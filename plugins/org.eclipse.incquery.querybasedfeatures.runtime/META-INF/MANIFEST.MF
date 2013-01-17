@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF-IncQuery based derived features runtime (Incubation)
+Bundle-SymbolicName: org.eclipse.incquery.querybasedfeatures.runtime;singleton:=true
+Bundle-Version: 0.7.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.6.5"
+Export-Package: org.eclipse.incquery.querybasedfeatures.runtime,
+ org.eclipse.incquery.querybasedfeatures.runtime.util.validation
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

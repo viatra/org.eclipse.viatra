@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Validation Engine UI (Incubation)
+Bundle-SymbolicName: org.eclipse.incquery.validation.runtime.ui;singleton:=true
+Bundle-Version: 0.7.0.qualifier
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide;visibility:=reexport,
+ org.eclipse.emf.edit.ui;bundle-version="2.6.0",
+ org.eclipse.incquery.validation.runtime;bundle-version="0.7.0",
+ org.eclipse.core.expressions,
+ org.eclipse.incquery.tooling.ui;bundle-version="0.7.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
