@@ -12,6 +12,7 @@ package org.eclipse.incquery.patternlanguage.emf.ui;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
@@ -59,7 +60,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     Logger provideLoggerImplementation() {
         Logger logger = Logger.getLogger(loggerRoot);
         logger.setAdditivity(false);
-        logger.addAppender(new ConsoleAppender());
+        logger.addAppender(new ConsoleAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
         logger.addAppender(new EclipseLogAppender());
         return logger;
     }
