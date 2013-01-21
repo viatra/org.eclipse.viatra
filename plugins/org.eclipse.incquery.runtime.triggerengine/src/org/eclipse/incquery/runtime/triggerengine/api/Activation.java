@@ -13,10 +13,11 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Objects;
-
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.xtext.AbstractRule;
+
+import com.google.common.base.Objects;
 
 /**
  * An {@link Activation} is a created for a {@link AbstractRule} when the preconditions (LHS) are fully satisfied with
@@ -102,7 +103,7 @@ public class Activation<Match extends IPatternMatch> {
     @Override
     public int hashCode() {
         if (cachedHash == -1) {
-            cachedHash = Objects.hash(rule, patternMatch/*, state*/);
+            cachedHash = Objects.hashCode(rule, patternMatch/*, state*/);
         }
         return cachedHash;
     }
