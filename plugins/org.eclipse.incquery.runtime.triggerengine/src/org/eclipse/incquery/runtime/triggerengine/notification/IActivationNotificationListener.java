@@ -16,11 +16,12 @@ import org.eclipse.incquery.runtime.triggerengine.api.Activation;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
+import org.eclipse.incquery.runtime.triggerengine.api.RuleInstance;
 
 /**
  * The interface is used to observe the changes in the collection of activations. <br/>
  * <br/>
- * An implementing class is for example the {@link Agenda} which is called back by the {@link AbstractRule} instances
+ * An implementing class is for example the {@link Agenda} which is called back by the {@link RuleInstance}
  * when those have updated the activations after an EMF operation.
  * 
  * @author Tamas Szabo
