@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the collection of activations within
@@ -26,14 +28,15 @@ import org.eclipse.incquery.runtime.triggerengine.api.Activation;
  */
 public abstract class ActivationNotificationProvider implements IActivationNotificationProvider {
 
-    protected Set<IActivationNotificationListener> activationNotificationListeners;
+    private Set<IActivationNotificationListener> activationNotificationListeners;
 
     public ActivationNotificationProvider() {
         this.activationNotificationListeners = new HashSet<IActivationNotificationListener>();
     }
 
     @Override
-    public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
+    public boolean addActivationNotificationListener(final IActivationNotificationListener listener,
+            final boolean fireNow) {
         boolean notContained = this.activationNotificationListeners.add(listener);
         if (notContained) {
             listenerAdded(listener, fireNow);
@@ -41,22 +44,18 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
         return notContained;
     }
 
-    protected abstract void listenerAdded(IActivationNotificationListener listener, boolean fireNow);
+    protected abstract void listenerAdded(final IActivationNotificationListener listener, final boolean fireNow);
 
     @Override
-    public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
+    public boolean removeActivationNotificationListener(final IActivationNotificationListener listener) {
         return this.activationNotificationListeners.remove(listener);
     }
 
-    public void notifyActivationAppearance(Activation<? extends IPatternMatch> activation) {
+    public void notifyActivationChanged(final Activation<? extends IPatternMatch> activation,
+            final ActivationState oldState, final ActivationLifeCycleEvent event) {
         for (IActivationNotificationListener listener : this.activationNotificationListeners) {
-            listener.activationAppeared(activation);
+            listener.activationChanged(activation, oldState, event);
         }
     }
 
-    public void notifyActivationDisappearance(Activation<? extends IPatternMatch> activation) {
-        for (IActivationNotificationListener listener : this.activationNotificationListeners) {
-            listener.activationDisappeared(activation);
-        }
-    }
 }

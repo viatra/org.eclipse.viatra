@@ -11,8 +11,12 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Objects;
+
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * An {@link Activation} is a created for a {@link AbstractRule} when the preconditions (LHS) are fully satisfied with
@@ -24,69 +28,72 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * one may set whether the Disappeared and Upgraded states will be used during the lifecycle of the Activation. If
  * multiple firing is allowed for the Activation then only the Appeared state will be used.
  * 
+ * TODO rewrite documentation
+ * 
  * @author Tamas Szabo
  * 
- * @param <MatchType>
+ * @param <Match>
  *            the type of the pattern match
  */
-public abstract class Activation<MatchType extends IPatternMatch> {
+public class Activation<Match extends IPatternMatch> {
 
-    protected MatchType patternMatch;
-    protected boolean fired;
-    protected ActivationState state;
-    protected AbstractRule<MatchType> rule;
+    private Match patternMatch;
+    private ActivationState state;
+    private boolean enabled;
+    private RuleInstance<Match, ? extends IncQueryMatcher<Match>> rule;
     private int cachedHash = -1;
 
-    public Activation(AbstractRule<MatchType> rule, MatchType patternMatch) {
-        this.patternMatch = patternMatch;
-        this.fired = false;
-        this.rule = rule;
+    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match, Matcher> rule, Match patternMatch) {
+        this.patternMatch = checkNotNull(patternMatch,"Cannot create activation with null patternmatch");
+        this.rule = checkNotNull(rule,"Cannot create activation with null rule");
+        this.state = ActivationState.INACTIVE;
     }
 
-    public void setFired(boolean fired) {
-        this.fired = fired;
-    }
-
-    public boolean isFired() {
-        return this.fired;
-    }
-
-    public MatchType getPatternMatch() {
+    public Match getPatternMatch() {
         return patternMatch;
     }
 
     public ActivationState getState() {
         return state;
     }
+    
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    /**
+     * @return the rule
+     */
+    public RuleInstance<Match, ? extends IncQueryMatcher<Match>> getRule() {
+        return rule;
+    }
 
-    public void setState(ActivationState state) {
-        this.state = state;
+    /**
+     * Should be only set through {@link RuleInstance#activationStateTransition}
+     * 
+     * @param state
+     */
+    protected void setState(final ActivationState state) {
+        this.state = checkNotNull(state, "Activation state cannot be null!");
+        enabled = rule.getSpecification().getEnabledStates().contains(state);
     }
 
     /**
      * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
      */
-    public void fire() {
-        IMatchProcessor<MatchType> processor = rule.getStateChangeProcessor(this.state);
-        if (processor != null) {
-            processor.process(patternMatch);
-        }
-
-        if (!rule.getAgenda().isAllowMultipleFiring()) {
-            this.fired = true;
-            this.rule.activationFired(this);
-        }
+    public void fire(final Context context) {
+        checkNotNull(context,"Cannot fire activation with null context");
+        rule.fire(this, context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         } else if (obj instanceof Activation) {
-            Activation<MatchType> other = (Activation<MatchType>) obj;
-            return (other.fired == this.fired) && (other.rule.equals(this.rule))
-                    && (other.patternMatch.equals(this.patternMatch)) && (other.state == this.state);
+            Activation<?> other = (Activation<?>) obj;
+            return (other.rule.equals(this.rule)) && (other.patternMatch.equals(this.patternMatch)
+                    /*&& (other.state == this.state*/);
         } else {
             return false;
         }
@@ -95,11 +102,18 @@ public abstract class Activation<MatchType extends IPatternMatch> {
     @Override
     public int hashCode() {
         if (cachedHash == -1) {
-            final int prime = 31;
-            cachedHash = 1;
-            cachedHash = prime * cachedHash + state.hashCode();
-            cachedHash = prime * cachedHash + patternMatch.hashCode();
+            cachedHash = Objects.hash(rule, patternMatch/*, state*/);
         }
         return cachedHash;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this).
+                add("match",patternMatch).
+                add("state",state).toString();
     }
 }

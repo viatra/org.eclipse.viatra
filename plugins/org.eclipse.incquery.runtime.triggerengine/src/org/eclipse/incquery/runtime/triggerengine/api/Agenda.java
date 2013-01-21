@@ -11,29 +11,28 @@
 
 package org.eclipse.incquery.runtime.triggerengine.api;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.triggerengine.firing.AutomaticFiringStrategy;
-import org.eclipse.incquery.runtime.triggerengine.firing.IQBaseCallbackUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.triggerengine.firing.IUpdateCompleteListener;
-import org.eclipse.incquery.runtime.triggerengine.firing.IUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.triggerengine.firing.TimedFiringStrategy;
-import org.eclipse.incquery.runtime.triggerengine.firing.TransactionUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.triggerengine.notification.ActivationNotificationProvider;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * An Agenda is associated to each EMF instance model (more precisely {@link IncQueryEngine} or equivalently
@@ -50,235 +49,183 @@ import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotifi
  * state of development.
  * 
  * <p>
- * Note that, one may instantiate an {@link ActivationMonitor} in order to process the activations on an individual
- * basis, because the {@link Agenda} always reflects the most up-to-date state of the activations.
  * 
- * <p>
  * One may define whether multiple firing of the same activation is allowed; that is, only the Appeared state will be
  * used from the lifecycle of {@link Activation}s and consecutive firing of a previously applied {@link Activation} is
  * possible. For more information on the lifecycle see {@link Activation}. Multiple firing is used for example in Design
  * Space Exploration scenarios.
  * 
+ * TODO rewrite code comments - multiple firing is implicitly allowed by defining a job that wokrs in the Fired state -
+ * life-cycle is defined separately (see {@link ActivationLifeCycle}) - {@link Scheduler} and {@link Executor} are
+ * separated from Agenda
+ * 
  * @author Tamas Szabo
  * 
  */
-public class Agenda implements IAgenda {
+public class Agenda {
 
     private final IncQueryEngine iqEngine;
-    private final Set<IRule<? extends IPatternMatch>> rules;
-    private final Set<ActivationMonitor> monitors;
-    private final Notifier notifier;
-    private final TransactionalEditingDomain editingDomain;
-    private final boolean allowMultipleFiring;
-    private IRuleFactory ruleFactory;
-    private final Collection<Activation<? extends IPatternMatch>> activations;
-    private IUpdateCompleteProvider updateCompleteProvider;
+    private final Map<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleInstanceMap;
+    private Multimap<ActivationState, Activation<?>> activations;
+    private Set<Activation<?>> enabledActivations;
     private final IActivationNotificationListener activationListener;
-    private final ActivationNotificationProvider activationProvider;
 
     /**
-     * Instantiates a new Agenda instance with the given {@link IncQueryEngine}. Multiple firing of the same activation
-     * is not allowed.
+     * Instantiates a new Agenda instance with the given {@link IncQueryEngine}.
      * 
      * @param iqEngine
      *            the {@link IncQueryEngine} instance
      */
-    protected Agenda(IncQueryEngine iqEngine) {
-        this(iqEngine, false);
-    }
-
-    /**
-     * Instantiates a new Agenda instance with the given {@link IncQueryEngine} and sets whether multiple allowing is
-     * allowed.
-     * 
-     * @param iqEngine
-     *            the {@link IncQueryEngine} instance
-     * @param allowMultipleFiring
-     *            indicates whether multiple firing is allowed
-     */
-    protected Agenda(IncQueryEngine iqEngine, boolean allowMultipleFiring) {
-        this.iqEngine = iqEngine;
-        this.rules = new HashSet<IRule<? extends IPatternMatch>>();
-        this.monitors = new HashSet<ActivationMonitor>();
-        this.notifier = iqEngine.getEmfRoot();
-        this.editingDomain = TransactionUtil.getEditingDomain(notifier);
-        this.allowMultipleFiring = allowMultipleFiring;
-        this.activations = new HashSet<Activation<? extends IPatternMatch>>();
-
-        this.activationProvider = new ActivationNotificationProvider() {
-
-            @Override
-            protected void listenerAdded(IActivationNotificationListener listener, boolean fireNow) {
-                if (fireNow) {
-                    for (Activation<? extends IPatternMatch> activation : activations) {
-                        listener.activationAppeared(activation);
-                    }
-                }
-            }
-
-        };
+    protected Agenda(final IncQueryEngine iqEngine) {
+        this.iqEngine = checkNotNull(iqEngine, "Cannot create Agenda with null IncQueryEngine");
+        this.ruleInstanceMap = new HashMap<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>>();
+        this.activations = HashMultimap.create();
+        this.enabledActivations = Sets.newHashSet();
 
         this.activationListener = new IActivationNotificationListener() {
 
             @Override
-            public void activationDisappeared(Activation<? extends IPatternMatch> activation) {
-                activations.remove(activation);
-                for (ActivationMonitor monitor : monitors) {
-                    monitor.removeActivation(activation);
+            public void activationChanged(final Activation<? extends IPatternMatch> activation,
+                    final ActivationState oldState, final ActivationLifeCycleEvent event) {
+                Agenda.this.iqEngine.getLogger().debug(
+                        String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
+                activations.remove(oldState, activation);
+                ActivationState state = activation.getState();
+                switch (state) {
+                case INACTIVE:
+                    enabledActivations.remove(activation);
+                    break;
+                default:
+                    if (activation.isEnabled()) {
+                        enabledActivations.add(activation);
+                    } else {
+                        enabledActivations.remove(activation);
+                    }
+                    activations.put(state, activation);
+                    break;
                 }
-                activationProvider.notifyActivationDisappearance(activation);
-            }
-
-            @Override
-            public void activationAppeared(Activation<? extends IPatternMatch> activation) {
-                activations.add(activation);
-                for (ActivationMonitor monitor : monitors) {
-                    monitor.addActivation(activation);
-                }
-                activationProvider.notifyActivationAppearance(activation);
             }
         };
 
-        if (this.editingDomain != null) {
-            updateCompleteProvider = new TransactionUpdateCompleteProvider(editingDomain);
-        } else {
-            NavigationHelper helper;
-            try {
-                helper = iqEngine.getBaseIndex();
-                updateCompleteProvider = new IQBaseCallbackUpdateCompleteProvider(helper);
-            } catch (IncQueryException e) {
-                getLogger().error("The base index cannot be constructed for the engine!", e);
-            }
-        }
     }
 
-    /**
-     * Sets the {@link IRuleFactory} for the Agenda.
-     * 
-     * @param ruleFactory
-     *            the {@link IRuleFactory} instance
+    /*
+     * public Notifier getNotifier() { return iqEngine.getEmfRoot(); }
      */
-    public void setRuleFactory(IRuleFactory ruleFactory) {
-        this.ruleFactory = ruleFactory;
-    }
 
-    @Override
-    public Notifier getNotifier() {
-        return notifier;
-    }
-
-    @Override
-    public TransactionalEditingDomain getEditingDomain() {
-        return editingDomain;
-    }
-
-    @Override
-    public boolean isAllowMultipleFiring() {
-        return allowMultipleFiring;
-    }
-
-    @Override
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IRule<Match> createRule(
-            IMatcherFactory<Matcher> factory) {
-        return createRule(factory, false, false);
-    }
-
-    @Override
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IRule<Match> createRule(
-            IMatcherFactory<Matcher> factory, boolean upgradedStateUsed, boolean disappearedStateUsed) {
-        AbstractRule<Match> rule = ruleFactory.createRule(iqEngine, factory, upgradedStateUsed, disappearedStateUsed);
+    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> instantiateRule(
+            final RuleSpecification<Match, Matcher> specification) {
+        RuleInstance<Match, Matcher> rule = specification.instantiateRule(iqEngine);
         rule.addActivationNotificationListener(activationListener, true);
-        rules.add(rule);
+        ruleInstanceMap.put(specification, rule);
         return rule;
     }
 
-    @Override
-    public <MatchType extends IPatternMatch> void removeRule(AbstractRule<MatchType> rule) {
-        if (rules.contains(rule)) {
+    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
+            final RuleInstance<Match, Matcher> rule) {
+        if (ruleInstanceMap.containsValue(rule)) {
             rule.removeActivationNotificationListener(activationListener);
             rule.dispose();
-            rules.remove(rule);
+            ruleInstanceMap.remove(rule.getSpecification());
+            return true;
         }
+        return false;
     }
 
-    @Override
-    public Collection<IRule<? extends IPatternMatch>> getRules() {
-        return rules;
+    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
+            final RuleSpecification<Match, Matcher> ruleSpecification) {
+        RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>> rule = ruleInstanceMap
+                .get(ruleSpecification);
+        if (rule != null) {
+            rule.removeActivationNotificationListener(activationListener);
+            rule.dispose();
+            ruleInstanceMap.remove(rule);
+            return true;
+        }
+        return false;
     }
 
-    @Override
-    public void dispose() {
-        if (updateCompleteProvider != null) {
-            updateCompleteProvider.dispose();
-        }
-        for (IRule<? extends IPatternMatch> rule : rules) {
+    protected void dispose() {
+        for (RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>> rule : ruleInstanceMap
+                .values()) {
             rule.dispose();
         }
     }
 
-    @Override
-    public Logger getLogger() {
-        return iqEngine.getLogger();
-    }
-
-    @Override
-    public Collection<Activation<? extends IPatternMatch>> getActivations() {
-        return Collections.unmodifiableCollection(activations);
+    /**
+     * @return the iqEngine
+     */
+    public IncQueryEngine getIncQueryEngine() {
+        return iqEngine;
     }
 
     /**
-     * @return the updateCompleteProvider
+     * @return the ruleInstanceMap
      */
-    public IUpdateCompleteProvider getUpdateCompleteProvider() {
-        return updateCompleteProvider;
+    public Map<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRuleInstanceMap() {
+        return Collections.unmodifiableMap(ruleInstanceMap);
     }
 
     /**
-     * @param updateCompleteProvider
-     *            the updateCompleteProvider to set
+     * @return the set of rule instances
      */
-    public void setUpdateCompleteProvider(IUpdateCompleteProvider updateCompleteProvider) {
-        this.updateCompleteProvider = updateCompleteProvider;
+    public Set<RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRuleInstances() {
+        return ImmutableSet.copyOf(ruleInstanceMap.values());
     }
 
-    @Override
-    public ActivationMonitor newActivationMonitor(boolean fillAtStart) {
-        ActivationMonitor monitor = new ActivationMonitor();
-        if (fillAtStart) {
-            for (Activation<? extends IPatternMatch> activation : activations) {
-                monitor.addActivation(activation);
-            }
-        }
-        monitors.add(monitor);
-        return monitor;
+    @SuppressWarnings("unchecked")
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> getInstance(
+            final RuleSpecification<Match, Matcher> ruleSpecification) {
+        return (RuleInstance<Match, Matcher>) ruleInstanceMap.get(ruleSpecification);
     }
 
-    @Override
-    public boolean addUpdateCompleteListener(IUpdateCompleteListener listener, boolean fireNow) {
-        if (updateCompleteProvider != null) {
-            return updateCompleteProvider.addUpdateCompleteListener(listener, fireNow);
+    /**
+     * @return the activations
+     */
+    public Multimap<ActivationState, Activation<?>> getActivations() {
+        return activations;
+    }
+
+    /**
+     * @return the enabledActivations
+     */
+    public Set<Activation<?>> getEnabledActivations() {
+        return enabledActivations;
+    }
+
+    public Collection<Activation<?>> getActivations(final ActivationState state) {
+        return activations.get(state);
+    }
+
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Collection<Activation<Match>> getActivations(
+            final RuleSpecification<Match, Matcher> ruleSpecification) {
+        RuleInstance<Match, Matcher> instance = getInstance(ruleSpecification);
+        if (instance == null) {
+            return Collections.emptySet();
         } else {
-            return false;
+            return instance.getAllActivations();
         }
     }
 
-    @Override
-    public boolean removeUpdateCompleteListener(IUpdateCompleteListener listener) {
-        if (updateCompleteProvider != null) {
-            return updateCompleteProvider.removeUpdateCompleteListener(listener);
-        } else {
-            return false;
+    /**
+     * 
+     * @return
+     */
+    public Collection<Activation<?>> getAllActivations() {
+        return activations.values();
+    }
+
+    protected void addActivationOrdering(final Comparator<Activation<?>> activationComparator) {
+        if (activationComparator != null) {
+            TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(null,
+                    activationComparator);
+            newActivations.putAll(activations);
+            activations = newActivations;
+
+            TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
+            newEnabledActivations.addAll(enabledActivations);
+            enabledActivations = newEnabledActivations;
         }
-    }
-
-    @Override
-    public boolean addActivationNotificationListener(IActivationNotificationListener listener, boolean fireNow) {
-        return activationProvider.addActivationNotificationListener(listener, fireNow);
-    }
-
-    @Override
-    public boolean removeActivationNotificationListener(IActivationNotificationListener listener) {
-        return activationProvider.removeActivationNotificationListener(listener);
     }
 
 }

@@ -31,21 +31,21 @@ public abstract class AttributeMonitor<MatchType extends IPatternMatch> {
         this.listeners = new ArrayList<IAttributeMonitorListener<MatchType>>();
     }
 
-    public void addCallbackOnMatchUpdate(IAttributeMonitorListener<MatchType> listener) {
+    public void addCallbackOnMatchUpdate(final IAttributeMonitorListener<MatchType> listener) {
         this.listeners.add(listener);
     }
 
-    public void removeCallbackOnMatchUpdate(IAttributeMonitorListener<MatchType> listener) {
+    public void removeCallbackOnMatchUpdate(final IAttributeMonitorListener<MatchType> listener) {
         this.listeners.remove(listener);
     }
 
-    public abstract void registerFor(MatchType match);
+    public abstract void registerFor(final MatchType match);
 
     public abstract void unregisterForAll();
 
-    public abstract void unregisterFor(MatchType match);
+    public abstract void unregisterFor(final MatchType match);
 
-    protected void notifyListeners(MatchType match) {
+    protected void notifyListeners(final MatchType match) {
         for (IAttributeMonitorListener<MatchType> listener : listeners) {
             listener.notifyUpdate(match);
         }

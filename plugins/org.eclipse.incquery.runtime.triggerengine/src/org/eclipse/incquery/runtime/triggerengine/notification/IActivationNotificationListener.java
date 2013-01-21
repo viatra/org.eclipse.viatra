@@ -13,6 +13,9 @@ package org.eclipse.incquery.runtime.triggerengine.notification;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
+import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
 
 /**
  * The interface is used to observe the changes in the collection of activations. <br/>
@@ -25,8 +28,7 @@ import org.eclipse.incquery.runtime.triggerengine.api.Activation;
  */
 public interface IActivationNotificationListener {
 
-    public void activationAppeared(Activation<? extends IPatternMatch> activation);
-
-    public void activationDisappeared(Activation<? extends IPatternMatch> activation);
+    void activationChanged(final Activation<? extends IPatternMatch> activation, final ActivationState oldState,
+            final ActivationLifeCycleEvent event);
 
 }

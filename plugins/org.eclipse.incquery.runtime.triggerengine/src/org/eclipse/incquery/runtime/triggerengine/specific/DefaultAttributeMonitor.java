@@ -40,7 +40,7 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
 
     private class ChangeListener implements IValueChangeListener {
         @Override
-        public void handleValueChange(ValueChangeEvent event) {
+        public void handleValueChange(final ValueChangeEvent event) {
             IObservableValue val = event.getObservableValue();
             if (val != null) {
                 notifyListeners(observableMap.get(val));
@@ -49,7 +49,7 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
     }
 
     @Override
-    public void registerFor(MatchType match) {
+    public void registerFor(final MatchType match) {
         List<IObservableValue> values = new ArrayList<IObservableValue>();
         for (String param : match.parameterNames()) {
             Object location = match.get(param);
@@ -66,7 +66,7 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
         observableMapReversed.put(match, values);
     }
 
-    private List<IObservableValue> observeAllAttributes(IValueChangeListener changeListener, Object object) {
+    private List<IObservableValue> observeAllAttributes(final IValueChangeListener changeListener, final Object object) {
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
         if (object instanceof EObject) {
             for (EStructuralFeature feature : ((EObject) object).eClass().getEAllStructuralFeatures()) {
@@ -86,7 +86,7 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
     }
 
     @Override
-    public void unregisterFor(MatchType match) {
+    public void unregisterFor(final MatchType match) {
         List<IObservableValue> observables = observableMapReversed.get(match);
         if (observables != null) {
             for (IObservableValue val : observables) {

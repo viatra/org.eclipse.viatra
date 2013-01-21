@@ -8,30 +8,29 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.triggerengine.notification;
+package org.eclipse.incquery.runtime.triggerengine.update;
+
+import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 
 /**
  * @author Abel Hegedus
  * 
  */
-public interface IActivationNotificationProvider {
+public interface IUpdateCompleteProvider {
 
     /**
-     * Registers an {@link IActivationNotificationListener} to receive updates on activation appearance and
-     * disappearance.
+     * Registers an {@link IUpdateCompleteListener} to receive notification on completed updates.
      * 
      * <p>
-     * The listener can be unregistered via
-     * {@link #removeActivationNotificationListener(IActivationNotificationListener)}.
+     * The listener can be unregistered via {@link #removeUpdateCompleteListener(IUpdateCompleteListener)}.
      * 
      * @param fireNow
-     *            if true, listener will be immediately invoked on all current activations as a one-time effect.
+     *            if true, listener will be immediately invoked without waiting for the next update
      * 
      * @param listener
-     *            the listener that will be notified of each new activation that appears or disappears, starting from
-     *            now.
+     *            the listener that will be notified of each completed update
      */
-    boolean addActivationNotificationListener(final IActivationNotificationListener listener, final boolean fireNow);
+    boolean addUpdateCompleteListener(final IUpdateCompleteListener listener, final boolean fireNow);
 
     /**
      * Unregisters a listener registered by
@@ -40,6 +39,11 @@ public interface IActivationNotificationProvider {
      * @param listener
      *            the listener that will no longer be notified.
      */
-    boolean removeActivationNotificationListener(final IActivationNotificationListener listener);
+    boolean removeUpdateCompleteListener(final IUpdateCompleteListener listener);
+
+    /**
+     * 
+     */
+    void dispose();
 
 }
