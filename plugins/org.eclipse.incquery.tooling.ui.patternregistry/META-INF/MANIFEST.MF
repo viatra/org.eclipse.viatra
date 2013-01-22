@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.incquery.runtime.patternregistry;bundle-version="0.7.0",
  org.eclipse.incquery.patternlanguage.emf.ui;bundle-version="0.7.0",
- org.eclipse.ui;bundle-version="3.103.0",
+ org.eclipse.ui;bundle-version="3.8.0",
  org.eclipse.jdt.core;bundle-version="3.8.1",
  org.eclipse.core.resources;bundle-version="3.8.0",
  org.eclipse.core.runtime;bundle-version="3.8.0",
