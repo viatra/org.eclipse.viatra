@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.patternregistry.listeners.IPatternRegistryListener;
+import org.eclipse.incquery.runtime.patternregistry.sources.PluginPatternSource;
 
 public enum PatternRegistry {
 
@@ -19,6 +20,10 @@ public enum PatternRegistry {
 
     private final Map<String, PatternInfo> idToPatternInfoMap = new HashMap<String, PatternInfo>();
 
+    private PatternRegistry() {
+        PluginPatternSource.initializeRegisteredPatterns();
+    }
+
     public List<PatternInfo> getAllPatternInfosInAspect() {
         return Collections.unmodifiableList(patternInfos);
     }
@@ -29,7 +34,7 @@ public enum PatternRegistry {
         if (idToPatternInfoMap.containsKey(id)) {
             return idToPatternInfoMap.get(id);
         }
-        
+
         // Registers new pattern
         PatternInfo patternInfo = new PatternInfo(pattern);
         patternInfos.add(patternInfo);

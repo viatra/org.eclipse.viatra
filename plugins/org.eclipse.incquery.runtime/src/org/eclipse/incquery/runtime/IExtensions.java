@@ -26,4 +26,7 @@ public interface IExtensions {
             + ".xexpressionevaluator";
 
     public static final String INJECTOREXTENSIONID = IncQueryRuntimePlugin.PLUGIN_ID + ".injectorprovider";
+
+    public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
+
 }

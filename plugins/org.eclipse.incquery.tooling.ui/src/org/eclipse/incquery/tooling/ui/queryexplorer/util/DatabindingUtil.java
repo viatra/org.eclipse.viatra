@@ -50,6 +50,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
+import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -81,7 +82,7 @@ public class DatabindingUtil {
     private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
     private static List<Pattern> generatedPatterns;
     private static Map<Pattern, IMatcherFactory<?>> generatedMatcherFactories;
-    public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
+
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
     @Inject
@@ -130,7 +131,8 @@ public class DatabindingUtil {
     }
 
     public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
-        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern, QUERY_EXPLORER_ANNOTATION);
+        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern,
+                IExtensions.QUERY_EXPLORER_ANNOTATION);
         if (annotation == null) {
             return null;
         } else {
@@ -331,8 +333,8 @@ public class DatabindingUtil {
             if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
                 pattern = p;
 
-                Annotation annotation = CorePatternLanguageHelper
-                        .getFirstAnnotationByName(p, QUERY_EXPLORER_ANNOTATION);
+                Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p,
+                        IExtensions.QUERY_EXPLORER_ANNOTATION);
                 if (annotation == null) {
                     // Try with deprecated PatternUI annotation
                     annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, PATTERNUI_ANNOTATION);
