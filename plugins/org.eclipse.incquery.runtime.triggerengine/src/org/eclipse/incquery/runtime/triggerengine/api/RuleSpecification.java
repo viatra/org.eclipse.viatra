@@ -66,10 +66,9 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         this.enabledStates = ImmutableSet.copyOf(states);
         this.comparator = comparator;
     }
-
+    
     protected RuleInstance<Match, Matcher> instantiateRule(final IncQueryEngine engine) {
-        RuleInstance<Match, Matcher> instance = new RuleInstance<Match, Matcher>(this, engine);
-        return instance;
+        return new RuleInstance<Match, Matcher>(this, engine);
     }
 
     /**

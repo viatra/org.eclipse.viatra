@@ -73,9 +73,25 @@ public class RuleEngine {
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRule(
             final RuleSpecification<Match, Matcher> specification) {
+        return addRule(specification, false);
+    }
+    
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRule(
+            final RuleSpecification<Match, Matcher> specification, boolean fireNow) {
         checkNotNull(specification, "Rule specification must be specified!");
         RuleInstance<Match, Matcher> instance = agenda.instantiateRule(specification);
-        return instance != null;
+        if(fireNow) {
+            fireActivations(fireNow, instance);
+        }
+        return true;
+    }
+
+    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void fireActivations(boolean fireNow,
+            RuleInstance<Match, Matcher> instance) {
+        Context context = new Context();
+        for (Activation<Match> act : instance.getAllActivations()) {
+            act.fire(context);
+        }
     }
 
     public Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRules() {

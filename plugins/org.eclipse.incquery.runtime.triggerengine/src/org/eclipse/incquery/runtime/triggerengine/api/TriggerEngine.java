@@ -12,6 +12,9 @@ package org.eclipse.incquery.runtime.triggerengine.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+
 /**
  * @author Abel Hegedus
  * 
@@ -38,6 +41,15 @@ public class TriggerEngine extends RuleEngine {
      */
     protected Scheduler getScheduler() {
         return scheduler;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.triggerengine.api.RuleEngine#fireActivations(boolean, org.eclipse.incquery.runtime.triggerengine.api.RuleInstance)
+     */
+    @Override
+    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void fireActivations(
+            boolean fireNow, RuleInstance<Match, Matcher> instance) {
+        scheduler.schedule();
     }
 
 }

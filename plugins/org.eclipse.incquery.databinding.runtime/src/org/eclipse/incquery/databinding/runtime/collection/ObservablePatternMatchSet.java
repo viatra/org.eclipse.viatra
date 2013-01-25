@@ -103,7 +103,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         RuleSpecification<Match,Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
         RuleEngine triggerEngine = TriggerEngineUtil.createTriggerEngine(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
-        triggerEngine.addRule(specification);
+        triggerEngine.addRule(specification, true);
     }
 
     /**
@@ -122,7 +122,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             RuleEngine engine) {
         super();
         RuleSpecification<Match, Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
-        engine.addRule(specification);
+        engine.addRule(specification, true);
     }
 
     /*

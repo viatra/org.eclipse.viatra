@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -35,9 +34,9 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
 /**
- * An Agenda is associated to each EMF instance model (more precisely {@link IncQueryEngine} or equivalently
- * {@link Notifier} in the context of EMF-IncQuery) and it is responsible for creating, managing and disposing rules in
- * the AbstractRule Engine. It provides an unmodifiable view for the collection of applicable activations.
+ * An Agenda is associated to each EMF instance model (more precisely {@link IncQueryEngine} and 
+ * it is responsible for creating, managing and disposing rules in
+ * the Rule Engine. It provides an unmodifiable view for the collection of applicable activations.
  * 
  * <p>
  * One must register an {@link IActivationNotificationListener} in order to receive notifications automatically about
