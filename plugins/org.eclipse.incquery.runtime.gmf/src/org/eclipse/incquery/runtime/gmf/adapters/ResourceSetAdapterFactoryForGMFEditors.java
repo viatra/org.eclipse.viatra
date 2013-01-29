@@ -20,7 +20,7 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocument
  * instances from it.
  */
 @SuppressWarnings("rawtypes")
-public class AdapterFactoryForGMFEditors implements IAdapterFactory {
+public class ResourceSetAdapterFactoryForGMFEditors implements IAdapterFactory {
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {

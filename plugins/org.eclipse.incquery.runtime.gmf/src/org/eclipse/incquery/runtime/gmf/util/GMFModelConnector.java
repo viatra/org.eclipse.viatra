@@ -36,7 +36,7 @@ public class GMFModelConnector extends EMFModelConnector {
 
     @Override
     protected TreePath createTreePath(IEditorPart editor, EObject obj) {
-        if (editor instanceof DiagramDocumentEditor) {
+        if (editor instanceof DiagramDocumentEditor) { // TODO: also handle IDiagramWorkbenchPart
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editor;
             EditPart epBegin = providerEditor.getDiagramEditPart().getPrimaryChildEditPart();
             if (epBegin instanceof GraphicalEditPart) {
@@ -54,7 +54,7 @@ public class GMFModelConnector extends EMFModelConnector {
     @Override
     protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
         super.navigateToElements(editorPart, selection);
-        if (editorPart instanceof DiagramDocumentEditor) {
+        if (editorPart instanceof DiagramDocumentEditor) { // TODO: also support IDiagramWorkbenchPart
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editorPart;
             IDiagramGraphicalViewer viewer = providerEditor.getDiagramGraphicalViewer();
             if (selection.getFirstElement() instanceof GraphicalEditPart) {
