@@ -144,7 +144,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
                 if (parameterSet) {
                     si.setError(PATTERN_NAME_MUST_BE_SPECIFIED);
                 } else {
-                    si.setWarning(PATTERN_NAME_SHOULD_BE_SPECIFIED);
+                    si.setError(PATTERN_NAME_SHOULD_BE_SPECIFIED);
                 }
             }
         }
