@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.TriggerEngineUtil;
+import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
@@ -73,7 +73,7 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
      * 
      */
     protected TriggeredQueryResultMultimap(final IncQueryEngine engine) {
-        this(TriggerEngineUtil.createTriggerEngine(engine,
+        this(EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine)));
     }
 

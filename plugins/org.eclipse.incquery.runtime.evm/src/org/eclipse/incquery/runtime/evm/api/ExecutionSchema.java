@@ -19,17 +19,17 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
  * @author Abel Hegedus
  * 
  */
-public class TriggerEngine extends RuleEngine {
+public class ExecutionSchema extends RuleEngine {
 
     private Scheduler scheduler;
 
-    protected TriggerEngine(final Scheduler scheduler) {
+    protected ExecutionSchema(final Scheduler scheduler) {
         super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getAgenda());
         this.scheduler = scheduler;
     }
 
-    public static TriggerEngine create(final Scheduler scheduler) {
-        return new TriggerEngine(scheduler);
+    public static ExecutionSchema create(final Scheduler scheduler) {
+        return new ExecutionSchema(scheduler);
     }
 
     public void dispose() {

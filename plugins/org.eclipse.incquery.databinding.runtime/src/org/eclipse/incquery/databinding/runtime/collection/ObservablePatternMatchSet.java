@@ -26,8 +26,8 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.TriggerEngine;
-import org.eclipse.incquery.runtime.evm.api.TriggerEngineUtil;
+import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
+import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
@@ -39,9 +39,9 @@ import com.google.common.collect.Sets;
  * {@link IncQueryMatcher} are not ordered by default).
  * 
  * <p>
- * This implementation uses the {@link TriggerEngine} to get notifications for match set changes, and can be instantiated
+ * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be instantiated
  * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
- * {@link IncQueryEngine} or {@link TriggerEngine}.
+ * {@link IncQueryEngine} or {@link ExecutionSchema}.
  * 
  * @author Abel Hegedus
  * 
@@ -101,7 +101,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
         RuleSpecification<Match,Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
-        RuleEngine triggerEngine = TriggerEngineUtil.createTriggerEngine(engine,
+        RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
         triggerEngine.addRule(specification, true);
     }
@@ -116,7 +116,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      * @param factory
      *            the {@link IMatcherFactory} used to create a matcher
      * @param engine
-     *            an existing {@link TriggerEngine} that specifies the used model
+     *            an existing {@link ExecutionSchema} that specifies the used model
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {

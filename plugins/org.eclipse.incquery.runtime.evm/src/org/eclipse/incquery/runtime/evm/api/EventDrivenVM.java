@@ -26,14 +26,14 @@ import com.google.common.collect.ImmutableSet;
  * @author Abel Hegedus
  * 
  */
-public final class TriggerEngineUtil {
+public final class EventDrivenVM {
 
-    private TriggerEngineUtil() {
+    private EventDrivenVM() {
     }
 
     private static boolean debug = true;
 
-    public static TriggerEngine createTriggerEngine(final IncQueryEngine engine,
+    public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleSpecifications) {
         checkNotNull(schedulerFactory, "Cannot create trigger engine with null scheduler factory");
         checkNotNull(ruleSpecifications, "Cannot create trigger engine with null rule specification set");
@@ -44,12 +44,12 @@ public final class TriggerEngineUtil {
             agenda.instantiateRule(ruleSpecification);
         }
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
-        return TriggerEngine.create(scheduler);
+        return ExecutionSchema.create(scheduler);
     }
     
-    public static TriggerEngine createTriggerEngine(final IncQueryEngine engine,
+    public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>... ruleSpecifications) {
-        return createTriggerEngine(engine, schedulerFactory, ImmutableSet.copyOf(ruleSpecifications));
+        return createExecutionSchema(engine, schedulerFactory, ImmutableSet.copyOf(ruleSpecifications));
     }
 
     /**
@@ -61,13 +61,13 @@ public final class TriggerEngineUtil {
         }
     }
     
-    public static TriggerEngine createTriggerEngine(final IncQueryEngine engine,
+    public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
         checkNotNull(schedulerFactory, "Cannot create trigger engine with null scheduler factory");
         Executor executor = new Executor(engine);
         setLoggerLevelToDebug(engine);
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
-        return TriggerEngine.create(scheduler);
+        return ExecutionSchema.create(scheduler);
     }
     
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
