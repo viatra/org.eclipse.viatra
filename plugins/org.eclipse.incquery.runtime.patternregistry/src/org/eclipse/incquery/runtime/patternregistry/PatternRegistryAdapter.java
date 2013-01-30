@@ -8,19 +8,18 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.patternregistry.listeners;
+package org.eclipse.incquery.runtime.patternregistry;
 
-import org.eclipse.incquery.runtime.patternregistry.PatternInfo;
 
 public abstract class PatternRegistryAdapter implements IPatternRegistryListener {
 
     @Override
-    public void patternAdded(PatternInfo patternInfo) {
+    public void patternAdded(IPatternInfo patternInfo) {
         // Empty implementation
     }
 
     @Override
-    public void patternRemoved(PatternInfo patternInfo) {
+    public void patternRemoved(IPatternInfo patternInfo) {
         // Empty implementation
     }
 

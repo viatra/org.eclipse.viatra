@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.patternregistry.listeners.IPatternRegistryListener;
-import org.eclipse.incquery.runtime.patternregistry.sources.PluginPatternSource;
+import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
+import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
 
 public enum PatternRegistry {
 
@@ -26,19 +26,21 @@ public enum PatternRegistry {
 
     private final List<IPatternRegistryListener> listeners = new ArrayList<IPatternRegistryListener>();
 
-    private final List<PatternInfo> patternInfos = new ArrayList<PatternInfo>();
+    private final List<IPatternInfo> patternInfos = new ArrayList<IPatternInfo>();
 
-    private final Map<String, PatternInfo> idToPatternInfoMap = new HashMap<String, PatternInfo>();
+    private final Map<String, IPatternInfo> idToPatternInfoMap = new HashMap<String, IPatternInfo>();
 
     private PatternRegistry() {
-        PluginPatternSource.initializeRegisteredPatterns();
+        for (IPatternInfo patternInfo : GeneratedPatternSource.initializeRegisteredPatterns()) {
+            registerPatternInfo(patternInfo);
+        }
     }
 
-    public List<PatternInfo> getAllPatternInfosInAspect() {
+    public List<IPatternInfo> getAllPatternInfosInAspect() {
         return Collections.unmodifiableList(patternInfos);
     }
 
-    public PatternInfo addPatternToRegistry(Pattern pattern) {
+    public IPatternInfo addPatternToRegistry(Pattern pattern) {
         // Returns the PatterInfo if it is already registered
         String id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
         if (idToPatternInfoMap.containsKey(id)) {
@@ -46,13 +48,18 @@ public enum PatternRegistry {
         }
 
         // Registers new pattern
-        PatternInfo patternInfo = new PatternInfo(pattern);
+        // FIXME do it create the matcherfactory!!
+        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, null);
+        registerPatternInfo(patternInfo);
+        return patternInfo;
+    }
+
+    private void registerPatternInfo(IPatternInfo patternInfo) {
         patternInfos.add(patternInfo);
-        idToPatternInfoMap.put(id, patternInfo);
+        idToPatternInfoMap.put(patternInfo.getId(), patternInfo);
         for (IPatternRegistryListener patternRegistryListener : listeners) {
             patternRegistryListener.patternAdded(patternInfo);
         }
-        return patternInfo;
     }
 
     // public void removePatternFromRegistry(Pattern pattern) {

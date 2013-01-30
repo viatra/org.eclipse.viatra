@@ -8,15 +8,10 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.patternregistry.listeners;
+package org.eclipse.incquery.runtime.patternregistry;
 
-import org.eclipse.incquery.runtime.patternregistry.PatternInfo;
+public enum PatternTypeEnum {
 
-
-public interface IPatternRegistryListener {
-
-    public void patternAdded(PatternInfo patternInfo);
-
-    public void patternRemoved(PatternInfo patternInfo);
+    GENERATED, GENERIC;
 
 }

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.patternregistry.views;
 
-import org.eclipse.incquery.runtime.patternregistry.PatternInfo;
+import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
+import org.eclipse.incquery.runtime.patternregistry.IPatternRegistryListener;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
-import org.eclipse.incquery.runtime.patternregistry.listeners.IPatternRegistryListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
@@ -37,12 +37,12 @@ public class PatternRegistryViewPart extends ViewPart {
 
         PatternRegistry.INSTANCE.registerListener(new IPatternRegistryListener() {
             @Override
-            public void patternRemoved(PatternInfo patternInfo) {
+            public void patternRemoved(IPatternInfo patternInfo) {
                 updateLabelText();
             }
 
             @Override
-            public void patternAdded(PatternInfo patternInfo) {
+            public void patternAdded(IPatternInfo patternInfo) {
                 updateLabelText();
             }
         });
@@ -50,7 +50,7 @@ public class PatternRegistryViewPart extends ViewPart {
 
     private void updateLabelText() {
         String labelText = "";
-        for (PatternInfo patternInfo : PatternRegistry.INSTANCE.getAllPatternInfosInAspect()) {
+        for (IPatternInfo patternInfo : PatternRegistry.INSTANCE.getAllPatternInfosInAspect()) {
             labelText = labelText.concat(patternInfo.getId() + "\n");
         }
         label.setText(labelText);
