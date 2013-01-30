@@ -62,7 +62,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.incquery.runtime.triggerengine"
+         id="org.eclipse.incquery.runtime.evm"
          download-size="0"
          install-size="0"
          version="0.0.0"

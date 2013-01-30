@@ -24,13 +24,13 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.TriggerEngine;
+import org.eclipse.incquery.runtime.evm.api.TriggerEngineUtil;
+import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleEngine;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngine;
-import org.eclipse.incquery.runtime.triggerengine.api.TriggerEngineUtil;
-import org.eclipse.incquery.runtime.triggerengine.specific.UpdateCompleteBasedScheduler;
 
 import com.google.common.collect.Sets;
 

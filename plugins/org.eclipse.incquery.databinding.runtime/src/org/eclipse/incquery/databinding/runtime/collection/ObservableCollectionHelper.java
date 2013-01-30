@@ -14,12 +14,12 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
-import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
-import org.eclipse.incquery.runtime.triggerengine.api.Agenda;
-import org.eclipse.incquery.runtime.triggerengine.api.Job;
-import org.eclipse.incquery.runtime.triggerengine.api.RuleSpecification;
-import org.eclipse.incquery.runtime.triggerengine.specific.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.triggerengine.specific.StatelessJob;
+import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.Agenda;
+import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 
 import com.google.common.collect.Sets;
 

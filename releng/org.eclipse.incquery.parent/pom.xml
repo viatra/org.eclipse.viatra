@@ -21,7 +21,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
-		<module>../../plugins/org.eclipse.incquery.runtime.triggerengine</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
