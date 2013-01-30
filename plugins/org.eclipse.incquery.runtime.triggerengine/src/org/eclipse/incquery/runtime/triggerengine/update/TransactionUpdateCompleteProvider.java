@@ -24,13 +24,11 @@ import org.eclipse.incquery.runtime.triggerengine.specific.RecordingJob;
  */
 public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
     private final TransactionListener transactionListener;
-    private final TransactionalEditingDomain editingDomain;
     private final Lifecycle lifecycle;
 
     public TransactionUpdateCompleteProvider(final TransactionalEditingDomain editingDomain) {
         this.transactionListener = new TransactionListener();
-        this.editingDomain = editingDomain;
-        this.lifecycle = TransactionUtil.getAdapter(this.editingDomain, Lifecycle.class);
+        this.lifecycle = TransactionUtil.getAdapter(editingDomain, Lifecycle.class);
         this.lifecycle.addTransactionalEditingDomainListener(transactionListener);
     }
 

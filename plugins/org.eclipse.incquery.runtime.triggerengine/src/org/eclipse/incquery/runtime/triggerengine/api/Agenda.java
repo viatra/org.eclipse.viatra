@@ -24,12 +24,12 @@ import java.util.TreeSet;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
@@ -63,6 +63,34 @@ import com.google.common.collect.TreeMultimap;
  */
 public class Agenda {
 
+    /**
+     * @author Abel Hegedus
+     *
+     */
+    private final class DefaultActivationNotificationListener implements IActivationNotificationListener {
+        @Override
+        public void activationChanged(final Activation<? extends IPatternMatch> activation,
+                final ActivationState oldState, final ActivationLifeCycleEvent event) {
+            Agenda.this.iqEngine.getLogger().debug(
+                    String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
+            activations.remove(oldState, activation);
+            ActivationState state = activation.getState();
+            switch (state) {
+            case INACTIVE:
+                enabledActivations.remove(activation);
+                break;
+            default:
+                if (activation.isEnabled()) {
+                    enabledActivations.add(activation);
+                } else {
+                    enabledActivations.remove(activation);
+                }
+                activations.put(state, activation);
+                break;
+            }
+        }
+    }
+
     private final IncQueryEngine iqEngine;
     private final Map<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleInstanceMap;
     private Multimap<ActivationState, Activation<?>> activations;
@@ -81,30 +109,7 @@ public class Agenda {
         this.activations = HashMultimap.create();
         this.enabledActivations = Sets.newHashSet();
 
-        this.activationListener = new IActivationNotificationListener() {
-
-            @Override
-            public void activationChanged(final Activation<? extends IPatternMatch> activation,
-                    final ActivationState oldState, final ActivationLifeCycleEvent event) {
-                Agenda.this.iqEngine.getLogger().debug(
-                        String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
-                activations.remove(oldState, activation);
-                ActivationState state = activation.getState();
-                switch (state) {
-                case INACTIVE:
-                    enabledActivations.remove(activation);
-                    break;
-                default:
-                    if (activation.isEnabled()) {
-                        enabledActivations.add(activation);
-                    } else {
-                        enabledActivations.remove(activation);
-                    }
-                    activations.put(state, activation);
-                    break;
-                }
-            }
-        };
+        this.activationListener = new DefaultActivationNotificationListener();
 
     }
 
@@ -138,7 +143,7 @@ public class Agenda {
         if (rule != null) {
             rule.removeActivationNotificationListener(activationListener);
             rule.dispose();
-            ruleInstanceMap.remove(rule);
+            ruleInstanceMap.remove(ruleSpecification);
             return true;
         }
         return false;
@@ -216,7 +221,7 @@ public class Agenda {
 
     protected void addActivationOrdering(final Comparator<Activation<?>> activationComparator) {
         if (activationComparator != null) {
-            TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(null,
+            TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
                     activationComparator);
             newActivations.putAll(activations);
             activations = newActivations;

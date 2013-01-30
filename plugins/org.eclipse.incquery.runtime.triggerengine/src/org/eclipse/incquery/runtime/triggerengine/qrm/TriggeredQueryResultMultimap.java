@@ -89,7 +89,7 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IMatcherFactory<Matcher> factory) {
         engine.addRule(new RuleSpecification<Match, Matcher>(factory,
-                DefaultActivationLifeCycle.getDEFAULT_NO_UPDATE(), jobs));
+                DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 
     protected abstract KeyType getKeyFromMatch(final Match match);

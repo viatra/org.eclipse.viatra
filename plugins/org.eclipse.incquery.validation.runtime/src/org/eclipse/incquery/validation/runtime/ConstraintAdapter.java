@@ -68,7 +68,7 @@ public class ConstraintAdapter {
 
             rules.add(new RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
                     (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) constraint.getMatcherFactory(),
-                    DefaultActivationLifeCycle.getDEFAULT(), Sets.newHashSet(placerJob, eraserJob, updaterJob)));
+                    DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(placerJob, eraserJob, updaterJob)));
         }
 
         try {

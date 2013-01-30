@@ -26,10 +26,6 @@ import com.google.common.collect.Table;
  * 
  */
 public class ActivationLifeCycle {
-
-    public enum ActivationLifeCycleEvent{
-        MATCH_APPEARS, MATCH_DISAPPEARS, MATCH_UPDATES, ACTIVATION_FIRES
-    }
     
     private Table<ActivationState, ActivationLifeCycleEvent, ActivationState> stateTransitionTable;
     

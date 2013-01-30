@@ -28,6 +28,10 @@ import com.google.common.collect.Multimap;
  */
 public class RuleEngine {
 
+    /**
+     * 
+     */
+    private static final String RULE_SPECIFICATION_MUST_BE_SPECIFIED = "Rule specification must be specified!";
     private Agenda agenda;
 
     protected RuleEngine(final Agenda agenda) {
@@ -60,13 +64,13 @@ public class RuleEngine {
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
             final RuleSpecification<Match, Matcher> specification) {
-        checkNotNull(specification, "Rule specification must be specified!");
+        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         return ImmutableSet.copyOf(agenda.getActivations(specification));
     }
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
             final RuleSpecification<Match, Matcher> specification, final ActivationState state) {
-        checkNotNull(specification, "Rule specification must be specified!");
+        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(state, "Activation state must be specified!");
         return ImmutableSet.copyOf(agenda.getInstance(specification).getActivations(state));
     }
@@ -78,7 +82,7 @@ public class RuleEngine {
     
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRule(
             final RuleSpecification<Match, Matcher> specification, boolean fireNow) {
-        checkNotNull(specification, "Rule specification must be specified!");
+        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         RuleInstance<Match, Matcher> instance = agenda.instantiateRule(specification);
         if(fireNow) {
             fireActivations(fireNow, instance);
@@ -100,7 +104,7 @@ public class RuleEngine {
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
             final RuleSpecification<Match, Matcher> specification) {
-        checkNotNull(specification, "Rule specification must be specified!");
+        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         return agenda.removeRule(specification);
     }
 

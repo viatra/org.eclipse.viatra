@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.update;
 
-import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
 
 /**
  * @author Abel Hegedus
@@ -34,7 +33,7 @@ public interface IUpdateCompleteProvider {
 
     /**
      * Unregisters a listener registered by
-     * {@link #addActivationNotificationListener(IActivationNotificationListener, boolean)}.
+     * {@link IUpdateCompleteProvider#addUpdateCompleteListener(IUpdateCompleteListener, boolean)}.
      * 
      * @param listener
      *            the listener that will no longer be notified.

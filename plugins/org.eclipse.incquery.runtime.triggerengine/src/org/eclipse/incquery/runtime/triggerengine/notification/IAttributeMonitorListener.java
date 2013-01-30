@@ -23,6 +23,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  */
 public interface IAttributeMonitorListener<MatchType extends IPatternMatch> {
 
-    public void notifyUpdate(final MatchType match);
+    void notifyUpdate(final MatchType match);
 
 }

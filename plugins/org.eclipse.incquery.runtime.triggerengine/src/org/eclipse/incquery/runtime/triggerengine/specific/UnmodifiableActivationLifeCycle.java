@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.triggerengine.specific;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 import com.google.common.collect.Table.Cell;

@@ -25,7 +25,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.notification.ActivationNotificationProvider;
 import org.eclipse.incquery.runtime.triggerengine.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.triggerengine.notification.IActivationNotificationListener;
@@ -156,6 +155,19 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
             this.activations = HashBasedTable.create();
         }
         
+        prepareMatchMonitors();
+        
+        try {
+            this.matcher = specification.getFactory().getMatcher(engine);
+            this.matcher.addCallbackOnMatchUpdate(matchUpdateListener, true);
+        } catch (IncQueryException e) {
+            engine.getLogger().error(
+                    String.format("Could not initialize matcher %s in engine %s", specification.getFactory()
+                            .getPatternFullyQualifiedName(), engine.getEmfRoot().toString()), e);
+        }
+    }
+
+    private void prepareMatchMonitors() {
         this.activationNotificationProvider = checkNotNull(prepareActivationNotificationProvider(), "Prepared activation notification provider is null!");
 
         IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
@@ -166,15 +178,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
         this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         this.attributeMonitor.addCallbackOnMatchUpdate(attributeMonitorListener);
-        
-        try {
-            this.matcher = specification.getFactory().getMatcher(engine);
-            this.matcher.addCallbackOnMatchUpdate(matchUpdateListener, true);
-        } catch (IncQueryException e) {
-            engine.getLogger().error(
-                    String.format("Could not initialize matcher %s in engine %s", specification.getFactory()
-                            .getPatternFullyQualifiedName(), engine.getEmfRoot().toString()), e);
-        }
     }
 
     protected ActivationNotificationProvider prepareActivationNotificationProvider() {

@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.triggerengine.api.Activation;
-import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycle.ActivationLifeCycleEvent;
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 /**

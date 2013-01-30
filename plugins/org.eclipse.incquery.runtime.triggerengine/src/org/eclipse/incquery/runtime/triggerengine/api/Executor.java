@@ -28,6 +28,7 @@ public class Executor {
 
     private Agenda agenda;
     private Context context;
+    private boolean scheduling = false;
     
     protected Executor(final IncQueryEngine engine) {
         this(engine, Context.create());
@@ -40,33 +41,34 @@ public class Executor {
 
     protected void schedule() {
         
+        if(!startScheduling()) {
+            return;
+        }
+        
         Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
         while(!enabledActivations.isEmpty()) {
             Activation<?> activation = enabledActivations.iterator().next();
+            agenda.getIncQueryEngine().getLogger().debug(String.format("Executing %s in %s.",activation,this));
             activation.fire(context);
         }
         
-        /*for (RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>> spec : ruleSpecifications) {
-            RuleInstance<IPatternMatch,IncQueryMatcher<IPatternMatch>> instance = agenda.getInstance(spec);
-            
-            // only activations of enabled states are gathered
-            for (ActivationState state : enabledStates) {
-                // ensures that each activation keeps its state until it is fired
-                activations.putAll(state, instance.getActivations(state));
-            }
-            
-            if(!activations.isEmpty()) {
-                // hashmap is not ordered, so we use the natural ordering of states
-                for (ActivationState activationState : enabledStates) {
-                    for (Activation<IPatternMatch> activation : activations.get(activationState)) {
-                        // ensure that an earlier firing did not cause this activation to alter its state
-                        if(activation.getState().equals(activationState)) {
-                            activation.fire(context);
-                        }
-                    }
-                }
-            }
-        }*/
+        endScheduling();
+    }
+
+    private synchronized void endScheduling() {
+        agenda.getIncQueryEngine().getLogger().debug(String.format("Executing ended in %s.",this));
+        scheduling = false;
+    }
+
+    protected synchronized boolean startScheduling() {
+        if(scheduling) {
+            agenda.getIncQueryEngine().getLogger().debug(String.format("Re-entrant schedule call ignored in %s.", this));
+            return false;
+        } else {
+            scheduling = true;
+            agenda.getIncQueryEngine().getLogger().debug(String.format("Executing started in %s.",this));
+            return true;
+        }
     }
     
     /**
@@ -82,37 +84,6 @@ public class Executor {
     public Context getContext() {
         return context;
     }
-    
-/*
-
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match,Matcher> addRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        boolean added = ruleSpecifications.add((RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>) specification);
-        RuleInstance<Match,Matcher> instance = null;
-        if(added) {
-            instance = agenda.instantiateRule(specification);
-        }
-        return instance;
-        
-    }
-    
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRuleSpecification(RuleSpecification<Match, Matcher> specification) {
-        if(ruleSpecifications != null) {
-            boolean removed = ruleSpecifications.remove(specification);
-            if(removed) {
-                agenda.removeRule(specification);
-                return true;
-            }
-        }
-        return false;
-    } 
-    
-    /**
-     * @return the ruleSpecifications
-     */
-    /*public Set<RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>> getRuleSpecifications() {
-        return ImmutableSet.copyOf(ruleSpecifications);
-    }
-    */
     
     protected void dispose() {
         agenda.dispose();

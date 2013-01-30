@@ -56,8 +56,7 @@ public final class ObservableCollectionHelper {
                 Direction.INSERT, observableCollectionUpdate));
         Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
                 Direction.DELETE, observableCollectionUpdate));
-
-        return new RuleSpecification<Match, Matcher>(factory, new DefaultActivationLifeCycle(), Sets.newHashSet(
+       return new RuleSpecification<Match, Matcher>(factory, DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(
                 insertJob, deleteJob));
     }
 

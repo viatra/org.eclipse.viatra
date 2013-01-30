@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.triggerengine.specific;
 
+import org.eclipse.incquery.runtime.triggerengine.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
 
 /**
@@ -34,10 +35,10 @@ import org.eclipse.incquery.runtime.triggerengine.api.ActivationState;
  */
 public final class DefaultActivationLifeCycle extends UnmodifiableActivationLifeCycle {
 
-    private static DefaultActivationLifeCycle DEFAULT;
-    private static DefaultActivationLifeCycle DEFAULT_NO_UPDATE;
-    private static DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR;
-    private static DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+    public static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle();
+    public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
+    public static final DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
+    public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
 
     /**
      * Creates an activation life cycle with the default state transition map.
@@ -90,46 +91,6 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
      */
     public DefaultActivationLifeCycle() {
         this(true, true);
-    }
-
-    /**
-     * @return the dEFAULT
-     */
-    public static DefaultActivationLifeCycle getDEFAULT() {
-        if (DEFAULT == null) {
-            DEFAULT = new DefaultActivationLifeCycle();
-        }
-        return DEFAULT;
-    }
-
-    /**
-     * @return the dEFAULT_NO_UPDATE
-     */
-    public static DefaultActivationLifeCycle getDEFAULT_NO_UPDATE() {
-        if (DEFAULT_NO_UPDATE == null) {
-            DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
-        }
-        return DEFAULT_NO_UPDATE;
-    }
-
-    /**
-     * @return the dEFAULT_NO_DISAPPEAR
-     */
-    public static DefaultActivationLifeCycle getDEFAULT_NO_DISAPPEAR() {
-        if (DEFAULT_NO_DISAPPEAR == null) {
-            DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
-        }
-        return DEFAULT_NO_DISAPPEAR;
-    }
-
-    /**
-     * @return the dEFAULT_NO_UPDATE_AND_DISAPPEAR
-     */
-    public static DefaultActivationLifeCycle getDEFAULT_NO_UPDATE_AND_DISAPPEAR() {
-        if (DEFAULT_NO_UPDATE_AND_DISAPPEAR == null) {
-            DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
-        }
-        return DEFAULT_NO_UPDATE_AND_DISAPPEAR;
     }
 
 }
