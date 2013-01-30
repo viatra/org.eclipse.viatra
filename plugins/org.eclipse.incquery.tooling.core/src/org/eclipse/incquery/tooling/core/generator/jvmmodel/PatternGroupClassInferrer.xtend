@@ -7,8 +7,8 @@
  *
  * Contributors:
  *   Mark Czotter - initial API and implementation
+ *   Andras Okros - minor changes
  *******************************************************************************/
- 
 package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
@@ -24,11 +24,10 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
- * 
- * @author Mark Czotter
  */
 class PatternGroupClassInferrer {
 	
@@ -53,7 +52,6 @@ class PatternGroupClassInferrer {
 	}
 	
 	def JvmConstructor inferConstructor(PatternModel model) {
-		/*val matcherFactoryInterfaceReference = model.newTypeRef(typeof (IMatcherFactory))*/ 
 		val incQueryException = model.newTypeRef(typeof (IncQueryException)) 
 		val matcherReferences = gatherMatchers(model)
 		model.toConstructor [
@@ -61,18 +59,12 @@ class PatternGroupClassInferrer {
 			it.simpleName = groupClassName(model)
 			it.exceptions += incQueryException
 			it.setBody([
-				/*serialize(returnTypeReference, model)
-				append(''' result = new ''')
-				serialize(model.newTypeRef(typeof(HashSet), matcherFactoryInterfaceReference), model)
-				append('''();''')*/
 				for (matcherRef : matcherReferences) {
 					append('''matcherFactories.add(''')
 					serialize(matcherRef, model)
 					append('''.factory());''')
 					newLine
 				}
-				/*newLine
-				append('''return result;''')*/
 			])
 		]
 	}
@@ -80,11 +72,13 @@ class PatternGroupClassInferrer {
 	def gatherMatchers(PatternModel model) {
 		val result = new HashSet<JvmTypeReference>()
 		for (pattern : model.patterns) {
-			val jvmElements = pattern.jvmElements
-			val matcherClass = jvmElements.findFirst([e | e instanceof JvmGenericType])	
-			if (matcherClass instanceof JvmGenericType) {
-				val sourceElementRef = types.createTypeRef(matcherClass as JvmGenericType)
-				result.add(sourceElementRef)
+			if (!CorePatternLanguageHelper::isPrivate(pattern)) {
+				val jvmElements = pattern.jvmElements
+				val matcherClass = jvmElements.findFirst([e | e instanceof JvmGenericType])	
+				if (matcherClass instanceof JvmGenericType) {
+					val sourceElementRef = types.createTypeRef(matcherClass as JvmGenericType)
+					result.add(sourceElementRef)
+				}
 			}
 		}
 		result

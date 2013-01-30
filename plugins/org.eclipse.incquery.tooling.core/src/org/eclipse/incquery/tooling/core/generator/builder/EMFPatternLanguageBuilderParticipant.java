@@ -7,8 +7,8 @@
  *
  * Contributors:
  *   Zoltan Ujhelyi, Mark Czotter - initial API and implementation
+ *   Andras Okros - minor changes
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.core.generator.builder;
 
 import java.util.List;
@@ -60,9 +60,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-/**
- * @author Mark Czotter
- */
+@SuppressWarnings("restriction")
 public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
     @Inject
@@ -167,44 +165,50 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
      * and executes the provided fragments. Various contribution: package export, MatcherFactory extension, validation
      * constraint stuff.
      * 
-     * 
      * @param deltaResource
      * @param context
      * @throws CoreException
      */
     private void doPostGenerate(Resource deltaResource, IBuildContext context) throws CoreException {
         final IProject project = context.getBuiltProject();
-        ExtensionGenerator extGenerator = new ExtensionGenerator();
-        extGenerator.setProject(project);
+        ExtensionGenerator extensionGenerator = new ExtensionGenerator();
+        extensionGenerator.setProject(project);
         calculateEMFModelProjects(deltaResource, project);
         TreeIterator<EObject> it = deltaResource.getAllContents();
         while (it.hasNext()) {
             EObject obj = it.next();
-            if (obj instanceof Pattern && !CorePatternLanguageHelper.isPrivate((Pattern) obj)) {
+            if (obj instanceof Pattern) {
                 Pattern pattern = (Pattern) obj;
-
-                Iterable<IPluginExtension> matcherFactoryExtensionContribution = matcherFactoryExtensionGenerator
-                        .extensionContribution(pattern, extGenerator);
-                ensureSupport.appendAllExtension(project, matcherFactoryExtensionContribution);
-
-                for (PatternBody patternBody : pattern.getBodies()) {
-                    for (Constraint constraint : patternBody.getConstraints()) {
-                        if (constraint instanceof CheckConstraint) {
-                            CheckConstraint checkConstraint = (CheckConstraint) constraint;
-                            XExpression xExpression = checkConstraint.getExpression();
-                            String expressionID = CheckExpressionUtil.getExpressionUniqueID(pattern, xExpression);
-                            String expressionUniqueNameInPattern = CheckExpressionUtil
-                                    .getExpressionUniqueNameInPattern(pattern, xExpression);
-                            Iterable<IPluginExtension> xExpressionEvaluatorExtensionContribution = xExpressionEvaluatorExtensionGenerator
-                                    .extensionContribution(pattern, expressionID, expressionUniqueNameInPattern,
-                                            extGenerator);
-                            ensureSupport.appendAllExtension(project, xExpressionEvaluatorExtensionContribution);
-                        }
+                boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
+                if (isPublic || CorePatternLanguageHelper.hasCheckExpression(pattern)) {
+                    if (isPublic) {
+                        Iterable<IPluginExtension> matcherFactoryExtensionContribution = matcherFactoryExtensionGenerator
+                                .extensionContribution(pattern, extensionGenerator);
+                        ensureSupport.appendAllExtension(project, matcherFactoryExtensionContribution);
                     }
+                    doPostGenerateExpressionEvaluator(project, extensionGenerator, pattern);
+                    executeGeneratorFragments(context.getBuiltProject(), pattern);
+                    ensureSupport.exportPackage(project, util.getPackageName(pattern));
                 }
+            }
+        }
+    }
 
-                executeGeneratorFragments(context.getBuiltProject(), pattern);
-                ensureSupport.exportPackage(project, util.getPackageName(pattern));
+    private void doPostGenerateExpressionEvaluator(IProject project, ExtensionGenerator extensionGenerator,
+            Pattern pattern) {
+        for (PatternBody patternBody : pattern.getBodies()) {
+            for (Constraint constraint : patternBody.getConstraints()) {
+                if (constraint instanceof CheckConstraint) {
+                    CheckConstraint checkConstraint = (CheckConstraint) constraint;
+                    XExpression xExpression = checkConstraint.getExpression();
+                    String expressionID = CheckExpressionUtil.getExpressionUniqueID(pattern, xExpression);
+                    String expressionUniqueNameInPattern = CheckExpressionUtil.getExpressionUniqueNameInPattern(
+                            pattern, xExpression);
+                    Iterable<IPluginExtension> xExpressionEvaluatorExtensionContribution = xExpressionEvaluatorExtensionGenerator
+                            .extensionContribution(pattern, expressionID, expressionUniqueNameInPattern,
+                                    extensionGenerator);
+                    ensureSupport.appendAllExtension(project, xExpressionEvaluatorExtensionContribution);
+                }
             }
         }
     }

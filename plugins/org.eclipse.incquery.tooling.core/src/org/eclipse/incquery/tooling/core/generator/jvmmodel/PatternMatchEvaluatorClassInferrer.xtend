@@ -8,7 +8,6 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
@@ -43,7 +42,7 @@ class PatternMatchEvaluatorClassInferrer {
 	/**
 	 * Infers the {@link IMatchChecker} implementation class from a {@link Pattern}.
 	 */
-	def List<JvmDeclaredType> inferEvaluatorClass(Pattern pattern, boolean isPrelinkingPhase, String checkerPackageName, JvmTypeReference matchClassRef) {
+	def List<JvmDeclaredType> inferEvaluatorClass(Pattern pattern, String checkerPackageName) {
 		val List<JvmDeclaredType> result = new ArrayList<JvmDeclaredType>()
 		var int patternBodyNumber = 0
 		for (patternBody:pattern.bodies) {

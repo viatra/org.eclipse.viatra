@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
+ *   Andras Okros - minor changes
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.helper;
 
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Modifiers;
@@ -52,6 +54,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 
+@SuppressWarnings("restriction")
 public final class CorePatternLanguageHelper {
 
     private CorePatternLanguageHelper() {
@@ -60,35 +63,47 @@ public final class CorePatternLanguageHelper {
     /**
      * Returns the name of the pattern, qualified by package name.
      */
-    public static String getFullyQualifiedName(Pattern p) {
-        if (p == null) {
+    public static String getFullyQualifiedName(Pattern pattern) {
+        if (pattern == null) {
             throw new IllegalArgumentException("No pattern specified for getFullyQualifiedName");
         }
-        PatternModel patternModel = (PatternModel) p.eContainer();
+        PatternModel patternModel = (PatternModel) pattern.eContainer();
 
         String packageName = (patternModel == null) ? null : patternModel.getPackageName();
         if (packageName == null || packageName.isEmpty()) {
-            return p.getName();
+            return pattern.getName();
         } else {
-            return packageName + "." + p.getName();
+            return packageName + "." + pattern.getName();
         }
         // TODO ("local pattern?")
     }
 
     /**
-     * Returns true if the pattern has a private modifier, false otherwise.
-     * 
      * @param pattern
-     * @return
+     * @return true if the pattern has a private modifier, false otherwise.
      */
     public static boolean isPrivate(Pattern pattern) {
-        boolean isPrivate = false;
         for (Modifiers mod : pattern.getModifiers()) {
             if (mod.isPrivate()) {
-                isPrivate = true;
+                return true;
             }
         }
-        return isPrivate;
+        return false;
+    }
+
+    /**
+     * @param pattern
+     * @return true if the pattern contains xbase check expression, false otherwise.
+     */
+    public static boolean hasCheckExpression(Pattern pattern) {
+        for (PatternBody patternBody : pattern.getBodies()) {
+            for (Constraint constraint : patternBody.getConstraints()) {
+                if (constraint instanceof CheckConstraint) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Zoltan Ujhelyi, Mark Czotter - initial API and implementation
+ *    Andras Okros - minor changes
  *******************************************************************************/
 package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
@@ -35,8 +36,6 @@ import java.util.List
  *
  * <p>The JVM model should contain all elements that would appear in the Java code 
  * which is generated from the source model. Other models link against the JVM model rather than the source model.</p>
- * 
- * @author Mark Czotter
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
@@ -69,50 +68,49 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
 	 */
    	def dispatch void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
-   		if (pattern.name.nullOrEmpty) return;
-   		if (CorePatternLanguageHelper::isPrivate(pattern)) {
-   			return;
-   		}
-   		logger.debug("Inferring Jvm Model for " + pattern.name);
-	   	try {
-	   		val packageName = pattern.getPackageName
-			// infer Match class
-		   	val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
-		   	val matchClassRef = types.createTypeRef(matchClass)
-		   	// infer a Matcher class
-		   	val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
-		   	val matcherClassRef = types.createTypeRef(matcherClass)
-		   	// infer MatcherFactory class
-		   	val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
-		   	val matcherFactoryClassRef = types.createTypeRef(matcherFactoryClass)
-		   	/*val matcherFactoryProviderClass = matcherFactoryClass.members.findFirst([it instanceof JvmDeclaredType]) as JvmDeclaredType*/
-		   	// infer Processor class
-		   	val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
-		   	// infer Evaluator classes
-		   	val List<JvmDeclaredType> evaluatorClassList = pattern.inferEvaluatorClass(isPrelinkingPhase, packageName, matchClassRef)
-		   	// add Factory field to Matcher class
-		   	matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
-		   		it.visibility = JvmVisibility::PUBLIC
-		   		it.setStatic(true)
-				it.documentation = pattern.javadocFactoryMethod.toString
-				it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
-				it.setBody([append('''
-					return ''') serialize(matcherFactoryClassRef, pattern) append('''.instance();''')
-				])
-			]
-		   	
-		   	associator.associatePrimary(pattern, matcherClass)
-		   	// accept new classes
-		   	acceptor.accept(matchClass)
-		   	acceptor.accept(matcherClass)
-		   	acceptor.accept(matcherFactoryClass)
-		   	acceptor.accept(processorClass)
-		   	for (JvmDeclaredType evaluatorClass : evaluatorClassList) {
-		   		acceptor.accept(evaluatorClass)
-		   	}
-		   	/*acceptor.accept(matcherFactoryProviderClass)*/
-	   	} catch(Exception e) {
-	   		logger.error("Exception during Jvm Model Infer for: " + pattern, e)
+   		val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
+   		val hasCheckExpression = CorePatternLanguageHelper::hasCheckExpression(pattern);
+   		if (!pattern.name.nullOrEmpty && (isPublic || hasCheckExpression)) {
+   			logger.debug("Inferring Jvm Model for " + pattern.name);
+	   		try {
+	   			val packageName = pattern.getPackageName
+
+			   	if (isPublic) {
+			   		val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
+			   		val matchClassRef = types.createTypeRef(matchClass)
+			   		val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
+			   		val matcherClassRef = types.createTypeRef(matcherClass)
+			   		val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
+			   		val matcherFactoryClassRef = types.createTypeRef(matcherFactoryClass)
+			   		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
+			   	
+			   		// add Factory field to Matcher class
+			   		matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
+			   			it.visibility = JvmVisibility::PUBLIC
+			   			it.setStatic(true)
+						it.documentation = pattern.javadocFactoryMethod.toString
+						it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+						it.setBody([append('''
+							return ''') serialize(matcherFactoryClassRef, pattern) append('''.instance();''')
+						])
+					]
+				
+			   		associator.associatePrimary(pattern, matcherClass)
+			   		acceptor.accept(matchClass)
+			   		acceptor.accept(matcherClass)
+			   		acceptor.accept(matcherFactoryClass)
+			   		acceptor.accept(processorClass)
+			   	}
+			   	
+			   	if (hasCheckExpression) {
+			   		val List<JvmDeclaredType> evaluatorClassList = pattern.inferEvaluatorClass(packageName)
+		   			for (JvmDeclaredType evaluatorClass : evaluatorClassList) {
+			   			acceptor.accept(evaluatorClass)
+			   		}
+			   	}
+	   		} catch(Exception e) {
+	   			logger.error("Exception during Jvm Model Infer for: " + pattern, e)
+	   		}
 	   	}
    	}
    	
