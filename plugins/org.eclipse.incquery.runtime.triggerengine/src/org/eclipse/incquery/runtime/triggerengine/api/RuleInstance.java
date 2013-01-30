@@ -69,7 +69,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @author Abel Hegedus
      *
      */
-    public final class DefaultMatchAppearProcessor implements IMatchProcessor<Match> {
+    private final class DefaultMatchAppearProcessor implements IMatchProcessor<Match> {
         /* (non-Javadoc)
          * @see org.eclipse.incquery.runtime.api.IMatchProcessor#process(org.eclipse.incquery.runtime.api.IPatternMatch)
          */
@@ -95,7 +95,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @author Abel Hegedus
      *
      */
-    public final class DefaultMatchDisappearProcessor implements IMatchProcessor<Match> {
+    private final class DefaultMatchDisappearProcessor implements IMatchProcessor<Match> {
         /* (non-Javadoc)
          * @see org.eclipse.incquery.runtime.api.IMatchProcessor#process(org.eclipse.incquery.runtime.api.IPatternMatch)
          */
@@ -115,7 +115,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @author Abel Hegedus
      *
      */
-    public final class DefaultAttributeMonitorListener implements IAttributeMonitorListener<Match> {
+    private final class DefaultAttributeMonitorListener implements IAttributeMonitorListener<Match> {
         @Override
         public void notifyUpdate(final Match match) {
             checkNotNull(match,"Cannot process null match!");
@@ -155,7 +155,10 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
             this.activations = HashBasedTable.create();
         }
         
-        prepareMatchMonitors();
+        this.activationNotificationProvider = new DefaultActivationNotificationProvider();
+
+        prepareMatchUpdateListener();
+        prepateAttributeMonitor();
         
         try {
             this.matcher = specification.getFactory().getMatcher(engine);
@@ -167,21 +170,17 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         }
     }
 
-    private void prepareMatchMonitors() {
-        this.activationNotificationProvider = checkNotNull(prepareActivationNotificationProvider(), "Prepared activation notification provider is null!");
-
+    private void prepareMatchUpdateListener() {
         IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
         IMatchProcessor<Match> matchDisppearProcessor = checkNotNull(prepareMatchDisppearProcessor(), "Prepared match disappearance processor is null!");
         this.matchUpdateListener = new MatchUpdateAdapter<Match>(matchAppearProcessor,
                 matchDisppearProcessor);
+    }
 
+    private void prepateAttributeMonitor() {
         this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
         this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         this.attributeMonitor.addCallbackOnMatchUpdate(attributeMonitorListener);
-    }
-
-    protected ActivationNotificationProvider prepareActivationNotificationProvider() {
-        return new DefaultActivationNotificationProvider();
     }
 
     protected IMatchProcessor<Match> prepareMatchAppearProcessor() {
@@ -190,6 +189,10 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     
     protected IMatchProcessor<Match> prepareMatchDisppearProcessor() {
         return new DefaultMatchDisappearProcessor();
+    }
+
+    protected AttributeMonitor<Match> prepareAttributeMonitor(){
+        return new DefaultAttributeMonitor<Match>();
     }
 
     protected IAttributeMonitorListener<Match> prepareAttributeMonitorListener() {
@@ -236,10 +239,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         }
         activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
         return nextActivationState;
-    }
-    
-    protected AttributeMonitor<Match> prepareAttributeMonitor(){
-        return new DefaultAttributeMonitor<Match>();
     }
     
     /**

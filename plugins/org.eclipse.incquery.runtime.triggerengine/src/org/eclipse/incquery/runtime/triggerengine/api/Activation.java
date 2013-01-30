@@ -23,12 +23,9 @@ import com.google.common.base.Objects;
  * some domain model elements and the rule becomes eligible for execution.
  * 
  * <p>
- * An Activation holds a state, a pattern match, the corresponding rule and whether it was fired yet. The state of the
- * Activation can be either Inactive, Appeared, Disappeared, Upgraded or Fired. Upon {@link RuleSpecification} instantiation,
- * one may set whether the Disappeared and Upgraded states will be used during the lifecycle of the Activation. If
- * multiple firing is allowed for the Activation then only the Appeared state will be used.
- * 
- * TODO rewrite documentation
+ * An Activation holds a state, a pattern match, the corresponding rule. The state of the
+ * Activation can be either Inactive, Appeared, Disappeared, Upgraded or Fired, while its actual
+ * state will be managed by the life-cycle of its rule.
  * 
  * @author Tamas Szabo
  * 
