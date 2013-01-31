@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.common.notify.Notifier;
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
+import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -60,11 +62,33 @@ public class IncQueryObservables {
      * @param notifier
      *            the notifier to use for the matcher
      * @return an observable list of matches
-     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
+     * @throws IncQueryException
+     *             if the {@link IncQueryEngine} used in the background cannot be created on the {@link Notifier}
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
             IMatcherFactory<Matcher> factory, Notifier notifier) throws IncQueryException {
         return new ObservablePatternMatchList<Match>(factory, notifier);
+    }
+
+    /**
+     * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
+     * 
+     * <p>
+     * The matches are ordered by appearance, so a new match is always put on the end of the list.
+     * 
+     * <p>
+     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * invocation (or use the Generic classes if you are sure).
+     * 
+     * @param factory
+     *            the matcher factory for the query to observe
+     * @param engine
+     *            the engine used with the matcher
+     * @return an observable list of matches
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
+            IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
+        return new ObservablePatternMatchList<Match>(factory, engine);
     }
 
     /**
@@ -173,6 +197,12 @@ public class IncQueryObservables {
         }
 
         return val;
+    }
+
+    public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression,
+            Object container) {
+        ComputedValue value = new ObservableLabelFeature(match, expression, container);
+        return value;
     }
 
 }
