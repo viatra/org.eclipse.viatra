@@ -11,17 +11,29 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.HorizontalShiftAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.incquery.tooling.ui.retevis.Activator;
 import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -59,6 +71,80 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
     public ReteVisView() {
     }
 
+    
+    private Action refreshGraph = new Action("Refresh Graph") {
+        @Override
+        public void run() {
+            redraw();
+        }
+    };
+    
+    private Action clearGraph = new Action("Clear Graph") {
+        @Override
+        public void run() {
+            graphViewer.setInput(null);
+        }
+    };
+    
+//    private Action saveFile = new Action("Save Graph as Image") {
+//        @Override
+//        public void run() {
+//            FileDialog save = new FileDialog(PlatformUI.getWorkbench()
+//                    .getDisplay().getActiveShell(), SWT.SAVE);
+//            save.setFilterExtensions(new String[] { "*.png" });
+//            save.setFilterNames(new String[] { "PNG File" });
+//            save.setFileName("rete.png");
+//            String filename = save.open();
+//            graphViewer.saveImage(filename, SWT.IMAGE_PNG);
+//        }
+//    };
+    
+    public void redraw() {
+        if (graphViewer != null) {
+            graphViewer.applyLayout();
+        }
+    }
+    
+    private void initializeActions() {
+        refreshGraph.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/refresh.gif"));
+        clearGraph.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/clear.gif"));
+    }
+    
+    private void createToolbar() {
+        IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+        mgr.removeAll();
+        mgr.add(refreshGraph);
+        mgr.add(clearGraph);
+        mgr.update(true);
+        
+        IMenuManager mmgr = getViewSite().getActionBars().getMenuManager();
+        mmgr.removeAll();
+        mmgr.add(createLayoutMenu());
+        
+    }
+    
+    private MenuManager createLayoutMenu() {
+        MenuManager mgr = new MenuManager("Layout");
+        mgr.add(createLayoutAction("Tree", new TreeLayoutAlgorithm()));
+        mgr.add(createLayoutAction("Spring", new SpringLayoutAlgorithm()));
+        mgr.add(createLayoutAction("Radial", new RadialLayoutAlgorithm()));
+        mgr.add(createLayoutAction("SpaceTree", new SpaceTreeLayoutAlgorithm()));
+        SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
+        HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
+        mgr.add(createLayoutAction("Sugiyama (unstable)",new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {sugiyamaAlgorithm, shiftAlgorithm })));
+        return mgr;
+    }
+    
+    private Action createLayoutAction(final String name, final LayoutAlgorithm lay) {
+        return new Action(name) {
+          @Override
+          public void run() {
+            graphViewer.setLayoutAlgorithm(lay);
+            redraw();
+          }  
+        };
+    }
+    
     /**
      * This is a callback that will allow us to create the viewer and initialize it.
      */
@@ -73,6 +159,9 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         theme = new ColorTheme(display);
         labelProvider.setColors(theme);
         graphViewer.setLabelProvider(labelProvider);
+        
+        initializeActions();
+        createToolbar();
     }
 
     @Override
@@ -91,21 +180,10 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
                         try {
                             ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
                             ((ZestReteLabelProvider) graphViewer.getLabelProvider()).setRb(rb);
-                            // graphViewer.setInput( pm.getMatcher().getEngine().getReteEngine().getBoundary() );
-                            SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
-                            HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
-                            //graphViewer.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
-                             //       sugiyamaAlgorithm, shiftAlgorithm }));
-                             graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
-                            // graphViewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
-                            // graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
-                            // graphViewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
+                            graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
                             graphViewer.setInput(rb.getHeadContainer());
-                            // graphViewer.applyLayout();
-                            // graphViewer.refresh();
                         } catch (IncQueryException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
                         }
                     }
                 }
@@ -118,14 +196,9 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
      */
     @Override
     public void setFocus() {
-        // treeViewer.getControl().setFocus();
+
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-     */
     @Override
     public void dispose() {
         if (theme != null) {
@@ -133,5 +206,4 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         }
         super.dispose();
     }
-
 }

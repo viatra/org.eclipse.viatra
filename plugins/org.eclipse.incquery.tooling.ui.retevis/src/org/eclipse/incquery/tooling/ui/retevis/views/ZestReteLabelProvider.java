@@ -104,7 +104,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             }
             if (n instanceof IndexerWithMemory) {
                 MaskedTupleMemory mem = ((IndexerWithMemory) n).getMemory();
-                s += "\n[" + mem.getKeysetSize() + " / " + mem.getTotalSize() + "]";
+                s += " [" + mem.getKeysetSize() + " => " + mem.getTotalSize() + "]";
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
                 StringBuilder sb = new StringBuilder();
@@ -288,7 +288,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
     @Override
     public boolean fisheyeNode(Object entity) {
         // TODO Auto-generated method stub
-        return true;
+        return false;
     }
 
 }
