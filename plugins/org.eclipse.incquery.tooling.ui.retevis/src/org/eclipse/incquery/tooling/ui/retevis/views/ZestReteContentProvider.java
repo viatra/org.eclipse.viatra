@@ -11,18 +11,21 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
-import java.lang.reflect.Field;
 import java.util.Vector;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
+import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
+import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
+import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.index.StandardIndexer;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
 public class ZestReteContentProvider extends ArrayContentProvider implements IGraphEntityContentProvider {
@@ -51,38 +54,28 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
             Vector<Node> r = new Vector<Node>();
             if (entity instanceof Supplier) {
                 r.addAll(((Supplier) entity).getReceivers());
-                try {
-                    Field field = entity.getClass().getDeclaredField("memoryNullIndexer");
-                    field.setAccessible(true);
-                    Object nullIndexer = field.get(entity);
-                    if (nullIndexer instanceof Node) {
-                        r.add((Node) nullIndexer);
+                
+                // look for memoryNullIndexer and memoryIdentityIndexer references
+                if (entity instanceof PredicateEvaluatorNode) {
+                    MemoryNullIndexer mni = ((PredicateEvaluatorNode)entity).getNullIndexer();
+                    if (mni!=null) {
+                        r.add(mni);
                     }
-                } catch (Exception e) {
-                    // XXX this exception might come but it is no problem here
-                    System.out.println(e.getMessage());
-                }
-                try {
-                    Field field = entity.getClass().getDeclaredField("memoryIdentityIndexer");
-                    field.setAccessible(true);
-                    Object identityIndexer = field.get(entity);
-                    if (identityIndexer instanceof Node) {
-                        r.add((Node) identityIndexer);
+                    MemoryIdentityIndexer mii = ((PredicateEvaluatorNode)entity).getIdentityIndexer();
+                    if (mii!=null) {
+                        r.add(mii);
                     }
-                } catch (Exception e) {
-                    // XXX this exception might come but it is no problem here
-                    System.out.println(e.getMessage());
                 }
-                // if (entity instanceof UniquenessEnforcerNode) {
-                // UniquenessEnforcerNode node = (UniquenessEnforcerNode) entity;
-                // r.add(node.getIdentityIndexer());
-                // r.add(node.getNullIndexer());
-                // } else if (entity instanceof PredicateEvaluatorNode) {
-                // PredicateEvaluatorNode node = (PredicateEvaluatorNode) entity;
-                // r.add(node.getIdentityIndexer());
-                // r.add(node.getNullIndexer());
-                //
-                // }
+                if (entity instanceof UniquenessEnforcerNode) {
+                    MemoryNullIndexer mni = ((UniquenessEnforcerNode)entity).getNullIndexer();
+                    if (mni!=null) {
+                        r.add(mni);
+                    }
+                    MemoryIdentityIndexer mii = ((UniquenessEnforcerNode)entity).getIdentityIndexer();
+                    if (mii!=null) {
+                        r.add(mii);
+                    }
+                }
             }
             if (entity instanceof Indexer) {
                 if (entity instanceof StandardIndexer) {

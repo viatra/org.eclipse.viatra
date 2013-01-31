@@ -38,6 +38,7 @@ import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
+import org.eclipse.incquery.runtime.rete.tuple.MaskedTupleMemory;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -102,7 +103,8 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
             }
             if (n instanceof IndexerWithMemory) {
-                s += "[" + ((IndexerWithMemory) n).getMemory().getSize() + "]";
+                MaskedTupleMemory mem = ((IndexerWithMemory) n).getMemory();
+                s += "\n[" + mem.getKeysetSize() + " / " + mem.getTotalSize() + "]";
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
                 StringBuilder sb = new StringBuilder();
