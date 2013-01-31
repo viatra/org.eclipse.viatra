@@ -1,0 +1,133 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2013, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.incquery.querybasedui.runtime.model;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateListStrategy;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.MultiList;
+import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.querybasedui.runtime.model.converters.EdgeConverter;
+import org.eclipse.incquery.querybasedui.runtime.model.converters.ItemConverter;
+import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+/**
+ * Data model collecting input from multiple query results, and returns them as {@link ObservableList} instances.
+ * 
+ * @author Zoltan Ujhelyi
+ * 
+ */
+@SuppressWarnings({ "unchecked" })
+public class ViewerDataModel {
+    private IncQueryEngine engine;
+    private ResourceSet model;
+    private Set<Pattern> patterns;
+    private Map<Object, Item> itemMap;
+
+    public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns) throws IncQueryException {
+        this(model, patterns, EngineManager.getInstance().createUnmanagedIncQueryEngine(model));
+    }
+
+    public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns, IncQueryEngine engine) {
+        this.model = model;
+        this.patterns = Sets.newHashSet(patterns);
+        this.engine = engine;
+        itemMap = Maps.newHashMap();
+    }
+
+    public IncQueryEngine getEngine() {
+        return engine;
+    }
+
+    public ResourceSet getModel() {
+        return model;
+    }
+
+    public Collection<Pattern> getPatterns(String annotation) {
+        return patterns;
+    }
+
+    /**
+     * Initializes and returns an observable list of nodes. Each call re-initializes a new observable
+     * 
+     * @return an observable list of {@link Item} elements representing the match results in the model.
+     */
+    public IObservableList initializeObservableItemList() {
+        itemMap.clear();
+        List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
+        final String annotationName = Item.ANNOTATION_ID;
+        for (final Pattern nodepattern : getPatterns(annotationName)) {
+            DataBindingContext ctx = new DataBindingContext();
+            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
+                    .getOrCreateMatcherFactory(nodepattern);
+
+            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodepattern, annotationName)) {
+
+                ObservableList resultList = new WritableList();
+                nodeListsObservable.add(resultList);
+
+                ctx.bindList(resultList, obspatternmatchlist, null,
+                        new UpdateListStrategy().setConverter(new ItemConverter(itemMap, annotation)));
+            }
+        }
+        MultiList list = new MultiList(nodeListsObservable.toArray(new ObservableList[nodeListsObservable.size()]));
+        return list;
+    }
+
+    /**
+     * Initializes and returns an observable list of edges. Each call re-initializes a new observable
+     * 
+     * @return an observable list of {@link Edge} elements representing the match results in the model.
+     */
+    public MultiList initializeObservableEdgeList() {
+        final String annotationName = Edge.ANNOTATION_ID;
+        List<ObservableList> edgeListsObservable = new ArrayList<ObservableList>();
+        for (final Pattern nodepattern : getPatterns(annotationName)) {
+            DataBindingContext ctx = new DataBindingContext();
+            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
+                    .getOrCreateMatcherFactory(nodepattern);
+
+            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+
+            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodepattern, annotationName)) {
+                ObservableList resultList = new WritableList();
+                edgeListsObservable.add(resultList);
+
+                ctx.bindList(resultList, obspatternmatchlist, null,
+                        new UpdateListStrategy().setConverter(new EdgeConverter(annotation, itemMap)));
+            }
+        }
+        MultiList list = new MultiList(edgeListsObservable.toArray(new ObservableList[edgeListsObservable.size()]));
+        return list;
+    }
+}
