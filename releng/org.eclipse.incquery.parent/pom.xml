@@ -24,6 +24,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
 		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
@@ -49,6 +50,7 @@
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
 		<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
