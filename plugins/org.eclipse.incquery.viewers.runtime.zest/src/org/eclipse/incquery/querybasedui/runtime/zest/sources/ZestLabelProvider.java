@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedui.runtime.zest.sources;
 
-import java.util.List;
 
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -22,14 +18,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef4.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
-import org.eclipse.incquery.querybasedui.runtime.model.Edge;
-import org.eclipse.incquery.querybasedui.runtime.model.Item;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.incquery.querybasedui.runtime.sources.QueryLabelProvider;
 import org.eclipse.swt.graphics.Color;
 
-import com.google.common.collect.Lists;
 
 /**
  * Label provider for Zest graphs.
@@ -37,36 +28,9 @@ import com.google.common.collect.Lists;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestLabelProvider extends LabelProvider implements IEntityStyleProvider, IEntityConnectionStyleProvider {
+public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyleProvider, IEntityConnectionStyleProvider {
 
-    private IChangeListener changeListener = new IChangeListener() {
-		@Override
-        public void handleChange(ChangeEvent event) {
-            Object container = ((ObservableLabelFeature) event.getSource()).getContainer();
-            LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ZestLabelProvider.this, container);
-			fireLabelProviderChanged(newEvent);
-		}
-	};
-
-    private List<IObservableValue> observables = Lists.newArrayList();
-
-	@Override
-	public String getText(Object element) {
-        if (element instanceof Item) {
-            IObservableValue value = ((Item) element).getLabel();
-            value.addChangeListener(changeListener);
-            observables.add(value);
-            return value.getValue().toString();
-        } else if (element instanceof Edge) {
-            IObservableValue value = ((Edge) element).getLabel();
-            value.addChangeListener(changeListener);
-            observables.add(value);
-            return value.getValue().toString();
-		}
-		return "";
-	}
-
-	@Override
+    @Override
 	public int getConnectionStyle(Object src, Object dest) {
         return 0;
 	}
@@ -149,18 +113,5 @@ public class ZestLabelProvider extends LabelProvider implements IEntityStyleProv
     @Override
     public ConnectionRouter getRouter(Object src, Object dest) {
         return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-     */
-    @Override
-    public void dispose() {
-        for (IObservableValue value : observables) {
-            if (value != null && !value.isDisposed()) {
-                value.removeChangeListener(changeListener);
-            }
-        }
-        super.dispose();
     }
 }

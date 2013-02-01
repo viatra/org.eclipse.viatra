@@ -7,6 +7,7 @@ Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant S
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.databinding;bundle-version="1.4.1",
+ org.eclipse.jface.databinding;bundle-version="1.5.0",
  org.eclipse.incquery.runtime;bundle-version="0.7.0",
  org.eclipse.incquery.databinding.runtime;bundle-version="0.7.0",
  org.eclipse.incquery.viewers.runtime;bundle-version="0.7.0",

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
@@ -23,7 +22,8 @@ import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.querybasedui.runtime.model.Edge;
 import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider;
+import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -32,28 +32,8 @@ import org.eclipse.jface.viewers.Viewer;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestContentProvider extends ArrayContentProvider implements IGraphEntityRelationshipContentProvider {
-    private final class NodeListChangeListener implements IListChangeListener {
+public class ZestContentProvider extends ListContentProvider implements IGraphEntityRelationshipContentProvider {
 
-        private GraphViewer viewer;
-
-        public NodeListChangeListener(GraphViewer viewer) {
-            super();
-            this.viewer = viewer;
-        }
-
-        @Override
-        public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                if (entry.isAddition()) {
-                    viewer.addNode(entry.getElement());
-                } else {
-                    viewer.removeNode(entry.getElement());
-                }
-            }
-        }
-    }
 
     private final class EdgeListChangeListener implements IListChangeListener {
 
@@ -78,35 +58,17 @@ public class ZestContentProvider extends ArrayContentProvider implements IGraphE
         }
     }
 
-    private ViewerDataModel vmodel;
-    private IObservableList nodeList;
     private MultiList edgeList;
 
-    private NodeListChangeListener nodeListener;
     private EdgeListChangeListener edgeListener;
 
-	@Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        removeListeners();
 
-        vmodel = (ViewerDataModel) newInput;
-
-        if (newInput == null) {
-            return;
-        }
-
-        nodeList = vmodel.initializeObservableItemList();
-        nodeListener = new NodeListChangeListener((GraphViewer) viewer);
-        nodeList.addListChangeListener(nodeListener);
+    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
+        super.initializeContent(viewer, vmodel);
 
         edgeList = vmodel.initializeObservableEdgeList();
         edgeListener = new EdgeListChangeListener((GraphViewer) viewer);
         edgeList.addListChangeListener(edgeListener);
-    }
-
-    @Override
-    public Object[] getElements(Object inputElement) {
-        return nodeList.toArray();
     }
 
 	@Override
@@ -121,27 +83,24 @@ public class ZestContentProvider extends ArrayContentProvider implements IGraphE
 		return edgeto.toArray();
 	}
 
+    @Override
+    protected void removeListeners() {
+        if (edgeList != null && !edgeList.isDisposed() && edgeListener != null) {
+            edgeList.removeListChangeListener(edgeListener);
+        }
+        super.removeListeners();
+    }
+
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.jface.viewers.ArrayContentProvider#dispose()
+     * @see
+     * org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider#getUpdater(org.eclipse.jface.viewers.Viewer
+     * )
      */
     @Override
-    public void dispose() {
-        removeListeners();
-        super.dispose();
-    }
-
-    /**
-     * 
-     */
-    private void removeListeners() {
-        if (nodeList != null && !nodeList.isDisposed() && nodeListener != null) {
-            nodeList.removeListChangeListener(nodeListener);
-        }
-        if (edgeList != null && !edgeList.isDisposed() && edgeListener != null) {
-            nodeList.removeListChangeListener(edgeListener);
-        }
+    protected IViewerUpdater getUpdater(Viewer viewer) {
+        return new GraphNodeUpdater((GraphViewer) viewer);
     }
 
 }
