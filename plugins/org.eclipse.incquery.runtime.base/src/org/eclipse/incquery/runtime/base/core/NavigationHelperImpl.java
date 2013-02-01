@@ -40,6 +40,8 @@ import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
+import com.google.common.collect.Multiset;
+
 public class NavigationHelperImpl implements NavigationHelper {
 
     protected boolean inWildcardMode;
@@ -193,13 +195,11 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> findByAttributeValue(Object value) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
-        if (valMap != null) {
-            for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
-                for (EObject holder : entry.getValue()) {
-                    retSet.add(new NavigationHelperSetting(entry.getKey(), holder, value));
-                }
+        for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+            for (EObject holder : entry.getValue()) {
+                retSet.add(new NavigationHelperSetting(entry.getKey(), holder, value));
             }
         }
 
@@ -209,14 +209,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
-        if (valMap != null) {
-            for (EAttribute attr : attributes) {
-                if (valMap.get(attr) != null) {
-                    for (EObject holder : valMap.get(attr)) {
-                        retSet.add(new NavigationHelperSetting(attr, holder, value));
-                    }
+        for (EAttribute attr : attributes) {
+            if (valMap.get(attr) != null) {
+                for (EObject holder : valMap.get(attr)) {
+                    retSet.add(new NavigationHelperSetting(attr, holder, value));
                 }
             }
         }
@@ -226,8 +224,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
-        if (valMap == null || valMap.get(attribute) == null) {
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        if (valMap.get(attribute) == null) {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valMap.get(attribute));
@@ -254,13 +252,11 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> getInverseReferences(EObject target) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
-        if (valMap != null) {
-            for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
-                for (EObject source : entry.getValue()) {
-                    retSet.add(new NavigationHelperSetting(entry.getKey(), source, target));
-                }
+        for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+            for (EObject source : entry.getValue()) {
+                retSet.add(new NavigationHelperSetting(entry.getKey(), source, target));
             }
         }
 
@@ -270,14 +266,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
-        if (valMap != null) {
-            for (EReference ref : references) {
-                if (valMap.get(ref) != null) {
-                    for (EObject source : valMap.get(ref)) {
-                        retSet.add(new NavigationHelperSetting(ref, source, target));
-                    }
+        for (EReference ref : references) {
+            if (valMap.get(ref) != null) {
+                for (EObject source : valMap.get(ref)) {
+                    retSet.add(new NavigationHelperSetting(ref, source, target));
                 }
             }
         }
@@ -287,12 +281,36 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> getInverseReferences(EObject target, EReference reference) {
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(target);
-        if (valMap == null || valMap.get(reference) == null) {
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        if (valMap.get(reference) == null) {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valMap.get(reference));
         }
+    }
+
+    @Override
+    public Collection<EObject> getReferenceValues(EObject source, EReference reference) {
+        Collection<Object> targets = getFeatureTargets(source, reference);
+        Collection<EObject> values = new ArrayList<EObject>();
+        for (Object object : targets) {
+            if(object instanceof EObject) {
+                values.add((EObject) object);
+            }
+        }
+        return Collections.unmodifiableCollection(values);
+    }
+
+    @Override
+    public Collection<Object> getFeatureTargets(EObject source, EStructuralFeature feature) {
+        Collection<Object> values = new ArrayList<Object>();  
+        Map<Object, Set<EObject>> valueToHolderMap = contentAdapter.getValueToFeatureToHolderMap().column(feature);
+        for (Entry<Object, Set<EObject>> entry : valueToHolderMap.entrySet()) {
+            if(entry.getValue().contains(source)) {
+                values.add(entry.getKey());
+            }
+        }
+        return Collections.unmodifiableCollection(values);
     }
 
     @Override
@@ -309,7 +327,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Collection<EObject> getAllInstances(EClass type) {
         Set<EObject> retSet = new HashSet<EObject>();
 
-        Set<EClass> valSet = contentAdapter.subTypeMap.get(type);
+        Set<EClass> valSet = NavigationHelperContentAdapter.getSubTypeMap().get(type);
         if (valSet != null) {
             for (EClass c : valSet) {
                 final Set<EObject> instances = contentAdapter.getInstanceSet(c);
@@ -329,8 +347,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature feature) {
         Set<EObject> retSet = new HashSet<EObject>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.featureMap.get(value);
-        if (valMap != null && valMap.get(feature) != null) {
+        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        if (valMap.get(feature) != null) {
             retSet.addAll(valMap.get(feature));
         }
         return retSet;
@@ -338,10 +356,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> getHoldersOfFeature(EStructuralFeature feature) {
-        if (contentAdapter.getReversedFeatureMap().get(feature) == null) {
+        Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
+        if (holders == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(contentAdapter.getReversedFeatureMap().get(feature).elementSet());
+            return Collections.unmodifiableSet(holders.elementSet());
         }
     }
 
@@ -423,7 +442,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * @return the observedDataTypes
      */
-    public HashSet<EDataType> getObservedDataTypes() {
+    public Set<EDataType> getObservedDataTypes() {
         return observedDataTypes;
     }
 
@@ -483,7 +502,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * @return the directlyObservedClasses
      */
-    public HashSet<EClass> getDirectlyObservedClasses() {
+    public Set<EClass> getDirectlyObservedClasses() {
         return directlyObservedClasses;
     }
 
@@ -494,12 +513,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * not just the directly observed classes, but also their known subtypes
      */
-    public HashSet<EClass> getAllObservedClasses() {
+    public Set<EClass> getAllObservedClasses() {
         if (allObservedClasses == null) {
             allObservedClasses = new HashSet<EClass>();
             for (EClass eClass : directlyObservedClasses) {
                 allObservedClasses.add(eClass);
-                final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+                final Set<EClass> subTypes = NavigationHelperContentAdapter.getSubTypeMap().get(eClass);
                 if (subTypes != null) {
                     allObservedClasses.addAll(subTypes);
                 }
@@ -538,10 +557,12 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedFeatures.removeAll(features);
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
-                for (Object key : contentAdapter.featureMap.keySet()) {
-                    contentAdapter.featureMap.get(key).remove(f);
+                contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
+                /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
+                    // XXX this would probably cause ConcurrentModificationException
+                    contentAdapter.valueToFeatureToHolderMap.remove(key,f);
                     // TODO proper notification
-                }
+                }*/
             }
         }
     }
@@ -574,7 +595,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         directlyObservedClasses.addAll(classes);
         getAllObservedClasses().addAll(classes);
         for (EClass eClass : classes) {
-            final Set<EClass> subTypes = NavigationHelperContentAdapter.subTypeMap.get(eClass);
+            final Set<EClass> subTypes = NavigationHelperContentAdapter.getSubTypeMap().get(eClass);
             if (subTypes != null) {
                 allObservedClasses.addAll(subTypes);
             }

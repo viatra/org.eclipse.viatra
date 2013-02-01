@@ -47,6 +47,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
@@ -58,10 +59,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private boolean isDirty = false;
 
     // value -> feature (attr or ref) -> holder(s)
-    protected Map<Object, Map<EStructuralFeature, Set<EObject>>> featureMap;
+    private Table<Object, EStructuralFeature, Set<EObject>> valueToFeatureToHolderMap;
 
     // feature -> holder(s)
-    protected Map<EStructuralFeature, Multiset<EObject>> reversedFeatureMap;
+    private Map<EStructuralFeature, Multiset<EObject>> featureToHolderMap;
 
     // eclass -> instance(s)
     private final Map<String, Set<EObject>> instanceMap;
@@ -70,20 +71,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private final Map<String, Map<Object, Integer>> dataTypeMap;
 
     // source -> feature -> proxy target -> delayed visitors
-    protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
+    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
 
     // proxy source -> delayed visitors
-    protected ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
+    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
     // static for all eClasses whose instances were encountered at least once
     private static Set<EClass> knownClasses = new HashSet<EClass>();
 
     // static for eclass -> all subtypes in knownClasses
-    protected static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
+    private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
-        this.featureMap = new HashMap<Object, Map<EStructuralFeature, Set<EObject>>>();
+        this.valueToFeatureToHolderMap = HashBasedTable.create();
         this.instanceMap = new HashMap<String, Set<EObject>>();
         this.dataTypeMap = new HashMap<String, Map<Object, Integer>>();
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
@@ -104,14 +105,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      */
     private static String getUniqueIdentifier(ETypedElement typedElement) {
         return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
-    }
-
-    public Map<EStructuralFeature, Multiset<EObject>> getReversedFeatureMap() {
-        if (reversedFeatureMap == null) {
-            reversedFeatureMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
-            initReversedFeatureMap();
-        }
-        return reversedFeatureMap;
     }
 
     @Override
@@ -340,50 +333,41 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // }
 
     private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
-        Map<EStructuralFeature, Set<EObject>> mapVal = featureMap.get(value);
-        Set<EObject> setVal = null;
+        Set<EObject> setVal = valueToFeatureToHolderMap.get(value, feature);
 
-        if (mapVal == null) {
-            mapVal = new HashMap<EStructuralFeature, Set<EObject>>();
-        }
-        if ((setVal = mapVal.get(feature)) == null) {
+        if (setVal == null) {
             setVal = new HashSet<EObject>();
         }
         setVal.add(holder);
-        mapVal.put(feature, setVal);
-        featureMap.put(value, mapVal);
+        valueToFeatureToHolderMap.put(value, feature, setVal);
     }
 
     private void addToReversedFeatureMap(EStructuralFeature feature, EObject holder) {
-        Multiset<EObject> setVal = reversedFeatureMap.get(feature);
+        Multiset<EObject> setVal = featureToHolderMap.get(feature);
 
         if (setVal == null) {
             setVal = HashMultiset.create();
         }
         setVal.add(holder);
-        reversedFeatureMap.put(feature, setVal);
+        featureToHolderMap.put(feature, setVal);
     }
 
     private void removeFromReversedFeatureMap(EStructuralFeature feature, EObject holder) {
-        if (reversedFeatureMap.containsKey(feature)) {
-            reversedFeatureMap.get(feature).remove(holder);
+        if (featureToHolderMap.containsKey(feature)) {
+            featureToHolderMap.get(feature).remove(holder);
 
-            if (reversedFeatureMap.get(feature).size() == 0) {
-                reversedFeatureMap.remove(feature);
+            if (featureToHolderMap.get(feature).size() == 0) {
+                featureToHolderMap.remove(feature);
             }
         }
     }
 
     private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
-        if (featureMap.containsKey(value) && featureMap.get(value).containsKey(feature)) {
-            featureMap.get(value).get(feature).remove(holder);
+        if (valueToFeatureToHolderMap.contains(value, feature)) {
+            valueToFeatureToHolderMap.get(value,feature).remove(holder);
 
-            if (featureMap.get(value).get(feature).size() == 0) {
-                featureMap.get(value).remove(feature);
-            }
-
-            if (featureMap.get(value).size() == 0) {
-                featureMap.remove(value);
+            if (valueToFeatureToHolderMap.get(value,feature).size() == 0) {
+                valueToFeatureToHolderMap.remove(value,feature);
             }
         }
     }
@@ -393,7 +377,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         // navigationHelper.getObservedFeatures().contains(feature)) {
         addToFeatureMap(feature, value, holder);
 
-        if (reversedFeatureMap != null) {
+        if (featureToHolderMap != null) {
             addToReversedFeatureMap(feature, holder);
         }
 
@@ -407,7 +391,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         // navigationHelper.getObservedFeatures().contains(feature)) {
         removeFromFeatureMap(feature, value, holder);
 
-        if (reversedFeatureMap != null) {
+        if (featureToHolderMap != null) {
             removeFromReversedFeatureMap(feature, holder);
         }
 
@@ -597,13 +581,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void initReversedFeatureMap() {
-        for (Entry<Object, Map<EStructuralFeature, Set<EObject>>> valueToFeatureHolderMap : featureMap.entrySet()) {
-            for (Entry<EStructuralFeature, Set<EObject>> featureToHolders : valueToFeatureHolderMap.getValue()
-                    .entrySet()) {
-                final EStructuralFeature feature = featureToHolders.getKey();
-                for (EObject holder : featureToHolders.getValue()) {
-                    addToReversedFeatureMap(feature, holder);
-                }
+        for (Cell<Object, EStructuralFeature, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+            final EStructuralFeature feature = valueToFeatureHolderMap.getColumnKey();
+            for (EObject holder : valueToFeatureHolderMap.getValue()) {
+                addToReversedFeatureMap(feature, holder);
             }
         }
     }
@@ -730,6 +711,45 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     private List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
         return unresolvableProxyObjectsMap.removeAll(source);
+    }
+
+    /**
+     * @return the valueToFeatureToHolderMap
+     */
+    protected Table<Object, EStructuralFeature, Set<EObject>> getValueToFeatureToHolderMap() {
+        return valueToFeatureToHolderMap;
+    }
+
+    /**
+     * @return the featureToHolderMap
+     */
+    protected Map<EStructuralFeature, Multiset<EObject>> getFeatureToHolderMap() {
+        if (featureToHolderMap == null) {
+            featureToHolderMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
+            initReversedFeatureMap();
+        }
+        return featureToHolderMap;
+    }
+
+    /**
+     * @return the unresolvableProxyFeaturesMap
+     */
+    protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> getUnresolvableProxyFeaturesMap() {
+        return unresolvableProxyFeaturesMap;
+    }
+
+    /**
+     * @return the unresolvableProxyObjectsMap
+     */
+    protected ListMultimap<EObject, EMFVisitor> getUnresolvableProxyObjectsMap() {
+        return unresolvableProxyObjectsMap;
+    }
+
+    /**
+     * @return the subTypeMap
+     */
+    protected static Map<EClass, Set<EClass>> getSubTypeMap() {
+        return subTypeMap;
     }
 
 }

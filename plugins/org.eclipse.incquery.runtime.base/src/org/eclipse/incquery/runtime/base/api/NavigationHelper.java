@@ -155,7 +155,38 @@ public interface NavigationHelper {
     // * @return the collection of settings
     // */
     // public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
-
+    
+    /**
+     * Find all {@link EObject}s that are the target of the <code>reference</code> EReference instance from the given
+     * <code>source</code>.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Results will be returned only if either (a) the reference has already been
+     * registered using {@link #registerEStructuralFeatures(Set)}, or (b) running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * @param source the startpoint of a reference
+     * @param reference the EReference instance
+     * @return the collection of {@link EObject} instances
+     */
+    public Collection<EObject> getReferenceValues(EObject source, EReference reference);
+   
+    /**
+     * Find all {@link Object}s that are the target of the <code>feature</code> EStructuralFeature instance from the given
+     * <code>source</code>.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
+     * registered, or (b) running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * @param source the startpoint of a feature
+     * @param feature the EStructuralFeature instance
+     * @return the collection of {@link Object} instances
+     */
+    public Collection<Object> getFeatureTargets(EObject source, EStructuralFeature feature);
+   
+    
     /**
      * Find all the {@link EObject} instances that have an {@link EReference} instance with the given
      * <code>target</code>. The method will return these information as a collection of

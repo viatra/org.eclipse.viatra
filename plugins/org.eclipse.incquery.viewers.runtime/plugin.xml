@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            description="An element to display in a JFace viewer"
+            name="Item">
+         <annotationparameter
+               description="The pattern parameter the Item will represent in the viewer."
+               mandatory="true"
+               multiple="false"
+               name="item"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="The label to describe the item. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$."
+               mandatory="false"
+               multiple="false"
+               name="label"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="A project-relative path to an icon."
+               mandatory="false"
+               multiple="false"
+               name="icon"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            description="An annotation describing a containment relation between two items."
+            name="ContainsItem">
+         <annotationparameter
+               description="The pattern parameter representing the container. Must refer an EObject."
+               mandatory="true"
+               multiple="false"
+               name="container"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="The pattern parameter referring to a contained element. Must refer to an EObject."
+               mandatory="true"
+               multiple="false"
+               name="item"
+               type="string">
+         </annotationparameter>
+      </annotation>
+      <annotation
+            description="Represents a custom, directed edge between GuiItems. Not supported by all viewers."
+            name="Edge">
+         <annotationparameter
+               description="A label for the edge."
+               mandatory="false"
+               multiple="false"
+               name="label"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The pattern parameter representing the source item of the edge. Must refer to an EObject."
+               mandatory="true"
+               multiple="false"
+               name="source"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="The pattern parameter representing the target item of the edge. Must refer to an EObject."
+               mandatory="true"
+               multiple="false"
+               name="target"
+               type="variablereference">
+         </annotationparameter>
+      </annotation>
+   </extension>
+
+</plugin>
