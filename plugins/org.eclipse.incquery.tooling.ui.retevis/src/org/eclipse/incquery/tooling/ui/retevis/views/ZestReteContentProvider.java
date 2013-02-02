@@ -11,12 +11,12 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
@@ -36,7 +36,7 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
             return super.getElements(((ReteContainer) inputElement).getAllNodes());
         } else if (inputElement instanceof ReteBoundary) {
             ReteBoundary rb = (ReteBoundary) inputElement;
-            Vector<Node> r = new Vector<Node>();
+            List<Node> r = new ArrayList<Node>();
             for (Object a : rb.getAllUnaryRoots()) {
                 r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all unary constraints
             }
@@ -51,7 +51,7 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
     @Override
     public Object[] getConnectedTo(Object entity) {
         if (entity instanceof Node) {
-            Vector<Node> r = new Vector<Node>();
+            List<Node> r = new ArrayList<Node>();
             if (entity instanceof Supplier) {
                 r.addAll(((Supplier) entity).getReceivers());
                 
@@ -77,11 +77,9 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
                     }
                 }
             }
-            if (entity instanceof Indexer) {
-                if (entity instanceof StandardIndexer) {
-                    for (IndexerListener il : ((StandardIndexer) entity).getListeners()) {
-                        r.add(il.getOwner());
-                    }
+            if (entity instanceof StandardIndexer) {
+                for (IndexerListener il : ((StandardIndexer) entity).getListeners()) {
+                    r.add(il.getOwner());
                 }
             }
             return r.toArray();

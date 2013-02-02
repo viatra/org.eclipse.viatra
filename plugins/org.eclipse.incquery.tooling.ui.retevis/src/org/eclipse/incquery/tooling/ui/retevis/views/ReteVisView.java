@@ -25,6 +25,7 @@ import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
@@ -174,11 +175,11 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
                 if (selection instanceof IStructuredSelection) {
                     IStructuredSelection sel = (IStructuredSelection) selection;
                     Object o = sel.getFirstElement();
-                    if (o != null && o instanceof ObservablePatternMatcher) {
+                    if (o instanceof ObservablePatternMatcher) {
                         ObservablePatternMatcher pm = (ObservablePatternMatcher) o;
                         // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
                         try {
-                            ReteBoundary rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
+                            ReteBoundary<Pattern> rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
                             ((ZestReteLabelProvider) graphViewer.getLabelProvider()).setRb(rb);
                             graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
                             graphViewer.setInput(rb.getHeadContainer());

@@ -44,11 +44,12 @@ import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 
+@SuppressWarnings("rawtypes")
 public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
 
-    private final int INDEXER_ID = 0;
-    private final int RETEMATCHER_ID = 1;
-    private final int INPUT_ID = 2;
+    private final static int INDEXER_ID = 0;
+    private final static int RETEMATCHER_ID = 1;
+    private final static int INPUT_ID = 2;
 
     private ReteBoundary rb;
     private ColorTheme theme;
@@ -90,24 +91,23 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
                 simpleName = namedClass.getSimpleName();
                 namedClass = namedClass.getSuperclass();
             } while (simpleName == null || simpleName.isEmpty());
-            String s = "" + simpleName;
+            StringBuilder sb = new StringBuilder(simpleName);
             if (n instanceof UniquenessEnforcerNode) {
                 // print tuplememory statistics
                 UniquenessEnforcerNode un = (UniquenessEnforcerNode) n;
 
                 if (un.getParents().isEmpty() && un.getTag() instanceof ENamedElement) {
-                    s += " : " + ((ENamedElement) un.getTag()).getName() + " : ";
+                    sb.append(" : " + ((ENamedElement) un.getTag()).getName() + " : ");
 
                 }
-                s += " [" + (un).getMemory().size() + "]";
+                sb.append(" [" + (un).getMemory().size() + "]");
 
             }
             if (n instanceof IndexerWithMemory) {
                 MaskedTupleMemory mem = ((IndexerWithMemory) n).getMemory();
-                s += " [" + mem.getKeysetSize() + " => " + mem.getTotalSize() + "]";
+                sb.append(" [" + mem.getKeysetSize() + " => " + mem.getTotalSize() + "]");
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
-                StringBuilder sb = new StringBuilder();
                 sb.append("\n");
                 for (Stub st : getStubsForNode(n)) {
                     sb.append("<");
@@ -122,10 +122,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
                         sb.append("; ");
                     }
                     sb.append(">  ");
-                    s += sb.toString();
                 }
             }
-            return s;
+            return sb.toString();
         }
         return "!";
         // return s+super.getText(element);
@@ -135,10 +134,10 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
     public IFigure getTooltip(Object entity) {
         if (entity instanceof Node) {
             Node n = (Node) entity;
-            String s = "";
-
+//            String s = "";
+            StringBuilder infoBuilder = new StringBuilder("Stubs:\n");
             for (Stub st : getStubsForNode(n)) {
-                s += getEnforcedConstraints(st);
+                infoBuilder.append(getEnforcedConstraints(st));
             }
 
             FlowPage fp = new FlowPage();
@@ -149,9 +148,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             // infoTf.setFont(fontRegistry.get("code"));
 
             nameTf.setText(n.toString());
-            String info = "";// "\n";
-            info += "Stubs:\n" + s;// +"\n";
-            infoTf.setText(info);
+            infoTf.setText(infoBuilder.toString());
             if (entity instanceof RetePatternMatcher) {
                 if (((Node) entity).getTag() instanceof Pattern) {
                     Pattern pattern = (Pattern) ((Node) entity).getTag();
@@ -177,17 +174,16 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
     // useful only for production nodes
     private static String getEnforcedConstraints(Stub st) {
-        String s = "";
+        StringBuilder sb = new StringBuilder();
         for (Object _pc : st.getAllEnforcedConstraints()) {
             PConstraint pc = (PConstraint) _pc;
-            s += "\t[" + pc.getClass().getSimpleName() + "]:";
-            for (Object _v : pc.getAffectedVariables()) {
-                PVariable v = (PVariable) _v;
-                s += "{" + v.getName() + "}";
+            sb.append("\t[" + pc.getClass().getSimpleName() + "]:");
+            for (PVariable v : pc.getAffectedVariables()) {
+                sb.append("{" + v.getName() + "}");
             }
-            s += "\n";
+            sb.append("\n");
         }
-        return s;
+        return sb.toString();
     }
 
     private Collection<Stub<Address<?>>> getStubsForNode(Node n) {
@@ -195,7 +191,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
         if (r != null)
             return r;
         else
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
     }
 
     Map<Node, Collection<Stub<Address<?>>>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
@@ -228,7 +224,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             v.addAll(getAllParentStubs(st.getSecondaryParentStub()));
             return v;
         } else
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
     }
 
     @Override
