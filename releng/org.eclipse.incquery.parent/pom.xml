@@ -35,6 +35,8 @@
 		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
+		<module>../../plugins/org.eclipse.incquery.viewers.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.viewers.runtime.zest</module>
 		<module>../../tests/org.eclipse.incquery.patternlanguage.emf.tests</module>
 		<module>../../tests/org.eclipse.incquery.runtime.tests</module>
 		<module>../../tests/org.eclipse.incquery.runtime.base.itc.tests</module>
