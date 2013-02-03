@@ -71,6 +71,38 @@
                type="variablereference">
          </annotationparameter>
       </annotation>
+      <annotation
+            description="Formatting specification for Items and Edges"
+            name="Format">
+         <annotationparameter
+               description="The main color definition in CSS format (#RRGGBB)"
+               mandatory="false"
+               multiple="false"
+               name="color"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The line color setting in CSS format (#RRGGBB)."
+               mandatory="false"
+               multiple="false"
+               name="lineColor"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The text color setting in CSS format (#RRGGBB)."
+               mandatory="false"
+               multiple="false"
+               name="textColor"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The width of the line in pixels. Only available for Edges."
+               mandatory="false"
+               multiple="false"
+               name="lineWidth"
+               type="int">
+         </annotationparameter>
+      </annotation>
    </extension>
 
 </plugin>

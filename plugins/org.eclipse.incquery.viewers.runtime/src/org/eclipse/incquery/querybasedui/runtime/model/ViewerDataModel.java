@@ -92,13 +92,15 @@ public class ViewerDataModel {
                     .getOrCreateMatcherFactory(nodePattern);
 
             IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+            Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
+                    FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
 
                 ObservableList resultList = new WritableList();
                 nodeListsObservable.add(resultList);
 
                 ctx.bindList(resultList, obspatternmatchlist, null,
-                        new UpdateListStrategy().setConverter(new ItemConverter(itemMap, annotation)));
+                        new UpdateListStrategy().setConverter(new ItemConverter(itemMap, annotation, formatAnnotation)));
             }
         }
         MultiList list = new MultiList(nodeListsObservable.toArray(new ObservableList[nodeListsObservable.size()]));
@@ -120,12 +122,14 @@ public class ViewerDataModel {
 
             IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
 
+            Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
+                    FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
                 ObservableList resultList = new WritableList();
                 edgeListsObservable.add(resultList);
 
                 ctx.bindList(resultList, obspatternmatchlist, null,
-                        new UpdateListStrategy().setConverter(new EdgeConverter(annotation, itemMap)));
+                        new UpdateListStrategy().setConverter(new EdgeConverter(annotation, formatAnnotation, itemMap)));
             }
         }
         MultiList list = new MultiList(edgeListsObservable.toArray(new ObservableList[edgeListsObservable.size()]));

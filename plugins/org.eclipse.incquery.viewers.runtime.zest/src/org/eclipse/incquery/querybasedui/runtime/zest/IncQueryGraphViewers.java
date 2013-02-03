@@ -28,7 +28,7 @@ public class IncQueryGraphViewers {
 
     public static void bind(GraphViewer viewer, ViewerDataModel model) {
         viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider());
+        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
         viewer.setInput(model);
     }
 

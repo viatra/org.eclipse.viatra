@@ -19,6 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.querybasedui.runtime.model.Edge;
+import org.eclipse.incquery.querybasedui.runtime.model.FormatSpecification;
 import org.eclipse.incquery.querybasedui.runtime.model.Item;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
@@ -35,8 +36,9 @@ public class EdgeConverter implements IConverter {
     private String sourceParameterName;
     private String destParameterName;
     private Map<Object, Item> itemMap;
+    private FormatSpecification format;
 
-    public EdgeConverter(Annotation itemAnnotation, Map<Object, Item> itemMap) {
+    public EdgeConverter(Annotation itemAnnotation, Annotation formatAnnotation, Map<Object, Item> itemMap) {
         Preconditions.checkArgument(Edge.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Edge.ANNOTATION_ID + " annotation.");
         this.itemMap = itemMap;
@@ -48,6 +50,10 @@ public class EdgeConverter implements IConverter {
         StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "label");
         labelParameterName = labelParam == null ? "" : labelParam.getValue();
+
+        if (formatAnnotation != null) {
+            format = FormatParser.parseFormatAnnotation(formatAnnotation);
+        }
     }
 
     @Override
@@ -71,6 +77,7 @@ public class EdgeConverter implements IConverter {
         Item destItem = itemMap.get(destValue);
 
         Edge edge = new Edge(sourceItem, destItem, match, labelParameterName);
+        edge.setSpecification(format);
         return edge;
     }
 }

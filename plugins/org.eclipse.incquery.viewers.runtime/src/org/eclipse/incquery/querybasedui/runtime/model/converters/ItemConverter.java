@@ -18,6 +18,7 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.incquery.querybasedui.runtime.model.FormatSpecification;
 import org.eclipse.incquery.querybasedui.runtime.model.Item;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
@@ -34,13 +35,14 @@ public class ItemConverter implements IConverter {
     private String parameterName;
     private String labelParameterName;
     private Map<Object, Item> itemMap;
+    private FormatSpecification format;
 
     /**
      * @param itemMap
      * @param itemAnnotation
      *            an Item annotation to initialize the converter with.
      */
-    public ItemConverter(Map<Object, Item> itemMap, Annotation itemAnnotation) {
+    public ItemConverter(Map<Object, Item> itemMap, Annotation itemAnnotation, Annotation formatAnnotation) {
         Preconditions.checkArgument(Item.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Item.ANNOTATION_ID + " annotation.");
         this.itemMap = itemMap;
@@ -49,6 +51,10 @@ public class ItemConverter implements IConverter {
         StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "label");
         labelParameterName = labelParam == null ? "" : labelParam.getValue();
+
+        if (formatAnnotation != null) {
+            format = FormatParser.parseFormatAnnotation(formatAnnotation);
+        }
     }
 
     @Override
@@ -67,6 +73,7 @@ public class ItemConverter implements IConverter {
 
         EObject param = (EObject) match.get(parameterName);
         Item item = new Item(match, labelParameterName);
+        item.setSpecification(format);
         itemMap.put(param, item);
         return item;
     }

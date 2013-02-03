@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public class FormatSpecification {
 
@@ -24,6 +24,7 @@ public class FormatSpecification {
     private final static String PREFIX = "org.eclipse.incquery.viewers.format.";
     public final static String COLOR = PREFIX + "color";
     public final static String LINE_COLOR = PREFIX + "linecolor";
+    public final static String TEXT_COLOR = PREFIX + "textcolor";
     public final static String LINE_WIDTH = PREFIX + "linewidth";
 
     private Map<String, String> formatProperties = new HashMap<String, String>();
@@ -35,4 +36,5 @@ public class FormatSpecification {
     public String getProperty(String index) {
         return formatProperties.get(index);
     }
+
 }
