@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.sources;
+package org.eclipse.incquery.viewers.runtime.sources;
 
 import java.util.Collection;
 import java.util.Map;
@@ -18,9 +18,9 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.incquery.querybasedui.runtime.model.Containment;
-import org.eclipse.incquery.querybasedui.runtime.model.Item;
-import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.Containment;
+import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreePath;

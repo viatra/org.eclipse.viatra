@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.zest.sources;
+package org.eclipse.incquery.viewers.runtime.zest.sources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +20,9 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
-import org.eclipse.incquery.querybasedui.runtime.model.Edge;
-import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
-import org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**

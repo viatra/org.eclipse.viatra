@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.zest.sources;
+package org.eclipse.incquery.viewers.runtime.zest.sources;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.jface.databinding.viewers.IViewerUpdater;

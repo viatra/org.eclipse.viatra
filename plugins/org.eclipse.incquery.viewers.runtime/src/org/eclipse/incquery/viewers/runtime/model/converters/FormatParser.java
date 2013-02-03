@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.model.converters;
+package org.eclipse.incquery.viewers.runtime.model.converters;
 
 import java.util.Map;
 
@@ -16,7 +16,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.incquery.querybasedui.runtime.model.FormatSpecification;
+import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.swt.graphics.RGB;
 
 import com.google.common.collect.ImmutableMap;

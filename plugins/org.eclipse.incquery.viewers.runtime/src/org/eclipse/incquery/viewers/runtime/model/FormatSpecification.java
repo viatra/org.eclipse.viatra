@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.HashMap;
 import java.util.Map;

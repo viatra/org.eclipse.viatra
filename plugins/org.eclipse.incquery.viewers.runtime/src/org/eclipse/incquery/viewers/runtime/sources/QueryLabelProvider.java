@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.sources;
+package org.eclipse.incquery.viewers.runtime.sources;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
-import org.eclipse.incquery.querybasedui.runtime.model.Edge;
-import org.eclipse.incquery.querybasedui.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 

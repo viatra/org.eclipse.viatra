@@ -8,9 +8,9 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model;
 
-import org.eclipse.incquery.querybasedui.runtime.model.converters.FormatParser;
+import org.eclipse.incquery.viewers.runtime.model.converters.FormatParser;
 import org.eclipse.swt.graphics.RGB;
 
 /**

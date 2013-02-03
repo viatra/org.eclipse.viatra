@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.zest.sources;
+package org.eclipse.incquery.viewers.runtime.zest.sources;
 
 
 import java.util.Map;
@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.incquery.querybasedui.runtime.model.Edge;
-import org.eclipse.incquery.querybasedui.runtime.model.FormatSpecification;
-import org.eclipse.incquery.querybasedui.runtime.model.FormattableElement;
-import org.eclipse.incquery.querybasedui.runtime.model.Item;
-import org.eclipse.incquery.querybasedui.runtime.sources.QueryLabelProvider;
 import org.eclipse.incquery.runtime.rete.network.Node;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
+import org.eclipse.incquery.viewers.runtime.model.FormattableElement;
+import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;

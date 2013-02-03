@@ -8,12 +8,12 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime;
+package org.eclipse.incquery.viewers.runtime;
 
-import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
-import org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider;
-import org.eclipse.incquery.querybasedui.runtime.sources.QueryLabelProvider;
-import org.eclipse.incquery.querybasedui.runtime.sources.TreeContentProvider;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
+import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
+import org.eclipse.incquery.viewers.runtime.sources.TreeContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 

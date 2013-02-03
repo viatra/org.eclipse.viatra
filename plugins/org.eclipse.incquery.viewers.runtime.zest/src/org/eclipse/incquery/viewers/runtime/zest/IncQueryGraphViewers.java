@@ -8,12 +8,12 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.zest;
+package org.eclipse.incquery.viewers.runtime.zest;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
-import org.eclipse.incquery.querybasedui.runtime.zest.sources.ZestContentProvider;
-import org.eclipse.incquery.querybasedui.runtime.zest.sources.ZestLabelProvider;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
+import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
 
 /**
  * API to bind the result of model queries to Zest {@link GraphViewer} widgets.

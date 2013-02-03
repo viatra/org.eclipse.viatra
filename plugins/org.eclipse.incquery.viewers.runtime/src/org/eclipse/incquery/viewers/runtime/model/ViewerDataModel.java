@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.querybasedui.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +27,6 @@ import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.querybasedui.runtime.model.converters.ContainmentConverter;
-import org.eclipse.incquery.querybasedui.runtime.model.converters.EdgeConverter;
-import org.eclipse.incquery.querybasedui.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -37,6 +34,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentConverter;
+import org.eclipse.incquery.viewers.runtime.model.converters.EdgeConverter;
+import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
