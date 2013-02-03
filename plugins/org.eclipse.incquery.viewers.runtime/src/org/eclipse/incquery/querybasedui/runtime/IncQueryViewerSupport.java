@@ -13,7 +13,9 @@ package org.eclipse.incquery.querybasedui.runtime;
 import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider;
 import org.eclipse.incquery.querybasedui.runtime.sources.QueryLabelProvider;
+import org.eclipse.incquery.querybasedui.runtime.sources.TreeContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 
 /**
  * @author Zoltan Ujhelyi
@@ -25,5 +27,13 @@ public class IncQueryViewerSupport {
         viewer.setContentProvider(new ListContentProvider());
         viewer.setLabelProvider(new QueryLabelProvider());
         viewer.setInput(model);
+        viewer.refresh();
+    }
+
+    public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
+        viewer.setContentProvider(new TreeContentProvider());
+        viewer.setLabelProvider(new QueryLabelProvider());
+        viewer.setInput(model);
+        viewer.refresh();
     }
 }

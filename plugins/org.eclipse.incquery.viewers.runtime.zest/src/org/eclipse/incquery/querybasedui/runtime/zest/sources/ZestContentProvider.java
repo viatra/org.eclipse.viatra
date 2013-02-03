@@ -23,7 +23,6 @@ import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvide
 import org.eclipse.incquery.querybasedui.runtime.model.Edge;
 import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider;
-import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
@@ -62,8 +61,11 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
 
     private EdgeListChangeListener edgeListener;
 
+    private GraphViewer viewer;
+
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
+        this.viewer = (GraphViewer) viewer;
         super.initializeContent(viewer, vmodel);
 
         edgeList = vmodel.initializeObservableEdgeList();
@@ -95,12 +97,19 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
      * (non-Javadoc)
      * 
      * @see
-     * org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider#getUpdater(org.eclipse.jface.viewers.Viewer
-     * )
+     * org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider#handleListChanges(org.eclipse.core.databinding
+     * .observable.list.ListDiff)
      */
     @Override
-    protected IViewerUpdater getUpdater(Viewer viewer) {
-        return new GraphNodeUpdater((GraphViewer) viewer);
+    protected void handleListChanges(ListDiff diff) {
+        for (ListDiffEntry entry : diff.getDifferences()) {
+            if (entry.isAddition()) {
+                viewer.addNode(entry.getElement());
+            } else {
+                viewer.removeNode(entry.getElement());
+            }
+        }
     }
+
 
 }

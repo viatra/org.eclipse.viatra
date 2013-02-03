@@ -16,7 +16,6 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.incquery.querybasedui.runtime.model.ViewerDataModel;
-import org.eclipse.jface.databinding.viewers.IViewerUpdater;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,39 +28,41 @@ public class ListContentProvider implements IStructuredContentProvider {
 
     private final class NodeListChangeListener implements IListChangeListener {
 
-
-        private IViewerUpdater updater;
-
-        public NodeListChangeListener(IViewerUpdater updater) {
-            super();
-            this.updater = updater;
-        }
-
         @Override
         public void handleListChange(ListChangeEvent event) {
             ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                if (entry.isAddition()) {
-                    updater.add(new Object[] { entry });
-                    updater.insert(entry.getElement(), entry.getPosition());
-                } else {
-                    updater.remove(entry.getElement(), entry.getPosition());
-                }
-            }
+            handleListChanges(diff);
         }
     }
 
     private IObservableList nodeList;
     private NodeListChangeListener nodeListener;
     protected ViewerDataModel vmodel;
+    private AbstractListViewer viewer;
 
     @Override
     public Object[] getElements(Object inputElement) {
         return nodeList.toArray();
     }
 
+    /**
+     * @param diff
+     */
+    protected void handleListChanges(ListDiff diff) {
+        for (ListDiffEntry entry : diff.getDifferences()) {
+            if (entry.isAddition()) {
+                viewer.insert(entry.getElement(), entry.getPosition());
+            } else {
+                viewer.remove(entry.getElement());
+            }
+        }
+    }
+
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (viewer instanceof AbstractListViewer) {
+            this.viewer = (AbstractListViewer) viewer;
+        }
         removeListeners();
 
         vmodel = (ViewerDataModel) newInput;
@@ -75,7 +76,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
         nodeList = vmodel.initializeObservableItemList();
-        nodeListener = new NodeListChangeListener(getUpdater(viewer));
+        nodeListener = new NodeListChangeListener();
         nodeList.addListChangeListener(nodeListener);
 
     }
@@ -94,10 +95,6 @@ public class ListContentProvider implements IStructuredContentProvider {
         if (nodeList != null && !nodeList.isDisposed() && nodeListener != null) {
             nodeList.removeListChangeListener(nodeListener);
         }
-    }
-
-    protected IViewerUpdater getUpdater(Viewer viewer) {
-        return new ListViewerUpdater((AbstractListViewer) viewer);
     }
 
 }

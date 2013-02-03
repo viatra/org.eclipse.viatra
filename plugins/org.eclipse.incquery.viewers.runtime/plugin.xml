@@ -43,7 +43,7 @@
                mandatory="true"
                multiple="false"
                name="item"
-               type="string">
+               type="variablereference">
          </annotationparameter>
       </annotation>
       <annotation

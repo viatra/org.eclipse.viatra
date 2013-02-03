@@ -27,6 +27,7 @@ import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.querybasedui.runtime.model.converters.ContainmentConverter;
 import org.eclipse.incquery.querybasedui.runtime.model.converters.EdgeConverter;
 import org.eclipse.incquery.querybasedui.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.runtime.api.EngineManager;
@@ -85,13 +86,13 @@ public class ViewerDataModel {
         itemMap.clear();
         List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
         final String annotationName = Item.ANNOTATION_ID;
-        for (final Pattern nodepattern : getPatterns(annotationName)) {
+        for (final Pattern nodePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
             IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                    .getOrCreateMatcherFactory(nodepattern);
+                    .getOrCreateMatcherFactory(nodePattern);
 
             IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
-            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodepattern, annotationName)) {
+            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
 
                 ObservableList resultList = new WritableList();
                 nodeListsObservable.add(resultList);
@@ -112,14 +113,14 @@ public class ViewerDataModel {
     public MultiList initializeObservableEdgeList() {
         final String annotationName = Edge.ANNOTATION_ID;
         List<ObservableList> edgeListsObservable = new ArrayList<ObservableList>();
-        for (final Pattern nodepattern : getPatterns(annotationName)) {
+        for (final Pattern edgePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
             IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                    .getOrCreateMatcherFactory(nodepattern);
+                    .getOrCreateMatcherFactory(edgePattern);
 
             IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
 
-            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodepattern, annotationName)) {
+            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
                 ObservableList resultList = new WritableList();
                 edgeListsObservable.add(resultList);
 
@@ -128,6 +129,33 @@ public class ViewerDataModel {
             }
         }
         MultiList list = new MultiList(edgeListsObservable.toArray(new ObservableList[edgeListsObservable.size()]));
+        return list;
+    }
+
+    /**
+     * Initializes and returns an observable list of edges. Each call re-initializes a new observable
+     * 
+     * @return an observable list of {@link Edge} elements representing the match results in the model.
+     */
+    public MultiList initializeObservableContainmentList() {
+        final String annotationName = Containment.ANNOTATION_ID;
+        List<ObservableList> containmentListsObservable = new ArrayList<ObservableList>();
+        for (final Pattern containmentPattern : getPatterns(annotationName)) {
+            DataBindingContext ctx = new DataBindingContext();
+            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
+                    .getOrCreateMatcherFactory(containmentPattern);
+
+            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+
+            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
+                ObservableList resultList = new WritableList();
+                containmentListsObservable.add(resultList);
+
+                ctx.bindList(resultList, obspatternmatchlist, null,
+                        new UpdateListStrategy().setConverter(new ContainmentConverter(annotation, itemMap)));
+            }
+        }
+        MultiList list = new MultiList(containmentListsObservable.toArray(new ObservableList[containmentListsObservable.size()]));
         return list;
     }
 }
