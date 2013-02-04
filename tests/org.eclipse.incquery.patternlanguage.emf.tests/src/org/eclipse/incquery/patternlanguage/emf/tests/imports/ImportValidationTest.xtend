@@ -80,7 +80,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	def javaClassImport() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java.util.Calendar
+			uses java.util.Calendar
 
 			pattern name(L) = {
 				ELong(L);
@@ -94,7 +94,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	def javaPackageImport() {
 		val model = parseHelper.parse('
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			import java.util.*
+			uses java.util.*
 
 			pattern name(L) = {
 				ELong(L);

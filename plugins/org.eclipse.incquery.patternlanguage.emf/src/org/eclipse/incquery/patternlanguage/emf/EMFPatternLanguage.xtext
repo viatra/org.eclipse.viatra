@@ -32,7 +32,7 @@ PackageImport:
 ;
 
 JavaImport:
-	'uses' (type=ImportType)? importedNamespace =  QualifiedNameWithWildCard ';'?
+	'uses' /*(type=ImportType)?*/ importedNamespace =  QualifiedNameWithWildCard ';'?
 ;
 
 enum ImportType:
