@@ -28,13 +28,6 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
             expressionValidator.validateStringExpression(value, pattern, messageRef, validator);
         }
 
-        ValueReference locationRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "location");
-
-        if (locationRef instanceof StringValue) {
-            String value = ((StringValue) locationRef).getValue();
-            expressionValidator.validateParameterString(value, pattern, locationRef, validator);
-        }
-
         ValueReference severityRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "severity");
 
         if (severityRef instanceof StringValue) {

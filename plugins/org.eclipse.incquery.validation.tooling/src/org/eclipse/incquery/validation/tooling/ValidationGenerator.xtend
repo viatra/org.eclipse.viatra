@@ -29,6 +29,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -169,13 +170,13 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 	}
 	
 	def getElementOfConstraintAnnotation(Annotation annotation, String elementName) {
-    val ap = annotation.getAnnotationParameterValue(elementName)
-    if(ap != null && ap.size == 1){
-      return (ap.get(0) as StringValue).value
-    } else {
-      return null
-    }
-  }
+    	val ap = CorePatternLanguageHelper::getFirstAnnotationParameter(annotation, elementName)
+    	return switch(ap) {
+    		StringValue case true: ap.value
+    		VariableValue case true: ap.value.^var
+    		default: null
+    	}
+  	}
 	
 	def getAnnotationParameterValue(Annotation annotation, String elementName) {
 	  val values = newArrayList()
@@ -220,12 +221,12 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 				{
 				  val loc = getElementOfConstraintAnnotation(annotation, "location")
   				if(!pattern.parameterPositionsByName.containsKey(loc)){
-  				  feedback.reportError(annotation, "Location is not a valid parameter name!", VALIDATION_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+  					//This error should not be reported anymore
+  				  feedback.reportError(annotation, '''Location '«loc»' is not a valid parameter name!''', VALIDATION_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
    				}
  				  loc
 				}
-				  »"
-				);
+				  »");
 				if(location instanceof EObject){
 					return (EObject) location;
 				}
