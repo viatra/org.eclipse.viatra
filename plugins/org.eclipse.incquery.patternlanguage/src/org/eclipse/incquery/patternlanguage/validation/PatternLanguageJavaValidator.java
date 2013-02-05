@@ -243,6 +243,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             getTypeName(expectedParameterType)), parameter,
                             PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, annotation.getParameters()
                                     .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                } else if (parameter.getValue() instanceof VariableValue) {
+                    VariableValue value = (VariableValue) parameter.getValue();
+                    if (value.getValue().getVariable() == null) {
+                        error(String.format("Unknown variable %s", value.getValue().getVar()), parameter,
+                                PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE, annotation.getParameters()
+                                        .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                    }
                 }
             }
             // Execute extra validation
