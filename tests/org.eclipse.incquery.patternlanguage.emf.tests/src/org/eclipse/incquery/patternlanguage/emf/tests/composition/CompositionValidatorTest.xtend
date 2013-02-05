@@ -61,6 +61,21 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
 	}	
 	@Test
+	def void duplicatePatternsIgnoreCase() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern calledpattern(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
+	}	
+	@Test
 	def void duplicateParameters() {
 		val model = parseHelper.parse(
 			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"

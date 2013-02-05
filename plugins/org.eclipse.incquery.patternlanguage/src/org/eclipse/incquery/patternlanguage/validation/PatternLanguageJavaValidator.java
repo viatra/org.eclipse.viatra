@@ -191,7 +191,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 for (int j = i + 1; j < model.getPatterns().size(); ++j) {
                     Pattern rightPattern = model.getPatterns().get(j);
                     String rightPatternName = rightPattern.getName();
-                    if (equal(leftPatternName, rightPatternName)) {
+                    if (leftPatternName.equalsIgnoreCase(rightPatternName)) {
                         error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + leftPatternName, leftPattern,
                                 PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                         error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + rightPatternName, rightPattern,
