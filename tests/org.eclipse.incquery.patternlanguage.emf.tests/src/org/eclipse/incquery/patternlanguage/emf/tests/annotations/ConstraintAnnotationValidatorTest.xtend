@@ -26,6 +26,7 @@ import org.junit.runner.RunWith
 import org.eclipse.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator
 import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator
 import org.eclipse.incquery.validation.runtime.annotation.ConstraintAnnotationValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 
 
 @RunWith(typeof(XtextRunner))
@@ -50,7 +51,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "$p$")
+			@Constraint(severity = "error",  location = p, message = "$p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -63,7 +64,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "Pattern $p$")
+			@Constraint(severity = "error",  location = p, message = "Pattern $p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -76,7 +77,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "")
+			@Constraint(severity = "error",  location = p, message = "")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -89,7 +90,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "$$")
+			@Constraint(severity = "error",  location = p, message = "$$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -102,7 +103,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "Pattern $$")
+			@Constraint(severity = "error",  location = p, message = "Pattern $$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -115,7 +116,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message =  "$p.name$")
+			@Constraint(severity = "error",  location = p, message =  "$p.name$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -128,7 +129,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message =  "p1 $p$")
+			@Constraint(severity = "error",  location = p, message =  "p1 $p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -140,7 +141,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message =  "p1.name $p$")
+			@Constraint(severity = "error",  location = p, message =  "p1.name $p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -152,7 +153,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message =  "p1 $p1$")
+			@Constraint(severity = "error",  location = p, message =  "p1 $p1$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -164,7 +165,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message =  "p1 $p.notExists$")
+			@Constraint(severity = "error",  location = p, message =  "p1 $p.notExists$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -176,7 +177,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "p", message = "$p.notExists$")
+			@Constraint(severity = "error",  location = p, message = "$p.notExists$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -189,12 +190,12 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "error",  location = "notexists", message = "$p$")
+			@Constraint(severity = "error",  location = notexists, message = "$p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
 		) 
-		tester.validate(model).assertError(AnnotationExpressionValidator::UNKNOWN_VARIABLE_CODE)
+		tester.validate(model).assertError(IssueCodes::MISTYPED_ANNOTATION_PARAMETER)
 	}
 	
 	@Test
@@ -202,7 +203,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "warning",  location = "p", message = "$p$")
+			@Constraint(severity = "warning",  location = p, message = "$p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
@@ -215,7 +216,7 @@ class ConstraintAnnotationValidatorTest extends AbstractValidatorTest{
 		val model = parseHelper.parse(
 			'''import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
-			@Constraint(severity = "invalid",  location = "p", message = "$p$")
+			@Constraint(severity = "invalid",  location = p, message = "$p$")
 			pattern pattern2(p : Pattern) = {
 				Pattern(p);
 			}'''
