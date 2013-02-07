@@ -59,7 +59,7 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>				
 				<property>
-					<name>release</name>
+					<name>BUILD_TYPE</name>
 				</property>
 			</activation>
 			<build>
