@@ -57,10 +57,7 @@
 		<profile>
 			<id>release</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>				
-				<property>
-					<name>BUILD_TYPE</name>
-				</property>
+				<activeByDefault>false</activeByDefault>
 				<file>
 					<exists>mirrorsite</exists>
 				</file>
