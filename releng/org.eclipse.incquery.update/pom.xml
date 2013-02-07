@@ -57,10 +57,9 @@
 		<profile>
 			<id>release</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>false</activeByDefault>				
 				<property>
 					<name>release</name>
-					<value>true</value>
 				</property>
 			</activation>
 			<build>
@@ -80,7 +79,7 @@
 						<configuration>
 						<source>
 							<repository>
-								<url>http://viatra.inf.mit.bme.hu/update/incquery/</url>
+								<url>${site_url}</url>
 								<layout>p2</layout>
 							</repository>
 						</source>

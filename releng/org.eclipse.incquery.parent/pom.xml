@@ -249,8 +249,8 @@
 		<url>http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/</url>
 	</scm>
 	<ciManagement>
-		<url>https://build.inf.mit.bme.hu/jenkins</url>
-		<system>Jenkins</system>
+		<url>https://hudson.eclipse.org/hudson/</url>
+		<system>Hudson</system>
 	</ciManagement>
 	<issueManagement>
 		<url>${eclipse.bugzillaUrl}</url>
