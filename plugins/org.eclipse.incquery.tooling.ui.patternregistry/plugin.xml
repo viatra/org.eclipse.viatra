@@ -4,10 +4,12 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
             name="Register All EIQ">
       </command>
       <command
+            categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq"
             name="Register Single EIQ">
       </command>

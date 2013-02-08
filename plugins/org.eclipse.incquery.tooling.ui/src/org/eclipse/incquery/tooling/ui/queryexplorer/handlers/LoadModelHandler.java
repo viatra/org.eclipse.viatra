@@ -13,34 +13,29 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.EMFModelConnector;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Default 'Load model' handler, default ResourceSet loader.
- * 
- * @author Tamas Szabo
  */
 public class LoadModelHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        ResourceSet resourceSet = AdapterUtil.getResourceSetFromIEditorPart(editorPart);
-
-        if (resourceSet != null && resourceSet.getResources().size() > 0) {
-            MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resourceSet);
-            ModelConnector contentModel = new EMFModelConnector(key);
-            QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-            contentModel.loadModel();
+        IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
+        if (modelConnector instanceof EMFModelConnector) {
+            // FIXME do it rework this part
+            modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCESET);
+            QueryExplorer.getInstance().getModelConnectorMap()
+                    .put(((EMFModelConnector) modelConnector).getKey(), modelConnector);
         }
-
         return null;
     }
 

@@ -179,7 +179,7 @@
          <with
                variable="activeEditor">
             <instanceof
-                  value="org.eclipse.emf.edit.domain.IEditingDomainProvider">
+                  value="org.eclipse.ui.IEditorPart">
             </instanceof>
          </with>
       </definition>
@@ -595,10 +595,10 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="org.eclipse.emf.edit.domain.IEditingDomainProvider"
-            class="org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterFactoryForEcoreEditors">
+            adaptableType="org.eclipse.ui.IEditorPart"
+            class="org.eclipse.incquery.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
          <adapter
-               type="org.eclipse.emf.ecore.resource.ResourceSet">
+               type="org.eclipse.incquery.runtime.api.IModelConnector">
          </adapter>
       </factory>
    </extension>

@@ -15,9 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.EMFModelConnector;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -34,11 +32,9 @@ public class LoadEiqModelHandler extends LoadModelHandler {
         try {
             IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
             if (file != null) {
-                MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(HandlerUtil.getActiveEditor(event),
-                        dbUtil.parseEPM(file));
-                ModelConnector contentModel = new EMFModelConnector(key);
-                QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-                contentModel.loadModel();
+                EMFModelConnector contentModel = new EMFModelConnector(HandlerUtil.getActiveEditor(event));
+                contentModel.loadModel(dbUtil.parseEPM(file));
+                QueryExplorer.getInstance().getModelConnectorMap().put(contentModel.getKey(), contentModel);
             }
         } catch (Exception e) {
             throw new ExecutionException("Cannot load pattern model", e);

@@ -51,11 +51,11 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private final Map<String, ObservablePatternMatcher> matchers;
     private final List<ObservablePatternMatcher> sortedMatchers;
-    private final MatcherTreeViewerRootKey key;
+    private final ModelConnectorTreeViewerKey key;
 
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
-    public ObservablePatternMatcherRoot(MatcherTreeViewerRootKey key) {
+    public ObservablePatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         matchers = new HashMap<String, ObservablePatternMatcher>();
         sortedMatchers = new LinkedList<ObservablePatternMatcher>();
         this.key = key;
@@ -139,7 +139,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         return (engine == null) ? true : engine.isTainted();
     }
 
-    public MatcherTreeViewerRootKey getKey() {
+    public ModelConnectorTreeViewerKey getKey() {
         return key;
     }
 

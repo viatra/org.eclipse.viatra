@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.ui.IEditorPart;
 
@@ -31,21 +32,21 @@ public class AdapterUtil {
      *            which can be loaded into the system
      * @return a {@link ResourceSet} instance which is used by the given editorpart
      */
-    public static ResourceSet getResourceSetFromIEditorPart(IEditorPart editorPart) {
+    public static IModelConnector getModelConnectorFromIEditorPart(IEditorPart editorPart) {
         if (editorPart != null) {
-            Object adaptedObject = editorPart.getAdapter(ResourceSet.class);
+            Object adaptedObject = editorPart.getAdapter(IModelConnector.class);
             if (adaptedObject != null) {
-                return (ResourceSet) adaptedObject;
+                return (IModelConnector) adaptedObject;
             }
 
-            Platform.getAdapterManager().loadAdapter(editorPart, ResourceSet.class.getName());
-            adaptedObject = editorPart.getAdapter(ResourceSet.class);
+            Platform.getAdapterManager().loadAdapter(editorPart, IModelConnector.class.getName());
+            adaptedObject = editorPart.getAdapter(IModelConnector.class);
             if (adaptedObject != null) {
-                return (ResourceSet) adaptedObject;
+                return (IModelConnector) adaptedObject;
             } else {
                 logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "EditorPart " + editorPart.getTitle()
                         + " (type: " + editorPart.getClass().getSimpleName()
-                        + ") cannot provide a ResourceSet object for the QueryExplorer."));
+                        + ") cannot provide a ModelConnector object for the QueryExplorer."));
             }
         }
         return null;

@@ -8,51 +8,35 @@
  * Contributors:
  *   Tamas Szabo, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.EMFModelConnector;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Default Resource and EObject loader.
- * 
- * @author Tamas Szabo
- * 
  */
 public class LoadResourceHandler extends LoadModelHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
+        // FIXME do it, make an eobject loader separately
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-
-        if (editorPart instanceof ISelectionProvider) {
-            ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
-            if (selectionProvider.getSelection() instanceof TreeSelection) {
-                Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
-                Resource resource = null;
-                if (object instanceof Resource) {
-                    resource = (Resource) object;
-                } else if (object instanceof EObject) {
-                    resource = ((EObject) object).eResource();
-                }
-                MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, resource);
-                ModelConnector contentModel = new EMFModelConnector(key);
-                QueryExplorer.getInstance().getModelConnectorMap().put(key, contentModel);
-                contentModel.loadModel();
-            }
+        IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
+        if (modelConnector instanceof EMFModelConnector) {
+            // FIXME do it rework this part
+            modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCE);
+            QueryExplorer.getInstance().getModelConnectorMap()
+                    .put(((EMFModelConnector) modelConnector).getKey(), modelConnector);
         }
-
         return null;
     }
+
 }

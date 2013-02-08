@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.TableViewerUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
@@ -31,7 +32,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPrefe
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherContentProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherLabelProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRoot;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
@@ -40,7 +41,6 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.Patt
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalContentProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerHierarchicalLabelProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerInput;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
@@ -87,7 +87,7 @@ public class QueryExplorer extends ViewPart {
 
     public static final String ID = "org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer";
 
-    private final Map<MatcherTreeViewerRootKey, ModelConnector> modelConnectorMap = new HashMap<MatcherTreeViewerRootKey, ModelConnector>();
+    private final Map<ModelConnectorTreeViewerKey, IModelConnector> modelConnectorMap = new HashMap<ModelConnectorTreeViewerKey, IModelConnector>();
 
     private TableViewer detailsTableViewer;
     private CheckboxTreeViewer patternsTreeViewer;
@@ -132,7 +132,7 @@ public class QueryExplorer extends ViewPart {
         return matcherTreeViewerRoot;
     }
 
-    public Map<MatcherTreeViewerRootKey, ModelConnector> getModelConnectorMap() {
+    public Map<ModelConnectorTreeViewerKey, IModelConnector> getModelConnectorMap() {
         return modelConnectorMap;
     }
 

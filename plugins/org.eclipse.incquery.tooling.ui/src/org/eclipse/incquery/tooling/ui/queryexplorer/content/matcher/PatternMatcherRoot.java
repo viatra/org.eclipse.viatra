@@ -42,11 +42,11 @@ import org.eclipse.ui.IEditorPart;
 public class PatternMatcherRoot {
 
     private final Map<String, PatternMatcher> matchers;
-    private final MatcherTreeViewerRootKey key;
+    private final ModelConnectorTreeViewerKey key;
 
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
-    public PatternMatcherRoot(MatcherTreeViewerRootKey key) {
+    public PatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         matchers = new HashMap<String, PatternMatcher>();
         this.key = key;
     }

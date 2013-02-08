@@ -16,8 +16,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.ModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 
 public class ResetUIHandler extends AbstractHandler {
@@ -27,8 +27,8 @@ public class ResetUIHandler extends AbstractHandler {
         QueryExplorer explorer = QueryExplorer.getInstance();
 
         if (explorer != null) {
-            for (ModelConnector connector : explorer.getModelConnectorMap().values()) {
-                connector.unloadModel();
+            for (IModelConnector modelConnector : explorer.getModelConnectorMap().values()) {
+                modelConnector.unloadModel();
             }
             for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);

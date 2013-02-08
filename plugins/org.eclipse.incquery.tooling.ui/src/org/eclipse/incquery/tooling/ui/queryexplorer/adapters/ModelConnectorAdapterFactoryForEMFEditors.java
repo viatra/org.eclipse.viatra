@@ -11,28 +11,26 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.adapters;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.ui.IEditorPart;
 
 /**
- * This AdapterFactory is responsible for processing the default EMF model inputs, and return the underlying ResourceSet
- * instances from it.
+ * FIXME do it
  */
 @SuppressWarnings("rawtypes")
-public class AdapterFactoryForEcoreEditors implements IAdapterFactory {
+public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (adapterType == ResourceSet.class && adaptableObject instanceof IEditingDomainProvider) {
-            IEditingDomainProvider editingDomainProvider = (IEditingDomainProvider) adaptableObject;
-            return editingDomainProvider.getEditingDomain().getResourceSet();
+        if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
+            return new EMFModelConnector((IEditorPart) adaptableObject);
         }
         return null;
     }
 
     @Override
     public Class[] getAdapterList() {
-        return new Class[] { ResourceSet.class };
+        return new Class[] { IModelConnector.class };
     }
 
 }

@@ -24,13 +24,13 @@ import org.eclipse.ui.IEditorPart;
  * @author Tamas Szabo
  * 
  */
-public class MatcherTreeViewerRootKey {
+public class ModelConnectorTreeViewerKey {
 
     private IEditorPart editorPart;
     private Notifier notifier;
     private IncQueryEngine engine;
 
-    public MatcherTreeViewerRootKey(IEditorPart editor, Notifier notifier) {
+    public ModelConnectorTreeViewerKey(IEditorPart editor, Notifier notifier) {
         super();
         this.editorPart = editor;
         this.notifier = notifier;
@@ -59,7 +59,7 @@ public class MatcherTreeViewerRootKey {
         } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         } else {
-            MatcherTreeViewerRootKey key = (MatcherTreeViewerRootKey) obj;
+            ModelConnectorTreeViewerKey key = (ModelConnectorTreeViewerKey) obj;
             if (key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier)) {
                 return true;
             } else {

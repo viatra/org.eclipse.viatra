@@ -51,6 +51,5 @@ Export-Package: org.eclipse.incquery.tooling.ui.dialog,
  org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher,
  org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer,
  org.eclipse.incquery.tooling.ui.queryexplorer.handlers,
- org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util,
  org.eclipse.incquery.tooling.ui.queryexplorer.util
 

@@ -8,57 +8,63 @@
  * Contributors:
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.incquery.runtime.graphiti.util;
+package org.eclipse.incquery.runtime.graphiti;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.util.EMFModelConnector;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
 
+/**
+ * FIXME DO IT
+ */
 public class GraphitiModelConnector extends EMFModelConnector {
 
-    private IWorkbenchPage workbenchPage;
-
-    public GraphitiModelConnector(MatcherTreeViewerRootKey key) {
-        super(key);
-        this.workbenchPage = key.getEditorPart().getSite().getPage();
+    public GraphitiModelConnector(IEditorPart editorPart) {
+        super(editorPart);
     }
 
     @Override
-    public void loadModel() {
-        workbenchPage.addPartListener(GraphitiEditorPartListener.getInstance());
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+    public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum) {
+        Notifier result = null;
+        if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
+            if (editorPart instanceof DiagramEditor) {
+                DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+                return diagramEditor.getEditingDomain().getResourceSet();
+            }
+        } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
+            if (editorPart instanceof DiagramEditor) {
+                DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+                PictogramElement[] selectedElements = diagramEditor.getSelectedPictogramElements();
+                if (selectedElements.length > 0) {
+                    PictogramElement element = selectedElements[0];
+                    return Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
+                }
+            }
+        } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
+            // XXX Not implemented now. The selected element is a would be a graphical, not a model object.
         }
-    }
-
-    @Override
-    public void unloadModel() {
-        workbenchPage.removePartListener(GraphitiEditorPartListener.getInstance());
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
-        }
+        return result;
     }
 
     @Override
     public void showLocation(Object[] locationObjects) {
         // reflective set selection is not needed
         IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-        navigateToElements(key.getEditorPart(), preparedSelection);
-        workbenchPage.bringToTop(key.getEditorPart());
+        navigateToElements(getKey().getEditorPart(), preparedSelection);
+        workbenchPage.bringToTop(getKey().getEditorPart());
+        // reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
 
     @Override

@@ -24,18 +24,18 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.ui.IEditorPart;
 
 public class MatcherTreeViewerRoot {
-    private Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> roots;
+    private Map<ModelConnectorTreeViewerKey, ObservablePatternMatcherRoot> roots;
 
     public MatcherTreeViewerRoot() {
-        roots = new HashMap<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot>();
+        roots = new HashMap<ModelConnectorTreeViewerKey, ObservablePatternMatcherRoot>();
     }
 
     public void addPatternMatcherRoot(IEditorPart editorPart, Notifier notifier) {
-        MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, notifier);
+        ModelConnectorTreeViewerKey key = new ModelConnectorTreeViewerKey(editorPart, notifier);
         addPatternMatcherRoot(key);
     }
 
-    public void addPatternMatcherRoot(MatcherTreeViewerRootKey key) {
+    public void addPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         if (!roots.containsKey(key)) {
             ObservablePatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);
             this.roots.put(key, root);
@@ -46,11 +46,11 @@ public class MatcherTreeViewerRoot {
     }
 
     public void removePatternMatcherRoot(IEditorPart editorPart, ResourceSet res) {
-        MatcherTreeViewerRootKey key = new MatcherTreeViewerRootKey(editorPart, res);
+        ModelConnectorTreeViewerKey key = new ModelConnectorTreeViewerKey(editorPart, res);
         removePatternMatcherRoot(key);
     }
 
-    public void removePatternMatcherRoot(MatcherTreeViewerRootKey key) {
+    public void removePatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         if (roots.containsKey(key)) {
             // Notifier notifier = key.getNotifier();
             // disposing IncQueryEngine instance associated to the given Notifier
@@ -68,7 +68,7 @@ public class MatcherTreeViewerRoot {
         }
     }
 
-    public Map<MatcherTreeViewerRootKey, ObservablePatternMatcherRoot> getRootsMap() {
+    public Map<ModelConnectorTreeViewerKey, ObservablePatternMatcherRoot> getRootsMap() {
         return roots;
     }
 

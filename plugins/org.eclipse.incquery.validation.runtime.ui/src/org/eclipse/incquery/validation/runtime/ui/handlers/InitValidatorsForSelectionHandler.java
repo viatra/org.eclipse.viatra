@@ -14,9 +14,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
 import org.eclipse.incquery.validation.runtime.ui.ValidationInitUtil;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -25,12 +27,11 @@ public class InitValidatorsForSelectionHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
-        Object selectedElement = selection.getFirstElement();
-
-        if (selectedElement instanceof Notifier) {
+        IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
+        Notifier notifier = modelConnector.getNotifier(IModelConnectorTypeEnum.EOBJECT);
+        if (notifier != null) {
             try {
-                ValidationInitUtil.initializeAdapters(editorPart, (Notifier) selectedElement);
+                ValidationInitUtil.initializeAdapters(editorPart, notifier);
             } catch (IncQueryException ex) {
                 throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
             }

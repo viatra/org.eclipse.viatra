@@ -56,7 +56,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
@@ -440,7 +440,7 @@ public class DatabindingUtil {
      *            the key element (editorpart + notifier)
      * @return the PatternMatcherRoot element
      */
-    public static ObservablePatternMatcherRoot createPatternMatcherRoot(MatcherTreeViewerRootKey key) {
+    public static ObservablePatternMatcherRoot createPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
         List<Pattern> activePatterns = PatternRegistry.getInstance().getActivePatterns();
         // runtime & generated matchers

@@ -17,7 +17,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRootKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
@@ -49,7 +49,7 @@ public class ShowLocationHandler extends AbstractHandler {
 
             if (obj instanceof ObservablePatternMatch) {
                 ObservablePatternMatch pm = (ObservablePatternMatch) obj;
-                MatcherTreeViewerRootKey key = pm.getParent().getParent().getKey();
+                ModelConnectorTreeViewerKey key = pm.getParent().getParent().getKey();
                 QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
             } else if (obj instanceof ObservablePatternMatcher) {
                 ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;

@@ -9,7 +9,7 @@
  *   Zoltan Ujhelyi, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.gmf.handlers;
+package org.eclipse.incquery.runtime.gmf;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
