@@ -200,7 +200,7 @@
             commandId="org.eclipse.incquery.tooling.ui.runtimematcherreg">
       </handler>
       <handler
-            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadResourceSetHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
             <reference
