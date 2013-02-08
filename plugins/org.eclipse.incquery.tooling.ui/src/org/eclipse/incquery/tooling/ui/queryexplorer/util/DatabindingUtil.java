@@ -8,7 +8,6 @@
  * Contributors:
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
 import java.util.ArrayList;
@@ -65,16 +64,10 @@ import com.google.inject.Singleton;
 
 /**
  * The util contains several useful methods for the databinding operations.
- * 
- * @author Tamas Szabo
- * 
  */
 @Singleton
 public class DatabindingUtil {
 
-    /**
-     * 
-     */
     private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
     private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
     private static Map<URI, IConfigurationElement> uriConfElementMap = null;
@@ -85,6 +78,7 @@ public class DatabindingUtil {
 
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
+    
     @Inject
     private IResourceSetProvider resSetProvider;
 

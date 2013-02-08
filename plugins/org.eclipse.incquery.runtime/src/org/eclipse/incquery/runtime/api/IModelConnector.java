@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Tamas Szabo, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2012, Andras Okros, Tamas Szabo, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,18 +25,16 @@ public interface IModelConnector {
      */
     public abstract void loadModel(IModelConnectorTypeEnum modelConnectorTypeEnum);
 
-    @Deprecated
-    // FIXME DO IT: Check if we need this in the long run.
-    public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum);
-
-    @Deprecated
-    // FIXME DO IT: Check if we need this in the long run.
-    public abstract void loadModel(Notifier notifier);
-
     /**
      * Unloads the instance model from the {@link QueryExplorer}
      */
     public abstract void unloadModel();
+
+    /**
+     * @param modelConnectorTypeEnum
+     * @return
+     */
+    public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum);
 
     /**
      * Shows the location of the given objects inside the specific editor

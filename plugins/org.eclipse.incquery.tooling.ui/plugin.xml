@@ -238,7 +238,7 @@
             commandId="org.eclipse.incquery.tooling.ui.pattern.hierarchical">
       </handler>
       <handler
-            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadResourceSetHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadresourceset">
       </handler>
       <handler
@@ -246,7 +246,7 @@
             commandId="org.eclipse.incquery.tooling.ui.loadresource">
       </handler>
       <handler
-            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqModelHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadResourceHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadeiqmodel">
       </handler>
       <handler
@@ -596,7 +596,7 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.ui.IEditorPart"
-            class="org.eclipse.incquery.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
          <adapter
                type="org.eclipse.incquery.runtime.api.IModelConnector">
          </adapter>

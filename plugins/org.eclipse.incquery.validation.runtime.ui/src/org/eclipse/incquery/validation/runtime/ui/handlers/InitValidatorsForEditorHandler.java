@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.validation.runtime.ui.handlers;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -21,10 +22,10 @@ import org.eclipse.incquery.validation.runtime.ui.ValidationInitUtil;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-public class InitValidatorsForEditorHandler extends InitValidatorsForSelectionHandler {
+public class InitValidatorsForEditorHandler extends AbstractHandler {
 
     @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {        
+    public Object execute(ExecutionEvent event) throws ExecutionException {
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
         IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
         ResourceSet resourceSet = (ResourceSet) modelConnector.getNotifier(IModelConnectorTypeEnum.RESOURCESET);

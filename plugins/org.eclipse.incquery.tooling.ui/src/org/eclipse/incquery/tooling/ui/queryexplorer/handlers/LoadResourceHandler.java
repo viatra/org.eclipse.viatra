@@ -23,7 +23,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Default Resource and EObject loader.
  */
-public class LoadResourceHandler extends LoadModelHandler {
+public class LoadResourceHandler extends LoadResourceSetHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

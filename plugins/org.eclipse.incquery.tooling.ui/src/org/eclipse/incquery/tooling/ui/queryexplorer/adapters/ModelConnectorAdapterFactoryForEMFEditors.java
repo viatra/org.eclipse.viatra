@@ -13,6 +13,9 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.adapters;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+
+import com.google.inject.Inject;
 
 /**
  * FIXME do it
@@ -20,10 +23,18 @@ import org.eclipse.ui.IEditorPart;
 @SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {
 
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
+
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
-            return new EMFModelConnector((IEditorPart) adaptableObject);
+            IEditorPart editorPart = (IEditorPart) adaptableObject;
+            if ("org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage".equals(editorPart.getSite().getId())) {
+                return new EIQEditorModelConnector(editorPart, resourceSetProvider);
+            } else {
+                return new EMFModelConnector(editorPart);
+            }
         }
         return null;
     }

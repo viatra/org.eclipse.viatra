@@ -22,9 +22,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Default 'Load model' handler, default ResourceSet loader.
+ * Default ResourceSet loader.
  */
-public class LoadModelHandler extends AbstractHandler {
+public class LoadResourceSetHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

@@ -58,11 +58,6 @@ public class EMFModelConnector implements IModelConnector {
     @Override
     public void loadModel(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier notifier = getNotifier(modelConnectorTypeEnum);
-        loadModel(notifier);
-    }
-
-    @Override
-    public void loadModel(Notifier notifier) {
         if (notifier != null) {
             key = new ModelConnectorTreeViewerKey(editorPart, notifier);
             workbenchPage = key.getEditorPart().getSite().getPage();
