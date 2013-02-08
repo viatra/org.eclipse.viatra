@@ -49,7 +49,11 @@ public class GraphitiModelConnector extends EMFModelConnector {
                 PictogramElement[] selectedElements = diagramEditor.getSelectedPictogramElements();
                 if (selectedElements.length > 0) {
                     PictogramElement element = selectedElements[0];
-                    return Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(element).eResource();
+                    EObject businessObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
+                            element);
+                    if (businessObject != null) {
+                        return businessObject.eResource();
+                    }
                 }
             }
         } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
