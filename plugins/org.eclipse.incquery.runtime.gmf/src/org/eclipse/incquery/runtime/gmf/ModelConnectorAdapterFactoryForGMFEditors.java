@@ -15,7 +15,7 @@ import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * FIXME do it
+ * Adapter factory for the GMF connector.
  */
 @SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForGMFEditors implements IAdapterFactory {

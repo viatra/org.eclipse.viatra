@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Tamas Szabo - initial API and implementation
+ *   Istvan Rath - bugfixes
  *******************************************************************************/
 package org.eclipse.incquery.runtime.gmf;
 
@@ -20,6 +21,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
+import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,7 +29,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * FIXME DO IT
+ * Model connector for GMF editors.
  */
 public class GMFModelConnector extends EMFModelConnector {
 
@@ -49,29 +51,47 @@ public class GMFModelConnector extends EMFModelConnector {
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
             if (editorPart instanceof DiagramDocumentEditor) {
                 DiagramDocumentEditor diagramDocumentEditor = (DiagramDocumentEditor) editorPart;
-                return ((EObject) diagramDocumentEditor.getDiagramEditPart().getModel()).eResource();
+                Diagram d = diagramDocumentEditor.getDiagram();
+                if (d!=null && d.getElement()!=null) {
+                    return d.getElement().eResource();
+                }
+                else
+                    return ((EObject) diagramDocumentEditor.getDiagramEditPart().getModel()).eResource();
             } else if (editorPart instanceof IDiagramWorkbenchPart) {
                 IDiagramWorkbenchPart diagramWorkbenchPart = (IDiagramWorkbenchPart) editorPart;
-                return ((EObject) diagramWorkbenchPart.getDiagramEditPart().getModel()).eResource();
+                Diagram d = diagramWorkbenchPart.getDiagram();
+                if (d!=null && d.getElement()!=null) {
+                    return d.getElement().eResource();
+                }
+                else
+                    return ((EObject) diagramWorkbenchPart.getDiagramEditPart().getModel()).eResource();
             }
         } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
-            // XXX Not implemented now. The selected element is a would be a graphical, not a model object.
+            // XXX Not implemented for now. The selected element is a graphical, not a model object.
         }
         return result;
     }
 
     @Override
     protected TreePath createTreePath(IEditorPart editor, EObject obj) {
-        if (editor instanceof DiagramDocumentEditor) { // TODO: also handle IDiagramWorkbenchPart
+        if (editor instanceof DiagramDocumentEditor) {
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editor;
-            EditPart epBegin = providerEditor.getDiagramEditPart().getPrimaryChildEditPart();
-            if (epBegin instanceof GraphicalEditPart) {
-                List<Object> nodes = new ArrayList<Object>();
-                epBegin = ((GraphicalEditPart) epBegin).findEditPart(epBegin.getRoot(), obj);
-                if (epBegin != null) {
-                    nodes.add(epBegin);
-                    return new TreePath(nodes.toArray());
-                }
+            return createTreePath(providerEditor.getDiagramEditPart().getPrimaryChildEditPart(), obj);
+        }
+        else if (editor instanceof IDiagramWorkbenchPart) {
+            IDiagramWorkbenchPart dwp = (IDiagramWorkbenchPart) editor;
+            return createTreePath(dwp.getDiagramEditPart().getPrimaryChildEditPart(), obj);
+        }
+        return null;
+    }
+    
+    private TreePath createTreePath(EditPart epBegin, EObject obj) {
+        if (epBegin instanceof GraphicalEditPart) {
+            List<Object> nodes = new ArrayList<Object>();
+            epBegin = ((GraphicalEditPart) epBegin).findEditPart(epBegin.getRoot(), obj);
+            if (epBegin != null) {
+                nodes.add(epBegin);
+                return new TreePath(nodes.toArray());
             }
         }
         return null;
@@ -80,15 +100,22 @@ public class GMFModelConnector extends EMFModelConnector {
     @Override
     protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
         super.navigateToElements(editorPart, selection);
+        IDiagramGraphicalViewer viewer = null;
         if (editorPart instanceof DiagramDocumentEditor) {
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editorPart;
-            IDiagramGraphicalViewer viewer = providerEditor.getDiagramGraphicalViewer();
+            viewer = providerEditor.getDiagramGraphicalViewer();
+        }
+        else if (editorPart instanceof IDiagramWorkbenchPart) {
+            IDiagramWorkbenchPart dwp = (IDiagramWorkbenchPart) editorPart;
+            viewer = dwp.getDiagramGraphicalViewer();
+        }
+        if (viewer!=null) {
             if (selection.getFirstElement() instanceof GraphicalEditPart) {
                 GraphicalEditPart part = (GraphicalEditPart) selection.getFirstElement();
                 viewer.reveal(part);
             }
         }
-        // FIXME do it: also support IDiagramWorkbenchPart
     }
+    
     
 }

@@ -15,7 +15,7 @@ import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * FIXME do it
+ * Adapter factory for the Graphiti model connector.
  */
 @SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForGraphiti implements IAdapterFactory {

@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * FIXME DO IT
+ * Model connector for Graphiti model editors.
  */
 public class GraphitiModelConnector extends EMFModelConnector {
 
