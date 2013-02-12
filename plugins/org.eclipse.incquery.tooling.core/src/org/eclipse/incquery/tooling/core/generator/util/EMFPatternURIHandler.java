@@ -11,12 +11,13 @@
 
 package org.eclipse.incquery.tooling.core.generator.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.URIHandlerImpl;
 
@@ -25,31 +26,47 @@ import com.google.common.collect.Maps;
 public class EMFPatternURIHandler extends URIHandlerImpl {
 
     private final Map<URI, EPackage> uriToEPackageMap = Maps.newHashMap();
-    private final Map<EPackage, String> packageFragmentMap = Maps.newHashMap();
-    private final Map<EPackage, String> packageUriMap = Maps.newHashMap();
+    private final Map<EPackage, URI> packageUriMap = Maps.newHashMap();
 
     public EMFPatternURIHandler(Collection<EPackage> packages) {
         for (EPackage e : packages) {
-            Resource resource = e.eResource();
-            if (resource != null) {
-                uriToEPackageMap.put(EcoreUtil.getURI(e), e);
-                packageFragmentMap.put(e, resource.getURIFragment(e));
-                packageUriMap.put(e, calculateModifiedUri(e, ""));
-            }
+            URI uri = EcoreUtil.getURI(e);
+            uriToEPackageMap.put(uri, e);
+            URI modifiedUri = calculateModifiedUri(e);
+            packageUriMap.put(e, modifiedUri);
         }
     }
 
-    private String calculateModifiedUri(EPackage e, String fragment) {
-        String uri = e.getNsURI();
-        if (e.getESuperPackage() != null && uri.startsWith(e.getESuperPackage().getNsURI())) {
-            String newFragment = uri.substring(e.getESuperPackage().getNsURI().length()) + fragment;
-            return calculateModifiedUri(e.getESuperPackage(), newFragment);
+    private EPackage nonEmptySuperPackage(EPackage p) {
+        EPackage sup = p.getESuperPackage();
+        // XXX is the isEmpty needed?
+        if (sup != null && sup.getEClassifiers().isEmpty()) {
+            return sup;
+        } else {
+            return null;
         }
-        return e.getNsURI() + "#/" + fragment;
-        // if (fragment != "" && fragment != null) {
-        // return fragment;
-        // }
-        // return res.getURIFragment(e);
+    }
+
+    private URI calculateModifiedUri(EPackage e) {
+        String uriString = e.getNsURI();
+        List<String> fragments = new ArrayList<String>();
+        EPackage p = e;
+        while (nonEmptySuperPackage(p) != null) {
+            fragments.add(p.getNsPrefix());
+            p = nonEmptySuperPackage(p);
+            uriString = p.getNsURI();
+
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = fragments.size() - 1; i >= 0; i--) {
+            sb.append("/");
+            sb.append(fragments.get(i));
+        }
+        URI uri = URI.createURI(uriString);
+        if (sb.length() > 0) {
+            return uri.appendFragment("/" + sb.toString());
+        }
+        return uri;
     }
 
     @Override
@@ -58,17 +75,24 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
             String fragment = uri.fragment();
             
             String testFragment = fragment;
+            String remainingFragment = "";
             while (!testFragment.isEmpty()) {
-                int index = testFragment.lastIndexOf("/");
-                testFragment = testFragment.substring(0, index);
-                URI fragmentRemoved = uri.appendFragment(testFragment);
+                URI fragmentRemoved = testFragment.isEmpty() ? uri : uri.appendFragment(testFragment);
                 EPackage p = uriToEPackageMap.get(fragmentRemoved);
                 if (p != null) {
-                    URI newURI = URI.createURI(packageUriMap.get(p));
-                    String newFragment = newURI.fragment() + fragment.substring(index);
-                    newURI = newURI.appendFragment(newFragment);
-                    return newURI;
+                    URI newUri = packageUriMap.get(p);
+                    String newFragment = newUri.fragment() == null ? remainingFragment : newUri.fragment()
+                            + remainingFragment;
+                    if (newFragment == null) {
+                        newUri = newUri.trimFragment();
+                    } else {
+                        newUri = newUri.appendFragment(newFragment);
+                    }
+                    return newUri;
                 }
+                int index = testFragment.lastIndexOf("/");
+                testFragment = testFragment.substring(0, index);
+                remainingFragment = fragment.substring(index);
             }
         }
         return super.deresolve(uri);
