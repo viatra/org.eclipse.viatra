@@ -2,19 +2,23 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.incquery.patternlanguage" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.incquery.patternlanguage" id="purewhitelist" name="EMF-IncQuery @Pure Whitelist extension"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This expression point is used by the validator to check for whitelisted packages and classes. It used in conjunction with the @Pure annotation in the xbase check expressions. Every function call in the expression needs to have the @Pure annotation, or it should be registered via this expression point.
+         This expression point is used by the expression validator to check for packages and classes that are whitelisted (indicating that they provide pure functions). It is used in conjunction with the @Pure annotation in the validation of xbase expressions. Every method call in the expression needs to have the @Pure annotation, or alternatively it should be registered via this expression point.
+
+A method is considered pure functional (and therefore eligible for @Pure or this whitelist) if and only if (a) it is read-only/side effect free, (b) it is deterministic. Determinism of method &lt;tt&gt;m(x,y,z)&lt;/tt&gt; here means that  &lt;tt&gt;com.google.common.base.Objects.equal(m(x1,y1,z1),m(x2,y2,z2))&lt;/tt&gt; is always guaranteed to hold whenever &lt;tt&gt;Objects.equal(x1,x2)&lt;/tt&gt;, &lt;tt&gt;Objects.equal(y1,y2)&lt;/tt&gt; and &lt;tt&gt;Objects.equal(z1,z2)&lt;/tt&gt;. Here &quot;this&quot; is considered the first parameter in case of non-static methods. The property must hold even if the two sets of actual parameters (x1,y1,z1) and (x2,y2,z2) do not exist at the same time. Furthermore, the method must be .
+
+See also &lt;a href=&quot;http://en.wikipedia.org/wiki/Pure_function&quot;&gt;http://en.wikipedia.org/wiki/Pure_function&lt;/a&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
@@ -39,9 +43,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -61,45 +65,45 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.incquery.patternlanguage.validation.whitelist.IXBasePureWhitelist"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.7.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiinfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter information about supplied implementation of this extension point.]
       </documentation>
