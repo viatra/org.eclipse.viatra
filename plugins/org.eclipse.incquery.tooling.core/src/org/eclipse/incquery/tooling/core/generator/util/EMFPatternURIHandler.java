@@ -39,12 +39,11 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
 
     private EPackage nonEmptySuperPackage(EPackage p) {
         EPackage sup = p.getESuperPackage();
-        // XXX is the isEmpty needed?
-        if (sup != null && !sup.getEClassifiers().isEmpty()) {
-            return sup;
-        } else {
-            return null;
+        while (sup != null && sup.getEClassifiers().isEmpty()) {
+            // Skipping empty superpackages
+            sup = sup.getESuperPackage();
         }
+        return sup;
     }
 
     private URI calculateModifiedUri(EPackage e) {
