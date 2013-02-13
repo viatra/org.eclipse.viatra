@@ -122,7 +122,7 @@ public class Stub<HandleType> {
      * @return the new constraints enforced at this handle, that aren't yet enforced at parents
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
-        Set<PConstraint> result = CollectionsFactory.getSet();//new HashSet<PConstraint>(constraints);
+        Set<PConstraint> result = CollectionsFactory.getSet(constraints);//new HashSet<PConstraint>(constraints);
         if (primaryParentStub != null)
             result.removeAll(primaryParentStub.getAllEnforcedConstraints());
         if (secondaryParentStub != null)

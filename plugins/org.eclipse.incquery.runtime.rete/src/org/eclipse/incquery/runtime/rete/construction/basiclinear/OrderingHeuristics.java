@@ -75,7 +75,7 @@ public class OrderingHeuristics<PatternDescription, StubHandle, Collector> imple
     }
 
     Set<PVariable> boundVariables(PConstraint o) {
-        Set<PVariable> boundVariables = CollectionsFactory.getSet();//new HashSet<PVariable>(o.getAffectedVariables());
+        Set<PVariable> boundVariables = CollectionsFactory.getSet(o.getAffectedVariables());//new HashSet<PVariable>(o.getAffectedVariables());
         boundVariables.retainAll(stub.getVariablesIndex().keySet());
         return boundVariables;
     }

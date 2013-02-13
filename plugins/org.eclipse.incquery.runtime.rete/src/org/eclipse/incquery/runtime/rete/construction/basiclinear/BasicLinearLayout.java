@@ -68,7 +68,7 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
             // stub = BuildHelper.naturalJoin(buildable, stub, sideStub);
             // }
 
-            Set<PConstraint> pQueue = CollectionsFactory.getSet();//new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
+            Set<PConstraint> pQueue = CollectionsFactory.getSet(pSystem.getConstraints());//new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
                                                                                           // OrderingHeuristics());
             // pQueue.addAll(pSystem.getConstraintsOfType(EnumerablePConstraint.class));
             // pQueue.addAll(pSystem.getConstraintsOfType(DeferredPConstraint.class));
