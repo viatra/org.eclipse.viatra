@@ -16,7 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
@@ -65,49 +64,47 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         }
     }
 
-    /**
-     * @author Abel Hegedus
-     *
-     */
-    private final class DefaultMatchAppearProcessor implements IMatchProcessor<Match> {
-        /* (non-Javadoc)
-         * @see org.eclipse.incquery.runtime.api.IMatchProcessor#process(org.eclipse.incquery.runtime.api.IPatternMatch)
-         */
-        @Override
-        public void process(final Match match) {
+    private abstract class DefaultMatchEventProcessor {
+        
+        protected void processMatchEvent(Match match) {
             checkNotNull(match,"Cannot process null match!");
             Map<ActivationState, Activation<Match>> column = activations.column(match);
             if(column.size() > 0) {
-                for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
-                    activationStateTransition(entry.getValue(), ActivationLifeCycleEvent.MATCH_APPEARS);
-                }
+                checkArgument(column.size() == 1, String.format("%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple"));
+                Activation<Match> act = column.values().iterator().next();
+                activationExists(act);
             } else {
-                Activation<Match> activation = new Activation<Match>(RuleInstance.this, match);
-                if(specification.getLifeCycle().containsTo(ActivationState.UPDATED)) {
-                    attributeMonitor.registerFor(match);
-                }
-                activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_APPEARS);
+                activationMissing(match);
             }
         }
+        
+        protected abstract void activationExists(Activation<Match> activation);
+        protected abstract void activationMissing(Match match);
     }
-
+    
     /**
      * @author Abel Hegedus
      *
      */
-    private final class DefaultMatchDisappearProcessor implements IMatchProcessor<Match> {
-        /* (non-Javadoc)
-         * @see org.eclipse.incquery.runtime.api.IMatchProcessor#process(org.eclipse.incquery.runtime.api.IPatternMatch)
-         */
+    private final class DefaultMatchAppearProcessor extends DefaultMatchEventProcessor implements IMatchProcessor<Match> {
+
         @Override
-        public void process(final Match match) {
-            checkNotNull(match,"Cannot process null match!");
-            Map<ActivationState, Activation<Match>> column = activations.column(match);
-            if(column.size() > 0) {
-                for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
-                    activationStateTransition(entry.getValue(), ActivationLifeCycleEvent.MATCH_DISAPPEARS);
-                }
+        protected void activationExists(Activation<Match> activation) {
+            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_APPEARS);
+        }
+
+        @Override
+        protected void activationMissing(Match match) {
+            Activation<Match> activation = new Activation<Match>(RuleInstance.this, match);
+            if(specification.getLifeCycle().containsTo(ActivationState.UPDATED)) {
+                attributeMonitor.registerFor(match);
             }
+            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_APPEARS);
+        }
+
+        @Override
+        public void process(Match match) {
+            processMatchEvent(match);
         }
     }
 
@@ -115,15 +112,42 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @author Abel Hegedus
      *
      */
-    private final class DefaultAttributeMonitorListener implements IAttributeMonitorListener<Match> {
+    private final class DefaultMatchDisappearProcessor extends DefaultMatchEventProcessor implements IMatchProcessor<Match> {
+
+        @Override
+        protected void activationExists(Activation<Match> activation) {
+            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_DISAPPEARS);
+        }
+
+        @Override
+        protected void activationMissing(Match match) {
+            matcher.getEngine().getLogger().error(String.format("Match %s disappeared without existing activation in rule instance %s!",match,this));
+        }
+
+        @Override
+        public void process(Match match) {
+            processMatchEvent(match);
+        }
+    }
+
+    /**
+     * @author Abel Hegedus
+     *
+     */
+    private final class DefaultAttributeMonitorListener extends DefaultMatchEventProcessor implements IAttributeMonitorListener<Match> {
         @Override
         public void notifyUpdate(final Match match) {
-            checkNotNull(match,"Cannot process null match!");
-            Map<ActivationState, Activation<Match>> column = activations.column(match);
-            checkArgument(column.size() == 1, "Multiple activations in the same state for the same match");
-            for (Entry<ActivationState, Activation<Match>> entry : column.entrySet()) {
-                activationStateTransition(entry.getValue(), ActivationLifeCycleEvent.MATCH_UPDATES);
-            }
+            processMatchEvent(match);
+        }
+
+        @Override
+        protected void activationExists(Activation<Match> activation) {
+            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_UPDATES);
+        }
+
+        @Override
+        protected void activationMissing(Match match) {
+            matcher.getEngine().getLogger().error(String.format("Match %s updated without existing activation in rule instance %s!",match,this));
         }
 
     }
