@@ -11,6 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
@@ -26,6 +29,7 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 public class TypeBinary<PatternDescription, StubHandle> extends
         KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
     private final IPatternMatcherContext<PatternDescription> context;
+    private PVariable source; private PVariable target;
 
     /**
      * @param buildable
@@ -35,6 +39,8 @@ public class TypeBinary<PatternDescription, StubHandle> extends
     public TypeBinary(PSystem<PatternDescription, StubHandle, ?> pSystem,
             IPatternMatcherContext<PatternDescription> context, PVariable source, PVariable target, Object typeKey) {
         super(pSystem, new FlatTuple(source, target), typeKey);
+        this.source = source;
+        this.target = target;
         this.context = context;
     }
 
@@ -56,5 +62,16 @@ public class TypeBinary<PatternDescription, StubHandle> extends
     protected String keyToString() {
         return pSystem.getContext().printType(supplierKey);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	// TODO insert keys inferred by multiplicity    	
+		return result;
+    }
+    
 
 }

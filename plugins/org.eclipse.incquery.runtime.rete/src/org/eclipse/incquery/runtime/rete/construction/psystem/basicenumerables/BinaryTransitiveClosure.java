@@ -11,10 +11,14 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
+import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
@@ -46,4 +50,15 @@ public class BinaryTransitiveClosure<PatternDescription, StubHandle> extends
         return pSystem.getContext().printType(supplierKey) + "+";
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	// TODO insert keys inferred by multiplicity    	
+		return result;
+    }
+    
+    
 }

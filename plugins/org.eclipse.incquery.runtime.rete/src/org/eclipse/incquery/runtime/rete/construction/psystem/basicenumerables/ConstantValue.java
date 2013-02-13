@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
@@ -43,5 +47,17 @@ public class ConstantValue<PatternDescription, StubHandle> extends
     protected String keyToString() {
         return supplierKey.toString();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	final Set<PVariable> emptySet = Collections.emptySet(); // a constant value is functionally determined by everything
+		result.add(emptySet);
+		return result;
+    }
+
 
 }

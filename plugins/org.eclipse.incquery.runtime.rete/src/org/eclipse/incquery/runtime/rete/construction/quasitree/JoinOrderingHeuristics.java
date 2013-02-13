@@ -34,6 +34,7 @@ public class JoinOrderingHeuristics<PatternDescription, StubHandle, Collector> i
             protected void doCompare() {
                 swallowBoolean(true && consider(preferTrue(a.isTrivial(), b.isTrivial()))
                         && consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
+                        && consider(preferTrue(a.isHeath(), b.isHeath()))
                         && consider(preferFalse(a.isDescartes(), b.isDescartes()))
 
                         // TODO main heuristic decisions

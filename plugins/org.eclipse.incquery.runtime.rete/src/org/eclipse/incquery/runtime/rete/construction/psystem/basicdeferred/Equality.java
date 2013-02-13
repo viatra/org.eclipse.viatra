@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -81,6 +82,17 @@ public class Equality<PatternDescription, StubHandle> extends DeferredPConstrain
     @Override
     public Set<PVariable> getDeducedVariables() {
         return Collections.emptySet();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	result.add(Collections.singleton(who));
+    	result.add(Collections.singleton(withWhom));
+		return result;
     }
 
     @Override

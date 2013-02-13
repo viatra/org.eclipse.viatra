@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
@@ -21,12 +25,16 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
  */
 public class Containment<PatternDescription, StubHandle> extends CoreModelRelationship<PatternDescription, StubHandle> {
 
+	PVariable parent; 
+	PVariable child;
     /**
      * @param variablesTuple
      */
     public Containment(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
+        this.parent = parent;
+        this.child = child;
     }
 
     /**
@@ -43,6 +51,16 @@ public class Containment<PatternDescription, StubHandle> extends CoreModelRelati
     @Override
     protected Stub<StubHandle> doCreateTransitiveStub() {
         return buildable.containmentTransitiveStub(variablesTuple);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	result.add(Collections.singleton(child));
+		return result;
     }
 
 }

@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.rete.construction.quasitree;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 
 /**
@@ -26,6 +27,7 @@ class JoinCandidate<StubHandle> {
 
     Set<Object> varPrimary;
     Set<Object> varSecondary;
+    Set<Object> varCommon;
 
     JoinCandidate(Stub<StubHandle> primary, Stub<StubHandle> secondary) {
         super();
@@ -34,7 +36,7 @@ class JoinCandidate<StubHandle> {
 
         varPrimary = getPrimary().getVariablesSet();
         varSecondary = getSecondary().getVariablesSet();
-
+        varCommon = CollectionsFactory.getSet(varPrimary); varCommon.retainAll(varSecondary);
     }
 
     /**
@@ -87,4 +89,16 @@ class JoinCandidate<StubHandle> {
         return Collections.disjoint(varPrimary, varSecondary);
     }
 
+    //private Boolean heath;
+    // it is a Heath-join iff common variables functionally determine either all primary or all secondary variables
+    public boolean isHeath() {
+    	/*if (heath == null) {
+    		heath = false;
+    		primary.
+    	}*/
+    	// TODO use functional dependency analysis to determine heathness here
+    	return false;
+    }
+    
+    
 }

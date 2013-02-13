@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -52,6 +53,14 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
     public Set<PVariable> getAffectedVariables() {
         return affectedVariables;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	return Collections.emptySet();
+    }
 
     @Override
     public void replaceVariable(PVariable obsolete, PVariable replacement) {
@@ -76,4 +85,5 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
     @Override
     public void checkSanity() throws RetePatternBuildException {
     }
+    
 }

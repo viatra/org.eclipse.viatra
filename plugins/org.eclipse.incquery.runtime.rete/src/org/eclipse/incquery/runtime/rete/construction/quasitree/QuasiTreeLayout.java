@@ -30,12 +30,7 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
- * Layout ideas
- * 
- * Order of preference - trivial joins (stub a = stub b) - high selectivity filters - supressed by joincandidate if
- * already checked on other side - apply first to narrower stubs - aggregator quasijoins, let-expressions (?) - true
- * joins - except cartesians - TBD: ranking based on what constraints the join will enable - low-selectivity filters
- * (injectivity) - cartesian joins
+ * Layout ideas: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398763
  * 
  * @author Bergmann Gábor
  * 

@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
@@ -26,7 +30,7 @@ import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 public class TypeTernary<PatternDescription, StubHandle> extends
         KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
     private final IPatternMatcherContext<PatternDescription> context;
-
+    private PVariable edge; private PVariable source; private PVariable target;
     /**
      * @param buildable
      * @param variablesTuple
@@ -37,6 +41,9 @@ public class TypeTernary<PatternDescription, StubHandle> extends
             IPatternMatcherContext<PatternDescription> context, PVariable edge, PVariable source, PVariable target,
             Object supplierKey) {
         super(pSystem, new FlatTuple(edge, source, target), supplierKey);
+        this.edge = edge;
+        this.source = source;
+        this.target = target;
         this.context = context;
     }
 
@@ -59,6 +66,17 @@ public class TypeTernary<PatternDescription, StubHandle> extends
     @Override
     protected String keyToString() {
         return pSystem.getContext().printType(supplierKey);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
+     */
+    @Override
+    public Set<Set<PVariable>> getFunctionalKeys() {
+    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
+    	// TODO insert keys inferred by multiplicity    	
+    	result.add(Collections.singleton(edge));
+		return result;
     }
 
 }
