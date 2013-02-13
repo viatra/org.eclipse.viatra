@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
+         <command
+               commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers"
+               label="Initialize IncQuery Viewers"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
+            defaultHandler="org.eclipse.incquery.viewers.tooling.ui.handlers.InitializeViewersHandler"
+            id="org.eclipse.incquery.viewers.tooling.ui.initViewers"
+            name="Initialize IncQuery Viewers">
+      </command>
+      <category
+            id="org.eclipse.incquery.viewers.tooling.ui.category"
+            name="IncQuery Viewers">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.incquery.tooling.ui"
+            class="org.eclipse.incquery.viewers.tooling.ui.views.ZestView"
+            icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo.png"
+            id="org.eclipse.incquery.viewers.tooling.ui.sandbox"
+            name="IncQuery Viewers Sandbox"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
