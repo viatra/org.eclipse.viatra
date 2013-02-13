@@ -31,7 +31,7 @@ public final class EventDrivenVM {
     private EventDrivenVM() {
     }
 
-    private static boolean debug = true;
+    private static boolean debug = false;
 
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleSpecifications) {
