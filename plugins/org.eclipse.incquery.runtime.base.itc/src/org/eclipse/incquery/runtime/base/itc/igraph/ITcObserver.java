@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.base.itc.igraph;
 /**
  * Interface ITcObserver is used to observ the changes in a transitive closure relation; tuple insertion/deleteion.
  * 
- * @author Szabó Tamás
+ * @author Szabo Tamas
  * 
  */
 public interface ITcObserver<V> {
