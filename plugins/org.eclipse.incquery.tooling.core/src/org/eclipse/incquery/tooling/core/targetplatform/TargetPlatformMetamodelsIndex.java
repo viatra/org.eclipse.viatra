@@ -96,7 +96,6 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 								String genModel = genAttrib.getValue();
 								if (!genModel.startsWith("/")) genModel = "/"+genModel;
 								metamodels.add(new TargetPlatformMetamodel(URI.createURI(resolvePluginResource(base.getPluginModel(), genModel)), uri));
-								System.out.println(uri);
 							}
 						}
 					}
