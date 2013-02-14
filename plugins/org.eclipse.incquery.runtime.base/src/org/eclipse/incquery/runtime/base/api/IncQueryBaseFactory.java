@@ -90,7 +90,7 @@ public class IncQueryBaseFactory {
      */
     public TransitiveClosureHelper createTransitiveClosureHelper(Notifier emfRoot, Set<EReference> referencesToObserve)
             throws IncQueryBaseException {
-        return new TransitiveClosureHelperImpl(emfRoot, referencesToObserve);
+        return new TransitiveClosureHelperImpl(getInstance().createNavigationHelper(emfRoot, false, null), referencesToObserve);
     }
 
 }

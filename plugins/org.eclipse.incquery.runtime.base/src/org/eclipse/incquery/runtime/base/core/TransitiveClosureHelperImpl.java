@@ -12,177 +12,76 @@
 package org.eclipse.incquery.runtime.base.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EContentAdapter;
-import org.eclipse.emf.ecore.util.EObjectEList;
+import org.eclipse.incquery.runtime.base.api.FeatureListener;
+import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.api.TransitiveClosureHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 
 /**
- * Implementation class for the transitive closure. The class is a wrapper for the tc algorithms on an emf model.
+ * Implementation class for the {@link TransitiveClosureHelper}.
+ * It uses a {@link NavigationHelper} instance to wrap an EMF model 
+ * and make it suitable for the {@link IncSCCAlg} algorithm. 
  * 
  * @author Tamas Szabo
  * 
  */
 public class TransitiveClosureHelperImpl extends EContentAdapter implements TransitiveClosureHelper,
-        ITcObserver<EObject> {
+        ITcObserver<EObject>, FeatureListener, InstanceListener {
 
     private IncSCCAlg<EObject> sccAlg;
-    private Set<EReference> refToObserv;
+    private Set<EStructuralFeature> features;
+    private Set<EClass> classes;
     private EMFDataSource dataSource;
-    private ArrayList<ITcObserver<EObject>> observers;
-    private Notifier notifier;
-
-    public TransitiveClosureHelperImpl(Notifier emfRoot, Set<EReference> refToObserv) throws IncQueryBaseException {
-        this.refToObserv = refToObserv;
-        this.notifier = emfRoot;
-        this.observers = new ArrayList<ITcObserver<EObject>>();
-
-        if (emfRoot instanceof EObject) {
-            dataSource = new EMFDataSource.ForEObject((EObject) emfRoot, refToObserv);
-        } else if (emfRoot instanceof Resource) {
-            dataSource = new EMFDataSource.ForResource((Resource) emfRoot, refToObserv);
-        } else if (emfRoot instanceof ResourceSet) {
-            dataSource = new EMFDataSource.ForResourceSet((ResourceSet) emfRoot, refToObserv);
-        } else {
-            throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
-        }
-
+    private ArrayList<ITcObserver<EObject>> tcObservers;
+    private NavigationHelper navigationHelper;
+    
+    public TransitiveClosureHelperImpl(NavigationHelper navigationHelper, Set<EReference> references) throws IncQueryBaseException {
+        this.tcObservers = new ArrayList<ITcObserver<EObject>>();
+        this.navigationHelper = navigationHelper;
+		
+		//NavigationHelper only accepts Set<EStructuralFeature> upon registration
+		this.features = new HashSet<EStructuralFeature>(references);
+		this.navigationHelper.registerEStructuralFeatures(features);
+		this.classes = collectEClasses();
+		this.navigationHelper.registerEClasses(classes);
+        
+		this.navigationHelper.registerFeatureListener(features, this);
+		this.navigationHelper.registerInstanceListener(classes, this);
+		
+		this.dataSource = new EMFDataSource(navigationHelper, references, classes);
+		
         this.sccAlg = new IncSCCAlg<EObject>(dataSource);
         this.sccAlg.attachObserver(this);
-        emfRoot.eAdapters().add(this);
     }
-
-    /**
-     * The method visits an {@link EObject} for the registered references in order to explore the potential nodes and
-     * edges that should be inserted and deleted.
-     * 
-     * Multiple node deletion and insertion must be avoided!
-     * 
-     * @param source
-     * @param isInsert
-     */
-    private void visitObjectForEReference(EObject source, boolean isInsert) {
-        for (EReference ref : source.eClass().getEReferences()) {
-            if (refToObserv.contains(ref)) {
-                Object o = source.eGet(ref);
-
-                if (o instanceof EObjectEList<?>) {
-                    @SuppressWarnings("unchecked")
-                    List<EObject> list = (EObjectEList<EObject>) o;
-                    Iterator<EObject> it = list.iterator();
-
-                    while (it.hasNext()) {
-                        EObject target = it.next();
-                        if (isInsert) {
-                            if (!target.equals(source))
-                                nodeInserted(target);
-                            edgeInserted(source, target);
-                        } else {
-                            edgeDeleted(source, target);
-                            if (!target.equals(source))
-                                nodeDeleted(target);
-                        }
-                    }
-                } else {
-                    EObject target = (EObject) o;
-                    if (isInsert) {
-                        if (!target.equals(source))
-                            nodeInserted(target);
-                        edgeInserted(source, target);
-                    } else {
-                        edgeDeleted(source, target);
-                        if (!target.equals(source))
-                            nodeDeleted(target);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void notifyChanged(Notification notification) {
-        super.notifyChanged(notification);
-        Object feature = notification.getFeature();
-        Object oldValue = notification.getOldValue();
-        Object newValue = notification.getNewValue();
-        Object notifier = notification.getNotifier();
-
-        // System.out.println(notification);
-        if (feature instanceof EReference && (oldValue == null || oldValue instanceof EObject)
-                && (newValue == null || newValue instanceof EObject)
-                && (notifier == null || notifier instanceof EObject)) {
-
-            EReference ref = (EReference) feature;
-            EObject oldValueObj = (EObject) oldValue;
-            EObject newValueObj = (EObject) newValue;
-            EObject notifierObj = (EObject) notifier;
-
-            if (ref.isContainment()) {
-                // Inserting nodes
-                if (notification.getEventType() == Notification.ADD && oldValueObj == null && newValueObj != null) {
-                    nodeInserted(newValueObj);
-                    visitObjectForEReference(newValueObj, true);
-                }
-                if (notification.getEventType() == Notification.REMOVE && newValueObj == null && oldValueObj != null) {
-                    visitObjectForEReference(oldValueObj, false);
-                    nodeDeleted(oldValueObj);
-                }
-            } else // Inserting edges (excusively -> edge or node modification)
-            if (refToObserv.contains(ref)) {
-
-                if (notification.getEventType() == Notification.ADD && newValueObj != null) {
-                    edgeInserted(notifierObj, newValueObj);
-                } else if (notification.getEventType() == Notification.REMOVE && oldValueObj != null) {
-                    edgeDeleted(notifierObj, oldValueObj);
-                } else if (notification.getEventType() == Notification.SET) {
-                    if (oldValueObj != null) {
-                        edgeDeleted(notifierObj, oldValueObj);
-                    }
-
-                    if (newValueObj != null) {
-                        edgeInserted(notifierObj, newValueObj);
-                    }
-                }
-            }
-        }
-    }
-
-    private void edgeInserted(EObject source, EObject target) {
-        dataSource.notifyEdgeInserted(source, target);
-    }
-
-    private void edgeDeleted(EObject source, EObject target) {
-        dataSource.notifyEdgeDeleted(source, target);
-    }
-
-    private void nodeInserted(EObject node) {
-        dataSource.notifyNodeInserted(node);
-    }
-
-    private void nodeDeleted(EObject node) {
-        dataSource.notifyNodeDeleted(node);
-    }
+    
+	private Set<EClass> collectEClasses() {
+		Set<EClass> classes = new HashSet<EClass>();
+		for (EStructuralFeature ref : features) {
+			classes.add(ref.getEContainingClass());
+			classes.add(((EReference) ref).getEReferenceType());
+		}
+		return classes;
+	}
 
     @Override
     public void attachObserver(ITcObserver<EObject> to) {
-        this.observers.add(to);
+        this.tcObservers.add(to);
     }
 
     @Override
     public void detachObserver(ITcObserver<EObject> to) {
-        this.observers.remove(to);
+        this.tcObservers.remove(to);
     }
 
     @Override
@@ -202,14 +101,14 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
 
     @Override
     public void tupleInserted(EObject source, EObject target) {
-        for (ITcObserver<EObject> to : observers) {
+        for (ITcObserver<EObject> to : tcObservers) {
             to.tupleInserted(source, target);
         }
     }
 
     @Override
     public void tupleDeleted(EObject source, EObject target) {
-        for (ITcObserver<EObject> to : observers) {
+        for (ITcObserver<EObject> to : tcObservers) {
             to.tupleDeleted(source, target);
         }
     }
@@ -217,6 +116,28 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
     @Override
     public void dispose() {
         this.sccAlg.dispose();
-        this.notifier.eAdapters().remove(this);
+        this.navigationHelper.unregisterInstanceListener(classes, this);
+        this.navigationHelper.unregisterFeatureListener(features, this);
+        this.navigationHelper.dispose();
     }
+
+	@Override
+	public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
+		this.dataSource.notifyEdgeInserted(host, (EObject) value);
+	}
+
+	@Override
+	public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
+		this.dataSource.notifyEdgeDeleted(host, (EObject) value);
+	}
+
+	@Override
+	public void instanceInserted(EClass clazz, EObject instance) {
+		this.dataSource.notifyNodeInserted(instance);
+	}
+
+	@Override
+	public void instanceDeleted(EClass clazz, EObject instance) {
+		this.dataSource.notifyNodeDeleted(instance);
+	}
 }
