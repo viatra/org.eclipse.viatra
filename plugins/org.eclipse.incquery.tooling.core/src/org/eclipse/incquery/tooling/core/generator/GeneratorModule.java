@@ -21,6 +21,8 @@ import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelPro
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvider;
+import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
+import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
@@ -60,5 +62,9 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
     @Override
     public Class<? extends ITypeProvider> bindITypeProvider() {
         return GenModelBasedTypeProvider.class;
+    }
+    
+    public Class<? extends ITargetPlatformMetamodelLoader> bindTargetPlatformMetamodelLoader(){
+    	return TargetPlatformMetamodelsIndex.class;
     }
 }
