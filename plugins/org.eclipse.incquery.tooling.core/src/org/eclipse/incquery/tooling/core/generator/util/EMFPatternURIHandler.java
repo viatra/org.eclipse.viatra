@@ -80,16 +80,12 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
                 EPackage p = uriToEPackageMap.get(fragmentRemoved);
                 if (p != null) {
                     URI newUri = packageUriMap.get(p);
-                    String newFragment = newUri.fragment() == null ? remainingFragment : newUri.fragment()
+                    String newFragment = newUri.fragment() == null ? "/" + remainingFragment : newUri.fragment()
                             + remainingFragment;
-                    if (newFragment == null) {
-                        newUri = newUri.trimFragment();
-                    } else {
-                        newUri = newUri.appendFragment(newFragment);
-                    }
+                    newUri = newUri.appendFragment(newFragment);
                     return newUri;
                 }
-                int index = testFragment.lastIndexOf("/");
+                int index = testFragment.lastIndexOf('/');
                 testFragment = testFragment.substring(0, index);
                 remainingFragment = fragment.substring(index);
             }
