@@ -80,9 +80,11 @@ public class TargetPlatformMetamodelProviderService extends
 	 */
 	@Override
 	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-		EPackage pack = metamodelLoader.loadPackage(resourceSet, packageUri);
-		if (pack != null) return pack;
-		return super.loadEPackage(packageUri, resourceSet);
+	    EPackage pack;
+	    pack = super.loadEPackage(packageUri, resourceSet);
+	    if (pack != null) return pack;
+        pack = metamodelLoader.loadPackage(resourceSet, packageUri);
+        return pack;
 	}
 	
 }
