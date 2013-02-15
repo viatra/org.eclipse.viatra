@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.URIHandlerImpl;
@@ -79,15 +81,45 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
                 URI fragmentRemoved = testFragment.isEmpty() ? uri : uri.appendFragment(testFragment);
                 EPackage p = uriToEPackageMap.get(fragmentRemoved);
                 if (p != null) {
+                    EObject eObject = p.eResource().getEObject(fragment);
+                    if(eObject != null) {
+                        if(eObject != p && eObject instanceof ENamedElement) {
+                            String name = ((ENamedElement) eObject).getName();
+                            if(!remainingFragment.endsWith(name)) {
+                                remainingFragment = "/" + name;
+                            }
+                        }
+                        URI newUri = packageUriMap.get(p);
+                        String newFragment = newUri.fragment() == null ? "/" + remainingFragment : newUri.fragment()
+                            + remainingFragment;
+                        newUri = newUri.appendFragment(newFragment);
+                        return newUri;
+                    }
+                }
+                int index = testFragment.lastIndexOf('/');
+                testFragment = index == -1 ? "/" : testFragment.substring(0, index);
+                remainingFragment = index == -1 ? fragment : fragment.substring(index);
+            }
+            
+            /*
+             * Alternative implementation when IDs are used.
+             * It first finds the package that contains the object,
+             * then constructs a new URI using the package URI. 
+             * FIXME what happens if two packages contain objects with the exact same ID???
+             */
+            for (EPackage p : uriToEPackageMap.values()) {
+                EObject eObject = p.eResource().getEObject(fragment);
+                if(eObject != null) {
+                    if(eObject instanceof ENamedElement) {
+                        String name = ((ENamedElement) eObject).getName();
+                        remainingFragment = "/" + name;
+                    }
                     URI newUri = packageUriMap.get(p);
                     String newFragment = newUri.fragment() == null ? "/" + remainingFragment : newUri.fragment()
-                            + remainingFragment;
+                        + remainingFragment;
                     newUri = newUri.appendFragment(newFragment);
                     return newUri;
                 }
-                int index = testFragment.lastIndexOf('/');
-                testFragment = testFragment.substring(0, index);
-                remainingFragment = fragment.substring(index);
             }
         }
         return super.deresolve(uri);
