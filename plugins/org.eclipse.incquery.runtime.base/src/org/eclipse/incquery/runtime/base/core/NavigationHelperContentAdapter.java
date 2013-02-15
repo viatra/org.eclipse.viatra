@@ -41,6 +41,7 @@ import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultiset;
@@ -96,6 +97,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @return A unique string id generated from the classifier's package nsuri and the name.
      */
     private static String getUniqueIdentifier(EClassifier classifier) {
+        Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
         return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
     }
 
@@ -104,6 +106,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
     private static String getUniqueIdentifier(ETypedElement typedElement) {
+        Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
         return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
     }
 

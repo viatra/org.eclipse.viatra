@@ -561,8 +561,8 @@ public class NavigationHelperImpl implements NavigationHelper {
                 /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
                     // XXX this would probably cause ConcurrentModificationException
                     contentAdapter.valueToFeatureToHolderMap.remove(key,f);
-                    // TODO proper notification
                 }*/
+                // TODO proper notification
             }
         }
     }
