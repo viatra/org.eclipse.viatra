@@ -199,7 +199,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
             return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
         }
         IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-        if (!text.toLowerCase().equals(text)) {
+        if (!text.equalsIgnoreCase(text)) {
             return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, PACKAGE_NAME_WARNING);
         }
         return status;
