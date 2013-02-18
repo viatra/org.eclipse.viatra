@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
@@ -87,18 +89,18 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		for(IPluginExtension extension : base.getExtensions()){
 			if (EP_GENPACKAGE.equals(extension.getPoint())){
 				for(IPluginObject po : extension.getChildren()){
-					if (po instanceof IPluginElement){
-						if (PACKAGE.equals(po.getName())){
-							IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
-							IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
-							if (uriAttrib != null && genAttrib != null){
-								String uri = uriAttrib.getValue();
-								String genModel = genAttrib.getValue();
-								if (!genModel.startsWith("/")) genModel = "/"+genModel;
-								metamodels.add(new TargetPlatformMetamodel(URI.createURI(resolvePluginResource(base.getPluginModel(), genModel)), uri));
-							}
-						}
-					}
+                    if (po instanceof IPluginElement && PACKAGE.equals(po.getName())) {
+                        IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
+                        IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
+                        if (uriAttrib != null && genAttrib != null) {
+                            String uri = uriAttrib.getValue();
+                            String genModel = genAttrib.getValue();
+                            if (!genModel.startsWith("/"))
+                                genModel = "/" + genModel;
+                            metamodels.add(new TargetPlatformMetamodel(URI.createURI(resolvePluginResource(
+                                    base.getPluginModel(), genModel)), uri));
+                        }
+                    }
 				}
 			}
 		}
@@ -164,6 +166,13 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	}
 	
 	private static String resolvePluginResource(IPluginModelBase modelbase, String path){
+        IResource res = modelbase.getUnderlyingResource();
+        if (res != null) {
+            IProject project = res.getProject();
+            URI platformUri = URI.createPlatformResourceURI(project.findMember(path).getFullPath().toString(),
+                    false);
+            return platformUri.toString();
+        }
 		String location = modelbase.getInstallLocation();
 		if (location.endsWith(".jar")) {
 			return "jar:file:" + location + "!" + path;
