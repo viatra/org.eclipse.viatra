@@ -72,7 +72,7 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
 
     @Override
     public URI deresolve(URI uri) {
-        if (uri.isPlatform() || uri.isFile()) {
+        if (uri.isPlatform() || uri.isFile() || uri.isArchive()) {
             String fragment = uri.fragment();
             
             String testFragment = fragment;
