@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
@@ -37,6 +38,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
 
 /**
  * This class is responsible for querying the active target platform data for registered GenModels 
@@ -49,6 +51,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	private static final String ATTR_URI = "uri";
 	private static final String ATTR_GENMODEL = "genModel";
 	
+    @Inject
+    Logger logger;
+
 	private static final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
 	
 	private void update(){
@@ -97,8 +102,10 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                             String genModel = genAttrib.getValue();
                             if (!genModel.startsWith("/"))
                                 genModel = "/" + genModel;
-                            metamodels.add(new TargetPlatformMetamodel(URI.createURI(resolvePluginResource(
-                                    base.getPluginModel(), genModel)), uri));
+                            String resourceURI = resolvePluginResource(base.getPluginModel(), genModel);
+                            if (resourceURI != null){
+                            	metamodels.add(new TargetPlatformMetamodel(URI.createURI(resourceURI), uri));
+                            }
                         }
                     }
 				}
@@ -165,13 +172,19 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		
 	}
 	
-	private static String resolvePluginResource(IPluginModelBase modelbase, String path){
+    private String resolvePluginResource(IPluginModelBase modelbase, String path) {
         IResource res = modelbase.getUnderlyingResource();
         if (res != null) {
             IProject project = res.getProject();
-            URI platformUri = URI.createPlatformResourceURI(project.findMember(path).getFullPath().toString(),
-                    false);
-            return platformUri.toString();
+            IResource file = project.findMember(path);
+            if (file != null){
+            	URI platformUri = URI.createPlatformResourceURI(file.getFullPath().toString(),
+            			false);
+            	return platformUri.toString();
+            }else{
+                logger.warn("Could not find resource '" + path + "' in project " + project.getName() + ".");
+            	return null;
+            }
         }
 		String location = modelbase.getInstallLocation();
 		if (location.endsWith(".jar")) {
