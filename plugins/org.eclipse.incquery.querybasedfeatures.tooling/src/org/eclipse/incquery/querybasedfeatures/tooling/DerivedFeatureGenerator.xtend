@@ -61,6 +61,7 @@ import java.util.ArrayList
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
+import java.io.IOException
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
@@ -177,40 +178,50 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				
 				val bodyDeclListRewrite = rewrite.getListRewrite(type, TypeDeclaration::BODY_DECLARATIONS_PROPERTY)
 				
+				val feat = genFeature.ecoreFeature
 				if(generate){
 					ast.ensureImports(rewrite, astNode, type)
 					ast.ensureHandlerField(bodyDeclListRewrite, type, genFeature)
 					ast.ensureGetterMethod(document, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature, pattern, parameters)
 					
-					val annotations = new ArrayList(feature.EAnnotations)
-          annotations.forEach[
-            if(it.source == ANNOTATION_NAME){
-              feature.EAnnotations.remove(it)
-            }
-          ]
-					val annotation = EcoreFactory::eINSTANCE.createEAnnotation
-					annotation.source = ANNOTATION_NAME
-          feature.EAnnotations.add(annotation)
-					
-				  // add entry ("patternFQN", pattern.fullyQualifiedName)
-			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
-			    entry.key = "patternFQN"
-			    entry.value = pattern.fullyQualifiedName
-			    annotation.details.add(entry)
+					try{
+  					val annotations = new ArrayList(feat.EAnnotations)
+            annotations.forEach[
+              if(it.source == ANNOTATION_NAME){
+                feat.EAnnotations.remove(it)
+              }
+            ]
+  					val annotation = EcoreFactory::eINSTANCE.createEAnnotation
+  					annotation.source = ANNOTATION_NAME
+            feat.EAnnotations.add(annotation)
+  					
+  				  // add entry ("patternFQN", pattern.fullyQualifiedName)
+  			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+  			    entry.key = "patternFQN"
+  			    entry.value = pattern.fullyQualifiedName
+  			    annotation.details.add(entry)
+					} catch(Exception e){
+					  logger.warn("Error happened when trying to edit Ecore file!", e)
+					}
 				} else {
 					ast.removeHandlerField(bodyDeclListRewrite, type, genFeature.name)
 					ast.restoreGetterMethod(document, compunit, type, rewrite, bodyDeclListRewrite, genSourceClass, genFeature)
-					val annotations = new ArrayList(feature.EAnnotations)
-					annotations.forEach[
-            if(it.source == ANNOTATION_NAME){
-              feature.EAnnotations.remove(it)
-            }
-          ]
+					
+					try{
+					  val annotations = new ArrayList(feat.EAnnotations)
+  					annotations.forEach[
+              if(it.source == ANNOTATION_NAME){
+                feat.EAnnotations.remove(it)
+              }
+            ]
+          } catch(Exception e){
+            logger.warn("Error happened when trying to edit Ecore file!", e)
+          }
 				}
 				try{
-          feature.EContainingClass.eResource.save(null)
-				} catch(Exception e){
-				  logger.error("Error happened when trying to save Ecore file!", e)
+          feat.eResource.save(null)
+				} catch(IOException e){
+				  logger.warn("Error happened when trying to save Ecore file!", e)
 				}
 
 				val edits = rewrite.rewriteAST(document, javaProject.getOptions(true));
@@ -230,7 +241,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	def private findGenClassForSource(GenPackage pckg, EClass source, Pattern pattern){
-		val genSourceClass = pckg.genClasses.findFirst[it.ecoreClass == source]
+		val genSourceClass = pckg.genClasses.findFirst[
+		  val cls = it.ecoreClass
+		  cls.name == source.name
+		]
 		if(genSourceClass == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Source EClass " + source.name + " not found in GenPackage " + pckg + "!")
 		}
@@ -238,7 +252,10 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	def private findGenFeatureForFeature(GenClass genSourceClass, EStructuralFeature feature, Pattern pattern){
-		val genFeature = genSourceClass.genFeatures.findFirst[it.ecoreFeature == feature]
+		val genFeature = genSourceClass.genFeatures.findFirst[
+      val feat = it.ecoreFeature
+      feat.name == feature.name
+    ]
 		if(genFeature == null){
 			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature " + feature.name + " not found in GenClass " + genSourceClass.name + "!")
 		}
