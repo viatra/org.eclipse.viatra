@@ -323,7 +323,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     @Override
     public Match newEmptyMatch() {
-        return arrayToMatch(new Object[getParameterNames().length]);
+        return arrayToMatchMutable(new Object[getParameterNames().length]);
     }
 
     @Override

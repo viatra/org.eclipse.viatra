@@ -17,14 +17,14 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 
 /**
- * Generic signature object implementation. Please instantiate using GenericPatternMatcher.arrayToSignature().
+ * Generic signature object implementation. Please instantiate using {@link GenericPatternMatcher#newMatch(Object...)} or {@link GenericPatternMatcher#newEmptyMatch()}.
  * 
  * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
  * 
  * @author Bergmann Gábor
  * 
  */
-public class GenericPatternMatch extends BasePatternMatch implements IPatternMatch {
+public abstract class GenericPatternMatch extends BasePatternMatch {
 
     private final GenericPatternMatcher matcher;
     private final Object[] array;
@@ -33,7 +33,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
      * @param posMapping
      * @param array
      */
-    GenericPatternMatch(GenericPatternMatcher matcher, Object[] array) {
+    private GenericPatternMatch(GenericPatternMatcher matcher, Object[] array) {
         super();
         this.matcher = matcher;
         this.array = array;
@@ -47,6 +47,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 
     @Override
     public boolean set(String parameterName, Object newValue) {
+    	if (!isMutable()) throw new UnsupportedOperationException();
         Integer index = matcher.getPositionOfParameter(parameterName);
         if (index == null)
             return false;
@@ -56,7 +57,7 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
 
     @Override
     public Object[] toArray() {
-        return array;
+        return Arrays.copyOf(array, array.length);
     }
 
     @Override
@@ -111,4 +112,27 @@ public class GenericPatternMatch extends BasePatternMatch implements IPatternMat
         return matcher.getParameterNames();
     }
 
+    
+    static final class Mutable extends GenericPatternMatch {
+
+		Mutable(GenericPatternMatcher matcher, Object[] array) {
+			super(matcher, array);
+		}
+    	
+		@Override
+		public boolean isMutable() {
+			return true;
+		}
+    }
+    static final class Immutable extends GenericPatternMatch {
+
+    	Immutable(GenericPatternMatcher matcher, Object[] array) {
+			super(matcher, array);
+		}
+    	
+		@Override
+		public boolean isMutable() {
+			return false;
+		}
+    }
 }

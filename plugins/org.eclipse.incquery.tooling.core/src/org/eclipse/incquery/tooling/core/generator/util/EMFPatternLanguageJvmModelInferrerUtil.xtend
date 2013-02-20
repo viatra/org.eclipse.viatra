@@ -122,6 +122,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		name.toFirstUpper+"Match"
    	}
    	
+   	def matchImmutableInnerClassName(Pattern pattern) {
+   		"Immutable"
+   	}   	
+   	def matchMutableInnerClassName(Pattern pattern) {
+   		"Mutable"
+   	}
+   	
 	/**
 	 * Returns the ProcessorClass name based on the Pattern's name
 	 */   	

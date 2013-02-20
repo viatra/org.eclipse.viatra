@@ -270,8 +270,10 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 
     // ARRAY-BASED INTERFACE
 
-    /** Converts the array representation of a pattern match to a Match object. */
+    /** Converts the array representation of a pattern match to an immutable Match object. */
     public Match arrayToMatch(Object[] parameters);
+    /** Converts the array representation of a pattern match to a mutable Match object. */
+    public Match arrayToMatchMutable(Object[] parameters);
 
     /** Converts the Match object of a pattern match to the array representation. */
     public Object[] matchToArray(Match partialMatch);
@@ -359,16 +361,21 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
     public abstract DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters);
 
     /**
-     * Returns an empty Match for the matcher. This can be used to call the matcher with a partial match even if the
-     * specific class of the matcher or the match is unknown.
+     * Returns an empty, mutable Match for the matcher. 
+     * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 
+     * This can be used to call the matcher with a partial match 
+     *  even if the specific class of the matcher or the match is unknown.
      * 
      * @return the empty match
      */
     public abstract Match newEmptyMatch();
 
     /**
-     * Returns a new (partial) Match object for the matcher. This can be used e.g. to call the matcher with a partial
-     * match.
+     * Returns a new (partial) Match object for the matcher. 
+     * This can be used e.g. to call the matcher with a partial
+     * match. 
+     * 
+     * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
      * 
      * @param parameters
      *            the fixed value of pattern parameters, or null if not bound.

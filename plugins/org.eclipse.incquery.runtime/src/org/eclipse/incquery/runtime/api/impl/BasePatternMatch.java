@@ -64,6 +64,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
 
     @Override
     public boolean set(int position, Object newValue) {
+    	if (!isMutable()) throw new UnsupportedOperationException();
         if (position >= 0 && position < parameterNames().length) {
             return set(parameterNames()[position], newValue);
         } else {
@@ -71,14 +72,9 @@ public abstract class BasePatternMatch implements IPatternMatch {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "Match<" + patternName() + ">{" + prettyPrint() + "}";
     }
-
+    
 }
