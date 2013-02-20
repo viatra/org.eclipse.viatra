@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.core.targetplatform;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -90,7 +91,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	}
 	
 	private List<TargetPlatformMetamodel> load(IPluginBase base){
-		List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodelsIndex.TargetPlatformMetamodel>();
+		List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodel>();
 		for(IPluginExtension extension : base.getExtensions()){
 			if (EP_GENPACKAGE.equals(extension.getPoint())){
 				for(IPluginObject po : extension.getChildren()){
@@ -195,8 +196,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	}
 
 	private Iterable<TargetPlatformMetamodel> load(){
-		update();
-		return entries.values();
+	    // FIXME we need to ensure that only one caller modifies entries at any given time
+		synchronized (TargetPlatformMetamodelsIndex.class) {
+		    update();
+		    return new ArrayList<TargetPlatformMetamodel>(entries.values());
+        }
 	}
 
 	/* (non-Javadoc)
