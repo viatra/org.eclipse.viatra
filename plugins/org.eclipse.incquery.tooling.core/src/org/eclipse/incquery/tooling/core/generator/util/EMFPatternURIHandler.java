@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Mark Czotter - initial API and implementation
+ *   Zoltan Ujhelyi, Abel Hegedus, Balazs Grill - enhancements for subpackage support
  *******************************************************************************/
 
 package org.eclipse.incquery.tooling.core.generator.util;
@@ -53,7 +54,7 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
         List<String> fragments = new ArrayList<String>();
         EPackage p = e;
         while (nonEmptySuperPackage(p) != null) {
-            fragments.add(p.getNsPrefix());
+            fragments.add(p.getName());
             p = nonEmptySuperPackage(p);
             uriString = p.getNsURI();
 
@@ -109,12 +110,29 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
              */
             for (EPackage p : uriToEPackageMap.values()) {
                 EObject eObject = p.eResource().getEObject(fragment);
+                EPackage e = p;
                 if(eObject != null) {
                     if(eObject instanceof ENamedElement) {
+                    	remainingFragment = "";
+                    	EObject parent = eObject.eContainer();
+                    	/*
+                    	 * Because this element was found by ID, p may not be the containing
+                    	 * package. We must find the correct parent package along with all
+                    	 * name elements inbetween.
+                    	 */
+                    	while (parent!= null && !(parent instanceof EPackage)){
+                    		if (parent instanceof ENamedElement){
+                    			remainingFragment += "/" + ((ENamedElement) parent).getName();
+                    		}
+                    		parent = parent.eContainer();
+                    	}
+                    	if (parent instanceof EPackage){
+                    		e = (EPackage)parent;
+                    	}
                         String name = ((ENamedElement) eObject).getName();
-                        remainingFragment = "/" + name;
+                        remainingFragment += "/" + name;
                     }
-                    URI newUri = packageUriMap.get(p);
+                    URI newUri = packageUriMap.get(e);
                     String newFragment = newUri.fragment() == null ? "/" + remainingFragment : newUri.fragment()
                         + remainingFragment;
                     newUri = newUri.appendFragment(newFragment);
