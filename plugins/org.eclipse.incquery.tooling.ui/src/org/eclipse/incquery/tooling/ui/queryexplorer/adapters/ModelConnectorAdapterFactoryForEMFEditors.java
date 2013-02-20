@@ -18,7 +18,7 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import com.google.inject.Inject;
 
 /**
- * FIXME do it
+ * Adapter factory for the default EMF generated model editors and our own EIQ editor.
  */
 @SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {

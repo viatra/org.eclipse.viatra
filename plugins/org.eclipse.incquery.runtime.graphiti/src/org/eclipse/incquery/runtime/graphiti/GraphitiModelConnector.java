@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * Model connector for Graphiti model editors.
+ * Model connector implementation for the Graphiti model editors.
  */
 public class GraphitiModelConnector extends EMFModelConnector {
 
@@ -38,13 +38,11 @@ public class GraphitiModelConnector extends EMFModelConnector {
     @Override
     public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier result = null;
-        if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
-            if (editorPart instanceof DiagramEditor) {
+        if (editorPart instanceof DiagramEditor) {
+            if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
                 DiagramEditor diagramEditor = (DiagramEditor) editorPart;
                 return diagramEditor.getEditingDomain().getResourceSet();
-            }
-        } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
-            if (editorPart instanceof DiagramEditor) {
+            } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
                 DiagramEditor diagramEditor = (DiagramEditor) editorPart;
                 PictogramElement[] selectedElements = diagramEditor.getSelectedPictogramElements();
                 if (selectedElements.length > 0) {
@@ -56,8 +54,6 @@ public class GraphitiModelConnector extends EMFModelConnector {
                     }
                 }
             }
-        } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
-            // XXX Not implemented now. The selected element is a would be a graphical, not a model object.
         }
         return result;
     }
