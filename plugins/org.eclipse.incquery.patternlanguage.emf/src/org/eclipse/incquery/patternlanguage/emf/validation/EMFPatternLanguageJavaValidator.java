@@ -504,7 +504,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
-                error("The type infered from the path expression (" + typeClassifier.getInstanceClassName()
+                String name = typeClassifier == null ? "<unknown>" : typeClassifier.getInstanceClassName();
+                error("The type infered from the path expression (" + name
                         + ") is different from the input literal/computational value ("
                         + inputClassifier.getInstanceClassName() + ").", pathExpressionConstraint, null,
                         EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION);

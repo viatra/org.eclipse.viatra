@@ -301,8 +301,11 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                                 // In case of incorrect number of parameters we might check for non-existing parameters
                                 if (parameters.size() > parameterIndex) {
                                     Variable variableInCalledPattern = parameters.get(parameterIndex);
-                                    possibleClassifiersList.add(getClassifierForVariableWithPattern(pattern,
-                                            variableInCalledPattern, recursionCallingLevel + 1));
+                                    EClassifier variableClassifier = getClassifierForVariableWithPattern(pattern,
+                                            variableInCalledPattern, recursionCallingLevel + 1);
+                                    if (variableClassifier != null) {
+                                        possibleClassifiersList.add(variableClassifier);
+                                    }
                                 }
                             }
                         }

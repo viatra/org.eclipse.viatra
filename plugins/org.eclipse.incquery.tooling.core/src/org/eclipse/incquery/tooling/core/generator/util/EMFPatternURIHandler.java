@@ -33,10 +33,13 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
 
     public EMFPatternURIHandler(Collection<EPackage> packages) {
         for (EPackage e : packages) {
-            URI uri = EcoreUtil.getURI(e);
-            uriToEPackageMap.put(uri, e);
-            URI modifiedUri = calculateModifiedUri(e);
-            packageUriMap.put(e, modifiedUri);
+            // FIXME until bug 401314 is not fixed, the builder might call this with proxy packages using empty nsUri
+            if (e.getNsURI() != null && !(e.getNsURI().isEmpty())) {
+                URI uri = EcoreUtil.getURI(e);
+                uriToEPackageMap.put(uri, e);
+                URI modifiedUri = calculateModifiedUri(e);
+                packageUriMap.put(e, modifiedUri);
+            }
         }
     }
 
