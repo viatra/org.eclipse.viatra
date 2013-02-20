@@ -25,7 +25,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.IDiagnosticConverter;
-import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Inject;
 
@@ -37,8 +36,6 @@ public class PatternSetValidator {
 
     @Inject
     private Diagnostician diagnostician;
-    @Inject
-    private IResourceValidator resourceValidator;
     @Inject
     private IDiagnosticConverter converter;
 
