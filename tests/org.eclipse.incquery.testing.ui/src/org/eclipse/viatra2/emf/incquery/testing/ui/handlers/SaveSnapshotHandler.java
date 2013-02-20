@@ -26,19 +26,19 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.testing.core.ModelLoadHelper;
-import org.eclipse.incquery.testing.core.SnapshotHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
+import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
+import org.eclipse.incquery.testing.core.ModelLoadHelper;
+import org.eclipse.incquery.testing.core.SnapshotHelper;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
-import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
 
 import com.google.inject.Inject;
 
@@ -140,8 +140,8 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			}
 		} 
 		for (ObservablePatternMatcher matcher : matchers) {
-			IPatternMatch filter = matcher.getMatcher().arrayToMatch(matcher.getFilter());
 			if(matcher.getMatcher() != null) {
+				IPatternMatch filter = matcher.getMatcher().newMatch(matcher.getFilter());
 			    helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
 			}
 		}

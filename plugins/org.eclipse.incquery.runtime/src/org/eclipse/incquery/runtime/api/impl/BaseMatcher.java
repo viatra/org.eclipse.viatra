@@ -75,6 +75,19 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
                             CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "Pattern contains errors");
     }
 
+    
+    // ARRAY-BASED INTERFACE
+    
+    /** Converts the array representation of a pattern match to an immutable Match object. */
+    protected abstract Match arrayToMatch(Object[] parameters);
+    /** Converts the array representation of a pattern match to a mutable Match object. */
+    protected abstract Match arrayToMatchMutable(Object[] parameters);
+
+    /** Converts the Match object of a pattern match to the array representation. */
+    protected Object[] matchToArray(Match partialMatch) {
+        return partialMatch.toArray();
+    }
+    
     protected abstract Match tupleToMatch(Tuple t);
 
     private static Object[] fEmptyArray;
@@ -129,8 +142,15 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return rawGetAllMatches(emptyArray());
     }
 
-    @Override
-    public Collection<Match> rawGetAllMatches(Object[] parameters) {
+    /**
+     * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @return matches represented as a Match object.
+     */
+    protected Collection<Match> rawGetAllMatches(Object[] parameters) {
         ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
         ArrayList<Match> matches = new ArrayList<Match>();
         // clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher
@@ -151,8 +171,16 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return rawGetOneArbitraryMatch(emptyArray());
     }
 
-    @Override
-    public Match rawGetOneArbitraryMatch(Object[] parameters) {
+    /**
+     * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
+     * Neither determinism nor randomness of selection is guaranteed.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @return a match represented as a Match object, or null if no match is found.
+     */
+    protected Match rawGetOneArbitraryMatch(Object[] parameters) {
         Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
         if (t != null)
             return tupleToMatch(t);
@@ -167,8 +195,15 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
-    @Override
-    public boolean rawHasMatch(Object[] parameters) {
+    /**
+     * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match, under
+     * any possible substitution of the unspecified parameters.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @return true if the input is a valid (partial) match of the pattern.
+     */
+    protected boolean rawHasMatch(Object[] parameters) {
         return patternMatcher.count(parameters, notNull(parameters)) > 0;
     }
 
@@ -184,8 +219,15 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return rawCountMatches(emptyArray());
     }
 
-    @Override
-    public int rawCountMatches(Object[] parameters) {
+    /**
+     * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @return the number of pattern matches found.
+     */
+    protected int rawCountMatches(Object[] parameters) {
         return patternMatcher.count(parameters, notNull(parameters));
     }
 
@@ -196,8 +238,17 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
-    @Override
-    public void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
+    /**
+     * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
+     * parameters.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @param action
+     *            the action that will process each pattern match.
+     */
+    protected void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
         ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
         // clones the tuples into match objects to protect the Tuples from modifications outside of the ReteMatcher
         for (Tuple t : m)
@@ -226,8 +277,19 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return rawForOneArbitraryMatch(partialMatch.toArray(), processor);
     };
 
-    @Override
-    public boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
+    /**
+     * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
+     * values of some parameters. Neither determinism nor randomness of selection is guaranteed.
+     * 
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @pre size of input array must be equal to the number of parameters.
+     * @param processor
+     *            the action that will process the selected match.
+     * @return true if the pattern has at least one match with the given parameter values, false if the processor was
+     *         not invoked
+     */
+    protected boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
         Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
         if (t != null) {
             processor.process(tupleToMatch(t));
@@ -268,8 +330,20 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return dm;
     }
 
-    @Override
-    public DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
+    /**
+     * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
+     * (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the
+     * given fixed values of some parameters. It can also be reset to track changes from a later point in time, and
+     * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
+     * 
+     * @param fillAtStart
+     *            if true, all current matches are reported as new match events; if false, the delta monitor starts
+     *            empty.
+     * @param parameters
+     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
+     * @return the delta monitor.
+     */
+    protected DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
         final int length = parameters.length;
         DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
             @Override
@@ -316,10 +390,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return engine.getAfterWipeCallbacks().remove(callback);
     }
 
-    @Override
-    public Object[] matchToArray(Match partialMatch) {
-        return partialMatch.toArray();
-    }
 
     @Override
     public Match newEmptyMatch() {
@@ -341,8 +411,19 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return rawGetAllValues(getPositionOfParameter(parameterName), partialMatch.toArray());
     };
 
-    @Override
-    public Set<Object> rawGetAllValues(final int position, Object[] parameters) {
+    /**
+     * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed
+     * values of some parameters.
+     * 
+     * @param position
+     *            position of the parameter for which values are returned
+     * @param parameters
+     *            a parameter array corresponding to a partial match of the pattern where each non-null field binds the
+     *            corresponding pattern parameter to a fixed value.
+     * @return the Set of all values in the given position, null if no parameter with the given position exists or if
+     *         parameters[position] is set, empty set if there are no matches
+     */
+    protected Set<Object> rawGetAllValues(final int position, Object[] parameters) {
         if (position >= 0 && position < getParameterNames().length) {
             if (parameters.length == getParameterNames().length) {
                 if (parameters[position] == null) {

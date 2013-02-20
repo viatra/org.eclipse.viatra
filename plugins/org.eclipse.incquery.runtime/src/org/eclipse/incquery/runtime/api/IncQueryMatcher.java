@@ -268,98 +268,6 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      */
     public boolean removeCallbackAfterWipes(Runnable callback);
 
-    // ARRAY-BASED INTERFACE
-
-    /** Converts the array representation of a pattern match to an immutable Match object. */
-    public Match arrayToMatch(Object[] parameters);
-    /** Converts the array representation of a pattern match to a mutable Match object. */
-    public Match arrayToMatchMutable(Object[] parameters);
-
-    /** Converts the Match object of a pattern match to the array representation. */
-    public Object[] matchToArray(Match partialMatch);
-
-    /**
-     * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @pre size of input array must be equal to the number of parameters.
-     * @return matches represented as a Match object.
-     */
-    public abstract Collection<Match> rawGetAllMatches(Object[] parameters);
-
-    /**
-     * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
-     * Neither determinism nor randomness of selection is guaranteed.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @pre size of input array must be equal to the number of parameters.
-     * @return a match represented as a Match object, or null if no match is found.
-     */
-    public abstract Match rawGetOneArbitraryMatch(Object[] parameters);
-
-    /**
-     * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match, under
-     * any possible substitution of the unspecified parameters.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @return true if the input is a valid (partial) match of the pattern.
-     */
-    public abstract boolean rawHasMatch(Object[] parameters);
-
-    /**
-     * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @pre size of input array must be equal to the number of parameters.
-     * @return the number of pattern matches found.
-     */
-    public abstract int rawCountMatches(Object[] parameters);
-
-    /**
-     * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
-     * parameters.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @pre size of input array must be equal to the number of parameters.
-     * @param action
-     *            the action that will process each pattern match.
-     */
-    public abstract void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor);
-
-    /**
-     * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
-     * values of some parameters. Neither determinism nor randomness of selection is guaranteed.
-     * 
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @pre size of input array must be equal to the number of parameters.
-     * @param processor
-     *            the action that will process the selected match.
-     * @return true if the pattern has at least one match with the given parameter values, false if the processor was
-     *         not invoked
-     */
-    public abstract boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor);
-
-    /**
-     * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
-     * (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the
-     * given fixed values of some parameters. It can also be reset to track changes from a later point in time, and
-     * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
-     * 
-     * @param fillAtStart
-     *            if true, all current matches are reported as new match events; if false, the delta monitor starts
-     *            empty.
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @return the delta monitor.
-     */
-    public abstract DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters);
-
     /**
      * Returns an empty, mutable Match for the matcher. 
      * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 
@@ -406,20 +314,6 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *         or if the parameter with the given name is set in partialMatch, empty set if there are no matches
      */
     public abstract Set<Object> getAllValues(final String parameterName, Match partialMatch);
-
-    /**
-     * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed
-     * values of some parameters.
-     * 
-     * @param position
-     *            position of the parameter for which values are returned
-     * @param parameters
-     *            a parameter array corresponding to a partial match of the pattern where each non-null field binds the
-     *            corresponding pattern parameter to a fixed value.
-     * @return the Set of all values in the given position, null if no parameter with the given position exists or if
-     *         parameters[position] is set, empty set if there are no matches
-     */
-    public abstract Set<Object> rawGetAllValues(final int position, Object[] parameters);
 
     /**
      * Returns the engine that the matcher uses.

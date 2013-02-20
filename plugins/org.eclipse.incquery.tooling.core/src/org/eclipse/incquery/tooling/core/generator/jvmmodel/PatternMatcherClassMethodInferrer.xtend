@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 
 class PatternMatcherClassMethodInferrer {
@@ -122,6 +123,7 @@ class PatternMatcherClassMethodInferrer {
    				type.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 	   				it.parameters += pattern.toParameter("parameters", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+   					it.visibility = JvmVisibility::PROTECTED
 	   				it.setBody([
 						referClass(pattern, typeof(Set), typeOfVariable)
 						append(''' results = new ''')
@@ -179,14 +181,17 @@ class PatternMatcherClassMethodInferrer {
    	def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmTypeReference matchClassRef) {
 	   	val tupleToMatchMethod = pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
    			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
    		]
    		val arrayToMatchMethod = pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
    		val arrayToMatchMutableMethod = pattern.toMethod("arrayToMatchMutable", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
    		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it)])

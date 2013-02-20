@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.api;
 
+import java.util.Arrays;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -94,7 +96,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 
     @Override
     public GenericPatternMatch arrayToMatch(Object[] parameters) {
-        return new GenericPatternMatch.Immutable(this, parameters);
+        return new GenericPatternMatch.Immutable(this, Arrays.copyOf(parameters, parameters.length));
     }
     
     @Override

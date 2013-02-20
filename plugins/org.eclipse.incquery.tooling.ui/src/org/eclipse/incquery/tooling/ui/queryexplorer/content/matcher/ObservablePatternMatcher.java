@@ -249,13 +249,13 @@ public class ObservablePatternMatcher {
                 parameterFilter[i] = null;
             }
 
-            this.filter = this.matcher.arrayToMatch(parameterFilter);
+            this.filter = this.matcher.newMatch(parameterFilter);
         }
     }
 
     public void setFilter(Object[] parameterFilter) {
         this.parameterFilter = parameterFilter.clone();
-        this.filter = this.matcher.arrayToMatch(this.parameterFilter);
+        this.filter = this.matcher.newMatch(this.parameterFilter);
 
         Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
 
