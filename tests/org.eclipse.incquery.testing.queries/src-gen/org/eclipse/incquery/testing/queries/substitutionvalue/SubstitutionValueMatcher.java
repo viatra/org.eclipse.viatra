@@ -176,13 +176,14 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   /**
    * Returns a new (partial) Match object for the matcher. 
    * This can be used e.g. to call the matcher with a partial match. 
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pSubstitution the fixed value of pattern parameter Substitution, or null if not bound.
    * @param pValue the fixed value of pattern parameter Value, or null if not bound.
    * @return the (partial) match object.
    * 
    */
   public SubstitutionValueMatch newMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
-    return new SubstitutionValueMatch(pSubstitution, pValue);
+    return new SubstitutionValueMatch.Immutable(pSubstitution, pValue);
     
   }
   
@@ -191,7 +192,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSubstitutionRecord> rawAccumulateAllValuesOfSubstitution(final Object[] parameters) {
+  protected Set<MatchSubstitutionRecord> rawAccumulateAllValuesOfSubstitution(final Object[] parameters) {
     Set<MatchSubstitutionRecord> results = new HashSet<MatchSubstitutionRecord>();
     rawAccumulateAllValues(POSITION_SUBSTITUTION, parameters, results);
     return results;
@@ -229,7 +230,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfValue(final Object[] parameters) {
+  protected Set<Object> rawAccumulateAllValuesOfValue(final Object[] parameters) {
     Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_VALUE, parameters, results);
     return results;
@@ -263,9 +264,9 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   }
   
   @Override
-  public SubstitutionValueMatch tupleToMatch(final Tuple t) {
+  protected SubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new SubstitutionValueMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));	
+    	return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));	
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -273,9 +274,19 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   }
   
   @Override
-  public SubstitutionValueMatch arrayToMatch(final Object[] match) {
+  protected SubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new SubstitutionValueMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+    	return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return null;
+    }
+    
+  }
+  
+  @Override
+  protected SubstitutionValueMatch arrayToMatchMutable(final Object[] match) {
+    try {
+    	return new SubstitutionValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

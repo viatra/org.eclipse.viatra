@@ -9,7 +9,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 
 /**
  * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 
- * to be used in conjunction with SubstitutionValueMatcher.
+ * to be used in conjunction with {@link SubstitutionValueMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters, 
@@ -20,14 +20,14 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
  * @see SubstitutionValueProcessor
  * 
  */
-public final class SubstitutionValueMatch extends BasePatternMatch {
+public abstract class SubstitutionValueMatch extends BasePatternMatch {
   private MatchSubstitutionRecord fSubstitution;
   
   private Object fValue;
   
   private static String[] parameterNames = {"Substitution", "Value"};
   
-  SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+  private SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     this.fSubstitution = pSubstitution;
     this.fValue = pValue;
     
@@ -53,6 +53,7 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Substitution".equals(parameterName) ) {
     	this.fSubstitution = (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) newValue;
     	return true;
@@ -66,11 +67,13 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
   }
   
   public void setSubstitution(final MatchSubstitutionRecord pSubstitution) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fSubstitution = pSubstitution;
     
   }
   
   public void setValue(final Object pValue) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fValue = pValue;
     
   }
@@ -143,4 +146,28 @@ public final class SubstitutionValueMatch extends BasePatternMatch {
     }
     
   }
+  static final class Mutable extends SubstitutionValueMatch {
+    Mutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+      super(pSubstitution, pValue);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return true;
+    }
+  }
+  
+  static final class Immutable extends SubstitutionValueMatch {
+    Immutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+      super(pSubstitution, pValue);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return false;
+    }
+  }
+  
 }

@@ -2,6 +2,7 @@ package org.eclipse.incquery.testing.queries.recordrolevalue;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
+import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
 import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
 
 /**
@@ -17,7 +18,7 @@ public abstract class RecordRoleValueProcessor implements IMatchProcessor<Record
    * @param pRole the value of pattern parameter Role in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final Object Role);
+  public abstract void process(final MatchRecord Record, final RecordRole Role);
   
   @Override
   public void process(final RecordRoleValueMatch match) {

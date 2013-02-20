@@ -13,7 +13,7 @@ import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueM
  * @see SubstitutionValueMatch
  * 
  */
-public class SubstitutionValueMatcherFactory extends BaseGeneratedMatcherFactory<SubstitutionValueMatcher> {
+public final class SubstitutionValueMatcherFactory extends BaseGeneratedMatcherFactory<SubstitutionValueMatcher> {
   /**
    * @return the singleton instance of the matcher factory
    * @throws IncQueryException if the pattern definition could not be loaded

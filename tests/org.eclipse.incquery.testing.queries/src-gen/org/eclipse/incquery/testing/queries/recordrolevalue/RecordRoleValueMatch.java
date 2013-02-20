@@ -6,10 +6,11 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
+import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
 
 /**
  * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
- * to be used in conjunction with RecordRoleValueMatcher.
+ * to be used in conjunction with {@link RecordRoleValueMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters, 
@@ -20,14 +21,14 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
  * @see RecordRoleValueProcessor
  * 
  */
-public final class RecordRoleValueMatch extends BasePatternMatch {
+public abstract class RecordRoleValueMatch extends BasePatternMatch {
   private MatchRecord fRecord;
   
-  private Object fRole;
+  private RecordRole fRole;
   
   private static String[] parameterNames = {"Record", "Role"};
   
-  RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
+  private RecordRoleValueMatch(final MatchRecord pRecord, final RecordRole pRole) {
     this.fRecord = pRecord;
     this.fRole = pRole;
     
@@ -46,19 +47,20 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
     
   }
   
-  public Object getRole() {
+  public RecordRole getRole() {
     return this.fRole;
     
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Record".equals(parameterName) ) {
     	this.fRecord = (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
     	return true;
     }
-    if ("Role".equals(parameterName) && newValue instanceof java.lang.Object) {
-    	this.fRole = (java.lang.Object) newValue;
+    if ("Role".equals(parameterName) ) {
+    	this.fRole = (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) newValue;
     	return true;
     }
     return false;
@@ -66,11 +68,13 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
   }
   
   public void setRecord(final MatchRecord pRecord) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRecord = pRecord;
     
   }
   
-  public void setRole(final Object pRole) {
+  public void setRole(final RecordRole pRole) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRole = pRole;
     
   }
@@ -143,4 +147,28 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
     }
     
   }
+  static final class Mutable extends RecordRoleValueMatch {
+    Mutable(final MatchRecord pRecord, final RecordRole pRole) {
+      super(pRecord, pRole);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return true;
+    }
+  }
+  
+  static final class Immutable extends RecordRoleValueMatch {
+    Immutable(final MatchRecord pRecord, final RecordRole pRole) {
+      super(pRecord, pRole);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return false;
+    }
+  }
+  
 }
