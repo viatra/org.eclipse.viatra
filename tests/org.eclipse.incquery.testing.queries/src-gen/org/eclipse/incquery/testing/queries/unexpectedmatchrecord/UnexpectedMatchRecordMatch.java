@@ -141,15 +141,16 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (obj == null)
-    	return false;
-    if (!(obj instanceof IPatternMatch))
-    	return false;
-    IPatternMatch otherSig  = (IPatternMatch) obj;
-    if (!pattern().equals(otherSig.pattern()))
-    	return false;
-    if (!UnexpectedMatchRecordMatch.class.equals(obj.getClass()))
+    if (!(obj instanceof UnexpectedMatchRecordMatch)) { // this should be infrequent				
+    	if (obj == null)
+    		return false;
+    	if (!(obj instanceof IPatternMatch))
+    		return false;
+    	IPatternMatch otherSig  = (IPatternMatch) obj;
+    	if (!pattern().equals(otherSig.pattern()))
+    		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
+    }
     UnexpectedMatchRecordMatch other = (UnexpectedMatchRecordMatch) obj;
     if (fActualSet == null) {if (other.fActualSet != null) return false;}
     else if (!fActualSet.equals(other.fActualSet)) return false;

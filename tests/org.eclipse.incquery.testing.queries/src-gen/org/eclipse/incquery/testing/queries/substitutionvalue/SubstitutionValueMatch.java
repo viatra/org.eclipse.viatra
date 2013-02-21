@@ -119,15 +119,16 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (obj == null)
-    	return false;
-    if (!(obj instanceof IPatternMatch))
-    	return false;
-    IPatternMatch otherSig  = (IPatternMatch) obj;
-    if (!pattern().equals(otherSig.pattern()))
-    	return false;
-    if (!SubstitutionValueMatch.class.equals(obj.getClass()))
+    if (!(obj instanceof SubstitutionValueMatch)) { // this should be infrequent				
+    	if (obj == null)
+    		return false;
+    	if (!(obj instanceof IPatternMatch))
+    		return false;
+    	IPatternMatch otherSig  = (IPatternMatch) obj;
+    	if (!pattern().equals(otherSig.pattern()))
+    		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
+    }
     SubstitutionValueMatch other = (SubstitutionValueMatch) obj;
     if (fSubstitution == null) {if (other.fSubstitution != null) return false;}
     else if (!fSubstitution.equals(other.fSubstitution)) return false;

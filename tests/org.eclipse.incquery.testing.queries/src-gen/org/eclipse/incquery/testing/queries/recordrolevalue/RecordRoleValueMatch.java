@@ -120,15 +120,16 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (obj == null)
-    	return false;
-    if (!(obj instanceof IPatternMatch))
-    	return false;
-    IPatternMatch otherSig  = (IPatternMatch) obj;
-    if (!pattern().equals(otherSig.pattern()))
-    	return false;
-    if (!RecordRoleValueMatch.class.equals(obj.getClass()))
+    if (!(obj instanceof RecordRoleValueMatch)) { // this should be infrequent				
+    	if (obj == null)
+    		return false;
+    	if (!(obj instanceof IPatternMatch))
+    		return false;
+    	IPatternMatch otherSig  = (IPatternMatch) obj;
+    	if (!pattern().equals(otherSig.pattern()))
+    		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
+    }
     RecordRoleValueMatch other = (RecordRoleValueMatch) obj;
     if (fRecord == null) {if (other.fRecord != null) return false;}
     else if (!fRecord.equals(other.fRecord)) return false;
