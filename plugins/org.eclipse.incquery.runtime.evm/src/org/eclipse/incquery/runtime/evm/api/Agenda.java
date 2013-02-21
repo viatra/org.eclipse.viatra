@@ -23,7 +23,6 @@ import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 
 import com.google.common.collect.HashMultimap;
@@ -92,7 +91,7 @@ public class Agenda {
     }
 
     private final IncQueryEngine iqEngine;
-    private final Map<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleInstanceMap;
+    private final Map<RuleSpecification<? extends IPatternMatch>, RuleInstance<? extends IPatternMatch>> ruleInstanceMap;
     private Multimap<ActivationState, Activation<?>> activations;
     private Set<Activation<?>> enabledActivations;
     private final IActivationNotificationListener activationListener;
@@ -105,7 +104,7 @@ public class Agenda {
      */
     protected Agenda(final IncQueryEngine iqEngine) {
         this.iqEngine = checkNotNull(iqEngine, "Cannot create Agenda with null IncQueryEngine");
-        this.ruleInstanceMap = new HashMap<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>>();
+        this.ruleInstanceMap = new HashMap<RuleSpecification<? extends IPatternMatch>, RuleInstance<? extends IPatternMatch>>();
         this.activations = HashMultimap.create();
         this.enabledActivations = Sets.newHashSet();
 
@@ -117,16 +116,16 @@ public class Agenda {
      * public Notifier getNotifier() { return iqEngine.getEmfRoot(); }
      */
 
-    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> instantiateRule(
-            final RuleSpecification<Match, Matcher> specification) {
-        RuleInstance<Match, Matcher> rule = specification.instantiateRule(iqEngine);
+    protected <Match extends IPatternMatch> RuleInstance<Match> instantiateRule(
+            final RuleSpecification<Match> specification) {
+        RuleInstance<Match> rule = specification.instantiateRule(iqEngine);
         rule.addActivationNotificationListener(activationListener, true);
         ruleInstanceMap.put(specification, rule);
         return rule;
     }
 
-    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
-            final RuleInstance<Match, Matcher> rule) {
+    protected <Match extends IPatternMatch> boolean removeRule(
+            final RuleInstance<Match> rule) {
         if (ruleInstanceMap.containsValue(rule)) {
             rule.removeActivationNotificationListener(activationListener);
             rule.dispose();
@@ -136,9 +135,9 @@ public class Agenda {
         return false;
     }
 
-    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
-            final RuleSpecification<Match, Matcher> ruleSpecification) {
-        RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>> rule = ruleInstanceMap
+    protected <Match extends IPatternMatch> boolean removeRule(
+            final RuleSpecification<Match> ruleSpecification) {
+        RuleInstance<? extends IPatternMatch> rule = ruleInstanceMap
                 .get(ruleSpecification);
         if (rule != null) {
             rule.removeActivationNotificationListener(activationListener);
@@ -150,7 +149,7 @@ public class Agenda {
     }
 
     protected void dispose() {
-        for (RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>> rule : ruleInstanceMap
+        for (RuleInstance<? extends IPatternMatch> rule : ruleInstanceMap
                 .values()) {
             rule.dispose();
         }
@@ -166,21 +165,21 @@ public class Agenda {
     /**
      * @return the ruleInstanceMap
      */
-    public Map<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>, RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRuleInstanceMap() {
+    public Map<RuleSpecification<? extends IPatternMatch>, RuleInstance<? extends IPatternMatch>> getRuleInstanceMap() {
         return Collections.unmodifiableMap(ruleInstanceMap);
     }
 
     /**
      * @return the set of rule instances
      */
-    public Set<RuleInstance<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRuleInstances() {
+    public Set<RuleInstance<? extends IPatternMatch>> getRuleInstances() {
         return ImmutableSet.copyOf(ruleInstanceMap.values());
     }
 
     @SuppressWarnings("unchecked")
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleInstance<Match, Matcher> getInstance(
-            final RuleSpecification<Match, Matcher> ruleSpecification) {
-        return (RuleInstance<Match, Matcher>) ruleInstanceMap.get(ruleSpecification);
+    public <Match extends IPatternMatch> RuleInstance<Match> getInstance(
+            final RuleSpecification<Match> ruleSpecification) {
+        return (RuleInstance<Match>) ruleInstanceMap.get(ruleSpecification);
     }
 
     /**
@@ -201,9 +200,9 @@ public class Agenda {
         return activations.get(state);
     }
 
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Collection<Activation<Match>> getActivations(
-            final RuleSpecification<Match, Matcher> ruleSpecification) {
-        RuleInstance<Match, Matcher> instance = getInstance(ruleSpecification);
+    public <Match extends IPatternMatch> Collection<Activation<Match>> getActivations(
+            final RuleSpecification<Match> ruleSpecification) {
+        RuleInstance<Match> instance = getInstance(ruleSpecification);
         if (instance == null) {
             return Collections.emptySet();
         } else {

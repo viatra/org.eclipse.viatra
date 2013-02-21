@@ -17,18 +17,16 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
 import org.eclipse.incquery.runtime.evm.notification.ActivationNotificationProvider;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.evm.specific.DefaultAttributeMonitor;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
@@ -47,7 +45,7 @@ import com.google.common.collect.TreeBasedTable;
  * @author Abel Hegedus
  * 
  */
-public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>>{
+public abstract class RuleInstance<Match extends IPatternMatch>{
 
     /**
      * @author Abel Hegedus
@@ -121,7 +119,7 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
 
         @Override
         protected void activationMissing(Match match) {
-            matcher.getEngine().getLogger().error(String.format("Match %s disappeared without existing activation in rule instance %s!",match,this));
+            getLogger().error(String.format("Match %s disappeared without existing activation in rule instance %s!",match,this));
         }
 
         @Override
@@ -147,13 +145,12 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
 
         @Override
         protected void activationMissing(Match match) {
-            matcher.getEngine().getLogger().error(String.format("Match %s updated without existing activation in rule instance %s!",match,this));
+            getLogger().error(String.format("Match %s updated without existing activation in rule instance %s!",match,this));
         }
 
     }
 
-    private Matcher matcher;
-    private final RuleSpecification<Match, Matcher> specification;
+    private final RuleSpecification<Match> specification;
     private Table<ActivationState, Match, Activation<Match>> activations;
     private ActivationNotificationProvider activationNotificationProvider;
     private IMatchUpdateListener<Match> matchUpdateListener;
@@ -166,9 +163,8 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
      * @param specification
      * @param engine
      */
-    protected RuleInstance(final RuleSpecification<Match, Matcher> specification, final IncQueryEngine engine) {
+    protected RuleInstance(final RuleSpecification<Match> specification) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
-        checkNotNull(engine, "Cannot create rule instance for null IncQuery Engine!");
         
         
         Comparator<Match> columnComparator = specification.getComparator();
@@ -181,27 +177,16 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
 
-        prepareMatchUpdateListener();
-        prepateAttributeMonitor();
-        
-        try {
-            this.matcher = specification.getFactory().getMatcher(engine);
-            this.matcher.addCallbackOnMatchUpdate(matchUpdateListener, true);
-        } catch (IncQueryException e) {
-            engine.getLogger().error(
-                    String.format("Could not initialize matcher %s in engine %s", specification.getFactory()
-                            .getPatternFullyQualifiedName(), engine.getEmfRoot().toString()), e);
-        }
     }
 
-    private void prepareMatchUpdateListener() {
+    protected void prepareMatchUpdateListener() {
         IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
         IMatchProcessor<Match> matchDisppearProcessor = checkNotNull(prepareMatchDisppearProcessor(), "Prepared match disappearance processor is null!");
-        this.matchUpdateListener = new MatchUpdateAdapter<Match>(matchAppearProcessor,
-                matchDisppearProcessor);
+        this.setMatchUpdateListener(new MatchUpdateAdapter<Match>(matchAppearProcessor,
+                matchDisppearProcessor));
     }
-
-    private void prepateAttributeMonitor() {
+    
+    protected void prepateAttributeMonitor() {
         this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
         this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         this.attributeMonitor.addCallbackOnMatchUpdate(attributeMonitorListener);
@@ -265,20 +250,34 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
         return nextActivationState;
     }
     
-    /**
-     * @return the matcher
-     */
-    public IncQueryMatcher<?> getMatcher() {
-        return matcher;
-    }
+    
 
     /**
      * @return the specification
      */
-    public RuleSpecification<Match, Matcher> getSpecification() {
+    public RuleSpecification<Match> getSpecification() {
         return specification;
     }
     
+    /**
+     * @return the matchUpdateListener
+     */
+    protected IMatchUpdateListener<Match> getMatchUpdateListener() {
+        return matchUpdateListener;
+    }
+
+    /**
+     * @return the logger
+     */
+    protected abstract Logger getLogger();
+
+    /**
+     * @param matchUpdateListener the matchUpdateListener to set
+     */
+    public void setMatchUpdateListener(IMatchUpdateListener<Match> matchUpdateListener) {
+        this.matchUpdateListener = matchUpdateListener;
+    }
+
     protected boolean addActivationNotificationListener(final IActivationNotificationListener listener, final boolean fireNow) {
         return activationNotificationProvider.addActivationNotificationListener(listener, fireNow);
     }
@@ -314,7 +313,6 @@ public class RuleInstance<Match extends IPatternMatch, Matcher extends IncQueryM
     protected void dispose() {
         this.attributeMonitor.removeCallbackOnMatchUpdate(attributeMonitorListener);
         this.attributeMonitor.dispose();
-        this.matcher.removeCallbackOnMatchUpdate(matchUpdateListener);
     }
     
     /* (non-Javadoc)

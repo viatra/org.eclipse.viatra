@@ -22,11 +22,11 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -35,7 +35,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @author Abel Hegedus
  * 
  */
-public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
+public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
         QueryResultMultimap<KeyType, ValueType> {
 
     private final Set<Job<Match>> jobs;
@@ -45,7 +45,7 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
     /**
      * @param agenda
      */
-    protected TriggeredQueryResultMultimap(final RuleEngine engine) {
+    protected EVMBasedQueryResultMultimap(final RuleEngine engine) {
         super(engine.getIncQueryEngine().getLogger());
         this.engine = engine;
         this.jobs = new HashSet<Job<Match>>();
@@ -72,7 +72,7 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
      * @throws IncQueryException
      * 
      */
-    protected TriggeredQueryResultMultimap(final IncQueryEngine engine) {
+    protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
         this(EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine)));
     }
@@ -82,13 +82,13 @@ public abstract class TriggeredQueryResultMultimap<Match extends IPatternMatch, 
      *             if the {@link IncQueryEngine} creation fails on the {@link Notifier}
      * 
      */
-    protected TriggeredQueryResultMultimap(final Notifier notifier) throws IncQueryException {
+    protected EVMBasedQueryResultMultimap(final Notifier notifier) throws IncQueryException {
         this(EngineManager.getInstance().getIncQueryEngine(notifier));
     }
 
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IMatcherFactory<Matcher> factory) {
-        engine.addRule(new RuleSpecification<Match, Matcher>(factory,
+        engine.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(factory,
                 DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 

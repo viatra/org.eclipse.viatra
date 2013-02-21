@@ -37,10 +37,10 @@ public class Activation<Match extends IPatternMatch> {
     private Match patternMatch;
     private ActivationState state;
     private boolean enabled;
-    private RuleInstance<Match, ? extends IncQueryMatcher<Match>> rule;
+    private RuleInstance<Match> rule;
     private int cachedHash = -1;
 
-    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match, Matcher> rule, Match patternMatch) {
+    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match> rule, Match patternMatch) {
         this.patternMatch = checkNotNull(patternMatch,"Cannot create activation with null patternmatch");
         this.rule = checkNotNull(rule,"Cannot create activation with null rule");
         this.state = ActivationState.INACTIVE;
@@ -61,7 +61,7 @@ public class Activation<Match extends IPatternMatch> {
     /**
      * @return the rule
      */
-    public RuleInstance<Match, ? extends IncQueryMatcher<Match>> getRule() {
+    public RuleInstance<Match> getRule() {
         return rule;
     }
 

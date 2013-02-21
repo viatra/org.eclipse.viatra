@@ -11,12 +11,12 @@
 package org.eclipse.incquery.runtime.evm.specific;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
@@ -32,12 +32,16 @@ import com.google.common.collect.Table;
  */
 public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Match> {
 
-    public static final String RECORDING_JOB = "RecordingJobExecution";
-    public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.triggerengine.specific.RecordingJob.SessionData";
+    /**
+     * 
+     */
+    public static final String TRANSACTIONAL_EDITING_DOMAIN = "org.eclipse.incquery.evm.TransactionalEditingDomain";
+    public static final String RECORDING_JOB = "org.eclipse.incquery.evm.specifc.RecordingJobExecution";
+    public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.evm.specific.RecordingJob.SessionData";
 
     public static class RecordingJobSessionData {
 
-        private Table<RecordingJob<? extends IPatternMatch>, Activation<? extends IPatternMatch>, Command> table;
+        private Table<Activation<? extends IPatternMatch>, RecordingJob<? extends IPatternMatch>, Command> table;
 
         /**
          * 
@@ -49,7 +53,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
         /**
          * @return the table
          */
-        public Table<RecordingJob<? extends IPatternMatch>, Activation<? extends IPatternMatch>, Command> getTable() {
+        public Table<Activation<? extends IPatternMatch>, RecordingJob<? extends IPatternMatch>, Command> getTable() {
             return table;
         }
 
@@ -72,8 +76,8 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      */
     @Override
     protected void execute(final Activation<Match> activation, final Context context) {
-        IncQueryEngine engine = activation.getRule().getMatcher().getEngine();
-        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(engine.getEmfRoot());
+        Object target = findDomainTarget(activation, context);
+        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(target);
         if (domain == null) {
             super.execute(activation, context);
         } else {
@@ -90,6 +94,18 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
         }
     }
 
+    private Object findDomainTarget(final Activation<Match> activation, final Context context) {
+        Match match = activation.getPatternMatch();
+        if(match.parameterNames().length > 0) {
+            for (int i = 0; i < match.parameterNames().length; i++) {
+                if(match.get(i) instanceof EObject) {
+                    return match.get(i);
+                }
+            }
+        }
+        return context.get(TRANSACTIONAL_EDITING_DOMAIN);
+    }
+
     private void updateSessionData(final Activation<Match> activation, final Context context, final Command command) {
         Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
         RecordingJobSessionData result = null;
@@ -99,7 +115,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
             result = new RecordingJobSessionData();
             context.put(RECORDING_JOB_SESSION_DATA_KEY, result);
         }
-        result.getTable().put(this, activation, command);
+        result.getTable().put(activation, this, command);
     }
 
 }

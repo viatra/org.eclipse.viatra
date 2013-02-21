@@ -17,7 +17,6 @@ import java.util.Set;
 import org.apache.log4j.Level;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 
 import com.google.common.collect.ImmutableSet;
@@ -34,13 +33,13 @@ public final class EventDrivenVM {
     private static boolean debug = false;
 
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleSpecifications) {
+            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch>> ruleSpecifications) {
         checkNotNull(schedulerFactory, "Cannot create trigger engine with null scheduler factory");
         checkNotNull(ruleSpecifications, "Cannot create trigger engine with null rule specification set");
         Executor executor = new Executor(engine);
         setLoggerLevelToDebug(engine);
         Agenda agenda = executor.getAgenda();
-        for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
+        for (RuleSpecification<?> ruleSpecification : ruleSpecifications) {
             agenda.instantiateRule(ruleSpecification);
         }
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
@@ -48,7 +47,7 @@ public final class EventDrivenVM {
     }
     
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>... ruleSpecifications) {
+            final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch>... ruleSpecifications) {
         return createExecutionSchema(engine, schedulerFactory, ImmutableSet.copyOf(ruleSpecifications));
     }
 
@@ -71,11 +70,11 @@ public final class EventDrivenVM {
     }
     
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final Set<RuleSpecification<?, ?>> ruleSpecifications) {
+            final Set<RuleSpecification<?>> ruleSpecifications) {
         checkNotNull(ruleSpecifications, "Cannot create rule engine with null rule specification set");
         Agenda agenda = new Agenda(engine);
         setLoggerLevelToDebug(engine);
-        for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
+        for (RuleSpecification<?> ruleSpecification : ruleSpecifications) {
             agenda.instantiateRule(ruleSpecification);
         }
 
@@ -83,7 +82,7 @@ public final class EventDrivenVM {
     }
     
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final RuleSpecification<?, ?>... ruleSpecifications) {
+            final RuleSpecification<?>... ruleSpecifications) {
         return createRuleEngine(engine, ImmutableSet.copyOf(ruleSpecifications));
     }
     

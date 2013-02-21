@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.evm.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 /**
  * @author Abel Hegedus
@@ -47,8 +46,8 @@ public class ExecutionSchema extends RuleEngine {
      * @see org.eclipse.incquery.runtime.evm.api.RuleEngine#fireActivations(boolean, org.eclipse.incquery.runtime.evm.api.RuleInstance)
      */
     @Override
-    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void fireActivations(
-            boolean fireNow, RuleInstance<Match, Matcher> instance) {
+    protected <Match extends IPatternMatch> void fireActivations(
+            boolean fireNow, RuleInstance<Match> instance) {
         scheduler.schedule();
     }
 

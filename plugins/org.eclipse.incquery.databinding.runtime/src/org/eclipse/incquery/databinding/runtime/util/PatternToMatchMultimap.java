@@ -14,7 +14,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.qrm.TriggeredQueryResultMultimap;
+import org.eclipse.incquery.runtime.evm.qrm.EVMBasedQueryResultMultimap;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * 
  */
 public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends
-        TriggeredQueryResultMultimap<MatchType, Pattern, MatchType> {
+        EVMBasedQueryResultMultimap<MatchType, Pattern, MatchType> {
 
     /**
      * Creates a new multimap for the given engine.

@@ -63,47 +63,47 @@ public class RuleEngine {
     }
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
-            final RuleSpecification<Match, Matcher> specification) {
+            final RuleSpecification<Match> specification) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         return ImmutableSet.copyOf(agenda.getActivations(specification));
     }
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> Set<Activation<Match>> getActivations(
-            final RuleSpecification<Match, Matcher> specification, final ActivationState state) {
+            final RuleSpecification<Match> specification, final ActivationState state) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(state, "Activation state must be specified!");
         return ImmutableSet.copyOf(agenda.getInstance(specification).getActivations(state));
     }
 
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRule(
-            final RuleSpecification<Match, Matcher> specification) {
+            final RuleSpecification<Match> specification) {
         return addRule(specification, false);
     }
     
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean addRule(
-            final RuleSpecification<Match, Matcher> specification, boolean fireNow) {
+    public <Match extends IPatternMatch> boolean addRule(
+            final RuleSpecification<Match> specification, boolean fireNow) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        RuleInstance<Match, Matcher> instance = agenda.instantiateRule(specification);
+        RuleInstance<Match> instance = agenda.instantiateRule(specification);
         if(fireNow) {
             fireActivations(fireNow, instance);
         }
         return true;
     }
 
-    protected <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> void fireActivations(boolean fireNow,
-            RuleInstance<Match, Matcher> instance) {
+    protected <Match extends IPatternMatch> void fireActivations(boolean fireNow,
+            RuleInstance<Match> instance) {
         Context context = new Context();
         for (Activation<Match> act : instance.getAllActivations()) {
             act.fire(context);
         }
     }
 
-    public Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> getRules() {
+    public Set<RuleSpecification<? extends IPatternMatch>> getRules() {
         return ImmutableSet.copyOf(agenda.getRuleInstanceMap().keySet());
     }
 
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> boolean removeRule(
-            final RuleSpecification<Match, Matcher> specification) {
+    public <Match extends IPatternMatch> boolean removeRule(
+            final RuleSpecification<Match> specification) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         return agenda.removeRule(specification);
     }

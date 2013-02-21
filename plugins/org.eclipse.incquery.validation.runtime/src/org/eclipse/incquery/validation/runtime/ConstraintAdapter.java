@@ -25,12 +25,13 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -54,7 +55,7 @@ public class ConstraintAdapter {
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
-        Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> rules = Sets.newHashSet();
+        Set<RuleSpecification<? extends IPatternMatch>> rules = Sets.newHashSet();
 
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
@@ -66,7 +67,7 @@ public class ConstraintAdapter {
             Job<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
                     constraint, logger));
 
-            rules.add(new RuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
+            rules.add(new SimpleMatcherRuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
                     (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) constraint.getMatcherFactory(),
                     DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(placerJob, eraserJob, updaterJob)));
         }

@@ -17,10 +17,8 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
@@ -33,25 +31,23 @@ import com.google.common.collect.Multimap;
  *         implement rule specification - Activation Life Cycle - Jobs related to Activation State - create Rule
  *         Instance with Matcher(Factory)/Pattern
  */
-public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
+public abstract class RuleSpecification<Match extends IPatternMatch> {
 
-    private final IMatcherFactory<Matcher> factory;
     private final ActivationLifeCycle lifeCycle;
     private final Multimap<ActivationState, Job<Match>> jobs;
     private final Comparator<Match> comparator;
     private final Set<ActivationState> enabledStates;
 
-    public RuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs) {
-        this(factory, lifeCycle, jobs, null);
+        this(lifeCycle, jobs, null);
     }
 
     /**
      * 
      */
-    public RuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs, final Comparator<Match> comparator) {
-        this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
         this.lifeCycle = checkNotNull(ActivationLifeCycle.copyOf(lifeCycle),
                 "Cannot create rule specification with null life cycle!");
         this.jobs = HashMultimap.create();
@@ -67,17 +63,8 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         this.comparator = comparator;
     }
     
-    protected RuleInstance<Match, Matcher> instantiateRule(final IncQueryEngine engine) {
-        return new RuleInstance<Match, Matcher>(this, engine);
-    }
-
-    /**
-     * @return the factory
-     */
-    public IMatcherFactory<Matcher> getFactory() {
-        return factory;
-    }
-
+    protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine);
+    
     /**
      * 
      * @return the lifeCycle
@@ -118,7 +105,6 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
-                .add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
+        return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
     }
 }
