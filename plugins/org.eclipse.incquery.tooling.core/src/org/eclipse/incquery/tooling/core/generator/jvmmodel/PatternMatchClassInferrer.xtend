@@ -202,27 +202,29 @@ class PatternMatchClassInferrer {
 			it.setBody([append('''
 				if (this == obj)
 					return true;
-				if (obj == null)
-					return false;
-				if (!(obj instanceof ''')
+				if (!(obj instanceof «pattern.matchClassName»)) { // this should be infrequent				
+					if (obj == null)
+						return false;
+					if (!(obj instanceof ''')
 				referClass(pattern, typeof(IPatternMatch))
 				append('''
 				))
-					return false;
+						return false;
 				''')
+				append("	")
 				referClass(pattern, typeof(IPatternMatch))
 				append(" ") append('''
 				otherSig  = (''')
 				referClass(pattern, typeof(IPatternMatch))
 				append('''
 				) obj;
-				if (!pattern().equals(otherSig.pattern()))
-					return false;
-				if (!«pattern.matchClassName».class.equals(obj.getClass()))
+					if (!pattern().equals(otherSig.pattern()))
+						return false;
 					return ''')
 				referClass(pattern, typeof(Arrays))
 				append('''
 				.deepEquals(toArray(), otherSig.toArray());
+				}
 				«IF !pattern.parameters.isEmpty»
 				«pattern.matchClassName» other = («pattern.matchClassName») obj;
 				«FOR variable : pattern.parameters» 

@@ -73,16 +73,18 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof IPatternMatch))
-            return false;
-        IPatternMatch other = (IPatternMatch) obj;
-        if (!pattern().equals(other.pattern()))
-            return false;
-        if (!Arrays.deepEquals(array, other.toArray()))
-            return false;
-        return true;
+        if (!(obj instanceof GenericPatternMatch)) { // this should be infrequent
+	        if (obj == null)
+	            return false;
+	        if (!(obj instanceof IPatternMatch))
+	            return false;
+	        IPatternMatch other = (IPatternMatch) obj;
+	        if (!pattern().equals(other.pattern()))
+	            return false;
+	        return Arrays.deepEquals(array, other.toArray());	     	
+        }
+    	final GenericPatternMatch other = (GenericPatternMatch) obj;
+		return pattern().equals(other.pattern()) && Arrays.deepEquals(array, other.array);
     }
 
     @Override
