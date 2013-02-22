@@ -31,7 +31,7 @@
             name="%_UI_EIQSnapshotEditor_label"
             icon="icons/full/obj16/EIQSnapshotModelFile.gif"
             extensions="eiqsnapshot"
-            class="org.eclipse.viatra2.emf.incquery.snapshot.EIQSnapshot.presentation.EIQSnapshotEditor"
+            class="org.eclipse.incquery.snapshot.EIQSnapshot.presentation.EIQSnapshotEditor"
             contributorClass="org.eclipse.incquery.snapshot.EIQSnapshot.presentation.EIQSnapshotActionBarContributor">
       </editor>
    </extension>

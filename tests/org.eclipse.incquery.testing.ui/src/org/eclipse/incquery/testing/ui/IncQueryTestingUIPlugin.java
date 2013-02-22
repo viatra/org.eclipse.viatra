@@ -9,7 +9,7 @@
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.testing.ui;
+package org.eclipse.incquery.testing.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
 public class IncQueryTestingUIPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.viatra2.emf.incquery.testing.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.incquery.testing.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static IncQueryTestingUIPlugin plugin;

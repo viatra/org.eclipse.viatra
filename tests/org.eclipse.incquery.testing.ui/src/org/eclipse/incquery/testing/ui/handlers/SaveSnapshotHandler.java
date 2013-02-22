@@ -8,7 +8,7 @@
  * Contributors:
  *    Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.incquery.testing.ui.handlers;
+package org.eclipse.incquery.testing.ui.handlers;
 
 import java.io.IOException;
 import java.util.ArrayList;
