@@ -15,6 +15,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
+ * 
+ * 
  * @author Abel Hegedus
  *
  */

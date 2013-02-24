@@ -58,4 +58,11 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
         }
     }
 
+    /**
+     * Disposes of the provider by unregistering all listeners.
+     */
+    public void dispose() {
+        this.activationNotificationListeners.clear();
+    }
+
 }

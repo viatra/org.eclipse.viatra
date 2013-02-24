@@ -32,6 +32,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 import com.google.common.collect.TreeBasedTable;
 
 /**
@@ -310,7 +311,18 @@ public abstract class RuleInstance<Match extends IPatternMatch>{
         return activations.row(state).values();
     }
 
+    /**
+     * Rule instances are managed by their Agenda, they should be disposed through that!
+     * 
+     */
     protected void dispose() {
+        for (Cell<ActivationState, Match, Activation<Match>> cell : activations.cellSet()) {
+            Activation<Match> activation = cell.getValue();
+            ActivationState activationState = activation.getState();
+            activation.setState(ActivationState.INACTIVE);
+            activationNotificationProvider.notifyActivationChanged(activation, activationState, ActivationLifeCycleEvent.MATCH_DISAPPEARS);
+        } 
+        this.activationNotificationProvider.dispose();
         this.attributeMonitor.removeCallbackOnMatchUpdate(attributeMonitorListener);
         this.attributeMonitor.dispose();
     }

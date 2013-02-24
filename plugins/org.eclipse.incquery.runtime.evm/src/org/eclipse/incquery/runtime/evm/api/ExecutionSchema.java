@@ -15,6 +15,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
+ * An execution schema is a special rule engine and a facade
+ *  for accessing the EVM. In addition to the RuleEngine,
+ *  it uses a scheduler for firing activations.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -22,15 +26,29 @@ public class ExecutionSchema extends RuleEngine {
 
     private Scheduler scheduler;
 
+    /**
+     * Creates a facade for the EVM represented by the given scheduler
+     * 
+     * @param scheduler
+     */
     protected ExecutionSchema(final Scheduler scheduler) {
         super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getAgenda());
         this.scheduler = scheduler;
     }
 
+    /**
+     * Creates a facede for the EVM represented by the given scheduler.
+     * 
+     * @param scheduler
+     * @return the created facade
+     */
     public static ExecutionSchema create(final Scheduler scheduler) {
         return new ExecutionSchema(scheduler);
     }
 
+    /**
+     * Disposes of the scheduler.
+     */
     public void dispose() {
         scheduler.dispose();
     }
@@ -42,12 +60,12 @@ public class ExecutionSchema extends RuleEngine {
         return scheduler;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.evm.api.RuleEngine#fireActivations(boolean, org.eclipse.incquery.runtime.evm.api.RuleInstance)
+    /**
+     * Since a scheduler is defined, activations cannot be fired directly,
+     * instead, an out-of-order schedule call is sent.
      */
     @Override
-    protected <Match extends IPatternMatch> void fireActivations(
-            boolean fireNow, RuleInstance<Match> instance) {
+    protected <Match extends IPatternMatch> void fireActivations(RuleInstance<Match> instance) {
         scheduler.schedule();
     }
 

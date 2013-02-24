@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api;
 
-
+/**
+ * This enumeration defines the initial set of events that are 
+ * defined for the EVM.
+ * 
+ * @author Abel Hegedus
+ *
+ */
 public enum ActivationLifeCycleEvent{
+    
     MATCH_APPEARS, MATCH_DISAPPEARS, MATCH_UPDATES, ACTIVATION_FIRES;
     
 }
