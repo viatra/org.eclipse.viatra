@@ -51,7 +51,7 @@ public class XBasePureCheckerUtil {
             } catch (CoreException coreException) {
                 logger.error("Whitelist extension point initialization failed.", coreException);
             }
-            if (object != null && object instanceof IXBasePureWhitelist) {
+            if (object instanceof IXBasePureWhitelist) {
                 IXBasePureWhitelist xbasePureWhitelist = (IXBasePureWhitelist) object;
                 if (xbasePureWhitelist.getWhitelistedClasses().contains(qualifiedName)) {
                     return false;

@@ -193,11 +193,7 @@ public class TableViewerUtil {
         classFqn = classFqn.toLowerCase();
 
         if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
-            if (value.toLowerCase().matches("true") || value.toLowerCase().matches("false")) {
-                return true;
-            } else {
-                return false;
-            }
+            return value.toLowerCase().matches("true") || value.toLowerCase().matches("false");
         } else if (Character.class.getName().toLowerCase().matches(classFqn)) {
             return true;
         } else if (Byte.class.getName().toLowerCase().matches(classFqn)

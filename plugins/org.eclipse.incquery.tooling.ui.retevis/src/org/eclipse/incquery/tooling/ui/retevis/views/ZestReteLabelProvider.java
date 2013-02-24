@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.text.FlowPage;
@@ -47,9 +47,9 @@ import org.eclipse.swt.graphics.Color;
 @SuppressWarnings("rawtypes")
 public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
 
-    private final static int INDEXER_ID = 0;
-    private final static int RETEMATCHER_ID = 1;
-    private final static int INPUT_ID = 2;
+    private static final int INDEXER_ID = 0;
+    private static final int RETEMATCHER_ID = 1;
+    private static final int INPUT_ID = 2;
 
     private ReteBoundary rb;
     private ColorTheme theme;
@@ -75,7 +75,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
         resetReverseMap();
         for (Object _o : rb.getAllProductionNodes()) {
             Node productionNode = rb.getHeadContainer().resolveLocal((Address<?>) _o);
-            if (productionNode != null && productionNode instanceof Production) {
+            if (productionNode instanceof Production) {
                 initalizeReverseMap((Production) productionNode);
             }
         }
@@ -218,7 +218,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
     private static Collection<Stub<Address<?>>> getAllParentStubs(Stub<Address<?>> st) {
         if (st != null) {
-            Vector<Stub<Address<?>>> v = new Vector<Stub<Address<?>>>();
+            List<Stub<Address<?>>> v = new ArrayList<Stub<Address<?>>>();
             v.add(st);
             v.addAll(getAllParentStubs(st.getPrimaryParentStub()));
             v.addAll(getAllParentStubs(st.getSecondaryParentStub()));
