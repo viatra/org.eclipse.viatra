@@ -60,11 +60,7 @@ public class ModelConnectorTreeViewerKey {
             return false;
         } else {
             ModelConnectorTreeViewerKey key = (ModelConnectorTreeViewerKey) obj;
-            if (key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier)) {
-                return true;
-            } else {
-                return false;
-            }
+            return key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier);
         }
     }
 

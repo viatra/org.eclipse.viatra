@@ -29,11 +29,7 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
 
     @Override
     public boolean canModify(Object element, String property) {
-        if (property.equalsIgnoreCase("filter")) {
-            return true;
-        } else {
-            return false;
-        }
+        return property.equalsIgnoreCase("filter");
     }
 
     @Override

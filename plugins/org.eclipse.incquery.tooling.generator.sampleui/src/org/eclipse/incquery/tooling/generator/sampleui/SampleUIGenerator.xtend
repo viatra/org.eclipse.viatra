@@ -27,12 +27,12 @@ import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternL
 class SampleUIGenerator implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	private static String ECLIPSE_UI_COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"
-	private static String ECLIPSE_UI_HANDLERS_EXTENSION_POINT = "org.eclipse.ui.handlers"
-	private static String ECLIPSE_UI_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
-	public static String UI_COMMANDS_PREFIX = "generated.incquery.command."
-	public static String UI_HANDLERS_PREFIX = "generated.incquery.handler."
-	public static String UI_MENUS_PREFIX = "generated.incquery.menu."
+	private static val String ECLIPSE_UI_COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"
+	private static val String ECLIPSE_UI_HANDLERS_EXTENSION_POINT = "org.eclipse.ui.handlers"
+	private static val String ECLIPSE_UI_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
+	public static val String UI_COMMANDS_PREFIX = "generated.incquery.command."
+	public static val String UI_HANDLERS_PREFIX = "generated.incquery.handler."
+	public static val String UI_MENUS_PREFIX = "generated.incquery.menu."
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.handlerClassJavaFile, pattern.patternHandler)
