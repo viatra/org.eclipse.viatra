@@ -552,23 +552,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
-    	throw new UnsupportedOperationException();
-//        if (inWildcardMode) {
-//            throw new IllegalStateException();
-//        }
-//        if (features != null) {
-//            features = resolveAll(features);
-//            observedFeatures.removeAll(features);
-//            delayedFeatures.removeAll(features);
-//            for (EStructuralFeature f : features) {
-//                contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
-//                /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
-//                    // XXX this would probably cause ConcurrentModificationException
-//                    contentAdapter.valueToFeatureToHolderMap.remove(key,f);
-//                }*/
-//                // TODO proper notification
-//            }
-//        }
+        if (inWildcardMode) {
+            throw new IllegalStateException();
+        }
+        if (features != null) {
+            features = resolveAll(features);
+            observedFeatures.removeAll(features);
+            delayedFeatures.removeAll(features);
+            for (EStructuralFeature f : features) {
+                contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
+                /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
+                    // XXX this would probably cause ConcurrentModificationException
+                    contentAdapter.valueToFeatureToHolderMap.remove(key,f);
+                }*/
+                // TODO proper notification
+            }
+        }
     }
 
     @Override
@@ -610,19 +609,18 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEClasses(Set<EClass> classes) {
-    	throw new UnsupportedOperationException();
-//        if (inWildcardMode) {
-//            throw new IllegalStateException();
-//        }
-//        if (classes != null) {
-//            classes = resolveAll(classes);
-//            directlyObservedClasses.removeAll(classes);
-//            allObservedClasses = null;
-//            delayedClasses.removeAll(classes);
-//            for (EClass c : classes) {
-//                contentAdapter.removeInstanceSet(c);
-//            }
-//        }
+        if (inWildcardMode) {
+            throw new IllegalStateException();
+        }
+        if (classes != null) {
+            classes = resolveAll(classes);
+            directlyObservedClasses.removeAll(classes);
+            allObservedClasses = null;
+            delayedClasses.removeAll(classes);
+            for (EClass c : classes) {
+                contentAdapter.removeInstanceSet(c);
+            }
+        }
     }
 
     @Override
@@ -650,18 +648,18 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
-    	throw new UnsupportedOperationException();
-//        if (inWildcardMode) {
-//            throw new IllegalStateException();
-//        }
-//        if (dataTypes != null) {
-//            dataTypes = resolveAll(dataTypes);
-//            observedDataTypes.removeAll(dataTypes);
-//            delayedDataTypes.removeAll(dataTypes);
-//            for (EDataType dataType : dataTypes) {
-//                contentAdapter.removeDataTypeMap(dataType);
-//            }
-//        }
+//    	throw new UnsupportedOperationException();
+        if (inWildcardMode) {
+            throw new IllegalStateException();
+        }
+        if (dataTypes != null) {
+            dataTypes = resolveAll(dataTypes);
+            observedDataTypes.removeAll(dataTypes);
+            delayedDataTypes.removeAll(dataTypes);
+            for (EDataType dataType : dataTypes) {
+                contentAdapter.removeDataTypeMap(dataType);
+            }
+        }
     }
 
     @Override
