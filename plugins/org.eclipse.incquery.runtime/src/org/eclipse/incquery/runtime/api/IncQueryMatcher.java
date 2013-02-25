@@ -168,7 +168,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * 
      * <p>
      * This is a low-level callback that is invoked when the pattern matcher is not necessarily in a consistent state
-     * yet. Most users should use the agenda and trigger engine instead. TODO reference
+     * yet. Importantly, no model modification permitted during the callback. Most users should use the agenda and trigger engine instead. TODO reference
      * 
      * <p>
      * Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)},
