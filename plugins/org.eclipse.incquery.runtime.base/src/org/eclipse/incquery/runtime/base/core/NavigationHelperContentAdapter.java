@@ -191,7 +191,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void featureUpdate(boolean isInsertion, EObject notifier, EStructuralFeature feature, Object value) {
-        EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
+        // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
+    	EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
     }
 
     @Override
@@ -234,7 +235,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void processingError(Throwable ex, String task) {
+    protected void processingError(Throwable ex, String task) {
         navigationHelper.getLogger().fatal(
                 "EMF-IncQuery encountered an error in processing the EMF model. " + "This happened while trying to "
                         + task, ex);
