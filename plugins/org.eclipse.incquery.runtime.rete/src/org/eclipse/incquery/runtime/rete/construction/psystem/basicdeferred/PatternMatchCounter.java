@@ -12,7 +12,8 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
@@ -51,9 +52,9 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
      * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
      */
     @Override
-    public Set<Set<PVariable>> getFunctionalKeys() {
-    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
-    	result.add(getDeferringVariables());
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	result.put(getDeferringVariables(), getDeducedVariables());
 		return result;
     }
 

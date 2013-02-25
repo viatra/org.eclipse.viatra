@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -58,8 +59,8 @@ public abstract class BasePConstraint<PatternDescription, StubHandle> implements
      * @see org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint#getFunctionalKeys()
      */
     @Override
-    public Set<Set<PVariable>> getFunctionalKeys() {
-    	return Collections.emptySet();
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	return Collections.emptyMap();
     }
 
     @Override

@@ -12,10 +12,14 @@
 package org.eclipse.incquery.runtime.rete.construction.quasitree;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
+import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
  * @author Bergmann Gábor
@@ -25,9 +29,9 @@ class JoinCandidate<StubHandle> {
     Stub<StubHandle> primary;
     Stub<StubHandle> secondary;
 
-    Set<Object> varPrimary;
-    Set<Object> varSecondary;
-    Set<Object> varCommon;
+    Set<PVariable> varPrimary;
+    Set<PVariable> varSecondary;
+    Set<PVariable> varCommon;
 
     JoinCandidate(Stub<StubHandle> primary, Stub<StubHandle> secondary) {
         super();
@@ -66,14 +70,14 @@ class JoinCandidate<StubHandle> {
     /**
      * @return the varPrimary
      */
-    public Set<Object> getVarPrimary() {
+    public Set<PVariable> getVarPrimary() {
         return varPrimary;
     }
 
     /**
      * @return the varSecondary
      */
-    public Set<Object> getVarSecondary() {
+    public Set<PVariable> getVarSecondary() {
         return varSecondary;
     }
 
@@ -89,14 +93,20 @@ class JoinCandidate<StubHandle> {
         return Collections.disjoint(varPrimary, varSecondary);
     }
 
-    //private Boolean heath;
+    private Boolean heath;
     // it is a Heath-join iff common variables functionally determine either all primary or all secondary variables
     public boolean isHeath() {
-    	/*if (heath == null) {
+    	if (heath == null) {
+    		Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>(); 		
+    		for (PConstraint pConstraint : primary.getAllEnforcedConstraints()) 
+    			dependencies.putAll(pConstraint.getFunctionalDependencies());	
+    		for (PConstraint pConstraint : secondary.getAllEnforcedConstraints()) 
+    			dependencies.putAll(pConstraint.getFunctionalDependencies());	
+    		
+    		// TODO use functional dependency analysis to determine heathness here
+    		// does varCommon determine either varPrimary or varSecondary?
     		heath = false;
-    		primary.
-    	}*/
-    	// TODO use functional dependency analysis to determine heathness here
+    	}
     	return false;
     }
     

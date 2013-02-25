@@ -11,8 +11,11 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.Stub;
@@ -72,10 +75,13 @@ public class TypeTernary<PatternDescription, StubHandle> extends
      * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
      */
     @Override
-    public Set<Set<PVariable>> getFunctionalKeys() {
-    	final HashSet<Set<PVariable>> result = new HashSet<Set<PVariable>>();
-    	// TODO insert keys inferred by multiplicity    	
-    	result.add(Collections.singleton(edge));
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	result.put(Collections.singleton(edge), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,target})));
+    	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
+    		result.put(Collections.singleton(source), new HashSet<PVariable>(Arrays.asList(new PVariable[]{edge,target})));
+    	if (context.isBinaryEdgeMultiplicityOneTo(supplierKey))
+    		result.put(Collections.singleton(target), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,edge})));    	
 		return result;
     }
 

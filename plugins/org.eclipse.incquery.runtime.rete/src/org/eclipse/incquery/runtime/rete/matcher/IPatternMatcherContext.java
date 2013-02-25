@@ -69,12 +69,20 @@ public interface IPatternMatcherContext<PatternDescription> {
 
     boolean isTernaryEdgeType(Object typeObject);
 
+    boolean isTernaryEdgeMultiplicityToOne(Object typeObject);
+    
+    boolean isTernaryEdgeMultiplicityOneTo(Object typeObject);
+
     Collection<? extends Object> enumerateDirectTernaryEdgeSubtypes(Object typeObject);
 
     Collection<? extends Object> enumerateDirectTernaryEdgeSupertypes(Object typeObject);
 
     boolean isBinaryEdgeType(Object typeObject);
 
+    boolean isBinaryEdgeMultiplicityToOne(Object typeObject);
+    
+    boolean isBinaryEdgeMultiplicityOneTo(Object typeObject);
+       
     Collection<? extends Object> enumerateDirectBinaryEdgeSubtypes(Object typeObject);
 
     Collection<? extends Object> enumerateDirectBinaryEdgeSupertypes(Object typeObject);
