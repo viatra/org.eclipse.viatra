@@ -28,6 +28,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import com.google.common.base.Objects;
 
 /**
+ * This class implements a rule specification that uses a single matcher factory to prepare instances. 
+ * 
  * @author Abel Hegedus
  *
  */
@@ -36,7 +38,11 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     private final IMatcherFactory<Matcher> factory;
     
     /**
+     * Creates a specification with the given factory, life-cycle and job list.
      * 
+     * @param factory
+     * @param lifeCycle
+     * @param jobs
      */
     public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs) {
@@ -45,7 +51,12 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     }
 
     /**
+     * Creates a specification with the given factory, life-cycle, job list and activation comparator.
      * 
+     * @param factory
+     * @param lifeCycle
+     * @param jobs
+     * @param comparator
      */
     public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs, final Comparator<Match> comparator) {

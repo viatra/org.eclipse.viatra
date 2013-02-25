@@ -11,11 +11,16 @@
 package org.eclipse.incquery.runtime.evm.update;
 
 /**
+ * This interface is used for listening to update complete events sent by an {@link IUpdateCompleteProvider}.
+ * 
  * @author Abel Hegedus
  * 
  */
 public interface IUpdateCompleteListener {
 
+    /**
+     * This method is called when an update complete event occurs.
+     */
     void updateComplete();
 
 }

@@ -11,6 +11,9 @@
 package org.eclipse.incquery.runtime.evm.notification;
 
 /**
+ * This interface is used for providing an internal activation notification mechanism.
+ * Listeners added to the implemented provider should be notified when an activation change occurs.
+ * 
  * @author Abel Hegedus
  * 
  */

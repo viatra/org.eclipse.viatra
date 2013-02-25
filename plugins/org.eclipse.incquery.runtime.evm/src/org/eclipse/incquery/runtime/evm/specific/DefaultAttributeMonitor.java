@@ -25,6 +25,14 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 
+/**
+ * Default implementation of the {@link AttributeMonitor} that uses EMF Data binding to 
+ * watch the values of each feature of each object in matches.
+ * 
+ * @author Abel Hegedus
+ *
+ * @param <MatchType>
+ */
 public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 
     private ChangeListener changeListener;
@@ -38,6 +46,12 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
         this.observableMapReversed = new HashMap<MatchType, List<IObservableValue>>();
     }
 
+    /**
+     * Simple change listener implementation that sends a notification on each change.
+     * 
+     * @author Abel Hegedus
+     *
+     */
     private class ChangeListener implements IValueChangeListener {
         @Override
         public void handleValueChange(final ValueChangeEvent event) {
@@ -66,6 +80,13 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
         observableMapReversed.put(match, values);
     }
 
+    /**
+     * Iterates on all features and returns a list of observable values.
+     * 
+     * @param changeListener
+     * @param object
+     * @return
+     */
     private List<IObservableValue> observeAllAttributes(final IValueChangeListener changeListener, final Object object) {
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
         if (object instanceof EObject) {

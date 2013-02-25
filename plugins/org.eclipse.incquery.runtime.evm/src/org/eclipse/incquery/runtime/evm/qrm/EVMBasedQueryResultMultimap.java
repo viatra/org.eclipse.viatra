@@ -23,8 +23,8 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
+import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
@@ -32,6 +32,10 @@ import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
+ * This {@link QueryResultMultimap} implementation uses the EVM to provide a query-based multimap.
+ * 
+ * The contents of the multimap will be updated when the activations are fired in the EVM.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -40,14 +44,16 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
 
     private final Set<Job<Match>> jobs;
 
-    private final RuleEngine engine;
+    private final ExecutionSchema schema;
 
     /**
-     * @param agenda
+     * Creates a multimap on top of the given execution schema.
+     * 
+     * @param schema
      */
-    protected EVMBasedQueryResultMultimap(final RuleEngine engine) {
-        super(engine.getIncQueryEngine().getLogger());
-        this.engine = engine;
+    protected EVMBasedQueryResultMultimap(final ExecutionSchema schema) {
+        super(schema.getIncQueryEngine().getLogger());
+        this.schema = schema;
         this.jobs = new HashSet<Job<Match>>();
         jobs.add(new StatelessJob<Match>(ActivationState.APPEARED, new IMatchProcessor<Match>() {
             @Override
@@ -69,7 +75,8 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
     }
 
     /**
-     * @throws IncQueryException
+     * Creates a new multimap on the given engine. It will use an execution schema that
+     * is scheduled with IQBase update callbacks.
      * 
      */
     protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
@@ -78,6 +85,8 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
     }
 
     /**
+     * Creates a new multimap on the given notifier, delegates to {@link #EVMBasedQueryResultMultimap(IncQueryEngine)}.
+     * 
      * @throws IncQueryException
      *             if the {@link IncQueryEngine} creation fails on the {@link Notifier}
      * 
@@ -86,14 +95,31 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
         this(EngineManager.getInstance().getIncQueryEngine(notifier));
     }
 
+    /**
+     * Adds the given query into the results of the multimap. 
+     * 
+     * @param factory
+     */
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IMatcherFactory<Matcher> factory) {
-        engine.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(factory,
+        schema.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(factory,
                 DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 
+    /**
+     * Processes the given match and returns the key to be used in the multimap.
+     * 
+     * @param match
+     * @return the computed key
+     */
     protected abstract KeyType getKeyFromMatch(final Match match);
 
+    /**
+     * Processes the given match and returns the value to be used in the mulitmap.
+     * 
+     * @param match
+     * @return the computed value
+     */
     protected abstract ValueType getValueFromMatch(final Match match);
 
 }

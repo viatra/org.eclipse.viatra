@@ -12,6 +12,8 @@ package org.eclipse.incquery.runtime.evm.update;
 
 
 /**
+ * This interface is used to register listeners for a given type of update complete event.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -39,10 +41,5 @@ public interface IUpdateCompleteProvider {
      *            the listener that will no longer be notified.
      */
     boolean removeUpdateCompleteListener(final IUpdateCompleteListener listener);
-
-    /**
-     * 
-     */
-    void dispose();
 
 }

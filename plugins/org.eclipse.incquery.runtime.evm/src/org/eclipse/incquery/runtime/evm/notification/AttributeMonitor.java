@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
- * The class defines the operations that are required to observ the EMF attribute changes on pattern match objects.
+ * The class defines the operations that are required to observe the EMF attribute changes on pattern match objects.
  * 
  * @author Tamas Szabo
  * 
@@ -30,27 +30,65 @@ public abstract class AttributeMonitor<MatchType extends IPatternMatch> {
     public AttributeMonitor() {
         this.listeners = new ArrayList<IAttributeMonitorListener<MatchType>>();
     }
-
-    public void addCallbackOnMatchUpdate(final IAttributeMonitorListener<MatchType> listener) {
+    
+    /**
+     * Registers a listener for notifications when a feature value of an object in a match changes.
+     * 
+     * <p>
+     * The listener can be unregistered via
+     * {@link #removeAttributeMonitorListener(IAttributeMonitorListener)}.
+     * 
+     * @param listener
+     */
+    public void addAttributeMonitorListener(final IAttributeMonitorListener<MatchType> listener) {
         this.listeners.add(listener);
     }
 
-    public void removeCallbackOnMatchUpdate(final IAttributeMonitorListener<MatchType> listener) {
+    /**
+     * Unregisters a listener registered by
+     * {@link #addAttributeMonitorListener(IAttributeMonitorListener)}.
+     * 
+     * @param listener
+     */
+    public void removeAttributeMonitorListener(final IAttributeMonitorListener<MatchType> listener) {
         this.listeners.remove(listener);
     }
 
+    /**
+     * Register the attribute monitor to watch feature values  of object defined in the given match.
+     *  
+     * @param match
+     */
     public abstract void registerFor(final MatchType match);
 
+    /**
+     * Remove the attribute monitor from watching registered matches.
+     */
     public abstract void unregisterForAll();
 
+    /**
+     * Remove the attribute monitor from watching the given match.
+     * 
+     * @param match
+     */
     public abstract void unregisterFor(final MatchType match);
 
+    /**
+     * Sends notification to listeners when the given match is updated.
+     * 
+     * @param match
+     */
     protected void notifyListeners(final MatchType match) {
         for (IAttributeMonitorListener<MatchType> listener : listeners) {
             listener.notifyUpdate(match);
         }
     }
 
+    /**
+     * Disposes of the attribute monitor by unregistering from each match.
+     * 
+     * TODO should we clear the listener list?
+     */
     public void dispose() {
         this.unregisterForAll();
     }

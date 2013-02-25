@@ -244,7 +244,7 @@ public class Agenda {
      * 
      * @param activationComparator
      */
-    protected void addActivationOrdering(final Comparator<Activation<?>> activationComparator) {
+    public void addActivationOrdering(final Comparator<Activation<?>> activationComparator) {
         checkNotNull(activationComparator, "Comparator cannot be null!");
         TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
                 activationComparator);

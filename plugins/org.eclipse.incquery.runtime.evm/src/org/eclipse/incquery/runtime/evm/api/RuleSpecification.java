@@ -26,10 +26,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
+ * A rule specification specifies how the set of individual
+ * rule activations and their states are computed, what jobs (operations)
+ * to perform when an activation is executed, and how events affect the 
+ * state of the activations based on a life-cycle model.
+ * 
  * @author Abel Hegedus
  * 
- *         implement rule specification - Activation Life Cycle - Jobs related to Activation State - create Rule
- *         Instance with Matcher(Factory)/Pattern
  */
 public abstract class RuleSpecification<Match extends IPatternMatch> {
 
@@ -38,13 +41,24 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
     private final Comparator<Match> comparator;
     private final Set<ActivationState> enabledStates;
 
+    /**
+     * Creates a specification with the given life-cycle and job set.
+     * 
+     * @param lifeCycle
+     * @param jobs
+     */
     public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs) {
         this(lifeCycle, jobs, null);
     }
 
     /**
+     * Creates a specification with the given life-cycle, job set and
+     * activation comparator.
      * 
+     * @param lifeCycle
+     * @param jobs
+     * @param comparator
      */
     public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs, final Comparator<Match> comparator) {
@@ -63,10 +77,15 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
         this.comparator = comparator;
     }
     
+    /**
+     * Instantiates the rule on the given IncQueryEngine.
+     * 
+     * @param engine
+     * @return the instantiated rule
+     */
     protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine);
     
     /**
-     * 
      * @return the lifeCycle
      */
     public ActivationLifeCycle getLifeCycle() {
@@ -80,6 +99,12 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
         return enabledStates;
     }
 
+    /**
+     * Returns the jobs specified for the given state.
+     * 
+     * @param state
+     * @return the collection of jobs
+     */
     public Collection<Job<Match>> getJobs(final ActivationState state) {
         return jobs.get(state);
     }

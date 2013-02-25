@@ -16,6 +16,8 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleInstance;
 
 /**
+ * This class implements a rule instance that creates activations based on the match set of a single matcher.
+ * 
  * @author Abel Hegedus
  *
  */
@@ -24,12 +26,17 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
     private Matcher matcher;
     
     /**
-     * 
+     * Creates an instance using the given specification. 
      */
     public SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification) {
         super(specification);
     }
     
+    /**
+     * Prepares the instance with the given matcher.
+     * 
+     * @param matcher
+     */
     protected void prepareInstance(final Matcher matcher) {
         prepareMatchUpdateListener();
         prepateAttributeMonitor();

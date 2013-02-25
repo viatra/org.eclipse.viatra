@@ -19,6 +19,9 @@ import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
 import org.eclipse.incquery.runtime.evm.specific.RecordingJob;
 
 /**
+ * This provider implementation uses the EMF Transaction notification as
+ * an event source for update complete events.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -26,12 +29,23 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
     private final TransactionListener transactionListener;
     private final Lifecycle lifecycle;
 
+    /**
+     * Creates a new provider for the given {@link TransactionalEditingDomain}
+     * 
+     * @param editingDomain
+     */
     public TransactionUpdateCompleteProvider(final TransactionalEditingDomain editingDomain) {
         this.transactionListener = new TransactionListener();
         this.lifecycle = TransactionUtil.getAdapter(editingDomain, Lifecycle.class);
         this.lifecycle.addTransactionalEditingDomainListener(transactionListener);
     }
 
+    /**
+     * Listener implementation that is invoked by the transaction life-cycle.
+     * 
+     * @author Abel Hegedus
+     *
+     */
     private class TransactionListener implements TransactionalEditingDomainListener {
 
         @Override

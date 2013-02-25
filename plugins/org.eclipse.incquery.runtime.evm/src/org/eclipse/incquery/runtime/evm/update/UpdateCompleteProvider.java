@@ -14,6 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * This abstract implementation allows the registration of listeners and calls them when 
+ * an update complete event occurs. The class is abstract since there is no definition of
+ * the actual update complete event.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -39,13 +43,18 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
         return this.listeners.remove(listener);
     }
 
+    /**
+     * Notifies each listener that an update complete event occurred.
+     */
     protected void updateCompleted() {
         for (IUpdateCompleteListener listener : this.listeners) {
             listener.updateComplete();
         }
     }
 
-    @Override
+    /**
+     * Disposes of the provider by clearing the listener list
+     */
     public void dispose() {
         listeners.clear();
     }
