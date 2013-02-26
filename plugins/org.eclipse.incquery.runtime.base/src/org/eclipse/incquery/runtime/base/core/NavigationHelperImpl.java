@@ -489,6 +489,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 expansionAllowed = true;
             }
             contentAdapter.addAdapter(root);
+            contentAdapter.runCallbacksIfDirty();
         }
     }
 
@@ -743,7 +744,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (Notifier root : modelRoots) {
             EMFModelComprehension.traverseModel(visitor, root);
         }
-        runAfterUpdateCallbacks();
+        contentAdapter.runCallbacksIfDirty();
     }
 
     /**

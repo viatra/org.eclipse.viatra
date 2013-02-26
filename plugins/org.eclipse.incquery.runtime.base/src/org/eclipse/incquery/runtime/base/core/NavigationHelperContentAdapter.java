@@ -167,12 +167,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             processingError(ex, "handle the following update notification: " + notification);
         }
 
-        if (isDirty) {
+        runCallbacksIfDirty();
+
+    }
+
+	/**
+	 * 
+	 */
+	protected void runCallbacksIfDirty() {
+		if (isDirty) {
             isDirty = false;
             navigationHelper.runAfterUpdateCallbacks();
         }
-
-    }
+	}
 
     private void featureResolve(EObject source, EStructuralFeature feature, Object oldValue, Object newValue) {
         EReference reference = (EReference) feature;
@@ -755,5 +762,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     protected static Map<EClass, Set<EClass>> getSubTypeMap() {
         return subTypeMap;
     }
+
 
 }
