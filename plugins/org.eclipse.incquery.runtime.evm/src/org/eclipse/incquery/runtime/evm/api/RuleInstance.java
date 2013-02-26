@@ -283,9 +283,9 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
 
     /**
      * Checks whether the activation is part of the activation set of
-     * the instance, then executes each job that corresponds to the 
-     * activation state using the supplied context. Finally, it 
-     * updates the state by calling activationStateTransition().
+     * the instance, then updates the state by calling activationStateTransition().
+     * Finally, it executes each job that corresponds to the 
+     * activation state using the supplied context.
      * 
      * @param activation
      * @param activationState
@@ -295,11 +295,10 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
     protected void doFire(final Activation<Match> activation, final ActivationState activationState, final Match patternMatch, final Context context) {
         if (activations.contains(activationState, patternMatch)) {
             Collection<Job<Match>> jobs = specification.getJobs(activationState);
+            activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
             for (Job<Match> job : jobs) {
                 job.execute(activation, context);
             }
-            activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
-            
         }
     }
 
