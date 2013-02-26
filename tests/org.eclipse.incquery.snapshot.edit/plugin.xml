@@ -12,7 +12,7 @@
 
    <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
       <factory
-            uri="http://www.eclipse.org/viatra2/emf/incquery/snapshot"
+            uri="http://www.eclipse.org/incquery/snapshot"
             class="org.eclipse.incquery.snapshot.EIQSnapshot.provider.EIQSnapshotItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider

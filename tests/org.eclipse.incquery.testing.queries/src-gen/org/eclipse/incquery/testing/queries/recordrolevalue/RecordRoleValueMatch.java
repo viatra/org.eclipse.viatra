@@ -9,7 +9,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 
 /**
  * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
- * to be used in conjunction with RecordRoleValueMatcher.
+ * to be used in conjunction with {@link RecordRoleValueMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters, 
@@ -20,14 +20,14 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
  * @see RecordRoleValueProcessor
  * 
  */
-public final class RecordRoleValueMatch extends BasePatternMatch {
+public abstract class RecordRoleValueMatch extends BasePatternMatch {
   private MatchRecord fRecord;
   
   private Object fRole;
   
   private static String[] parameterNames = {"Record", "Role"};
   
-  RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
+  private RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
     this.fRecord = pRecord;
     this.fRole = pRole;
     
@@ -53,6 +53,7 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Record".equals(parameterName) ) {
     	this.fRecord = (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
     	return true;
@@ -66,11 +67,13 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
   }
   
   public void setRecord(final MatchRecord pRecord) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRecord = pRecord;
     
   }
   
   public void setRole(final Object pRole) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRole = pRole;
     
   }
@@ -116,15 +119,16 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (obj == null)
-    	return false;
-    if (!(obj instanceof IPatternMatch))
-    	return false;
-    IPatternMatch otherSig  = (IPatternMatch) obj;
-    if (!pattern().equals(otherSig.pattern()))
-    	return false;
-    if (!RecordRoleValueMatch.class.equals(obj.getClass()))
+    if (!(obj instanceof RecordRoleValueMatch)) { // this should be infrequent				
+    	if (obj == null)
+    		return false;
+    	if (!(obj instanceof IPatternMatch))
+    		return false;
+    	IPatternMatch otherSig  = (IPatternMatch) obj;
+    	if (!pattern().equals(otherSig.pattern()))
+    		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
+    }
     RecordRoleValueMatch other = (RecordRoleValueMatch) obj;
     if (fRecord == null) {if (other.fRecord != null) return false;}
     else if (!fRecord.equals(other.fRecord)) return false;
@@ -143,4 +147,28 @@ public final class RecordRoleValueMatch extends BasePatternMatch {
     }
     
   }
+  static final class Mutable extends RecordRoleValueMatch {
+    Mutable(final MatchRecord pRecord, final Object pRole) {
+      super(pRecord, pRole);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return true;
+    }
+  }
+  
+  static final class Immutable extends RecordRoleValueMatch {
+    Immutable(final MatchRecord pRecord, final Object pRole) {
+      super(pRecord, pRole);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return false;
+    }
+  }
+  
 }

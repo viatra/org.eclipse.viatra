@@ -13,7 +13,16 @@ package org.eclipse.incquery.runtime.evm.api;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
+
 /**
+ * A context is an associative store that is accessible during the
+ * execution of the EVM, and thus usable by the Sceduler, Executor, Agenda,
+ *  Rule Instances, Activations and Jobs.
+ * 
+ * In order to separate different users from each other, values can
+ * be accessed (get/put/remove) with a key.
+ * 
  * @author Abel Hegedus
  *
  */
@@ -25,22 +34,52 @@ public class Context {
         this.sessionData = new HashMap<String, Object>();
     }
     
+    /**
+     * Static helper method to create an empty Context.
+     * 
+     * @return
+     */
     public static Context create() {
         return new Context();
     }
     
+    /**
+     * Returns the value corresponding to the given key.
+     * 
+     * @param key
+     * @return the value in the context for the key
+     */
     public Object get(final String key) {
+        Preconditions.checkNotNull(key, "Cannot get value for null!");
         return sessionData.get(key);
     }
     
+    /**
+     * Puts the value into the context with the given key
+     * 
+     * @param key
+     * @param value
+     * @return the previous value for the key, or null
+     */
     public Object put(final String key, final Object value) {
+        Preconditions.checkNotNull(key, "Cannot put into null key!");
+        Preconditions.checkNotNull(value, "Cannot put null value (use remove for deletion)!");
         return sessionData.put(key, value);
     }
     
+    /**
+     * Removes any existing value for the given key from the context.
+     * 
+     * @param key
+     * @return the value if exists, null otherwise
+     */
     public Object remove(final String key) {
         return sessionData.remove(key);
     }
     
+    /**
+     * Clears all data from the context.
+     */
     protected void clear() {
         sessionData.clear();
     }

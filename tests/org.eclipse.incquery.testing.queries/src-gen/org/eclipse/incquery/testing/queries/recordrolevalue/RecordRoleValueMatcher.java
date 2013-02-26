@@ -162,13 +162,14 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   /**
    * Returns a new (partial) Match object for the matcher. 
    * This can be used e.g. to call the matcher with a partial match. 
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
    * @param pRole the fixed value of pattern parameter Role, or null if not bound.
    * @return the (partial) match object.
    * 
    */
   public RecordRoleValueMatch newMatch(final MatchRecord pRecord, final Object pRole) {
-    return new RecordRoleValueMatch(pRecord, pRole);
+    return new RecordRoleValueMatch.Immutable(pRecord, pRole);
     
   }
   
@@ -177,7 +178,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+  protected Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
     Set<MatchRecord> results = new HashSet<MatchRecord>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
@@ -215,7 +216,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Object> rawAccumulateAllValuesOfRole(final Object[] parameters) {
+  protected Set<Object> rawAccumulateAllValuesOfRole(final Object[] parameters) {
     Set<Object> results = new HashSet<Object>();
     rawAccumulateAllValues(POSITION_ROLE, parameters, results);
     return results;
@@ -249,9 +250,9 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   }
   
   @Override
-  public RecordRoleValueMatch tupleToMatch(final Tuple t) {
+  protected RecordRoleValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new RecordRoleValueMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_ROLE));	
+    	return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (java.lang.Object) t.get(POSITION_ROLE));	
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -259,9 +260,19 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   }
   
   @Override
-  public RecordRoleValueMatch arrayToMatch(final Object[] match) {
+  protected RecordRoleValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new RecordRoleValueMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
+    	return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return null;
+    }
+    
+  }
+  
+  @Override
+  protected RecordRoleValueMatch arrayToMatchMutable(final Object[] match) {
+    try {
+    	return new RecordRoleValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (java.lang.Object) match[POSITION_ROLE]);
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

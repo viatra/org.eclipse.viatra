@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 /**
- * FIXME DO IT
+ * Model connector implementation for our own EIQ model editor.
  */
 public class EIQEditorModelConnector extends EMFModelConnector {
 
@@ -35,7 +35,7 @@ public class EIQEditorModelConnector extends EMFModelConnector {
     public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier result = null;
         if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
-            // FIXME DO IT should load the depending eiq's as well?
+            // XXX It should load the depending eiq's as well
             IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
             if (file != null) {
                 result = loadEIQFile(file);
@@ -45,8 +45,6 @@ public class EIQEditorModelConnector extends EMFModelConnector {
             if (file != null) {
                 result = loadEIQFile(file);
             }
-        } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
-            // XXX Not implemented now. The selected element is a would be a graphical, not a model object.
         }
         return result;
     }
@@ -59,7 +57,7 @@ public class EIQEditorModelConnector extends EMFModelConnector {
 
     @Override
     public void showLocation(Object[] locationObjects) {
-        // FIXME do it
+        // TODO
     }
 
 }

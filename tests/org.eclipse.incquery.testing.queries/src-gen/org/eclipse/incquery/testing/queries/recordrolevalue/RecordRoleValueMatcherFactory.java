@@ -13,7 +13,7 @@ import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch
  * @see RecordRoleValueMatch
  * 
  */
-public class RecordRoleValueMatcherFactory extends BaseGeneratedMatcherFactory<RecordRoleValueMatcher> {
+public final class RecordRoleValueMatcherFactory extends BaseGeneratedMatcherFactory<RecordRoleValueMatcher> {
   /**
    * @return the singleton instance of the matcher factory
    * @throws IncQueryException if the pattern definition could not be loaded

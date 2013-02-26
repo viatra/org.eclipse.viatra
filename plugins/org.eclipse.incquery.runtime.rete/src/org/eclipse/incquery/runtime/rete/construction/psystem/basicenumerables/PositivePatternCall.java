@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
@@ -51,9 +52,9 @@ public class PositivePatternCall<PatternDescription, StubHandle> extends
      * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
      */
     @Override
-    public Set<Set<PVariable>> getFunctionalKeys() {
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	// TODO insert inferred functional dependencies here
-		return super.getFunctionalKeys();
+		return super.getFunctionalDependencies();
     }
     
 }

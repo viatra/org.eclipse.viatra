@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.api;
 
+import java.util.Arrays;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -34,8 +36,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * @see GenericMatcherFactory
  * @see GenericMatchProcessor
  */
-public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> implements
-        IncQueryMatcher<GenericPatternMatch> {
+public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 
     Pattern pattern;
 
@@ -95,12 +96,17 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> impl
 
     @Override
     public GenericPatternMatch arrayToMatch(Object[] parameters) {
-        return new GenericPatternMatch(this, parameters);
+        return new GenericPatternMatch.Immutable(this, Arrays.copyOf(parameters, parameters.length));
+    }
+    
+    @Override
+    public GenericPatternMatch arrayToMatchMutable(Object[] parameters) {
+        return new GenericPatternMatch.Mutable(this, parameters);
     }
 
     @Override
     protected GenericPatternMatch tupleToMatch(Tuple t) {
-        return new GenericPatternMatch(this, t.getElements());
+        return new GenericPatternMatch.Immutable(this, t.getElements());
     }
 
     private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {

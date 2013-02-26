@@ -109,6 +109,24 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
     public boolean isBinaryEdgeType(Object typeObject) {
         return typeObject instanceof EStructuralFeature;
     }
+    
+    @Override
+    public boolean isBinaryEdgeMultiplicityToOne(Object typeObject) {
+    	if (typeObject instanceof EStructuralFeature) {
+	    	final EStructuralFeature feature = (EStructuralFeature)typeObject;
+			return !feature.isMany();
+    	} else return false;
+    }
+    
+    @Override
+    public boolean isBinaryEdgeMultiplicityOneTo(Object typeObject) {
+    	if (typeObject instanceof EReference) {
+	    	final EReference feature = (EReference)typeObject;
+	    	final EReference eOpposite = feature.getEOpposite();
+			return feature.isContainment() || (eOpposite != null && !eOpposite.isMany());
+    	} else return false;
+    }
+    
 
     @Override
     public Collection<? extends Object> enumerateDirectBinaryEdgeSubtypes(Object typeObject) {
@@ -128,6 +146,16 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
     @Override
     public boolean isTernaryEdgeType(Object typeObject) {
         return false;
+    }
+    
+    @Override
+    public boolean isTernaryEdgeMultiplicityOneTo(Object typeObject) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public boolean isTernaryEdgeMultiplicityToOne(Object typeObject) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

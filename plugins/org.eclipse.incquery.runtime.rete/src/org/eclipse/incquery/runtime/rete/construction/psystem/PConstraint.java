@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
@@ -32,12 +33,10 @@ public interface PConstraint {
     public Set<PVariable> getDeducedVariables();
     
     /**
-     * Determinants are sets of variables that are guaranteed to functionally determine the value of the rest of variables.
-     * Keys are irreducible determinants. 
-     * The set of all affected variables is always a determinant, therefore it need not be returned even if it is a key.
-     * @return non-trivial keys.   
+     * A (preferably minimal) cover of known functional dependencies between variables.
+     * @return non-trivial functional dependencies in the form of {variables} --> {variables}, where dependencies with the same lhs are unified.   
      */
-    public Set<Set<PVariable>> getFunctionalKeys();  
+    public Map<Set<PVariable>,Set<PVariable>> getFunctionalDependencies();  
 
     public void replaceVariable(PVariable obsolete, PVariable replacement);
 

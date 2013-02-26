@@ -12,30 +12,39 @@ package org.eclipse.incquery.runtime.evm.update;
 
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
+import com.google.common.base.Preconditions;
+
 /**
+ * This provider implementation uses the IQBase after update callback as
+ * an event source for update complete events.
+ * 
  * @author Abel Hegedus
  * 
  */
 public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider {
 
-    private final Runnable matchsetProcessor;
+    private final Runnable callback;
     private final NavigationHelper helper;
 
     /**
-     * 
+     * Creates a new provider for the given {@link NavigationHelper}.
      */
     public IQBaseCallbackUpdateCompleteProvider(final NavigationHelper helper) {
         super();
-        this.matchsetProcessor = new MatchSetProcessor();
+        Preconditions.checkNotNull(helper, "Cannot create provider with null helper!");
+        this.callback = new IQBaseAfterUpdateCallback();
 
         this.helper = helper;
-
-        if (helper != null) {
-            helper.getAfterUpdateCallbacks().add(matchsetProcessor);
-        }
+        helper.getAfterUpdateCallbacks().add(callback);
     }
 
-    private class MatchSetProcessor implements Runnable {
+    /**
+     * Callback class invoked by the {@link NavigationHelper}.
+     * 
+     * @author Abel Hegedus
+     *
+     */
+    private class IQBaseAfterUpdateCallback implements Runnable {
         @Override
         public void run() {
             updateCompleted();
@@ -44,9 +53,7 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
 
     @Override
     public void dispose() {
-        if (helper != null) {
-            helper.getAfterUpdateCallbacks().remove(matchsetProcessor);
-        }
+        helper.getAfterUpdateCallbacks().remove(callback);
         super.dispose();
     }
 

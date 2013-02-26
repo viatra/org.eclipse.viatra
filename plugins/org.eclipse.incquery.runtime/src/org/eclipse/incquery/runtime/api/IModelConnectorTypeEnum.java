@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Tamas Szabo, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2012, Andras Okros, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eclipse.incquery.runtime.api;
 
 /**
- * FIXME do it.
- * */
+ * This enum represents the possible notifier types which a model input should provide for the ui.
+ */
 public enum IModelConnectorTypeEnum {
 
-    RESOURCESET, RESOURCE, EOBJECT;
+    RESOURCESET, RESOURCE;
 
 }

@@ -69,7 +69,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         gds.attachObserver(this);
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
         SCCResult<V> _sccres = SCC.computeSCC(gds);
         Set<Set<V>> _sccs = _sccres.getSccs();
@@ -216,7 +215,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void edgeDeleted(V source, V target) {
         V sourceRoot = sccs.find(source);
@@ -500,10 +498,6 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> targets = gds.getTargetNodes(node);
         List<V> sources = gds.getSourceNodes(node);
 
-        if (((targets == null) || (targets.isEmpty())) && ((sources == null) || (sources.isEmpty()))) {
-            return true;
-        } else {
-            return false;
-        }
+        return ((targets == null) || (targets.isEmpty())) && ((sources == null) || (sources.isEmpty()));
     }
 }

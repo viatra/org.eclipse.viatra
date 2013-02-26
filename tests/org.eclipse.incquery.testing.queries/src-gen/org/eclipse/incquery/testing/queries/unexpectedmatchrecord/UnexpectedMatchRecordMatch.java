@@ -10,7 +10,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 
 /**
  * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 
- * to be used in conjunction with UnexpectedMatchRecordMatcher.
+ * to be used in conjunction with {@link UnexpectedMatchRecordMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
  * Each instance is a (possibly partial) substitution of pattern parameters, 
@@ -21,7 +21,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
  * @see UnexpectedMatchRecordProcessor
  * 
  */
-public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
+public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   private MatchSetRecord fActualSet;
   
   private MatchSetRecord fExpectedSet;
@@ -30,7 +30,7 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
   
   private static String[] parameterNames = {"ActualSet", "ExpectedSet", "Record"};
   
-  UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+  private UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     this.fActualSet = pActualSet;
     this.fExpectedSet = pExpectedSet;
     this.fRecord = pRecord;
@@ -63,6 +63,7 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("ActualSet".equals(parameterName) ) {
     	this.fActualSet = (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) newValue;
     	return true;
@@ -80,16 +81,19 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
   }
   
   public void setActualSet(final MatchSetRecord pActualSet) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fActualSet = pActualSet;
     
   }
   
   public void setExpectedSet(final MatchSetRecord pExpectedSet) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fExpectedSet = pExpectedSet;
     
   }
   
   public void setRecord(final MatchRecord pRecord) {
+    if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRecord = pRecord;
     
   }
@@ -137,15 +141,16 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (obj == null)
-    	return false;
-    if (!(obj instanceof IPatternMatch))
-    	return false;
-    IPatternMatch otherSig  = (IPatternMatch) obj;
-    if (!pattern().equals(otherSig.pattern()))
-    	return false;
-    if (!UnexpectedMatchRecordMatch.class.equals(obj.getClass()))
+    if (!(obj instanceof UnexpectedMatchRecordMatch)) { // this should be infrequent				
+    	if (obj == null)
+    		return false;
+    	if (!(obj instanceof IPatternMatch))
+    		return false;
+    	IPatternMatch otherSig  = (IPatternMatch) obj;
+    	if (!pattern().equals(otherSig.pattern()))
+    		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
+    }
     UnexpectedMatchRecordMatch other = (UnexpectedMatchRecordMatch) obj;
     if (fActualSet == null) {if (other.fActualSet != null) return false;}
     else if (!fActualSet.equals(other.fActualSet)) return false;
@@ -166,4 +171,28 @@ public final class UnexpectedMatchRecordMatch extends BasePatternMatch {
     }
     
   }
+  static final class Mutable extends UnexpectedMatchRecordMatch {
+    Mutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+      super(pActualSet, pExpectedSet, pRecord);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return true;
+    }
+  }
+  
+  static final class Immutable extends UnexpectedMatchRecordMatch {
+    Immutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+      super(pActualSet, pExpectedSet, pRecord);
+      
+    }
+    
+    @Override
+    public boolean isMutable() {
+      return false;
+    }
+  }
+  
 }

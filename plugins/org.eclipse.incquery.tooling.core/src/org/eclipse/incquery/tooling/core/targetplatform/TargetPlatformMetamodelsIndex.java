@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.core.targetplatform;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
@@ -35,6 +39,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
 
 /**
  * This class is responsible for querying the active target platform data for registered GenModels 
@@ -47,6 +52,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	private static final String ATTR_URI = "uri";
 	private static final String ATTR_GENMODEL = "genModel";
 	
+    @Inject
+    Logger logger;
+
 	private static final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
 	
 	private void update(){
@@ -83,23 +91,24 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	}
 	
 	private List<TargetPlatformMetamodel> load(IPluginBase base){
-		List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodelsIndex.TargetPlatformMetamodel>();
+		List<TargetPlatformMetamodel> metamodels = new LinkedList<TargetPlatformMetamodel>();
 		for(IPluginExtension extension : base.getExtensions()){
 			if (EP_GENPACKAGE.equals(extension.getPoint())){
 				for(IPluginObject po : extension.getChildren()){
-					if (po instanceof IPluginElement){
-						if (PACKAGE.equals(po.getName())){
-							IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
-							IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
-							if (uriAttrib != null && genAttrib != null){
-								String uri = uriAttrib.getValue();
-								String genModel = genAttrib.getValue();
-								if (!genModel.startsWith("/")) genModel = "/"+genModel;
-								metamodels.add(new TargetPlatformMetamodel(URI.createURI(resolvePluginResource(base.getPluginModel(), genModel)), uri));
-								System.out.println(uri);
-							}
-						}
-					}
+                    if (po instanceof IPluginElement && PACKAGE.equals(po.getName())) {
+                        IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
+                        IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
+                        if (uriAttrib != null && genAttrib != null) {
+                            String uri = uriAttrib.getValue();
+                            String genModel = genAttrib.getValue();
+                            if (!genModel.startsWith("/"))
+                                genModel = "/" + genModel;
+                            String resourceURI = resolvePluginResource(base.getPluginModel(), genModel);
+                            if (resourceURI != null){
+                            	metamodels.add(new TargetPlatformMetamodel(URI.createURI(resourceURI), uri));
+                            }
+                        }
+                    }
 				}
 			}
 		}
@@ -164,7 +173,20 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		
 	}
 	
-	private static String resolvePluginResource(IPluginModelBase modelbase, String path){
+    private String resolvePluginResource(IPluginModelBase modelbase, String path) {
+        IResource res = modelbase.getUnderlyingResource();
+        if (res != null) {
+            IProject project = res.getProject();
+            IResource file = project.findMember(path);
+            if (file != null){
+            	URI platformUri = URI.createPlatformResourceURI(file.getFullPath().toString(),
+            			false);
+            	return platformUri.toString();
+            }else{
+                logger.warn("Could not find resource '" + path + "' in project " + project.getName() + ".");
+            	return null;
+            }
+        }
 		String location = modelbase.getInstallLocation();
 		if (location.endsWith(".jar")) {
 			return "jar:file:" + location + "!" + path;
@@ -174,8 +196,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	}
 
 	private Iterable<TargetPlatformMetamodel> load(){
-		update();
-		return entries.values();
+	    // FIXME we need to ensure that only one caller modifies entries at any given time
+		synchronized (TargetPlatformMetamodelsIndex.class) {
+		    update();
+		    return new ArrayList<TargetPlatformMetamodel>(entries.values());
+        }
 	}
 
 	/* (non-Javadoc)

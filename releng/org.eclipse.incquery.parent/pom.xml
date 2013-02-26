@@ -69,7 +69,7 @@
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<jacoco.version>0.6.0.201210061924</jacoco.version>
+		<jacoco.version>0.6.2.201302030002</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.3.1</xtend.compiler.version>
 		<!-- Sonar -->
@@ -77,7 +77,7 @@
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
-		<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath>
+		<!-- This property should not<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath> -->
 		<sonar.skippedModules>org.eclipse.incquery.runtime.feature,org.eclipse.incquery.databinding.runtime.feature,org.eclipse.incquery.databinding.tooling.feature,org.eclipse.incquery.sdk.feature.feature,org.eclipse.incquery.validation.runtime.feature,org.eclipse.incquery.validation.tooling.feature,org.eclipse.incquery.licence.feature,org.eclipse.incquery.update,school,school.edit,school.editor,org.eclipse.incquery.snapshot,org.eclipse.incquery.snapshot.edit,org.eclipse.incquery.snapshot.editor</sonar.skippedModules>
 	</properties>
 	<build>
@@ -213,10 +213,6 @@
 		</pluginManagement>
 	</build>
 	<repositories>
-		<repository>
-			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
-		</repository>
 		<repository>
 			<id>xtend</id>
 			<url>http://build.eclipse.org/common/xtend/maven/</url>

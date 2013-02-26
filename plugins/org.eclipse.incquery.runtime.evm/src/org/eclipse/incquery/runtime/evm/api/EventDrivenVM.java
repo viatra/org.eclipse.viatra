@@ -14,14 +14,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.apache.log4j.Level;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 
 import com.google.common.collect.ImmutableSet;
 /**
+ * 
+ * Utility class for creating new rule engines and execution schemes.
+ * 
+ * The static create methods use the provided parameters to set up the EVM
+ * and return a facade object for accessing it.
  * 
  * @author Abel Hegedus
  * 
@@ -31,65 +34,102 @@ public final class EventDrivenVM {
     private EventDrivenVM() {
     }
 
-    private static boolean debug = false;
-
+    /**
+     * Creates a new execution schema that is initialized over the given
+     * IncQueryEngine, creates an executor and agenda with the given
+     *  rule specifications and prepares a scheduler using the provided factory.
+     * 
+     * @param engine
+     * @param schedulerFactory
+     * @param specifications
+     * @return the prepared execution schema
+     */
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>> ruleSpecifications) {
-        checkNotNull(schedulerFactory, "Cannot create trigger engine with null scheduler factory");
-        checkNotNull(ruleSpecifications, "Cannot create trigger engine with null rule specification set");
+            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch>> specifications) {
+        checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
+        checkNotNull(specifications, "Cannot create execution schema with null rule specification set");
         Executor executor = new Executor(engine);
-        setLoggerLevelToDebug(engine);
         Agenda agenda = executor.getAgenda();
-        for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
-            agenda.instantiateRule(ruleSpecification);
+        for (RuleSpecification<?> specification : specifications) {
+            agenda.instantiateRule(specification);
         }
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
     }
     
-    public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch, ? extends IncQueryMatcher<? extends IPatternMatch>>... ruleSpecifications) {
-        return createExecutionSchema(engine, schedulerFactory, ImmutableSet.copyOf(ruleSpecifications));
-    }
-
     /**
+     * Creates a new execution schema that is initialized over the given
+     * IncQueryEngine, creates an executor and agenda with the given
+     *  rule specifications and prepares a scheduler using the provided factory.
+     * 
      * @param engine
+     * @param schedulerFactory
+     * @param specifications
+     * @return the prepared execution schema
      */
-    private static void setLoggerLevelToDebug(final IncQueryEngine engine) {
-        if (debug) {
-            engine.getLogger().setLevel((Level) Level.DEBUG);
-        }
+    public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
+            final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch>... specifications) {
+        return createExecutionSchema(engine, schedulerFactory, ImmutableSet.copyOf(specifications));
     }
     
+    /**
+     * Creates a new execution schema that is initialized over the given
+     * IncQueryEngine, creates an executor and agenda without rules and
+     *  prepares a scheduler using the provided factory.
+     * 
+     * @param engine
+     * @param schedulerFactory
+     * @return the prepared execution schema
+     */
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
-        checkNotNull(schedulerFactory, "Cannot create trigger engine with null scheduler factory");
+        checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
         Executor executor = new Executor(engine);
-        setLoggerLevelToDebug(engine);
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
     }
     
+    /**
+     * Creates a new rule engine that is initialized over the given
+     * IncQueryEngine and an agenda with the given rule specifications.
+     
+     * @param engine
+     * @param specifications
+     * @return the prepared rule engine
+     */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final Set<RuleSpecification<?, ?>> ruleSpecifications) {
-        checkNotNull(ruleSpecifications, "Cannot create rule engine with null rule specification set");
+            final Set<RuleSpecification<?>> specifications) {
+        checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
         Agenda agenda = new Agenda(engine);
-        setLoggerLevelToDebug(engine);
-        for (RuleSpecification<?, ?> ruleSpecification : ruleSpecifications) {
+        for (RuleSpecification<?> ruleSpecification : specifications) {
             agenda.instantiateRule(ruleSpecification);
         }
 
         return RuleEngine.create(agenda);
     }
     
+    /**
+     * Creates a new rule engine that is initialized over the given
+     * IncQueryEngine and an agenda with the given rule specifications.
+     
+     * @param engine
+     * @param specifications
+     * @return the prepared rule engine
+     */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final RuleSpecification<?, ?>... ruleSpecifications) {
-        return createRuleEngine(engine, ImmutableSet.copyOf(ruleSpecifications));
+            final RuleSpecification<?>... specifications) {
+        return createRuleEngine(engine, ImmutableSet.copyOf(specifications));
     }
     
+    /**
+     * Creates a new rule engine that is initialized over the given
+     * IncQueryEngine and an agenda without rules.
+     
+     * @param engine
+     * @return the prepared rule engine
+     */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine) {
         Agenda agenda = new Agenda(engine);
-        setLoggerLevelToDebug(engine);
         return RuleEngine.create(agenda);
     }
 }

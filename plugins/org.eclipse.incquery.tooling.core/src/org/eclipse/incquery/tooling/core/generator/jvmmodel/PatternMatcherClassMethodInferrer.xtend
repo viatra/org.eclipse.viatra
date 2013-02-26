@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 
 class PatternMatcherClassMethodInferrer {
@@ -113,7 +114,7 @@ class PatternMatcherClassMethodInferrer {
    					return new ''')
 	   				serialize(matchClassReference, pattern)
 	   				append('''
-	   				(«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»);
+	   				.«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»);
 	   				''')
    				])
 	   		]
@@ -122,6 +123,7 @@ class PatternMatcherClassMethodInferrer {
    				type.members += pattern.toMethod("rawAccumulateAllValuesOf"+variable.name, pattern.newTypeRef(typeof(Set), typeOfVariable)) [
 	   				it.documentation = variable.javadocGetAllValuesOfMethod.toString
 	   				it.parameters += pattern.toParameter("parameters", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+   					it.visibility = JvmVisibility::PROTECTED
 	   				it.setBody([
 						referClass(pattern, typeof(Set), typeOfVariable)
 						append(''' results = new ''')
@@ -179,25 +181,34 @@ class PatternMatcherClassMethodInferrer {
    	def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmTypeReference matchClassRef) {
 	   	val tupleToMatchMethod = pattern.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
    			it.parameters += pattern.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
    		]
    		val arrayToMatchMethod = pattern.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
+   			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
+   		]
+   		val arrayToMatchMutableMethod = pattern.toMethod("arrayToMatchMutable", cloneWithProxies(matchClassRef)) [
+   			it.annotations += pattern.toAnnotation(typeof (Override))
+   			it.visibility = JvmVisibility::PROTECTED
    			it.parameters += pattern.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
    		tupleToMatchMethod.setBody([it | pattern.inferTupleToMatchMethodBody(it)])
    		arrayToMatchMethod.setBody([it | pattern.inferArrayToMatchMethodBody(it)])
+   		arrayToMatchMutableMethod.setBody([it | pattern.inferArrayToMatchMutableMethodBody(it)])
    		matcherClass.members += tupleToMatchMethod
    		matcherClass.members += arrayToMatchMethod
+   		matcherClass.members += arrayToMatchMutableMethod
    	}
   	
   	/**
-  	 * Infers the arrayToMatch method body.
+  	 * Infers the tupleToMatch method body.
   	 */
   	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
    		appendable.append('''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);	
+   				return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);	
    			} catch(ClassCastException e) {''')
    		inferErrorLogging("Element(s) in tuple not properly typed!", "e", appendable)
    		appendable.append('''
@@ -213,7 +224,22 @@ class PatternMatcherClassMethodInferrer {
   	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   				return new «pattern.matchClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   				return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   			} catch(ClassCastException e) {''')
+   		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
+   		appendable.append('''
+   				//throw new IncQueryRuntimeException(e.getMessage());
+   				return null;
+   			}
+   		''')
+  	}
+  	/**
+  	 * Infers the arrayToMatch method body.
+  	 */
+  	def inferArrayToMatchMutableMethodBody(Pattern pattern, ITreeAppendable appendable) {
+  		appendable.append('''
+   			try {
+   				return new «pattern.matchClassName».«pattern.matchMutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
    		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
    		appendable.append('''

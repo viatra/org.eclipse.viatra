@@ -29,14 +29,14 @@ import static org.junit.Assert.*
  */
 class TestExecutor {
 	
-	public static String CORRECTRESULTS = "Correct result set"
-	public static String CORRECT_SINGLE = "Correct single match for parameterless pattern"
-	public static String CORRECT_EMPTY = "Correct empty match set"
-	public static String UNEXPECTED_MATCH = "Unexpected match"
-	public static String EXPECTED_NOT_FOUND = "Expected match not found"
-	public static String MULTIPLE_FOR_EXPECTED = "Multiple matches found for expected match"
-	public static String MATCHSETRECORD_NOT_IN_SNAPSHOT = "Expected match set record is not part of snapshot"
-	public static String PATTERNNAME_DIFFERENT = "Expected pattern qualified name different from actual"
+	public static val String CORRECTRESULTS = "Correct result set"
+	public static val String CORRECT_SINGLE = "Correct single match for parameterless pattern"
+	public static val String CORRECT_EMPTY = "Correct empty match set"
+	public static val String UNEXPECTED_MATCH = "Unexpected match"
+	public static val String EXPECTED_NOT_FOUND = "Expected match not found"
+	public static val String MULTIPLE_FOR_EXPECTED = "Multiple matches found for expected match"
+	public static val String MATCHSETRECORD_NOT_IN_SNAPSHOT = "Expected match set record is not part of snapshot"
+	public static val String PATTERNNAME_DIFFERENT = "Expected pattern qualified name different from actual"
 	
 	@Inject extension ModelLoadHelper
 	@Inject extension SnapshotHelper

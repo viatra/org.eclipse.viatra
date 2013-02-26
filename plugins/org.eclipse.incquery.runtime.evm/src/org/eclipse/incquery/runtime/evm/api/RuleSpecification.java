@@ -17,10 +17,8 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
@@ -28,30 +26,42 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
+ * A rule specification specifies how the set of individual
+ * rule activations and their states are computed, what jobs (operations)
+ * to perform when an activation is executed, and how events affect the 
+ * state of the activations based on a life-cycle model.
+ * 
  * @author Abel Hegedus
  * 
- *         implement rule specification - Activation Life Cycle - Jobs related to Activation State - create Rule
- *         Instance with Matcher(Factory)/Pattern
  */
-public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
+public abstract class RuleSpecification<Match extends IPatternMatch> {
 
-    private final IMatcherFactory<Matcher> factory;
     private final ActivationLifeCycle lifeCycle;
     private final Multimap<ActivationState, Job<Match>> jobs;
     private final Comparator<Match> comparator;
     private final Set<ActivationState> enabledStates;
 
-    public RuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    /**
+     * Creates a specification with the given life-cycle and job set.
+     * 
+     * @param lifeCycle
+     * @param jobs
+     */
+    public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs) {
-        this(factory, lifeCycle, jobs, null);
+        this(lifeCycle, jobs, null);
     }
 
     /**
+     * Creates a specification with the given life-cycle, job set and
+     * activation comparator.
      * 
+     * @param lifeCycle
+     * @param jobs
+     * @param comparator
      */
-    public RuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    public RuleSpecification(final ActivationLifeCycle lifeCycle,
             final Set<Job<Match>> jobs, final Comparator<Match> comparator) {
-        this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
         this.lifeCycle = checkNotNull(ActivationLifeCycle.copyOf(lifeCycle),
                 "Cannot create rule specification with null life cycle!");
         this.jobs = HashMultimap.create();
@@ -67,19 +77,15 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         this.comparator = comparator;
     }
     
-    protected RuleInstance<Match, Matcher> instantiateRule(final IncQueryEngine engine) {
-        return new RuleInstance<Match, Matcher>(this, engine);
-    }
-
     /**
-     * @return the factory
-     */
-    public IMatcherFactory<Matcher> getFactory() {
-        return factory;
-    }
-
-    /**
+     * Instantiates the rule on the given IncQueryEngine.
      * 
+     * @param engine
+     * @return the instantiated rule
+     */
+    protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine);
+    
+    /**
      * @return the lifeCycle
      */
     public ActivationLifeCycle getLifeCycle() {
@@ -93,6 +99,12 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
         return enabledStates;
     }
 
+    /**
+     * Returns the jobs specified for the given state.
+     * 
+     * @param state
+     * @return the collection of jobs
+     */
     public Collection<Job<Match>> getJobs(final ActivationState state) {
         return jobs.get(state);
     }
@@ -118,7 +130,6 @@ public class RuleSpecification<Match extends IPatternMatch, Matcher extends IncQ
      */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
-                .add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
+        return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
     }
 }

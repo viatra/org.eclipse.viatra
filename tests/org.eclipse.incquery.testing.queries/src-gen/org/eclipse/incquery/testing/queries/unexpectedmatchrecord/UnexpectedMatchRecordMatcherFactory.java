@@ -13,7 +13,7 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
  * @see UnexpectedMatchRecordMatch
  * 
  */
-public class UnexpectedMatchRecordMatcherFactory extends BaseGeneratedMatcherFactory<UnexpectedMatchRecordMatcher> {
+public final class UnexpectedMatchRecordMatcherFactory extends BaseGeneratedMatcherFactory<UnexpectedMatchRecordMatcher> {
   /**
    * @return the singleton instance of the matcher factory
    * @throws IncQueryException if the pattern definition could not be loaded

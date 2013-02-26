@@ -8,7 +8,6 @@
  * Contributors:
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -28,7 +27,6 @@ public class LoadEiqPatternHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-
         try {
             IFile file = (IFile) HandlerUtil.getActiveEditorInput(event).getAdapter(IFile.class);
             if (file != null) {
@@ -39,7 +37,7 @@ public class LoadEiqPatternHandler extends AbstractHandler {
         } catch (Exception e) {
             throw new ExecutionException("Cannot load pattern file", e);
         }
-
         return null;
     }
+
 }

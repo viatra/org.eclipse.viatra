@@ -32,7 +32,12 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
  * @author Abel Hegedus
  */
 public final class QueryBasedFeatureHelper {
-
+    
+    // QueryResultMultiMap based implementation:
+    // - one Execution Schema for one IncQueryEngine
+    // - one QueryResultMultiMap for one feature and model pair
+    // - handler can be stateless? simply processes updates from multimap
+    
     /**
      * Weak hash map for keeping the created
      */
@@ -79,7 +84,9 @@ public final class QueryBasedFeatureHelper {
                 while (top.eContainer() != null) {
                     top = top.eContainer();
                 }
-                return prepareNotifierForSource(top);
+                if(top != source) {
+                    return prepareNotifierForSource(top);
+                }
             }
         }
         return source;

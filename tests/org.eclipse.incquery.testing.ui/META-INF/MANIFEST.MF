@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Testing Framework UI
 Bundle-SymbolicName: org.eclipse.incquery.testing.ui;singleton:=true
 Bundle-Version: 0.7.0.qualifier
-Bundle-Activator: org.eclipse.viatra2.emf.incquery.testing.ui.IncQueryTestingUIPlugin
+Bundle-Activator: org.eclipse.incquery.testing.ui.IncQueryTestingUIPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.incquery.tooling.ui;bundle-version="0.7.0",
@@ -16,5 +16,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.incquery.runtime;bundle-version="0.7.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.viatra2.emf.incquery.testing.ui.handlers
+Export-Package: org.eclipse.incquery.testing.ui.handlers
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

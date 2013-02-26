@@ -20,7 +20,8 @@ import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
 
 /**
- * TODO write documentation - use {@link RecordingJob} when modifying the model
+ * This class represents a {@link Job} that uses an {@link IMatchProcessor} 
+ * on the match of the activation when executed.
  * 
  * @author Abel Hegedus
  */
@@ -35,6 +36,12 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
         return matchProcessor;
     }
 
+    /**
+     * Creates a stateless job for the given state and processor.
+     * 
+     * @param activationState
+     * @param matchProcessor
+     */
     public StatelessJob(final ActivationState activationState, final IMatchProcessor<Match> matchProcessor) {
         super(activationState);
         this.matchProcessor = checkNotNull(matchProcessor,

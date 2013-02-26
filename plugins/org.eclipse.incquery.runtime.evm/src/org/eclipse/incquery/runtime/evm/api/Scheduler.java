@@ -13,23 +13,41 @@ package org.eclipse.incquery.runtime.evm.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * The scheduler is used to define when the executor of a schema should
+ * start its execution strategy.
+ * 
  * @author Abel Hegedus
  * 
- *         define Scheduler interface for trigger executor "ticks" - similar to firing strategy - doesn't have
- *         activation monitor - has trigger executor - automatic scheduler may work with update complete listener
  */
 public abstract class Scheduler {
     
+    /**
+     * Factory interface for preparing a scheduler for a given executor.
+     * 
+     * @author Abel Hegedus
+     *
+     */
     public interface ISchedulerFactory{
-        
-        Scheduler prepareScheduler(final Executor engine);
+       
+        /**
+         * Creates a scheduler for the given executor.
+         * 
+         * @param executor
+         * @return
+         */
+        Scheduler prepareScheduler(final Executor executor);
 
     }
 
     private Executor executor;
 
-    protected Scheduler(final Executor engine) {
-        this.executor = checkNotNull(engine, "Cannot create scheduler with null IncQuery Engine!");
+    /**
+     * Creates a scheduler for the given executor.
+     * 
+     * @param executor
+     */
+    protected Scheduler(final Executor executor) {
+        this.executor = checkNotNull(executor, "Cannot create scheduler with null IncQuery Engine!");
     }
 
     /**
@@ -46,6 +64,9 @@ public abstract class Scheduler {
         return executor;
     }
     
+    /**
+     * Disposes of the scheduler by disposing its executor.
+     */
     protected void dispose() {
         executor.dispose();
     }

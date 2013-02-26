@@ -533,16 +533,19 @@ public class NavigationHelperImpl implements NavigationHelper {
             throw new IllegalStateException();
         }
         if (features != null) {
-            features = resolveAll(features);
-            if (delayTraversals) {
-                delayedFeatures.addAll(features);
-            } else {
-                features = setMinus(features, observedFeatures);
-
-                observedFeatures.addAll(features);
-                final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this, features,
-                        noClass(), noClass(), noDataType());
-                traverse(visitor);
+            final Set<EStructuralFeature> resolved = resolveAll(features);
+            try {
+                coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                    	delayedFeatures.addAll(resolved);
+                    	return null;
+                    }
+                });
+            } catch (InvocationTargetException ex) {
+                processingError(ex.getCause(), "register the EStructuralFeatures: " + resolved);
+            } catch (Exception ex) {
+                processingError(ex, "register the EStructuralFeatures: " + resolved);
             }
         }
     }
@@ -561,8 +564,8 @@ public class NavigationHelperImpl implements NavigationHelper {
                 /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
                     // XXX this would probably cause ConcurrentModificationException
                     contentAdapter.valueToFeatureToHolderMap.remove(key,f);
-                    // TODO proper notification
                 }*/
+                // TODO proper notification
             }
         }
     }
@@ -573,17 +576,19 @@ public class NavigationHelperImpl implements NavigationHelper {
             throw new IllegalStateException();
         }
         if (classes != null) {
-            classes = resolveAll(classes);
-            if (delayTraversals) {
-                delayedClasses.addAll(classes);
-            } else {
-                classes = setMinus(classes, directlyObservedClasses);
-
-                final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
-                startObservingClasses(classes);
-                final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                        noFeature(), classes, oldClasses, noDataType());
-                traverse(visitor);
+            final Set<EClass> resolvedClasses = resolveAll(classes);
+            try {
+                coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                    	delayedClasses.addAll(resolvedClasses);
+                    	return null;
+                    }
+                });
+            } catch (InvocationTargetException ex) {
+                processingError(ex.getCause(), "register the EClasses: " + resolvedClasses);
+            } catch (Exception ex) {
+                processingError(ex, "register the EClasses: " + resolvedClasses);
             }
         }
     }
@@ -624,23 +629,26 @@ public class NavigationHelperImpl implements NavigationHelper {
             throw new IllegalStateException();
         }
         if (dataTypes != null) {
-            dataTypes = resolveAll(dataTypes);
-            if (delayTraversals) {
-                delayedDataTypes.addAll(dataTypes);
-            } else {
-                dataTypes = setMinus(dataTypes, observedDataTypes);
-
-                observedDataTypes.addAll(dataTypes);
-                final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                        noFeature(), noClass(), noClass(), dataTypes);
-                traverse(visitor);
-
+            final Set<EDataType> resolved = resolveAll(dataTypes);
+            try {
+                coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                    	delayedDataTypes.addAll(resolved);
+                    	return null;
+                    }
+                });
+            } catch (InvocationTargetException ex) {
+                processingError(ex.getCause(), "register the EDataTypes: " + resolved);
+            } catch (Exception ex) {
+                processingError(ex, "register the EDataTypes: " + resolved);
             }
         }
     }
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
+//    	throw new UnsupportedOperationException();
         if (inWildcardMode) {
             throw new IllegalStateException();
         }
@@ -656,64 +664,79 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
+        V finalResult = null;
+        
         if (delayTraversals) { // reentrant case, no special action needed
-            V result = null;
             try {
-                result = callable.call();
+            	finalResult = callable.call();
             } catch (Exception e) {
                 throw new InvocationTargetException(e);
             }
-            return result;
+            return finalResult;
         }
+        
+	    boolean firstRun = true;
+        while (callable != null) {   // repeat if post-processing needed  	
+	        delayedClasses = new HashSet<EClass>();
+	        delayedFeatures = new HashSet<EStructuralFeature>();
+	        delayedDataTypes = new HashSet<EDataType>();
 
-        delayedClasses = new HashSet<EClass>();
-        delayedFeatures = new HashSet<EStructuralFeature>();
-        delayedDataTypes = new HashSet<EDataType>();
-
-        V result = null;
-        try {
-            try {
-                delayTraversals = true;
-                result = callable.call();
-            } finally {
-                delayTraversals = false;
-
-                delayedFeatures = setMinus(delayedFeatures, observedFeatures);
-                delayedClasses = setMinus(delayedClasses, directlyObservedClasses);
-                delayedDataTypes = setMinus(delayedDataTypes, observedDataTypes);
-
-                boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClasses()).isEmpty();
-
-                if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-                    final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
-                    startObservingClasses(delayedClasses);
-                    observedFeatures.addAll(delayedFeatures);
-                    observedDataTypes.addAll(delayedDataTypes);
-
-                    // make copies and clean original accumulators, for the rare case that a coalesced
-                    // traversal is invoked during visitation, e.g. by a derived feature implementation
-                    final HashSet<EClass> toGatherClasses = new HashSet<EClass>(delayedClasses);
-                    final HashSet<EStructuralFeature> toGatherFeatures = new HashSet<EStructuralFeature>(
-                            delayedFeatures);
-                    final HashSet<EDataType> toGatherDataTypes = new HashSet<EDataType>(delayedDataTypes);
-                    delayedFeatures.clear();
-                    delayedClasses.clear();
-                    delayedDataTypes.clear();
-
-                    if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
-                        final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-                                toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
-                        traverse(visitor);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            getLogger()
-                    .fatal("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. ",
-                            e);
-            throw new InvocationTargetException(e);
+        	try {
+        		try {
+        			delayTraversals = true;
+        			V result = callable.call();
+        			if (firstRun) {
+        				firstRun = false;
+        				finalResult = result; 
+        			}
+        		} finally {
+        			delayTraversals = false;
+        			callable = null;
+        			
+        			delayedFeatures = setMinus(delayedFeatures, observedFeatures);
+        			delayedClasses = setMinus(delayedClasses, directlyObservedClasses);
+        			delayedDataTypes = setMinus(delayedDataTypes, observedDataTypes);
+        			
+        			boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClasses()).isEmpty();
+        			
+        			if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
+        				final HashSet<EClass> oldClasses = new HashSet<EClass>(directlyObservedClasses);
+        				startObservingClasses(delayedClasses);
+        				observedFeatures.addAll(delayedFeatures);
+        				observedDataTypes.addAll(delayedDataTypes);
+        				
+        				// make copies so that original accumulators can be cleaned for the next cycle
+        				// or for the rare case that a coalesced  traversal is invoked during visitation, 
+        				// e.g. by a derived feature implementation
+        				final HashSet<EClass> toGatherClasses = new HashSet<EClass>(delayedClasses);
+        				final HashSet<EStructuralFeature> toGatherFeatures = new HashSet<EStructuralFeature>(
+        						delayedFeatures);
+        				final HashSet<EDataType> toGatherDataTypes = new HashSet<EDataType>(delayedDataTypes);
+        				
+        				if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+        					// repeat the cycle with this visit
+        					final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
+        							toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+        					
+        					callable = new Callable<V>() {
+        						@Override
+        						public V call() throws Exception {
+        							traverse(visitor);
+        							return null;
+        						}
+							};
+        					
+        				}
+        			}
+        		}
+	        } catch (Exception e) {
+	            getLogger()
+	                    .fatal("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. ",
+	                            e);
+	            throw new InvocationTargetException(e);
+	        }
         }
-        return result;
+        return finalResult;
     }
 
     private void traverse(final NavigationHelperVisitor visitor) {
@@ -745,5 +768,10 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         expandToAdditionalRoot(emfRoot);
     }
+    
+    protected void processingError(Throwable ex, String task) {
+        contentAdapter.processingError(ex, task);
+    }
+
 
 }

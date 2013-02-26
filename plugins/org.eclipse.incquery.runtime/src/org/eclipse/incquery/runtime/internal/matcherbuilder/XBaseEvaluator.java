@@ -82,7 +82,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
                 } catch (CoreException coreException) {
                     logger.error("XBase Java evaluator extension point initialization failed.", coreException);
                 }
-                if (object != null && object instanceof IMatchChecker) {
+                if (object instanceof IMatchChecker) {
                     matchChecker = (IMatchChecker) object;
                 }
             }

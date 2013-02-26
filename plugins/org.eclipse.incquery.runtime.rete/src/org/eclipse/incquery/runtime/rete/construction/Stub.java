@@ -11,11 +11,13 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
+import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
@@ -32,6 +34,7 @@ public class Stub<HandleType> {
     private Set<PConstraint> constraints;
     private Stub<HandleType> primaryParentStub;
     private Stub<HandleType> secondaryParentStub;
+	private final Set<PVariable> variablesSet;
 
     private Stub(Map<Object, Integer> variablesIndex, Tuple variablesTuple, HandleType handle) {
         super();
@@ -39,6 +42,10 @@ public class Stub<HandleType> {
         this.variablesTuple = variablesTuple;
         this.handle = handle;
         this.constraints = CollectionsFactory.getSet();//new HashSet<PConstraint>();
+		variablesSet = new HashSet<PVariable>();
+		for (Object pVar : variablesIndex.keySet()) {
+			variablesSet.add((PVariable) pVar);
+		}
     }
 
     public Stub(Tuple variablesTuple, HandleType handle) {
@@ -107,8 +114,8 @@ public class Stub<HandleType> {
     /**
      * @return the set of variables involved
      */
-    public Set<Object> getVariablesSet() {
-        return variablesIndex.keySet();
+    public Set<PVariable> getVariablesSet() {
+        return variablesSet;
     }
 
     /**

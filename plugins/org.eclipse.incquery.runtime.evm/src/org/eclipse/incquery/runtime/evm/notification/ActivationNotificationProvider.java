@@ -44,6 +44,13 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
         return notContained;
     }
 
+    /**
+     * Called when a new listener is added to the provider.
+     * 
+     * @param listener
+     * @param fireNow if true, all existing activations should be sent as appear notifications,
+     *  with inactive old state.
+     */
     protected abstract void listenerAdded(final IActivationNotificationListener listener, final boolean fireNow);
 
     @Override
@@ -51,11 +58,25 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
         return this.activationNotificationListeners.remove(listener);
     }
 
+    /**
+     * Notifies listeners about an activation change.
+     * 
+     * @param activation
+     * @param oldState
+     * @param event
+     */
     public void notifyActivationChanged(final Activation<? extends IPatternMatch> activation,
             final ActivationState oldState, final ActivationLifeCycleEvent event) {
         for (IActivationNotificationListener listener : this.activationNotificationListeners) {
             listener.activationChanged(activation, oldState, event);
         }
+    }
+
+    /**
+     * Disposes of the provider by unregistering all listeners.
+     */
+    public void dispose() {
+        this.activationNotificationListeners.clear();
     }
 
 }

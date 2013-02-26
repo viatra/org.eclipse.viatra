@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 /**
  * 
- * TODO documentation
+ * This enumeration represents the possible states of an Activation.
  * 
  * @author Abel Hegedus
  *

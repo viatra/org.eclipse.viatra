@@ -46,7 +46,8 @@ class PatternMatchClassInferrer {
 		val matchClass = pattern.toClass(pattern.matchClassName) [
    			it.packageName = matchPackageName
    			it.documentation = pattern.javadocMatchClass.toString
-   			it.final = true
+   			//it.final = true
+   			it.setAbstract(true)
    			it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
    			//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
    		]
@@ -56,6 +57,8 @@ class PatternMatchClassInferrer {
    		matchClass.inferMatchClassSetters(pattern)
    		matchClass.inferMatchClassMethods(pattern)
    		matchClass.inferCheckBodies(pattern)
+  		matchClass.inferMatchInnerClasses(pattern)
+   		
    		return matchClass
    	}
    	
@@ -78,7 +81,7 @@ class PatternMatchClassInferrer {
    	def inferMatchClassConstructors(JvmDeclaredType matchClass, Pattern pattern) {
    		matchClass.members += pattern.toConstructor() [
    			it.simpleName = pattern.matchClassName
-   			it.visibility = JvmVisibility::DEFAULT
+   			it.visibility = JvmVisibility::PRIVATE //DEFAULT
    			for (Variable variable : pattern.parameters) {
    				val javaType = variable.calculateType
    				it.parameters += variable.toParameter(variable.parameterName, javaType)
@@ -123,6 +126,7 @@ class PatternMatchClassInferrer {
    			it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    			it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    			it.setBody([append('''
+   				if (!isMutable()) throw new java.lang.UnsupportedOperationException();
    				«FOR variable : pattern.parameters»
    				«val type = variable.calculateType»
    				«val typeName = type.qualifiedName»
@@ -138,6 +142,7 @@ class PatternMatchClassInferrer {
    			matchClass.members += pattern.toMethod(variable.setterMethodName, null) [
    				it.parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
    				it.setBody([append('''
+   					if (!isMutable()) throw new java.lang.UnsupportedOperationException();
    					this.«variable.fieldName» = «variable.parameterName»;
    				''')])
    			]
@@ -197,27 +202,29 @@ class PatternMatchClassInferrer {
 			it.setBody([append('''
 				if (this == obj)
 					return true;
-				if (obj == null)
-					return false;
-				if (!(obj instanceof ''')
+				if (!(obj instanceof «pattern.matchClassName»)) { // this should be infrequent				
+					if (obj == null)
+						return false;
+					if (!(obj instanceof ''')
 				referClass(pattern, typeof(IPatternMatch))
 				append('''
 				))
-					return false;
+						return false;
 				''')
+				append("	")
 				referClass(pattern, typeof(IPatternMatch))
 				append(" ") append('''
 				otherSig  = (''')
 				referClass(pattern, typeof(IPatternMatch))
 				append('''
 				) obj;
-				if (!pattern().equals(otherSig.pattern()))
-					return false;
-				if (!«pattern.matchClassName».class.equals(obj.getClass()))
+					if (!pattern().equals(otherSig.pattern()))
+						return false;
 					return ''')
 				referClass(pattern, typeof(Arrays))
 				append('''
 				.deepEquals(toArray(), otherSig.toArray());
+				}
 				«IF !pattern.parameters.isEmpty»
 				«pattern.matchClassName» other = («pattern.matchClassName») obj;
 				«FOR variable : pattern.parameters» 
@@ -267,4 +274,44 @@ class PatternMatchClassInferrer {
 //			}
 //		}
 	}
+	
+ 	/**
+   	 * Infers inner classes for Match class based on the input 'pattern'.
+   	 */
+  	def inferMatchInnerClasses(JvmDeclaredType matchClass, Pattern pattern) {
+  		matchClass.members += matchClass.makeMatchInnerClass(pattern, pattern.matchMutableInnerClassName, true);
+  		matchClass.members += matchClass.makeMatchInnerClass(pattern, pattern.matchImmutableInnerClassName, false);
+	}
+	
+ 	/**
+   	 * Infers a single inner class for Match class
+   	 */
+	def makeMatchInnerClass(JvmDeclaredType matchClass, Pattern pattern, String innerClassName, boolean isMutable) {
+		pattern.toClass(innerClassName) [
+			it.visibility = JvmVisibility::DEFAULT
+			it.setStatic(true)
+			it.setFinal(true)
+			it.superTypes += typeReference.createTypeRef(matchClass)
+			
+			it.members+= pattern.toConstructor() [
+	   			it.simpleName = innerClassName
+	   			it.visibility = JvmVisibility::DEFAULT
+	   			for (Variable variable : pattern.parameters) {
+	   				val javaType = variable.calculateType
+	   				it.parameters += variable.toParameter(variable.parameterName, javaType)
+	   			}
+	   			it.setBody([append('''
+	   				super(«FOR variable : pattern.parameters SEPARATOR ", "»«variable.parameterName»«ENDFOR»);
+	   			''')])
+			]
+			it.members += pattern.toMethod("isMutable", pattern.newTypeRef(typeof (boolean))) [
+				it.visibility = JvmVisibility::PUBLIC
+				it.annotations += pattern.toAnnotation(typeof (Override))
+				it.setBody([append('''return «isMutable»;''')])			
+			]		
+		]
+	}
+	
+	
+	
 }

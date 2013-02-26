@@ -172,6 +172,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   /**
    * Returns a new (partial) Match object for the matcher. 
    * This can be used e.g. to call the matcher with a partial match. 
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pActualSet the fixed value of pattern parameter ActualSet, or null if not bound.
    * @param pExpectedSet the fixed value of pattern parameter ExpectedSet, or null if not bound.
    * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
@@ -179,7 +180,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * 
    */
   public UnexpectedMatchRecordMatch newMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
-    return new UnexpectedMatchRecordMatch(pActualSet, pExpectedSet, pRecord);
+    return new UnexpectedMatchRecordMatch.Immutable(pActualSet, pExpectedSet, pRecord);
     
   }
   
@@ -188,7 +189,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> rawAccumulateAllValuesOfActualSet(final Object[] parameters) {
+  protected Set<MatchSetRecord> rawAccumulateAllValuesOfActualSet(final Object[] parameters) {
     Set<MatchSetRecord> results = new HashSet<MatchSetRecord>();
     rawAccumulateAllValues(POSITION_ACTUALSET, parameters, results);
     return results;
@@ -226,7 +227,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchSetRecord> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
+  protected Set<MatchSetRecord> rawAccumulateAllValuesOfExpectedSet(final Object[] parameters) {
     Set<MatchSetRecord> results = new HashSet<MatchSetRecord>();
     rawAccumulateAllValues(POSITION_EXPECTEDSET, parameters, results);
     return results;
@@ -264,7 +265,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
+  protected Set<MatchRecord> rawAccumulateAllValuesOfRecord(final Object[] parameters) {
     Set<MatchRecord> results = new HashSet<MatchRecord>();
     rawAccumulateAllValues(POSITION_RECORD, parameters, results);
     return results;
@@ -298,9 +299,9 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   }
   
   @Override
-  public UnexpectedMatchRecordMatch tupleToMatch(final Tuple t) {
+  protected UnexpectedMatchRecordMatch tupleToMatch(final Tuple t) {
     try {
-    	return new UnexpectedMatchRecordMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));	
+    	return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));	
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
@@ -308,9 +309,19 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   }
   
   @Override
-  public UnexpectedMatchRecordMatch arrayToMatch(final Object[] match) {
+  protected UnexpectedMatchRecordMatch arrayToMatch(final Object[] match) {
     try {
-    	return new UnexpectedMatchRecordMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
+    	return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
+    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    	return null;
+    }
+    
+  }
+  
+  @Override
+  protected UnexpectedMatchRecordMatch arrayToMatchMutable(final Object[] match) {
+    try {
+    	return new UnexpectedMatchRecordMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
     } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }

@@ -27,7 +27,7 @@ class JavadocInferrer {
    	 */
    	def javadocMatchClass(Pattern pattern) '''
 		Pattern-specific match representation of the «pattern.fullyQualifiedName» pattern, 
-		to be used in conjunction with «pattern.matcherClassName».
+		to be used in conjunction with {@link «pattern.matcherClassName»}.
 		
 		<p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
 		Each instance is a (possibly partial) substitution of pattern parameters, 
@@ -173,6 +173,7 @@ class JavadocInferrer {
 	def javadocNewMatchMethod(Pattern pattern) '''
 		Returns a new (partial) Match object for the matcher. 
 		This can be used e.g. to call the matcher with a partial match. 
+		<p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
 		«FOR p : pattern.parameters»
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»

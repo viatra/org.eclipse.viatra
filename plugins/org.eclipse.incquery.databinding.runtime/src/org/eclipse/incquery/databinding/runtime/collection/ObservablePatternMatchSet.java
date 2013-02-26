@@ -24,10 +24,10 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
+import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
@@ -100,7 +100,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
-        RuleSpecification<Match,Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        SimpleMatcherRuleSpecification<Match,Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
         RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
         triggerEngine.addRule(specification, true);
@@ -121,7 +121,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
         super();
-        RuleSpecification<Match, Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        SimpleMatcherRuleSpecification<Match, Matcher> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
         engine.addRule(specification, true);
     }
 

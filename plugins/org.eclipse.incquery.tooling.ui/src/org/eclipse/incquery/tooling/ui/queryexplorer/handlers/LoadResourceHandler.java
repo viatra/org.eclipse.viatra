@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Tamas Szabo, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2012, Andras Okros, Tamas Szabo, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Tamas Szabo, Zoltan Ujhelyi - initial API and implementation
+ *   Andras Okros - second version implementation
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
@@ -21,17 +22,15 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Default Resource and EObject loader.
+ * Default Resource loader.
  */
 public class LoadResourceHandler extends LoadResourceSetHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        // FIXME do it, make an eobject loader separately
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
         IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
         if (modelConnector instanceof EMFModelConnector) {
-            // FIXME do it rework this part
             modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCE);
             QueryExplorer.getInstance().getModelConnectorMap()
                     .put(((EMFModelConnector) modelConnector).getKey(), modelConnector);

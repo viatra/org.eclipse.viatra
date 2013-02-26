@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.base.core;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,16 +34,16 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public static class ChangeVisitor extends NavigationHelperVisitor {
         // local copies to save actual state, in case visitor has to be saved for later due unresolvable proxies
         private final boolean wildcardMode;
-        private final HashSet<EClass> allObservedClasses;
-        private final HashSet<EDataType> observedDataTypes;
-        private final HashSet<EStructuralFeature> observedFeatures;
+        private final Set<EClass> allObservedClasses;
+        private final Set<EDataType> observedDataTypes;
+        private final Set<EStructuralFeature> observedFeatures;
 
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
             super(navigationHelper, isInsertion, false);
             wildcardMode = navigationHelper.isInWildcardMode();
-            allObservedClasses = new HashSet<EClass>(navigationHelper.getAllObservedClasses());
-            observedDataTypes = new HashSet<EDataType>(navigationHelper.getObservedDataTypes());
-            observedFeatures = new HashSet<EStructuralFeature>(navigationHelper.getObservedFeatures());
+            allObservedClasses = navigationHelper.getAllObservedClasses(); //new HashSet<EClass>();
+            observedDataTypes = navigationHelper.getObservedDataTypes(); //new HashSet<EDataType>();
+            observedFeatures = navigationHelper.getObservedFeatures(); //new HashSet<EStructuralFeature>();
         }
 
         @Override

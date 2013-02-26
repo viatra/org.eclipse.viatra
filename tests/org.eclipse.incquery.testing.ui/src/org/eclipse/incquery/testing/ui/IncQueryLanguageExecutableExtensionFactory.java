@@ -9,7 +9,7 @@
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra2.emf.incquery.testing.ui;
+package org.eclipse.incquery.testing.ui;
 
 import org.eclipse.incquery.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory;
 import org.osgi.framework.Bundle;

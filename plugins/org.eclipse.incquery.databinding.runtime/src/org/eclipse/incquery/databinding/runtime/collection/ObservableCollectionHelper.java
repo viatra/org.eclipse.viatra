@@ -17,8 +17,8 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Agenda;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 
 import com.google.common.collect.Sets;
@@ -49,14 +49,14 @@ public final class ObservableCollectionHelper {
      *            an existing {@link Agenda} where the rule is created
      */
     @SuppressWarnings("unchecked")
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match, Matcher> createRuleSpecification(
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> SimpleMatcherRuleSpecification<Match, Matcher> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
 
         Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED, new ObservableCollectionProcessor<Match>(
                 Direction.INSERT, observableCollectionUpdate));
         Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
                 Direction.DELETE, observableCollectionUpdate));
-       return new RuleSpecification<Match, Matcher>(factory, DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(
+       return new SimpleMatcherRuleSpecification<Match, Matcher>(factory, DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(
                 insertJob, deleteJob));
     }
 

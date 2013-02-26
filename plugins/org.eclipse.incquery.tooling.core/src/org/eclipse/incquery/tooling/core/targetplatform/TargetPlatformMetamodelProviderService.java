@@ -80,9 +80,24 @@ public class TargetPlatformMetamodelProviderService extends
 	 */
 	@Override
 	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-		EPackage pack = metamodelLoader.loadPackage(resourceSet, packageUri);
-		if (pack != null) return pack;
-		return super.loadEPackage(packageUri, resourceSet);
+	    EPackage pack;
+	    pack = super.loadEPackage(packageUri, resourceSet);
+	    if (pack != null) return pack;
+        pack = metamodelLoader.loadPackage(resourceSet, packageUri);
+        return pack;
 	}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService#isGeneratedCodeAvailable(org.eclipse
+     * .emf.ecore.EPackage, org.eclipse.emf.ecore.resource.ResourceSet)
+     */
+    @Override
+    public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
+        return (metamodelLoader.loadGenPackage(set, ePackage.getNsURI()) != null)
+                || super.isGeneratedCodeAvailable(ePackage, set);
+    }
 	
 }

@@ -19,6 +19,9 @@ import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import com.google.common.collect.Table.Cell;
 
 /**
+ * This class represents life-cycles that cannot be modified. 
+ * Attempts to add new transitions will result in {@link UnsupportedOperationException}.
+ * 
  * @author Abel Hegedus
  *
  */
@@ -32,10 +35,24 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
         throw new UnsupportedOperationException("Life cycle is unmodifiable!");
     }
     
+    /**
+     * Internal method to add transitions to an unmodifiable life-cycle.
+     *  
+     * @param from
+     * @param event
+     * @param to
+     * @return
+     */
     protected boolean internalAddStateTransition(final ActivationState from, final ActivationLifeCycleEvent event, final ActivationState to) {
         return super.addStateTransition(from, event, to);
     }
     
+    /**
+     * Creates an unmodifiable copy of the given life-cycle.
+     * 
+     * @param lifeCycle
+     * @return
+     */
     public static UnmodifiableActivationLifeCycle copyOf(final ActivationLifeCycle lifeCycle) {
         if(lifeCycle instanceof UnmodifiableActivationLifeCycle) {
             return (UnmodifiableActivationLifeCycle) lifeCycle;

@@ -23,7 +23,7 @@ import com.google.common.base.Objects;
  * some domain model elements and the rule becomes eligible for execution.
  * 
  * <p>
- * An Activation holds a state, a pattern match, the corresponding rule. The state of the
+ * An Activation holds a state, a pattern match, the corresponding rule 5nstance. The state of the
  * Activation can be either Inactive, Appeared, Disappeared, Upgraded or Fired, while its actual
  * state will be managed by the life-cycle of its rule.
  * 
@@ -37,10 +37,10 @@ public class Activation<Match extends IPatternMatch> {
     private Match patternMatch;
     private ActivationState state;
     private boolean enabled;
-    private RuleInstance<Match, ? extends IncQueryMatcher<Match>> rule;
+    private RuleInstance<Match> rule;
     private int cachedHash = -1;
 
-    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match, Matcher> rule, Match patternMatch) {
+    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match> rule, Match patternMatch) {
         this.patternMatch = checkNotNull(patternMatch,"Cannot create activation with null patternmatch");
         this.rule = checkNotNull(rule,"Cannot create activation with null rule");
         this.state = ActivationState.INACTIVE;
@@ -54,6 +54,12 @@ public class Activation<Match extends IPatternMatch> {
         return state;
     }
     
+    /**
+     * An activatio is enabled, if the there are jobs corresponding
+     *  to the state of the activation.
+     * 
+     * @return true, if there are jobs for the current state
+     */
     public boolean isEnabled() {
         return enabled;
     }
@@ -61,7 +67,7 @@ public class Activation<Match extends IPatternMatch> {
     /**
      * @return the rule
      */
-    public RuleInstance<Match, ? extends IncQueryMatcher<Match>> getRule() {
+    public RuleInstance<Match> getRule() {
         return rule;
     }
 

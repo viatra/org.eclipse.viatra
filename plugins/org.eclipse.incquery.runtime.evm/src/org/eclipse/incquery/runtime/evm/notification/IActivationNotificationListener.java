@@ -17,8 +17,9 @@ import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 
 /**
- * The interface is used to observe the changes in the collection of activations. <br/>
- * <br/>
+ * The interface is used to observe the changes in the collection of activations.
+ * 
+ * <p/>
  * An implementing class is for example the Agenda which is called back by the RuleInstance
  * when those have updated the activations after an EMF operation.
  * 
@@ -27,6 +28,16 @@ import org.eclipse.incquery.runtime.evm.api.ActivationState;
  */
 public interface IActivationNotificationListener {
 
+    /**
+     * This method is called by {@link ActivationNotificationProvider} to relay changes to listeners.
+     * 
+     * <p/>
+     * Implementing classes can use the old state, the event, and the new state (available from the activation).
+     * 
+     * @param activation
+     * @param oldState
+     * @param event
+     */
     void activationChanged(final Activation<? extends IPatternMatch> activation, final ActivationState oldState,
             final ActivationLifeCycleEvent event);
 

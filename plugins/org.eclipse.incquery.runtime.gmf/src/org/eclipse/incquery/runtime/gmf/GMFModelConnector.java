@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * Model connector for GMF editors.
+ * Model connector implementation for the GMF editors.
  */
 public class GMFModelConnector extends EMFModelConnector {
 
@@ -51,23 +51,21 @@ public class GMFModelConnector extends EMFModelConnector {
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
             if (editorPart instanceof DiagramDocumentEditor) {
                 DiagramDocumentEditor diagramDocumentEditor = (DiagramDocumentEditor) editorPart;
-                Diagram d = diagramDocumentEditor.getDiagram();
-                if (d!=null && d.getElement()!=null) {
-                    return d.getElement().eResource();
-                }
-                else
+                Diagram diagram = diagramDocumentEditor.getDiagram();
+                if (diagram != null && diagram.getElement() != null) {
+                    return diagram.getElement().eResource();
+                } else {
                     return ((EObject) diagramDocumentEditor.getDiagramEditPart().getModel()).eResource();
+                }
             } else if (editorPart instanceof IDiagramWorkbenchPart) {
                 IDiagramWorkbenchPart diagramWorkbenchPart = (IDiagramWorkbenchPart) editorPart;
-                Diagram d = diagramWorkbenchPart.getDiagram();
-                if (d!=null && d.getElement()!=null) {
-                    return d.getElement().eResource();
-                }
-                else
+                Diagram diagram = diagramWorkbenchPart.getDiagram();
+                if (diagram != null && diagram.getElement() != null) {
+                    return diagram.getElement().eResource();
+                } else {
                     return ((EObject) diagramWorkbenchPart.getDiagramEditPart().getModel()).eResource();
+                }
             }
-        } else if (IModelConnectorTypeEnum.EOBJECT.equals(modelConnectorTypeEnum)) {
-            // XXX Not implemented for now. The selected element is a graphical, not a model object.
         }
         return result;
     }
@@ -77,14 +75,13 @@ public class GMFModelConnector extends EMFModelConnector {
         if (editor instanceof DiagramDocumentEditor) {
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editor;
             return createTreePath(providerEditor.getDiagramEditPart().getPrimaryChildEditPart(), obj);
-        }
-        else if (editor instanceof IDiagramWorkbenchPart) {
+        } else if (editor instanceof IDiagramWorkbenchPart) {
             IDiagramWorkbenchPart dwp = (IDiagramWorkbenchPart) editor;
             return createTreePath(dwp.getDiagramEditPart().getPrimaryChildEditPart(), obj);
         }
         return null;
     }
-    
+
     private TreePath createTreePath(EditPart epBegin, EObject obj) {
         if (epBegin instanceof GraphicalEditPart) {
             List<Object> nodes = new ArrayList<Object>();
@@ -104,18 +101,16 @@ public class GMFModelConnector extends EMFModelConnector {
         if (editorPart instanceof DiagramDocumentEditor) {
             DiagramDocumentEditor providerEditor = (DiagramDocumentEditor) editorPart;
             viewer = providerEditor.getDiagramGraphicalViewer();
-        }
-        else if (editorPart instanceof IDiagramWorkbenchPart) {
+        } else if (editorPart instanceof IDiagramWorkbenchPart) {
             IDiagramWorkbenchPart dwp = (IDiagramWorkbenchPart) editorPart;
             viewer = dwp.getDiagramGraphicalViewer();
         }
-        if (viewer!=null) {
+        if (viewer != null) {
             if (selection.getFirstElement() instanceof GraphicalEditPart) {
                 GraphicalEditPart part = (GraphicalEditPart) selection.getFirstElement();
                 viewer.reveal(part);
             }
         }
     }
-    
-    
+
 }

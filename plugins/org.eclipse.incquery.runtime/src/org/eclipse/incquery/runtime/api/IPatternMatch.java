@@ -41,20 +41,41 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
     /**
      * Sets the parameter with the given name to the given value.
      * 
+     * <p> Works only if match is mutable. See {@link #isMutable()}.
+     * 
      * @returns true if successful, false if parameter name is invalid. May also fail and return false if the value type
      *          is incompatible.
+     * @throws UnsupportedOperationException if match is not mutable.
      */
     public boolean set(String parameterName, Object newValue);
 
     /**
      * Sets the parameter at the given position to the given value.
      * 
+     * <p> Works only if match is mutable. See {@link #isMutable()}.
+     * 
      * @returns true if successful, false if position is invalid. May also fail and return false if the value type is
      *          incompatible.
+     * @throws UnsupportedOperationException if match is not mutable.
      */
     public boolean set(int position, Object newValue);
 
-    /** Converts the match to an array representation, with each pattern parameter at their respective position */
+    /**
+     * Returns whether the match object can be further modified after its creation. Setters work only if the match is mutable. 
+     * 
+     * Matches computed by the pattern matchers are not mutable, so that the match set cannot be modified externally. 
+     * Partial matches used as matcher input, however, can be mutable; such match objects can be created using {@link IncQueryMatcher#newEmptyMatch()}. 
+     * 
+     * @return whether the match can be modified
+     */
+    public boolean isMutable();
+    
+    /** 
+     * Converts the match to an array representation, with each pattern parameter at their respective position. 
+     * In case of a partial match, unsubstituted parameters will be represented as null elements in the array. 
+     *
+     * @return a newly constructed array containing each parameter substitution of the match in order.
+     */
     public Object[] toArray();
 
     /** Prints the list of parameter-value pairs. */

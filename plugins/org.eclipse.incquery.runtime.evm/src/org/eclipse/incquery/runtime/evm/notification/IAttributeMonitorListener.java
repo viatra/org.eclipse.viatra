@@ -14,8 +14,8 @@ package org.eclipse.incquery.runtime.evm.notification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
- * The interface exposes the {@link #notifyUpdate(IPatternMatch)} method to receive notifications when the attributes of
- * the match objects have changed.
+ * The interface exposes the {@link #notifyUpdate(IPatternMatch)} method to
+ *  receive notifications when the attributes of the match objects have changed.
  * 
  * @author Tamas Szabo
  * 
@@ -23,6 +23,12 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  */
 public interface IAttributeMonitorListener<MatchType extends IPatternMatch> {
 
+    /**
+     * This method is called by {@link AttributeMonitor} when a feature value
+     *  changes in one of the objects in the match.
+     * 
+     * @param match
+     */
     void notifyUpdate(final MatchType match);
 
 }
