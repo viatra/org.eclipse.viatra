@@ -84,18 +84,6 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected Set<EDataType> delayedDataTypes;
 
-    private Set<EClass> noClass() {
-        return Collections.emptySet();
-    };
-
-    private Set<EDataType> noDataType() {
-        return Collections.emptySet();
-    };
-
-    private Set<EStructuralFeature> noFeature() {
-        return Collections.emptySet();
-    };
-
     <T> Set<T> setMinus(Set<T> a, Set<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
@@ -103,7 +91,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     <T extends EObject> Set<T> resolveAll(Set<T> a) {
-        Set<T> result = new HashSet<T>(a);
+    	if (a==null) a = Collections.emptySet();
+        Set<T> result = new HashSet<T>();
         for (T t : a) {
             if (t.eIsProxy()) {
                 result.add((T) EcoreUtil.resolve(t, (ResourceSet) null));
@@ -527,7 +516,44 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return allObservedClasses;
     }
+    
+    @Override
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+        ensureNotInWildcardMode();
+        if (classes !=null || features != null || dataTypes!=null) {
+			final Set<EStructuralFeature> resolvedFeatures = resolveAll(features);
+			final Set<EClass> resolvedClasses = resolveAll(classes);
+			final Set<EDataType> resolvedDatatypes = resolveAll(dataTypes);
+			try {
+			     coalesceTraversals(new Callable<Void>() {
+			         @Override
+			         public Void call() throws Exception {
+			         	delayedFeatures.addAll(resolvedFeatures);
+			         	delayedDataTypes.addAll(resolvedDatatypes);
+			         	delayedClasses.addAll(resolvedClasses);
+			         	return null;
+			         }
+			     });
+			 } catch (InvocationTargetException ex) {
+			     processingError(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
+			    		 + " and EDatatypes " + resolvedDatatypes
+			    		 + " and EStructuralFeatures " + resolvedFeatures);
+			 } catch (Exception ex) {
+			     processingError(ex, "register en masse the observed EClasses " + resolvedClasses
+			    		 + " and EDatatypes " + resolvedDatatypes
+			    		 + " and EStructuralFeatures " + resolvedFeatures);
+			 }
+	     }
+	 }
 
+    @Override
+    public void unregisterObservedTypes(Set<EClass> classes,
+    		Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    	unregisterEClasses(classes);
+    	unregisterEDataTypes(dataTypes);
+    	unregisterEStructuralFeatures(features);
+    }
+    
     @Override
     public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
         ensureNotInWildcardMode();
@@ -542,9 +568,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EStructuralFeatures: " + resolved);
+                processingError(ex.getCause(), "register the observed EStructuralFeatures: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the EStructuralFeatures: " + resolved);
+                processingError(ex, "register the observed EStructuralFeatures: " + resolved);
             }
         }
     }
@@ -559,11 +585,6 @@ public class NavigationHelperImpl implements NavigationHelper {
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
                 contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
-                /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
-                    // XXX this would probably cause ConcurrentModificationException
-                    contentAdapter.valueToFeatureToHolderMap.remove(key,f);
-                }*/
-                // TODO proper notification
             }
         }
     }
@@ -582,9 +603,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EClasses: " + resolvedClasses);
+                processingError(ex.getCause(), "register the observed EClasses: " + resolvedClasses);
             } catch (Exception ex) {
-                processingError(ex, "register the EClasses: " + resolvedClasses);
+                processingError(ex, "register the observed EClasses: " + resolvedClasses);
             }
         }
     }
@@ -634,9 +655,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EDataTypes: " + resolved);
+                processingError(ex.getCause(), "register the observed EDataTypes: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the EDataTypes: " + resolved);
+                processingError(ex, "register the observed EDataTypes: " + resolved);
             }
         }
     }

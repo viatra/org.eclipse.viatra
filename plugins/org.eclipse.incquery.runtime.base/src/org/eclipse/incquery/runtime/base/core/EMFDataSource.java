@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
-import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphObserver;
 
@@ -32,7 +31,7 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
     private Set<EClass> classes;
 	private NavigationHelper navigationHelper;
 	
-	public EMFDataSource(NavigationHelper navigationHelper, Set<EReference> references, Set<EClass> classes) throws IncQueryBaseException {
+	public EMFDataSource(NavigationHelper navigationHelper, Set<EReference> references, Set<EClass> classes) {
 		this.references = references;
 		this.classes = classes;
 		this.observers = new ArrayList<IGraphObserver<EObject>>();

@@ -24,7 +24,6 @@ import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.api.TransitiveClosureHelper;
-import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 
@@ -45,16 +44,18 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
     private EMFDataSource dataSource;
     private ArrayList<ITcObserver<EObject>> tcObservers;
     private NavigationHelper navigationHelper;
+    private boolean disposeBaseIndexWhenDisposed;
     
-    public TransitiveClosureHelperImpl(NavigationHelper navigationHelper, Set<EReference> references) throws IncQueryBaseException {
+    public TransitiveClosureHelperImpl(final NavigationHelper navigationHelper, boolean disposeBaseIndexWhenDisposed, Set<EReference> references) {
         this.tcObservers = new ArrayList<ITcObserver<EObject>>();
         this.navigationHelper = navigationHelper;
+        this.disposeBaseIndexWhenDisposed = disposeBaseIndexWhenDisposed;
 		
 		//NavigationHelper only accepts Set<EStructuralFeature> upon registration
 		this.features = new HashSet<EStructuralFeature>(references);
-		this.navigationHelper.registerEStructuralFeatures(features);
 		this.classes = collectEClasses();
-		this.navigationHelper.registerEClasses(classes);
+		if (!navigationHelper.isInWildcardMode())
+			navigationHelper.registerObservedTypes(classes, null, features);
         
 		this.navigationHelper.registerFeatureListener(features, this);
 		this.navigationHelper.registerInstanceListener(classes, this);
@@ -118,7 +119,9 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
         this.sccAlg.dispose();
         this.navigationHelper.unregisterInstanceListener(classes, this);
         this.navigationHelper.unregisterFeatureListener(features, this);
-        this.navigationHelper.dispose();
+        
+        if (disposeBaseIndexWhenDisposed)
+        	this.navigationHelper.dispose();
     }
 
 	@Override
