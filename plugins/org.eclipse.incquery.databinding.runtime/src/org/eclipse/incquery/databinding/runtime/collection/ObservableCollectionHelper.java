@@ -50,11 +50,12 @@ public final class ObservableCollectionHelper {
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
 
-        Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED, new ObservableCollectionProcessor<Match>(
-                Direction.INSERT, observableCollectionUpdate));
-        Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED, new ObservableCollectionProcessor<Match>(
-                Direction.DELETE, observableCollectionUpdate));
-       return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, Sets.newHashSet(insertJob, deleteJob));
+        Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED,
+                new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate));
+        Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED,
+                new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate));
+        return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE,
+                Sets.newHashSet(insertJob, deleteJob));
     }
 
 }
