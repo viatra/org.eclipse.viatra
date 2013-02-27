@@ -20,10 +20,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
@@ -31,7 +29,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -67,8 +65,7 @@ public class ConstraintAdapter {
             Job<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
                     constraint, logger));
 
-            rules.add(new SimpleMatcherRuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
-                    (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) constraint.getMatcherFactory(),
+            rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getMatcherFactory(),
                     DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(placerJob, eraserJob, updaterJob)));
         }
 
