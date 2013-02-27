@@ -367,10 +367,7 @@ public interface NavigationHelper {
     /**
      * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
      * registering new features will result in iterating through the whole attached model.
-     * 
-     * <pre>
-     * Not usable in <em>wildcard mode</em>
-     * </pre>
+     * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * @param features
      *            the set of features to observe
@@ -380,6 +377,9 @@ public interface NavigationHelper {
     /**
      * Manually turns off indexing for the given features (indexing of other features are unaffected). Note that if the
      * unregistered features are re-registered later, the whole attached model needs to be visited again.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * <dt><b>Precondition:</b><dd> no listeners can be registered for the given features.
      * 
      * @param features
      *            the set of features that will be ignored
@@ -390,10 +390,11 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
      * subclasses will also be indexed. Note that registering new classes will result in iterating through the whole
      * attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
-     * <pre>
-     * Not usable in <em>wildcard mode</em>
-     * </pre>
+     * <b>
+     * Not usable in <em>wildcard mode</em>.
+     * </b>
      * 
      * @param classes
      *            the set of classes to observe
@@ -403,7 +404,10 @@ public interface NavigationHelper {
     /**
      * Manually turns off indexing for the given classes (indexing of other classes are unaffected). Note that if the
      * unregistered classes are re-registered later, the whole attached model needs to be visited again.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
+     * <dt><b>Precondition:</b><dd> no listeners can be registered for the given classes.
+
      * @param classes
      *            the set of classes that will be ignored
      */
@@ -412,6 +416,7 @@ public interface NavigationHelper {
     /**
      * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
      * registering new data types will result in iterating through the whole attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <pre>
      * Not usable in <em>wildcard mode</em>
@@ -425,6 +430,9 @@ public interface NavigationHelper {
     /**
      * Manually turns off indexing for the given data types (indexing of other data types are unaffected). Note that if
      * the unregistered data types are re-registered later, the whole attached model needs to be visited again.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * <dt><b>Precondition:</b><dd> no listeners can be registered for the given datatypes.
      * 
      * @param dataTypes
      *            the set of data types that will be ignored

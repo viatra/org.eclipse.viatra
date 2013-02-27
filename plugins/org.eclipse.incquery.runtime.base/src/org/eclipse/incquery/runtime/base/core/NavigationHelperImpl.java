@@ -530,9 +530,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (features != null) {
             final Set<EStructuralFeature> resolved = resolveAll(features);
             try {
@@ -553,11 +551,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (features != null) {
             features = resolveAll(features);
+            ensureNoListeners(features, featureListeners);									
             observedFeatures.removeAll(features);
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
@@ -573,9 +570,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEClasses(Set<EClass> classes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (classes != null) {
             final Set<EClass> resolvedClasses = resolveAll(classes);
             try {
@@ -610,11 +605,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEClasses(Set<EClass> classes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (classes != null) {
             classes = resolveAll(classes);
+            ensureNoListeners(classes, instanceListeners);									
             directlyObservedClasses.removeAll(classes);
             allObservedClasses = null;
             delayedClasses.removeAll(classes);
@@ -624,11 +618,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
+
+
     @Override
     public void registerEDataTypes(Set<EDataType> dataTypes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (dataTypes != null) {
             final Set<EDataType> resolved = resolveAll(dataTypes);
             try {
@@ -649,12 +643,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
-//    	throw new UnsupportedOperationException();
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (dataTypes != null) {
             dataTypes = resolveAll(dataTypes);
+            ensureNoListeners(dataTypes, dataTypeListeners);									
             observedDataTypes.removeAll(dataTypes);
             delayedDataTypes.removeAll(dataTypes);
             for (EDataType dataType : dataTypes) {
@@ -774,5 +766,15 @@ public class NavigationHelperImpl implements NavigationHelper {
         contentAdapter.processingError(ex, task);
     }
 
+    private void ensureNotInWildcardMode() {
+    	if (inWildcardMode) {
+    		throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
+    	}
+    }
+    private <Type> void ensureNoListeners(Set<Type> observedTypes, final Map<?, Collection<Type>> listenerRegistry) {
+    	for (Collection<Type> listenerTypes : listenerRegistry.values()) 
+    		if (!Collections.disjoint(observedTypes, listenerTypes))
+    			throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
+    }
 
 }
