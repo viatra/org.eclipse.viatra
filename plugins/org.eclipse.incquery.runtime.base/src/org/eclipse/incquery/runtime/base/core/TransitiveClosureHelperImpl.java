@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.base.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,7 +54,8 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
 		
 		//NavigationHelper only accepts Set<EStructuralFeature> upon registration
 		this.features = new HashSet<EStructuralFeature>(references);
-		this.classes = collectEClasses();
+		/*this.classes = collectEClasses();*/
+		this.classes = Collections.emptySet();
 		if (!navigationHelper.isInWildcardMode())
 			navigationHelper.registerObservedTypes(classes, null, features);
         
