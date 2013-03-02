@@ -116,7 +116,7 @@ public class PatternSanitizer {
         }
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
-        PatternSetValidationDiagnostics validatorResult = validator.validate(patterns);
+        PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
         validatorResult.logErrors(logger);
 
         boolean ok = inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
