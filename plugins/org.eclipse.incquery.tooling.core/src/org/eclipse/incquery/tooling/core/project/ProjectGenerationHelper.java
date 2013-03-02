@@ -107,7 +107,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
-        List<String> dependencies = Lists.newArrayList("org.eclipse.pde.core", "org.eclipse.emf.ecore",
+        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore",
                 "org.eclipse.emf.transaction", IncQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
