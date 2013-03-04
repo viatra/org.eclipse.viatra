@@ -17,9 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.GenericMatcherFactory;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
 
+/**
+ * FIXME DO IT
+ */
 public enum PatternRegistry {
 
     INSTANCE;
@@ -48,8 +55,8 @@ public enum PatternRegistry {
         }
 
         // Registers new pattern
-        // FIXME do it create the matcherfactory!!
-        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, null);
+        IMatcherFactory<?> matcherFactory = new GenericMatcherFactory(pattern);
+        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
         registerPatternInfo(patternInfo);
         return patternInfo;
     }
