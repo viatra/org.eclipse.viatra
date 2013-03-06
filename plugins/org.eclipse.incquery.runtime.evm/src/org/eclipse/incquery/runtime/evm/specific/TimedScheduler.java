@@ -23,7 +23,6 @@ import org.eclipse.incquery.runtime.evm.api.Scheduler;
 public class TimedScheduler extends Scheduler {
     private long interval;
     private volatile boolean interrupted = false;
-    private FiringThread firingThread;
     
     /**
      * Creates a timed scheduler for the given executor and interval.
@@ -34,8 +33,7 @@ public class TimedScheduler extends Scheduler {
     protected TimedScheduler(final Executor executor, final long interval) {
         super(executor);
         this.interval = interval;
-        this.firingThread = new FiringThread();
-        this.firingThread.start();
+        new FiringThread().start();
     }
 
     /**

@@ -84,18 +84,6 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected Set<EDataType> delayedDataTypes;
 
-    private Set<EClass> noClass() {
-        return Collections.emptySet();
-    };
-
-    private Set<EDataType> noDataType() {
-        return Collections.emptySet();
-    };
-
-    private Set<EStructuralFeature> noFeature() {
-        return Collections.emptySet();
-    };
-
     <T> Set<T> setMinus(Set<T> a, Set<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
@@ -103,7 +91,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     <T extends EObject> Set<T> resolveAll(Set<T> a) {
-        Set<T> result = new HashSet<T>(a);
+    	if (a==null) a = Collections.emptySet();
+        Set<T> result = new HashSet<T>();
         for (T t : a) {
             if (t.eIsProxy()) {
                 result.add((T) EcoreUtil.resolve(t, (ResourceSet) null));
@@ -489,6 +478,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 expansionAllowed = true;
             }
             contentAdapter.addAdapter(root);
+            contentAdapter.runCallbacksIfDirty();
         }
     }
 
@@ -526,12 +516,47 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return allObservedClasses;
     }
+    
+    @Override
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+        ensureNotInWildcardMode();
+        if (classes !=null || features != null || dataTypes!=null) {
+			final Set<EStructuralFeature> resolvedFeatures = resolveAll(features);
+			final Set<EClass> resolvedClasses = resolveAll(classes);
+			final Set<EDataType> resolvedDatatypes = resolveAll(dataTypes);
+			try {
+			     coalesceTraversals(new Callable<Void>() {
+			         @Override
+			         public Void call() throws Exception {
+			         	delayedFeatures.addAll(resolvedFeatures);
+			         	delayedDataTypes.addAll(resolvedDatatypes);
+			         	delayedClasses.addAll(resolvedClasses);
+			         	return null;
+			         }
+			     });
+			 } catch (InvocationTargetException ex) {
+			     processingError(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
+			    		 + " and EDatatypes " + resolvedDatatypes
+			    		 + " and EStructuralFeatures " + resolvedFeatures);
+			 } catch (Exception ex) {
+			     processingError(ex, "register en masse the observed EClasses " + resolvedClasses
+			    		 + " and EDatatypes " + resolvedDatatypes
+			    		 + " and EStructuralFeatures " + resolvedFeatures);
+			 }
+	     }
+	 }
 
     @Override
+    public void unregisterObservedTypes(Set<EClass> classes,
+    		Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    	unregisterEClasses(classes);
+    	unregisterEDataTypes(dataTypes);
+    	unregisterEStructuralFeatures(features);
+    }
+    
+    @Override
     public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (features != null) {
             final Set<EStructuralFeature> resolved = resolveAll(features);
             try {
@@ -543,38 +568,30 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EStructuralFeatures: " + resolved);
+                processingError(ex.getCause(), "register the observed EStructuralFeatures: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the EStructuralFeatures: " + resolved);
+                processingError(ex, "register the observed EStructuralFeatures: " + resolved);
             }
         }
     }
 
     @Override
     public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (features != null) {
             features = resolveAll(features);
+            ensureNoListeners(features, featureListeners);									
             observedFeatures.removeAll(features);
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
                 contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
-                /*for (Object key : contentAdapter.valueToFeatureToHolderMap.column(f).keySet()) {
-                    // XXX this would probably cause ConcurrentModificationException
-                    contentAdapter.valueToFeatureToHolderMap.remove(key,f);
-                }*/
-                // TODO proper notification
             }
         }
     }
 
     @Override
     public void registerEClasses(Set<EClass> classes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (classes != null) {
             final Set<EClass> resolvedClasses = resolveAll(classes);
             try {
@@ -586,9 +603,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EClasses: " + resolvedClasses);
+                processingError(ex.getCause(), "register the observed EClasses: " + resolvedClasses);
             } catch (Exception ex) {
-                processingError(ex, "register the EClasses: " + resolvedClasses);
+                processingError(ex, "register the observed EClasses: " + resolvedClasses);
             }
         }
     }
@@ -609,11 +626,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEClasses(Set<EClass> classes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (classes != null) {
             classes = resolveAll(classes);
+            ensureNoListeners(classes, instanceListeners);									
             directlyObservedClasses.removeAll(classes);
             allObservedClasses = null;
             delayedClasses.removeAll(classes);
@@ -623,11 +639,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
+
+
     @Override
     public void registerEDataTypes(Set<EDataType> dataTypes) {
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (dataTypes != null) {
             final Set<EDataType> resolved = resolveAll(dataTypes);
             try {
@@ -639,21 +655,19 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the EDataTypes: " + resolved);
+                processingError(ex.getCause(), "register the observed EDataTypes: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the EDataTypes: " + resolved);
+                processingError(ex, "register the observed EDataTypes: " + resolved);
             }
         }
     }
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
-//    	throw new UnsupportedOperationException();
-        if (inWildcardMode) {
-            throw new IllegalStateException();
-        }
+        ensureNotInWildcardMode();
         if (dataTypes != null) {
             dataTypes = resolveAll(dataTypes);
+            ensureNoListeners(dataTypes, dataTypeListeners);									
             observedDataTypes.removeAll(dataTypes);
             delayedDataTypes.removeAll(dataTypes);
             for (EDataType dataType : dataTypes) {
@@ -743,7 +757,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (Notifier root : modelRoots) {
             EMFModelComprehension.traverseModel(visitor, root);
         }
-        runAfterUpdateCallbacks();
+        contentAdapter.runCallbacksIfDirty();
     }
 
     /**
@@ -773,5 +787,15 @@ public class NavigationHelperImpl implements NavigationHelper {
         contentAdapter.processingError(ex, task);
     }
 
+    private void ensureNotInWildcardMode() {
+    	if (inWildcardMode) {
+    		throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
+    	}
+    }
+    private <Type> void ensureNoListeners(Set<Type> observedTypes, final Map<?, Collection<Type>> listenerRegistry) {
+    	for (Collection<Type> listenerTypes : listenerRegistry.values()) 
+    		if (!Collections.disjoint(observedTypes, listenerTypes))
+    			throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
+    }
 
 }

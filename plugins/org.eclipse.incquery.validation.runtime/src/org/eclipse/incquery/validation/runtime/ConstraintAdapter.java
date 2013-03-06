@@ -20,19 +20,16 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
-import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.Jobs;
+import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.ui.IEditorPart;
@@ -60,16 +57,11 @@ public class ConstraintAdapter {
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
-            Job<IPatternMatch> placerJob = new StatelessJob<IPatternMatch>(ActivationState.APPEARED, new MarkerPlacerJob(this,
-                    constraint, logger));
-            Job<IPatternMatch> eraserJob = new StatelessJob<IPatternMatch>(ActivationState.DISAPPEARED, new MarkerEraserJob(
-                    this, logger));
-            Job<IPatternMatch> updaterJob = new StatelessJob<IPatternMatch>(ActivationState.UPDATED, new MarkerUpdaterJob(this,
-                    constraint, logger));
-
-            rules.add(new SimpleMatcherRuleSpecification<IPatternMatch, IncQueryMatcher<IPatternMatch>>(
-                    (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) constraint.getMatcherFactory(),
-                    DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(placerJob, eraserJob, updaterJob)));
+            rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getMatcherFactory(),
+                    DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(
+                            Jobs.newStatelessJob(ActivationState.APPEARED, new MarkerPlacerJob(this,constraint, logger)),
+                            Jobs.newStatelessJob(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger)),
+                            Jobs.newStatelessJob(ActivationState.UPDATED, new MarkerUpdaterJob(this,constraint, logger)))));
         }
 
         try {

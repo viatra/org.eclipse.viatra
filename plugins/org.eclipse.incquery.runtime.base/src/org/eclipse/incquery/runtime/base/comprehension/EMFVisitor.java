@@ -27,8 +27,16 @@ import org.eclipse.emf.ecore.resource.Resource;
 // - handle boundary of active emfRoot subtree
 // - more efficient traversal
 public class EMFVisitor {
+	
+	boolean preOrder;
+	
 
-    /**
+	public EMFVisitor(boolean preOrder) {
+		super();
+		this.preOrder = preOrder;
+	}
+
+	/**
      * @param resource
      * @param element
      */
@@ -111,5 +119,12 @@ public class EMFVisitor {
     public boolean forceProxyResolution() {
         return true;
     }
+
+	/**
+	 * @return if objects should be visited before their outgoing edges
+	 */
+	public boolean preOrder() {
+		return preOrder;
+	}
 
 }

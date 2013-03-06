@@ -129,7 +129,7 @@ public class EMFModelComprehension {
             }
         }
 
-        visitor.visitElement(source);
+        if (visitor.preOrder()) visitor.visitElement(source);
         for (EStructuralFeature feature : source.eClass().getEAllStructuralFeatures()) {
             if (untraversableDirectly(feature))
                 continue;
@@ -148,6 +148,7 @@ public class EMFModelComprehension {
                     traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
             }
         }
+        if (!visitor.preOrder()) visitor.visitElement(source);
     }
 
     private static boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {

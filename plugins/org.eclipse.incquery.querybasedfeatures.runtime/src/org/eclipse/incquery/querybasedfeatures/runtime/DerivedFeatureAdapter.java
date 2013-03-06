@@ -278,7 +278,11 @@ public class DerivedFeatureAdapter extends AdapterImpl {
      */
     protected class DerivedFeatureEMFVisitor extends EMFVisitor {
 
-        @Override
+		public DerivedFeatureEMFVisitor() {
+			super(true /* preOrder */);
+		}
+
+		@Override
         public void visitAttribute(EObject source, EAttribute feature, Object target) {
             // System.err.println("Attribute refresh.");
             // send set notification

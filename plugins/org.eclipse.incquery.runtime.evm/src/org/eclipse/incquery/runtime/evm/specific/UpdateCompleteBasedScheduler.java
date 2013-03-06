@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.Scheduler;
 import org.eclipse.incquery.runtime.evm.update.IQBaseCallbackUpdateCompleteProvider;
@@ -24,7 +23,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 /**
  * This scheduler uses update complete events to schedule its executor.
  * 
- * It provides two default implementations, one using the {@link NavigationHelper}
+ * It provides two default implementations, one using the NavigationHelper
  *  after update callback, the other uses Transaction commit events.
  * 
  * @author Abel Hegedus
@@ -46,7 +45,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
 
     /**
      * Creates a scheduler factory that creates schedulers by registering to the
-     *  after update callback on the {@link NavigationHelper} of the given engine.
+     *  after update callback on the NavigationHelper of the given engine.
      *    
      * @param engine
      * @return

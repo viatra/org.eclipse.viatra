@@ -60,14 +60,14 @@ public abstract class Scheduler {
     /**
      * @return the executor
      */
-    protected Executor getExecutor() {
+    public Executor getExecutor() {
         return executor;
     }
     
     /**
      * Disposes of the scheduler by disposing its executor.
      */
-    protected void dispose() {
+    public void dispose() {
         executor.dispose();
     }
     

@@ -78,7 +78,7 @@ public class IncQueryBaseFactory {
      * The method creates a TransitiveClosureHelper instance for the given EMF model root.
      * 
      * <p>
-     * One must specify the set of EReferences that will be considered as edged. The set can contain multiple elements;
+     * One must specify the set of EReferences that will be considered as edges. The set can contain multiple elements;
      * this way one can query forward and backward reachability information along heterogenous paths.
      * 
      * @param emfRoot
@@ -86,11 +86,29 @@ public class IncQueryBaseFactory {
      * @param referencesToObserve
      *            the set of references to observe
      * @return the TransitiveClosureHelper instance
-     * @throws IncQueryBaseException
+     * @throws IncQueryBaseException if the creation of the internal NavigationHelper failed
      */
     public TransitiveClosureHelper createTransitiveClosureHelper(Notifier emfRoot, Set<EReference> referencesToObserve)
             throws IncQueryBaseException {
-        return new TransitiveClosureHelperImpl(getInstance().createNavigationHelper(emfRoot, false, null), referencesToObserve);
+        return new TransitiveClosureHelperImpl(getInstance().createNavigationHelper(emfRoot, false, null), true, referencesToObserve);
     }
 
+    /**
+     * The method creates a TransitiveClosureHelper instance built on an existing NavigationHelper.
+     * 
+     * <p>
+     * One must specify the set of EReferences that will be considered as edges. The set can contain multiple elements;
+     * this way one can query forward and backward reachability information along heterogenous paths.
+     * 
+     * @param baseIndex
+     *            the already existing NavigationHelper index on the model
+     * @param referencesToObserve
+     *            the set of references to observe
+     * @return the TransitiveClosureHelper instance
+     */
+    public TransitiveClosureHelper createTransitiveClosureHelper(NavigationHelper baseIndex, Set<EReference> referencesToObserve) {
+        return new TransitiveClosureHelperImpl(baseIndex, false, referencesToObserve);
+    }
+    
+    
 }

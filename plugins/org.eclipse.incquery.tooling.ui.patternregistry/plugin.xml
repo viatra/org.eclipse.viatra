@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+            locationURI="popup:org.eclipse.ui.popup.any">
          <command
                commandId="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
                label="Register all EIQ files"

@@ -121,7 +121,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     boolean descendHierarchy;
 
     NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion, boolean descendHierarchy) {
-        super();
+        super(isInsertion /* preOrder iff insertion */);
         this.navigationHelper = navigationHelper;
         this.store = navigationHelper.getContentAdapter();
         this.isInsertion = isInsertion;
