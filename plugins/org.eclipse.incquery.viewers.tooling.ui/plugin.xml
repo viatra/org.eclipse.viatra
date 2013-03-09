@@ -17,7 +17,6 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
-            defaultHandler="org.eclipse.incquery.viewers.tooling.ui.handlers.InitializeViewersHandler"
             id="org.eclipse.incquery.viewers.tooling.ui.initViewers"
             name="Initialize IncQuery Viewers">
       </command>
@@ -30,12 +29,37 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.incquery.tooling.ui"
-            class="org.eclipse.incquery.viewers.tooling.ui.views.ZestView"
+            class="org.eclipse.incquery.viewers.tooling.ui.views.ViewerSandboxView"
             icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo.png"
             id="org.eclipse.incquery.viewers.tooling.ui.sandbox"
             name="IncQuery Viewers Sandbox"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.incquery.viewers.tooling.ui.handlers.InitializeViewersHandler"
+            commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
 
 </plugin>

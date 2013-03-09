@@ -22,7 +22,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
-import org.eclipse.incquery.viewers.tooling.ui.views.ZestView;
+import org.eclipse.incquery.viewers.tooling.ui.views.ViewerSandboxView;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
@@ -31,9 +31,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Temporary handler class to initialize the sandbox viewer.
  * 
- * Problems: only works on ObservablePatternMatcherRoot.
- * @author istvanrath
- *
+ * @author Istvan Rath
+ * 
  */
 public class InitializeViewersHandler extends AbstractHandler {
 
@@ -42,7 +41,7 @@ public class InitializeViewersHandler extends AbstractHandler {
         
         ISelection selection = HandlerUtil.getActiveMenuSelection(event);
         if (selection instanceof TreeSelection) {
-            ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection).getFirstElement();
+            ObservablePatternMatcherRoot root = getSelectedMatcherRoot(selection);
             
             try {
                 IEditorPart editorPart = root.getEditorPart();
@@ -60,17 +59,30 @@ public class InitializeViewersHandler extends AbstractHandler {
                         }
                         
                         
-                        if (ZestView.getInstance() != null) {
-                            ZestView.getInstance().setContents(resourceSet, patterns);
+                        if (ViewerSandboxView.getInstance() != null) {
+                            ViewerSandboxView.getInstance().setContents(resourceSet, patterns);
                         }
                     }
                 }
             } catch (IncQueryException e) {
                 throw new ExecutionException("Error initializing pattern matcher.", e);
+            } catch (IllegalArgumentException e) {
+                throw new ExecutionException("Invalid selrection", e);
             }
         }
         
         return null;
+    }
+
+    protected ObservablePatternMatcherRoot getSelectedMatcherRoot(ISelection selection) {
+        Object firstElement = ((TreeSelection) selection).getFirstElement();
+        if (firstElement instanceof ObservablePatternMatcherRoot) {
+            return (ObservablePatternMatcherRoot) firstElement;
+        } else if (firstElement instanceof ObservablePatternMatcher) {
+            return ((ObservablePatternMatcher) firstElement).getParent();
+        } else {
+            throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
+        }
     }
 
 }
