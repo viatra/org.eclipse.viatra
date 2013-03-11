@@ -13,6 +13,9 @@ package org.eclipse.incquery.runtime.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
@@ -298,19 +301,15 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     public void enumerateDirectBinaryEdgeInstances(Object typeObject, final ModelElementPairCrawler crawler) {
         final EStructuralFeature structural = (EStructuralFeature) typeObject;
         listener.ensure(structural);
-        final Collection<EObject> holders = baseIndex.getHoldersOfFeature(structural);
-        for (EObject holder : holders) {
-            if (structural.isMany()) {
-                final Collection<?> values = (Collection<?>) holder.eGet(structural);
-                for (Object value : values) {
-                    crawler.crawl(holder, value);
-                }
-            } else {
-                final Object value = holder.eGet(structural);
-                if (value != null)
-                    crawler.crawl(holder, value);
-            }
-        }
+        final Map<EObject, Set<Object>> featureInstances = baseIndex.getFeatureInstances(structural);
+        final Set<Entry<EObject, Set<Object>>> entrySet = featureInstances.entrySet();
+        for (Entry<EObject, Set<Object>> entry : entrySet) {
+			final EObject holder = entry.getKey();
+			final Set<Object> values = entry.getValue();
+			for (Object value : values) {
+				crawler.crawl(holder, value);
+			}
+		}
         // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
         // @Override
         // public void visitAttribute(EObject source, EAttribute feature, Object target) {

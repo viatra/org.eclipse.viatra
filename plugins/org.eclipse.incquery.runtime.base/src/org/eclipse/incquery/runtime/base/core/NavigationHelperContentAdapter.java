@@ -63,8 +63,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private Table<Object, EStructuralFeature, Set<EObject>> valueToFeatureToHolderMap;
 
     // feature -> holder(s)
+    // constructed on-demand
     private Map<EStructuralFeature, Multiset<EObject>> featureToHolderMap;
 
+    // holder -> feature (attr or ref) -> value(s)
+    // constructed on-demand
+    private Table<EObject, EStructuralFeature, Set<Object>> holderToFeatureToValueMap; 
+    
     // eclass -> instance(s)
     private final Map<String, Set<EObject>> instanceMap;
 
@@ -348,9 +353,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         if (setVal == null) {
             setVal = new HashSet<EObject>();
+            valueToFeatureToHolderMap.put(value, feature, setVal);
         }
         setVal.add(holder);
-        valueToFeatureToHolderMap.put(value, feature, setVal);
     }
 
     private void addToReversedFeatureMap(EStructuralFeature feature, EObject holder) {
@@ -358,31 +363,54 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         if (setVal == null) {
             setVal = HashMultiset.create();
+            featureToHolderMap.put(feature, setVal);
         }
         setVal.add(holder);
-        featureToHolderMap.put(feature, setVal);
     }
 
+    private void addToDirectFeatureMap(EObject holder, EStructuralFeature feature, Object value) {
+    	Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
+    	
+    	if (setVal == null) {
+    		setVal = new HashSet<Object>();
+    		holderToFeatureToValueMap.put(holder, feature, setVal);
+    	}
+    	setVal.add(value);
+    }
+    
     private void removeFromReversedFeatureMap(EStructuralFeature feature, EObject holder) {
-        if (featureToHolderMap.containsKey(feature)) {
-            featureToHolderMap.get(feature).remove(holder);
+    	final Multiset<EObject> setVal = featureToHolderMap.get(feature);
+        if (setVal != null) {
+			setVal.remove(holder);
 
-            if (featureToHolderMap.get(feature).size() == 0) {
+            if (setVal.isEmpty()) {
                 featureToHolderMap.remove(feature);
             }
         }
     }
 
     private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
-        if (valueToFeatureToHolderMap.contains(value, feature)) {
-            valueToFeatureToHolderMap.get(value,feature).remove(holder);
+    	final Set<EObject> setHolder = valueToFeatureToHolderMap.get(value,feature);
+        if (setHolder != null) {
+			setHolder.remove(holder);
 
-            if (valueToFeatureToHolderMap.get(value,feature).size() == 0) {
+            if (setHolder.isEmpty()) {
                 valueToFeatureToHolderMap.remove(value,feature);
             }
         }
     }
 
+    private void removeFromDirectFeatureMap(EObject holder, EStructuralFeature feature, Object value) {
+    	final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
+        if (setVal != null) {
+			setVal.remove(value);
+
+            if (setVal.isEmpty()) {
+                valueToFeatureToHolderMap.remove(holder, feature);
+            }
+        }
+    }
+    
     public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
         // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
         // navigationHelper.getObservedFeatures().contains(feature)) {
@@ -390,6 +418,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         if (featureToHolderMap != null) {
             addToReversedFeatureMap(feature, holder);
+        }
+        if (holderToFeatureToValueMap != null) {
+        	addToDirectFeatureMap(holder, feature, value);
         }
 
         isDirty = true;
@@ -404,6 +435,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         if (featureToHolderMap != null) {
             removeFromReversedFeatureMap(feature, holder);
+        }
+        if (holderToFeatureToValueMap != null) {
+        	removeFromDirectFeatureMap(holder, feature, value);
         }
 
         isDirty = true;
@@ -599,6 +633,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             }
         }
     }
+    
+
+	private void initDirectFeatureMap() {
+        for (Cell<Object, EStructuralFeature, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+        	final Object value = valueToFeatureHolderMap.getRowKey();
+            final EStructuralFeature feature = valueToFeatureHolderMap.getColumnKey();
+            for (EObject holder : valueToFeatureHolderMap.getValue()) {
+				addToDirectFeatureMap(holder, feature, value);
+            }
+        }		
+	}    
 
     // WORKAROUND for EContentAdapter bug
     // where proxy resolution during containment traversal would add a new
@@ -742,7 +787,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return featureToHolderMap;
     }
 
-    /**
+	/**
+	 * @return the holderToFeatureToValeMap
+	 */
+	protected Table<EObject, EStructuralFeature, Set<Object>> getHolderToFeatureToValueMap() {
+		if (holderToFeatureToValueMap == null) {
+			holderToFeatureToValueMap = HashBasedTable.create();
+			initDirectFeatureMap();
+		}
+		return holderToFeatureToValueMap;
+	}       
+
+
+	/**
      * @return the unresolvableProxyFeaturesMap
      */
     protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> getUnresolvableProxyFeaturesMap() {
@@ -762,6 +819,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     protected static Map<EClass, Set<EClass>> getSubTypeMap() {
         return subTypeMap;
     }
+
 
 
 }

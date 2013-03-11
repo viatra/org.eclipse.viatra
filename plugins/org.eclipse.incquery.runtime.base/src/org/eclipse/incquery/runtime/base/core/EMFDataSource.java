@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.base.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -58,7 +59,8 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 		List<EObject> targetNodes = new ArrayList<EObject>();
 		
 		for (EReference ref : references) {
-			targetNodes.addAll(navigationHelper.getReferenceValues(source, ref));
+			final Set<EObject> referenceValues = navigationHelper.getReferenceValues(source, ref);
+			targetNodes.addAll(referenceValues);
 		}
 		
 		return targetNodes;
@@ -121,12 +123,12 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 				allEObjects.addAll(navigationHelper.getAllInstances(clazz));
 			}
 	        for (EReference ref : references) {
-	            final Collection<EObject> holders = navigationHelper.getHoldersOfFeature(ref);
-	            for (EObject source : holders) {
-	            	final Collection<EObject> targets = navigationHelper.getReferenceValues(source, ref);
+	            final Map<EObject, Set<Object>> featureInstances = navigationHelper.getFeatureInstances(ref);
+	            for (EObject source : featureInstances.keySet()) {
+	            	final Collection<Object> targets = featureInstances.get(source);
 	            	allEObjects.add(source, targets.size());
-	            	for (EObject target : targets) {
-	            		allEObjects.add(target);
+	            	for (Object target : targets) {
+	            		allEObjects.add((EObject) target);
 					}
 				}
 	        }		

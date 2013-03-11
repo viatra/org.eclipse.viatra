@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.base.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -167,9 +168,9 @@ public interface NavigationHelper {
      * 
      * @param source the startpoint of a reference
      * @param reference the EReference instance
-     * @return the collection of {@link EObject} instances
+     * @return the set of {@link EObject} instances
      */
-    public Collection<EObject> getReferenceValues(EObject source, EReference reference);
+    public Set<EObject> getReferenceValues(EObject source, EReference reference);
    
     /**
      * Find all {@link Object}s that are the target of the <code>feature</code> EStructuralFeature instance from the given
@@ -182,10 +183,22 @@ public interface NavigationHelper {
      * 
      * @param source the startpoint of a feature
      * @param feature the EStructuralFeature instance
-     * @return the collection of {@link Object} instances
+     * @return the set of {@link Object} instances
      */
-    public Collection<Object> getFeatureTargets(EObject source, EStructuralFeature feature);
+    public Set<Object> getFeatureTargets(EObject source, EStructuralFeature feature);
    
+    /**
+     * Find all instances of the given EStructuralFeature in the form of a holder -> value(s) multimap. 
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
+     * registered, or (b) running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * @param feature the EStructuralFeature
+     * @return the map from {@link EObject} holders to the set of {@link Object} values the feature takes at them
+     */
+    public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature);
     
     /**
      * Find all the {@link EObject} instances that have an {@link EReference} instance with the given
@@ -293,7 +306,7 @@ public interface NavigationHelper {
      *            the feature instance
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> getHoldersOfFeature(EStructuralFeature feature);
+    public Set<EObject> getHoldersOfFeature(EStructuralFeature feature);
 
     /**
      * Call this method to dispose the NavigationHelper instance. The NavigationHelper instance will unregister itself

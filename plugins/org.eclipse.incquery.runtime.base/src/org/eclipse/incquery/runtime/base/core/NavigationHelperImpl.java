@@ -278,28 +278,31 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    @Override
-    public Collection<EObject> getReferenceValues(EObject source, EReference reference) {
-        Collection<Object> targets = getFeatureTargets(source, reference);
-        Collection<EObject> values = new ArrayList<EObject>();
-        for (Object object : targets) {
-            if(object instanceof EObject) {
-                values.add((EObject) object);
-            }
-        }
-        return Collections.unmodifiableCollection(values);
+	@Override
+	@SuppressWarnings("unchecked")
+    public Set<EObject> getReferenceValues(EObject source, EReference reference) {
+    	Set<Object> targets = getFeatureTargets(source, reference);
+        return (Set<EObject>)(Set<?>) targets; // this is known to be safe, as EReferences can only point to EObjects
     }
 
     @Override
-    public Collection<Object> getFeatureTargets(EObject source, EStructuralFeature feature) {
-        Collection<Object> values = new ArrayList<Object>();  
-        Map<Object, Set<EObject>> valueToHolderMap = contentAdapter.getValueToFeatureToHolderMap().column(feature);
-        for (Entry<Object, Set<EObject>> entry : valueToHolderMap.entrySet()) {
-            if(entry.getValue().contains(source)) {
-                values.add(entry.getKey());
-            }
+    public Set<Object> getFeatureTargets(EObject source, EStructuralFeature feature) {
+        final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, feature);
+        if (valSet == null) {
+            return Collections.emptySet();
+        } else {
+            return Collections.unmodifiableSet(valSet);
         }
-        return Collections.unmodifiableCollection(values);
+    }
+    
+    @Override
+    public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature) {
+    	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(feature);
+        if (valMap == null) {
+            return Collections.emptyMap();
+        } else {
+            return Collections.unmodifiableMap(valMap);
+        }
     }
 
     @Override
@@ -344,7 +347,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> getHoldersOfFeature(EStructuralFeature feature) {
+    public Set<EObject> getHoldersOfFeature(EStructuralFeature feature) {
         Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
         if (holders == null) {
             return Collections.emptySet();
