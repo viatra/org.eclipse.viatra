@@ -72,7 +72,7 @@ public class ItemConverter implements IConverter {
         IPatternMatch match = (IPatternMatch) fromObject;
 
         EObject param = (EObject) match.get(parameterName);
-        Item item = new Item(match, labelParameterName);
+        Item item = new Item(match, param, labelParameterName);
         item.setSpecification(format);
         itemMap.put(param, item);
         return item;

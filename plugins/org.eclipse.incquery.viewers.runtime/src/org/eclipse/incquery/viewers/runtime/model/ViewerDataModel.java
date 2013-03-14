@@ -18,10 +18,14 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -104,6 +108,36 @@ public class ViewerDataModel {
             }
         }
         MultiList list = new MultiList(nodeListsObservable.toArray(new ObservableList[nodeListsObservable.size()]));
+        list.addListChangeListener(new IListChangeListener() {
+            
+            @Override
+            public void handleListChange(ListChangeEvent event) {
+                event.diff.accept(new ListDiffVisitor() {
+                    
+                    @Override
+                    public void handleRemove(int index, Object element) {
+                        if (element instanceof Item) {
+                            Item item = (Item) element;
+                            EObject paramObject = item.getParamObject();
+                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).equals(item)) {
+                                itemMap.remove(paramObject);
+                            }
+                        }
+                    }
+                    
+                    @Override
+                    public void handleAdd(int index, Object element) {
+                        if (element instanceof Item) {
+                            Item item = (Item) element;
+                            if (!itemMap.containsKey(item.getParamObject())) {
+                                itemMap.put(item.getParamObject(), item);
+                            }
+                        }
+                        
+                    }
+                });
+            }
+        });
         return list;
     }
 

@@ -26,6 +26,7 @@ public class Edge extends FormattableElement {
     private Item source, target;
     private String label;
     private IPatternMatch match;
+    private IEdgeReadyListener listener;
 
     /**
      * @param source
@@ -47,11 +48,41 @@ public class Edge extends FormattableElement {
         return source;
     }
 
+    public void setSource(Item source) {
+        this.source = source;
+        if (listener != null && isReady()) {
+            listener.edgeReady(this);
+            listener = null;
+        }
+    }
+
     /**
      * @return the target
      */
     public Item getTarget() {
         return target;
+    }
+
+    public void setTarget(Item target) {
+        this.target = target;
+        if (listener != null && isReady()) {
+            listener.edgeReady(this);
+            listener = null;
+        }
+    }
+
+    /**
+     * Adds a callback function that is executed when all data is gathered during the notification change. Only a single
+     * listener is supported, and that is only called once.
+     * 
+     * @param listener
+     */
+    public void setListener(IEdgeReadyListener listener) {
+        this.listener = listener;
+    }
+
+    public boolean isReady() {
+        return source != null && target != null;
     }
 
     /**
@@ -63,6 +94,49 @@ public class Edge extends FormattableElement {
         } else {
             return IncQueryObservables.getObservableLabelFeature(match, label, this);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((label == null) ? 0 : label.hashCode());
+        result = prime * result + ((match == null) ? 0 : match.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((target == null) ? 0 : target.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Edge other = (Edge) obj;
+        if (label == null) {
+            if (other.label != null)
+                return false;
+        } else if (!label.equals(other.label))
+            return false;
+        if (match == null) {
+            if (other.match != null)
+                return false;
+        } else if (!match.equals(other.match))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        if (target == null) {
+            if (other.target != null)
+                return false;
+        } else if (!target.equals(other.target))
+            return false;
+        return true;
     }
 
 }
