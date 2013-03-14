@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -34,7 +35,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class ZestContentProvider extends ListContentProvider implements IGraphEntityRelationshipContentProvider {
 
 
-    private final class EdgeListChangeListener implements IListChangeListener {
+    private final class EdgeListChangeListener implements IListChangeListener, IEdgeReadyListener {
 
         private GraphViewer viewer;
 
@@ -49,11 +50,27 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
             for (ListDiffEntry entry : diff.getDifferences()) {
                 Edge edge = (Edge) entry.getElement();
                 if (entry.isAddition()) {
-                    viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
+                    addRelationship(edge);
                 } else {
                     viewer.removeRelationship(edge);
                 }
             }
+        }
+
+        /**
+         * @param edge
+         */
+        protected void addRelationship(Edge edge) {
+            if (edge.isReady()) {
+                viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
+            } else {
+                edge.setListener(this);
+            }
+        }
+
+        @Override
+        public void edgeReady(Edge edge) {
+            addRelationship(edge);
         }
     }
 
@@ -62,7 +79,6 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
     private EdgeListChangeListener edgeListener;
 
     private GraphViewer viewer;
-
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
         this.viewer = (GraphViewer) viewer;
