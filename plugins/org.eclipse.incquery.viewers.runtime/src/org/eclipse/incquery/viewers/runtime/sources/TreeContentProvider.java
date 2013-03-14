@@ -19,11 +19,12 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.incquery.viewers.runtime.model.Containment;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.HashMultimap;
@@ -36,7 +37,7 @@ import com.google.common.collect.Multimap;
  */
 public class TreeContentProvider extends ListContentProvider implements ITreeContentProvider {
 
-    private final class ContainmentListChangeListener implements IListChangeListener {
+    private final class ContainmentListChangeListener implements IListChangeListener, IEdgeReadyListener {
 
         private AbstractTreeViewer viewer;
 
@@ -51,15 +52,40 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
             for (ListDiffEntry entry : diff.getDifferences()) {
                 Containment edge = (Containment) entry.getElement();
                 if (entry.isAddition()) {
-                    viewer.add(edge.getSource(), edge.getTarget());
-                    elementMap.put(edge.getSource(), edge.getTarget());
-                    parentMap.put(edge.getTarget(), edge.getSource());
+                    addContainment(edge);
                 } else {
-                    viewer.remove(edge.getSource(), new Object[] { edge.getTarget() });
-                    elementMap.remove(edge.getSource(), edge.getTarget());
-                    parentMap.remove(edge.getTarget());
+                    Item source = edge.getSource();
+                    Item target = edge.getTarget();
+                    viewer.remove(source, new Object[] { target });
+                    elementMap.remove(source, target);
+                    parentMap.remove(target);
+                    viewer.refresh(source);
                 }
             }
+        }
+
+        /**
+         * @param source
+         * @param target
+         */
+        protected void addContainment(Edge edge) {
+            if (edge.isReady()) {
+                Item source = edge.getSource();
+                Item target = edge.getTarget();
+                viewer.add(source, target);
+                viewer.setExpandedState(source, true);
+                elementMap.put(source, target);
+                parentMap.put(target, source);
+                viewer.refresh(source);
+            } else {
+                edge.setListener(this);
+            }
+        }
+
+        @Override
+        public void edgeReady(Edge edge) {
+            addContainment(edge);
+
         }
     }
     
@@ -140,7 +166,7 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     protected void handleListChanges(ListDiff diff) {
         for (ListDiffEntry entry : diff.getDifferences()) {
             if (entry.isAddition()) {
-                viewer.add(new TreePath(new Object[0]), entry.getElement());
+                viewer.add(viewer.getInput(), entry.getElement());
             } else {
                 viewer.remove(entry.getElement());
             }
