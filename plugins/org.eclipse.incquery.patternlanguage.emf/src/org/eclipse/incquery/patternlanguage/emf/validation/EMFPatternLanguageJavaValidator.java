@@ -597,7 +597,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
                                                                            // NPE for classifier.getName()
                 error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
-                        + "has a type of " + classifier.getName() + ".", checkConstraint, null,
+                        + " has a type of " + classifier.getName() + ".", checkConstraint, null,
                         EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
             }
         }
