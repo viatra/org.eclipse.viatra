@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -58,6 +59,7 @@ public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPar
     private ISelectionChangedListener selectionChangedListener;
 
     private ListViewer listViewer;
+    private TreeViewer treeViewer;
     private GraphViewer zestviewer;
     private ResourceSet resourceSet;
 
@@ -94,6 +96,11 @@ public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPar
         folder.setSelection(0);
         listViewer = new ListViewer(folder);
         listTab.setControl(listViewer.getControl());
+        // Tree Viewer
+        CTabItem treeTab = new CTabItem(folder, SWT.NONE);
+        treeTab.setText("Tree");
+        treeViewer = new TreeViewer(folder);
+        treeTab.setControl(treeViewer.getControl());
         // Graph Viewer
         CTabItem zestTab = new CTabItem(folder, SWT.NONE);
         zestTab.setText("Graph");
@@ -168,6 +175,7 @@ public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPar
 
             ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns));
             IncQueryViewerSupport.bind(listViewer, viewmodel);
+            IncQueryViewerSupport.bind(treeViewer, viewmodel);
             IncQueryGraphViewers.bind(zestviewer, viewmodel);
         }
     }
