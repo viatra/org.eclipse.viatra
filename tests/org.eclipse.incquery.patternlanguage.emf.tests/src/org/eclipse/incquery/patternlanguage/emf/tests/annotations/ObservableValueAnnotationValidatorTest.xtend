@@ -69,6 +69,30 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 		) 
 		tester.validate(model).assertOK
 	}
+	@Test
+	def void labelExpressionFullName() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@ObservableValue(name = "name", labelExpression = "$p.name$")
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertOK
+	}
+	@Test
+	def void labelExpressionFullNameUnescaped() {
+		val model = parseHelper.parse(
+			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@ObservableValue(name = "name", labelExpression = "p.name")
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertWarning(ObservableValuePatternValidator::GENERAL_ISSUE_CODE)
+	}
 	
 	@Test
 	def void expressionEmpty() {
@@ -81,6 +105,31 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 			}'
 		) 
 		tester.validate(model).assertError(AnnotationExpressionValidator::GENERAL_ISSUE_CODE)
+	}
+	
+	@Test
+	def void expressionMismatch1() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@ObservableValue(name = "name")
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'''
+		) 
+		tester.validate(model).assertError(ObservableValuePatternValidator::EXPRESSION_MISMATCH_ISSUE_CODE)
+	}
+	@Test
+	def void expressionMismatch2() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@ObservableValue(name = "name", expression = "p", labelExpression="label $p.name$")
+			pattern pattern2(p : Pattern) = {
+				Pattern(p);
+			}'''
+		) 
+		tester.validate(model).assertError(ObservableValuePatternValidator::EXPRESSION_MISMATCH_ISSUE_CODE)
 	}
 	
 	@Test

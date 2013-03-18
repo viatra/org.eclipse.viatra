@@ -32,6 +32,7 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.databinding.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
+    public static final String EXPRESSION_MISMATCH_ISSUE_CODE = VALIDATOR_BASE_CODE + "expressionmismatch";
 
     @Inject
     private AnnotationExpressionValidator expressionValidator;
@@ -40,6 +41,16 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         Pattern pattern = (Pattern) annotation.eContainer();
         ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "expression");
+        ValueReference labelRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "labelExpression");
+
+        if (ref == null && labelRef == null) {
+            validator.error("Specify either the parameter 'expression' or 'labelExpression'", annotation,
+                    PatternLanguagePackage.Literals.ANNOTATION__PARAMETERS, EXPRESSION_MISMATCH_ISSUE_CODE);
+        }
+        if (ref != null && labelRef != null) {
+            validator.error("Specify only one of the parameter 'expression' or 'labelExpression'", annotation,
+                    PatternLanguagePackage.Literals.ANNOTATION__PARAMETERS, EXPRESSION_MISMATCH_ISSUE_CODE);
+        }
 
         if (ref instanceof StringValue) {
             String value = ((StringValue) ref).getValue();
@@ -50,6 +61,16 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
 
             expressionValidator.validateModelExpression(value, pattern, ref, validator);
         }
+        if (labelRef instanceof StringValue) {
+            String value = ((StringValue) labelRef).getValue();
+            if (!value.contains("$")) {
+                validator.warning("The label expressions should contain escaped references using $ characters.", ref,
+                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+            }
+
+            expressionValidator.validateStringExpression(value, pattern, labelRef, validator);
+        }
+
     }
 
 }
