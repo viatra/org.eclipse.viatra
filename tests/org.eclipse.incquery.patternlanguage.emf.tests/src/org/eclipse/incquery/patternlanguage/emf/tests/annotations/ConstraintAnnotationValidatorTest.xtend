@@ -14,8 +14,11 @@ package org.eclipse.incquery.patternlanguage.emf.tests.annotations
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.incquery.validation.runtime.annotation.ConstraintAnnotationValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -23,10 +26,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.databinding.runtime.util.validation.ObservableValuePatternValidator
-import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator
-import org.eclipse.incquery.validation.runtime.annotation.ConstraintAnnotationValidator
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 
 
 @RunWith(typeof(XtextRunner))
