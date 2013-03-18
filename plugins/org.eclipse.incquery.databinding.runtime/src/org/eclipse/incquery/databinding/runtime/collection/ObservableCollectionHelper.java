@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
+import java.util.Comparator;
+
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.RulePriorityActivationComparator;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
 
@@ -56,6 +61,14 @@ public final class ObservableCollectionHelper {
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate));
         return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE,
                 Sets.newHashSet(insertJob, deleteJob));
+    }
+
+    public static <Match extends IPatternMatch> void addPrioritizedRuleSpecification(RuleEngine engine, RuleSpecification<Match> specification, int priority) {
+        Comparator<Activation<?>> comparator = engine.getActivationComparator();
+        if (comparator instanceof RulePriorityActivationComparator) {
+            ((RulePriorityActivationComparator) comparator).setRuleSpecificationPriority(specification, priority);
+        }
+        engine.addRule(specification, true);
     }
 
 }

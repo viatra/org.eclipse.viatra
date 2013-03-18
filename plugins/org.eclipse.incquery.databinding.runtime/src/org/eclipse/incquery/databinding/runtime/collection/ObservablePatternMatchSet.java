@@ -50,6 +50,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
     private final Set<Match> cache = Collections.synchronizedSet(new HashSet<Match>());
     private final SetCollectionUpdate updater = new SetCollectionUpdate();
+    private RuleSpecification<Match> specification;
 
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
@@ -100,7 +101,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
-        RuleSpecification<Match> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        this(factory);
         RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
         triggerEngine.addRule(specification, true);
@@ -120,11 +121,15 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
-        super();
-        RuleSpecification<Match> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        this(factory);
         engine.addRule(specification, true);
     }
 
+    protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory) {
+        super();
+        setSpecification(ObservableCollectionHelper.createRuleSpecification(updater, factory));
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -143,6 +148,20 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     @Override
     protected Set<Match> getWrappedSet() {
         return cache;
+    }
+
+    /**
+     * @return the specification
+     */
+    protected RuleSpecification<Match> getSpecification() {
+        return specification;
+    }
+
+    /**
+     * @param specification the specification to set
+     */
+    protected void setSpecification(RuleSpecification<Match> specification) {
+        this.specification = specification;
     }
 
     public class SetCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match>{

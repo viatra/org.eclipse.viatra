@@ -79,6 +79,7 @@ public class Agenda {
     private Multimap<ActivationState, Activation<?>> activations;
     private Set<Activation<?>> enabledActivations;
     private final IActivationNotificationListener activationListener;
+    private Comparator<Activation<?>> activationComparator;
 
     /**
      * Instantiates a new Agenda instance with the given {@link IncQueryEngine}.
@@ -244,8 +245,9 @@ public class Agenda {
      * 
      * @param activationComparator
      */
-    public void addActivationOrdering(final Comparator<Activation<?>> activationComparator) {
+    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
         checkNotNull(activationComparator, "Comparator cannot be null!");
+        this.activationComparator = activationComparator;
         TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
                 activationComparator);
         newActivations.putAll(activations);
@@ -254,6 +256,13 @@ public class Agenda {
         TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
         newEnabledActivations.addAll(enabledActivations);
         enabledActivations = newEnabledActivations;
+    }
+    
+    /**
+     * @return the activationComparator
+     */
+    public Comparator<Activation<?>> getActivationComparator() {
+        return activationComparator;
     }
 
 }

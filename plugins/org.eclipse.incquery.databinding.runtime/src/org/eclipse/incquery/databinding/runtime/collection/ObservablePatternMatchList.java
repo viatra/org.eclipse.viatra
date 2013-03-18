@@ -49,6 +49,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
     private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
     private final ListCollectionUpdate updater = new ListCollectionUpdate();
+    private RuleSpecification<Match> specification;
 
     /**
      * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
@@ -99,15 +100,15 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
-        RuleSpecification<Match> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
+        this(factory);
         RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
-        triggerEngine.addRule(specification,true);
+        triggerEngine.addRule(getSpecification(),true);
     }
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
-     * {@link ExecutionSchema}.
+     * {@link RuleEngine}.
      * 
      * <p>
      * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
@@ -117,13 +118,19 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      * @param factory
      *            the {@link IMatcherFactory} used to create a matcher
      * @param engine
-     *            an existing {@link ExecutionSchema} that specifies the used model
+     *            an existing {@link RuleEngine} that specifies the used model
+     * @param priority TODO
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
+        this(factory);
+        engine.addRule(getSpecification(), true);
+        
+    }
+    
+    protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory) {
         super();
-        RuleSpecification<Match> specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
-        engine.addRule(specification,true);
+        setSpecification(ObservableCollectionHelper.createRuleSpecification(updater, factory));
     }
 
     /*
@@ -154,6 +161,20 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     @Override
     public Object get(int index) {
         return cache.get(index);
+    }
+
+    /**
+     * @return the specification
+     */
+    protected RuleSpecification<Match> getSpecification() {
+        return specification;
+    }
+
+    /**
+     * @param specification the specification to set
+     */
+    protected void setSpecification(RuleSpecification<Match> specification) {
+        this.specification = specification;
     }
 
     public class ListCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match> {

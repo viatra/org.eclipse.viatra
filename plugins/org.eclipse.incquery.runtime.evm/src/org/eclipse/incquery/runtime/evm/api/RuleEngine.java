@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -60,6 +61,15 @@ public class RuleEngine {
      */
     protected Agenda getAgenda() {
         return agenda;
+    }
+    
+    public void setActivationComparator(Comparator<Activation<?>> comparator) {
+        checkNotNull(comparator, "Comparator cannot be null!");
+        agenda.setActivationComparator(comparator);
+    }
+    
+    public Comparator<Activation<?>> getActivationComparator() {
+        return agenda.getActivationComparator();
     }
 
     /**
