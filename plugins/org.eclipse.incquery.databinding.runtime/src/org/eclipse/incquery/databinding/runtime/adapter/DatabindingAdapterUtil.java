@@ -18,17 +18,16 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.databinding.runtime.adapter.ObservableDefinition.ObservableType;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 public class DatabindingAdapterUtil {
@@ -151,31 +150,38 @@ public class DatabindingAdapterUtil {
      * @param pattern
      * @return
      */
-    public static Map<String, String> calculateObservableValues(Pattern pattern) {
-        Map<String, String> propertyMap = Maps.newHashMap();
+    public static Map<String, ObservableDefinition> calculateObservableValues(Pattern pattern) {
+        Map<String, ObservableDefinition> propertyMap = Maps.newHashMap();
         for (Variable v : pattern.getParameters()) {
-            propertyMap.put(v.getName(), v.getName());
+            ObservableDefinition def = new ObservableDefinition(v.getName(), v.getName(),
+                    ObservableType.OBSERVABLE_FEATURE);
+            propertyMap.put(v.getName(), def);
         }
         for (Annotation annotation : CorePatternLanguageHelper
                 .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
 
-            ListMultimap<String, ValueReference> parameterMap = CorePatternLanguageHelper
-                    .getAnnotationParameters(annotation);
-            List<ValueReference> nameAttributes = parameterMap.get("name");
-            List<ValueReference> expressionAttributes = parameterMap.get("expression");
-            if (nameAttributes.size() == 1 && expressionAttributes.size() == 1) {
-                Preconditions.checkArgument(nameAttributes.get(0) instanceof StringValue);
-                Preconditions.checkArgument(expressionAttributes.get(0) instanceof StringValue);
-
-                StringValue name = (StringValue) nameAttributes.get(0);
-                String key = name.getValue();
-                StringValue expr = (StringValue) expressionAttributes.get(0);
-                String value = expr.getValue();
-
-                if (key != null && value != null) {
-                    propertyMap.put(key, value);
-                }
+            StringValue nameRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
+                    "name");
+            Preconditions.checkArgument(nameRef != null, "Name attribute must not be empty");
+            String name = nameRef.getValue();
+            StringValue exprRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
+                    "expression");
+            StringValue labelRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
+                    "labelExpression");
+            Preconditions.checkArgument(exprRef != null ^ labelRef != null,
+                    "Either expression or label expression attribute must not be empty.");
+            String expr;
+            ObservableType type;
+            if (exprRef != null) {
+                expr = exprRef.getValue();
+                type = ObservableType.OBSERVABLE_FEATURE;
+            } else {// if (labelRef != null)
+                expr = labelRef.getValue();
+                type = ObservableType.OBSERVABLE_LABEL;
             }
+            ObservableDefinition def = new ObservableDefinition(name, expr, type);
+
+            propertyMap.put(name, def);
         }
         return propertyMap;
     }

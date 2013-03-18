@@ -199,6 +199,9 @@ public class IncQueryObservables {
         return val;
     }
 
+    public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression) {
+        return getObservableLabelFeature(match, expression, null);
+    }
     public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression,
             Object container) {
         ComputedValue value = new ObservableLabelFeature(match, expression, container);

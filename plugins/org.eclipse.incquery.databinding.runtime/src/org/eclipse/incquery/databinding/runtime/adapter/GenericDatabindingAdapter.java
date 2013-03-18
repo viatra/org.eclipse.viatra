@@ -23,11 +23,7 @@ import com.google.common.base.Preconditions;
 
 public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch> {
 
-    private final Map<String, String> parameterMap;
-
-    public GenericDatabindingAdapter(Map<String, String> parameterMap) {
-        this.parameterMap = parameterMap;
-    }
+    private final Map<String, ObservableDefinition> parameterMap;
 
     public GenericDatabindingAdapter(Pattern pattern) {
         this.parameterMap = DatabindingAdapterUtil.calculateObservableValues(pattern);
@@ -41,15 +37,29 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
     @Override
     public IObservableValue getObservableParameter(IPatternMatch match, String parameterName) {
         if (parameterMap.size() > 0) {
-            String expression = parameterMap.get(parameterName);
-            return IncQueryObservables.getObservableValue(match, expression);
+            ObservableDefinition def = parameterMap.get(parameterName);
+            String expression = def.getExpression();
+            switch (def.getType()) {
+            case OBSERVABLE_FEATURE:
+                return IncQueryObservables.getObservableValue(match, expression);
+            case OBSERVABLE_LABEL:
+                return IncQueryObservables.getObservableLabelFeature(match, expression);
+            }
+
         }
         return null;
     }
 
     public IValueProperty getProperty(String parameterName) {
         Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
-        return new MatcherProperty(parameterMap.get(parameterName));
+        ObservableDefinition def = parameterMap.get(parameterName);
+        switch (def.getType()) {
+        case OBSERVABLE_FEATURE:
+            return new MatcherProperty(def.getExpression());
+        case OBSERVABLE_LABEL:
+            return new MatcherLabelProperty(def.getExpression());
+        }
+        return null;
     }
 
 }

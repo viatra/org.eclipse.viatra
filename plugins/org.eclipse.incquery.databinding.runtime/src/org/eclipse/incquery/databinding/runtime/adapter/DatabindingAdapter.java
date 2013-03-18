@@ -62,6 +62,39 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
 
     }
 
+    protected class MatcherLabelProperty extends ValueProperty {
+
+        private String expression;
+
+        public MatcherLabelProperty(String expression) {
+            this.expression = expression;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.core.databinding.property.value.IValueProperty#getValueType()
+         */
+        @Override
+        public Object getValueType() {
+            return String.class;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.eclipse.core.databinding.property.value.IValueProperty#observe(org.eclipse.core.databinding.observable
+         * .Realm, java.lang.Object)
+         */
+        @Override
+        public IObservableValue observe(Realm realm, Object source) {
+            Preconditions.checkArgument((source instanceof IPatternMatch), "Source must be a typed Pattern Match");
+            return IncQueryObservables.getObservableLabelFeature((IPatternMatch) source, expression);
+        }
+
+    }
+
     /**
      * Returns the array of observable values.
      * 
