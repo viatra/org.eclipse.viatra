@@ -124,9 +124,9 @@ class DatabindingGenerator implements IGenerationFragment {
 	def patternHandler(Pattern pattern) '''
 		package «pattern.packageName»;
 		
-		import java.util.HashMap;
-
 		import org.eclipse.incquery.databinding.runtime.adapter.BaseGeneratedDatabindingAdapter;
+		import org.eclipse.incquery.databinding.runtime.adapter.ObservableDefinition;
+		import org.eclipse.incquery.databinding.runtime.adapter.ObservableDefinition.ObservableType;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
 
@@ -134,10 +134,10 @@ class DatabindingGenerator implements IGenerationFragment {
 		
 			public «pattern.name.toFirstUpper»DatabindingAdapter() {
 				super();
-				parameterMap = new HashMap<String, String>();
 				«val valueMap = DatabindingAdapterUtil::calculateObservableValues(pattern)»
 				«FOR value : valueMap.keySet »
-				    parameterMap.put("«value»", "«valueMap.get(value)»");
+				«val definition = valueMap.get(value)»
+				parameterMap.put("«value»", new ObservableDefinition("«definition.name»", "«definition.expression»", ObservableType.«definition.type»));
 				«ENDFOR»
 			}
 			

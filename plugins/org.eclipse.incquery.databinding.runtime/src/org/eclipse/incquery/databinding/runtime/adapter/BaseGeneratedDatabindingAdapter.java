@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.databinding.runtime.adapter;
 
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -22,7 +23,7 @@ import com.google.common.base.Preconditions;
 
 public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends DatabindingAdapter<T> {
 
-    protected Map<String, String> parameterMap;
+    protected Map<String, ObservableDefinition> parameterMap = new Hashtable<String, ObservableDefinition>();
 
     @Override
     public String[] getParameterNames() {
@@ -32,15 +33,29 @@ public class BaseGeneratedDatabindingAdapter<T extends IPatternMatch> extends Da
     @Override
     public IObservableValue getObservableParameter(T match, String parameterName) {
         if (parameterMap.size() > 0) {
-            String expression = parameterMap.get(parameterName);
-            return IncQueryObservables.getObservableValue(match, expression);
+            ObservableDefinition def = parameterMap.get(parameterName);
+            String expression = def.getExpression();
+            switch (def.getType()) {
+            case OBSERVABLE_FEATURE:
+                return IncQueryObservables.getObservableValue(match, expression);
+            case OBSERVABLE_LABEL:
+                return IncQueryObservables.getObservableLabelFeature(match, expression);
+            }
+
         }
         return null;
     }
 
     public IValueProperty getProperty(String parameterName) {
         Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
-        return new MatcherProperty(parameterMap.get(parameterName));
+        ObservableDefinition def = parameterMap.get(parameterName);
+        switch (def.getType()) {
+        case OBSERVABLE_FEATURE:
+            return new MatcherProperty(def.getExpression());
+        case OBSERVABLE_LABEL:
+            return new MatcherLabelProperty(def.getExpression());
+        }
+        return null;
     }
 
 }
