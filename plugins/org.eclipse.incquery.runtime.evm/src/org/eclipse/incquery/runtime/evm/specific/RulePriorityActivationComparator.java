@@ -172,7 +172,8 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
                  */
                 return arbitraryOrdering.compare(o1, o2);
             } else {
-                return Integer.compare(priority2, priority1); // higher number means bigger priority means earlier in order
+                return priority2 - priority1; // no Java7
+                // Integer.compare(priority2, priority1); // higher number means bigger priority means earlier in order
             }
         }
         
