@@ -39,6 +39,8 @@ public class ObservableValuePatternValidator implements IPatternAnnotationAdditi
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
+        if (annotation.getParameters().isEmpty())
+            return;
         Pattern pattern = (Pattern) annotation.eContainer();
         ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "expression");
         ValueReference labelRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "labelExpression");
