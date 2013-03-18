@@ -28,10 +28,17 @@
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="This expression defines the attribute of a pattern parameter for which the IObservableValue will be created."
+               description="This expression defines the attribute of a pattern parameter for which the IObservableValue will be created.  Only one of the expression and labelExpression properties must be set."
                mandatory="false"
                multiple="false"
                name="expression"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="A label expression definition that can contain references to match parameters inside $ symbols. Only one of the expression and labelExpression properties must be set."
+               mandatory="false"
+               multiple="false"
+               name="labelExpression"
                type="string">
          </annotationparameter>
       </annotation>
