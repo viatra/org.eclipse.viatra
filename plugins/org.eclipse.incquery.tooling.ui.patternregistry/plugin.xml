@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="popup:org.eclipse.ui.popup.any">
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <command
                commandId="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
                icon="icons/add.gif"
