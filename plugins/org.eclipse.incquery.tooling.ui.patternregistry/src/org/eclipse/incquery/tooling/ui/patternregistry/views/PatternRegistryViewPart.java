@@ -14,7 +14,10 @@ import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.IPatternRegistryListener;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
@@ -36,7 +39,34 @@ public class PatternRegistryViewPart extends ViewPart {
         checkboxTreeViewer = new CheckboxTreeViewer(parent);
         checkboxTreeViewer.setContentProvider(new PatternRegistryTreeContentProvider());
         checkboxTreeViewer.setLabelProvider(new PatternRegistryTreeLabelProvider());
-        checkboxTreeViewer.setCheckStateProvider(new PatternRegistryCheckStateProvider());
+        checkboxTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
+            @Override
+            public boolean isChecked(Object element) {
+                if (element instanceof IPatternInfo) {
+                    IPatternInfo patternInfo = (IPatternInfo) element;
+                    return patternInfo.isActive();
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public boolean isGrayed(Object element) {
+                return false;
+            }
+        });
+        
+        checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
+            @Override
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                Object element = event.getElement();
+                if (element instanceof IPatternInfo) {
+                    IPatternInfo patternInfo = (IPatternInfo) element;
+                    patternInfo.setActive(!patternInfo.isActive());
+                }
+            }
+        });
+        
         checkboxTreeViewer.setInput("unused_input");
 
         MenuManager menuManager = new MenuManager();

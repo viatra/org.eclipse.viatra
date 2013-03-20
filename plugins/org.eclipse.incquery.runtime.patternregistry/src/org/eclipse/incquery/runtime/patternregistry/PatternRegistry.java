@@ -69,6 +69,7 @@ public enum PatternRegistry {
         idToPatternInfoMap.put(patternInfo.getId(), patternInfo);
         for (IPatternRegistryListener patternRegistryListener : listeners) {
             patternRegistryListener.patternAdded(patternInfo);
+            patternRegistryListener.patternActivated(patternInfo);
         }
     }
 
@@ -86,6 +87,7 @@ public enum PatternRegistry {
             patternInfos.remove(patternInfo);
             idToPatternInfoMap.remove(id);
             for (IPatternRegistryListener patternRegistryListener : listeners) {
+                patternRegistryListener.patternDeactivated(patternInfo);
                 patternRegistryListener.patternRemoved(patternInfo);
             }
         }
