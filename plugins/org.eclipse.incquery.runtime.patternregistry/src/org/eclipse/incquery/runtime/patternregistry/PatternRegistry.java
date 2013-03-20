@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
@@ -47,7 +48,8 @@ public enum PatternRegistry {
         return Collections.unmodifiableList(patternInfos);
     }
 
-    public IPatternInfo addPatternToRegistry(Pattern pattern) {
+    @SuppressWarnings("unchecked")
+    public IPatternInfo addPatternToRegistry(Pattern pattern, IFile relatedFile) {
         // Returns the PatterInfo if it is already registered
         String id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
         if (idToPatternInfoMap.containsKey(id)) {
@@ -56,7 +58,8 @@ public enum PatternRegistry {
 
         // Registers new pattern
         IMatcherFactory<?> matcherFactory = new GenericMatcherFactory(pattern);
-        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
+        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile,
+                (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
         registerPatternInfo(patternInfo);
         return patternInfo;
     }
@@ -69,16 +72,28 @@ public enum PatternRegistry {
         }
     }
 
-    // public void removePatternFromRegistry(Pattern pattern) {
-    // patterns.remove(PatternRegistryUtil.getUniquePatternIdentifier(pattern));
-    // for (IPatternRegistryListener patternRegistryListener : listeners) {
-    // patternRegistryListener.patternRemoved(pattern);
-    // }
-    // }
-    //
-    // public boolean isPatternContainedInRegistry(Pattern pattern) {
-    // return patterns.containsKey(PatternRegistryUtil.getUniquePatternIdentifier(pattern));
-    // }
+    public void removePatternFromRegistry(Pattern pattern) {
+        String id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
+        if (idToPatternInfoMap.containsKey(id)) {
+            IPatternInfo patternInfo = idToPatternInfoMap.get(id);
+            removePatternFromRegistry(patternInfo);
+        }
+    }
+
+    public void removePatternFromRegistry(IPatternInfo patternInfo) {
+        String id = patternInfo.getId();
+        if (idToPatternInfoMap.containsKey(id)) {
+            patternInfos.remove(patternInfo);
+            idToPatternInfoMap.remove(id);
+            for (IPatternRegistryListener patternRegistryListener : listeners) {
+                patternRegistryListener.patternRemoved(patternInfo);
+            }
+        }
+    }
+
+    public boolean isPatternContainedInRegistry(Pattern pattern) {
+        return idToPatternInfoMap.containsKey(PatternRegistryUtil.getUniquePatternIdentifier(pattern));
+    }
 
     public void registerListener(IPatternRegistryListener patternRegistryListener) {
         listeners.add(patternRegistryListener);

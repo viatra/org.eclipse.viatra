@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -36,7 +37,9 @@ public class PatternInfo implements IPatternInfo {
 
     private final String fqn;
 
-    private final String source;
+    private final IFile relatedFile;
+
+    private boolean active;
 
     private final List<Annotation> annotations;
 
@@ -44,17 +47,16 @@ public class PatternInfo implements IPatternInfo {
 
     private final List<IPatternInfo> patternDependecies;
 
-    // package info (?)
-
-    public PatternInfo(PatternTypeEnum patternTypeEnum, Pattern pattern,
+    public PatternInfo(PatternTypeEnum patternTypeEnum, Pattern pattern, IFile relatedFile,
             IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory) {
         super();
         this.patternTypeEnum = patternTypeEnum;
         this.pattern = pattern;
         this.matcherFactory = matcherFactory;
         this.fqn = PatternRegistryUtil.getFQN(pattern);
-        this.source = "TODO";
+        this.relatedFile = relatedFile;
         this.id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
+        this.active = true;
 
         List<Annotation> patternAnnotations = pattern.getAnnotations();
         annotations = Collections.unmodifiableList(patternAnnotations);
@@ -92,8 +94,18 @@ public class PatternInfo implements IPatternInfo {
     }
 
     @Override
-    public String getSource() {
-        return source;
+    public IFile getRelatedFile() {
+        return relatedFile;
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

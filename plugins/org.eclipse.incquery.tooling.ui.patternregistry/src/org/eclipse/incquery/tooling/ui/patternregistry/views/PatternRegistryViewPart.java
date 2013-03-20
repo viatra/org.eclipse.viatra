@@ -13,13 +13,15 @@ package org.eclipse.incquery.tooling.ui.patternregistry.views;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.IPatternRegistryListener;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
 
 public class PatternRegistryViewPart extends ViewPart {
 
-    private Label label;
+    private CheckboxTreeViewer checkboxTreeViewer;
 
     public PatternRegistryViewPart() {
         super();
@@ -27,33 +29,48 @@ public class PatternRegistryViewPart extends ViewPart {
 
     @Override
     public void setFocus() {
-        label.setFocus();
     }
 
     @Override
     public void createPartControl(Composite parent) {
-        label = new Label(parent, 0);
-        updateLabelText();
+        checkboxTreeViewer = new CheckboxTreeViewer(parent);
+        checkboxTreeViewer.setContentProvider(new PatternRegistryTreeContentProvider());
+        checkboxTreeViewer.setLabelProvider(new PatternRegistryTreeLabelProvider());
+        checkboxTreeViewer.setCheckStateProvider(new PatternRegistryCheckStateProvider());
+        checkboxTreeViewer.setInput("unused_input");
 
+        MenuManager menuManager = new MenuManager();
+        Menu menu = menuManager.createContextMenu(checkboxTreeViewer.getControl());
+        checkboxTreeViewer.getControl().setMenu(menu);
+        getSite().registerContextMenu(menuManager, checkboxTreeViewer);
+        getSite().setSelectionProvider(checkboxTreeViewer);
+
+        updateCheckboxTreeViewer();
         PatternRegistry.INSTANCE.registerListener(new IPatternRegistryListener() {
             @Override
             public void patternRemoved(IPatternInfo patternInfo) {
-                updateLabelText();
+                updateCheckboxTreeViewer();
             }
 
             @Override
             public void patternAdded(IPatternInfo patternInfo) {
-                updateLabelText();
+                updateCheckboxTreeViewer();
+            }
+
+            @Override
+            public void patternActivated(IPatternInfo patternInfo) {
+                updateCheckboxTreeViewer();
+            }
+
+            @Override
+            public void patternDeactivated(IPatternInfo patternInfo) {
+                updateCheckboxTreeViewer();
             }
         });
     }
 
-    private void updateLabelText() {
-        String labelText = "";
-        for (IPatternInfo patternInfo : PatternRegistry.INSTANCE.getAllPatternInfosInAspect()) {
-            labelText = labelText.concat(patternInfo.getId() + "\n");
-        }
-        label.setText(labelText);
+    private void updateCheckboxTreeViewer() {
+        checkboxTreeViewer.refresh();
     }
 
 }

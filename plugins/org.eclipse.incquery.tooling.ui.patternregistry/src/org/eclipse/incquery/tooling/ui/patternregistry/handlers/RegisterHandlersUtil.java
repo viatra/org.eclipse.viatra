@@ -31,7 +31,7 @@ public class RegisterHandlersUtil {
             if (eObject instanceof PatternModel) {
                 PatternModel patternModel = (PatternModel) eObject;
                 for (Pattern pattern : patternModel.getPatterns()) {
-                    PatternRegistry.INSTANCE.addPatternToRegistry(pattern);
+                    PatternRegistry.INSTANCE.addPatternToRegistry(pattern, file);
                 }
             }
         }

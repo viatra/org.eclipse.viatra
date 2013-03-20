@@ -67,7 +67,7 @@ public class GeneratedPatternSource {
             if (idAttributeInExtension.equals(patternFullyQualifiedName)) {
                 Pattern pattern = matcherFactory.getPattern();
                 if (hasQueryExplorerAnnotation(pattern)) {
-                    PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERATED, pattern, matcherFactory);
+                    PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERATED, pattern, null, matcherFactory);
                     return patternInfo;
                 }
             } else {

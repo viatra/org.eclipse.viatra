@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.patternregistry;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -31,7 +32,11 @@ public interface IPatternInfo {
 
     public String getFqn();
 
-    public String getSource();
+    public IFile getRelatedFile();
+    
+    public boolean isActive();
+    
+    public void setActive(boolean active);
 
     public List<Annotation> getAnnotations();
 

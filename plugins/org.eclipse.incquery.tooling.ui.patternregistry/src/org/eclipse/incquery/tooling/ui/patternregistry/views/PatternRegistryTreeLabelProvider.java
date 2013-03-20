@@ -8,17 +8,21 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.patternregistry;
+package org.eclipse.incquery.tooling.ui.patternregistry.views;
 
+import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
+import org.eclipse.jface.viewers.LabelProvider;
 
-public interface IPatternRegistryListener {
+public class PatternRegistryTreeLabelProvider extends LabelProvider {
 
-    public void patternAdded(IPatternInfo patternInfo);
-
-    public void patternRemoved(IPatternInfo patternInfo);
-    
-    public void patternActivated(IPatternInfo patternInfo);
-    
-    public void patternDeactivated(IPatternInfo patternInfo);
+    @Override
+    public String getText(Object element) {
+        if (element instanceof IPatternInfo) {
+            IPatternInfo patternInfo = (IPatternInfo) element;
+            return patternInfo.getId();
+        } else {
+            return super.getText(element);
+        }
+    }
 
 }

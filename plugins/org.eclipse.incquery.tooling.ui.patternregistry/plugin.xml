@@ -13,13 +13,30 @@
             id="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq"
             name="Register Single EIQ">
       </command>
+      <command
+            categoryId="org.eclipse.incquery.tooling.category"
+            id="org.eclipse.incquery.tooling.ui.patternregistry.addpattern"
+            name="Add Pattern">
+      </command>
+      <command
+            categoryId="org.eclipse.incquery.tooling.category"
+            id="org.eclipse.incquery.tooling.ui.patternregistry.removepattern"
+            name="Remove Pattern">
+      </command>
+      <command
+            categoryId="org.eclipse.incquery.tooling.category"
+            id="org.eclipse.incquery.tooling.ui.patternregistry.showlocation"
+            name="Show Location">
+      </command>
    </extension>
+   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any">
          <command
                commandId="org.eclipse.incquery.tooling.ui.patternregistry.registeralleiq"
+               icon="icons/add.gif"
                label="Register all EIQ files"
                style="push">
             <visibleWhen
@@ -37,6 +54,7 @@
          </command>
          <command
                commandId="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq"
+               icon="icons/add.gif"
                label="Register EIQ file"
                style="push">
             <visibleWhen
@@ -53,6 +71,32 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.incquery.tooling.ui.patternregistry.view">
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.patternregistry.addpattern"
+               icon="icons/add.gif"
+               label="Add Pattern"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.incquery.tooling.ui.patternregistry.view">
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.patternregistry.removepattern"
+               icon="icons/remove.gif"
+               label="Remove Pattern"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.patternregistry.showlocation"
+               icon="icons/showlocation.gif"
+               label="Show Location"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -63,6 +107,26 @@
       <handler
             class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.handlers.RegisterSingleHandler"
             commandId="org.eclipse.incquery.tooling.ui.patternregistry.registersingleeiq">
+      </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.handlers.AddPatternHandler"
+            commandId="org.eclipse.incquery.tooling.ui.patternregistry.addpattern">
+         <activeWhen>
+            <with
+                  variable="activeEditorId">
+               <equals
+                     value="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.ui.patternregistry.handlers.RemovePatternHandler"
+            commandId="org.eclipse.incquery.tooling.ui.patternregistry.removepattern">
+      </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.handlers.ShowLocationHandler"
+            commandId="org.eclipse.incquery.tooling.ui.patternregistry.showlocation">
       </handler>
    </extension>
    <extension
