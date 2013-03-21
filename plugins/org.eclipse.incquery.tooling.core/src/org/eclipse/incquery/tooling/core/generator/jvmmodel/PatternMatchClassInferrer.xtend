@@ -25,6 +25,7 @@ import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -38,6 +39,7 @@ class PatternMatchClassInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
 	@Inject TypeReferences typeReference
+	@Inject extension IJvmModelAssociator associator
 	
 	/**
 	 * Infers the {@link IPatternMatch} implementation class from {@link Pattern} parameters.
@@ -67,7 +69,7 @@ class PatternMatchClassInferrer {
    	 */
    	def inferMatchClassFields(JvmDeclaredType matchClass, Pattern pattern) {
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += pattern.toField(variable.fieldName, variable.calculateType)
+   			matchClass.members += variable.toField(variable.fieldName, variable.calculateType)
    		}
 		matchClass.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
  			it.setStatic(true);
@@ -109,11 +111,13 @@ class PatternMatchClassInferrer {
    			''')])
    		]
    		for (Variable variable : pattern.parameters) {
-			matchClass.members += pattern.toMethod(variable.getterMethodName, variable.calculateType) [
+			 val getter = variable.toMethod(variable.getterMethodName, variable.calculateType) [
 	   			it.setBody([append('''
 	   				return this.«variable.fieldName»;
 	   			''')])
 	   		]
+	   		matchClass.members += getter
+	   		associator.associatePrimary(variable, getter)
    		}
    	}
    	
@@ -139,7 +143,7 @@ class PatternMatchClassInferrer {
    			''')])
    		]
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += pattern.toMethod(variable.setterMethodName, null) [
+   			matchClass.members += variable.toMethod(variable.setterMethodName, null) [
    				it.parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
    				it.setBody([append('''
    					if (!isMutable()) throw new java.lang.UnsupportedOperationException();

@@ -15,6 +15,8 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport
 import org.eclipse.incquery.patternlanguage.naming.PatternNameProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -55,6 +57,11 @@ public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider
             } else {
                 return containerName.append(name);
             }
+        } else if (obj instanceof Variable && obj.eContainer() instanceof Pattern) {
+            Variable variable = (Variable) obj;
+            Pattern pattern = (Pattern) obj.eContainer();
+            String name = variable.getName() != null ? variable.getName() : "<none>";
+            return getFullyQualifiedName(pattern).append(name);
         }
         return super.getFullyQualifiedName(obj);
     }
