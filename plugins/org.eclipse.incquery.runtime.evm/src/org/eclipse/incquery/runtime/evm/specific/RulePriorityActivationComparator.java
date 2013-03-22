@@ -33,6 +33,8 @@ import com.google.common.collect.Ranges;
  */
 public class RulePriorityActivationComparator implements Comparator<Activation<?>> {
 
+    private static final String COMPARATOR_MUST_NOT_BE_NULL = "Comparator must not be null!";
+    private static final String SPECIFICATION_MUST_NOT_BE_NULL = "Specification must not be null!";
     private Map<RuleSpecification<? extends IPatternMatch>, Integer> rulePriority;
     private Map<RuleSpecification<? extends IPatternMatch>, Comparator<Activation<? extends IPatternMatch>>> comparators;
     private Ordering<Object> arbitraryOrdering = Ordering.arbitrary();
@@ -65,7 +67,7 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
      * as it would alter the order of existing elements.
      */
     public int setRuleSpecificationPriority(RuleSpecification<? extends IPatternMatch> specification, int priority) {
-        Preconditions.checkNotNull(specification, "Specification must not be null!");
+        Preconditions.checkNotNull(specification, SPECIFICATION_MUST_NOT_BE_NULL);
         Preconditions.checkNotNull(priority, "Priority must not be null!");
         Integer oldPriority = rulePriority.get(specification);
         if(oldPriority != null && !oldPriority.equals(priority)) {
@@ -110,7 +112,7 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
      * @return
      */
     public int getRuleSpecificationPriority(RuleSpecification<? extends IPatternMatch> specification) {
-        Preconditions.checkNotNull(specification, "Specification must not be null!");
+        Preconditions.checkNotNull(specification, SPECIFICATION_MUST_NOT_BE_NULL);
         Integer priority = rulePriority.get(specification);
         if(priority != null) {
             return priority;
@@ -122,10 +124,14 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
     
     public void setActivationComparator(RuleSpecification<? extends IPatternMatch> specification, 
             Comparator<Activation<? extends IPatternMatch>> comparator) {
-        Preconditions.checkNotNull(specification, "Specification must not be null!");
-        Preconditions.checkNotNull(comparator, "Comparator must not be null!");
-        Preconditions.checkArgument(comparators.get(specification).equals(comparator), "Cannot replace existing comparator");
-        comparators.put(specification, comparator);
+        Preconditions.checkNotNull(specification, SPECIFICATION_MUST_NOT_BE_NULL);
+        Preconditions.checkNotNull(comparator, COMPARATOR_MUST_NOT_BE_NULL);
+        Comparator<Activation<? extends IPatternMatch>> oldComparator = comparators.get(specification);
+        if(oldComparator != null) {
+            Preconditions.checkArgument(oldComparator.equals(comparator), "Cannot replace existing comparator");
+        } else {
+            comparators.put(specification, comparator);
+        }
     }
     
     /**
@@ -134,7 +140,7 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
      * @return the comparator if exists, null otherwise
      */
     public Comparator<Activation<? extends IPatternMatch>> getActivationComparator(RuleSpecification<? extends IPatternMatch> specification) {
-        Preconditions.checkNotNull(specification, "Specification must not be null!");
+        Preconditions.checkNotNull(specification, SPECIFICATION_MUST_NOT_BE_NULL);
         
         Comparator<Activation<? extends IPatternMatch>> comparator = comparators.get(specification);
         return comparator;
@@ -142,7 +148,7 @@ public class RulePriorityActivationComparator implements Comparator<Activation<?
 
     @Override
     public int compare(Activation<?> o1, Activation<?> o2) {
-        if(o1 == o2) {
+        if(o1.equals(o2)) {
             return 0;
         }
         RuleInstance<?> instance = o1.getRule();
