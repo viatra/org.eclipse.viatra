@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -88,6 +89,14 @@ public class RuleEngine {
         return ImmutableMultimap.copyOf(agenda.getActivations());
     }
 
+    /**
+     * 
+     * @return an unmodifiable view of the set of enabled activations
+     */
+    public Set<Activation<?>> getEnabledActivation() {
+        return Collections.unmodifiableSet(agenda.getEnabledActivations());
+    }
+    
     /**
      * 
      * @param state
