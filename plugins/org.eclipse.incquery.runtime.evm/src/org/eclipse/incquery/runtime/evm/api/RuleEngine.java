@@ -14,6 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -90,12 +91,28 @@ public class RuleEngine {
     }
 
     /**
+     * Important: firing an activation, or other events may cause 
+     * {@link ConcurrentModificationException} if you try to iterate
+     * on this set.
      * 
      * @return an unmodifiable view of the set of enabled activations
      */
-    public Set<Activation<?>> getEnabledActivation() {
+    public Set<Activation<?>> getEnabledActivations() {
         return Collections.unmodifiableSet(agenda.getEnabledActivations());
     }
+    
+    /**
+     * 
+     * @return the first enabled activation if exists
+     */
+    public Activation<?> getFirstEnabledActivation() {
+        Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
+        if(enabledActivations.isEmpty()) {
+            return null;
+        } else {
+            return enabledActivations.iterator().next();
+        }
+    }    
     
     /**
      * 
