@@ -10,7 +10,7 @@
               contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
               default="true"
               extensions="eiq"
-              icon="icons/file_icon.gif"
+              icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
               id="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage"
               name="EMF-IncQuery Pattern Editor">
         </editor>

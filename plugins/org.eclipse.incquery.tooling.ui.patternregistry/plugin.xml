@@ -134,7 +134,7 @@
       <view
             category="org.eclipse.incquery.tooling.ui"
             class="org.eclipse.incquery.tooling.ui.patternregistry.views.PatternRegistryViewPart"
-            icon="icons/iqlogo.png"
+            icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
             id="org.eclipse.incquery.tooling.ui.patternregistry.view"
             name="Pattern Registry"
             restorable="true">
