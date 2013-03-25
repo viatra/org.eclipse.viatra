@@ -269,7 +269,11 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
             }
         }
         if (fallbackToPackageRegistry) {
-            return getGenmodelRegistry().findGenPackage(packageNsUri, set);
+            GenPackage foundPackage = getGenmodelRegistry().findGenPackage(packageNsUri, set);
+            if (foundPackage == null) {
+                foundPackage = internalFindGenPackage(set, packageNsUri);
+            }
+            return foundPackage;
         }
         return null;
     }

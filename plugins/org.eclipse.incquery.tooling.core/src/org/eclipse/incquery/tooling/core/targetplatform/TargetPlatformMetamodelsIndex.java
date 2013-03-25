@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
@@ -98,15 +99,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                     if (po instanceof IPluginElement && PACKAGE.equals(po.getName())) {
                         IPluginAttribute uriAttrib = ((IPluginElement) po).getAttribute(ATTR_URI);
                         IPluginAttribute genAttrib = ((IPluginElement) po).getAttribute(ATTR_GENMODEL);
-                        if (uriAttrib != null && genAttrib != null) {
-                            String uri = uriAttrib.getValue();
-                            String genModel = genAttrib.getValue();
-                            if (!genModel.startsWith("/"))
-                                genModel = "/" + genModel;
-                            String resourceURI = resolvePluginResource(base.getPluginModel(), genModel);
-                            if (resourceURI != null){
-                            	metamodels.add(new TargetPlatformMetamodel(URI.createURI(resourceURI), uri));
-                            }
+                        TargetPlatformMetamodel metamodel = loadMetamodelSpecification(base, uriAttrib, genAttrib);
+                        if (metamodel != null) {
+                            metamodels.add(metamodel);
                         }
                     }
 				}
@@ -114,17 +109,37 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		}
 		return metamodels;
 	}
+
+    private TargetPlatformMetamodel loadMetamodelSpecification(IPluginBase base, IPluginAttribute uriAttrib,
+            IPluginAttribute genAttrib) {
+        TargetPlatformMetamodel metamodel = null;
+        if (uriAttrib != null && genAttrib != null) {
+            String nsUri = uriAttrib.getValue();
+            URI genmodelURI = null;
+            String genModel = genAttrib.getValue();
+            genmodelURI = URI.createURI(genModel);
+            if (genmodelURI.isRelative()) {
+                genmodelURI = URI.createURI(resolvePluginResource(base.getPluginModel(), "/" + genModel));
+            }
+            metamodel = new TargetPlatformMetamodel(nsUri, genmodelURI, logger);
+        }
+        return metamodel;
+    }
 	
-	public static class TargetPlatformMetamodel{
+    public static final class TargetPlatformMetamodel {
 		
-		private final URI genModel;
+		private final URI genModelUri;
 		private final String packageURI;
+        private Logger logger;
 		
 		/**
 		 * 
 		 */
-		private TargetPlatformMetamodel(URI genModel, String packageURI) {
-			this.genModel = genModel;
+        private TargetPlatformMetamodel(String packageURI, URI genModel, Logger logger) {
+            this.logger = logger;
+            Preconditions.checkArgument(packageURI != null && !packageURI.isEmpty(), "EPackage nsURI must be set");
+            Preconditions.checkArgument(genModel != null, "Genmodel URI must not be null");
+			this.genModelUri = genModel;
 			this.packageURI = packageURI;
 		}
 		
@@ -135,9 +150,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 			return packageURI;
 		}
 		
-		public GenModel loadGenModel(ResourceSet resourceset){
+        private GenModel loadGenModel(ResourceSet resourceset) {
 			try{
-				Resource genModel = resourceset.getResource(this.genModel, true);
+				Resource genModel = resourceset.getResource(this.genModelUri, true);
 				for(EObject eo : genModel.getContents()){
 					if (eo instanceof GenModel){
 						return (GenModel)eo;
@@ -152,22 +167,26 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		
 		public GenPackage loadGenPackage(ResourceSet resourceset){
 			GenModel genModel = loadGenModel(resourceset);
-			try{
-				for(GenPackage genpack : genModel.getAllGenPackagesWithClassifiers()){
-					EPackage epack = genpack.getEcorePackage();
-					if (this.packageURI.equals(epack.getNsURI())){
-						return genpack;
-					}
-				}
-			}catch(NullPointerException e){
-				// genModel.getAllGenPackagesWithClassifiers() can throw NullPointerException
+			if (genModel != null) {
+			    for(GenPackage genpack : genModel.getAllGenPackagesWithClassifiers()){
+			        EPackage epack = genpack.getEcorePackage();
+			        if (this.packageURI.equals(epack.getNsURI())){
+			            return genpack;
+			        }
+			    }			    
+			} else {
+                logger.warn(String.format(
+                        "Error while loading genmodel for EPackage %s. Check corresponding plugin.xml declaration.",
+                        packageURI));
 			}
 			return null;
 		}
 		
 		public EPackage loadPackage(ResourceSet resourceset){
-			GenPackage genPack = loadGenPackage(resourceset);
-			if (genPack != null) return genPack.getEcorePackage();
+            GenPackage genPack = loadGenPackage(resourceset);
+            if (genPack != null) {
+                return genPack.getEcorePackage();
+            }
 			return null;
 		}
 		
