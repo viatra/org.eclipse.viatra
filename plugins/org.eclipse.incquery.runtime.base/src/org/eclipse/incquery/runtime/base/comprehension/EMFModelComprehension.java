@@ -44,7 +44,10 @@ public class EMFModelComprehension {
      * {@link #representable(EStructuralFeature)} is true.
      */
     public static boolean untraversableDirectly(EStructuralFeature feature) {
-        boolean suspect = feature.isDerived() || feature.isVolatile();
+        boolean suspect = 
+        		feature.isDerived() || 
+        		feature.isVolatile() || 
+        		(feature instanceof EReference && ((EReference)feature).isContainer());
         if (suspect) {
             // override support here
             // (e.g. if manual notifications available, or no changes expected afterwards)
