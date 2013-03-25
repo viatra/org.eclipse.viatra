@@ -48,19 +48,23 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
 
         @Override
         public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                Containment edge = (Containment) entry.getElement();
-                if (entry.isAddition()) {
-                    addContainment(edge);
-                } else {
-                    Item source = edge.getSource();
-                    Item target = edge.getTarget();
-                    viewer.remove(source, new Object[] { target });
-                    elementMap.remove(source, target);
-                    parentMap.remove(target);
-                    viewer.refresh(source);
+            try {
+                ListDiff diff = event.diff;
+                for (ListDiffEntry entry : diff.getDifferences()) {
+                    Containment edge = (Containment) entry.getElement();
+                    if (entry.isAddition()) {
+                        addContainment(edge);
+                    } else {
+                        Item source = edge.getSource();
+                        Item target = edge.getTarget();
+                        viewer.remove(source, new Object[] { target });
+                        elementMap.remove(source, target);
+                        parentMap.remove(target);
+                        viewer.refresh(source);
+                    }
                 }
+            } catch (Exception e) {
+                vmodel.getLogger().error("Error refreshing viewer structure", e);
             }
         }
 

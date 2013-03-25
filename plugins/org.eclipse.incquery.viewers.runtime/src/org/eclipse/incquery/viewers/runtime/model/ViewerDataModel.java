@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -54,12 +55,14 @@ import com.google.common.collect.Sets;
 @SuppressWarnings({ "unchecked" })
 public class ViewerDataModel {
     private IncQueryEngine engine;
+    Logger logger;
     private ResourceSet model;
     private Set<Pattern> patterns;
     private Map<Object, Item> itemMap;
 
     public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns) throws IncQueryException {
         this(model, patterns, EngineManager.getInstance().createUnmanagedIncQueryEngine(model));
+        logger = engine.getLogger();
     }
 
     public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns, IncQueryEngine engine) {
@@ -81,6 +84,10 @@ public class ViewerDataModel {
         return patterns;
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
     /**
      * Initializes and returns an observable list of nodes. Each call re-initializes a new observable
      * 
@@ -99,7 +106,6 @@ public class ViewerDataModel {
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
-
                 ObservableList resultList = new WritableList();
                 nodeListsObservable.add(resultList);
 

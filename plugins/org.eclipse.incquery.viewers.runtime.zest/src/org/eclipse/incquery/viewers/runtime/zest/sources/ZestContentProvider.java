@@ -47,13 +47,17 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
         @Override
         public void handleListChange(ListChangeEvent event) {
             ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                Edge edge = (Edge) entry.getElement();
-                if (entry.isAddition()) {
-                    addRelationship(edge);
-                } else {
-                    viewer.removeRelationship(edge);
+            try {
+                for (ListDiffEntry entry : diff.getDifferences()) {
+                    Edge edge = (Edge) entry.getElement();
+                    if (entry.isAddition()) {
+                        addRelationship(edge);
+                    } else {
+                        viewer.removeRelationship(edge);
+                    }
                 }
+            } catch (Exception e) {
+                vmodel.getLogger().error("Error refreshing the graph structure", e);
             }
         }
 

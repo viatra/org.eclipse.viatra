@@ -49,12 +49,16 @@ public class ListContentProvider implements IStructuredContentProvider {
      * @param diff
      */
     protected void handleListChanges(ListDiff diff) {
+        try {
         for (ListDiffEntry entry : diff.getDifferences()) {
             if (entry.isAddition()) {
                 viewer.insert(entry.getElement(), entry.getPosition());
             } else {
                 viewer.remove(entry.getElement());
             }
+        }
+        } catch (Exception e) {
+            vmodel.getLogger().error("Error refreshing viewer", e);
         }
     }
 
