@@ -162,12 +162,16 @@ public class DatabindingAdapterUtil {
 
             StringValue nameRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
                     "name");
-            Preconditions.checkArgument(nameRef != null, "Name attribute must not be empty");
-            String name = nameRef.getValue();
             StringValue exprRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
                     "expression");
             StringValue labelRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
                     "labelExpression");
+            if (nameRef == null) {
+                Preconditions.checkArgument(exprRef == null && labelRef == null,
+                        "Name attribute must not be empty");
+                continue;
+            }
+            String name = nameRef.getValue();
             Preconditions.checkArgument(exprRef != null ^ labelRef != null,
                     "Either expression or label expression attribute must not be empty.");
             String expr;
