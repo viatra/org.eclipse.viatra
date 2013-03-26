@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -37,12 +38,20 @@ public class EMFPatternLanguageHelper {
     }
 
     /**
-     * Returns an iterable of package imports in a selected pattern model
+     * Returns an iterable of package imports in a selected pattern model. If an import package is an unresolvable
+     * proxy, it is omitted.
      * 
      * @param model
      * @return
      */
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
-        return Iterables.filter(model.getImportPackages(), PackageImport.class);
+        return Iterables.filter(Iterables.filter(model.getImportPackages(), PackageImport.class),
+                new Predicate<PackageImport>() {
+
+                    @Override
+                    public boolean apply(PackageImport pImport) {
+                        return !pImport.eIsProxy();
+                    }
+                });
     }
 }

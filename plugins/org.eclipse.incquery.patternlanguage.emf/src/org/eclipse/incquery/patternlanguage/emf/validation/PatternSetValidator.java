@@ -26,6 +26,7 @@ import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.IDiagnosticConverter;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 /**
@@ -38,6 +39,29 @@ public class PatternSetValidator {
     private Diagnostician diagnostician;
     @Inject
     private IDiagnosticConverter converter;
+
+    public PatternSetValidationDiagnostics validate(Resource resource) {
+        BasicDiagnostic chain = new BasicDiagnostic();
+        PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();
+
+        for (Diagnostic diag : resource.getErrors()) {
+            if (diag instanceof AbstractDiagnostic) {
+                AbstractDiagnostic abstractDiagnostic = (AbstractDiagnostic) diag;
+                converter.convertResourceDiagnostic(abstractDiagnostic, Severity.ERROR, collectedIssues);
+            }
+        }
+        for (EObject obj : resource.getContents()) {
+            diagnostician.validate(obj, chain);
+        }
+        for (org.eclipse.emf.common.util.Diagnostic diag : chain.getChildren()) {
+            converter.convertValidatorDiagnostic(diag, collectedIssues);
+        }
+        return collectedIssues;
+    }
+
+    public PatternSetValidationDiagnostics validate(Pattern pattern) {
+        return validate(ImmutableList.of(pattern));
+    }
 
     public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
         BasicDiagnostic chain = new BasicDiagnostic();

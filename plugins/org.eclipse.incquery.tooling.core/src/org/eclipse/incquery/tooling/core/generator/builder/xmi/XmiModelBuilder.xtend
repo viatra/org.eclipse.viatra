@@ -28,13 +28,18 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator
+import com.google.inject.Inject
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus
+import java.util.Map
 
 /**
  * @author Mark Czotter
  */
 class XmiModelBuilder {
 	
-	Logger logger = Logger::getLogger(getClass())
+	@Inject Logger logger
+	@Inject PatternSetValidator validator
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
@@ -57,8 +62,9 @@ class XmiModelBuilder {
 				for (obj : r.contents) {
 					if (obj instanceof PatternModel && !obj.equals(xmiModelRoot)) {
 						for (importDecl : EMFPatternLanguageHelper::getPackageImportsIterable(obj as PatternModel)){
-							if (!importDeclarations.contains(importDecl.EPackage)) {
-								importDeclarations.add(importDecl.EPackage)
+							val ePackage = importDecl.EPackage
+							if (ePackage != null && !ePackage.eIsProxy && !importDeclarations.contains(ePackage)) {
+								importDeclarations.add(ePackage)
 							}
 						}
 					}
@@ -78,45 +84,11 @@ class XmiModelBuilder {
 				imp.setEPackage(it)
 				return imp
 			])
-			// first add all patterns
-			val fqnToPatternMap = newHashMap();
+			// first add all error-free patterns
+			val Map<String, Pattern> fqnToPatternMap = newHashMap();
 			for (pattern : resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
-				val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
-				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
-				p.name = fqn
-				p.fileName = pattern.eResource.URI.toString
-				if (fqnToPatternMap.get(fqn) != null) {
-					logger.error("Pattern already set in the Map: " + fqn)
-				} else {
-					fqnToPatternMap.put(fqn, p)
-					xmiModelRoot.patterns.add(p)
-				}
-				
-				// iterate over each body
-				for(body : p.bodies) {
-					// add local variables
-					val nameToLocalVariableParameterMap = newHashMap();
-					for(variable : body.variables) {
-						val vfqn = variable.name
-						if (nameToLocalVariableParameterMap.get(vfqn) != null) {
-							logger.error("Variable already set in the Map: " + vfqn)
-						} else {
-							nameToLocalVariableParameterMap.put(vfqn, variable)
-						}
-					}
-					// then iterate over all added FeatureCalls and change feature to proper variable
-					for(expression : body.eAllContents.toIterable.filter(typeof (XFeatureCall))){
-						val f = expression.feature
-						if(f instanceof Variable){
-							val vfqn = (f as Variable).name
-							val v = nameToLocalVariableParameterMap.get(vfqn);
-							if(v == null){								
-								logger.error("Variable not found: " + vfqn)
-							} else {
-								expression.setFeature(v as Variable)
-							}
-						}
-					}
+				if (validator.validate(pattern).status != PatternValidationStatus::ERROR){
+					pattern.copyPattern(fqnToPatternMap, xmiModelRoot)
 				}
 			}
 			// then iterate over all added PatternCall and change the patternRef
@@ -138,4 +110,43 @@ class XmiModelBuilder {
 		}
 	}
 	
+	def copyPattern(Pattern pattern, Map<String, Pattern> fqnToPatternMap, PatternModel xmiModelRoot) {
+		val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
+		val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
+		p.name = fqn
+		p.fileName = pattern.eResource.URI.toString
+		if (fqnToPatternMap.get(fqn) != null) {
+			logger.error("Pattern already set in the Map: " + fqn)
+		} else {
+			fqnToPatternMap.put(fqn, p)
+			xmiModelRoot.patterns.add(p)
+		}
+				
+		// iterate over each body
+		for(body : p.bodies) {
+			// add local variables
+			val nameToLocalVariableParameterMap = newHashMap();
+			for(variable : body.variables) {
+				val vfqn = variable.name
+				if (nameToLocalVariableParameterMap.get(vfqn) != null) {
+					logger.error("Variable already set in the Map: " + vfqn)
+				} else {
+					nameToLocalVariableParameterMap.put(vfqn, variable)
+				}
+			}
+			// then iterate over all added FeatureCalls and change feature to proper variable
+			for(expression : body.eAllContents.toIterable.filter(typeof (XFeatureCall))){
+				val f = expression.feature
+				if(f instanceof Variable){
+					val vfqn = (f as Variable).name
+					val v = nameToLocalVariableParameterMap.get(vfqn);
+					if(v == null){								
+						logger.error("Variable not found: " + vfqn)
+					} else {
+						expression.setFeature(v as Variable)
+					}
+				}
+			}
+		}
+	}
 }

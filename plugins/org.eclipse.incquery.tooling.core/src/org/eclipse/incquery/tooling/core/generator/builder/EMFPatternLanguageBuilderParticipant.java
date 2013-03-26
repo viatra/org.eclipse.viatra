@@ -31,6 +31,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
@@ -102,6 +105,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     @Inject
     private IStorage2UriMapper storage2UriMapper;
 
+    @Inject
+    private PatternSetValidator validator;
+
     @Override
     public void build(final IBuildContext context, IProgressMonitor monitor) throws CoreException {
         if (!isEnabled(context)) {
@@ -170,6 +176,10 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
      * @throws CoreException
      */
     private void doPostGenerate(Resource deltaResource, IBuildContext context) throws CoreException {
+        PatternSetValidationDiagnostics validate = validator.validate(deltaResource);
+        if (validate.getStatus() == PatternValidationStatus.ERROR) {
+            // If there are errors in the resource, do not execute post-build steps
+        }
         final IProject project = context.getBuiltProject();
         ExtensionGenerator extensionGenerator = new ExtensionGenerator();
         extensionGenerator.setProject(project);
