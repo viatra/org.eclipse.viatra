@@ -31,6 +31,7 @@ import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvid
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -131,5 +132,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     public Class<? extends IIssueCallback> bindIIssueCallback() {
         return GenmodelBasedEMFPatternLanguageJavaValidator.class;
+    }
+
+    // contributed by org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
+    public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
+        return EMFPatternLanguageEditorCallback.class;
     }
 }
