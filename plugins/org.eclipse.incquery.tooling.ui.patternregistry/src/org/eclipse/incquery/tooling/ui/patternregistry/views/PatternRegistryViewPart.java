@@ -10,24 +10,35 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.patternregistry.views;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.IPatternRegistryListener;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.patternregistry.common.ResourceChangeListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
+
+import com.google.inject.Inject;
 
 public class PatternRegistryViewPart extends ViewPart {
 
     private CheckboxTreeViewer checkboxTreeViewer;
 
-    public PatternRegistryViewPart() {
+    @Inject
+    public PatternRegistryViewPart(IResourceSetProvider resourceSetProvider) {
         super();
+
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(new ResourceChangeListener(resourceSetProvider),
+                IResourceChangeEvent.PRE_BUILD);
     }
 
     @Override
@@ -55,7 +66,7 @@ public class PatternRegistryViewPart extends ViewPart {
                 return false;
             }
         });
-        
+
         checkboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
             @Override
             public void checkStateChanged(CheckStateChangedEvent event) {
@@ -66,7 +77,7 @@ public class PatternRegistryViewPart extends ViewPart {
                 }
             }
         });
-        
+
         checkboxTreeViewer.setInput("unused_input");
 
         MenuManager menuManager = new MenuManager();
@@ -100,7 +111,13 @@ public class PatternRegistryViewPart extends ViewPart {
     }
 
     private void updateCheckboxTreeViewer() {
-        checkboxTreeViewer.refresh();
+        Display display = checkboxTreeViewer.getTree().getDisplay();
+        display.syncExec(new Runnable() {
+            @Override
+            public void run() {
+                checkboxTreeViewer.refresh();
+            }
+        });
     }
 
 }

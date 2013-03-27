@@ -25,6 +25,8 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * FIXME DO IT
  */
@@ -37,6 +39,8 @@ public enum PatternRegistry {
     private final List<IPatternInfo> patternInfos = new ArrayList<IPatternInfo>();
 
     private final Map<String, IPatternInfo> idToPatternInfoMap = new HashMap<String, IPatternInfo>();
+
+    private final Map<IFile, List<IPatternInfo>> fileToPatternInfoMap = new HashMap<IFile, List<IPatternInfo>>();
 
     private PatternRegistry() {
         for (IPatternInfo patternInfo : GeneratedPatternSource.initializeRegisteredPatterns()) {
@@ -56,17 +60,29 @@ public enum PatternRegistry {
             return idToPatternInfoMap.get(id);
         }
 
-        // Registers new pattern
+        // Create new PatternInfo
         IMatcherFactory<?> matcherFactory = new GenericMatcherFactory(pattern);
         PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile,
                 (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
         registerPatternInfo(patternInfo);
+
         return patternInfo;
     }
 
     private void registerPatternInfo(IPatternInfo patternInfo) {
         patternInfos.add(patternInfo);
         idToPatternInfoMap.put(patternInfo.getId(), patternInfo);
+        IFile relatedFile = patternInfo.getRelatedFile();
+        if (relatedFile != null) {
+            List<IPatternInfo> relatedIPatternInfoList;
+            if (fileToPatternInfoMap.containsKey(relatedFile)) {
+                relatedIPatternInfoList = fileToPatternInfoMap.get(relatedFile);
+            } else {
+                relatedIPatternInfoList = new ArrayList<IPatternInfo>();
+                fileToPatternInfoMap.put(relatedFile, relatedIPatternInfoList);
+            }
+            relatedIPatternInfoList.add(patternInfo);
+        }
         for (IPatternRegistryListener patternRegistryListener : listeners) {
             patternRegistryListener.patternAdded(patternInfo);
             patternRegistryListener.patternActivated(patternInfo);
@@ -86,6 +102,11 @@ public enum PatternRegistry {
         if (idToPatternInfoMap.containsKey(id)) {
             patternInfos.remove(patternInfo);
             idToPatternInfoMap.remove(id);
+            IFile relatedFile = patternInfo.getRelatedFile();
+            if (relatedFile != null && fileToPatternInfoMap.containsKey(relatedFile)) {
+                List<IPatternInfo> relatedIPatternInfoList = fileToPatternInfoMap.get(relatedFile);
+                relatedIPatternInfoList.remove(patternInfo);
+            }
             for (IPatternRegistryListener patternRegistryListener : listeners) {
                 patternRegistryListener.patternDeactivated(patternInfo);
                 patternRegistryListener.patternRemoved(patternInfo);
@@ -103,6 +124,14 @@ public enum PatternRegistry {
 
     public void unregisterListener(IPatternRegistryListener patternRegistryListener) {
         listeners.remove(patternRegistryListener);
+    }
+
+    public List<IPatternInfo> getFileToPatternInfoList(IFile file) {
+        if (fileToPatternInfoMap.containsKey(file)) {
+            return ImmutableList.copyOf(fileToPatternInfoMap.get(file));
+        } else {
+            return new ArrayList<IPatternInfo>();
+        }
     }
 
 }

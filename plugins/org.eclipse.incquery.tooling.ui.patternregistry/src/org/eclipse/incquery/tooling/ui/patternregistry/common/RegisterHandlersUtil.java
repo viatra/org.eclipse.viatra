@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.tooling.ui.patternregistry.handlers;
+package org.eclipse.incquery.tooling.ui.patternregistry.common;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;

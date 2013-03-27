@@ -133,7 +133,7 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.incquery.tooling.ui"
-            class="org.eclipse.incquery.tooling.ui.patternregistry.views.PatternRegistryViewPart"
+            class="org.eclipse.incquery.tooling.ui.patternregistry.PatternRegistryExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.patternregistry.views.PatternRegistryViewPart"
             icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
             id="org.eclipse.incquery.tooling.ui.patternregistry.view"
             name="Pattern Registry"
