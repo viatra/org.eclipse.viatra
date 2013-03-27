@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -775,6 +776,20 @@ public class NavigationHelperImpl implements NavigationHelper {
         addRootInternal(emfRoot);
     }
 
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.common.util.EList)
+     */
+    @Override
+    public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList) {
+    	contentAdapter.ignoreInsertionAndDeletion = element;
+    	try {
+    		targetContainmentReferenceList.add(element);
+    	} finally {
+        	contentAdapter.ignoreInsertionAndDeletion = null;
+    	}
+    }
+    
     /**
      * @param emfRoot
      * @throws IncQueryBaseException

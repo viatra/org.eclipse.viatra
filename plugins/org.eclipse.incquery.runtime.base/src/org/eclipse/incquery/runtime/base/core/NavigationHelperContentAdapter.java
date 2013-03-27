@@ -87,6 +87,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // static for eclass -> all subtypes in knownClasses
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
+    
+    // move optimization to avoid removing and re-adding entire subtrees
+    EObject ignoreInsertionAndDeletion = null;
+    //Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
+    //Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
@@ -209,6 +214,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     @Override
     protected void addAdapter(final Notifier notifier) {
+    	if (notifier == ignoreInsertionAndDeletion) return;
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
@@ -229,6 +235,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     @Override
     protected void removeAdapter(final Notifier notifier) {
+    	if (notifier == ignoreInsertionAndDeletion) return;
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
