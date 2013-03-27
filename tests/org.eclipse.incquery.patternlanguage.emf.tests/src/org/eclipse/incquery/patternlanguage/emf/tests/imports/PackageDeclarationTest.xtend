@@ -72,6 +72,6 @@ class PackageDeclarationTest {
 				Pattern(Name);
 			}
 		') as PatternModel
-		model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::LOWERCASE_PATTERN_NAME)
+		model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 	}
 }
