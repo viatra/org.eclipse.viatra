@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.NotifyingList;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -781,18 +782,20 @@ public class NavigationHelperImpl implements NavigationHelper {
      * @see org.eclipse.incquery.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.common.util.EList)
      */
     @Override
-    public <T extends EObject> void cheapMoveTo(T element, NotifyingList<T> targetContainmentReferenceList) {
-    	final Object listNotifier = targetContainmentReferenceList.getNotifier();
-    	if (listNotifier instanceof Notifier && 
-    			((Notifier) listNotifier).eAdapters().contains(contentAdapter) &&
-    			element.eAdapters().contains(contentAdapter)) 
-    	{    	
-    		contentAdapter.ignoreInsertionAndDeletion = element;
-	    	try {
-	    		targetContainmentReferenceList.add(element);
-	    	} finally {
-	        	contentAdapter.ignoreInsertionAndDeletion = null;
-	    	}
+    public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList) {
+    	if (element.eAdapters().contains(contentAdapter) && 
+    			targetContainmentReferenceList instanceof NotifyingList<?>) {
+    		final Object listNotifier = ((NotifyingList<?>)targetContainmentReferenceList).getNotifier();
+    		if (listNotifier instanceof Notifier && ((Notifier) listNotifier).eAdapters().contains(contentAdapter)) {
+	     		contentAdapter.ignoreInsertionAndDeletion = element;
+		    	try {
+		    		targetContainmentReferenceList.add(element);
+		    	} finally {
+		        	contentAdapter.ignoreInsertionAndDeletion = null;
+		    	}
+    		} else {
+    			targetContainmentReferenceList.add(element);
+    		}
     	} else {
     		targetContainmentReferenceList.add(element);
     	}

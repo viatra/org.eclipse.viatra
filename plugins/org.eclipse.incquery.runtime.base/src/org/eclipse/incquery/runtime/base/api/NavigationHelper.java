@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.notify.NotifyingList;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -514,6 +514,6 @@ public interface NavigationHelper {
      * @param the containment list of the new parent object into which the element has to be moved
      * 
      */
-    public <T extends EObject> void cheapMoveTo(T element, NotifyingList<T> targetContainmentReferenceList);
+    public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList);
 
 }
