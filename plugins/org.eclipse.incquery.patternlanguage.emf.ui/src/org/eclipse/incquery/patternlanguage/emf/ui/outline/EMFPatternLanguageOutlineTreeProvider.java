@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
@@ -53,6 +54,15 @@ public class EMFPatternLanguageOutlineTreeProvider extends DefaultOutlineTreePro
                 createNode(parentNode, body);
             }
         }
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, PatternBody body) {
+        for (EObject childElement : body.getConstraints())
+            createNode(parentNode, childElement);
+    }
+
+    protected void _createChildren(IOutlineNode parentNode, CompareConstraint constraint) {
+        // By leaving this method empty, the Compare Constraint will not have any children in the outline view
     }
 
     protected void _createChildren(IOutlineNode parentNode, EClassifierConstraint constraint) {
