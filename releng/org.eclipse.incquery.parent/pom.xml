@@ -62,8 +62,8 @@
 		<module>../../releng/org.eclipse.incquery.update</module>
 	</modules>
 	<properties>
-		<tycho.version>0.17.0-SNAPSHOT</tycho.version>
-		<tycho.extras.version>0.17.0-SNAPSHOT</tycho.extras.version>
+		<tycho.version>0.17.0</tycho.version>
+		<tycho.extras.version>0.17.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
@@ -234,10 +234,6 @@
 			<url>
 			http://www.fornax-platform.org/m2/repository
 		</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>tycho-snapshots</id>
-			<url>https://oss.sonatype.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
