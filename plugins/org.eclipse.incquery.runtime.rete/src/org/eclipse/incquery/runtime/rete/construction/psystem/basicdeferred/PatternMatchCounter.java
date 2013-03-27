@@ -76,14 +76,15 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
         Integer resultPositionLeft = stub.getVariablesIndex().get(resultVariable);
         TupleMask primaryMask = joinHelper.getPrimaryMask();
         TupleMask secondaryMask = joinHelper.getSecondaryMask();
+        final Stub<StubHandle> counterBetaStub = buildable.buildCounterBetaNode(stub, sideStub, primaryMask, secondaryMask,
+        		joinHelper.getComplementerMask(), resultVariable);
         if (resultPositionLeft == null) {
-            return buildable.buildCounterBetaNode(stub, sideStub, primaryMask, secondaryMask,
-                    joinHelper.getComplementerMask(), resultVariable);
+			return counterBetaStub;
         } else {
-            int resultPositionFinal = primaryMask.indices.length; // append to the last position
-            primaryMask = TupleMask.append(primaryMask,
-                    TupleMask.selectSingle(resultPositionLeft, primaryMask.sourceWidth));
-            return buildable.buildCountCheckBetaNode(stub, sideStub, primaryMask, secondaryMask, resultPositionFinal);
+            int resultPositionFinal = counterBetaStub.getVariablesTuple().getSize() - 1; // appended to the last position
+            final Stub<StubHandle> equalityCheckerStub = 
+            		buildable.buildEqualityChecker(counterBetaStub, new int[]{resultPositionFinal, resultPositionLeft});
+            return buildable.buildTrimmer(equalityCheckerStub, TupleMask.omit(resultPositionFinal, 1+resultPositionFinal));
         }
 
     }
