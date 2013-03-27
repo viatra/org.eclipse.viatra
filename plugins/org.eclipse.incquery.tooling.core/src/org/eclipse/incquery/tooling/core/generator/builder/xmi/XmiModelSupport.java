@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant.IBuildContext;
@@ -81,7 +82,11 @@ public class XmiModelSupport {
         // create a resourcedescription for the input,
         // this way we can find all relevant EIQ file in the context of this input.
         IResourceDescriptions index = resourceDescriptionsProvider.createResourceDescriptions();
-        IResourceDescription resDesc = index.getResourceDescription(deltaResource.getURI());
+        URI deltaUri = deltaResource.getURI();
+        if (deltaUri == null) {
+            return;
+        }
+        IResourceDescription resDesc = index.getResourceDescription(deltaUri);
         List<IContainer> visibleContainers = containerManager.getVisibleContainers(resDesc, index);
         // load all visible resource to the resourceset of the input resource
         for (IContainer container : visibleContainers) {
