@@ -41,6 +41,8 @@ public final class IssueCodes {
     public static final String CONSTANT_COMPARE_CONSTRAINT = ISSUE_CODE_PREFIX + "constant_compare_constraint";
     public static final String SELF_COMPARE_CONSTRAINT = ISSUE_CODE_PREFIX + "self_compare_constraint";
 
+    public static final String PACKAGE_NAME_MISMATCH = ISSUE_CODE_PREFIX + "package_name_mismatch";
+
     public static final String LOWERCASE_PATTERN_NAME = ISSUE_CODE_PREFIX + "lowercase_pattern_name";
     public static final String UNUSED_PRIVATE_PATTERN = ISSUE_CODE_PREFIX + "unused_private_pattern";
     public static final String MISSING_PATTERN_PARAMETERS = ISSUE_CODE_PREFIX + "missing_pattern_parameters";
