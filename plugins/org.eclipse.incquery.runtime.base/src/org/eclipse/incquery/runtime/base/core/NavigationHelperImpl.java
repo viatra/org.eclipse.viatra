@@ -801,6 +801,27 @@ public class NavigationHelperImpl implements NavigationHelper {
     	}
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference)
+     */
+    @Override
+    public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {
+    	if (containmentFeature.isMany())
+    		cheapMoveTo(element, (EList)parent.eGet(containmentFeature));
+    	else if (element.eAdapters().contains(contentAdapter) &&
+    			parent.eAdapters().contains(contentAdapter)) 
+    	{
+     		contentAdapter.ignoreInsertionAndDeletion = element;
+	    	try {
+	    		parent.eSet(containmentFeature, element);
+	    	} finally {
+	        	contentAdapter.ignoreInsertionAndDeletion = null;
+	    	}
+		} else {
+			parent.eSet(containmentFeature, element);
+		}
+    }
+    
     /**
      * @param emfRoot
      * @throws IncQueryBaseException

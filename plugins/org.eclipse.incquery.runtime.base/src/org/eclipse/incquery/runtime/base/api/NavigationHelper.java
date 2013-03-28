@@ -515,5 +515,23 @@ public interface NavigationHelper {
      * 
      */
     public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList);
+    
+    /**
+     * Moves an EObject (along with its entire containment subtree) within the containment hierarchy of the EMF model. 
+     *   The object will be relocated from the original parent object to a different parent, or a different containment 
+     *   list of the same parent. 
+     *   
+     * <p> When indexing is enabled, such a relocation is costly if performed through normal getters/setters, as the index 
+     * for the entire subtree is pruned at the old location and reconstructed at the new one. 
+     * This method provides a workaround to keep the operation cheap.
+     * 
+     * <p> This method is experimental. Re-entrancy not supported.
+     * 
+     * @param element the eObject to be moved
+     * @param parent  the new parent object under which the element has to be moved
+     * @param containmentFeature the kind of containment reference that should be established between the new parent and the element
+     * 
+     */
+    public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature);
 
 }
