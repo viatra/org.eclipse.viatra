@@ -80,7 +80,6 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
      */
     @Override
     public void dispose() {
-        // TODO remove listener from update
         factory.provider.removeUpdateCompleteListener(this);
         super.dispose();
     }
@@ -101,14 +100,6 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
          */
         public IUpdateCompleteProvider getProvider() {
             return provider;
-        }
-
-        /**
-         * @param provider
-         *            the provider to set
-         */
-        public void setProvider(final IUpdateCompleteProvider provider) {
-            this.provider = provider;
         }
 
         /**
