@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.evm.api.ActivationState;
  * <li>Appeared -Activation fires-> Fired</li>
  * <li>Fired -Match Updates-> Updated (U)</li>
  * <li>Updated -Activation fires-> Fired (U)</li>
- * <li>Updated -Match Disappears-> Inactive (U), Disappeared (UD)</li>
+ * <li>Updated -Match Disappears-> Inactive (U) / Disappeared (UD)</li>
  * <li>Fired -Match Disappears-> Inactive / Disappeared (D)</li>
  * <li>Disappeared -Match Appears-> Fired (D)</li>
  * <li>Disappeared -Activation fires-> Inactive (D)</li>

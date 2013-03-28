@@ -72,6 +72,15 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         TransactionUpdateCompleteProvider provider = new TransactionUpdateCompleteProvider(domain);
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.evm.api.Scheduler#dispose()
+     */
+    @Override
+    public void dispose() {
+        // TODO remove listener from update
+        super.dispose();
+    }
 
     /**
      * This scheduler factory implementation uses an update complete provider that sends notifications 
@@ -119,7 +128,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
             provider.addUpdateCompleteListener(scheduler, true);
             return scheduler;
         }
-
+        
     }
 
 }

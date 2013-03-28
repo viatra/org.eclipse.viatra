@@ -29,6 +29,10 @@ public class Executor {
     private Agenda agenda;
     private Context context;
     private boolean scheduling = false;
+    private final String startMessage = "Executing started in " + this;
+    private final String reentrantMessage = "Reentrant schedule call ignored in " + this;
+    private final String endMessage = "Executing ended in " + this;
+    
     
     /**
      * Creates an executor for the given IncQueryEngine.
@@ -73,7 +77,7 @@ public class Executor {
         Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
         while(!enabledActivations.isEmpty()) {
             Activation<?> activation = enabledActivations.iterator().next();
-            agenda.getIncQueryEngine().getLogger().debug(String.format("Executing %s in %s.",activation,this));
+            agenda.getIncQueryEngine().getLogger().debug("Executing: " + activation + " in " + this);
             activation.fire(context);
         }
         
@@ -91,11 +95,11 @@ public class Executor {
      */
     protected synchronized boolean startScheduling() {
         if(scheduling) {
-            agenda.getIncQueryEngine().getLogger().debug(String.format("Reentrant schedule call ignored in %s.", this));
+            agenda.getIncQueryEngine().getLogger().debug(reentrantMessage);
             return false;
         } else {
             scheduling = true;
-            agenda.getIncQueryEngine().getLogger().debug(String.format("Executing started in %s.",this));
+            agenda.getIncQueryEngine().getLogger().debug(startMessage);
             return true;
         }
     }
@@ -106,7 +110,7 @@ public class Executor {
      * state is set to false.
      */
     protected synchronized void endScheduling() {
-        agenda.getIncQueryEngine().getLogger().debug(String.format("Executing ended in %s.",this));
+        agenda.getIncQueryEngine().getLogger().debug(endMessage);
         scheduling = false;
     }
 

@@ -55,7 +55,7 @@ public class Agenda {
         public void activationChanged(final Activation<? extends IPatternMatch> activation,
                 final ActivationState oldState, final ActivationLifeCycleEvent event) {
             Agenda.this.iqEngine.getLogger().debug(
-                    String.format("%s: %s -- %s --> %s", activation, oldState, event, activation.getState()));
+                    String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
             activations.remove(oldState, activation);
             ActivationState state = activation.getState();
             switch (state) {
@@ -123,7 +123,7 @@ public class Agenda {
      */
     protected <Match extends IPatternMatch> boolean removeRule(
             final RuleInstance<Match> instance) {
-        checkNotNull(instance, "Cannot remve null rule instance!");
+        checkNotNull(instance, "Cannot remove null rule instance!");
         return removeRule(instance.getSpecification());
     }
 
@@ -135,7 +135,7 @@ public class Agenda {
      */
     protected <Match extends IPatternMatch> boolean removeRule(
             final RuleSpecification<Match> specification) {
-        checkNotNull(specification, "Cannot remve null rule specification!");
+        checkNotNull(specification, "Cannot remove null rule specification!");
         RuleInstance<? extends IPatternMatch> instance = ruleInstanceMap
                 .get(specification);
         if (instance != null) {
