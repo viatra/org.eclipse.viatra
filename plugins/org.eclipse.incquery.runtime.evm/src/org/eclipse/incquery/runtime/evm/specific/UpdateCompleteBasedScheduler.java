@@ -31,6 +31,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCompleteListener {
 
+    private UpdateCompleteBasedSchedulerFactory factory;
+    
     @Override
     public void updateComplete() {
         schedule();
@@ -79,6 +81,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
     @Override
     public void dispose() {
         // TODO remove listener from update
+        factory.provider.removeUpdateCompleteListener(this);
         super.dispose();
     }
 
@@ -125,6 +128,7 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         @Override
         public Scheduler prepareScheduler(final Executor engine) {
             UpdateCompleteBasedScheduler scheduler = new UpdateCompleteBasedScheduler(engine);
+            scheduler.factory = this;
             provider.addUpdateCompleteListener(scheduler, true);
             return scheduler;
         }
