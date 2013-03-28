@@ -109,6 +109,24 @@ public class IncQueryObservables {
             IMatcherFactory<Matcher> factory, Notifier notifier) throws IncQueryException {
         return new ObservablePatternMatchSet<Match>(factory, notifier);
     }
+    
+    /**
+     * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
+     * 
+     * <p>
+     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * invocation (or use the Generic classes if you are sure).
+     * 
+     * @param factory
+     *            the matcher factory for the query to observe
+     * @param engine
+     *            the engine used with the matcher
+     * @return an observable set of matches
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
+            IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
+        return new ObservablePatternMatchSet<Match>(factory, engine);
+    }
 
     /**
      * Registers the given changeListener for the appropriate features of the given signature. The features will be
