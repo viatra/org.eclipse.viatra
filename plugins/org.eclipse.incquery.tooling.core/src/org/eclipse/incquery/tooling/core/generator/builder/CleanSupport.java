@@ -188,11 +188,13 @@ public class CleanSupport {
      * @throws CoreException
      * @throws IncQueryException
      */
-    private void removeExportedPackages(IProject project) throws CoreException, IncQueryException {
+    private void removeExportedPackages(IProject project) throws CoreException {
         if (getGlobalXmiFile(project).exists()) {
             ArrayList<String> packageNames = new ArrayList<String>();
-            Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE,
-                    project.getName(), new PrepareResourceSetWithLoader(project));
+            Resource globalXmiModel;
+            try {
+                globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE,
+                        project.getName(), new PrepareResourceSetWithLoader(project));
             Iterator<EObject> iter = globalXmiModel.getAllContents();
             while (iter.hasNext()) {
                 EObject obj = iter.next();
@@ -201,6 +203,9 @@ public class CleanSupport {
                 }
             }
             ProjectGenerationHelper.removePackageExports(project, packageNames);
+            } catch (IncQueryException e) {
+                logger.error("Error while removing exported projects", e);
+            }
         }
     }
 
