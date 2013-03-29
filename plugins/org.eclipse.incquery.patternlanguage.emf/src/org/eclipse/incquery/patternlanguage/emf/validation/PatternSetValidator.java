@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.xtext.diagnostics.AbstractDiagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -59,10 +60,34 @@ public class PatternSetValidator {
         return collectedIssues;
     }
 
+    /**
+     * Returns the validation results of a single pattern
+     * 
+     * @param pattern
+     * @return
+     */
     public PatternSetValidationDiagnostics validate(Pattern pattern) {
         return validate(ImmutableList.of(pattern));
     }
 
+    /**
+     * Returns the validation results of a single pattern and all its (transitively )referenced patterns.
+     * 
+     * @param pattern
+     * @return
+     */
+    public PatternSetValidationDiagnostics validateTransitively(Pattern pattern) {
+        Set<Pattern> patternsToValidate = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern);
+        return validate(patternsToValidate);
+
+    }
+
+    /**
+     * Returns the validation results of a collection of patterns
+     * 
+     * @param patternSet
+     * @return
+     */
     public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
         BasicDiagnostic chain = new BasicDiagnostic();
         PatternSetValidationDiagnostics collectedIssues = new PatternSetValidationDiagnostics();

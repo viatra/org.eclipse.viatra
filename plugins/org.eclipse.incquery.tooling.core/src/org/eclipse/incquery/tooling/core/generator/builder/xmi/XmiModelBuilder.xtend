@@ -87,7 +87,7 @@ class XmiModelBuilder {
 			// first add all error-free patterns
 			val Map<String, Pattern> fqnToPatternMap = newHashMap();
 			for (pattern : resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
-				if (validator.validate(pattern).status != PatternValidationStatus::ERROR){
+				if (validator.validateTransitively(pattern).status != PatternValidationStatus::ERROR){
 					pattern.copyPattern(fqnToPatternMap, xmiModelRoot)
 				}
 			}

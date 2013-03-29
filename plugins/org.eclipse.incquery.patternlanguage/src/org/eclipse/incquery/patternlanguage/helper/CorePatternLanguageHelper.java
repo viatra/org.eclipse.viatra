@@ -237,6 +237,21 @@ public final class CorePatternLanguageHelper {
         return result;
     }
 
+    public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern) {
+        Set<Pattern> referencedPatterns = new HashSet<Pattern>();
+        calculateReferencedPatternsTransitive(pattern, referencedPatterns);
+        return referencedPatterns;
+    }
+
+    private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns) {
+        Set<Pattern> candidates = getReferencedPatterns(pattern);
+        candidates.removeAll(addedPatterns);
+        addedPatterns.addAll(candidates);
+        for (Pattern newCandidate : candidates) {
+            calculateReferencedPatternsTransitive(newCandidate, addedPatterns);
+        }
+    }
+
     private static class AnnotationNameFilter implements Predicate<Annotation> {
 
         private final String name;
