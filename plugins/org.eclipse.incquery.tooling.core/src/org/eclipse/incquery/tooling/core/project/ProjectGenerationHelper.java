@@ -35,6 +35,7 @@ import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -519,7 +520,7 @@ public abstract class ProjectGenerationHelper {
         // XXX Using two APIs to extension generation: one to read and one to
         // write
         IFile pluginXml = PDEProject.getPluginXml(project);
-        IPluginModel plugin = (IPluginModel) PDECore.getDefault().getModelManager().findModel(project);
+        IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(project);
         WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
         fModel.setEditable(true);
         fModel.load();
