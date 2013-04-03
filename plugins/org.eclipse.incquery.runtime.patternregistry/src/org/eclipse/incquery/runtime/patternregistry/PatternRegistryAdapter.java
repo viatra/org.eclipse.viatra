@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.patternregistry;
 
-
 public abstract class PatternRegistryAdapter implements IPatternRegistryListener {
 
     @Override

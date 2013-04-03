@@ -8,7 +8,7 @@
  * Contributors:
  *   Andras Okros - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.tooling.ui.patternregistry.common;
+package org.eclipse.incquery.tooling.ui.patternregistry.views;
 
 import java.util.List;
 
@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.patternregistry.handlers.RegisterHandlersUtil;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 public class ResourceChangeListener implements IResourceChangeListener {

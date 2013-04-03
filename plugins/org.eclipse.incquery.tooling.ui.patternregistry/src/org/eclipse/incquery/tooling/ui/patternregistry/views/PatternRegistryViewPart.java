@@ -15,7 +15,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.IPatternRegistryListener;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
-import org.eclipse.incquery.tooling.ui.patternregistry.common.ResourceChangeListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;

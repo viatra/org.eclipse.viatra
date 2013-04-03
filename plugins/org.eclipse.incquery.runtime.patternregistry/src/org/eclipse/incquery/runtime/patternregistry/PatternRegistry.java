@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -44,7 +47,7 @@ public enum PatternRegistry {
 
     private PatternRegistry() {
         for (IPatternInfo patternInfo : GeneratedPatternSource.initializeRegisteredPatterns()) {
-            registerPatternInfo(patternInfo);
+            addPatternToRegistry(patternInfo);
         }
     }
 
@@ -52,6 +55,12 @@ public enum PatternRegistry {
         return Collections.unmodifiableList(patternInfos);
     }
 
+    /**
+     * @param pattern
+     * @param relatedFile
+     *            optional, leave null if not available
+     * @return FIXME DO IT
+     */
     @SuppressWarnings("unchecked")
     public IPatternInfo addPatternToRegistry(Pattern pattern, IFile relatedFile) {
         // Returns the PatterInfo if it is already registered
@@ -64,12 +73,32 @@ public enum PatternRegistry {
         IMatcherFactory<?> matcherFactory = new GenericMatcherFactory(pattern);
         PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile,
                 (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
-        registerPatternInfo(patternInfo);
+        addPatternToRegistry(patternInfo);
 
         return patternInfo;
     }
 
-    private void registerPatternInfo(IPatternInfo patternInfo) {
+    /**
+     * @param resource
+     * @param relatedFile
+     *            optional, leave null if not available
+     * @return FIXME DO IT
+     */
+    public List<IPatternInfo> addPatternsToRegistry(Resource resource, IFile relatedFile) {
+        List<IPatternInfo> resultList = new ArrayList<IPatternInfo>();
+        if (resource != null) {
+            EObject eObject = resource.getContents().get(0);
+            if (eObject instanceof PatternModel) {
+                PatternModel patternModel = (PatternModel) eObject;
+                for (Pattern pattern : patternModel.getPatterns()) {
+                    resultList.add(addPatternToRegistry(pattern, relatedFile));
+                }
+            }
+        }
+        return resultList;
+    }
+
+    private void addPatternToRegistry(IPatternInfo patternInfo) {
         patternInfos.add(patternInfo);
         idToPatternInfoMap.put(patternInfo.getId(), patternInfo);
         IFile relatedFile = patternInfo.getRelatedFile();
