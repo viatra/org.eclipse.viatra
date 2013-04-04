@@ -110,4 +110,21 @@ public class IncSCCPathConstructionTestCase {
 
         assertEquals(expectedPath, incscc.getReachabilityPath(1, 8));
     }
+    
+    @Test
+    public void pathConstructionTest4() {
+        Graph<Integer> testGraph = new Graph<Integer>();
+        IncSCCAlg<Integer> incscc = new IncSCCAlg<Integer>(testGraph);
+        testGraph.insertNode(1);
+        
+        assertNull(incscc.getReachabilityPath(1, 1));
+        
+        testGraph.insertEdge(1, 1);
+        
+        List<Integer> expectedPath = new ArrayList<Integer>();
+        expectedPath.add(1);
+        expectedPath.add(1);
+        
+        assertEquals(expectedPath, incscc.getReachabilityPath(1, 1));
+    }
 }
