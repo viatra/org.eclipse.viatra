@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.base.itc.dred.DRedCompleteGraphTestCase;
 import org.eclipse.incquery.runtime.base.itc.dred.DRedGraphsTestCase;
 import org.eclipse.incquery.runtime.base.itc.incscc.IncSCCCompleteGraphTestCase;
 import org.eclipse.incquery.runtime.base.itc.incscc.IncSCCGraphsTestCase;
+import org.eclipse.incquery.runtime.base.itc.incscc.IncSCCPathConstructionTestCase;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		DFSCompleteGraphTestCase.class, 
 		CountingCompleteGraphTestCase.class,
 		IncSCCGraphsTestCase.class,
-		IncSCCCompleteGraphTestCase.class
+		IncSCCCompleteGraphTestCase.class,
+		IncSCCPathConstructionTestCase.class
 })
 public class TransitiveClosureAlgorithmTestSuite {
 
