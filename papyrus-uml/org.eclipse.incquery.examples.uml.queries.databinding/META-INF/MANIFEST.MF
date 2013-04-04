@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.incquery.examples.uml.queries.databinding
+Bundle-SymbolicName: org.eclipse.incquery.examples.uml.queries.databinding;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Require-Bundle: org.eclipse.incquery.examples.uml.queries,
+ org.eclipse.uml2.uml,
+ org.eclipse.core.databinding.property,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.incquery.databinding.runtime,
+ org.eclipse.incquery.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
