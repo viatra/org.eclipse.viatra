@@ -85,7 +85,7 @@ public class GraphHelper {
 		V act = source;
 
 		// if source and target are the same node
-		if (source.equals(target)) {
+		if (source.equals(target) && graphDataSource.getTargetNodes(source) != null && graphDataSource.getTargetNodes(source).contains(target)) {
 		    //the node will be present in the path two times
 			path.add(source);
 			return path;
