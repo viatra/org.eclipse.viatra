@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Andras Okros, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Andras Okros, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.IMatcherFactoryProvider;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternTypeEnum;
@@ -59,10 +57,9 @@ public class GeneratedPatternSource {
     private static IPatternInfo intializeFromConfigurationElement(IConfigurationElement configurationElement) {
         try {
             String idAttributeInExtension = configurationElement.getAttribute("id");
-            @SuppressWarnings("unchecked")
-            IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>> matcherFactoryProvider = (IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>>) configurationElement
+            IMatcherFactoryProvider<?> matcherFactoryProvider = (IMatcherFactoryProvider<?>) configurationElement
                     .createExecutableExtension("factoryProvider");
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = matcherFactoryProvider.get();
+            IMatcherFactory<?> matcherFactory = matcherFactoryProvider.get();
             String patternFullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
             if (idAttributeInExtension.equals(patternFullyQualifiedName)) {
                 Pattern pattern = matcherFactory.getPattern();

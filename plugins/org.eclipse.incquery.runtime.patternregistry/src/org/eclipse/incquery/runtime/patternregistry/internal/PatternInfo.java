@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Andras Okros, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Andras Okros, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistryUtil;
 import org.eclipse.incquery.runtime.patternregistry.PatternTypeEnum;
@@ -31,7 +29,7 @@ public class PatternInfo implements IPatternInfo {
 
     private final Pattern pattern;
 
-    private final IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory;
+    private final IMatcherFactory<?> matcherFactory;
 
     private final String id;
 
@@ -48,7 +46,7 @@ public class PatternInfo implements IPatternInfo {
     private final List<IPatternInfo> patternDependecies;
 
     public PatternInfo(PatternTypeEnum patternTypeEnum, Pattern pattern, IFile relatedFile,
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory) {
+            IMatcherFactory<?> matcherFactory) {
         super();
         this.patternTypeEnum = patternTypeEnum;
         this.pattern = pattern;
@@ -79,7 +77,7 @@ public class PatternInfo implements IPatternInfo {
     }
 
     @Override
-    public IMatcherFactory<IncQueryMatcher<IPatternMatch>> getMatcherFactory() {
+    public IMatcherFactory<?> getMatcherFactory() {
         return matcherFactory;
     }
 

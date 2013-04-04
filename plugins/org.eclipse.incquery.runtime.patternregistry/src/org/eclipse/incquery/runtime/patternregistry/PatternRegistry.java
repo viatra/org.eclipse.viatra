@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012, Andras Okros, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Andras Okros, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
 
@@ -61,7 +59,6 @@ public enum PatternRegistry {
      *            optional, leave null if not available
      * @return FIXME DO IT
      */
-    @SuppressWarnings("unchecked")
     public IPatternInfo addPatternToRegistry(Pattern pattern, IFile relatedFile) {
         // Returns the PatterInfo if it is already registered
         String id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
@@ -71,8 +68,7 @@ public enum PatternRegistry {
 
         // Create new PatternInfo
         IMatcherFactory<?> matcherFactory = new GenericMatcherFactory(pattern);
-        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile,
-                (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) matcherFactory);
+        PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile, matcherFactory);
         addPatternToRegistry(patternInfo);
 
         return patternInfo;
