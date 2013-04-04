@@ -16,6 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class can be used to wrap an {@link IGraphDataSource} into an {@link IBiDirectionalGraphDataSource}.
+ * This class provides support for the retrieval of source nodes for a given target which is not 
+ * supported by standard {@link IGraphDataSource} implementations. 
+ * 
+ * @author Tamas Szabo
+ *
+ * @param <V> the type parameter of the nodes in the graph data source
+ */
 public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V>, IGraphObserver<V> {
 
     private static final long serialVersionUID = -5771114630390029106L;
@@ -65,7 +74,6 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
 
     @Override
     public void edgeInserted(V source, V target) {
-
         if (backwardEdges.get(target) == null) {
             ArrayList<V> tSet = new ArrayList<V>();
             tSet.add(source);
@@ -73,12 +81,10 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
         } else {
             backwardEdges.get(target).add(source);
         }
-
     }
 
     @Override
     public void edgeDeleted(V source, V target) {
-
         if (backwardEdges.containsKey(target)) {
             backwardEdges.get(target).remove(source);
             if (backwardEdges.get(target).size() == 0)

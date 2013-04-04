@@ -331,6 +331,11 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     public Set<V> getAllReachableSources(V target) {
         return tc.getTupleStarts(target);
     }
+    
+    @Override
+    public List<V> getReachabilityPath(V source, V target) {
+    	throw new UnsupportedOperationException("DRed implementation currently does not support the retrieval of reachability paths!");
+    }
 
     protected void notifyTcObservers(Set<Tuple<V>> tuples, int dir) {
         for (ITcObserver<V> o : observers) {

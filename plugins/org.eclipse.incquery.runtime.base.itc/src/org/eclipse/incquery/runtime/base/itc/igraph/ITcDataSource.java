@@ -11,12 +11,13 @@
 
 package org.eclipse.incquery.runtime.base.itc.igraph;
 
+import java.util.List;
 import java.util.Set;
 
 /**
- * Defines those methods that are necessary to observ a tc relation provider.
+ * This interface defines those methods that a transitive reachability data source should provide. 
  * 
- * @author Tamás Szabó
+ * @author Tamas Szabo
  * 
  * @param <V>
  *            the type parameter of the node
@@ -24,7 +25,7 @@ import java.util.Set;
 public interface ITcDataSource<V> {
 
     /**
-     * Attach a tc relation observer.
+     * Attach a transitive closure relation observer.
      * 
      * @param to
      *            the observer object
@@ -32,7 +33,7 @@ public interface ITcDataSource<V> {
     public void attachObserver(ITcObserver<V> to);
 
     /**
-     * Detach a tc relation observer.
+     * Detach a transitive closure relation observer.
      * 
      * @param to
      *            the observer object
@@ -67,9 +68,25 @@ public interface ITcDataSource<V> {
      * @return true if target is reachable from source, false otherwise
      */
     public boolean isReachable(V source, V target);
-
+    
     /**
-     * Call this method to properly dispose the data strucutres of a transitive closure algorithm.
+     * Returns a reachability path between the given tuple, or null if no such transitive reachability is present in the graph.  
+     * The returned {@link List} contains the nodes along the path 
+     * (this means that there is an edge in the graph between two consecutive nodes).
+     * A self loop (one edge) is indicated with the source node being present two times in the returned {@link List}.
+     * <br/>
+     * <br/>
+     * Note that the paths are not maintained incrementally and in worst case the complexity of the path construction is O(|V|+|E|) 
+     * (one depth-first graph traversal). There is no guarantee that the given path is the shortest one between the given two nodes. 
+     * 
+     * @param source the source node
+     * @param target the target node
+     * @return a path between the nodes, or null if target is not reachable from source
+     */
+    public List<V> getReachabilityPath(V source, V target);    
+    
+    /**
+     * Call this method to properly dispose the data structures of a transitive closure algorithm.
      */
     public void dispose();
 }

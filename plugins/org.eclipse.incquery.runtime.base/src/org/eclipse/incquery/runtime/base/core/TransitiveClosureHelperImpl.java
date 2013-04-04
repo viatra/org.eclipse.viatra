@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.base.core;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -143,5 +144,10 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
 	@Override
 	public void instanceDeleted(EClass clazz, EObject instance) {
 		this.dataSource.notifyNodeDeleted(instance);
+	}
+
+	@Override
+	public List<EObject> getReachabilityPath(EObject source, EObject target) {
+		return this.sccAlg.getReachabilityPath(source, target);
 	}
 }

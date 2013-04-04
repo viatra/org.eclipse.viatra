@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.base.itc.alg.incscc.CollectionHelper;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.GraphHelper;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.ITcRelation;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalWrapper;
@@ -213,6 +215,19 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             sources.addAll(tc.getTupleStarts(target));
         }
         return sources;
+    }
+    
+    @Override
+    public List<V> getReachabilityPath(V source, V target) {
+    	if (!isReachable(source, target)) {
+    		return null;
+    	}
+    	else {
+    		Set<V> nodesInSubGraph = CollectionHelper.intersection(this.getAllReachableSources(target), this.getAllReachableTargets(source));
+    		nodesInSubGraph.add(source);
+    		nodesInSubGraph.add(target); 
+    		return GraphHelper.constructPath(source, target, nodesInSubGraph, gds);
+    	}
     }
 
     private void notifyTcObservers(V source, V target, int dir) {

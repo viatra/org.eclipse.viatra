@@ -12,10 +12,8 @@
 package org.eclipse.incquery.runtime.base.itc.alg.misc.bfs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
@@ -38,35 +36,33 @@ public class BFS<V> {
      */
     public static <V> boolean isReachable(V source, V target, IGraphDataSource<V> graph) {
         List<V> nodeQueue = new ArrayList<V>();
-        Map<V, Boolean> visited = new HashMap<V, Boolean>();
+        Set<V> visited = new HashSet<V>();
 
         nodeQueue.add(source);
-        visited.put(source, true);
+        visited.add(source);
 
         boolean ret = _isReachable(target, graph, nodeQueue, visited);
         return ret;
     }
 
     private static <V> boolean _isReachable(V target, IGraphDataSource<V> graph, List<V> nodeQueue,
-            Map<V, Boolean> visited) {
+            Set<V> visited) {
 
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
             List<V> targets = graph.getTargetNodes(node);
             if (targets != null) {
-                for (V _node : targets) {
-
-                    if (_node.equals(target))
+                for (V t : targets) {
+                    if (t.equals(target)) {
                         return true;
-
-                    if (visited.get(_node) == null) {
-                        visited.put(_node, true);
-                        nodeQueue.add(_node);
+                    }
+                    if (!visited.contains(t)) {
+                        visited.add(t);
+                        nodeQueue.add(t);
                     }
                 }
             }
         }
-
         return false;
     }
 

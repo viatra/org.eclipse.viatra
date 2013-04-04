@@ -52,11 +52,9 @@ public interface IGraphDataSource<V> extends Serializable {
     public Set<V> getAllNodes();
 
     /**
-     * Get those nodes that are the target of an edge starting with source. The list is necessary because there can be
-     * more edges between two nodes. If no such edge can be found than the method returns null.
+     * Get those nodes that are the target of an edge starting with source. List is returned as multiple edges may be present. 
      * 
-     * @param source
-     *            the source node
+     * @param source the source node
      * @return the list of target nodes or null if no targets can be found
      */
     public List<V> getTargetNodes(V source);
