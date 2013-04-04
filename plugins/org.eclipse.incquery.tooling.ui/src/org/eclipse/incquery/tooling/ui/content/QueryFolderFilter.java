@@ -12,7 +12,6 @@
 package org.eclipse.incquery.tooling.ui.content;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.incquery.tooling.core.project.IncQueryNature;
@@ -25,14 +24,10 @@ public class QueryFolderFilter extends ViewerFilter {
     public boolean select(Viewer viewer, Object parentElement, Object element) {
         try {
             // Filter only active on IncQuery projects
-            if (parentElement instanceof IProject) {
-                IProject project = (IProject) parentElement;
-                if (project.hasNature(IncQueryNature.NATURE_ID))
-                    return true;
-            }
             if (element instanceof IFolder) {
                 IFolder folder = (IFolder) element;
-                if (XmiModelUtil.XMI_OUTPUT_FOLDER.equals(folder.getName())) {
+                if (folder.getProject().hasNature(IncQueryNature.NATURE_ID)
+                        && XmiModelUtil.XMI_OUTPUT_FOLDER.equals(folder.getName())) {
                     return false;
                 }
             }
