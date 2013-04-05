@@ -43,7 +43,7 @@ public class ResourceChangeListener implements IResourceChangeListener {
                     if (resource instanceof IFile) {
                         IFile file = (IFile) resource;
                         List<IPatternInfo> relatedIPatternInfoList = PatternRegistry.INSTANCE
-                                .getFileToPatternInfoList(file);
+                                .getPatternInfosByFile(file);
                         if (!relatedIPatternInfoList.isEmpty()) {
                             if (delta.getKind() == IResourceDelta.CHANGED) {
                                 for (IPatternInfo patternInfo : relatedIPatternInfoList) {

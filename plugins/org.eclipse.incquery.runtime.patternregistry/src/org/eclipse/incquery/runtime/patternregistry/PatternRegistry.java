@@ -19,14 +19,13 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.GenericMatcherFactory;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * FIXME DO IT
@@ -41,16 +40,64 @@ public enum PatternRegistry {
 
     private final Map<String, IPatternInfo> idToPatternInfoMap = new HashMap<String, IPatternInfo>();
 
-    private final Map<IFile, List<IPatternInfo>> fileToPatternInfoMap = new HashMap<IFile, List<IPatternInfo>>();
-
     private PatternRegistry() {
         for (IPatternInfo patternInfo : GeneratedPatternSource.initializeRegisteredPatterns()) {
             addPatternToRegistry(patternInfo);
         }
     }
 
-    public List<IPatternInfo> getAllPatternInfosInAspect() {
+    /**
+     * @return FIXME DO IT
+     */
+    public List<IPatternInfo> getAllPatternInfos() {
         return Collections.unmodifiableList(patternInfos);
+    }
+
+    /**
+     * @param file
+     * @return FIXME DO IT
+     */
+    public List<IPatternInfo> getPatternInfosByFile(IFile file) {
+        List<IPatternInfo> resultList = new ArrayList<IPatternInfo>();
+        if (file != null) {
+            for (IPatternInfo patternInfo : patternInfos) {
+                if (file.equals(patternInfo.getRelatedFile())) {
+                    resultList.add(patternInfo);
+                }
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * @param nameOfAnnotation
+     * @return FIXME DO IT
+     */
+    public List<IPatternInfo> getPatternInfosByAnnotation(String nameOfAnnotation) {
+        List<IPatternInfo> resultList = new ArrayList<IPatternInfo>();
+        if (nameOfAnnotation != null) {
+            for (IPatternInfo patternInfo : patternInfos) {
+                for (Annotation annotation : patternInfo.getAnnotations()) {
+                    if (nameOfAnnotation.equals(annotation.getName())) {
+                        resultList.add(patternInfo);
+                        break;
+                    }
+                }
+            }
+        }
+        return resultList;
+    }
+
+    public List<IPatternInfo> getPatternInfosByFQN(String fqn) {
+        List<IPatternInfo> resultList = new ArrayList<IPatternInfo>();
+        if (fqn != null) {
+            for (IPatternInfo patternInfo : patternInfos) {
+                if (fqn.equals(patternInfo.getFqn())) {
+                    resultList.add(patternInfo);
+                }
+            }
+        }
+        return resultList;
     }
 
     /**
@@ -97,17 +144,6 @@ public enum PatternRegistry {
     private void addPatternToRegistry(IPatternInfo patternInfo) {
         patternInfos.add(patternInfo);
         idToPatternInfoMap.put(patternInfo.getId(), patternInfo);
-        IFile relatedFile = patternInfo.getRelatedFile();
-        if (relatedFile != null) {
-            List<IPatternInfo> relatedIPatternInfoList;
-            if (fileToPatternInfoMap.containsKey(relatedFile)) {
-                relatedIPatternInfoList = fileToPatternInfoMap.get(relatedFile);
-            } else {
-                relatedIPatternInfoList = new ArrayList<IPatternInfo>();
-                fileToPatternInfoMap.put(relatedFile, relatedIPatternInfoList);
-            }
-            relatedIPatternInfoList.add(patternInfo);
-        }
         for (IPatternRegistryListener patternRegistryListener : listeners) {
             patternRegistryListener.patternAdded(patternInfo);
             patternRegistryListener.patternActivated(patternInfo);
@@ -127,11 +163,6 @@ public enum PatternRegistry {
         if (idToPatternInfoMap.containsKey(id)) {
             patternInfos.remove(patternInfo);
             idToPatternInfoMap.remove(id);
-            IFile relatedFile = patternInfo.getRelatedFile();
-            if (relatedFile != null && fileToPatternInfoMap.containsKey(relatedFile)) {
-                List<IPatternInfo> relatedIPatternInfoList = fileToPatternInfoMap.get(relatedFile);
-                relatedIPatternInfoList.remove(patternInfo);
-            }
             for (IPatternRegistryListener patternRegistryListener : listeners) {
                 patternRegistryListener.patternDeactivated(patternInfo);
                 patternRegistryListener.patternRemoved(patternInfo);
@@ -149,14 +180,6 @@ public enum PatternRegistry {
 
     public void unregisterListener(IPatternRegistryListener patternRegistryListener) {
         listeners.remove(patternRegistryListener);
-    }
-
-    public List<IPatternInfo> getFileToPatternInfoList(IFile file) {
-        if (fileToPatternInfoMap.containsKey(file)) {
-            return ImmutableList.copyOf(fileToPatternInfoMap.get(file));
-        } else {
-            return new ArrayList<IPatternInfo>();
-        }
     }
 
 }

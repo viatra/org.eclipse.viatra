@@ -28,7 +28,7 @@ public class PatternRegistryTreeContentProvider implements ITreeContentProvider 
 
     @Override
     public Object[] getElements(Object inputElement) {
-        return PatternRegistry.INSTANCE.getAllPatternInfosInAspect().toArray();
+        return PatternRegistry.INSTANCE.getAllPatternInfos().toArray();
     }
 
     @Override
