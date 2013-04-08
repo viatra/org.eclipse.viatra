@@ -1,4 +1,4 @@
-package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
+package org.eclipse.incquery.viewers.tooling.ui.zest.views.tabs;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -6,6 +6,7 @@ import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers;
+import org.eclipse.incquery.viewers.tooling.ui.views.tabs.AbstractViewerSandboxTab;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

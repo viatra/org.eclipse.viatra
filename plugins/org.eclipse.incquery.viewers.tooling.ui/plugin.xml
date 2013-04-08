@@ -70,9 +70,6 @@
       <tab
       		implementation="org.eclipse.incquery.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
       </tab>
-      <tab
-      		implementation="org.eclipse.incquery.viewers.tooling.ui.views.tabs.ZestGraphViewerSandboxTab">
-      </tab>      
    </extension>
 
 </plugin>
