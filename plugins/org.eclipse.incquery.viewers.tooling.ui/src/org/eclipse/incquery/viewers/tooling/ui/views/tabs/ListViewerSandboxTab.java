@@ -18,9 +18,6 @@ public class ListViewerSandboxTab extends AbstractViewerSandboxTab {
 
     @Override
     protected StructuredViewer getViewer() {
-        if (viewer == null || viewer.getControl().isDisposed()) {
-            throw new IllegalStateException("Sandbox tab not available");
-        }
         return viewer;
     }
 
