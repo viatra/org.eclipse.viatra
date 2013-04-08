@@ -35,6 +35,10 @@
          id="org.eclipse.incquery.querybasedfeatures.tooling.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.incquery.viewers.tooling.ui.feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.incquery.tooling.core"
          download-size="0"
