@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Istvan Rath - initial API and implementation
+ *   Zoltan Ujhelyi - viewer tab extension support
  *******************************************************************************/
 
 package org.eclipse.incquery.viewers.tooling.ui.views;
@@ -15,53 +16,46 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
-import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
-import org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers;
+import org.eclipse.incquery.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
-public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPart, ISelectionProvider {
+import com.google.common.collect.Lists;
+
+/**
+ * Implementation of the Viewer Sandbox view. It supports displaying models based on the
+ * {@value #SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
+ * 
+ */
+public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     public static final String ID = "org.eclipse.incquery.viewers.tooling.ui.sandbox";
+    public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.incquery.viewers.tooling.ui.viewersandboxtab";
 
-    private ISelection iSelection;
-    private List<ISelectionChangedListener> iSelectionChangedListeners = new ArrayList<ISelectionChangedListener>();
-    private ISelectionChangedListener selectionChangedListener;
-
-    private ListViewer listViewer;
-    private TreeViewer treeViewer;
-    private GraphViewer zestviewer;
-    private ResourceSet resourceSet;
+    private List<IViewerSandboxTab> tabList;
+    private CTabFolder folder;
 
     public static ViewerSandboxView getInstance() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -71,55 +65,43 @@ public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPar
         return null;
     }
 
-    @Override
-    public AbstractZoomableViewer getZoomableViewer() {
-        return zestviewer;
+    public void initializeTabList() {
+        tabList = Lists.newArrayList();
+        IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(
+                SANDBOX_TAB_EXTENSION_ID);
+        for (IConfigurationElement provider : providers) {
+            IViewerSandboxTab tab;
+            try {
+                tab = (IViewerSandboxTab) provider.createExecutableExtension("implementation");
+                tabList.add(tab);
+            } catch (CoreException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void createPartControl(Composite parent) {
-        CTabFolder folder = new CTabFolder(parent, SWT.TOP);
+        initializeTabList();
 
-        selectionChangedListener = new ISelectionChangedListener() {
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                if (event.getSelection().isEmpty()) {
-                    System.out.println("Nothing selected!");
-                    return;
-                }
-                setSelection(event.getSelection());
-            }
-        };
-        // List Viewer
-        CTabItem listTab = new CTabItem(folder, SWT.NONE);
-        listTab.setText("List");
+        folder = new CTabFolder(parent, SWT.TOP);
+
+        for (IViewerSandboxTab tab : tabList) {
+            tab.createPartControl(folder);
+        }
+
         folder.setSelection(0);
-        listViewer = new ListViewer(folder);
-        listTab.setControl(listViewer.getControl());
-        // Tree Viewer
-        CTabItem treeTab = new CTabItem(folder, SWT.NONE);
-        treeTab.setText("Tree");
-        treeViewer = new TreeViewer(folder);
-        treeTab.setControl(treeViewer.getControl());
-        // Graph Viewer
-        CTabItem zestTab = new CTabItem(folder, SWT.NONE);
-        zestTab.setText("Graph");
-        zestviewer = new GraphViewer(folder, SWT.NONE);
-        zestTab.setControl(zestviewer.getControl());
 
-        zestviewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-        LayoutAlgorithm layout = new TreeLayoutAlgorithm(TreeLayoutAlgorithm.BOTTOM_UP);
-        zestviewer.setLayoutAlgorithm(layout, true);
-
-        zestviewer.addSelectionChangedListener(selectionChangedListener);
         fillToolBar();
         getSite().setSelectionProvider(this);
     }
 
     @Override
     public void setFocus() {
-        if (zestviewer != null) {
-            zestviewer.getControl().setFocus();
+        // TODO implement setFocus correctly
+        if (!tabList.isEmpty()) {
+            tabList.get(0).setFocus();
         }
     }
 
@@ -136,47 +118,50 @@ public class ViewerSandboxView extends ViewPart implements IZoomableWorkbenchPar
     }
 
     private void fillToolBar() {
-        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
-        IActionBars bars = getViewSite().getActionBars();
-        bars.getMenuManager().add(toolbarZoomContributionViewItem);
+        // TODO add back zoom menu contribution for Zest graphs
+        // ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
+        // IActionBars bars = getViewSite().getActionBars();
+        // bars.getMenuManager().add(toolbarZoomContributionViewItem);
     }
 
     @Override
     public void setSelection(ISelection selection) {
-        iSelection = selection;
-        for (ISelectionChangedListener listener : iSelectionChangedListeners) {
-            listener.selectionChanged(new SelectionChangedEvent(this, selection));
+        for (IViewerSandboxTab tab : tabList) {
+            tab.setSelection(selection);
+        }
+    }
+
+
+    @Override
+    public ISelection getSelection() {
+        if (folder.getSelectionIndex() != -1) {
+            return tabList.get(folder.getSelectionIndex()).getSelection();
+        } else {
+            return StructuredSelection.EMPTY;
+        }
+    }
+
+
+    @Override
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        for (IViewerSandboxTab tab : tabList) {
+            tab.addSelectionChangedListener(listener);
         }
     }
 
     @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-        iSelectionChangedListeners.remove(listener);
-    }
-
-    @Override
-    public ISelection getSelection() {
-        return iSelection;
-    }
-
-    @Override
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        iSelectionChangedListeners.add(listener);
+        for (IViewerSandboxTab tab : tabList) {
+            tab.removeSelectionChangedListener(listener);
+        }
     }
 
     public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns) throws IncQueryException {
-        this.resourceSet = resourceSet;
-        if (this.resourceSet != null) {
-            // String[] annotations = { Item.ANNOTATION_ID, Edge.ANNOTATION_ID };
-            // ArrayList<Pattern> _patterns = new ArrayList<Pattern>();
-            // for (String annotation : annotations) {
-            // patterns.addAll(PatternRegistry.getInstance().getPatternsWithAnnotation(annotation));
-            // }
-
+        if (resourceSet != null) {
             ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns));
-            IncQueryViewerSupport.bind(listViewer, viewmodel);
-            IncQueryViewerSupport.bind(treeViewer, viewmodel);
-            IncQueryGraphViewers.bind(zestviewer, viewmodel);
+            for (IViewerSandboxTab tab : tabList) {
+                tab.bindModel(viewmodel);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="viewersandboxtab" name="Viewer Sandbox Tab" schema="schema/viewersandboxtab.exsd"/>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -60,6 +61,18 @@
             </with>
          </enabledWhen>
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.incquery.viewers.tooling.ui.viewersandboxtab">
+      <tab
+            implementation="org.eclipse.incquery.viewers.tooling.ui.views.tabs.ListViewerSandboxTab">
+      </tab>
+      <tab
+      		implementation="org.eclipse.incquery.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
+      </tab>
+      <tab
+      		implementation="org.eclipse.incquery.viewers.tooling.ui.views.tabs.ZestGraphViewerSandboxTab">
+      </tab>      
    </extension>
 
 </plugin>
