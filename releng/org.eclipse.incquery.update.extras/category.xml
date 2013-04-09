@@ -27,6 +27,9 @@
    <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.source" version="0.7.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.feature" version="0.7.0.qualifier">
+      <category name="org.eclipse.incquery"/>
+   </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
    <category-def name="org.eclipse.incquery.sources" label="EMF-IncQuery Sources"/>
 </site>
