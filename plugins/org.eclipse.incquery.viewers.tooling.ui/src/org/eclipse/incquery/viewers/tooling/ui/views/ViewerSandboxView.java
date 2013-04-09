@@ -22,12 +22,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.viewers.runtime.model.Edge;
-import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewersAnnotatedPatternTester;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -168,10 +167,8 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     private static Collection<Pattern> getPatternsWithProperAnnotations(Collection<Pattern> input) {
         ArrayList<Pattern> res = new ArrayList<Pattern>();
         for (Pattern p : input) {
-            for (Annotation a : p.getAnnotations()) {
-                if (Item.ANNOTATION_ID.equals(a.getName()) || Edge.ANNOTATION_ID.equals(a.getName())) {
-                    res.add(p);
-                }
+            if (Iterables.any(p.getAnnotations(), new ViewersAnnotatedPatternTester())) {
+                res.add(p);
             }
         }
         return res;
