@@ -77,4 +77,22 @@ public abstract class BasePatternMatch implements IPatternMatch {
         return "Match<" + patternName() + ">{" + prettyPrint() + "}";
     }
     
+    @Override
+    public boolean isCompatibleWith(IPatternMatch other) {
+        if(other == null) {
+            return true;
+        }
+        // we assume that the pattern is set for this match!
+        if(pattern().equals(other.pattern())) {
+            return false;
+        }
+        for (int i = 0; i < parameterNames().length; i++) {
+            Object value = get(i);
+            Object otherValue = other.get(i);
+            if(value != null && otherValue != null && !value.equals(otherValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

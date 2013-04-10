@@ -80,4 +80,24 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
 
     /** Prints the list of parameter-value pairs. */
     public String prettyPrint();
+    
+    /**
+     * Checks that this match is compatible with the given other match.
+     * This is used for filtering the match set of a matcher.
+     * 
+     * <p/> Two non-null matches are compatible if and only if:
+     * <ul>
+     *   <li>They share the same pattern.</li>
+     *   <li>For each parameter, where they are set (non-null) in both matches,
+     *    their values are equal.</li>
+     *   </li>  
+     * </ul>
+     * 
+     * <p/> Furthermore, all matches are considered compatible with
+     *  null matches (e.g. empty filter).
+     * 
+     * @param other
+     * @return true, if this is compatible with other, or other is null
+     */
+    public boolean isCompatibleWith(IPatternMatch other);
 }
