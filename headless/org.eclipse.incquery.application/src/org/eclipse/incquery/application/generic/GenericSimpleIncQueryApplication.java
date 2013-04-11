@@ -70,8 +70,10 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 			return IApplication.EXIT_OK;
 		}
 
-		System.out.println(new IncQueryHeadlessAdvanced().executeDemo_GenericAPI(model, patternFQN));
-
+		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
+		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
+		System.out.println(hla.executeTrackChangesDemo_Advanced(model, patternFQN));
+		
 		return IApplication.EXIT_OK;
 	}
 
@@ -81,13 +83,9 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
-	}
+	public void stop() {}
 
 	private void displayHelp() {
-		System.out.println(
-						"Usage:\n<call> -m <modelFilePAth> -p <patternFQN>\n  -m    :  Required, the model to match on.\n  -m    :  Required, the pattern to match");
+		System.out.println("Usage:\n<call> -m <modelFilePAth> -p <patternFQN>\n  -m    :  Required, the model to match on.\n  -m    :  Required, the pattern to match");
 	}
 }

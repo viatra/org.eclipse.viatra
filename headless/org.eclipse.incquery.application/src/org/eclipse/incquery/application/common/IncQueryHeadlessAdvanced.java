@@ -12,15 +12,12 @@
 package org.eclipse.incquery.application.common;
 
 
-import headless.epackage.EPackageMatch;
-import headless.epackage.EPackageMatcher;
-import headless.epackage.EPackageProcessor;
 
 import java.util.Collection;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -51,13 +48,24 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		if (resource != null) {
 			try {
 				// get all matches of the pattern
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				// create an *unmanaged* engine to ensure that noone else is going
+				// to use our engine
+				IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
+				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				IncQueryMatcher matcher = MatcherFactoryRegistry.getMatcherFactory(patternFQN).getMatcher(engine);
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				if (matcher!=null) {
 					Collection<IPatternMatch> matches = matcher.getAllMatches();
 					prettyPrintMatches(results, matches);
 				}
+				// wipe the engine
+				engine.wipe();
+				// after a wipe, new patterns can be rebuilt with much less overhead than 
+				// complete traversal (as the base indexes will be kept)
+				
+				// completely dispose of the engine once's it is not needed
+				engine.dispose();
+				resource.unload();
 			} catch (IncQueryException e) {
 				e.printStackTrace();
 				results.append(e.getMessage());
@@ -73,7 +81,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 	// incrementally track changes
 	
 	
-	public String executeTrackChangesDemo_Advanced(String modelPath)
+	public String executeTrackChangesDemo_Advanced(String modelPath, String patternFQN)
 	{
 		final StringBuilder results = new StringBuilder();
 		Resource resource = loadModel(modelPath);
@@ -83,12 +91,13 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				// phase 1: (managed) IncQueryEngine
 				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
 				// phase 2: pattern matcher for packages
-				EPackageMatcher matcher = new EPackageMatcher(engine);
-				matcher.forEachMatch(new EPackageProcessor() {
+				IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) MatcherFactoryRegistry.getMatcherFactory(patternFQN).getMatcher(engine);
+				matcher.forEachMatch(new IMatchProcessor<IPatternMatch>() {
 					@Override
-					public void process(EPackage p) {
-						results.append("\tEPackage before modification: " + p.getName()+"\n");
+					public void process(IPatternMatch match) {
+						results.append("\tMatch before modification: " + match.prettyPrint()+"\n");
 					}
+					
 				});
 				// phase 3: prepare for change processing
 				changeProcessing_lowlevel(results, matcher);
@@ -106,7 +115,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		return results.toString();
 	}
 
-	private void changeProcessing_lowlevel(final StringBuilder results, EPackageMatcher matcher) {
+	private void changeProcessing_lowlevel(final StringBuilder results, IncQueryMatcher<IPatternMatch> matcher) {
 		// (+) these update callbacks are called whenever there is an actual change in the
 		// result set of the pattern you are interested in. Hence, they are called fewer times
 		// than the "afterUpdates" option, giving better performance.
@@ -114,20 +123,20 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		// state (i.e. when the update propagation is settled), hence
 		//  * you must not invoke pattern matching and model manipulation _inside_ the callback method
 		//  * the callbacks might encounter "hazards", i.e. when an appearance is followed immediately by a disappearance.
-		matcher.addCallbackOnMatchUpdate(new IMatchUpdateListener<EPackageMatch>() {
+		matcher.addCallbackOnMatchUpdate(new IMatchUpdateListener<IPatternMatch>() {
 			@Override
-			public void notifyDisappearance(EPackageMatch match) {
+			public void notifyDisappearance(IPatternMatch match) {
 				// left empty
 			}
 			@Override
-			public void notifyAppearance(EPackageMatch match) {
-				results.append("\tNew EPackage found by changeset low level callback: " + match.getP().getName()+"\n");
+			public void notifyAppearance(IPatternMatch match) {
+				results.append("\tNew match found by changeset low level callback: " + match.prettyPrint()+"\n");
 			}
 		}, false);
 	}
 	
-	private void changeProcessing_deltaMonitor(final StringBuilder results, EPackageMatcher matcher) {
-		final DeltaMonitor<EPackageMatch> dm = matcher.newDeltaMonitor(false);
+	private void changeProcessing_deltaMonitor(final StringBuilder results, IncQueryMatcher<IPatternMatch> matcher) {
+		final DeltaMonitor<IPatternMatch> dm = matcher.newDeltaMonitor(false);
 		// (+) these updates are guaranteed to be called in a *consistent* state,
 		// i.e. when the pattern matcher is guaranteed to be consistent with the model
 		// anything can be written into the callback method
@@ -138,10 +147,10 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		matcher.addCallbackAfterUpdates(new Runnable() {
 			@Override
 			public void run() {
-				for (EPackageMatch newMatch : dm.matchFoundEvents) {
-					results.append("\tNew EPackage found by changeset delta monitor: " + newMatch.getP().getName()+"\n");
+				for (IPatternMatch newMatch : dm.matchFoundEvents) {
+					results.append("\tNew match found by changeset delta monitor: " + newMatch.prettyPrint()+"\n");
 				}
-				for (EPackageMatch lostMatch : dm.matchLostEvents) {
+				for (IPatternMatch lostMatch : dm.matchLostEvents) {
 					// left empty
 				}
 			}

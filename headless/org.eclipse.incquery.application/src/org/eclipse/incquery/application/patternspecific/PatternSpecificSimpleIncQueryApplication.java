@@ -67,8 +67,7 @@ public class PatternSpecificSimpleIncQueryApplication implements IApplication {
 		System.out.println(hl.executeDemo_PatternGroups(model));
 		System.out.println(hl.executeTrackChangesDemo(model));
 		
-		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
-		System.out.println(hla.executeTrackChangesDemo_Advanced(model));
+		
 		
 		return IApplication.EXIT_OK;
 	}
