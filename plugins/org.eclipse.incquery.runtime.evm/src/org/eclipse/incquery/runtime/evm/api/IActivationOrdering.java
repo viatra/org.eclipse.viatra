@@ -17,14 +17,13 @@ import java.util.Set;
  * @author Abel Hegedus
  *
  */
-public interface IActivationOrdering {
+public interface IActivationOrdering<ActivationContainer> {
 
-    /**
-     * The returned set can be linked to the ordering in some way
-     * 
-     * @return
-     */
-    Set<Activation<?>> createActivationContainer();
+    ActivationContainer createActivationContainer();
     
-    boolean removeActivationOnChange();
+    Set<Activation<?>> getActivations(ActivationContainer container);
+    
+    boolean addActivationToContainer(ActivationContainer container, Activation<?> activation);
+    
+    boolean removeActivationFromContainer(ActivationContainer container, Activation<?> activation);
 }

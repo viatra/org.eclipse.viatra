@@ -270,29 +270,5 @@ public class RuleBase {
 //        }
 //    }
 
-//    /**
-//     * Allows the setting of a comparator to be used for ordering activations.
-//     * 
-//     * @param activationComparator
-//     */
-//    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
-//        checkNotNull(activationComparator, "Comparator cannot be null!");
-//        this.activationComparator = activationComparator;
-//        TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
-//                activationComparator);
-//        newActivations.putAll(activations);
-//        activations = newActivations;
-//
-//        TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
-//        newEnabledActivations.addAll(enabledActivations);
-//        enabledActivations = newEnabledActivations;
-//    }
-//    
-//    /**
-//     * @return the activationComparator
-//     */
-//    public Comparator<Activation<?>> getActivationComparator() {
-//        return activationComparator;
-//    }
 
 }

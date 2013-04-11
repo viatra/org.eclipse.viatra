@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
  * @author Abel Hegedus
  *
  */
-public class ArbitraryActivationOrdering implements IActivationOrdering {
+public class ArbitraryActivationOrdering implements IActivationOrdering<Set<Activation<?>>> {
 
     @Override
     public Set<Activation<?>> createActivationContainer() {
@@ -29,10 +29,18 @@ public class ArbitraryActivationOrdering implements IActivationOrdering {
     }
 
     @Override
-    public boolean removeActivationOnChange() {
-        return false;
+    public Set<Activation<?>> getActivations(Set<Activation<?>> container) {
+        return container;
     }
 
-    
+    @Override
+    public boolean addActivationToContainer(Set<Activation<?>> container, Activation<?> activation) {
+        return container.add(activation);
+    }
+
+    @Override
+    public boolean removeActivationFromContainer(Set<Activation<?>> container, Activation<?> activation) {
+        return container.remove(activation);
+    }
     
 }

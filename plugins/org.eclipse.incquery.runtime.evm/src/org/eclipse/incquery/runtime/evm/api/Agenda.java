@@ -11,13 +11,19 @@
 package org.eclipse.incquery.runtime.evm.api;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * Sole purpose is the management all and ordering of enabled activations!
@@ -42,9 +48,6 @@ public class Agenda {
             ruleBase.getIncQueryEngine().getLogger().debug(
                     String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
             getActivations().remove(oldState, activation);
-            if(removeOnChange) {
-                getEnabledActivations().remove(activation);
-            }
             ActivationState state = activation.getState();
             switch (state) {
             case INACTIVE:
@@ -63,29 +66,29 @@ public class Agenda {
     }
 
     
-    private final Multimap<ActivationState, Activation<?>> activations;
+    private Multimap<ActivationState, Activation<?>> activations;
+    //private IActivationOrdering<?> activationOrdering;
+    //private Object activationContainer;
     private Set<Activation<?>> enabledActivations;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
-    private boolean removeOnChange;
+    private Comparator<Activation<?>> activationComparator;
     
     /**
      * 
      */
-    public Agenda(RuleBase ruleBase, IActivationOrdering activationOrdering) {
+    public Agenda(RuleBase ruleBase, IActivationOrdering<?> activationOrdering) {
         this.ruleBase = ruleBase;
         activations = HashMultimap.create();
-        this.removeOnChange = activationOrdering.removeActivationOnChange();
-        this.enabledActivations = activationOrdering.createActivationContainer();
+        this.enabledActivations = Sets.newHashSet();
+        //this.activationOrdering = activationOrdering;
+        //this.activationContainer = activationOrdering.createActivationContainer();
         this.activationListener = new DefaultActivationNotificationListener();
     }
     
-    public void setActivationOrdering(IActivationOrdering activationOrdering) {
-        Set<Activation<?>> set = activationOrdering.createActivationContainer();
-        removeOnChange = activationOrdering.removeActivationOnChange();
-        set.addAll(enabledActivations);
-        enabledActivations = set;
-    }
+//    public void setActivationOrdering(IActivationOrdering<?> activationOrdering) {
+//        this.activationOrdering = activationOrdering;
+//    }
 
     /**
      * @return the activations
@@ -116,6 +119,7 @@ public class Agenda {
      * @return the enabledActivations
      */
     public Set<Activation<?>> getEnabledActivations() {
+//        return activationOrdering.getActivations(activationContainer);
         return enabledActivations;
     }
 
@@ -126,4 +130,28 @@ public class Agenda {
         return activationListener;
     }
     
+    /**
+     * Allows the setting of a comparator to be used for ordering activations.
+     * 
+     * @param activationComparator
+     */
+    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
+        Preconditions.checkNotNull(activationComparator, "Comparator cannot be null!");
+        this.activationComparator = activationComparator;
+        TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
+                activationComparator);
+        newActivations.putAll(activations);
+        activations = newActivations;
+
+        TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
+        newEnabledActivations.addAll(enabledActivations);
+        enabledActivations = newEnabledActivations;
+    }
+
+    /**
+     * @return the activationComparator
+     */
+    public Comparator<Activation<?>> getActivationComparator() {
+        return activationComparator;
+    }
 }

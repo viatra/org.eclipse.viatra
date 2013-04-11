@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.evm.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Set;
 
@@ -67,19 +68,19 @@ public class RuleEngine {
         return ruleBase;
     }
     
-//    public void setActivationComparator(Comparator<Activation<?>> comparator) {
-//        checkNotNull(comparator, "Comparator cannot be null!");
-//        ruleBase.setActivationComparator(comparator);
-//    }
-//    
-//    public Comparator<Activation<?>> getActivationComparator() {
-//        return ruleBase.getActivationComparator();
-//    }
-
-    public void setActivationOrdering(IActivationOrdering activationOrdering) {
-        checkNotNull(activationOrdering, "Activation ordering cannot be null!");
-        ruleBase.getAgenda().setActivationOrdering(activationOrdering);
+    public void setActivationComparator(Comparator<Activation<?>> comparator) {
+        checkNotNull(comparator, "Comparator cannot be null!");
+        ruleBase.getAgenda().setActivationComparator(comparator);
     }
+    
+    public Comparator<Activation<?>> getActivationComparator() {
+        return ruleBase.getAgenda().getActivationComparator();
+    }
+
+//    public void setActivationOrdering(IActivationOrdering<?> activationOrdering) {
+//        checkNotNull(activationOrdering, "Activation ordering cannot be null!");
+//        ruleBase.getAgenda().setActivationOrdering(activationOrdering);
+//    }
     
     /**
      * 
