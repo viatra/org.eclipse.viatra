@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 /**
- * The executor is responsible for firing enabled activations of its agenda,
+ * The executor is responsible for firing enabled activations of its ruleBase,
  * when its scheduler notifies it. The executor also manages a context that
  * is passed to activations.
  * 
@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
  */
 public class Executor {
 
-    private Agenda agenda;
+    private RuleBase ruleBase;
     private Context context;
     private boolean scheduling = false;
     private final String startMessage = "Executing started in " + this;
@@ -55,7 +55,7 @@ public class Executor {
      */
     protected Executor(final IncQueryEngine engine, final Context context) {
         this.context = checkNotNull(context, "Cannot create trigger engine with null context!");
-        agenda = new Agenda(engine);
+        ruleBase = new RuleBase(engine);
     }
 
     /**
@@ -74,10 +74,10 @@ public class Executor {
             return;
         }
         
-        Set<Activation<?>> enabledActivations = agenda.getEnabledActivations();
+        Set<Activation<?>> enabledActivations = ruleBase.getAgenda().getEnabledActivations();
         while(!enabledActivations.isEmpty()) {
             Activation<?> activation = enabledActivations.iterator().next();
-            agenda.getIncQueryEngine().getLogger().debug("Executing: " + activation + " in " + this);
+            ruleBase.getIncQueryEngine().getLogger().debug("Executing: " + activation + " in " + this);
             activation.fire(context);
         }
         
@@ -95,11 +95,11 @@ public class Executor {
      */
     protected synchronized boolean startScheduling() {
         if(scheduling) {
-            agenda.getIncQueryEngine().getLogger().debug(reentrantMessage);
+            ruleBase.getIncQueryEngine().getLogger().debug(reentrantMessage);
             return false;
         } else {
             scheduling = true;
-            agenda.getIncQueryEngine().getLogger().debug(startMessage);
+            ruleBase.getIncQueryEngine().getLogger().debug(startMessage);
             return true;
         }
     }
@@ -110,15 +110,15 @@ public class Executor {
      * state is set to false.
      */
     protected synchronized void endScheduling() {
-        agenda.getIncQueryEngine().getLogger().debug(endMessage);
+        ruleBase.getIncQueryEngine().getLogger().debug(endMessage);
         scheduling = false;
     }
 
     /**
-     * @return the agenda
+     * @return the ruleBase
      */
-    public Agenda getAgenda() {
-        return agenda;
+    public RuleBase getAgenda() {
+        return ruleBase;
     }
     
     /**
@@ -129,11 +129,11 @@ public class Executor {
     }
     
     /**
-     * Disposes of the executor by disposing its agenda.
+     * Disposes of the executor by disposing its ruleBase.
      * 
      */
     protected void dispose() {
-        agenda.dispose();
+        ruleBase.dispose();
     }
     
 }

@@ -20,7 +20,7 @@ import org.eclipse.incquery.runtime.evm.api.ActivationState;
  * The interface is used to observe the changes in the collection of activations.
  * 
  * <p/>
- * An implementing class is for example the Agenda which is called back by the RuleInstance
+ * An implementing class is for example the RuleBase which is called back by the RuleInstance
  * when those have updated the activations after an EMF operation.
  * 
  * @author Tamas Szabo

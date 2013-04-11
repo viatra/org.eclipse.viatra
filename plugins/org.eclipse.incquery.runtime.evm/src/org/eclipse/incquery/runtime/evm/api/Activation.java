@@ -115,7 +115,7 @@ public class Activation<Match extends IPatternMatch> {
      */
     @Override
     public String toString() {
-        return com.google.common.base.Objects.toStringHelper(this).
+        return Objects.toStringHelper(this).
                 add("match",patternMatch).
                 add("state",state).toString();
     }

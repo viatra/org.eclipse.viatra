@@ -49,9 +49,9 @@ public final class EventDrivenVM {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
         checkNotNull(specifications, "Cannot create execution schema with null rule specification set");
         Executor executor = new Executor(engine);
-        Agenda agenda = executor.getAgenda();
+        RuleBase ruleBase = executor.getAgenda();
         for (RuleSpecification<?> specification : specifications) {
-            agenda.instantiateRule(specification);
+            ruleBase.instantiateRule(specification);
         }
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
@@ -100,12 +100,12 @@ public final class EventDrivenVM {
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
             final Set<RuleSpecification<?>> specifications) {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
-        Agenda agenda = new Agenda(engine);
+        RuleBase ruleBase = new RuleBase(engine);
         for (RuleSpecification<?> ruleSpecification : specifications) {
-            agenda.instantiateRule(ruleSpecification);
+            ruleBase.instantiateRule(ruleSpecification);
         }
 
-        return RuleEngine.create(agenda);
+        return RuleEngine.create(ruleBase);
     }
     
     /**
@@ -129,7 +129,7 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine) {
-        Agenda agenda = new Agenda(engine);
-        return RuleEngine.create(agenda);
+        RuleBase ruleBase = new RuleBase(engine);
+        return RuleEngine.create(ruleBase);
     }
 }

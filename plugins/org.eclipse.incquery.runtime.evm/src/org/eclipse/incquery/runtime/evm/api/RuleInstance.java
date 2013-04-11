@@ -30,6 +30,7 @@ import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.evm.specific.DefaultAttributeMonitor;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
@@ -86,6 +87,12 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
          */
         protected void processMatchEvent(Match match) {
             checkNotNull(match,"Cannot process null match!");
+            
+            // TODO check filter (this might be expensive!!!)
+            if(!match.isCompatibleWith(filter)) {
+                return;
+            }
+            
             Map<ActivationState, Activation<Match>> column = activations.column(match);
             if(column.size() > 0) {
                 checkArgument(column.size() == 1, String.format("%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple"));
@@ -195,17 +202,24 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
     private IMatchUpdateListener<Match> matchUpdateListener;
     private IAttributeMonitorListener<Match> attributeMonitorListener;
     private AttributeMonitor<Match> attributeMonitor;
+    private final Match filter;
+    
+    /**
+     * @return the filter
+     */
+    public Match getFilter() {
+        return filter;
+    }
 
     /**
      * Creates an instance using a RuleSpecification.
      * 
      * @param specification
      * @param engine
+     * @throws IllegalArgumentException if filter is mutable
      */
-    protected RuleInstance(final RuleSpecification<Match> specification) {
+    protected RuleInstance(final RuleSpecification<Match> specification, Match filter) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
-        
-        
         Comparator<Match> columnComparator = specification.getComparator();
         Ordering<ActivationState> rowComparator = Ordering.natural();
         if(columnComparator != null) {
@@ -215,7 +229,11 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
         }
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
-
+        
+        if(filter != null) {
+            Preconditions.checkArgument(!filter.isMutable(),String.format("Mutable filter %s is used in rule instance!",filter));
+        }
+        this.filter = filter;
     }
 
     /**
@@ -415,7 +433,7 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * Disposes the rule instance by inactivating all activations and disposing of its
      * activation notification provider and attribute monitor.
      * 
-     * Rule instances are managed by their Agenda, they should be disposed through that!
+     * Rule instances are managed by their RuleBase, they should be disposed through that!
      * 
      */
     protected void dispose() {

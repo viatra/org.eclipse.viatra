@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * A context is an associative store that is accessible during the
- * execution of the EVM, and thus usable by the Sceduler, Executor, Agenda,
+ * execution of the EVM, and thus usable by the Sceduler, Executor, RuleBase,
  *  Rule Instances, Activations and Jobs.
  * 
  * In order to separate different users from each other, values can

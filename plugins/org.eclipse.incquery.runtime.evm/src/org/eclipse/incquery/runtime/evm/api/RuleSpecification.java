@@ -78,12 +78,13 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
     }
     
     /**
-     * Instantiates the rule on the given IncQueryEngine.
-     * 
+     * Instantiates the rule on the given IncQueryEngine with the given filter
+     * .
      * @param engine
+     * @param filter
      * @return the instantiated rule
      */
-    protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine);
+    protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine, final Match filter);
     
     /**
      * @return the lifeCycle

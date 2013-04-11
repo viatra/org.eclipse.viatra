@@ -28,8 +28,8 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
     /**
      * Creates an instance using the given specification. 
      */
-    public SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification) {
-        super(specification);
+    protected SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification, final Match filter) {
+        super(specification, filter);
     }
     
     /**

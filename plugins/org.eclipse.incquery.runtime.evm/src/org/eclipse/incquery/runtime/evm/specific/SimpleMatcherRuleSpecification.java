@@ -65,16 +65,17 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     }
     
     @Override
-    protected RuleInstance<Match> instantiateRule(final IncQueryEngine engine) {
-        SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this);
-        Matcher matcher;
+    protected RuleInstance<Match> instantiateRule(IncQueryEngine engine, Match filter) {
         try {
-            matcher = factory.getMatcher(engine);
+            Matcher matcher = factory.getMatcher(engine);
+            Match immutableFilter = matcher.newMatch(filter.toArray());
+            SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, immutableFilter);
             ruleInstance.prepareInstance(matcher);
+            return ruleInstance;
         } catch (IncQueryException e) {
             engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
         }
-        return ruleInstance;
+        return null;
     }
     
     /*
