@@ -22,6 +22,7 @@ import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.base.api.TransitiveClosureHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -96,7 +97,6 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 					public void process(IPatternMatch match) {
 						results.append("\tMatch before modification: " + match.prettyPrint()+"\n");
 					}
-					
 				});
 				// phase 3: prepare for change processing
 				changeProcessing_lowlevel(results, matcher);
