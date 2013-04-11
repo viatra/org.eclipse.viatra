@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -30,7 +29,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 import com.google.common.collect.Sets;
 
@@ -41,7 +39,7 @@ import com.google.common.collect.Sets;
  * <p>
  * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be instantiated
  * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
- * {@link IncQueryEngine} or {@link ExecutionSchema}.
+ * {@link IncQueryEngine} or {@link RuleEngine}.
  * 
  * @author Abel Hegedus
  * 
@@ -52,39 +50,39 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     private final SetCollectionUpdate updater = new SetCollectionUpdate();
     private RuleSpecification<Match> specification;
 
-    /**
-     * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
-     * 
-     * @param matcher
-     *            the {@link IncQueryMatcher} to use as the source of the observable set
-     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
-     */
-    @SuppressWarnings("unchecked")
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) throws IncQueryException {
-        this((IMatcherFactory<Matcher>) MatcherFactoryRegistry
-                .getOrCreateMatcherFactory(matcher.getPattern()), matcher.getEngine());
-    }
+//    /**
+//     * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
+//     * 
+//     * <p>
+//     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+//     * 
+//     * @param matcher
+//     *            the {@link IncQueryMatcher} to use as the source of the observable set
+//     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
+//     */
+//    @SuppressWarnings("unchecked")
+//    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) throws IncQueryException {
+//        this((IMatcherFactory<Matcher>) MatcherFactoryRegistry
+//                .getOrCreateMatcherFactory(matcher.getPattern()), matcher.getEngine());
+//    }
 
-    /**
-     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
-     * {@link Notifier}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
-     * 
-     * @param factory
-     *            the {@link IMatcherFactory} used to create a matcher
-     * @param notifier
-     *            the {@link Notifier} on which the matcher is created
-     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
-            Notifier notifier) throws IncQueryException {
-        this(factory, EngineManager.getInstance().getIncQueryEngine(notifier));
-    }
+//    /**
+//     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+//     * {@link Notifier}.
+//     * 
+//     * <p>
+//     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+//     * 
+//     * @param factory
+//     *            the {@link IMatcherFactory} used to create a matcher
+//     * @param notifier
+//     *            the {@link Notifier} on which the matcher is created
+//     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
+//     */
+//    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
+//            Notifier notifier) throws IncQueryException {
+//        this(factory, EngineManager.getInstance().getIncQueryEngine(notifier));
+//    }
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
@@ -101,10 +99,29 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
+                this(factory, engine, null);
+            }
+
+    /**
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+     * {@link IncQueryEngine}.
+     * 
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+     * 
+     * @param factory
+     *            the {@link IMatcherFactory} used to create a matcher
+     * @param engine
+     *            the {@link IncQueryEngine} on which the matcher is created
+     * @param filter the partial match to be used as filter
+     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
+     */
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
+            IncQueryEngine engine, Match filter) {
         this(factory);
         RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
                 UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
-        triggerEngine.addRule(specification, true);
+        triggerEngine.addRule(specification, true, filter);
     }
 
     /**
@@ -121,13 +138,31 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
+                this(factory, engine, null);
+            }
+
+    /**
+     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
+     * {@link IncQueryEngine}.
+     * 
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsSet} instead!
+     * 
+     * @param factory
+     *            the {@link IMatcherFactory} used to create a matcher
+     * @param engine
+     *            an existing {@link ExecutionSchema} that specifies the used model
+     * @param filter the partial match to be used as filter
+     */
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
+            RuleEngine engine, Match filter) {
         this(factory);
-        engine.addRule(specification, true);
+        engine.addRule(specification, true, filter);
     }
 
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory) {
         super();
-        setSpecification(ObservableCollectionHelper.createRuleSpecification(updater, factory));
+        this.specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
     }
     
     /*
@@ -155,13 +190,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     protected RuleSpecification<Match> getSpecification() {
         return specification;
-    }
-
-    /**
-     * @param specification the specification to set
-     */
-    protected void setSpecification(RuleSpecification<Match> specification) {
-        this.specification = specification;
     }
 
     public class SetCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match>{
