@@ -40,8 +40,8 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * 
  * @param <Match>
  */
-public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {
-
+public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {	
+	
     // FIELDS AND CONSTRUCTOR
 
     protected IncQueryEngine engine;
@@ -302,7 +302,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     // with input binding as pattern-specific parameters: not declared in interface
 
     @Override
-    public void addCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener, boolean fireNow) {
+    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
                 engine, listener) {
             @Override
@@ -314,7 +314,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
 
     @Override
-    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<Match> listener) {
+    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
         patternMatcher.disconnectByTag(listener);
     }
 

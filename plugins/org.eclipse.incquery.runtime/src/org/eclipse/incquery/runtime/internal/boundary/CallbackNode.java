@@ -25,11 +25,11 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleReceiver {
 
     IncQueryEngine engine;
-    IMatchUpdateListener<Match> listener;
+    IMatchUpdateListener<? super Match> listener;
 
     public abstract Match statelessConvert(Tuple t);
 
-    public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine, IMatchUpdateListener<Match> listener) {
+    public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine, IMatchUpdateListener<? super Match> listener) {
         super(reteContainer);
         this.engine = engine;
         this.listener = listener;
