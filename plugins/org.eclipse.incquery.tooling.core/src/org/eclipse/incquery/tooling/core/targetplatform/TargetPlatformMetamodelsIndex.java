@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
@@ -119,7 +118,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
             String genModel = genAttrib.getValue();
             genmodelURI = URI.createURI(genModel);
             if (genmodelURI.isRelative()) {
-                genmodelURI = URI.createURI(resolvePluginResource(base.getPluginModel(), "/" + genModel));
+                genmodelURI = resolvePluginResource(base.getPluginModel(), "/" + genModel);
             }
             metamodel = new TargetPlatformMetamodel(nsUri, genmodelURI, logger);
         }
@@ -131,10 +130,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		private final URI genModelUri;
 		private final String packageURI;
         private Logger logger;
+
+        private final static String GENMODEL_LOAD_ERROR = "Error while loading genmodel '%s' for EPackage '%s'. Check corresponding plugin.xml declaration.";
 		
-		/**
-		 * 
-		 */
         private TargetPlatformMetamodel(String packageURI, URI genModel, Logger logger) {
             this.logger = logger;
             Preconditions.checkArgument(packageURI != null && !packageURI.isEmpty(), "EPackage nsURI must be set");
@@ -150,35 +148,40 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 			return packageURI;
 		}
 		
+        /**
+         * Loads and returns the genmodel into the selected {@link ResourceSet}.
+         * 
+         * @param resourceset
+         * @return the loaded genmodel, or null if {@link #genModelUri} contains no {@link GenModel}. During the loading
+         *         of the genmodel IO-related runtime exceptions might be thrown.
+         */
         private GenModel loadGenModel(ResourceSet resourceset) {
-			try{
-				Resource genModel = resourceset.getResource(this.genModelUri, true);
-				for(EObject eo : genModel.getContents()){
-					if (eo instanceof GenModel){
-						return (GenModel)eo;
-					}
+            Resource genModel = resourceset.getResource(this.genModelUri, true);
+            for (EObject eo : genModel.getContents()) {
+                if (eo instanceof GenModel) {
+                    return (GenModel) eo;
 				}
-				return null;
-			}catch(Exception e){
-				//Exception
-				return null;
 			}
+
+            return null;
 		}
 		
 		public GenPackage loadGenPackage(ResourceSet resourceset){
-			GenModel genModel = loadGenModel(resourceset);
-			if (genModel != null) {
-			    for(GenPackage genpack : genModel.getAllGenPackagesWithClassifiers()){
-			        EPackage epack = genpack.getEcorePackage();
-			        if (this.packageURI.equals(epack.getNsURI())){
-			            return genpack;
-			        }
-			    }			    
-			} else {
-                logger.warn(String.format(
-                        "Error while loading genmodel for EPackage %s. Check corresponding plugin.xml declaration.",
-                        packageURI));
-			}
+            try {
+                GenModel genModel = loadGenModel(resourceset);
+                if (genModel != null) {
+                    for (GenPackage genpack : genModel.getAllGenPackagesWithClassifiers()) {
+                        EPackage epack = genpack.getEcorePackage();
+                        if (this.packageURI.equals(epack.getNsURI())) {
+                            return genpack;
+                        }
+                    }
+                } else {
+                    logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI));
+                }
+            } catch (Exception e) {
+                logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI), e);
+            }
 			return null;
 		}
 		
@@ -192,26 +195,17 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		
 	}
 	
-    private String resolvePluginResource(IPluginModelBase modelbase, String path) {
-        IResource res = modelbase.getUnderlyingResource();
-        if (res != null) {
-            IProject project = res.getProject();
-            IResource file = project.findMember(path);
-            if (file != null){
-            	URI platformUri = URI.createPlatformResourceURI(file.getFullPath().toString(),
-            			false);
-            	return platformUri.toString();
-            }else{
-                logger.warn("Could not find resource '" + path + "' in project " + project.getName() + ".");
-            	return null;
-            }
+    private URI resolvePluginResource(IPluginModelBase modelbase, String path) {
+        // File exist check removed as it does not work with classpath-based resource paths
+        URI platformUri;
+        String pathString = new Path(modelbase.getPluginBase().getId()).append(path)
+                .toString();
+        if (modelbase.getUnderlyingResource() != null) {
+            platformUri = URI.createPlatformResourceURI(pathString, false);
+        } else {
+            platformUri = URI.createPlatformPluginURI(pathString, false);
         }
-		String location = modelbase.getInstallLocation();
-		if (location.endsWith(".jar")) {
-			return "jar:file:" + location + "!" + path;
-		} else {
-			return "file:" + modelbase.getInstallLocation() + path;
-		}
+        return platformUri;
 	}
 
 	private Iterable<TargetPlatformMetamodel> load(){
