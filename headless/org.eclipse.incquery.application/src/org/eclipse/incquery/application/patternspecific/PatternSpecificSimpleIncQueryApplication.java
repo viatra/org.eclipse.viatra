@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.incquery.application.common.IncQueryHeadless;
+import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
 
 /**
  * @author Abel Hegedus
@@ -61,8 +62,14 @@ public class PatternSpecificSimpleIncQueryApplication implements IApplication {
 			return IApplication.EXIT_OK;
 		}
 
-		new IncQueryHeadless().executePatternSpecific(model);
-
+		IncQueryHeadless hl = new IncQueryHeadless();
+		System.out.println(hl.executeDemo(model));
+		System.out.println(hl.executeDemo_PatternGroups(model));
+		System.out.println(hl.executeTrackChangesDemo(model));
+		
+		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
+		System.out.println(hla.executeTrackChangesDemo_Advanced(model));
+		
 		return IApplication.EXIT_OK;
 	}
 
@@ -73,12 +80,10 @@ public class PatternSpecificSimpleIncQueryApplication implements IApplication {
 	 */
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 
 	}
 
 	private void displayHelp() {
-		System.out.println(
-						"Usage:\n<call> -m <modelFilePAth> \n  -m    :  Required, the model to match on.");
+		System.out.println("Usage:\n<call> -m <modelFilePAth> \n  -m    :  Required, the model to match on.");
 	}
 }

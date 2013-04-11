@@ -2,8 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Application
 Bundle-SymbolicName: org.eclipse.incquery.application;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.3.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.incquery.runtime;bundle-version="0.6.0",
- headlessQueries.incquery;bundle-version="0.0.2"
+ headlessQueries.incquery;bundle-version="0.0.2",
+ org.eclipse.incquery.databinding.runtime;bundle-version="0.7.0",
+ org.eclipse.core.databinding;bundle-version="1.4.1"
+Bundle-ClassPath: .

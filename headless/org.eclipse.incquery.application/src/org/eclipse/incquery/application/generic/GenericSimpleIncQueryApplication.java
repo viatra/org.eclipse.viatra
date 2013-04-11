@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.incquery.application.common.IncQueryHeadless;
+import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
 
 /**
  * @author Abel Hegedus
@@ -70,7 +70,7 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 			return IApplication.EXIT_OK;
 		}
 
-		new IncQueryHeadless().executeGeneric(model, patternFQN);
+		System.out.println(new IncQueryHeadlessAdvanced().executeDemo_GenericAPI(model, patternFQN));
 
 		return IApplication.EXIT_OK;
 	}

@@ -17,5 +17,45 @@
             id="headless.eObject">
       </matcher>
    </extension>
+   <extension
+         id="headless.classesInPackage"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.classesinpackage.ClassesInPackageMatcherFactory$Provider"
+            id="headless.classesInPackage">
+      </matcher>
+   </extension>
+   <extension
+         id="headless.subPackage"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.subpackage.SubPackageMatcherFactory$Provider"
+            id="headless.subPackage">
+      </matcher>
+   </extension>
+   <extension
+         id="headless.classesInPackageHierarchy"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.classesinpackagehierarchy.ClassesInPackageHierarchyMatcherFactory$Provider"
+            id="headless.classesInPackageHierarchy">
+      </matcher>
+   </extension>
+   <extension
+         id="headless.ePackage"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.epackage.EPackageMatcherFactory$Provider"
+            id="headless.ePackage">
+      </matcher>
+   </extension>
+   <extension
+         id="headless.eClass"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.eclass.EClassMatcherFactory$Provider"
+            id="headless.eClass">
+      </matcher>
+   </extension>
 
 </plugin>

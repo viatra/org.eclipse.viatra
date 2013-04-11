@@ -2,9 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: headlessQueries.incquery
 Bundle-SymbolicName: headlessQueries.incquery;singleton:=true
-Bundle-Version: 0.0.2.qualifier
-Export-Package: headless.eclassnames,
- headless.eobject
+Bundle-Version: 0.0.3.qualifier
+Export-Package: headless,
+ headless.classesinpackage,
+ headless.classesinpackagehierarchy,
+ headless.eclass,
+ headless.eclassnames,
+ headless.eobject,
+ headless.epackage,
+ headless.subpackage
 Require-Bundle: org.eclipse.pde.core,
  org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,
