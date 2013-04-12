@@ -1,6 +1,7 @@
 package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
 
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -16,8 +17,8 @@ public class TreeViewerSandboxTab extends AbstractViewerSandboxTab {
     }
 
     @Override
-    public void bindModel(ViewerDataModel model) {
-        IncQueryViewerSupport.bind(viewer, model);
+    public void bindModel(ViewerDataModel model, ViewerDataFilter filter) {
+        IncQueryViewerSupport.bind(viewer, model, filter);
 
     }
 

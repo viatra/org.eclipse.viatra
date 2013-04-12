@@ -12,6 +12,7 @@
 package org.eclipse.incquery.viewers.tooling.ui.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -19,14 +20,19 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.tooling.ui.views.ViewerSandboxView;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 
 /**
  * Temporary handler class to initialize the sandbox viewer.
@@ -60,7 +66,8 @@ public class InitializeViewersHandler extends AbstractHandler {
                         
                         
                         if (ViewerSandboxView.getInstance() != null) {
-                            ViewerSandboxView.getInstance().setContents(resourceSet, patterns);
+                            ViewerDataFilter filter = prepareFilterInformation(root);
+                            ViewerSandboxView.getInstance().setContents(resourceSet, patterns, filter);
                         }
                     }
                 }
@@ -83,6 +90,18 @@ public class InitializeViewersHandler extends AbstractHandler {
         } else {
             throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
         }
+    }
+
+    protected ViewerDataFilter prepareFilterInformation(ObservablePatternMatcherRoot root) {
+        ViewerDataFilter dataFilter = new ViewerDataFilter();
+        for (ObservablePatternMatcher matcher : root.getMatchers()) {
+            final Object[] filter = matcher.getFilter();
+            if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
+                final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
+                dataFilter.addFilter(matcher.getMatcher().getPattern(), filterMatch);
+            }
+        }
+        return dataFilter;
     }
 
 }

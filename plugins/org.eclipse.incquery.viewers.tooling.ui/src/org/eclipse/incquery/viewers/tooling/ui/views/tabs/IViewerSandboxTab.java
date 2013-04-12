@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
 
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.custom.CTabFolder;
@@ -31,12 +32,14 @@ public interface IViewerSandboxTab extends ISelectionProvider {
      * @param parent
      */
     void createPartControl(CTabFolder folder);
-    
+
     /**
      * Binds the content of a data model to the current tab
+     * 
      * @param model
+     * @param filter
      */
-    void bindModel(ViewerDataModel model);
+    void bindModel(ViewerDataModel model, ViewerDataFilter filter);
     
     void setFocus();
 }

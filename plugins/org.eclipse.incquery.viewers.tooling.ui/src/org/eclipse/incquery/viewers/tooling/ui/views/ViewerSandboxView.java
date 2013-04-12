@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -26,6 +27,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewersAnnotatedPatternTester;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
@@ -158,12 +160,13 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         }
     }
 
-    public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns) throws IncQueryException {
+    public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns, ViewerDataFilter filter)
+            throws IncQueryException {
         if (resourceSet != null) {
             ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns),
                     getEngine(resourceSet));
             for (IViewerSandboxTab tab : tabList) {
-                tab.bindModel(viewmodel);
+                tab.bindModel(viewmodel, filter);
             }
         }
     }
@@ -173,6 +176,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
             engine.dispose();
         }
         engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+        engine.getLogger().setLevel(Level.DEBUG);
         return engine;
     }
 

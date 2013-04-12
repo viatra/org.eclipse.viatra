@@ -4,6 +4,7 @@ import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.AbstractViewerSandboxTab;
@@ -21,8 +22,8 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab {
     }
 
     @Override
-    public void bindModel(ViewerDataModel model) {
-        IncQueryGraphViewers.bind(viewer, model);
+    public void bindModel(ViewerDataModel model, ViewerDataFilter filter) {
+        IncQueryGraphViewers.bind(viewer, model, filter);
     }
 
     @Override
