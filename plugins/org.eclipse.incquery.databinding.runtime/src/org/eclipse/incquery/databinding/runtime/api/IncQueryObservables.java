@@ -63,8 +63,8 @@ public class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
             IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
-                return observeMatchesAsList(factory, engine, null);
-            }
+        return new ObservablePatternMatchList<Match>(factory, engine);
+    }
 
     /**
      * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
@@ -103,8 +103,8 @@ public class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
             IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
-                return observeMatchesAsSet(factory, engine, null);
-            }
+        return new ObservablePatternMatchSet<Match>(factory, engine);
+    }
 
     /**
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
