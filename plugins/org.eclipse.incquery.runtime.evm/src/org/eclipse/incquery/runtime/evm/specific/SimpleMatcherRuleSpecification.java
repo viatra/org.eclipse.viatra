@@ -68,7 +68,7 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     protected RuleInstance<Match> instantiateRule(IncQueryEngine engine, Match filter) {
         try {
             Matcher matcher = factory.getMatcher(engine);
-            Match immutableFilter = matcher.newMatch(filter.toArray());
+            Match immutableFilter = (filter != null) ? matcher.newMatch(filter.toArray()) : null;
             SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, immutableFilter);
             ruleInstance.prepareInstance(matcher);
             return ruleInstance;
