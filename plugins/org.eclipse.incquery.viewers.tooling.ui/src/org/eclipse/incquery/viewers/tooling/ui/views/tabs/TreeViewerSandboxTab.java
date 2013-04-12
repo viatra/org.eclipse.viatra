@@ -36,6 +36,7 @@ public class TreeViewerSandboxTab extends AbstractViewerSandboxTab {
     @Override
     protected StructuredViewer createViewer(Composite parent) {
         viewer = new TreeViewer(parent);
+        viewer.setUseHashlookup(true);
         return viewer;
     }
 
