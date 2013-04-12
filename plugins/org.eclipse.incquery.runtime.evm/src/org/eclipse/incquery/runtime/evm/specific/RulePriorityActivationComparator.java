@@ -29,7 +29,7 @@ import com.google.common.collect.Ranges;
  * 
  * 
  * @author Abel Hegedus
- *
+ * @deprecated this comparator is deprecated by ConflictResolver and ConlfictSet concepts
  */
 public class RulePriorityActivationComparator implements Comparator<Activation<?>> {
 

@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.lifecycle;
 
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;

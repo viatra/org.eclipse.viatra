@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.resolver;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -24,7 +24,7 @@ import java.util.TreeMap;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ConflictSet;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.FixedPriorityConflictResolver.FixedPriorityConflictSet;
+import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver.FixedPriorityConflictSet;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
@@ -157,12 +157,12 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         }
 
         @Override
-        public Set<Activation<?>> getConflictingActivations() {
+        public Set<Activation<?>> getNextActivations() {
             return Collections.unmodifiableSet(Sets.newHashSet(getFirstBucket()));
         }
 
         @Override
-        public Set<Activation<?>> getEnabledActivations() {
+        public Set<Activation<?>> getConflictingActivations() {
             return Collections.unmodifiableSet(Sets.newHashSet(priorityBuckets.values()));
         }
         

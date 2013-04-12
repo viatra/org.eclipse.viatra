@@ -15,5 +15,9 @@ Export-Package: org.eclipse.incquery.runtime.evm.api,
  org.eclipse.incquery.runtime.evm.notification,
  org.eclipse.incquery.runtime.evm.qrm,
  org.eclipse.incquery.runtime.evm.specific,
+ org.eclipse.incquery.runtime.evm.specific.jobs,
+ org.eclipse.incquery.runtime.evm.specific.lifecycle,
+ org.eclipse.incquery.runtime.evm.specific.resolver,
+ org.eclipse.incquery.runtime.evm.specific.scheduler,
  org.eclipse.incquery.runtime.evm.update
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
