@@ -36,7 +36,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
  * @author Abel Hegedus
  * 
  */
-public class IncQueryObservables {
+public final class IncQueryObservables {
 
     /**
      * Hidden constructor for utility class

@@ -12,14 +12,18 @@ package org.eclipse.incquery.databinding.runtime.collection;
 
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 
 import com.google.common.collect.Sets;
 
@@ -58,6 +62,16 @@ public final class ObservableCollectionHelper {
                 Sets.newHashSet(insertJob, deleteJob));
     }
 
+    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {
+        RuleEngine ruleEngine = EventDrivenVM.createExecutionSchema(engine,
+                UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
+        if(filter != null) {
+            ruleEngine.addRule(specification, true, filter);
+        } else {
+            ruleEngine.addRule(specification, true);
+        }
+    }
+    
 //    public static <Match extends IPatternMatch> void addPrioritizedRuleSpecification(RuleEngine engine,
 //            RuleSpecification<Match> specification, int priority, Match filter) {
 //        Comparator<Activation<?>> comparator = engine.getActivationComparator();

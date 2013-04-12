@@ -18,17 +18,14 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -38,7 +35,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * <p>
  * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be
  * instantiated using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a
- * {@link Notifier}, {@link IncQueryEngine} or {@link ExecutionSchema}.
+ * {@link IncQueryEngine} or {@link ExecutionSchema}.
  * 
  * @author Abel Hegedus
  * 
@@ -98,8 +95,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
-                this(factory, engine, null);
-            }
+        this(factory);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+    }
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
@@ -118,10 +116,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine, Match filter) {
         this(factory);
-        RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
-                UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
-        triggerEngine.addRule(getSpecification(),true, filter);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, filter);
     }
+
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
@@ -137,7 +134,8 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
-        this(factory, engine, null);
+        this(factory);
+        engine.addRule(specification, true, null);
     }
 
     /**
@@ -156,8 +154,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine, Match filter) {
         this(factory);
-        engine.addRule(getSpecification(), true, filter);
-        
+        engine.addRule(specification, true, filter);
     }
     
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory) {

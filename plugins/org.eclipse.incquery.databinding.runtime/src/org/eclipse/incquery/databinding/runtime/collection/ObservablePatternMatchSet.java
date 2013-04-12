@@ -23,11 +23,9 @@ import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.Sets;
@@ -99,8 +97,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine) {
-                this(factory, engine, null);
-            }
+        this(factory);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+    }
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
@@ -119,9 +118,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             IncQueryEngine engine, Match filter) {
         this(factory);
-        RuleEngine triggerEngine = EventDrivenVM.createExecutionSchema(engine,
-                UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
-        triggerEngine.addRule(specification, true, filter);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, filter);
     }
 
     /**
@@ -138,8 +135,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
-                this(factory, engine, null);
-            }
+        this(factory);
+        engine.addRule(specification, true);
+    }
 
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
