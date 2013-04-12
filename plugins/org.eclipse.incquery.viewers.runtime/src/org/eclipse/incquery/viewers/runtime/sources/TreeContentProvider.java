@@ -22,6 +22,7 @@ import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -99,12 +100,16 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     Map<Item, Item> parentMap;
     private AbstractTreeViewer viewer;
 
-    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
+    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         this.viewer = (AbstractTreeViewer) viewer;
-        super.initializeContent(viewer, vmodel);
+        super.initializeContent(viewer, vmodel, filter);
 
-        
-        containmentList = vmodel.initializeObservableContainmentList();
+        if (filter == null) {
+            containmentList = vmodel.initializeObservableContainmentList();
+        } else {
+            containmentList = vmodel.initializeObservableContainmentList(filter);
+        }
+
         elementMap = HashMultimap.create();
         parentMap = Maps.newHashMap();
 

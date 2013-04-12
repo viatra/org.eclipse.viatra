@@ -11,6 +11,8 @@
 package org.eclipse.incquery.viewers.runtime.zest;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
@@ -30,6 +32,12 @@ public class IncQueryGraphViewers {
         viewer.setContentProvider(new ZestContentProvider());
         viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
         viewer.setInput(model);
+    }
+
+    public static void bind(GraphViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
+        viewer.setContentProvider(new ZestContentProvider());
+        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
+        viewer.setInput(new FilteredViewerDataModel(model, filter));
     }
 
 }

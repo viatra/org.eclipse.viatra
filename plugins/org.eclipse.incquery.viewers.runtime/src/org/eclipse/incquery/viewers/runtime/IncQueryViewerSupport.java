@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime;
 
+import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
@@ -30,10 +32,24 @@ public class IncQueryViewerSupport {
         viewer.refresh();
     }
 
+    public static void bind(AbstractListViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
+        viewer.setContentProvider(new ListContentProvider());
+        viewer.setLabelProvider(new QueryLabelProvider());
+        viewer.setInput(new FilteredViewerDataModel(model, filter));
+        viewer.refresh();
+    }
+
     public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
         viewer.setContentProvider(new TreeContentProvider());
         viewer.setLabelProvider(new QueryLabelProvider());
         viewer.setInput(model);
+        viewer.refresh();
+    }
+
+    public static void bind(AbstractTreeViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
+        viewer.setContentProvider(new TreeContentProvider());
+        viewer.setLabelProvider(new QueryLabelProvider());
+        viewer.setInput(new FilteredViewerDataModel(model, filter));
         viewer.refresh();
     }
 }

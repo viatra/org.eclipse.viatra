@@ -22,6 +22,7 @@ import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -84,11 +85,15 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
 
     private GraphViewer viewer;
 
-    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel) {
+    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         this.viewer = (GraphViewer) viewer;
-        super.initializeContent(viewer, vmodel);
+        super.initializeContent(viewer, vmodel, filter);
 
-        edgeList = vmodel.initializeObservableEdgeList();
+        if (filter == null) {
+            edgeList = vmodel.initializeObservableEdgeList();
+        } else {
+            edgeList = vmodel.initializeObservableEdgeList(filter);
+        }
         edgeListener = new EdgeListChangeListener((GraphViewer) viewer);
         edgeList.addListChangeListener(edgeListener);
     }
