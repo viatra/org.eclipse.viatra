@@ -48,13 +48,13 @@ public class Agenda {
             ActivationState state = activation.getState();
             switch (state) {
             case INACTIVE:
-                getEnabledActivations().remove(activation);
+                conflictSet.removeActivation(activation);
                 break;
             default:
                 if (activation.isEnabled()) {
-                    getEnabledActivations().add(activation);
+                    conflictSet.addActivation(activation);
                 } else {
-                    getEnabledActivations().remove(activation);
+                    conflictSet.removeActivation(activation);
                 }
                 getActivations().put(state, activation);
                 break;
@@ -125,18 +125,6 @@ public class Agenda {
     }
     
     /**
-     * Allows the setting of a comparator to be used for ordering activations.
-     * 
-     * @param activationComparator
-     */
-    @Deprecated
-    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
-        Preconditions.checkNotNull(activationComparator, "Comparator cannot be null!");
-        ComparingConflictResolver resolver = new ComparingConflictResolver(activationComparator);
-        setConflictResolver(resolver);
-    }
-
-    /**
      * 
      * @param resolver
      */
@@ -146,6 +134,18 @@ public class Agenda {
             set.addActivation(act);
         }
         this.conflictSet = set;
+    }
+
+    /**
+     * Allows the setting of a comparator to be used for ordering activations.
+     * 
+     * @param activationComparator
+     */
+    @Deprecated
+    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
+        Preconditions.checkNotNull(activationComparator, "Comparator cannot be null!");
+        ComparingConflictResolver resolver = new ComparingConflictResolver(activationComparator);
+        setConflictResolver(resolver);
     }
 
     /**
