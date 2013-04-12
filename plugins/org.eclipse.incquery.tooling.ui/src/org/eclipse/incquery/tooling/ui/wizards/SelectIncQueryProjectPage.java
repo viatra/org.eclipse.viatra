@@ -155,8 +155,10 @@ public class SelectIncQueryProjectPage extends WizardPage {
                 IProject containerProject = ((IResource) obj).getProject();
                 setSelectedProject(viewer, containerProject);
             } else if (obj instanceof IAdaptable) {
-                IProject containerProject = ((IResource) ((IAdaptable) obj).getAdapter(IResource.class)).getProject();
-                setSelectedProject(viewer, containerProject);
+                final IResource adaptedResource = (IResource) ((IAdaptable) obj).getAdapter(IResource.class);
+                if (adaptedResource != null) {
+                    setSelectedProject(viewer, adaptedResource.getProject());
+                }
             }
         }
 
