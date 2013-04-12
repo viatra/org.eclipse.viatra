@@ -34,7 +34,6 @@ import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
@@ -63,6 +62,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+//import org.eclipse.pde.core.plugin.IPluginModel;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -623,7 +623,7 @@ public abstract class ProjectGenerationHelper {
             return;
         }
         IFile pluginXml = PDEProject.getPluginXml(project);
-        IPluginModel plugin = (IPluginModel) PDECore.getDefault().getModelManager().findModel(project);
+        IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(project);
         WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
         fModel.setEditable(true);
         fModel.load();
@@ -767,7 +767,7 @@ public abstract class ProjectGenerationHelper {
     }
 
     public static String getBundleSymbolicName(IProject project) {
-        IPluginModel plugin = (IPluginModel) PDECore.getDefault().getModelManager().findModel(project);
+        IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(project);
         return plugin.getBundleDescription().getSymbolicName();
     }
 
