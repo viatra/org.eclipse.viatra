@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewersAnnotatedPatternTester;
@@ -55,6 +57,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     private List<IViewerSandboxTab> tabList;
     private CTabFolder folder;
+    private IncQueryEngine engine;
 
     public static ViewerSandboxView getInstance() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -157,11 +160,20 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns) throws IncQueryException {
         if (resourceSet != null) {
-            ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns));
+            ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns),
+                    getEngine(resourceSet));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindModel(viewmodel);
             }
         }
+    }
+
+    private IncQueryEngine getEngine(ResourceSet resourceSet) throws IncQueryException {
+        if (engine != null) {
+            engine.dispose();
+        }
+        engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+        return engine;
     }
 
     private static Collection<Pattern> getPatternsWithProperAnnotations(Collection<Pattern> input) {
@@ -173,4 +185,13 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         }
         return res;
     }
+
+    @Override
+    public void dispose() {
+        if (engine != null) {
+            engine.dispose();
+        }
+        super.dispose();
+    }
+
 }
