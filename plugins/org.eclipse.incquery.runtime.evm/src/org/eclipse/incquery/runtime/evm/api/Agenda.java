@@ -13,17 +13,14 @@ package org.eclipse.incquery.runtime.evm.api;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
+import org.eclipse.incquery.runtime.evm.specific.ComparingConflictResolver;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
 
 /**
  * Sole purpose is the management all and ordering of enabled activations!
@@ -67,29 +64,20 @@ public class Agenda {
 
     
     private Multimap<ActivationState, Activation<?>> activations;
-    //private IActivationOrdering<?> activationOrdering;
-    //private Object activationContainer;
-    private Set<Activation<?>> enabledActivations;
+    private ConflictSet conflictSet;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
-    private Comparator<Activation<?>> activationComparator;
     
     /**
      * 
      */
-    public Agenda(RuleBase ruleBase, IActivationOrdering<?> activationOrdering) {
+    public Agenda(RuleBase ruleBase, ConflictResolver<?> conflictResolver) {
         this.ruleBase = ruleBase;
         activations = HashMultimap.create();
-        this.enabledActivations = Sets.newHashSet();
-        //this.activationOrdering = activationOrdering;
-        //this.activationContainer = activationOrdering.createActivationContainer();
+        this.conflictSet = conflictResolver.createConflictSet();
         this.activationListener = new DefaultActivationNotificationListener();
     }
     
-//    public void setActivationOrdering(IActivationOrdering<?> activationOrdering) {
-//        this.activationOrdering = activationOrdering;
-//    }
-
     /**
      * @return the activations
      */
@@ -118,9 +106,15 @@ public class Agenda {
     /**
      * @return the enabledActivations
      */
+    @Deprecated
     public Set<Activation<?>> getEnabledActivations() {
-//        return activationOrdering.getActivations(activationContainer);
-        return enabledActivations;
+        return conflictSet.getEnabledActivations();
+    }
+    /**
+     * @return the enabledActivations
+     */
+    public Activation<?> getNextActivation() {
+        return conflictSet.getNextActivation();
     }
 
     /**
@@ -135,23 +129,34 @@ public class Agenda {
      * 
      * @param activationComparator
      */
+    @Deprecated
     public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
         Preconditions.checkNotNull(activationComparator, "Comparator cannot be null!");
-        this.activationComparator = activationComparator;
-        TreeMultimap<ActivationState, Activation<?>> newActivations = TreeMultimap.create(Ordering.natural(),
-                activationComparator);
-        newActivations.putAll(activations);
-        activations = newActivations;
+        ComparingConflictResolver resolver = new ComparingConflictResolver(activationComparator);
+        setConflictResolver(resolver);
+    }
 
-        TreeSet<Activation<?>> newEnabledActivations = Sets.newTreeSet(activationComparator);
-        newEnabledActivations.addAll(enabledActivations);
-        enabledActivations = newEnabledActivations;
+    /**
+     * 
+     * @param resolver
+     */
+    public void setConflictResolver(ConflictResolver<?> resolver) {
+        ConflictSet set = resolver.createConflictSet();
+        for (Activation<?> act : conflictSet.getEnabledActivations()) {
+            set.addActivation(act);
+        }
+        this.conflictSet = set;
     }
 
     /**
      * @return the activationComparator
      */
+    @Deprecated
     public Comparator<Activation<?>> getActivationComparator() {
-        return activationComparator;
+        if(conflictSet.getConflictResolver() instanceof ComparingConflictResolver) {
+            ComparingConflictResolver resolver = (ComparingConflictResolver) conflictSet.getConflictResolver();
+            return resolver.getComparator();
+        }
+        return null;
     }
 }

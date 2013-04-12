@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.specific.ArbitraryActivationOrdering;
+import org.eclipse.incquery.runtime.evm.specific.ArbitraryOrderConflictResolver;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +48,7 @@ public class RuleBase {
     protected RuleBase(final IncQueryEngine iqEngine) {
         this.iqEngine = checkNotNull(iqEngine, "Cannot create RuleBase with null IncQueryEngine");
         this.ruleInstanceMap = HashMultimap.create();
-        this.agenda = new Agenda(this, new ArbitraryActivationOrdering());
+        this.agenda = new Agenda(this, new ArbitraryOrderConflictResolver());
     }
 
     /**

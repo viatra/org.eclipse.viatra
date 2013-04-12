@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api;
 
-import java.util.Set;
 
 /**
  * 
  * @author Abel Hegedus
  *
  */
-public interface IActivationOrdering<ActivationContainer> {
+public interface ConflictResolver<CSet extends ConflictSet> {
 
-    ActivationContainer createActivationContainer();
+    CSet createConflictSet();
     
-    Set<Activation<?>> getActivations(ActivationContainer container);
-    
-    boolean addActivationToContainer(ActivationContainer container, Activation<?> activation);
-    
-    boolean removeActivationFromContainer(ActivationContainer container, Activation<?> activation);
 }

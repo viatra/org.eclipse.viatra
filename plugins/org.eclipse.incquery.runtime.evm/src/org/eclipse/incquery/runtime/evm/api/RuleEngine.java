@@ -14,7 +14,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.ConcurrentModificationException;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -68,19 +67,21 @@ public class RuleEngine {
         return ruleBase;
     }
     
+    @Deprecated
     public void setActivationComparator(Comparator<Activation<?>> comparator) {
         checkNotNull(comparator, "Comparator cannot be null!");
         ruleBase.getAgenda().setActivationComparator(comparator);
     }
     
+    @Deprecated
     public Comparator<Activation<?>> getActivationComparator() {
         return ruleBase.getAgenda().getActivationComparator();
     }
 
-//    public void setActivationOrdering(IActivationOrdering<?> activationOrdering) {
-//        checkNotNull(activationOrdering, "Activation ordering cannot be null!");
-//        ruleBase.getAgenda().setActivationOrdering(activationOrdering);
-//    }
+    public void setConflictResolver(ConflictResolver<?> conflictResolver) {
+        checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
+        ruleBase.getAgenda().setConflictResolver(conflictResolver);
+    }
     
     /**
      * 
@@ -100,11 +101,12 @@ public class RuleEngine {
 
     /**
      * Important: firing an activation, or other events may cause 
-     * {@link ConcurrentModificationException} if you try to iterate
+     * ConcurrentModificationException if you try to iterate
      * on this set.
      * 
      * @return an unmodifiable view of the set of enabled activations
      */
+    @Deprecated
     public Set<Activation<?>> getEnabledActivations() {
         return Collections.unmodifiableSet(ruleBase.getAgenda().getEnabledActivations());
     }
@@ -114,13 +116,8 @@ public class RuleEngine {
      * @return the first enabled activation if exists
      */
     public Activation<?> getFirstEnabledActivation() {
-        Set<Activation<?>> enabledActivations = ruleBase.getAgenda().getEnabledActivations();
-        if(enabledActivations.isEmpty()) {
-            return null;
-        } else {
-            return enabledActivations.iterator().next();
-        }
-    }    
+        return ruleBase.getAgenda().getNextActivation();
+    }
     
     /**
      * 
@@ -154,8 +151,10 @@ public class RuleEngine {
             final RuleSpecification<Match> specification, final ActivationState state) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(state, "Activation state must be specified!");
-        return ImmutableSet.copyOf(ruleBase.getInstance(specification, null).getActivations(state));
+        return ImmutableSet.copyOf(ruleBase.getInstance(specification).getActivations(state));
     }
+    
+    
 
     /**
      * Adds a rule specification to the RuleBase.
@@ -197,7 +196,12 @@ public class RuleEngine {
     private <Match extends IPatternMatch> void internalAddRule(
             final RuleSpecification<Match> specification, boolean fireNow, Match filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        RuleInstance<Match> instance = ruleBase.instantiateRule(specification);
+        RuleInstance<Match> instance;
+        if(filter == null) {
+            instance = ruleBase.instantiateRule(specification);
+        } else {
+            instance = ruleBase.instantiateRule(specification, filter);
+        }
         if(fireNow) {
             fireActivations(instance);
         }
@@ -231,10 +235,9 @@ public class RuleEngine {
      * @param specification
      * @return true, if the rule existed
      */
-    public <Match extends IPatternMatch> boolean removeRule(
-            final RuleSpecification<Match> specification) {
-                return removeRule(specification, null);
-            }
+    public <Match extends IPatternMatch> boolean removeRule(final RuleSpecification<Match> specification) {
+        return removeRule(specification);
+    }
 
     /**
      * Removes the given filtered rule from the EVM.
@@ -247,7 +250,7 @@ public class RuleEngine {
             final RuleSpecification<Match> specification, Match filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
-        return ruleBase.removeRule(specification, null);
+        return ruleBase.removeRule(specification, filter);
     }
 
     /**
