@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.incquery.runtime.patternregistry.feature"
-      label="EMF-IncQuery Pattern Registry Runtime (Incubation)"
+      id="org.eclipse.incquery.tooling.ui.patternregistry.feature"
+      label="EMF-IncQuery Pattern Registry UI (Incubation)"
       version="0.7.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
       license-feature="org.eclipse.incquery.licence.feature"
       license-feature-version="1.0.0.qualifier">
 
    <description>
-      EMF-IncQuery Pattern Registry Runtime modul. It is incubation now, but after maturing it will replace the QueryExplorer&apos;s built in registry.
+      EMF-IncQuery Pattern Registry UI modul. It is incubation now, but after maturing it will replace the QueryExplorer&apos;s built in registry.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -20,7 +20,7 @@
    </url>
 
    <plugin
-         id="org.eclipse.incquery.runtime.patternregistry"
+         id="org.eclipse.incquery.tooling.ui.patternregistry"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -25,6 +25,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+		<module>../../plugins/org.eclipse.incquery.tooling.ui.patternregistry</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
 		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
@@ -63,8 +64,9 @@
 		<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
 		<module>../../features/org.eclipse.incquery.runtime.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
+		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
+		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 		<module>../../releng/org.eclipse.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.incquery.update</module>
