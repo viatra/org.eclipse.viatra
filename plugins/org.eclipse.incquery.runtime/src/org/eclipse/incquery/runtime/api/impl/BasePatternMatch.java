@@ -83,7 +83,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
             return true;
         }
         // we assume that the pattern is set for this match!
-        if(pattern().equals(other.pattern())) {
+        if (!pattern().equals(other.pattern())) {
             return false;
         }
         for (int i = 0; i < parameterNames().length; i++) {
