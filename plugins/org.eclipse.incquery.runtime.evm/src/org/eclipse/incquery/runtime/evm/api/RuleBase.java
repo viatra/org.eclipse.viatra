@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.specific.ArbitraryOrderConflictResolver;
+import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;

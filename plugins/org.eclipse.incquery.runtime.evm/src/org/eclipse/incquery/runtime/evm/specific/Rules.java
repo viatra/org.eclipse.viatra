@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 /**
  * 

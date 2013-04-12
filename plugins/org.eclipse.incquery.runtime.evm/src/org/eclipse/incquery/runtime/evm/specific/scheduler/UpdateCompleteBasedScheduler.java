@@ -8,17 +8,15 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.scheduler;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.Scheduler;
-import org.eclipse.incquery.runtime.evm.update.IQBaseCallbackUpdateCompleteProvider;
+import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.update.IUpdateCompleteListener;
 import org.eclipse.incquery.runtime.evm.update.IUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.evm.update.TransactionUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
  * This scheduler uses update complete events to schedule its executor.
@@ -51,16 +49,10 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
      *    
      * @param engine
      * @return
+     * @deprecated Use {@link Schedulers#getIQBaseSchedulerFactory(IncQueryEngine)} instead
      */
     public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IncQueryEngine engine) {
-        IQBaseCallbackUpdateCompleteProvider provider;
-        try {
-            provider = new IQBaseCallbackUpdateCompleteProvider(engine.getBaseIndex());
-        } catch (IncQueryException e) {
-            engine.getLogger().error("Base index not available in engine", e);
-            return null;
-        }
-        return new UpdateCompleteBasedSchedulerFactory(provider);
+        return Schedulers.getIQBaseSchedulerFactory(engine);
     }
     
     /**
@@ -69,10 +61,10 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
      *  
      * @param domain
      * @return
+     * @deprecated Use {@link Schedulers#getTransactionSchedulerFactory(TransactionalEditingDomain)} instead
      */
     public static UpdateCompleteBasedSchedulerFactory getTransactionSchedulerFactory(final TransactionalEditingDomain domain) {
-        TransactionUpdateCompleteProvider provider = new TransactionUpdateCompleteProvider(domain);
-        return new UpdateCompleteBasedSchedulerFactory(provider);
+        return Schedulers.getTransactionSchedulerFactory(domain);
     }
     
     /* (non-Javadoc)

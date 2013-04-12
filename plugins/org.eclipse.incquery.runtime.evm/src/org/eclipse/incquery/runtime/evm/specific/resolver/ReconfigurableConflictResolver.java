@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.resolver;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
