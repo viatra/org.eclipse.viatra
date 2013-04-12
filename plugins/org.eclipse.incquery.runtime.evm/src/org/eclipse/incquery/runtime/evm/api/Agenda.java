@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
-import org.eclipse.incquery.runtime.evm.specific.ComparingConflictResolver;
+import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
@@ -108,7 +108,7 @@ public class Agenda {
      */
     @Deprecated
     public Set<Activation<?>> getEnabledActivations() {
-        return conflictSet.getEnabledActivations();
+        return conflictSet.getConflictingActivations();
     }
     /**
      * @return the enabledActivations
@@ -130,7 +130,7 @@ public class Agenda {
      */
     public void setConflictResolver(ConflictResolver<?> resolver) {
         ConflictSet set = resolver.createConflictSet();
-        for (Activation<?> act : conflictSet.getEnabledActivations()) {
+        for (Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
         this.conflictSet = set;

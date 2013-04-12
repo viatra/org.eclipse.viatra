@@ -20,10 +20,10 @@ import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
-import org.eclipse.incquery.runtime.evm.specific.StatelessJob;
-import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
+import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.jobs.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 import com.google.common.collect.Sets;
 
@@ -64,7 +64,7 @@ public final class ObservableCollectionHelper {
 
     public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {
         RuleEngine ruleEngine = EventDrivenVM.createExecutionSchema(engine,
-                UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(engine));
+                Schedulers.getIQBaseSchedulerFactory(engine));
         if(filter != null) {
             ruleEngine.addRule(specification, true, filter);
         } else {

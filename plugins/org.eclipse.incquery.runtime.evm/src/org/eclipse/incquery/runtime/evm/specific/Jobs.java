@@ -12,8 +12,13 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.specific.jobs.EnableJob;
+import org.eclipse.incquery.runtime.evm.specific.jobs.RecordingJob;
+import org.eclipse.incquery.runtime.evm.specific.jobs.StatelessJob;
 
 /**
  * Provides static methods acting on or generating a {@link Job}. 
@@ -23,6 +28,12 @@ import org.eclipse.incquery.runtime.evm.api.Job;
  */
 public final class Jobs {
 
+    /**
+     * 
+     */
+    private Jobs() {
+    }
+    
     /**
      * Creates a {@link StatelessJob} for the given state with the given processor.
      * A stateless job simply processes the match in the activation during execution.
@@ -46,6 +57,27 @@ public final class Jobs {
      */
     public static <Match extends IPatternMatch> Job<Match> newRecordingJob(ActivationState activationState, IMatchProcessor<Match> processor){
         return new RecordingJob<Match>(activationState, processor);
+    }
+    
+    /**
+     * Creates a {@link Job} that does not have any effect. Useful when you don't want to do anything 
+     * for a given activation state but you want to fire.
+     * 
+     * Consider using your own LifeCycle instead of Nop jobs!
+     * 
+     * @param activationState
+     * @return
+     */
+    public static <Match extends IPatternMatch> Job<Match> newNopJob(ActivationState activationState) {
+        return new Job<Match>(activationState) {
+            @Override
+            protected void execute(Activation<Match> activation, Context context) {
+            }
+        };
+    }
+    
+    public static <Match extends IPatternMatch> Job<Match> newEnableJob(ActivationState activationState, IMatchProcessor<Match> processor) {
+        return new EnableJob<Match>(activationState, processor);
     }
     
 }

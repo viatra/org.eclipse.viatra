@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.resolver;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -21,7 +21,7 @@ import java.util.SortedSet;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.api.ConflictSet;
-import org.eclipse.incquery.runtime.evm.specific.ComparingConflictResolver.ComparingConflictSet;
+import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver.ComparingConflictSet;
 
 import com.google.common.collect.Sets;
 
@@ -92,14 +92,14 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         }
 
         @Override
-        public Set<Activation<?>> getConflictingActivations() {
+        public Set<Activation<?>> getNextActivations() {
             HashSet<Activation<?>> hashSet = new HashSet<Activation<?>>();
             hashSet.add(getNextActivation());
             return Collections.unmodifiableSet(hashSet);
         }
 
         @Override
-        public Set<Activation<?>> getEnabledActivations() {
+        public Set<Activation<?>> getConflictingActivations() {
             return Collections.unmodifiableSet(set);
         }
         

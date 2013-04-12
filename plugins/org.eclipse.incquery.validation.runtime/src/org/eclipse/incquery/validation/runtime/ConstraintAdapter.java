@@ -27,10 +27,10 @@ import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.evm.specific.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
-import org.eclipse.incquery.runtime.evm.specific.UpdateCompleteBasedScheduler;
+import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.ui.IEditorPart;
 
@@ -66,7 +66,7 @@ public class ConstraintAdapter {
 
         try {
             IncQueryEngine incQueryEngine = EngineManager.getInstance().getIncQueryEngine(notifier);
-            ISchedulerFactory schedulerFactory = UpdateCompleteBasedScheduler.getIQBaseSchedulerFactory(incQueryEngine);
+            ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
             this.engine = EventDrivenVM.createExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
             IncQueryEngine.getDefaultLogger().error(

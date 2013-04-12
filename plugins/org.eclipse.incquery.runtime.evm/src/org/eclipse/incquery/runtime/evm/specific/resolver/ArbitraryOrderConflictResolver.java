@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.resolver;
 
 import java.util.Collections;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.api.ConflictSet;
-import org.eclipse.incquery.runtime.evm.specific.ArbitraryOrderConflictResolver.ArbitraryConflictSet;
+import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver.ArbitraryConflictSet;
 
 import com.google.common.collect.Sets;
 
@@ -67,12 +67,12 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         }
 
         @Override
-        public Set<Activation<?>> getConflictingActivations() {
+        public Set<Activation<?>> getNextActivations() {
             return Collections.unmodifiableSet(container);
         }
 
         @Override
-        public Set<Activation<?>> getEnabledActivations() {
+        public Set<Activation<?>> getConflictingActivations() {
             return Collections.unmodifiableSet(container);
         }
         
