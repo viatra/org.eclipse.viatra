@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -176,7 +175,6 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
             engine.dispose();
         }
         engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
-        engine.getLogger().setLevel(Level.DEBUG);
         return engine;
     }
 
