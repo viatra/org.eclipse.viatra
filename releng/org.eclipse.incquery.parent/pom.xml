@@ -56,6 +56,7 @@
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
+		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
 		<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
@@ -66,7 +67,6 @@
 		<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 		<module>../../releng/org.eclipse.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.incquery.update</module>
