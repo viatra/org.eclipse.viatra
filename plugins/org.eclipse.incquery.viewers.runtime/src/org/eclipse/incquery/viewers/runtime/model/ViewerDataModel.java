@@ -28,17 +28,12 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IPatternGroup;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentConverter;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeConverter;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
@@ -52,24 +47,38 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  * 
  */
-@SuppressWarnings({ "unchecked" })
 public class ViewerDataModel {
     private IncQueryEngine engine;
-    Logger logger;
+    private Logger logger;
     private ResourceSet model;
     private Set<Pattern> patterns;
     private Map<Object, Item> itemMap;
 
-    public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns) throws IncQueryException {
-        this(model, patterns, EngineManager.getInstance().createUnmanagedIncQueryEngine(model));
-        logger = engine.getLogger();
+    /**
+     * Initializes a viewer model from a group of patterns over a
+     * 
+     * @param model
+     * @param group
+     * @param engine
+     */
+    public ViewerDataModel(ResourceSet model, IPatternGroup group, IncQueryEngine engine) {
+        this(model, group.getPatterns(), engine);
     }
 
+    /**
+     * Initializes a Viewer Data model using a set of patterns and a selected engine.
+     * 
+     * @param model
+     * @param patterns
+     * @param engine
+     * @throws IncQueryException
+     */
     public ViewerDataModel(ResourceSet model, Collection<Pattern> patterns, IncQueryEngine engine) {
         this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
         itemMap = Maps.newHashMap();
+        logger = engine.getLogger();
     }
 
     public IncQueryEngine getEngine() {
@@ -89,20 +98,32 @@ public class ViewerDataModel {
     }
 
     /**
-     * Initializes and returns an observable list of nodes. Each call re-initializes a new observable
+     * Initializes and returns an observable list of nodes. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
+     * {@link #initializeObservableItemList(ViewerDataFilter)} with an empty filter.
      * 
      * @return an observable list of {@link Item} elements representing the match results in the model.
      */
     public IObservableList initializeObservableItemList() {
+        return initializeObservableItemList(ViewerDataFilter.UNFILTERED);
+    }
+
+    /**
+     * Initializes and returns an observable list of nodes. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables.
+     * 
+     * @param filter
+     *            filter specification
+     * 
+     * @return an observable list of {@link Item} elements representing the match results in the model.
+     */
+    public IObservableList initializeObservableItemList(ViewerDataFilter filter) {
         itemMap.clear();
         List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
         final String annotationName = Item.ANNOTATION_ID;
         for (final Pattern nodePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                    .getOrCreateMatcherFactory(nodePattern);
-
-            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+            IObservableList obspatternmatchlist = filter.getObservableList(nodePattern, engine);
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
@@ -148,19 +169,32 @@ public class ViewerDataModel {
     }
 
     /**
-     * Initializes and returns an observable list of edges. Each call re-initializes a new observable
+     * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
+     * {@link ViewerDataModel#initializeObservableEdgeList(ViewerDataFilter)} with an empty filter.
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
     public MultiList initializeObservableEdgeList() {
+        return initializeObservableEdgeList(ViewerDataFilter.UNFILTERED);
+    }
+
+    /**
+     * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables.
+     * 
+     * @param filter
+     *            filter specification
+     * 
+     * @return an observable list of {@link Edge} elements representing the match results in the model.
+     */
+    public MultiList initializeObservableEdgeList(ViewerDataFilter filter) {
         final String annotationName = Edge.ANNOTATION_ID;
         List<ObservableList> edgeListsObservable = new ArrayList<ObservableList>();
         for (final Pattern edgePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                    .getOrCreateMatcherFactory(edgePattern);
 
-            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+            IObservableList obspatternmatchlist = filter.getObservableList(edgePattern, engine);
 
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
@@ -177,19 +211,32 @@ public class ViewerDataModel {
     }
 
     /**
-     * Initializes and returns an observable list of edges. Each call re-initializes a new observable
+     * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
+     * {@link #initializeObservableContainmentList(ViewerDataFilter)} with an empty filter.
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
     public MultiList initializeObservableContainmentList() {
+        return initializeObservableContainmentList(ViewerDataFilter.UNFILTERED);
+    }
+
+    /**
+     * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
+     * responsibility of the caller to dispose of the unnecessary observables.
+     * 
+     * @param filter
+     *            filter specification
+     * 
+     * @return an observable list of {@link Edge} elements representing the match results in the model.
+     */
+    public MultiList initializeObservableContainmentList(ViewerDataFilter filter) {
         final String annotationName = Containment.ANNOTATION_ID;
         List<ObservableList> containmentListsObservable = new ArrayList<ObservableList>();
         for (final Pattern containmentPattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                    .getOrCreateMatcherFactory(containmentPattern);
 
-            IObservableList obspatternmatchlist = IncQueryObservables.observeMatchesAsList(factory, getEngine());
+            IObservableList obspatternmatchlist = filter.getObservableList(containmentPattern, engine);
 
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
                 ObservableList resultList = new WritableList();
