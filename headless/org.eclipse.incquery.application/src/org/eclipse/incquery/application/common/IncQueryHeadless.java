@@ -137,12 +137,17 @@ public class IncQueryHeadless {
 				// because EClassNamesMatcher is included in the patterngroup, *no new traversal* will be done here
 				EClassNamesMatcher matcher2 = new EClassNamesMatcher(engine);
 				// defining an input mask by binding "name" to "A" ->
-				matcher2.forEachMatch( matcher2.newMatch(null, "A") , new EClassNamesProcessor() {
+				matcher2.forEachMatch(null, "A" , new EClassNamesProcessor() {
 					@Override
 					public void process(EClass c, String n) {
 						results.append("\tEClass with name A: " + c.toString() + "\n");
 					}
-				});				
+				});	
+				// projections
+				for (EClass ec: matcher2.getAllValuesOfc(matcher2.newMatch(null,"A")))
+				{
+					results.append("\tEClass with name A: " + ec.toString() + "\n");
+				}
 			} catch (IncQueryException e) {
 				e.printStackTrace();
 				results.append(e.getMessage());

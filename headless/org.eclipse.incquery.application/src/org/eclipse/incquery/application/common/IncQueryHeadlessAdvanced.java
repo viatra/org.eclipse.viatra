@@ -19,10 +19,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
+import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.base.api.TransitiveClosureHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -52,9 +52,11 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				// to use our engine
 				IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
-				IncQueryMatcher<? extends IPatternMatch> matcher = MatcherFactoryRegistry.getMatcherFactory(patternFQN).getMatcher(engine);
 				// assuming that there is a pattern definition registered matching 'patternFQN'
-				if (matcher!=null) {
+				// would be nice: IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+				IMatcherFactory<?> factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+				if (factory!=null) {
+					IncQueryMatcher<? extends IPatternMatch> matcher = factory.getMatcher(engine);
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
 					prettyPrintMatches(results, matches);
 				}
@@ -152,6 +154,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				for (IPatternMatch lostMatch : dm.matchLostEvents) {
 					// left empty
 				}
+				dm.clear();
 			}
 		});
 	}
