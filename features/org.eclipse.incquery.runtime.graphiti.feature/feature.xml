@@ -17,7 +17,7 @@ for various Graphiti editors.
    </copyright>
 
    <url>
-      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
    </url>
 
    <plugin

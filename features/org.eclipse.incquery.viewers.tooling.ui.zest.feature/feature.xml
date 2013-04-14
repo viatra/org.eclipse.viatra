@@ -16,7 +16,8 @@
    </copyright>
 
    <url>
-      <update label="EMF-IncQuery" url="http://viatra.inf.mit.bme.hu/update/incquery/"/>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <discovery label="GEF4 Update site" url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
    </url>
 
    <includes

@@ -15,6 +15,10 @@
       [Enter Copyright Description here.]
    </copyright>
 
+   <url>
+      <update url="http://download.eclipse.org/incquery/updates/milestone"/>
+   </url>
+
    <includes
          id="org.eclipse.incquery.databinding.runtime.feature"
          version="0.0.0"/>
