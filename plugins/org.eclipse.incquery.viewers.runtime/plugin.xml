@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.incquery.patternlanguage.annotation">
       <annotation
+            additionalValidator="org.eclipse.incquery.viewers.runtime.validators.ItemValidator"
             description="An element to display in a JFace viewer"
             name="Item">
          <annotationparameter
@@ -47,6 +48,7 @@
          </annotationparameter>
       </annotation>
       <annotation
+            additionalValidator="org.eclipse.incquery.viewers.runtime.validators.EdgeValidator"
             description="Represents a custom, directed edge between GuiItems. Not supported by all viewers."
             name="Edge">
          <annotationparameter
