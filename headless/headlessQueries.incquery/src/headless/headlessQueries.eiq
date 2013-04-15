@@ -10,30 +10,14 @@ pattern eObject(o) {
 	EObject(o);
 }
 
-@Edge(
-	source = p,
-	target = ec,
-	label = "classIn"
-)
-pattern classesInPackage(p : EPackage, ec: EClass) {
-	EPackage.eClassifiers(p,ec);
-}
+@Edge(source = p, target = ec, label = "classIn")
+pattern classesInPackage(p : EPackage, ec: EClass) { EPackage.eClassifiers(p,ec); }
 
-@Edge(
-	source = p,
-	target = sp,
-	label = "sub"
-)
-pattern subPackage(p: EPackage, sp: EPackage)
-{
-	EPackage.eSubpackages(p,sp);
-}
+@Edge(source = p, target = sp, label = "sub")
+pattern subPackage(p: EPackage, sp: EPackage){ EPackage.eSubpackages(p,sp); }
 
-@Edge(
-	source = rootP,
-	target = containedClass,
-	label = "classIn+"
-)
+@Edge(source = rootP, target = containedClass, label = "classIn+")
+@Format(color = "#0033ff")
 pattern classesInPackageHierarchy(rootP: EPackage, containedClass: EClass)
 {
 	find classesInPackage(rootP,containedClass);
@@ -42,18 +26,10 @@ pattern classesInPackageHierarchy(rootP: EPackage, containedClass: EClass)
 	find classesInPackage(somePackage,containedClass);
 }
 
-@Item(
-	item = p,
-	label = "P: $p.name$"
-)
-pattern ePackage(p : EPackage) {
-	EPackage(p);
-}
+@Item(item = p, label = "P: $p.name$")
+@Format(color = "#791662", textColor = "#ffffff")
+pattern ePackage(p : EPackage) { EPackage(p); }
 
-@Item(
-	item = ec,
-	label = "EC: $ec.name$"
-)
-pattern eClass(ec : EClass) {
-	EClass(ec);
-}
+@Item(item = ec, label = "EC: $ec.name$")
+@Format(color = "#e8da2c")
+pattern eClass(ec : EClass) { EClass(ec); }
