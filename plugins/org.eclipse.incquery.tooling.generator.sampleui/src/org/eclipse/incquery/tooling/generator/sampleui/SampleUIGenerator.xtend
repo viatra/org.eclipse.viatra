@@ -211,7 +211,7 @@ class SampleUIGenerator implements IGenerationFragment {
 
 				«pattern.matcherClassName» matcher;
 				try{
-					matcher = «pattern.matcherClassName».factory().getMatcher(resource);
+					matcher = «pattern.matcherClassName».factory().getMatcher(resource /* or resourceSet */);
 				} catch (IncQueryException ex) {
 					throw new ExecutionException("Error creating pattern matcher", ex);
 				}
