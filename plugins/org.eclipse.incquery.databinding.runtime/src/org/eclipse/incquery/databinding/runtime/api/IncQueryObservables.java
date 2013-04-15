@@ -13,6 +13,7 @@ package org.eclipse.incquery.databinding.runtime.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
@@ -208,6 +209,11 @@ public final class IncQueryObservables {
             }
             if (o != null && feature != null) {
                 val = EMFProperties.value(feature).observe(o);
+            } else if (o != null && feature == null) {
+                // No feature found, falling back to constant toString
+                val = Observables.constantObservableValue(o.toString());
+            } else {
+                val = Observables.constantObservableValue(expression);
             }
         }
 
