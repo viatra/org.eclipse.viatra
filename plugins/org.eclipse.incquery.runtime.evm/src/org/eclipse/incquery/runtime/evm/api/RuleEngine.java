@@ -236,7 +236,8 @@ public class RuleEngine {
      * @return true, if the rule existed
      */
     public <Match extends IPatternMatch> boolean removeRule(final RuleSpecification<Match> specification) {
-        return removeRule(specification);
+        checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
+        return ruleBase.removeRule(specification);
     }
 
     /**

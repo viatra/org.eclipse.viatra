@@ -12,8 +12,6 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
-
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 /**
@@ -74,11 +72,10 @@ public class Executor {
             return;
         }
         
-        Set<Activation<?>> enabledActivations = ruleBase.getAgenda().getEnabledActivations();
-        while(!enabledActivations.isEmpty()) {
-            Activation<?> activation = enabledActivations.iterator().next();
-            ruleBase.getIncQueryEngine().getLogger().debug("Executing: " + activation + " in " + this);
-            activation.fire(context);
+        Activation<?> nextActivation = null;
+        while((nextActivation = ruleBase.getAgenda().getNextActivation()) != null) {
+            ruleBase.getIncQueryEngine().getLogger().debug("Executing: " + nextActivation + " in " + this);
+            nextActivation.fire(context);
         }
         
         endScheduling();

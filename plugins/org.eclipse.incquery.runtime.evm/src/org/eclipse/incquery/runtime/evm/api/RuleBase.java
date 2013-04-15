@@ -104,7 +104,6 @@ public class RuleBase {
      * Removes and disposes of a rule instance with the given specification.
      * 
      * @param specification
-     * @param filter the partial match used as filter
      * @return true, if the specification had an instance in the RuleBase
      */
     protected <Match extends IPatternMatch> boolean removeRule(
@@ -202,10 +201,8 @@ public class RuleBase {
             Match realFilter = checkNotEmpty(filter);
             for (RuleInstance<? extends IPatternMatch> ruleInstance : instances) {
                 IPatternMatch instanceFilter = ruleInstance.getFilter();
-                if(realFilter != null && instanceFilter != null) {
-                    if(realFilter.equals(instanceFilter)){
-                        return (RuleInstance<Match>) ruleInstance;
-                    }
+                if (realFilter != null && instanceFilter != null && realFilter.equals(instanceFilter)) {
+                    return (RuleInstance<Match>) ruleInstance;
                 }
                 if(realFilter == null && instanceFilter == null){
                     return (RuleInstance<Match>) ruleInstance;

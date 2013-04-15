@@ -52,7 +52,7 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         return comparator;
     }
     
-    public class ComparingConflictSet implements ConflictSet {
+    public static class ComparingConflictSet implements ConflictSet {
     
         private SortedSet<Activation<?>> set;
         private ComparingConflictResolver resolver;

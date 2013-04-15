@@ -15,7 +15,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -68,12 +67,12 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         return new FixedPriorityConflictSet(this, priorities);
     }
 
-    private Integer getRulePriority(Activation<?> activation, Map<RuleSpecification<?>, Integer> priorityMap) {
+    private static Integer getRulePriority(Activation<?> activation, Map<RuleSpecification<?>, Integer> priorityMap) {
         RuleSpecification<?> specification = activation.getRule().getSpecification();
         return getRulePriority(specification, priorityMap);
     }
 
-    private Integer getRulePriority(RuleSpecification<?> specification, Map<RuleSpecification<?>, Integer> priorityMap) {
+    private static Integer getRulePriority(RuleSpecification<?> specification, Map<RuleSpecification<?>, Integer> priorityMap) {
         Integer rulePriority = 0;
         if(priorityMap.containsKey(specification)) {
             rulePriority = priorityMap.get(specification);
@@ -81,10 +80,10 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         return rulePriority;
     }
 
-    public final class FixedPriorityConflictSet implements ConflictSet {
+    public static final class FixedPriorityConflictSet implements ConflictSet {
 
         private final Multimap<Integer, Activation<?>> priorityBuckets;
-        private HashMap<RuleSpecification<?>, Integer> cachedPriorities;
+        private Map<RuleSpecification<?>, Integer> cachedPriorities;
         private FixedPriorityConflictResolver resolver;
         
         /**

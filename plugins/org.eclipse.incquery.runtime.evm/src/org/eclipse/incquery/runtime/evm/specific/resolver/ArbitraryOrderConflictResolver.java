@@ -31,7 +31,7 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         return new ArbitraryConflictSet(this);
     }
     
-    public final class ArbitraryConflictSet implements ConflictSet {
+    public static final class ArbitraryConflictSet implements ConflictSet {
 
         private final Set<Activation<?>> container;
         private final ArbitraryOrderConflictResolver resolver;

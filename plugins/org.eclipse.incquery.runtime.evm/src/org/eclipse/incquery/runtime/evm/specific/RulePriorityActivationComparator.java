@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleInstance;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -29,7 +30,8 @@ import com.google.common.collect.Ranges;
  * 
  * 
  * @author Abel Hegedus
- * @deprecated this comparator is deprecated by ConflictResolver and ConlfictSet concepts
+ * @deprecated this comparator is deprecated by ConflictResolver and ConlfictSet concepts, use
+ *             {@link ComparingConflictResolver} instead!
  */
 public class RulePriorityActivationComparator implements Comparator<Activation<?>> {
 
