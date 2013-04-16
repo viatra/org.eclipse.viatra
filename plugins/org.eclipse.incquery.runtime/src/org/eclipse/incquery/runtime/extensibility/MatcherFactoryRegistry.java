@@ -37,7 +37,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
  * 
  */
 public final class MatcherFactoryRegistry {
-    private static final Map<String, IMatcherFactory<?>> MATCHER_FACTORIES = createMatcherFactories();
+    private static final Map<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> MATCHER_FACTORIES = createMatcherFactories();
 
     /**
      * Utility class constructor hidden
@@ -45,14 +45,14 @@ public final class MatcherFactoryRegistry {
     private MatcherFactoryRegistry() {
     }
 
-    private static Map<String, IMatcherFactory<?>> createMatcherFactories() {
-        final Map<String, IMatcherFactory<?>> factories = new HashMap<String, IMatcherFactory<?>>();
+    private static Map<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> createMatcherFactories() {
+        final Map<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> factories = new HashMap<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>();
         initRegistry(factories);
         return factories;
     }
 
     // Does not use the field MATCHER_FACTORIES as it may still be uninitialized
-    private static void initRegistry(Map<String, IMatcherFactory<?>> factories) {
+    private static void initRegistry(Map<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> factories) {
         factories.clear();
 
         IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -91,14 +91,14 @@ public final class MatcherFactoryRegistry {
         }
     }
 
-    private static void prepareMatcherFactory(Map<String, IMatcherFactory<?>> factories, Set<String> duplicates,
+    private static void prepareMatcherFactory(Map<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> factories, Set<String> duplicates,
             IConfigurationElement el) {
         try {
             String id = el.getAttribute("id");
             @SuppressWarnings("unchecked")
-            IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>> provider = (IMatcherFactoryProvider<IMatcherFactory<IncQueryMatcher<IPatternMatch>>>) el
+            IMatcherFactoryProvider<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> provider = (IMatcherFactoryProvider<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>) el
                     .createExecutableExtension("factoryProvider");
-            IMatcherFactory<IncQueryMatcher<IPatternMatch>> matcherFactory = provider.get();
+            IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> matcherFactory = provider.get();
             String fullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
             if (id.equals(fullyQualifiedName)) {
                 if (factories.containsKey(fullyQualifiedName)) {
@@ -123,7 +123,7 @@ public final class MatcherFactoryRegistry {
      * 
      * @param factory
      */
-    public static void registerMatcherFactory(IMatcherFactory<?> factory) {
+    public static void registerMatcherFactory(IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> factory) {
         String qualifiedName = factory.getPatternFullyQualifiedName();
         if (!MATCHER_FACTORIES.containsKey(qualifiedName)) {
             MATCHER_FACTORIES.put(qualifiedName, factory);
@@ -139,8 +139,8 @@ public final class MatcherFactoryRegistry {
     /**
      * @return a copy of the set of contributed matcher factories
      */
-    public static Set<IMatcherFactory<?>> getContributedMatcherFactories() {
-        return new HashSet<IMatcherFactory<?>>(MATCHER_FACTORIES.values());
+    public static Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> getContributedMatcherFactories() {
+        return new HashSet<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>(MATCHER_FACTORIES.values());
     }
 
     /**
@@ -149,7 +149,7 @@ public final class MatcherFactoryRegistry {
      * @param patternFqn
      * @return
      */
-    public static IMatcherFactory<?> getMatcherFactory(String patternFqn) {
+    public static IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> getMatcherFactory(String patternFqn) {
         if (MATCHER_FACTORIES.containsKey(patternFqn)) {
             return MATCHER_FACTORIES.get(patternFqn);
         }
@@ -162,7 +162,7 @@ public final class MatcherFactoryRegistry {
      * @param pattern
      * @return
      */
-    public static IMatcherFactory<?> getMatcherFactory(Pattern pattern) {
+    public static IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> getMatcherFactory(Pattern pattern) {
         String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         if (MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
             return MATCHER_FACTORIES.get(fullyQualifiedName);
@@ -176,7 +176,7 @@ public final class MatcherFactoryRegistry {
      * @param pattern
      * @return
      */
-    public static IMatcherFactory<?> getOrCreateMatcherFactory(Pattern pattern) {
+    public static IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateMatcherFactory(Pattern pattern) {
         String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         if (MATCHER_FACTORIES.containsKey(fullyQualifiedName)) {
             return MATCHER_FACTORIES.get(fullyQualifiedName);
@@ -192,7 +192,7 @@ public final class MatcherFactoryRegistry {
      *            the fully qualified name of the package
      * @return the set of matcher factories inside the given package, empty set otherwise.
      */
-    public static Set<IMatcherFactory<?>> getPatternGroup(String packageFQN) {
+    public static Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroup(String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, false);
     }
 
@@ -204,7 +204,7 @@ public final class MatcherFactoryRegistry {
      *            the fully qualified name of the package
      * @return the set of matcher factories in the given package subtree, empty set otherwise.
      */
-    public static Set<IMatcherFactory<?>> getPatternSubTree(String packageFQN) {
+    public static Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, true);
     }
 
@@ -218,13 +218,13 @@ public final class MatcherFactoryRegistry {
      *            if it is in the given package
      * @return the matcher factories in the group
      */
-    private static Set<IMatcherFactory<?>> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
-        Map<String, Set<IMatcherFactory<?>>> map = new HashMap<String, Set<IMatcherFactory<?>>>();
+    private static Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
+        Map<String, Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>> map = new HashMap<String, Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>>();
         if (map.containsKey(packageFQN)) {
             return map.get(packageFQN);
         } else {
-            Set<IMatcherFactory<?>> group = new HashSet<IMatcherFactory<?>>();
-            for (Entry<String, IMatcherFactory<?>> entry : MATCHER_FACTORIES.entrySet()) {
+            Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>>();
+            for (Entry<String, IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> entry : MATCHER_FACTORIES.entrySet()) {
                 addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
             }
             if (group.size() > 0) {
@@ -249,8 +249,8 @@ public final class MatcherFactoryRegistry {
      *            if true, the pattern is added if it is in the package hierarchy, if false, the pattern is added only
      *            if it is in the given package
      */
-    private static void addPatternToGroup(String packageFQN, Set<IMatcherFactory<?>> group, String patternFQN,
-            IMatcherFactory<?> factory, boolean includeSubPackages) {
+    private static void addPatternToGroup(String packageFQN, Set<IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
+            IMatcherFactory<? extends IncQueryMatcher<? extends IPatternMatch>> factory, boolean includeSubPackages) {
         if (packageFQN.length() + 1 < patternFQN.length()) {
             if (includeSubPackages) {
                 if (patternFQN.startsWith(packageFQN + '.')) {
