@@ -12,15 +12,14 @@
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
-import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.index.StandardIndexer;
+import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
@@ -30,13 +29,13 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 
 public class ZestReteContentProvider extends ArrayContentProvider implements IGraphEntityContentProvider {
 
-    @Override
-    public Object[] getElements(Object inputElement) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Object[] _getElements(Object inputElement) {
         if (inputElement instanceof ReteContainer) {
             return super.getElements(((ReteContainer) inputElement).getAllNodes());
         } else if (inputElement instanceof ReteBoundary) {
             ReteBoundary rb = (ReteBoundary) inputElement;
-            List<Node> r = new ArrayList<Node>();
+            ArrayList<Node> r = new ArrayList<Node>();
             for (Object a : rb.getAllUnaryRoots()) {
                 r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all unary constraints
             }
@@ -47,30 +46,53 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
         }
         return super.getElements(inputElement);
     }
+    
+    private Object[] filterElements(Object[] elements) {
+        ArrayList<Object> r= new ArrayList<Object>();
+        for (Object o : elements) {
+            if (!
+                    (o instanceof DeltaMonitor)
+                ) 
+            {
+                r.add(o);
+            }
+        }
+        return r.toArray();
+    }
 
     @Override
+    public Object[] getElements(Object inputElement) {
+        return filterElements(_getElements(inputElement));
+    }
+    
+    @Override
     public Object[] getConnectedTo(Object entity) {
+        return filterElements(_getConnectedTo(entity));
+    }
+    
+    
+    private Object[] _getConnectedTo(Object entity) {
         if (entity instanceof Node) {
-            List<Node> r = new ArrayList<Node>();
+            ArrayList<Node> r = new ArrayList<Node>();
             if (entity instanceof Supplier) {
                 r.addAll(((Supplier) entity).getReceivers());
                 
                 // look for memoryNullIndexer and memoryIdentityIndexer references
                 if (entity instanceof PredicateEvaluatorNode) {
-                    MemoryNullIndexer mni = ((PredicateEvaluatorNode)entity).getNullIndexer();
-                    if (mni!=null) {
-                        r.add(mni);
-                    }
+//                    MemoryNullIndexer mni = ((PredicateEvaluatorNode)entity).getNullIndexer();
+//                    if (mni!=null) {
+//                        r.add(mni);
+//                    }
                     MemoryIdentityIndexer mii = ((PredicateEvaluatorNode)entity).getIdentityIndexer();
                     if (mii!=null) {
                         r.add(mii);
                     }
                 }
                 if (entity instanceof UniquenessEnforcerNode) {
-                    MemoryNullIndexer mni = ((UniquenessEnforcerNode)entity).getNullIndexer();
-                    if (mni!=null) {
-                        r.add(mni);
-                    }
+//                    MemoryNullIndexer mni = ((UniquenessEnforcerNode)entity).getNullIndexer();
+//                    if (mni!=null) {
+//                        r.add(mni);
+//                    }
                     MemoryIdentityIndexer mii = ((UniquenessEnforcerNode)entity).getIdentityIndexer();
                     if (mii!=null) {
                         r.add(mii);

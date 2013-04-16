@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IndexerWithMemory;
+import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.ConstantNode;
 import org.eclipse.incquery.runtime.rete.network.Node;
@@ -106,6 +107,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             if (n instanceof IndexerWithMemory) {
                 MaskedTupleMemory mem = ((IndexerWithMemory) n).getMemory();
                 sb.append(" [" + mem.getKeysetSize() + " => " + mem.getTotalSize() + "]");
+            }
+            if (n instanceof MemoryIdentityIndexer) {
+                sb.append(" [" + ((MemoryIdentityIndexer)n).getSignatures().size() + "]");
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
                 sb.append("\n");
