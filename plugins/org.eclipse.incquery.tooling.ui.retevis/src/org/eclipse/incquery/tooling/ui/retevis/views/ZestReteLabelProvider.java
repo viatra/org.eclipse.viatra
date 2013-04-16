@@ -128,6 +128,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
                     sb.append(">  ");
                 }
             }
+//            if (n instanceof RetePatternMatcher) {
+//                ((RetePatternMatcher)n). // TODO allow displaying the name of the pattern this matcher was built for
+//           }
             return sb.toString();
         }
         return "!";
@@ -198,7 +201,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             return Collections.emptySet();
     }
 
-    Map<Node, Collection<Stub<Address<?>>>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
+    private Map<Node, Collection<Stub<Address<?>>>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
 
     private void resetReverseMap() {
         reverseMap = new HashMap<Node, Collection<Stub<Address<?>>>>();
@@ -233,25 +236,21 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
     @Override
     public Color getNodeHighlightColor(Object entity) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Color getBorderColor(Object entity) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Color getBorderHighlightColor(Object entity) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public int getBorderWidth(Object entity) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
@@ -287,7 +286,6 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
     @Override
     public boolean fisheyeNode(Object entity) {
-        // TODO Auto-generated method stub
         return false;
     }
 

@@ -14,6 +14,7 @@ package org.eclipse.incquery.tooling.ui.retevis.views;
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.CompositeLayoutAlgorithm;
@@ -109,6 +110,10 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         mgr.removeAll();
         mgr.add(refreshGraph);
         mgr.add(clearGraph);
+        
+        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
+        mgr.add(toolbarZoomContributionViewItem);
+        
         mgr.update(true);
         
         IMenuManager mmgr = getViewSite().getActionBars().getMenuManager();
