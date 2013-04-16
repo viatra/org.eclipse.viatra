@@ -11,8 +11,6 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
@@ -25,25 +23,18 @@ import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.retevis.Activator;
 import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -66,12 +57,14 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         return graphViewer;
     }
 
-    /**
-     * The constructor.
-     */
-    public ReteVisView() {
+    public static ReteVisView getInstance() {
+        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
+            return (ReteVisView) activeWorkbenchWindow.getActivePage().findView(ID);
+        }
+        return null;
     }
-
+    
     
     private Action refreshGraph = new Action("Refresh Graph") {
         @Override
@@ -165,32 +158,12 @@ public class ReteVisView extends ViewPart implements IZoomableWorkbenchPart {
         createToolbar();
     }
 
-    @Override
-    public void init(IViewSite site) throws PartInitException {
-        super.init(site);
-        site.getPage().addSelectionListener(new ISelectionListener() {
-
-            @Override
-            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-                if (selection instanceof IStructuredSelection) {
-                    IStructuredSelection sel = (IStructuredSelection) selection;
-                    Object o = sel.getFirstElement();
-                    if (o instanceof ObservablePatternMatcher) {
-                        ObservablePatternMatcher pm = (ObservablePatternMatcher) o;
-                        // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
-                        try {
-                            ReteBoundary<Pattern> rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
-                            ((ZestReteLabelProvider) graphViewer.getLabelProvider()).setRb(rb);
-                            graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
-                            graphViewer.setInput(rb.getHeadContainer());
-                        } catch (IncQueryException e) {
-                            Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
-                        }
-                    }
-                }
-            }
-        });
+    public void setContent(@SuppressWarnings("rawtypes") ReteBoundary rb) {
+        ((ZestReteLabelProvider) graphViewer.getLabelProvider()).setRb(rb);
+        graphViewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
+        graphViewer.setInput(rb.getHeadContainer());
     }
+     
 
     /**
      * Passing the focus request to the viewer's control.
