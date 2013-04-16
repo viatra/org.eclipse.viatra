@@ -9,7 +9,7 @@
             locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers"
-               label="Initialize IncQuery Viewers"
+               label="(Re)initialize IncQuery Viewers"
                style="push">
          </command>
       </menuContribution>
@@ -19,7 +19,7 @@
       <command
             categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
             id="org.eclipse.incquery.viewers.tooling.ui.initViewers"
-            name="Initialize IncQuery Viewers">
+            name="(Re)initialize IncQuery Viewers">
       </command>
       <category
             id="org.eclipse.incquery.viewers.tooling.ui.category"

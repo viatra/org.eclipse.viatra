@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
@@ -104,10 +106,15 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
         this.viewer = (AbstractTreeViewer) viewer;
         super.initializeContent(viewer, vmodel, filter);
 
-        if (filter == null) {
-            containmentList = vmodel.initializeObservableContainmentList();
-        } else {
-            containmentList = vmodel.initializeObservableContainmentList(filter);
+        if (vmodel == null) {
+            containmentList = new ObservableList(new ArrayList(), new Object()) {};
+        }
+        else {
+            if (filter == null) {
+                containmentList = vmodel.initializeObservableContainmentList();
+            } else {
+                containmentList = vmodel.initializeObservableContainmentList(filter);
+            }
         }
 
         elementMap = HashMultimap.create();

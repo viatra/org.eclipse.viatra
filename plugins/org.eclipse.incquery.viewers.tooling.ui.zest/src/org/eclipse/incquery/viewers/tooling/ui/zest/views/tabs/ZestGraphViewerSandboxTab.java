@@ -111,7 +111,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     private Action clearGraph = new Action("Clear Graph") {
         @Override
         public void run() {
-            viewer.setInput(null); // TODO how to clear a databound viewer?
+            viewer.setInput(null);
         }
     };
     

@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.MultiList;
+import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
@@ -89,10 +91,15 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
         this.viewer = (GraphViewer) viewer;
         super.initializeContent(viewer, vmodel, filter);
 
-        if (filter == null) {
-            edgeList = vmodel.initializeObservableEdgeList();
-        } else {
-            edgeList = vmodel.initializeObservableEdgeList(filter);
+        if (vmodel == null) {
+            edgeList = new MultiList(new IObservableList[]{ new ObservableList(new ArrayList(), new Object()){} });
+        } 
+        else {
+            if (filter == null) {
+                edgeList = vmodel.initializeObservableEdgeList();
+            } else {
+                edgeList = vmodel.initializeObservableEdgeList(filter);
+            }
         }
         edgeListener = new EdgeListChangeListener((GraphViewer) viewer);
         edgeList.addListChangeListener(edgeListener);

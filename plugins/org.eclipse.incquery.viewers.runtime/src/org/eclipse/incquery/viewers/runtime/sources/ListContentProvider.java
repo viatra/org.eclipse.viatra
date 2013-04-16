@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
@@ -80,17 +83,23 @@ public class ListContentProvider implements IStructuredContentProvider {
             vFilter = ((FilteredViewerDataModel) newInput).getFilter();
         }
         if (newInput == null) {
-            return;
+            //return;
+            initializeContent(viewer, null, vFilter);
+        } else {
+            initializeContent(viewer, vmodel, vFilter);
         }
-
-        initializeContent(viewer, vmodel, vFilter);
     }
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
-        if (filter == null) {
-            nodeList = vmodel.initializeObservableItemList();
-        } else {
-            nodeList = vmodel.initializeObservableItemList(filter);
+        if (vmodel == null) {
+            nodeList = new ObservableList(new ArrayList(), new Object()) {};
+        }
+        else {
+            if (filter == null) {
+                nodeList = vmodel.initializeObservableItemList();
+            } else {
+                nodeList = vmodel.initializeObservableItemList(filter);
+            }
         }
         nodeListener = new NodeListChangeListener();
         nodeList.addListChangeListener(nodeListener);
