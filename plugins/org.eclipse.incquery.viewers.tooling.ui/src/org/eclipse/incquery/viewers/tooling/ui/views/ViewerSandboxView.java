@@ -18,7 +18,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
@@ -29,13 +31,20 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewersAnnotatedPatternTester;
+import org.eclipse.incquery.viewers.tooling.ui.Activator;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -78,8 +87,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
                 tab = (IViewerSandboxTab) provider.createExecutableExtension("implementation");
                 tabList.add(tab);
             } catch (CoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage(), e));
             }
         }
     }
@@ -95,8 +103,21 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         }
 
         folder.setSelection(0);
-
-        fillToolBar();
+        folder.addSelectionListener(new SelectionListener() { 
+            // make sure the contributed menu is refreshed each time the current tab changes
+            
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                fillToolBar(tabList.get(folder.getSelectionIndex()));
+            }
+            
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                fillToolBar(tabList.get(folder.getSelectionIndex()));
+            }
+        });
+        //fillToolBar();
+        
         getSite().setSelectionProvider(this);
     }
 
@@ -120,11 +141,47 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         return super.getAdapter(adapter);
     }
 
-    private void fillToolBar() {
-        // TODO add back zoom menu contribution for Zest graphs
-        // ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
-        // IActionBars bars = getViewSite().getActionBars();
-        // bars.getMenuManager().add(toolbarZoomContributionViewItem);
+    // this should be called whenever the active tab changes
+    private void fillToolBar(IViewerSandboxTab tab) 
+    {
+        if (tab!=null) {
+            IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+            mgr.removeAll();
+            for (IContributionItem item : getToolbarContributions(tab)) {
+                if (item instanceof MenuManager) {
+                    for (IContributionItem _item : ((MenuManager)item).getItems()) {
+                        mgr.add(_item);
+                    }
+                }
+                else {
+                    mgr.add(item);
+                }
+            }
+            mgr.update(true);
+            
+            IMenuManager mmgr = getViewSite().getActionBars().getMenuManager();
+            mmgr.removeAll();
+            for (IContributionItem item : getDropdownMenuContributions(tab)) {
+                mmgr.add(item);
+            }
+            mmgr.update(true);
+        }
+    }
+    
+    private List<IContributionItem> getDropdownMenuContributions(IViewerSandboxTab tab) {
+        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        if (tab!=null && tab.getDropDownMenuContributions()!=null) {
+            r.addAll(tab.getDropDownMenuContributions());
+        }
+        return r;
+    }
+    
+    private List<IContributionItem> getToolbarContributions(IViewerSandboxTab tab) {
+        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        if (tab!=null && tab.getToolBarContributions()!=null) {
+            r.addAll(tab.getToolBarContributions());
+        }   
+        return r;
     }
 
     @Override

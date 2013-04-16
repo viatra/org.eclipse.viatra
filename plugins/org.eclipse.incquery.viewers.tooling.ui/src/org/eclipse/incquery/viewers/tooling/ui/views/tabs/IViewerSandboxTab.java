@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
 
+import java.util.List;
+
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.custom.CTabFolder;
 
@@ -24,6 +27,9 @@ import org.eclipse.swt.custom.CTabFolder;
  */
 public interface IViewerSandboxTab extends ISelectionProvider {
 
+    /**
+     * The tab title.
+     */
     String getTabTitle();
 
     /**
@@ -41,5 +47,20 @@ public interface IViewerSandboxTab extends ISelectionProvider {
      */
     void bindModel(ViewerDataModel model, ViewerDataFilter filter);
     
+    /**
+     * Receive focus.
+     */
     void setFocus();
+    
+    /**
+     * A list of items that this tab will contribute to the dropdown menu of the Sandbox view.
+     * @return
+     */
+    List<IContributionItem> getDropDownMenuContributions();
+    
+    /**
+     * A list of items that this tab will contribute to the toolbar of the Sandbox view.
+     * @return
+     */
+    List<IContributionItem> getToolBarContributions();
 }
