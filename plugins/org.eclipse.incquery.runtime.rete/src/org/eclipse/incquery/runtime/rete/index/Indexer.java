@@ -53,6 +53,9 @@ public interface Indexer extends Node {
      */
     public Node getActiveNode();
 
+    
+    public Collection<IndexerListener> getListeners();
+    
     public void attachListener(IndexerListener listener);
 
     public void detachListener(IndexerListener listener);
