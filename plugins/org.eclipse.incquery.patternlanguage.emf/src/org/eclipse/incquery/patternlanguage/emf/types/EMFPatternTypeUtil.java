@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.types;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EReference;
@@ -30,6 +32,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
+
+import com.google.common.collect.Maps;
 
 /**
  * A common utility class for basic type checking methods.
@@ -74,6 +78,26 @@ public class EMFPatternTypeUtil {
             return getTypeFromPathExpressionTail(pathExpressionTail.getTail());
         }
         return pathExpressionTail.getType();
+    }
+    
+    public static Map<PathExpressionTail,EStructuralFeature> getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
+        Map<PathExpressionTail,EStructuralFeature> types = Maps.newHashMap();
+        getAllFeaturesFromPathExpressionTail(pathExpressionTail, types);
+        return types;
+    }
+    
+    public static void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail, Map<PathExpressionTail,EStructuralFeature> types) {
+        if (pathExpressionTail != null) {
+            Type type = pathExpressionTail.getType();
+            if(type instanceof ReferenceType) {
+                ReferenceType referenceType = (ReferenceType) type;
+                EStructuralFeature refname = referenceType.getRefname();
+                if(refname != null) {
+                    types.put(pathExpressionTail,refname);
+                }
+            }
+            getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
+        }
     }
 
     public static EClassifier getClassifierForType(Type type) {

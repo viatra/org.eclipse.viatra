@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.validation;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.incquery.patternlanguage.emf.ResolutionException;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
@@ -40,6 +42,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
@@ -49,6 +52,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
+import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.xtext.validation.Check;
 
 import com.google.inject.Inject;
@@ -599,6 +603,30 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
                         + " has a type of " + classifier.getName() + ".", checkConstraint, null,
                         EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
+            }
+        }
+    }
+    
+    /**
+     * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a warning
+     * on each that is not representable by EMF-IncQuery. This is a warning, since we only see well-behaving extensions
+     * in the host.
+     * 
+     * @param pathExpressionConstraint
+     */
+    @Check
+    public void checkForNotWellbehavingDerivedFeatureInPathExpressions(PathExpressionConstraint pathExpressionConstraint) {
+        PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
+        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = EMFPatternTypeUtil
+                .getAllFeaturesFromPathExpressionTail(pathExpressionHead.getTail());
+        for (PathExpressionTail tail : tailFeatureMap.keySet()) {
+            EStructuralFeature feature = tailFeatureMap.get(tail);
+            if (!EMFModelComprehension.representable(feature)) {
+                warning("The derived/volatile feature " + feature.getName() + " of class "
+                        + feature.getEContainingClass().getName()
+                        + " used in the path expression is not representable in EMF-IncQuery."
+                        + " For details, consult the documentation on well-behaving features.", tail.getType(), null,
+                        EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             }
         }
     }
