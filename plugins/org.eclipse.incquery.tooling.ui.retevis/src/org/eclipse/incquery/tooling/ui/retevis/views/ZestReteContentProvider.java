@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
+import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.index.StandardIndexer;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.network.Node;
@@ -50,8 +51,11 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
     private Object[] filterElements(Object[] elements) {
         ArrayList<Object> r= new ArrayList<Object>();
         for (Object o : elements) {
-            if (!
-                    (o instanceof DeltaMonitor)
+            if (! (
+                    (o instanceof DeltaMonitor) ||
+                    (o.getClass().getName().contains("ElementChangeNotifierNode")) ||
+                    (o.getClass().getName().contains("ASMFunctionTraceNotifierNode"))
+                  )
                 ) 
             {
                 r.add(o);
@@ -79,22 +83,22 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
                 
                 // look for memoryNullIndexer and memoryIdentityIndexer references
                 if (entity instanceof PredicateEvaluatorNode) {
-//                    MemoryNullIndexer mni = ((PredicateEvaluatorNode)entity).getNullIndexer();
-//                    if (mni!=null) {
-//                        r.add(mni);
-//                    }
+                    MemoryNullIndexer mni = ((PredicateEvaluatorNode)entity).getNullIndexer();
+                    if (mni!=null && !mni.getListeners().isEmpty()) {
+                        r.add(mni);
+                    }
                     MemoryIdentityIndexer mii = ((PredicateEvaluatorNode)entity).getIdentityIndexer();
-                    if (mii!=null) {
+                    if (mii!=null && !mii.getListeners().isEmpty()) {
                         r.add(mii);
                     }
                 }
                 if (entity instanceof UniquenessEnforcerNode) {
-//                    MemoryNullIndexer mni = ((UniquenessEnforcerNode)entity).getNullIndexer();
-//                    if (mni!=null) {
-//                        r.add(mni);
-//                    }
+                    MemoryNullIndexer mni = ((UniquenessEnforcerNode)entity).getNullIndexer();
+                    if (mni!=null && !mni.getListeners().isEmpty()) {
+                        r.add(mni);
+                    }
                     MemoryIdentityIndexer mii = ((UniquenessEnforcerNode)entity).getIdentityIndexer();
-                    if (mii!=null) {
+                    if (mii!=null && !mii.getListeners().isEmpty()) {
                         r.add(mii);
                     }
                 }
