@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.emf.ecore.EStructuralFeature
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -135,7 +136,7 @@ class TypeInferenceTest {
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern firstPath(class1, attribute1) = {
-				EClass.eAttributes(class1, attribute1);
+				EClass.eStructuralFeatures(class1, attribute1);
 			}
 		') as PatternModel
 		model.assertNoErrors
@@ -146,7 +147,7 @@ class TypeInferenceTest {
 		val type1 = typeProvider.getTypeForIdentifiable(param1)
 		val type2 = typeProvider.getTypeForIdentifiable(param2)
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
-		assertEquals(typeof(EAttribute).canonicalName, type2.qualifiedName)
+		assertEquals(typeof(EStructuralFeature).canonicalName, type2.qualifiedName)
 	}
 	
 	@Test
@@ -155,7 +156,7 @@ class TypeInferenceTest {
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern firstPath(class1, attribute1) = {
-				EClass.eAttributes(class1, attribute1);
+				EClass.eStructuralFeatures(class1, attribute1);
 			}
 
 			pattern secondPath(class2, attribute2) = {
@@ -175,8 +176,8 @@ class TypeInferenceTest {
 		val type22 = typeProvider.getTypeForIdentifiable(param22)
 		assertEquals(typeof(EClass).canonicalName, type11.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type12.qualifiedName)
-		assertEquals(typeof(EAttribute).canonicalName, type21.qualifiedName)
-		assertEquals(typeof(EAttribute).canonicalName, type22.qualifiedName)
+		assertEquals(typeof(EStructuralFeature).canonicalName, type21.qualifiedName)
+		assertEquals(typeof(EStructuralFeature).canonicalName, type22.qualifiedName)
 	}
 	
 	@Test

@@ -121,7 +121,7 @@ class CartesianProductTest {
 			pattern IntAndClassPattern(X, Y) {
 				EInt(X);
 				EClass(Y);
-				EClass.eAllAttributes.upperBound(Y,X);
+				EClass.eStructuralFeatures.upperBound(Y,X);
 			}
 
 			pattern Good4(X, Y, Z) {
@@ -152,7 +152,7 @@ class CartesianProductTest {
 				EClass(Y);
 				X == Y;
 				EClass(Z);
-				EClass.eAllAttributes.upperBound(Z,count find Good1(X,Y));
+				EClass.eStructuralFeatures.upperBound(Z,count find Good1(X,Y));
 			}
 		') as PatternModel
 		model.assertNoErrors

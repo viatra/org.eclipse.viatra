@@ -155,4 +155,17 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 		)
 	}
+  @Test
+  def referenceIsNotRepresentable(){
+    val model = parseHelper.parse('
+      import "http://www.eclipse.org/emf/2002/Ecore"
+
+      pattern IntAndClassPattern(X, Y) {
+        EInt(X);
+        EClass(Y);
+        EClass.eAttributes.upperBound(Y,X);
+      }
+    ') as PatternModel
+    tester.validate(model).assertWarning(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE)
+  }
 }
