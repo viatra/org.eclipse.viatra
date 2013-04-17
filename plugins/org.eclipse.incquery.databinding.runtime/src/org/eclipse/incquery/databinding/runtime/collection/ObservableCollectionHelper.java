@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -22,8 +24,9 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
-import org.eclipse.incquery.runtime.evm.specific.jobs.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
+import org.eclipse.incquery.runtime.evm.specific.rule.FavouredMatcherRuleSpecification;
 
 import com.google.common.collect.Sets;
 
@@ -43,23 +46,43 @@ public final class ObservableCollectionHelper {
     }
 
     /**
-     * Creates the rule used for updating the results in the given agenda.
+     * Creates the rule used for updating the results.
      * 
      * @param observableCollectionUpdate
      *            the observable collection to handle
      * @param factory
      *            the {@link IMatcherFactory} used to create the rule
      */
-    @SuppressWarnings("unchecked")
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
 
+        Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
+        return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+    }
+    
+    /**
+     * Creates the rule used for updating the results.
+     * 
+     * @param observableCollectionUpdate
+     *            the observable collection to handle
+     * @param factory
+     *            the {@link IncQueryMatcher} used to create the rule
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
+            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
+        
+        Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
+        return new FavouredMatcherRuleSpecification<Match, Matcher>(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
+            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate) {
         Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate));
         Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate));
-        return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE,
-                Sets.newHashSet(insertJob, deleteJob));
+        return Sets.newHashSet(insertJob, deleteJob);
     }
 
     public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {

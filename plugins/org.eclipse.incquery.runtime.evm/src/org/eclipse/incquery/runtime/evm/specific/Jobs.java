@@ -16,9 +16,9 @@ import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.specific.jobs.EnableJob;
-import org.eclipse.incquery.runtime.evm.specific.jobs.RecordingJob;
-import org.eclipse.incquery.runtime.evm.specific.jobs.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.job.EnableJob;
+import org.eclipse.incquery.runtime.evm.specific.job.RecordingJob;
+import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 
 /**
  * Provides static methods acting on or generating a {@link Job}. 

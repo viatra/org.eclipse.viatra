@@ -45,6 +45,21 @@ public final class IncQueryObservables {
     private IncQueryObservables() {
 
     }
+    
+    /**
+     * Create an observable list of the match set of the given {@link IncQueryMatcher}.
+     * 
+     * <p>
+     * The matches are ordered by appearance, so a new match is always put on the end of the list.
+     * 
+     * @param matcher
+     *            the matcher to observe
+     * @return an observable list of matches
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
+            Matcher matcher) {
+        return new ObservablePatternMatchList<Match>(matcher);
+    }
 
     /**
      * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
@@ -89,6 +104,18 @@ public final class IncQueryObservables {
         return new ObservablePatternMatchList<Match>(factory, engine, filter);
     }
 
+    /**
+     * Create an observable set of the match set of the given {@link IncQueryMatcher}.
+     * 
+     * @param matcher
+     *            the matcher to observe
+     * @return an observable list of matches
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
+            Matcher matcher) {
+        return new ObservablePatternMatchSet<Match>(matcher);
+    }
+    
     /**
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
      * 

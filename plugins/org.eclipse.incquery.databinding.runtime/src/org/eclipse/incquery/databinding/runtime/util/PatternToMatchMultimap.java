@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.util;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.qrm.EVMBasedQueryResultMultimap;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
  * Multimap for managing multiple patterns and related matches for a given notifier.
@@ -34,17 +32,6 @@ public class PatternToMatchMultimap<MatchType extends IPatternMatch> extends
      */
     public PatternToMatchMultimap(IncQueryEngine engine) {
         super(engine);
-    }
-
-    /**
-     * Creates a new multimap for the given notifier
-     * 
-     * @param notifier
-     *            the notifier to use
-     * @throws IncQueryException  if the {@link IncQueryEngine} creation fails on the {@link Notifier}
-     */
-    public PatternToMatchMultimap(Notifier notifier) throws IncQueryException {
-        super(notifier);
     }
 
     @Override

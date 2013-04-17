@@ -45,41 +45,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
     private final ListCollectionUpdate updater = new ListCollectionUpdate();
     private RuleSpecification<Match> specification;
-
-//    /**
-//     * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
-//     * 
-//     * <p>
-//     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-//     * 
-//     * @param matcher
-//     *            the {@link IncQueryMatcher} to use as the source of the observable list
-//     * @throws IncQueryException if the {@link IncQueryEngine} base index is not available
-//     */
-//    @SuppressWarnings("unchecked")
-//    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) throws IncQueryException {
-//        this((IMatcherFactory<Matcher>) MatcherFactoryRegistry
-//                .getOrCreateMatcherFactory(matcher.getPattern()), matcher.getEngine());
-//    }
-
-//    /**
-//     * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
-//     * {@link Notifier}.
-//     * 
-//     * <p>
-//     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-//     * 
-//     * @param factory
-//     *            the {@link IMatcherFactory} used to create a matcher
-//     * @param notifier
-//     *            the {@link Notifier} on which the matcher is created
-//     * @throws IncQueryException if the {@link IncQueryEngine} creation fails on the {@link Notifier}
-//     */
-//    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
-//            Notifier notifier) throws IncQueryException {
-//        this(factory, EngineManager.getInstance().getIncQueryEngine(notifier));
-//    }
-
+    
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
      * {@link IncQueryEngine}.
@@ -135,7 +101,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine) {
         this(factory);
-        engine.addRule(specification, true, null);
+        engine.addRule(specification, true);
     }
 
     /**
@@ -161,32 +127,31 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, factory);
     }
-
-    /*
-     * (non-Javadoc)
+    
+    /**
+     * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
      * 
-     * @see org.eclipse.core.databinding.observable.list.IObservableList#getElementType()
+     * <p>
+     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
+     * 
+     * @param matcher
+     *            the {@link IncQueryMatcher} to use as the source of the observable list
      */
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
+        super();
+        this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+    }
+
     @Override
     public Object getElementType() {
         return IPatternMatch.class;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.databinding.observable.list.AbstractObservableList#doGetSize()
-     */
     @Override
     protected int doGetSize() {
         return cache.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractList#get(int)
-     */
     @Override
     public Object get(int index) {
         return cache.get(index);

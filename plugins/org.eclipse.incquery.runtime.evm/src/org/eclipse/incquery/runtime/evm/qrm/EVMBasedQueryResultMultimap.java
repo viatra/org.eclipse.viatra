@@ -13,8 +13,6 @@ package org.eclipse.incquery.runtime.evm.qrm;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -26,10 +24,9 @@ import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
-import org.eclipse.incquery.runtime.evm.specific.SimpleMatcherRuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.jobs.StatelessJob;
+import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecification;
 
 /**
  * This {@link QueryResultMultimap} implementation uses the EVM to provide a query-based multimap.
@@ -82,17 +79,6 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
     protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
         this(EventDrivenVM.createExecutionSchema(engine,
                 Schedulers.getIQBaseSchedulerFactory(engine)));
-    }
-
-    /**
-     * Creates a new multimap on the given notifier, delegates to {@link #EVMBasedQueryResultMultimap(IncQueryEngine)}.
-     * 
-     * @throws IncQueryException
-     *             if the {@link IncQueryEngine} creation fails on the {@link Notifier}
-     * 
-     */
-    protected EVMBasedQueryResultMultimap(final Notifier notifier) throws IncQueryException {
-        this(EngineManager.getInstance().getIncQueryEngine(notifier));
     }
 
     /**

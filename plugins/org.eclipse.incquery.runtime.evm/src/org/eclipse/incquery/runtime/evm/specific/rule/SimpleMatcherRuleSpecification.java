@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.rule;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -67,7 +67,7 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     @Override
     protected RuleInstance<Match> instantiateRule(IncQueryEngine engine, Match filter) {
         try {
-            Matcher matcher = factory.getMatcher(engine);
+            Matcher matcher = getMatcher(engine);
             Match immutableFilter = (filter != null) ? matcher.newMatch(filter.toArray()) : null;
             SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, immutableFilter);
             ruleInstance.prepareInstance(matcher);
@@ -76,6 +76,11 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
             engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
         }
         return null;
+    }
+
+    protected Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
+        Matcher matcher = factory.getMatcher(engine);
+        return matcher;
     }
     
     /*

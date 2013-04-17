@@ -16,7 +16,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomainEvent;
 import org.eclipse.emf.transaction.TransactionalEditingDomainListener;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.emf.workspace.impl.EMFOperationTransaction;
-import org.eclipse.incquery.runtime.evm.specific.jobs.RecordingJob;
+import org.eclipse.incquery.runtime.evm.specific.job.RecordingJob;
 
 /**
  * This provider implementation uses the EMF Transaction notification as

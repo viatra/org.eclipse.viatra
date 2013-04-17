@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.runtime.evm.specific.rule;
 
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
