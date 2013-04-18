@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.evm.specific.job;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -51,5 +52,11 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     @Override
     protected void execute(final Activation<Match> activation, final Context context) {
         matchProcessor.process(activation.getPatternMatch());
+    }
+
+    @Override
+    protected void handleError(final Activation<Match> activation, final Exception exception, final Context context) {
+        checkState(false,"Exception " + exception.getMessage() + " was thrown when executing " + activation
+                + "! Stateless job doesn't handle errors!", exception);
     }
 }

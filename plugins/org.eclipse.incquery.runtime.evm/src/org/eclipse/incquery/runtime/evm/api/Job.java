@@ -47,4 +47,12 @@ public abstract class Job<Match extends IPatternMatch> {
      */
     protected abstract void execute(final Activation<Match> activation, final Context context);
     
+    /**
+     * Called if the {@link #execute} method has thrown an exception to allow jobs to handle their own errors.
+     *  
+     * @param activation
+     * @param exception
+     * @param context
+     */
+    protected abstract void handleError(final Activation<Match> activation, final Exception exception, final Context context);
 }

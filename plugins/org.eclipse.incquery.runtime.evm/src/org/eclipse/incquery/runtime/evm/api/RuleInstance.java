@@ -315,7 +315,11 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
             Collection<Job<Match>> jobs = specification.getJobs(activationState);
             activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
             for (Job<Match> job : jobs) {
-                job.execute(activation, context);
+                try {
+                    job.execute(activation, context);
+                } catch(Exception e) {
+                    job.handleError(activation, e, context);
+                }
             }
         }
     }

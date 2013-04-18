@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
@@ -68,10 +70,16 @@ public final class Jobs {
      * @param activationState
      * @return
      */
-    public static <Match extends IPatternMatch> Job<Match> newNopJob(ActivationState activationState) {
+    public static final <Match extends IPatternMatch> Job<Match> newNopJob(ActivationState activationState) {
         return new Job<Match>(activationState) {
             @Override
             protected void execute(Activation<Match> activation, Context context) {
+                // do nothing
+            }
+            @Override
+            protected void handleError(Activation<Match> activation, Exception exception, Context context) {
+                // never happens!
+                checkState(false, "NopJob should never cause errors!");
             }
         };
     }

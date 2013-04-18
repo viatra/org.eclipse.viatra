@@ -12,12 +12,15 @@ package org.eclipse.incquery.databinding.runtime.collection;
 
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -38,6 +41,23 @@ import com.google.common.collect.Sets;
  * 
  */
 public final class ObservableCollectionHelper {
+
+    /**
+     * Job implementation with error handling that logs exceptions.
+     * 
+     * @author Abel Hegedus
+     */
+    private static final class ObservableCollectionJob<Match extends IPatternMatch> extends StatelessJob<Match> {
+        private ObservableCollectionJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor) {
+            super(activationState, matchProcessor);
+        }
+
+        @Override
+        protected void handleError(Activation<Match> activation, Exception exception, Context context) {
+            IncQueryEngine.getDefaultLogger().error("Exception occurred while updating observable collection!",
+                    exception);
+        }
+    }
 
     /**
      * Constructor hidden for utility class
@@ -78,9 +98,9 @@ public final class ObservableCollectionHelper {
     @SuppressWarnings("unchecked")
     private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate) {
-        Job<Match> insertJob = new StatelessJob<Match>(ActivationState.APPEARED,
+        Job<Match> insertJob = new ObservableCollectionJob<Match>(ActivationState.APPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate));
-        Job<Match> deleteJob = new StatelessJob<Match>(ActivationState.DISAPPEARED,
+        Job<Match> deleteJob = new ObservableCollectionJob<Match>(ActivationState.DISAPPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate));
         return Sets.newHashSet(insertJob, deleteJob);
     }
