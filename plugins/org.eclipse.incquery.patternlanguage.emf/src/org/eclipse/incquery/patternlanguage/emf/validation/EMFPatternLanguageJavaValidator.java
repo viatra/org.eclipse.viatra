@@ -14,6 +14,7 @@ package org.eclipse.incquery.patternlanguage.emf.validation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -619,13 +620,13 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
         Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = EMFPatternTypeUtil
                 .getAllFeaturesFromPathExpressionTail(pathExpressionHead.getTail());
-        for (PathExpressionTail tail : tailFeatureMap.keySet()) {
-            EStructuralFeature feature = tailFeatureMap.get(tail);
+        for (Entry<PathExpressionTail, EStructuralFeature> tail : tailFeatureMap.entrySet()) {
+            EStructuralFeature feature = tail.getValue();
             if (!EMFModelComprehension.representable(feature)) {
                 warning("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
                         + " used in the path expression is not representable in EMF-IncQuery."
-                        + " For details, consult the documentation on well-behaving features.", tail.getType(), null,
+                        + " For details, consult the documentation on well-behaving features.", tail.getKey().getType(), null,
                         EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             }
         }
