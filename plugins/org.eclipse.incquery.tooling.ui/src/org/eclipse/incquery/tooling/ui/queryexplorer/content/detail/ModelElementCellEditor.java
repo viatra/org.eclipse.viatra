@@ -60,6 +60,7 @@ public class ModelElementCellEditor extends CellEditor {
 
     @Inject
     TableViewerUtil tableViewerUtil;
+    private DialogCellLayout layout;
 
     public ModelElementCellEditor(Table table, ObservablePatternMatcher observableMatcher) {
         super(table, SWT.NONE);
@@ -125,7 +126,8 @@ public class ModelElementCellEditor extends CellEditor {
         editor = new Composite(parent, getStyle());
         editor.setFont(font);
         editor.setBackground(bg);
-        editor.setLayout(new DialogCellLayout());
+        layout = new DialogCellLayout();
+        editor.setLayout(layout);
 
         contents = createContents(editor);
         updateContents(value);
@@ -363,4 +365,13 @@ public class ModelElementCellEditor extends CellEditor {
 
         return result;
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (layout != null) {
+            layout = null;
+        }
+    }
+
 }
