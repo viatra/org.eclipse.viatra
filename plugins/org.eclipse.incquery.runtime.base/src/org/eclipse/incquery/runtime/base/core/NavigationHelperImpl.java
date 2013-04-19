@@ -92,6 +92,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     <T extends EObject> Set<T> resolveAll(Set<T> a) {
     	if (a==null) a = Collections.emptySet();
         Set<T> result = new HashSet<T>();
@@ -109,24 +110,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     public boolean isInWildcardMode() {
         return inWildcardMode;
     }
-
-    // @Override
-    // public void setInWildcardMode(boolean newWildcardMode) {
-    // if (inWildcardMode && !newWildcardMode)
-    // throw new UnsupportedOperationException();
-    // if (!inWildcardMode && newWildcardMode) {
-    // this.inWildcardMode = true;
-    //
-    // this.allObservedClasses = null;
-    // this.directlyObservedClasses = null;
-    // this.observedDataTypes = null;
-    // this.observedFeatures = null;
-    //
-    // this.contentAdapter. // TODO lot of work because need to send proper notifications
-    // }
-    //
-    // }
-
+    
     public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
         this.logger = logger;
         assert (logger != null);
@@ -186,11 +170,11 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> findByAttributeValue(Object value) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
-        for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+        for (Entry<String, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject holder : entry.getValue()) {
-                retSet.add(new NavigationHelperSetting(entry.getKey(), holder, value));
+                retSet.add(new NavigationHelperSetting(contentAdapter.getKnownFeature(entry.getKey()), holder, value));
             }
         }
 
@@ -200,11 +184,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
         for (EAttribute attr : attributes) {
-            if (valMap.get(attr) != null) {
-                for (EObject holder : valMap.get(attr)) {
+            String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(attr);
+            if (valMap.get(featureId) != null) {
+                for (EObject holder : valMap.get(featureId)) {
                     retSet.add(new NavigationHelperSetting(attr, holder, value));
                 }
             }
@@ -215,39 +200,23 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute) {
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
-        if (valMap.get(attribute) == null) {
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(attribute);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        if (valMap.get(featureId) == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(valMap.get(attribute));
+            return Collections.unmodifiableSet(valMap.get(featureId));
         }
     }
-
-    // @Override
-    // public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
-    // Set<Setting> retSet = new HashSet<Setting>();
-    //
-    // for (Object value : contentAdapter.featureMap.keySet()) {
-    // if (value.getClass().equals(clazz)) {
-    // for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
-    // for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
-    // retSet.add(new NavigationHelperSetting(attr, holder, value));
-    // }
-    // }
-    // }
-    // }
-    //
-    // return retSet;
-    // }
 
     @Override
     public Collection<Setting> getInverseReferences(EObject target) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
-        for (Entry<EStructuralFeature, Set<EObject>> entry : valMap.entrySet()) {
+        for (Entry<String, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject source : entry.getValue()) {
-                retSet.add(new NavigationHelperSetting(entry.getKey(), source, target));
+                retSet.add(new NavigationHelperSetting(contentAdapter.getKnownFeature(entry.getKey()), source, target));
             }
         }
 
@@ -257,11 +226,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
         for (EReference ref : references) {
-            if (valMap.get(ref) != null) {
-                for (EObject source : valMap.get(ref)) {
+            String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(ref);
+            if (valMap.get(featureId) != null) {
+                for (EObject source : valMap.get(featureId)) {
                     retSet.add(new NavigationHelperSetting(ref, source, target));
                 }
             }
@@ -272,11 +242,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> getInverseReferences(EObject target, EReference reference) {
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
-        if (valMap.get(reference) == null) {
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(reference);
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        if (valMap.get(featureId) == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(valMap.get(reference));
+            return Collections.unmodifiableSet(valMap.get(featureId));
         }
     }
 
@@ -289,7 +260,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature feature) {
-        final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, feature);
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(feature);
+        final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, featureId);
         if (valSet == null) {
             return Collections.emptySet();
         } else {
@@ -299,7 +271,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     @Override
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature) {
-    	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(feature);
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(feature);
+    	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(featureId);
         if (valMap == null) {
             return Collections.emptyMap();
         } else {
@@ -340,17 +313,19 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature feature) {
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(feature);
         Set<EObject> retSet = new HashSet<EObject>();
-        Map<EStructuralFeature, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
-        if (valMap.get(feature) != null) {
-            retSet.addAll(valMap.get(feature));
+        Map<String, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        if (valMap.get(featureId) != null) {
+            retSet.addAll(valMap.get(featureId));
         }
         return retSet;
     }
 
     @Override
     public Set<EObject> getHoldersOfFeature(EStructuralFeature feature) {
-        Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
+        String featureId = NavigationHelperContentAdapter.getUniqueIdentifier(feature);
+        Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(featureId);
         if (holders == null) {
             return Collections.emptySet();
         } else {
@@ -589,7 +564,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedFeatures.removeAll(features);
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
-                contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
+                contentAdapter.getValueToFeatureToHolderMap().column(NavigationHelperContentAdapter.getUniqueIdentifier(f)).clear();
             }
         }
     }
@@ -804,6 +779,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference)
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {
     	if (containmentFeature.isMany())

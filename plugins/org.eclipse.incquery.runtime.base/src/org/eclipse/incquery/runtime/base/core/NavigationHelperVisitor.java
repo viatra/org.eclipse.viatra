@@ -128,43 +128,6 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         this.descendHierarchy = descendHierarchy;
     }
 
-    // public void visitModel(Notifier emfRoot, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType>
-    // dataTypes) {
-    // if (emfRoot instanceof EObject) {
-    // visitEObjectRoot((EObject) emfRoot, features, classes, dataTypes);
-    // }
-    // else if (emfRoot instanceof Resource) {
-    // visitResourceRoot((Resource) emfRoot, features, classes, dataTypes);
-    // }
-    // else if (emfRoot instanceof ResourceSet) {
-    // visitResourceSetRoot((ResourceSet) emfRoot, features, classes, dataTypes);
-    // }
-    // }
-    //
-    // private void visitResourceSetRoot(ResourceSet resourceSet, Set<EStructuralFeature> features, Set<EClass> classes,
-    // Set<EDataType> dataTypes) {
-    // for (Resource r : resourceSet.getResources()) {
-    // visitResourceRoot(r, features, classes, dataTypes);
-    // }
-    // }
-    //
-    // private void visitResourceRoot(Resource resource, Set<EStructuralFeature> features, Set<EClass> classes,
-    // Set<EDataType> dataTypes) {
-    // for (EObject obj : resource.getContents()) {
-    // visitEObjectRoot(obj, features, classes, dataTypes);
-    // }
-    // }
-    //
-    // private void visitEObjectRoot(EObject root, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType>
-    // dataTypes) {
-    // visitObject(root, features, classes, dataTypes);
-    // TreeIterator<EObject> it = root.eAllContents();
-    //
-    // while (it.hasNext()) {
-    // visitObject(it.next(), features, classes, dataTypes);
-    // }
-    // }
-
     @Override
     public boolean pruneSubtrees(EObject source) {
         return !descendHierarchy;
@@ -269,66 +232,4 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public boolean forceProxyResolution() {
         return isInsertion;
     }
-
-    // private void visitObject(EObject obj, Set<EStructuralFeature> features, Set<EClass> classes, Set<EDataType>
-    // dataTypes) {
-    // if (obj != null) {
-    //
-    // if (classes != null) {
-    // if (navigationHelper.isInWildcardMode() || classes.contains(obj.eClass())) {
-    // store.insertInstanceTuple(obj.eClass(), obj);
-    // }
-    // }
-    //
-    // if (features != null) {
-    // for (EReference ref : obj.eClass().getEAllReferences()) {
-    // if (navigationHelper.isInWildcardMode() || features.contains(ref)) {
-    // Object o = obj.eGet(ref);
-    //
-    // if (o != null) {
-    // if (o instanceof EObjectEList<?>) {
-    // @SuppressWarnings("unchecked")
-    // EObjectEList<EObject> list = (EObjectEList<EObject>) o;
-    // Iterator<EObject> it = list.iterator();
-    // while (it.hasNext()) {
-    // store.insertFeatureTuple(ref, it.next(), obj);
-    // }
-    // } else {
-    // store.insertFeatureTuple(ref, o, obj);
-    // }
-    // }
-    // }
-    // }
-    //
-    // visitObjectForEAttribute(obj, features, dataTypes, true);
-    // }
-    // }
-    // }
-
-    // // visit all the attributes of the given EObject and insert them to the
-    // // cache
-    // public void visitObjectForEAttribute(EObject obj, Set<EStructuralFeature> features, Set<EDataType> dataTypes,
-    // boolean isInsertion) {
-    // if (obj != null) {
-    // for (EAttribute attr : obj.eClass().getEAllAttributes()) {
-    // final EDataType eAttributeType = attr.getEAttributeType();
-    // if (navigationHelper.isInWildcardMode() || features.contains(attr) || dataTypes.contains(eAttributeType)) {
-    // if (attr.isMany()) {
-    // Collection<Object> values = (Collection<Object>) obj.eGet(attr);
-    // for (Object value : values) {
-    // visitAttributeValue(obj, features, dataTypes,
-    // isInsertion, attr, eAttributeType, value);
-    // }
-    // } else {
-    // Object value = obj.eGet(attr);
-    // if (value != null) {
-    // visitAttributeValue(obj, features, dataTypes,
-    // isInsertion, attr, eAttributeType, value);
-    // }
-    // }
-    // }
-    // }
-    // }
-    // }
-
 }

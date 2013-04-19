@@ -46,6 +46,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -60,15 +61,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private boolean isDirty = false;
 
     // value -> feature (attr or ref) -> holder(s)
-    private Table<Object, EStructuralFeature, Set<EObject>> valueToFeatureToHolderMap;
+    private Table<Object, String, Set<EObject>> valueToFeatureToHolderMap;
 
     // feature -> holder(s)
     // constructed on-demand
-    private Map<EStructuralFeature, Multiset<EObject>> featureToHolderMap;
+    private Map<String, Multiset<EObject>> featureToHolderMap;
 
     // holder -> feature (attr or ref) -> value(s)
     // constructed on-demand
-    private Table<EObject, EStructuralFeature, Set<Object>> holderToFeatureToValueMap; 
+    private Table<EObject, String, Set<Object>> holderToFeatureToValueMap; 
     
     // eclass -> instance(s)
     private final Map<String, Set<EObject>> instanceMap;
@@ -93,6 +94,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     //Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     //Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
+    //Maps the generated feature id to the actual EStructuralFeature instance
+    //Multimap is used, this way we can easily track if a given feature id is currently used by base
+    private Multimap<String, EStructuralFeature> knownFeatures;
+    
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
         this.valueToFeatureToHolderMap = HashBasedTable.create();
@@ -100,26 +105,35 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.dataTypeMap = new HashMap<String, Map<Object, Integer>>();
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
+        this.knownFeatures = ArrayListMultimap.create();
     }
 
     /**
      * @param classifier
      * @return A unique string id generated from the classifier's package nsuri and the name.
      */
-    private static String getUniqueIdentifier(EClassifier classifier) {
+    protected static String getUniqueIdentifier(EClassifier classifier) {
         Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-        return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+        return classifier.getEPackage().getNsURI() + "#" + classifier.getName();
     }
 
     /**
      * @param typedElement
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
-    private static String getUniqueIdentifier(ETypedElement typedElement) {
+    protected static String getUniqueIdentifier(ETypedElement typedElement) {
         Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
-        return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
+        EClassifier classifier = null;
+        if (typedElement.eContainer() instanceof EClass) {
+            classifier = (EClass) typedElement.eContainer();
+        }
+        else {
+            classifier = typedElement.eContainer().eClass();
+        }
+        return getUniqueIdentifier(classifier) + "#" + typedElement.getEType().getName() + "#" + typedElement.getName();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void notifyChanged(Notification notification) {
         try {
@@ -167,12 +181,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     break;
                 }
             }
-            // if (feature instanceof EReference) {
-            // handleReferenceChange(notification, (EReferenceImpl) feature);
-            // }
-            // if (feature instanceof EAttribute) {
-            // handleAttributeChange(notification, (EAttribute) feature);
-            // }
         } catch (Exception ex) {
             processingError(ex, "handle the following update notification: " + notification);
         }
@@ -264,98 +272,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
     }
 
-    // @SuppressWarnings("unchecked")
-    // public void handleReferenceChange(Notification notification, EReference
-    // ref) {
-    // EObject notifier = (EObject) notification.getNotifier();
-    //
-    // if (notification.getEventType() == Notification.REMOVE_MANY) {
-    // for (EObject oldValue: (Collection<? extends EObject>)
-    // notification.getOldValue()) {
-    // handleReferenceRemove(ref, oldValue, null, notifier);
-    // }
-    // }
-    // else if (notification.getEventType() == Notification.ADD_MANY) {
-    // for (EObject newValue: (Collection<? extends EObject>)
-    // notification.getNewValue()) {
-    // handleReferenceAdd(ref, newValue, notifier);
-    // }
-    // }
-    // else if (notification.getEventType() == Notification.ADD) {
-    // handleReferenceAdd(ref, (EObject) notification.getNewValue(), notifier);
-    // }
-    // else if (notification.getEventType() == Notification.REMOVE) {
-    // handleReferenceRemove(ref, (EObject) notification.getOldValue(),
-    // (EObject) notification.getNewValue(), notifier);
-    // }
-    // if (notification.getEventType() == Notification.SET ||
-    // notification.getEventType() == Notification.UNSET) {
-    // EObject oldValue = (EObject) notification.getOldValue();
-    // EObject newValue = (EObject) notification.getNewValue();
-    //
-    // if (oldValue != null) {
-    // removeFeatureTuple(ref, oldValue, notifier);
-    // removeInstanceTuple(oldValue.eClass(), oldValue);
-    //
-    // if (ref.isContainment())
-    // navigationHelper.getVisitor().visitObjectForEAttribute(oldValue,
-    // navigationHelper.getObservedFeatures(),
-    // navigationHelper.getObservedDataTypes(), false);
-    // }
-    // if (newValue != null) {
-    // handleReferenceAdd(ref, newValue, notifier);
-    // }
-    // }
-    // }
-    //
-    // public void handleReferenceAdd(EReference ref, EObject newValue, EObject
-    // notifier) {
-    // insertFeatureTuple(ref, newValue, notifier);
-    // insertInstanceTuple(newValue.eClass(), newValue);
-    // if (ref.isContainment()) {
-    // navigationHelper.getVisitor().visitObjectForEAttribute(newValue,
-    // navigationHelper.getObservedFeatures(),
-    // navigationHelper.getObservedDataTypes(), true);
-    // }
-    // }
-    //
-    // public void handleReferenceRemove(EReference ref, EObject oldValue,
-    // EObject newValue, EObject notifier) {
-    // removeFeatureTuple(ref, oldValue, notifier);
-    // removeInstanceTuple(oldValue.eClass(), oldValue);
-    //
-    // if (ref.isContainment()) {
-    // navigationHelper.getVisitor().visitObjectForEAttribute(oldValue,
-    // navigationHelper.getObservedFeatures(),
-    // navigationHelper.getObservedDataTypes(), false);
-    // }
-    //
-    // if (newValue != null) {
-    // handleReferenceAdd(ref, newValue, notifier);
-    // }
-    // }
-    //
-    // public void handleAttributeChange(Notification notification, EAttribute
-    // attribute) {
-    // Object oldValue = notification.getOldValue();
-    // Object newValue = notification.getNewValue();
-    // EObject notifier = (EObject) notification.getNotifier();
-    // final EDataType eAttributeType = attribute.getEAttributeType();
-    //
-    // if (notification.getEventType() == Notification.SET ||
-    // notification.getEventType() == Notification.UNSET) {
-    // if (oldValue != null) {
-    // removeFeatureTuple(attribute, oldValue, notifier);
-    // dataTypeInstanceUpdate(eAttributeType, oldValue, false);
-    // }
-    // if (newValue != null) {
-    // insertFeatureTuple(attribute, newValue, notifier);
-    // dataTypeInstanceUpdate(eAttributeType, newValue, true);
-    // }
-    // }
-    // }
-
-    private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+    private void addToFeatureMap(String feature, Object value, EObject holder) {
         Set<EObject> setVal = valueToFeatureToHolderMap.get(value, feature);
 
         if (setVal == null) {
@@ -365,7 +282,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         setVal.add(holder);
     }
 
-    private void addToReversedFeatureMap(EStructuralFeature feature, EObject holder) {
+    private void addToReversedFeatureMap(String feature, EObject holder) {
         Multiset<EObject> setVal = featureToHolderMap.get(feature);
 
         if (setVal == null) {
@@ -375,7 +292,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         setVal.add(holder);
     }
 
-    private void addToDirectFeatureMap(EObject holder, EStructuralFeature feature, Object value) {
+    private void addToDirectFeatureMap(EObject holder, String feature, Object value) {
     	Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
     	
     	if (setVal == null) {
@@ -385,7 +302,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     	setVal.add(value);
     }
     
-    private void removeFromReversedFeatureMap(EStructuralFeature feature, EObject holder) {
+    private void removeFromReversedFeatureMap(String feature, EObject holder) {
     	final Multiset<EObject> setVal = featureToHolderMap.get(feature);
         if (setVal != null) {
 			setVal.remove(holder);
@@ -396,7 +313,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+    private void removeFromFeatureMap(String feature, Object value, EObject holder) {
     	final Set<EObject> setHolder = valueToFeatureToHolderMap.get(value,feature);
         if (setHolder != null) {
 			setHolder.remove(holder);
@@ -407,7 +324,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void removeFromDirectFeatureMap(EObject holder, EStructuralFeature feature, Object value) {
+    private void removeFromDirectFeatureMap(EObject holder, String feature, Object value) {
     	final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
         if (setVal != null) {
 			setVal.remove(value);
@@ -421,14 +338,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
         // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
         // navigationHelper.getObservedFeatures().contains(feature)) {
-        addToFeatureMap(feature, value, holder);
+        String featureId = getUniqueIdentifier(feature);
+        addToFeatureMap(featureId, value, holder);
 
         if (featureToHolderMap != null) {
-            addToReversedFeatureMap(feature, holder);
+            addToReversedFeatureMap(featureId, holder);
         }
         if (holderToFeatureToValueMap != null) {
-        	addToDirectFeatureMap(holder, feature, value);
+        	addToDirectFeatureMap(holder, featureId, value);
         }
+        
+        knownFeatures.put(featureId, feature);
 
         isDirty = true;
         notifyFeatureListeners(holder, feature, value, true);
@@ -438,15 +358,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
         // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
         // navigationHelper.getObservedFeatures().contains(feature)) {
-        removeFromFeatureMap(feature, value, holder);
+        String featureId = getUniqueIdentifier(feature);
+        removeFromFeatureMap(featureId, value, holder);
 
         if (featureToHolderMap != null) {
-            removeFromReversedFeatureMap(feature, holder);
+            removeFromReversedFeatureMap(featureId, holder);
         }
         if (holderToFeatureToValueMap != null) {
-        	removeFromDirectFeatureMap(holder, feature, value);
+        	removeFromDirectFeatureMap(holder, featureId, value);
         }
 
+        knownFeatures.remove(featureId, feature);
+        
         isDirty = true;
         notifyFeatureListeners(holder, feature, value, false);
         // }
@@ -633,8 +556,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void initReversedFeatureMap() {
-        for (Cell<Object, EStructuralFeature, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
-            final EStructuralFeature feature = valueToFeatureHolderMap.getColumnKey();
+        for (Cell<Object, String, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+            final String feature = valueToFeatureHolderMap.getColumnKey();
             for (EObject holder : valueToFeatureHolderMap.getValue()) {
                 addToReversedFeatureMap(feature, holder);
             }
@@ -643,9 +566,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     
 
 	private void initDirectFeatureMap() {
-        for (Cell<Object, EStructuralFeature, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+        for (Cell<Object, String, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
         	final Object value = valueToFeatureHolderMap.getRowKey();
-            final EStructuralFeature feature = valueToFeatureHolderMap.getColumnKey();
+            final String feature = valueToFeatureHolderMap.getColumnKey();
             for (EObject holder : valueToFeatureHolderMap.getValue()) {
 				addToDirectFeatureMap(holder, feature, value);
             }
@@ -673,21 +596,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             }
         }
     }
-
-    // private void baseHandleNotification(Notification notification) {
-    // if (notification.getNotifier() instanceof ResourceSet
-    // && notification.getEventType() == Notification.ADD_MANY
-    // && notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES)
-    // {
-    // @SuppressWarnings("unchecked")
-    // Collection<Notifier> newValues = (Collection<Notifier>)notification.getNewValue();
-    // for (Notifier notifier : newValues) {
-    // if (!notifier.eAdapters().contains(this)) {
-    // addAdapter(notifier);
-    // }
-    // }
-    // } else super.notifyChanged(notification);
-    // }
 
     // WORKAROUND (TMP) for eContents vs. derived features bug
     @Override
@@ -779,16 +687,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * @return the valueToFeatureToHolderMap
      */
-    protected Table<Object, EStructuralFeature, Set<EObject>> getValueToFeatureToHolderMap() {
+    protected Table<Object, String, Set<EObject>> getValueToFeatureToHolderMap() {
         return valueToFeatureToHolderMap;
     }
 
     /**
      * @return the featureToHolderMap
      */
-    protected Map<EStructuralFeature, Multiset<EObject>> getFeatureToHolderMap() {
+    protected Map<String, Multiset<EObject>> getFeatureToHolderMap() {
         if (featureToHolderMap == null) {
-            featureToHolderMap = new HashMap<EStructuralFeature, Multiset<EObject>>();
+            featureToHolderMap = new HashMap<String, Multiset<EObject>>();
             initReversedFeatureMap();
         }
         return featureToHolderMap;
@@ -797,7 +705,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	/**
 	 * @return the holderToFeatureToValeMap
 	 */
-	protected Table<EObject, EStructuralFeature, Set<Object>> getHolderToFeatureToValueMap() {
+	protected Table<EObject, String, Set<Object>> getHolderToFeatureToValueMap() {
 		if (holderToFeatureToValueMap == null) {
 			holderToFeatureToValueMap = HashBasedTable.create();
 			initDirectFeatureMap();
@@ -827,6 +735,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return subTypeMap;
     }
 
-
+    /**
+     * @return the knownFeatures
+     */
+    public EStructuralFeature getKnownFeature(String featureId) {
+        Collection<EStructuralFeature> features = knownFeatures.get(featureId);
+        if (features.size() == 0) {
+            return null;
+        }
+        else {
+            return features.iterator().next();
+        }
+    }
 
 }
