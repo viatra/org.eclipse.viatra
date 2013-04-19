@@ -27,7 +27,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -301,23 +300,26 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
-    @Override
-    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
-        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-                engine, listener) {
-            @Override
-            public Match statelessConvert(Tuple t) {
-                return tupleToMatch(t);
-            }
-        };
-        patternMatcher.connect(callbackNode, listener, fireNow);
-    }
+//    @Override
+//    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+//        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
+//                engine, listener) {
+//            @Override
+//            public Match statelessConvert(Tuple t) {
+//                return tupleToMatch(t);
+//            }
+//        };
+//        patternMatcher.connect(callbackNode, listener, fireNow);
+//    }
+//
+//    @Override
+//    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
+//        patternMatcher.disconnectByTag(listener);
+//    }
 
-    @Override
-    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
-        patternMatcher.disconnectByTag(listener);
-    }
-
+    /**
+     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
+     */
     @Override
     public DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart) {
         DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
@@ -342,6 +344,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @return the delta monitor.
+     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
     protected DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
         final int length = parameters.length;
@@ -365,30 +368,33 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return dm;
     }
 
+    /**
+     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
+     */
     @Override
     public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
         return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());
     }
 
-    @Override
-    public boolean addCallbackAfterUpdates(Runnable callback) {
-        return baseIndex.getAfterUpdateCallbacks().add(callback);
-    }
-
-    @Override
-    public boolean removeCallbackAfterUpdates(Runnable callback) {
-        return baseIndex.getAfterUpdateCallbacks().remove(callback);
-    }
-
-    @Override
-    public boolean addCallbackAfterWipes(Runnable callback) {
-        return engine.getAfterWipeCallbacks().add(callback);
-    }
-
-    @Override
-    public boolean removeCallbackAfterWipes(Runnable callback) {
-        return engine.getAfterWipeCallbacks().remove(callback);
-    }
+//    @Override
+//    public boolean addCallbackAfterUpdates(Runnable callback) {
+//        return baseIndex.getAfterUpdateCallbacks().add(callback);
+//    }
+//
+//    @Override
+//    public boolean removeCallbackAfterUpdates(Runnable callback) {
+//        return baseIndex.getAfterUpdateCallbacks().remove(callback);
+//    }
+//
+//    @Override
+//    public boolean addCallbackAfterWipes(Runnable callback) {
+//        return engine.getAfterWipeCallbacks().add(callback);
+//    }
+//
+//    @Override
+//    public boolean removeCallbackAfterWipes(Runnable callback) {
+//        return engine.getAfterWipeCallbacks().remove(callback);
+//    }
 
 
     @Override

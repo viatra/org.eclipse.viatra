@@ -183,7 +183,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * @param listener
      *            the listener that will be notified of each new match that appears or disappears, starting from now.
      */
-    public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
+    // MOVED TO INCQUERY ENGINE
+    //public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
 
     /**
      * Unregisters a callback registered by {@link #addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)}.
@@ -191,7 +192,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * @param listener
      *            the listener that will no longer be notified.
      */
-    public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
+    // MOVED TO INCQUERY ENGINE
+    //public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
 
     /**
      * Registers a new delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes (delta) in
@@ -202,6 +204,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            if true, all current matches are reported as new match events; if false, the delta monitor starts
      *            empty.
      * @return the delta monitor.
+     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
     public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 
@@ -218,6 +221,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
      *            a fixed value.
      * @return the delta monitor.
+     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
     public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 
@@ -234,7 +238,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            a Runnable to execute after each update.
      * @return false if the callback was already registered.
      */
-    public boolean addCallbackAfterUpdates(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean addCallbackAfterUpdates(Runnable callback);
 
     /**
      * Removes a previously registered callback. See addCallbackAfterUpdates().
@@ -243,7 +248,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            the callback to remove.
      * @return false if the callback was not registered.
      */
-    public boolean removeCallbackAfterUpdates(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean removeCallbackAfterUpdates(Runnable callback);
 
     /**
      * Registers a callback that will be run each time the EMF-IncQuery engine is wiped or disposed. Typically useful if
@@ -257,7 +263,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            a Runnable to execute after each wipe.
      * @return false if the callback was already registered.
      */
-    public boolean addCallbackAfterWipes(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean addCallbackAfterWipes(Runnable callback);
 
     /**
      * Removes a previously registered callback. See {@link #addCallbackAfterWipes()}.
@@ -266,7 +273,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            the callback to remove.
      * @return false if the callback was not registered.
      */
-    public boolean removeCallbackAfterWipes(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean removeCallbackAfterWipes(Runnable callback);
 
     /**
      * Returns an empty, mutable Match for the matcher. 

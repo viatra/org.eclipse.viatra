@@ -11,12 +11,20 @@
 
 package org.eclipse.incquery.runtime.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.internal.BaseIndexListener;
+
+import com.google.common.collect.Sets;
 
 /**
  * Global registry of active EMF-IncQuery engines.
@@ -57,6 +65,7 @@ public class EngineManager {
     EngineManager() {
         super();
         engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngine>>();
+        initializationListeners = new HashSet<IncQueryEngineInitializationListener>();
     }
 
     /**
@@ -79,6 +88,7 @@ public class EngineManager {
         if (engine == null) {
             engine = new IncQueryEngine(this, emfRoot);
             engines.put(emfRoot, new WeakReference<IncQueryEngine>(engine));
+            notifyInitializationListeners(engine);
         }
         return engine;
     }
@@ -94,6 +104,26 @@ public class EngineManager {
         return getEngineInternal(emfRoot);
     }
 
+    /**
+     * Collects all {@link IncQueryEngine} instances that still exist.
+     * 
+     * @return set of engines if there is any, otherwise EMTPY_SET
+     */
+    public Set<IncQueryEngine> getExistingIncQueryEngines(){
+        Set<IncQueryEngine> existingEngines = null;
+        for (WeakReference<IncQueryEngine> engineRef : engines.values()) {
+            IncQueryEngine engine = engineRef == null ? null : engineRef.get();
+            if(existingEngines == null) {
+                existingEngines = Sets.newHashSet();
+            }
+            existingEngines.add(engine);
+        }
+        if(existingEngines == null) {
+            existingEngines = Collections.emptySet();
+        }
+        return existingEngines;
+    }
+    
     /**
      * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
@@ -138,7 +168,50 @@ public class EngineManager {
             return true;
         }
     }
+    
+    private final Set<IncQueryEngineInitializationListener> initializationListeners;
+    
+    /**
+     * Registers a listener for new engine initialization.
+     * 
+     * <p/> For removal, use {@link #removeIncQueryEngineInitializationListener}
+     * 
+     * @param listener the listener to register
+     */
+    public void addIncQueryEngineInitializationListener(IncQueryEngineInitializationListener listener) {
+        checkArgument(listener != null, "Cannot add null listener!");
+        initializationListeners.add(listener);
+    }
 
+    /**
+     * Removes a registered listener added with {@link #addIncQueryEngineInitializationListener}
+     * 
+     * @param listener
+     */
+    public void removeIncQueryEngineInitializationListener(IncQueryEngineInitializationListener listener) {
+        checkArgument(listener != null, "Cannot remove null listener!");
+        initializationListeners.remove(listener);
+    }
+
+    /**
+     * Notifies listeners that a new engine has been initialized.
+     * 
+     * @param engine the initialized engine
+     */
+    protected void notifyInitializationListeners(IncQueryEngine engine) {
+        try {
+            if (!initializationListeners.isEmpty()) {
+                for (IncQueryEngineInitializationListener listener : Sets.newHashSet(initializationListeners)) {
+                    listener.engineInitialized(engine);
+                }
+            }
+        } catch (Exception ex) {
+            IncQueryEngine.getDefaultLogger().fatal(
+                    "EMF-IncQuery Engine Manager encountered an error in delivering notifications"
+                            + " about engine initialization. ", ex);
+        }
+    }
+    
     /**
      * @param emfRoot
      */
