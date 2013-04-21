@@ -42,7 +42,8 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
         prepateAttributeMonitor();
         
         this.matcher = matcher;
-        this.matcher.addCallbackOnMatchUpdate(getMatchUpdateListener(), true);
+        this.matcher.getEngine().addMatchUpdateListener(matcher, getMatchUpdateListener(), true);
+//        this.matcher.addCallbackOnMatchUpdate(getMatchUpdateListener(), true);
     }
     
     /**
@@ -58,7 +59,8 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
     @Override
     protected void dispose() {
         super.dispose();
-        this.matcher.removeCallbackOnMatchUpdate(getMatchUpdateListener());
+        this.matcher.getEngine().removeMatchUpdateListener(matcher, getMatchUpdateListener());
+//        this.matcher.removeCallbackOnMatchUpdate(getMatchUpdateListener());
     }
 
     /* (non-Javadoc)

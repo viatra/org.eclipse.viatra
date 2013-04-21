@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.update;
 
+import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
 import com.google.common.base.Preconditions;
@@ -23,7 +24,7 @@ import com.google.common.base.Preconditions;
  */
 public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider {
 
-    private final Runnable callback;
+    private final IncQueryBaseIndexChangeListener modelUpdateListener;
     private final NavigationHelper helper;
 
     /**
@@ -32,10 +33,11 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
     public IQBaseCallbackUpdateCompleteProvider(final NavigationHelper helper) {
         super();
         Preconditions.checkNotNull(helper, "Cannot create provider with null helper!");
-        this.callback = new IQBaseAfterUpdateCallback();
+        this.modelUpdateListener = new BaseIndexListener();
 
         this.helper = helper;
-        helper.getAfterUpdateCallbacks().add(callback);
+        helper.addBaseIndexChangeListener(modelUpdateListener);
+//        helper.getAfterUpdateCallbacks().add(modelUpdateListener);
     }
 
     /**
@@ -44,16 +46,23 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
      * @author Abel Hegedus
      *
      */
-    private class IQBaseAfterUpdateCallback implements Runnable {
+    private class BaseIndexListener implements IncQueryBaseIndexChangeListener {
+
         @Override
-        public void run() {
+        public boolean onlyOnIndexChange() {
+            return false;
+        }
+
+        @Override
+        public void notifyChanged(boolean indexChanged) {
             updateCompleted();
         }
     }
 
     @Override
     public void dispose() {
-        helper.getAfterUpdateCallbacks().remove(callback);
+        helper.removeBaseIndexChangeListener(modelUpdateListener);
+//        helper.getAfterUpdateCallbacks().remove(modelUpdateListener);
         super.dispose();
     }
 
