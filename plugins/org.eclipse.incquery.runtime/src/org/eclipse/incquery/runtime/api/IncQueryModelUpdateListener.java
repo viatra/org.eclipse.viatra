@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.api;
 
 
+
 /**
  * Listener interface for model changes affecting different levels of the EMF-IncQuery architecture.
  * 
@@ -25,8 +26,16 @@ public interface IncQueryModelUpdateListener {
      * @author Abel Hegedus
      *
      */
-    enum ChangeLevel{
-        MODEL, INDEX, MATCHSET
+    enum ChangeLevel {
+        NO_CHANGE, MODEL, INDEX, MATCHSET;
+        
+        public ChangeLevel changeOccured(ChangeLevel occuredLevel) {
+            if(this.compareTo(occuredLevel) < 0) {
+                return occuredLevel;
+            } else {
+                return this;
+            }
+        }
     }
     /**
      * Called after each change with also sending the level of change.
@@ -37,7 +46,7 @@ public interface IncQueryModelUpdateListener {
     void notifyChanged(ChangeLevel changeLevel);
     
     /**
-     * This is queried ONCE (!!!) at the registration of the listener.
+     * This may be queried only ONCE (!!!) at the registration of the listener.
      * 
      * NOTE: this allows us to only create engine level change providers if there is someone who needs it.
      * 
