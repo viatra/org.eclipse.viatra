@@ -486,12 +486,23 @@ public interface NavigationHelper {
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 
     /**
-     * A set of coarse-grained callbacks that will be invoked after the NavigationHelper index is changed. Can be used
-     * e.g. to check delta monitors. Not intended for general use.
+     * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
+     * e.g. to check model contents. Not intended for general use.
      * 
+     * <p/> See {@link #removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * @param listener
      */
-    public Set<Runnable> getAfterUpdateCallbacks();
-
+    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    
+    /**
+     * Removes a registered listener.
+     * 
+     * <p/> See {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * 
+     * @param listener
+     */
+    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    
     /**
      * Adds an additional EMF model root.
      * 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.base.core;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +39,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
+import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
@@ -47,10 +50,10 @@ import com.google.common.collect.Multiset;
 public class NavigationHelperImpl implements NavigationHelper {
 
     protected boolean inWildcardMode;
-    protected HashSet<EClass> directlyObservedClasses;
-    protected HashSet<EClass> allObservedClasses = null; // including subclasses
-    protected HashSet<EDataType> observedDataTypes;
-    protected HashSet<EStructuralFeature> observedFeatures;
+    protected Set<EClass> directlyObservedClasses;
+    protected Set<EClass> allObservedClasses = null; // including subclasses
+    protected Set<EDataType> observedDataTypes;
+    protected Set<EStructuralFeature> observedFeatures;
 
     protected Notifier notifier;
     protected Set<Notifier> modelRoots;
@@ -63,7 +66,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * These global listeners will be called after updates.
      */
-    protected Set<Runnable> afterUpdateCallbacks;
+    //private final Set<Runnable> afterUpdateCallbacks;
+    private final Set<IncQueryBaseIndexChangeListener> baseIndexChangeListeners;
 
     private final Map<InstanceListener, Collection<EClass>> instanceListeners;
     private final Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
@@ -139,7 +143,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.observedDataTypes = new HashSet<EDataType>();
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         // this.visitor = new NavigationHelperVisitor(this);
-        this.afterUpdateCallbacks = new HashSet<Runnable>();
+        //this.afterUpdateCallbacks = new HashSet<Runnable>();
+        this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
 
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
@@ -158,7 +163,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return contentAdapter;
     }
 
-    public HashSet<EStructuralFeature> getObservedFeatures() {
+    public Set<EStructuralFeature> getObservedFeatures() {
         return observedFeatures;
     }
 
@@ -443,29 +448,42 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * These runnables will be called after updates by the manipulationListener at its own discretion. Can be used e.g.
      * to check delta monitors.
+     * 
+     * @deprecated use {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)} instead! 
      */
-    @Override
-    public Set<Runnable> getAfterUpdateCallbacks() {
-        return afterUpdateCallbacks;
-    }
+//    @Override
+//    public Set<Runnable> getAfterUpdateCallbacks() {
+//        return afterUpdateCallbacks;
+//    }
 
     /**
      * This will run after updates.
      */
-    // * If there are any such, updates are settled before they are run.
-    public void runAfterUpdateCallbacks() {
-        if (!afterUpdateCallbacks.isEmpty()) {
-            // settle();
-            for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
+    protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
+        if (!baseIndexChangeListeners.isEmpty()) {
+            for (IncQueryBaseIndexChangeListener listener : new ArrayList<IncQueryBaseIndexChangeListener>(baseIndexChangeListeners)) {
                 try {
-                    runnable.run();
+                    if(listener.onlyOnIndexChange() == baseIndexChanged) {
+                        listener.notifyChanged(baseIndexChanged);
+                    }
                 } catch (Exception ex) {
                     logger.fatal("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
                             ex);
-                    // throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
                 }
             }
         }
+    }
+
+    @Override
+    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+        checkArgument(listener != null, "Cannot add null listener!");
+        baseIndexChangeListeners.add(listener);
+    }
+
+    @Override
+    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+        checkArgument(listener != null, "Cannot remove null listener!");
+        baseIndexChangeListeners.remove(listener);
     }
 
     protected void considerForExpansion(EObject obj) {
@@ -483,7 +501,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 expansionAllowed = true;
             }
             contentAdapter.addAdapter(root);
-            contentAdapter.runCallbacksIfDirty();
+            contentAdapter.notifyBaseIndexChangeListeners();
         }
     }
 
@@ -762,7 +780,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (Notifier root : modelRoots) {
             EMFModelComprehension.traverseModel(visitor, root);
         }
-        contentAdapter.runCallbacksIfDirty();
+        contentAdapter.notifyBaseIndexChangeListeners();
     }
 
     /**

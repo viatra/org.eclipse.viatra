@@ -177,17 +177,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             processingError(ex, "handle the following update notification: " + notification);
         }
 
-        runCallbacksIfDirty();
+        notifyBaseIndexChangeListeners();
 
     }
 
 	/**
 	 * 
 	 */
-	protected void runCallbacksIfDirty() {
+	protected void notifyBaseIndexChangeListeners() {
+	    navigationHelper.notifyBaseIndexChangeListeners(isDirty);
 		if (isDirty) {
             isDirty = false;
-            navigationHelper.runAfterUpdateCallbacks();
         }
 	}
 
