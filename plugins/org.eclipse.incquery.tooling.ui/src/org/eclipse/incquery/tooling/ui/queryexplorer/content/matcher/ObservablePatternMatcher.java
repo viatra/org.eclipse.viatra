@@ -28,6 +28,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
@@ -57,6 +58,7 @@ public class ObservablePatternMatcher {
     private String orderParameter;
     private boolean descendingOrder;
     private final String exceptionMessage;
+    private IncQueryModelUpdateListener modelUpdateListener;
 
     public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher,
             String patternFqn, boolean generated, String exceptionMessage) {
@@ -93,7 +95,20 @@ public class ObservablePatternMatcher {
                 }
             };
 
-            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
+            modelUpdateListener = new IncQueryModelUpdateListener() {
+                
+                @Override
+                public void notifyChanged(ChangeLevel changeLevel) {
+                    processMatchesRunnable.run();
+                }
+                
+                @Override
+                public ChangeLevel getLevel() {
+                    return ChangeLevel.MATCHSET;
+                }
+            };
+            this.matcher.getEngine().addModelUpdateListener(modelUpdateListener);
+//            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
             this.processMatchesRunnable.run();
         }
     }
@@ -129,7 +144,8 @@ public class ObservablePatternMatcher {
             for (ObservablePatternMatch pm : matches) {
                 pm.dispose();
             }
-            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+            this.matcher.getEngine().removeModelUpdateListener(modelUpdateListener);
+//            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
             processMatchesRunnable = null;
         }
     }
@@ -335,6 +351,7 @@ public class ObservablePatternMatcher {
      * the user
      */
     public void stopMonitoring() {
-        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+        this.matcher.getEngine().removeModelUpdateListener(modelUpdateListener);
+//        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
     }
 }

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 
@@ -60,7 +61,20 @@ public class PatternMatcher {
                 }
             };
 
-            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
+            modelUpdateListener = new IncQueryModelUpdateListener() {
+                
+                @Override
+                public void notifyChanged(ChangeLevel changeLevel) {
+                    processMatchesRunnable.run();
+                }
+                
+                @Override
+                public ChangeLevel getLevel() {
+                    return ChangeLevel.MATCHSET;
+                }
+            };
+            this.matcher.getEngine().addModelUpdateListener(modelUpdateListener);
+//            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
             this.processMatchesRunnable.run();
         }
     }
@@ -73,7 +87,8 @@ public class PatternMatcher {
             for (PatternMatch pm : matches) {
                 pm.dispose();
             }
-            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+            this.matcher.getEngine().removeModelUpdateListener(modelUpdateListener);
+//            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
             processMatchesRunnable = null;
         }
     }
@@ -132,6 +147,7 @@ public class PatternMatcher {
     }
 
     public static final String MATCHES_ID = "matches";
+    private IncQueryModelUpdateListener modelUpdateListener;
 
     public List<PatternMatch> getMatches() {
         return matches;
