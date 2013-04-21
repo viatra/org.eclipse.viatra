@@ -27,7 +27,9 @@ import org.eclipse.emf.ecore.util.EcoreEList;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -189,8 +191,35 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
      * Call this once to start handling callbacks.
      */
     protected void startMonitoring() {
-        matcher.addCallbackAfterUpdates(processMatchesRunnable);
-        matcher.addCallbackAfterWipes(processWipeRunnable);
+        IncQueryEngine engine = matcher.getEngine();
+        engine.addLifecycleListener(new IncQueryEngineLifecycleListener() {
+            
+            @Override
+            public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {}
+            
+            @Override
+            public void engineWiped() {
+                processWipeRunnable.run();
+            }
+            
+            @Override
+            public void engineDisposed() {}
+            
+            @Override
+            public void engineBecameTainted() {}
+        });
+        engine.addModelUpdateListener(new IncQueryModelUpdateListener() {
+            
+            @Override
+            public void notifyChanged(ChangeLevel changeLevel) {
+                processMatchesRunnable.run();
+            }
+            
+            @Override
+            public ChangeLevel getLevel() {
+                return ChangeLevel.MATCHSET;
+            }
+        });
         processMatchesRunnable.run();
     }
 
