@@ -14,11 +14,7 @@ package org.eclipse.incquery.runtime.api;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Appender;
@@ -28,9 +24,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -38,6 +32,8 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
+import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.rete.construction.ReteContainerBuildable;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
@@ -46,12 +42,8 @@ import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
 /**
@@ -77,8 +69,6 @@ import com.google.inject.Injector;
  */
 public class IncQueryEngine {
 
-    private static final String CANNOT_ADD_NULL_LISTENER = "Cannot add null listener!";
-    private static final String CANNOT_REMOVE_NULL_LISTENER = "Cannot remove null listener!";
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
@@ -87,6 +77,7 @@ public class IncQueryEngine {
      * The model to which the engine is attached.
      */
     private final Notifier emfRoot;
+    private final Map<? extends IMatcherFactory<?>, ? extends IncQueryMatcher<?>> matchers;
 
     /**
      * The base index keeping track of basic EMF contents of the model.
@@ -146,9 +137,10 @@ public class IncQueryEngine {
         super();
         this.manager = manager;
         this.emfRoot = emfRoot;
+        this.matchers = Maps.newHashMap();
 //        this.afterWipeCallbacks = new HashSet<Runnable>();
-        this.lifecycleProvider = new LifecycleProvider();
-        this.modelUpdateProvider = new ModelUpdateProvider();
+        this.lifecycleProvider = new LifecycleProvider(this);
+        this.modelUpdateProvider = new ModelUpdateProvider(this);
         if (!(emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet))
             throw new IncQueryException(IncQueryException.INVALID_EMFROOT
                     + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()),
@@ -161,6 +153,21 @@ public class IncQueryEngine {
     public Notifier getEmfRoot() {
         return emfRoot;
     }
+    
+    public Set<? extends IncQueryMatcher<? extends IPatternMatch>> getMatchers(){
+        return ImmutableSet.copyOf(matchers.values());
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IMatcherFactory<Matcher> factory) {
+        if(matchers.containsKey(factory)) {
+            IncQueryMatcher<?> matcher = matchers.get(factory);
+            return (Matcher) matcher;
+        }
+        return null;
+    }
+    
+    
 
     /**
      * Internal accessor for the base index.
@@ -483,7 +490,7 @@ public class IncQueryEngine {
      */
     public <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener, boolean fireNow) {
-        checkArgument(listener != null, CANNOT_ADD_NULL_LISTENER);
+        checkArgument(listener != null, "Cannot add null listener!");
         // TODO implement
         // add callback node to patternMatcher of matcher
     }
@@ -495,7 +502,7 @@ public class IncQueryEngine {
      */
     public <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener) {
-        checkArgument(listener != null, CANNOT_REMOVE_NULL_LISTENER);
+        checkArgument(listener != null, "Cannot remove null listener!");
         // TODO implement
         // remove callback node
     }
@@ -553,246 +560,5 @@ public class IncQueryEngine {
     // return engine;
     // }
 
-    private abstract class ListenerContainer<Listener> {
-        
-        protected final Set<Listener> listeners;
-        
-        public ListenerContainer() {
-            this.listeners = new HashSet<Listener>();
-        }
-        
-        public synchronized void addListener(Listener listener) {
-            checkArgument(listener != null, CANNOT_ADD_NULL_LISTENER);
-            boolean added = listeners.add(listener);
-            if(added) {
-                listenerAdded(listener);
-            }
-        }
-        
-        public synchronized void removeListener(Listener listener) {
-            checkArgument(listener != null, CANNOT_REMOVE_NULL_LISTENER);
-            boolean removed = listeners.remove(listener);
-            if(removed) {
-                listenerRemoved(listener);
-            }
-        }
-        
-        protected abstract void listenerAdded(Listener listener);
-        
-        protected abstract void listenerRemoved(Listener listener);
-    }
-    
-    private final class LifecycleProvider extends ListenerContainer<IncQueryEngineLifecycleListener> implements IncQueryEngineLifecycleListener{
-
-        @Override
-        protected void listenerAdded(IncQueryEngineLifecycleListener listener) {
-            logger.debug("Lifecycle listener " + listener + " added to engine.");
-        }
-
-        @Override
-        protected void listenerRemoved(IncQueryEngineLifecycleListener listener) {
-            logger.debug("Lifecycle listener " + listener + " removed from engine.");
-        }
-
-        public void propagateEventToListeners(Predicate<IncQueryEngineLifecycleListener> function) {
-            if (!listeners.isEmpty()) {
-                for (IncQueryEngineLifecycleListener listener : new ArrayList<IncQueryEngineLifecycleListener>(listeners)) {
-                    try {
-                        function.apply(listener);
-                    } catch (Exception ex) {
-                        logger.error(
-                                "EMF-IncQuery encountered an error in delivering notification to listener "
-                                        + listener + ".", ex);
-                    }
-                }
-            }
-        }
-        
-        @Override
-        public void matcherInstantiated(final IncQueryMatcher<? extends IPatternMatch> matcher) {
-            propagateEventToListeners(new Predicate<IncQueryEngineLifecycleListener>() {
-               public boolean apply(IncQueryEngineLifecycleListener listener) {
-                   listener.matcherInstantiated(matcher);
-                   return true;
-               }
-            });
-        }
-
-        @Override
-        public void engineBecameTainted() {
-            propagateEventToListeners(new Predicate<IncQueryEngineLifecycleListener>() {
-                public boolean apply(IncQueryEngineLifecycleListener listener) {
-                    listener.engineBecameTainted();
-                    return true;
-                }
-             });
-        }
-
-        @Override
-        public void engineWiped() {
-            propagateEventToListeners(new Predicate<IncQueryEngineLifecycleListener>() {
-                public boolean apply(IncQueryEngineLifecycleListener listener) {
-                    listener.engineWiped();
-                    return true;
-                }
-             });
-        }
-
-        @Override
-        public void engineDisposed() {
-            propagateEventToListeners(new Predicate<IncQueryEngineLifecycleListener>() {
-                public boolean apply(IncQueryEngineLifecycleListener listener) {
-                    listener.engineDisposed();
-                    return true;
-                }
-             });
-        }
-        
-    }
-    
-    private final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUpdateListener> {
-
-        private ChangeLevel currentChange = ChangeLevel.NO_CHANGE;
-        private ChangeLevel maxLevel = ChangeLevel.NO_CHANGE;
-        private final Multimap<ChangeLevel, IncQueryModelUpdateListener> listenerMap;
-        
-        /**
-         * 
-         */
-        public ModelUpdateProvider() {
-            super();
-            Map<ChangeLevel, Collection<IncQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);
-            listenerMap = Multimaps.newSetMultimap(map,
-                    new com.google.common.base.Supplier<Set<IncQueryModelUpdateListener>>() {
-                        @Override
-                        public Set<IncQueryModelUpdateListener> get() {
-                            return Sets.newHashSet();
-                        }
-            });
-        }
-        
-        @Override
-        protected void listenerAdded(IncQueryModelUpdateListener listener) {
-            // check ChangeLevel
-            // create callback for given level if required
-            if(listenerMap.isEmpty()) {
-                baseIndex.addBaseIndexChangeListener(indexListener);
-            }
-            
-            ChangeLevel changeLevel = listener.getLevel();
-            listenerMap.put(changeLevel, listener);
-            // increase or keep max level of listeners
-            ChangeLevel oldMaxLevel = maxLevel;
-            maxLevel = maxLevel.changeOccured(changeLevel); 
-            if(maxLevel != oldMaxLevel  && ChangeLevel.MATCHSET.compareTo(oldMaxLevel) > 0 && ChangeLevel.MATCHSET.compareTo(maxLevel) <= 0) {
-                // TODO add matchUpdateListener to all matchers
-            }
-        }
-
-        @Override
-        protected void listenerRemoved(IncQueryModelUpdateListener listener) {
-            ChangeLevel changeLevel = listener.getLevel();
-            boolean removed = listenerMap.remove(changeLevel, listener);
-            if(!removed) {
-                handleUnsuccesfulRemove(listener);
-            }
-            
-            updateMaxLevel();
-            
-            if(listenerMap.isEmpty()) {
-                baseIndex.removeBaseIndexChangeListener(indexListener);
-            }
-        }
-
-        private void updateMaxLevel() {
-            if(!listenerMap.containsKey(maxLevel)) {
-                ChangeLevel newMaxLevel = ChangeLevel.NO_CHANGE;
-                for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
-                    newMaxLevel = newMaxLevel.changeOccured(level);
-                }
-                maxLevel = newMaxLevel;
-            }
-            if(maxLevel.compareTo(ChangeLevel.MATCHSET) < 0) {
-                // TODO remove listener from matchers
-            }
-        }
-
-        private void handleUnsuccesfulRemove(IncQueryModelUpdateListener listener) {
-            logger.error("Listener "+listener+" change level changed since initialization!");
-            for (Entry<ChangeLevel, IncQueryModelUpdateListener> entry : listenerMap.entries()) {
-                if(entry.getValue().equals(listener)) {
-                    listenerMap.remove(entry.getKey(), entry.getValue());
-                    break; // listener is contained only once
-                }
-            }
-        }
-
-        private void notifyListeners() {
-            
-            if(!listenerMap.isEmpty()) {
-                for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
-                    if(currentChange.compareTo(level) >= 0) {
-                        for (IncQueryModelUpdateListener listener : new ArrayList<IncQueryModelUpdateListener>(listenerMap.get(level))) {
-                            try {
-                                listener.notifyChanged(currentChange);
-                            } catch (Exception ex) {
-                                logger.error(
-                                        "EMF-IncQuery encountered an error in delivering model update notification to listener "
-                                                + listener + ".", ex);
-                            }
-                        }
-                    }
-                }
-//                for (IncQueryModelUpdateListener listener : new ArrayList<IncQueryModelUpdateListener>(listeners)) {
-//                    try {
-//                        if(currentChange.compareTo(listener.getLevel()) >= 0){
-//                            listener.notifyChanged(currentChange);
-//                        }
-//                    } catch (Exception ex) {
-//                        logger.error(
-//                                "EMF-IncQuery encountered an error in delivering model update notification to listener "
-//                                        + listener + ".", ex);
-//                    }
-//                }
-            }
-            
-            currentChange = ChangeLevel.NO_CHANGE;
-        }
-        
-        // TODO model update "providers":
-        // - model: IQBase callback even if not dirty
-        // - index: IQBase dirty callback
-        // TODO change to listener interface in IQBase
-        private final IncQueryBaseIndexChangeListener indexListener = new IncQueryBaseIndexChangeListener() {
-            
-            public boolean onlyOnIndexChange() {
-                return false;
-            }
-            
-            public void notifyChanged(boolean indexChanged) {
-                if(indexChanged) {
-                    currentChange = currentChange.changeOccured(ChangeLevel.INDEX);
-                } else {
-                    currentChange = currentChange.changeOccured(ChangeLevel.MODEL);
-                }
-                notifyListeners();
-            }
-            
-        };
-        // - matchset: add the same listener to each matcher and use a dirty flag. needs IQBase callback as well
-        private final IMatchUpdateListener<IPatternMatch> matchSetListener = new IMatchUpdateListener<IPatternMatch>() {
-            
-            @Override
-            public void notifyDisappearance(IPatternMatch match) {
-                currentChange = currentChange.changeOccured(ChangeLevel.MATCHSET);
-            }
-            
-            @Override
-            public void notifyAppearance(IPatternMatch match) {
-                currentChange = currentChange.changeOccured(ChangeLevel.MATCHSET);
-            }
-        };
-        
-    }
     
 }
