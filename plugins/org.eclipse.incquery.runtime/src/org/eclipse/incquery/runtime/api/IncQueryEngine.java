@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -501,22 +500,8 @@ public class IncQueryEngine {
     public <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         checkArgument(listener != null, "Cannot add null listener!");
-        if(matcher instanceof BaseMatcher) {
-            BaseMatcher<Match> baseMatcher = (BaseMatcher<Match>) matcher;
-            // TODO implement
-            // add callback node to patternMatcher of matcher
-//  @Override
-//  public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
-//      final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-//              engine, listener) {
-//          @Override
-//          public Match statelessConvert(Tuple t) {
-//              return tupleToMatch(t);
-//          }
-//      };
-//      patternMatcher.connect(callbackNode, listener, fireNow);
-//  }
-        }
+        checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
+        matcher.addCallbackOnMatchUpdate(listener, fireNow);
     }
     
     /**
@@ -527,12 +512,8 @@ public class IncQueryEngine {
     public <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
-        // TODO implement
-        // remove callback node
-//  @Override
-//  public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
-//      patternMatcher.disconnectByTag(listener);
-//  }
+        checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
+        matcher.removeCallbackOnMatchUpdate(listener);
     }
     
     /**

@@ -27,6 +27,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -52,10 +53,10 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
             throws IncQueryException {
         super();
         this.engine = engine;
-        this.engine.matcherInitialized(pattern, this);
         this.patternMatcher = patternMatcher;
         this.reteEngine = engine.getReteEngine();
         this.baseIndex = engine.getBaseIndex();
+        this.engine.matcherInitialized(pattern, this);
     }
 
     // HELPERS
@@ -301,22 +302,22 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
-//    @Override
-//    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
-//        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-//                engine, listener) {
-//            @Override
-//            public Match statelessConvert(Tuple t) {
-//                return tupleToMatch(t);
-//            }
-//        };
-//        patternMatcher.connect(callbackNode, listener, fireNow);
-//    }
-//
-//    @Override
-//    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
-//        patternMatcher.disconnectByTag(listener);
-//    }
+    @Override
+    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
+                engine, listener) {
+            @Override
+            public Match statelessConvert(Tuple t) {
+                return tupleToMatch(t);
+            }
+        };
+        patternMatcher.connect(callbackNode, listener, fireNow);
+    }
+
+    @Override
+    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
+        patternMatcher.disconnectByTag(listener);
+    }
 
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
