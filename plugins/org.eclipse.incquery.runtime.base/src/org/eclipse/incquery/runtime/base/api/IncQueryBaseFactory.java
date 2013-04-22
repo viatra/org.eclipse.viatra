@@ -15,7 +15,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.core.NavigationHelperImpl;
 import org.eclipse.incquery.runtime.base.core.TransitiveClosureHelperImpl;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -72,6 +75,40 @@ public class IncQueryBaseFactory {
         if (logger == null)
             logger = Logger.getLogger(NavigationHelper.class);
         return new NavigationHelperImpl(emfRoot, wildcardMode, logger);
+    }
+    
+    /**
+     * The method creates a {@link NavigationHelper} index for the given EMF model root.
+     * <p>
+     * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. If
+     * wildcard mode is off, the client will have to manually register the interesting aspects of the model.
+     * <p>
+     * If the dynamic model flag is set to true, the index will use String ids to distinguish between the various 
+     * {@link EStructuralFeature}, {@link EClass} and {@link EDataType} instances. This way the index is able to 
+     * handle dynamic EMF instance models too. 
+     * 
+     * @see NavigationHelper
+     * 
+     * @param emfRoot
+     *            the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet. Can be null - you can
+     *            add a root later using {@link NavigationHelper#addRoot(Notifier)}
+     * @param wildcardMode
+     *            true if all aspects of the EMF model should be indexed automatically, false if manual registration of
+     *            interesting aspects is desirable
+     * @param dynamicModel
+     *            true if the index should use String ids for the various EMF types and features, false if dynamic 
+     *            model support is not required
+     * @param logger
+     *            the log output where errors will be logged if encountered during the operation of the
+     *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
+     * @return the NavigationHelper instance
+     * @throws IncQueryBaseException
+     */
+    public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger)
+            throws IncQueryBaseException {
+        if (logger == null)
+            logger = Logger.getLogger(NavigationHelper.class);
+        return new NavigationHelperImpl(emfRoot, wildcardMode, dynamicModel, logger);
     }
 
     /**

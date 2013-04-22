@@ -27,6 +27,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -61,76 +62,93 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private boolean isDirty = false;
 
     // value -> feature (attr or ref) -> holder(s)
-    private Table<Object, String, Set<EObject>> valueToFeatureToHolderMap;
+    private Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap = null;
 
-    // feature -> holder(s)
+    // feature (attr or ref) -> holder(s)
     // constructed on-demand
-    private Map<String, Multiset<EObject>> featureToHolderMap;
+    private Map<Object, Multiset<EObject>> featureToHolderMap = null;
 
     // holder -> feature (attr or ref) -> value(s)
     // constructed on-demand
-    private Table<EObject, String, Set<Object>> holderToFeatureToValueMap; 
-    
+    private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap = null;
+
     // eclass -> instance(s)
-    private final Map<String, Set<EObject>> instanceMap;
+    private Map<Object, Set<EObject>> instanceMap = null;
 
     // edatatype -> multiset of value(s)
-    private final Map<String, Map<Object, Integer>> dataTypeMap;
+    private Map<Object, Map<Object, Integer>> dataTypeMap = null;
 
     // source -> feature -> proxy target -> delayed visitors
-    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
+    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap = null;
 
     // proxy source -> delayed visitors
-    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
+    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap = null;
 
     // static for all eClasses whose instances were encountered at least once
-    private static Set<EClass> knownClasses = new HashSet<EClass>();
+    private Set<EClass> knownClasses = null;
 
     // static for eclass -> all subtypes in knownClasses
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
-    
+
     // move optimization to avoid removing and re-adding entire subtrees
     EObject ignoreInsertionAndDeletion = null;
-    //Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
-    //Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
+    // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
+    // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
-    //Maps the generated feature id to the actual EStructuralFeature instance
-    //Multimap is used, this way we can easily track if a given feature id is currently used by base
-    private Multimap<String, EStructuralFeature> knownFeatures;
-    
-    public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper) {
+    // Maps the generated feature id to the actual EStructuralFeature instance
+    // Multimap is used, this way we can easily track if a given feature id is currently used by base
+    private Multimap<String, EStructuralFeature> knownFeatures = null;
+
+    private boolean isDynamicModel;
+    private static Map<ENamedElement, String> cachedId = new HashMap<ENamedElement, String>();
+
+    public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper, boolean isDynamicModel) {
         this.navigationHelper = navigationHelper;
-        this.valueToFeatureToHolderMap = HashBasedTable.create();
-        this.instanceMap = new HashMap<String, Set<EObject>>();
-        this.dataTypeMap = new HashMap<String, Map<Object, Integer>>();
+        this.isDynamicModel = isDynamicModel;
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
         this.knownFeatures = ArrayListMultimap.create();
+        this.valueToFeatureToHolderMap = HashBasedTable.create();
+        this.instanceMap = new HashMap<Object, Set<EObject>>();
+        this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
+        this.knownClasses = new HashSet<EClass>();
     }
 
     /**
      * @param classifier
      * @return A unique string id generated from the classifier's package nsuri and the name.
      */
-    protected static String getUniqueIdentifier(EClassifier classifier) {
-        Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-        return classifier.getEPackage().getNsURI() + "#" + classifier.getName();
+    static String getUniqueIdentifier(EClassifier classifier) {
+        Preconditions.checkArgument(!classifier.eIsProxy(),
+                String.format("Classifier %s is an unresolved proxy", classifier));
+        String generatedId = cachedId.get(classifier);
+        if (generatedId == null) {
+            generatedId = classifier.getEPackage().getNsURI() + "#" + classifier.getName();
+            cachedId.put(classifier, generatedId);
+        }
+        return generatedId;
     }
 
     /**
      * @param typedElement
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
-    protected static String getUniqueIdentifier(ETypedElement typedElement) {
-        Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
-        EClassifier classifier = null;
-        if (typedElement.eContainer() instanceof EClass) {
-            classifier = (EClass) typedElement.eContainer();
+    static String getUniqueIdentifier(ETypedElement typedElement) {
+        Preconditions.checkArgument(!typedElement.eIsProxy(),
+                String.format("Element %s is an unresolved proxy", typedElement));
+        String generatedId = cachedId.get(typedElement);
+        if (generatedId == null) {
+            EClassifier classifier = null;
+            if (typedElement.eContainer() instanceof EClass) {
+                classifier = (EClass) typedElement.eContainer();
+            } else {
+                classifier = typedElement.eContainer().eClass();
+            }
+            generatedId = getUniqueIdentifier(classifier) + "#" + typedElement.getEType().getName() + "#"
+                    + typedElement.getName();
+            cachedId.put(typedElement, generatedId);
         }
-        else {
-            classifier = typedElement.eContainer().eClass();
-        }
-        return getUniqueIdentifier(classifier) + "#" + typedElement.getEType().getName() + "#" + typedElement.getName();
+        return generatedId;
     }
 
     @SuppressWarnings("deprecation")
@@ -189,15 +207,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     }
 
-	/**
-	 * 
-	 */
-	protected void runCallbacksIfDirty() {
-		if (isDirty) {
+    /**
+     * 
+     */
+    protected void runCallbacksIfDirty() {
+        if (isDirty) {
             isDirty = false;
             navigationHelper.runAfterUpdateCallbacks();
         }
-	}
+    }
 
     private void featureResolve(EObject source, EStructuralFeature feature, Object oldValue, Object newValue) {
         EReference reference = (EReference) feature;
@@ -217,12 +235,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     private void featureUpdate(boolean isInsertion, EObject notifier, EStructuralFeature feature, Object value) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
-    	EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
+        EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
     }
 
     @Override
     protected void addAdapter(final Notifier notifier) {
-    	if (notifier == ignoreInsertionAndDeletion) return;
+        if (notifier == ignoreInsertionAndDeletion)
+            return;
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
@@ -243,7 +262,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     @Override
     protected void removeAdapter(final Notifier notifier) {
-    	if (notifier == ignoreInsertionAndDeletion) return;
+        if (notifier == ignoreInsertionAndDeletion)
+            return;
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
@@ -272,17 +292,28 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
     }
 
-    private void addToFeatureMap(String feature, Object value, EObject holder) {
-        Set<EObject> setVal = valueToFeatureToHolderMap.get(value, feature);
+    /**
+     * This method uses the original {@link EStructuralFeature}. 
+     */
+    private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+        Set<EObject> setVal = (isDynamicModel ? valueToFeatureToHolderMap.get(value, getUniqueIdentifier(feature))
+                : valueToFeatureToHolderMap.get(value, feature));
 
         if (setVal == null) {
             setVal = new HashSet<EObject>();
-            valueToFeatureToHolderMap.put(value, feature, setVal);
+            if (isDynamicModel) {
+                valueToFeatureToHolderMap.put(value, getUniqueIdentifier(feature), setVal);
+            } else {
+                valueToFeatureToHolderMap.put(value, feature, setVal);
+            }
         }
         setVal.add(holder);
     }
 
-    private void addToReversedFeatureMap(String feature, EObject holder) {
+    /**
+     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     */
+    private void addToReversedFeatureMap(Object feature, EObject holder) {
         Multiset<EObject> setVal = featureToHolderMap.get(feature);
 
         if (setVal == null) {
@@ -292,20 +323,26 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         setVal.add(holder);
     }
 
-    private void addToDirectFeatureMap(EObject holder, String feature, Object value) {
-    	Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
-    	
-    	if (setVal == null) {
-    		setVal = new HashSet<Object>();
-    		holderToFeatureToValueMap.put(holder, feature, setVal);
-    	}
-    	setVal.add(value);
+    /**
+     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     */
+    private void addToDirectFeatureMap(EObject holder, Object feature, Object value) {
+        Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
+
+        if (setVal == null) {
+            setVal = new HashSet<Object>();
+            holderToFeatureToValueMap.put(holder, feature, setVal);
+        }
+        setVal.add(value);
     }
-    
-    private void removeFromReversedFeatureMap(String feature, EObject holder) {
-    	final Multiset<EObject> setVal = featureToHolderMap.get(feature);
+
+    /**
+     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     */
+    private void removeFromReversedFeatureMap(Object feature, EObject holder) {
+        final Multiset<EObject> setVal = featureToHolderMap.get(feature);
         if (setVal != null) {
-			setVal.remove(holder);
+            setVal.remove(holder);
 
             if (setVal.isEmpty()) {
                 featureToHolderMap.remove(feature);
@@ -313,127 +350,157 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void removeFromFeatureMap(String feature, Object value, EObject holder) {
-    	final Set<EObject> setHolder = valueToFeatureToHolderMap.get(value,feature);
+    /**
+     * This method uses the original {@link EStructuralFeature}. 
+     */
+    private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
+        final Set<EObject> setHolder = (isDynamicModel ? valueToFeatureToHolderMap.get(value,
+                getUniqueIdentifier(feature)) : valueToFeatureToHolderMap.get(value, feature));
         if (setHolder != null) {
-			setHolder.remove(holder);
+            setHolder.remove(holder);
 
             if (setHolder.isEmpty()) {
-                valueToFeatureToHolderMap.remove(value,feature);
+                if (isDynamicModel) {
+                    valueToFeatureToHolderMap.remove(value, getUniqueIdentifier(feature));
+                } else {
+                    valueToFeatureToHolderMap.remove(value, feature);
+                }
             }
         }
     }
 
-    private void removeFromDirectFeatureMap(EObject holder, String feature, Object value) {
-    	final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
+    /**
+     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     */
+    private void removeFromDirectFeatureMap(EObject holder, Object feature, Object value) {
+        final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
         if (setVal != null) {
-			setVal.remove(value);
+            setVal.remove(value);
 
             if (setVal.isEmpty()) {
                 valueToFeatureToHolderMap.remove(holder, feature);
             }
         }
     }
-    
-    public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-        // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
-        // navigationHelper.getObservedFeatures().contains(feature)) {
-        String featureId = getUniqueIdentifier(feature);
-        addToFeatureMap(featureId, value, holder);
 
+    public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
+        addToFeatureMap(feature, value, holder);
+
+        Object dynamicFeature = (isDynamicModel ? getUniqueIdentifier(feature) : feature);
         if (featureToHolderMap != null) {
-            addToReversedFeatureMap(featureId, holder);
+            addToReversedFeatureMap(dynamicFeature, holder);
         }
         if (holderToFeatureToValueMap != null) {
-        	addToDirectFeatureMap(holder, featureId, value);
+            addToDirectFeatureMap(holder, dynamicFeature, value);
         }
-        
-        knownFeatures.put(featureId, feature);
+
+        if (isDynamicModel) {
+            knownFeatures.put(getUniqueIdentifier(feature), feature);
+        }
 
         isDirty = true;
         notifyFeatureListeners(holder, feature, value, true);
-        // }
     }
 
     public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-        // if ((navigationHelper.getType() == NavigationHelperType.ALL) ||
-        // navigationHelper.getObservedFeatures().contains(feature)) {
-        String featureId = getUniqueIdentifier(feature);
-        removeFromFeatureMap(featureId, value, holder);
+        removeFromFeatureMap(feature, value, holder);
 
+        Object dynamicFeature = (isDynamicModel ? getUniqueIdentifier(feature) : feature);
         if (featureToHolderMap != null) {
-            removeFromReversedFeatureMap(featureId, holder);
+            removeFromReversedFeatureMap(dynamicFeature, holder);
         }
         if (holderToFeatureToValueMap != null) {
-        	removeFromDirectFeatureMap(holder, featureId, value);
+            removeFromDirectFeatureMap(holder, dynamicFeature, value);
         }
 
-        knownFeatures.remove(featureId, feature);
-        
+        if (isDynamicModel) {
+            knownFeatures.remove(getUniqueIdentifier(feature), feature);
+        }
+
         isDirty = true;
         notifyFeatureListeners(holder, feature, value, false);
-        // }
     }
 
     // START ********* InstanceSet *********
     public Set<EObject> getInstanceSet(EClass keyClass) {
-        return instanceMap.get(getUniqueIdentifier(keyClass));
+        if (isDynamicModel) {
+            return instanceMap.get(getUniqueIdentifier(keyClass));
+        } else {
+            return instanceMap.get(keyClass);
+        }
     }
 
     public void removeInstanceSet(EClass keyClass) {
-        instanceMap.remove(getUniqueIdentifier(keyClass));
+        if (isDynamicModel) {
+            instanceMap.remove(getUniqueIdentifier(keyClass));
+        } else {
+            instanceMap.remove(keyClass);
+        }
     }
 
     public void insertIntoInstanceSet(EClass keyClass, EObject value) {
-        String key = getUniqueIdentifier(keyClass);
-        // if (navigationHelper.isObserved(key)) {
-        if (instanceMap.containsKey(key)) {
-            instanceMap.get(key).add(value);
-        } else {
-            HashSet<EObject> set = new HashSet<EObject>();
-            set.add(value);
-            instanceMap.put(key, set);
+        Set<EObject> set = (isDynamicModel ? instanceMap.get(getUniqueIdentifier(keyClass)) : instanceMap.get(keyClass));
+        if (set == null) {
+            set = new HashSet<EObject>();
+            if (isDynamicModel) {
+                instanceMap.put(getUniqueIdentifier(keyClass), set);
+            } else {
+                instanceMap.put(keyClass, set);
+            }
         }
+        set.add(value);
 
         isDirty = true;
-        // FIXME do it, is this key ok here?
         notifyInstanceListeners(keyClass, value, true);
-        // }
     }
 
     public void removeFromInstanceSet(EClass keyClass, EObject value) {
-        String key = getUniqueIdentifier(keyClass);
-        // if (navigationHelper.isObserved(key)) {
-        if (instanceMap.containsKey(key)) {
-            instanceMap.get(key).remove(value);
-            if (instanceMap.get(key).size() == 0) {
-                instanceMap.remove(key);
+        Set<EObject> set = (isDynamicModel ? instanceMap.get(getUniqueIdentifier(keyClass)) : instanceMap.get(keyClass));
+        if (set != null) {
+            set.remove(value);
+
+            if (set.isEmpty()) {
+                if (isDynamicModel) {
+                    instanceMap.remove(getUniqueIdentifier(keyClass));
+                } else {
+                    instanceMap.remove(keyClass);
+                }
             }
         }
 
         isDirty = true;
-        // FIXME do it, is this key ok here?
         notifyInstanceListeners(keyClass, value, false);
-        // }
     }
 
     // END ********* InstanceSet *********
 
     // START ********* DataTypeMap *********
     public Map<Object, Integer> getDataTypeMap(EDataType keyType) {
-        return dataTypeMap.get(getUniqueIdentifier(keyType));
+        if (isDynamicModel) {
+            return dataTypeMap.get(getUniqueIdentifier(keyType));
+        } else {
+            return dataTypeMap.get(keyType);
+        }
     }
 
     public void removeDataTypeMap(EDataType keyType) {
-        dataTypeMap.remove(getUniqueIdentifier(keyType));
+        if (isDynamicModel) {
+            dataTypeMap.remove(getUniqueIdentifier(keyType));
+        } else {
+            dataTypeMap.remove(keyType);
+        }
     }
 
     public void insertIntoDataTypeMap(EDataType keyType, Object value) {
-        String key = getUniqueIdentifier(keyType);
-        Map<Object, Integer> valMap = dataTypeMap.get(key);
+        Map<Object, Integer> valMap = (isDynamicModel ? dataTypeMap.get(getUniqueIdentifier(keyType)) : dataTypeMap
+                .get(keyType));
         if (valMap == null) {
             valMap = new HashMap<Object, Integer>();
-            dataTypeMap.put(key, valMap);
+            if (isDynamicModel) {
+                dataTypeMap.put(getUniqueIdentifier(keyType), valMap);
+            } else {
+                dataTypeMap.put(keyType, valMap);
+            }
         }
         if (valMap.get(value) == null) {
             valMap.put(value, Integer.valueOf(1));
@@ -441,15 +508,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             Integer count = valMap.get(value);
             valMap.put(value, ++count);
         }
-        
-      isDirty = true;
-      // FIXME do it, is this key ok here?
-      notifyDataTypeListeners(keyType, value, true);
+
+        isDirty = true;
+        notifyDataTypeListeners(keyType, value, true);
     }
 
     public void removeFromDataTypeMap(EDataType keyType, Object value) {
-        String key = getUniqueIdentifier(keyType);
-        Map<Object, Integer> valMap = dataTypeMap.get(key);
+        Map<Object, Integer> valMap = (isDynamicModel ? dataTypeMap.get(getUniqueIdentifier(keyType)) : dataTypeMap
+                .get(keyType));
         if (valMap != null) {
             if (valMap.get(value) != null) {
                 Integer count = valMap.get(value);
@@ -460,12 +526,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             }
             if (valMap.size() == 0) {
-                dataTypeMap.remove(key);
+                if (isDynamicModel) {
+                    dataTypeMap.remove(getUniqueIdentifier(keyType));
+                } else {
+                    dataTypeMap.remove(keyType);
+                }
             }
         }
-        
+
         isDirty = true;
-        // FIXME do it, is this key ok here?
         notifyDataTypeListeners(keyType, value, false);
     }
 
@@ -556,24 +625,24 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void initReversedFeatureMap() {
-        for (Cell<Object, String, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
-            final String feature = valueToFeatureHolderMap.getColumnKey();
+        for (Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+            final Object feature = valueToFeatureHolderMap.getColumnKey();
             for (EObject holder : valueToFeatureHolderMap.getValue()) {
                 addToReversedFeatureMap(feature, holder);
             }
         }
     }
-    
 
-	private void initDirectFeatureMap() {
-        for (Cell<Object, String, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
-        	final Object value = valueToFeatureHolderMap.getRowKey();
-            final String feature = valueToFeatureHolderMap.getColumnKey();
+    private void initDirectFeatureMap() {
+        for (Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap
+                .cellSet()) {
+            final Object value = valueToFeatureHolderMap.getRowKey();
+            final Object feature = valueToFeatureHolderMap.getColumnKey();
             for (EObject holder : valueToFeatureHolderMap.getValue()) {
-				addToDirectFeatureMap(holder, feature, value);
+                addToDirectFeatureMap(holder, feature, value);
             }
-        }		
-	}    
+        }
+    }
 
     // WORKAROUND for EContentAdapter bug
     // where proxy resolution during containment traversal would add a new
@@ -687,34 +756,33 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * @return the valueToFeatureToHolderMap
      */
-    protected Table<Object, String, Set<EObject>> getValueToFeatureToHolderMap() {
+    protected Table<Object, Object, Set<EObject>> getValueToFeatureToHolderMap() {
         return valueToFeatureToHolderMap;
     }
 
     /**
      * @return the featureToHolderMap
      */
-    protected Map<String, Multiset<EObject>> getFeatureToHolderMap() {
+    protected Map<Object, Multiset<EObject>> getFeatureToHolderMap() {
         if (featureToHolderMap == null) {
-            featureToHolderMap = new HashMap<String, Multiset<EObject>>();
+            featureToHolderMap = new HashMap<Object, Multiset<EObject>>();
             initReversedFeatureMap();
         }
         return featureToHolderMap;
     }
 
-	/**
-	 * @return the holderToFeatureToValeMap
-	 */
-	protected Table<EObject, String, Set<Object>> getHolderToFeatureToValueMap() {
-		if (holderToFeatureToValueMap == null) {
-			holderToFeatureToValueMap = HashBasedTable.create();
-			initDirectFeatureMap();
-		}
-		return holderToFeatureToValueMap;
-	}       
+    /**
+     * @return the holderToFeatureToValeMap
+     */
+    protected Table<EObject, Object, Set<Object>> getHolderToFeatureToValueMap() {
+        if (holderToFeatureToValueMap == null) {
+            holderToFeatureToValueMap = HashBasedTable.create();
+            initDirectFeatureMap();
+        }
+        return holderToFeatureToValueMap;
+    }
 
-
-	/**
+    /**
      * @return the unresolvableProxyFeaturesMap
      */
     protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> getUnresolvableProxyFeaturesMap() {
@@ -736,16 +804,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * @return the knownFeatures
+     * Returns the corresponding {@link EStructuralFeature} instance for the id.
+     * 
+     * @param featureId
+     *            the id of the feature
+     * @return the {@link EStructuralFeature} instance
      */
     public EStructuralFeature getKnownFeature(String featureId) {
         Collection<EStructuralFeature> features = knownFeatures.get(featureId);
         if (features.size() == 0) {
             return null;
-        }
-        else {
+        } else {
             return features.iterator().next();
         }
+    }
+
+    public boolean isDynamicModel() {
+        return isDynamicModel;
     }
 
 }
