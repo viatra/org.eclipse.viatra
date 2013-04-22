@@ -52,6 +52,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
             throws IncQueryException {
         super();
         this.engine = engine;
+        this.engine.matcherInitialized(pattern, this);
         this.patternMatcher = patternMatcher;
         this.reteEngine = engine.getReteEngine();
         this.baseIndex = engine.getBaseIndex();

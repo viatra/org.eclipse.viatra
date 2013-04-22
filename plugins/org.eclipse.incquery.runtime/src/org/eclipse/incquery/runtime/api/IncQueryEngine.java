@@ -23,7 +23,9 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -77,7 +79,7 @@ public class IncQueryEngine {
      * The model to which the engine is attached.
      */
     private final Notifier emfRoot;
-    private final Map<? extends IMatcherFactory<?>, ? extends IncQueryMatcher<?>> matchers;
+    private final Map<Pattern, IncQueryMatcher<?>> matchers;
 
     /**
      * The base index keeping track of basic EMF contents of the model.
@@ -160,14 +162,22 @@ public class IncQueryEngine {
     
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IMatcherFactory<Matcher> factory) {
-        if(matchers.containsKey(factory)) {
-            IncQueryMatcher<?> matcher = matchers.get(factory);
+        Pattern pattern = factory.getPattern();
+        if(matchers.containsKey(pattern)) {
+            IncQueryMatcher<?> matcher = matchers.get(pattern);
             return (Matcher) matcher;
         }
         return null;
     }
     
-    
+    public <Matcher extends IncQueryMatcher<?>> void matcherInitialized(Pattern pattern, Matcher matcher) {
+        if(matchers.containsKey(pattern)) {
+            logger.debug("Pattern " + CorePatternLanguageHelper.getFullyQualifiedName(pattern) + " already initialized in IncQueryEngine!");
+        } else {
+            matchers.put(pattern, matcher);
+            lifecycleProvider.matcherInstantiated(matcher);
+        }
+    }
 
     /**
      * Internal accessor for the base index.
@@ -491,10 +501,24 @@ public class IncQueryEngine {
     public <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         checkArgument(listener != null, "Cannot add null listener!");
-        // TODO implement
-        // add callback node to patternMatcher of matcher
+        if(matcher instanceof BaseMatcher) {
+            BaseMatcher<Match> baseMatcher = (BaseMatcher<Match>) matcher;
+            // TODO implement
+            // add callback node to patternMatcher of matcher
+//  @Override
+//  public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+//      final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
+//              engine, listener) {
+//          @Override
+//          public Match statelessConvert(Tuple t) {
+//              return tupleToMatch(t);
+//          }
+//      };
+//      patternMatcher.connect(callbackNode, listener, fireNow);
+//  }
+        }
     }
-
+    
     /**
      * 
      * @param matcher
@@ -505,6 +529,10 @@ public class IncQueryEngine {
         checkArgument(listener != null, "Cannot remove null listener!");
         // TODO implement
         // remove callback node
+//  @Override
+//  public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
+//      patternMatcher.disconnectByTag(listener);
+//  }
     }
     
     /**

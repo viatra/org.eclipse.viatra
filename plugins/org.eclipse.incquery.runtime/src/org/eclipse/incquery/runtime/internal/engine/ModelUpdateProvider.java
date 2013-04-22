@@ -117,7 +117,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
             // remove listener from matchers
             this.incQueryEngine.removeLifecycleListener(selfListener);
             for (IncQueryMatcher<?> matcher : this.incQueryEngine.getMatchers()) {
-                this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
+                this.incQueryEngine.removeMatchUpdateListener(matcher, matchSetListener);
             }
         }
     }
