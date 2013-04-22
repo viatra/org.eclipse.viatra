@@ -217,7 +217,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
             
             @Override
             public ChangeLevel getLevel() {
-                return ChangeLevel.MATCHSET;
+                return ChangeLevel.INDEX;
             }
         });
         processMatchesRunnable.run();

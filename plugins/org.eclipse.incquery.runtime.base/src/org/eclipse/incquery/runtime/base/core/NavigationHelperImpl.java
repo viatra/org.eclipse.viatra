@@ -463,7 +463,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (!baseIndexChangeListeners.isEmpty()) {
             for (IncQueryBaseIndexChangeListener listener : new ArrayList<IncQueryBaseIndexChangeListener>(baseIndexChangeListeners)) {
                 try {
-                    if(listener.onlyOnIndexChange() == baseIndexChanged) {
+                    if(!listener.onlyOnIndexChange() || baseIndexChanged) {
                         listener.notifyChanged(baseIndexChanged);
                     }
                 } catch (Exception ex) {
