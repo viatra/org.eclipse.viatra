@@ -118,15 +118,15 @@ public class IncQueryEngine {
         }
     }
 
+//  private final Set<Runnable> afterWipeCallbacks;
+    private final LifecycleProvider lifecycleProvider;
+    private final ModelUpdateProvider modelUpdateProvider;
+    private Logger logger;
+    
     /**
      * EXPERIMENTAL
      */
     private final int reteThreads = 0;
-//  private final Set<Runnable> afterWipeCallbacks;
-    private final LifecycleProvider lifecycleProvider;
-    private final ModelUpdateProvider modelUpdateProvider;
-    
-    private Logger logger;
 /**
      * @param manager
      *            null if unmanaged
@@ -151,26 +151,34 @@ public class IncQueryEngine {
     /**
      * @return the root of the EMF model tree that this engine is attached to.
      */
+    // TODO rename to getScope
     public Notifier getEmfRoot() {
         return emfRoot;
     }
     
+    // TODO JavaDoc missing!
     public Set<? extends IncQueryMatcher<? extends IPatternMatch>> getMatchers(){
         return ImmutableSet.copyOf(matchers.values());
     }
     
+    // TODO JavaDoc missing!
     @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IMatcherFactory<Matcher> factory) {
         Pattern pattern = factory.getPattern();
         if(matchers.containsKey(pattern)) {
             IncQueryMatcher<?> matcher = matchers.get(pattern);
+            // TODO this cast is not safe when a pattern with generated matcher is also created with generic API
             return (Matcher) matcher;
         }
+        // TODO getMatcher usually initiates the matcher, should it here as well?
         return null;
     }
     
+    // TODO JavaDoc missing!
+    // TODO make it package-only visible when implementation class is moved to impl package
     public <Matcher extends IncQueryMatcher<?>> void matcherInitialized(Pattern pattern, Matcher matcher) {
         if(matchers.containsKey(pattern)) {
+            // TODO simply dropping the matcher can cause problems
             logger.debug("Pattern " + CorePatternLanguageHelper.getFullyQualifiedName(pattern) + " already initialized in IncQueryEngine!");
         } else {
             matchers.put(pattern, matcher);
@@ -322,9 +330,9 @@ public class IncQueryEngine {
         lifecycleProvider.engineWiped();
     }
 
-    /**
-     * This will run before wipes.
-     */
+//    /**
+//     * This will run before wipes.
+//     */
     // * If there are any such, updates are settled before they are run.
 //    private void runAfterWipeCallbacks() {
 //        try {
@@ -484,15 +492,15 @@ public class IncQueryEngine {
         return manager != null;
     }
 
-    /**
-     * @return the set of callbacks that will be issued after a wipe
-     */
+//    /**
+//     * @return the set of callbacks that will be issued after a wipe
+//     */
 //    public Set<Runnable> getAfterWipeCallbacks() {
 //        return afterWipeCallbacks;
 //    }
 
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param matcher
      * @param listener
      * @param fireNow
@@ -505,7 +513,7 @@ public class IncQueryEngine {
     }
     
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param matcher
      * @param listener
      */
@@ -517,7 +525,7 @@ public class IncQueryEngine {
     }
     
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param listener
      */
     public void addModelUpdateListener(IncQueryModelUpdateListener listener) {
@@ -525,7 +533,7 @@ public class IncQueryEngine {
     }
     
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param listener
      */
     public void removeModelUpdateListener(IncQueryModelUpdateListener listener) {
@@ -533,7 +541,7 @@ public class IncQueryEngine {
     }
     
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param listener
      */
     public void addLifecycleListener(IncQueryEngineLifecycleListener listener) {
@@ -541,7 +549,7 @@ public class IncQueryEngine {
     }
     
     /**
-     * 
+     * TODO JavaDoc missing!
      * @param listener
      */
     public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
