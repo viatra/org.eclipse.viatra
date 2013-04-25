@@ -14,7 +14,6 @@ package org.eclipse.incquery.runtime.evm.notification;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
@@ -65,7 +64,7 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
      * @param oldState
      * @param event
      */
-    public void notifyActivationChanged(final Activation<? extends IPatternMatch> activation,
+    public void notifyActivationChanged(final Activation activation,
             final ActivationState oldState, final ActivationLifeCycleEvent event) {
         for (IActivationNotificationListener listener : this.activationNotificationListeners) {
             listener.activationChanged(activation, oldState, event);

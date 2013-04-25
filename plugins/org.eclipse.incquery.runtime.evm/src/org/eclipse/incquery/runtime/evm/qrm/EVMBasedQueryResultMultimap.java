@@ -20,9 +20,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
@@ -39,7 +39,7 @@ import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecifica
 public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
         QueryResultMultimap<KeyType, ValueType> {
 
-    private final Set<Job<Match>> jobs;
+    private final Set<Job> jobs;
 
     private final ExecutionSchema schema;
 
@@ -49,9 +49,9 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * @param schema
      */
     protected EVMBasedQueryResultMultimap(final ExecutionSchema schema) {
-        super(schema.getIncQueryEngine().getLogger());
+        super(schema.getEventSource().getLogger());
         this.schema = schema;
-        this.jobs = new HashSet<Job<Match>>();
+        this.jobs = new HashSet<Job>();
         jobs.add(new StatelessJob<Match>(ActivationState.APPEARED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {
@@ -77,7 +77,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * 
      */
     protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
-        this(EventDrivenVM.createExecutionSchema(engine,
+        this(ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQBaseSchedulerFactory(engine)));
     }
 

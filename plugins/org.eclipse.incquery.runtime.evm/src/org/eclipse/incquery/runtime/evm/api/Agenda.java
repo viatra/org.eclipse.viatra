@@ -11,14 +11,10 @@
 package org.eclipse.incquery.runtime.evm.api;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
-import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -40,9 +36,9 @@ public class Agenda {
      */
     private final class DefaultActivationNotificationListener implements IActivationNotificationListener {
         @Override
-        public void activationChanged(final Activation<? extends IPatternMatch> activation,
+        public void activationChanged(final Activation activation,
                 final ActivationState oldState, final ActivationLifeCycleEvent event) {
-            ruleBase.getIncQueryEngine().getLogger().debug(
+            ruleBase.getEventSource().getLogger().debug(
                     String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
             getActivations().remove(oldState, activation);
             ActivationState state = activation.getState();
@@ -63,7 +59,7 @@ public class Agenda {
     }
 
     
-    private Multimap<ActivationState, Activation<?>> activations;
+    private Multimap<ActivationState, Activation> activations;
     private ConflictSet conflictSet;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
@@ -81,7 +77,7 @@ public class Agenda {
     /**
      * @return the activations
      */
-    public Multimap<ActivationState, Activation<?>> getActivations() {
+    public Multimap<ActivationState, Activation> getActivations() {
         return activations;
     }
 
@@ -91,7 +87,7 @@ public class Agenda {
      * @param state
      * @return the activations in the given state
      */
-    public Collection<Activation<?>> getActivations(final ActivationState state) {
+    public Collection<Activation> getActivations(final ActivationState state) {
         return getActivations().get(state);
     }
     
@@ -99,24 +95,31 @@ public class Agenda {
      * 
      * @return all activations in a single collection
      */
-    public Collection<Activation<?>> getAllActivations() {
+    public Collection<Activation> getAllActivations() {
         return getActivations().values();
     }
     
     /**
-     * @return the enabledActivations
+     * @return the activation selected as next in order by the conflict resolver
      */
-    @Deprecated
-    public Set<Activation<?>> getEnabledActivations() {
-        return conflictSet.getConflictingActivations();
-    }
-    /**
-     * @return the enabledActivations
-     */
-    public Activation<?> getNextActivation() {
+    public Activation getNextActivation() {
         return conflictSet.getNextActivation();
     }
 
+    /**
+     * @return the set of activations that are considered equal by the conflict resolver
+     */
+    public Set<Activation> getNextActivations() {
+        return conflictSet.getNextActivations();
+    }
+
+    /**
+     * @return the set of activations in conflict (i.e. enabled)
+     */
+    public Set<Activation> getConflictingActivations() {
+        return conflictSet.getConflictingActivations();
+    }
+    
     /**
      * @return the activationListener
      */
@@ -130,33 +133,10 @@ public class Agenda {
      */
     public void setConflictResolver(ConflictResolver<?> resolver) {
         ConflictSet set = resolver.createConflictSet();
-        for (Activation<?> act : conflictSet.getConflictingActivations()) {
+        for (Activation act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
         this.conflictSet = set;
     }
 
-    /**
-     * Allows the setting of a comparator to be used for ordering activations.
-     * 
-     * @param activationComparator
-     */
-    @Deprecated
-    public void setActivationComparator(final Comparator<Activation<?>> activationComparator) {
-        Preconditions.checkNotNull(activationComparator, "Comparator cannot be null!");
-        ComparingConflictResolver resolver = new ComparingConflictResolver(activationComparator);
-        setConflictResolver(resolver);
-    }
-
-    /**
-     * @return the activationComparator
-     */
-    @Deprecated
-    public Comparator<Activation<?>> getActivationComparator() {
-        if(conflictSet.getConflictResolver() instanceof ComparingConflictResolver) {
-            ComparingConflictResolver resolver = (ComparingConflictResolver) conflictSet.getConflictResolver();
-            return resolver.getComparator();
-        }
-        return null;
-    }
 }

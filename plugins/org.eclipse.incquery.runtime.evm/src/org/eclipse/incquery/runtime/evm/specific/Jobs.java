@@ -44,7 +44,7 @@ public final class Jobs {
      * @param processor
      * @return
      */
-    public static <Match extends IPatternMatch> Job<Match> newStatelessJob(ActivationState activationState, IMatchProcessor<Match> processor){
+    public static <Match extends IPatternMatch> Job newStatelessJob(ActivationState activationState, IMatchProcessor<Match> processor){
         return new StatelessJob<Match>(activationState, processor);
     }
     
@@ -57,7 +57,7 @@ public final class Jobs {
      * @param processor
      * @return
      */
-    public static <Match extends IPatternMatch> Job<Match> newRecordingJob(ActivationState activationState, IMatchProcessor<Match> processor){
+    public static <Match extends IPatternMatch> Job newRecordingJob(ActivationState activationState, IMatchProcessor<Match> processor){
         return new RecordingJob<Match>(activationState, processor);
     }
     
@@ -70,21 +70,21 @@ public final class Jobs {
      * @param activationState
      * @return
      */
-    public static final <Match extends IPatternMatch> Job<Match> newNopJob(ActivationState activationState) {
-        return new Job<Match>(activationState) {
+    public static final <Match extends IPatternMatch> Job newNopJob(ActivationState activationState) {
+        return new Job(activationState) {
             @Override
-            protected void execute(Activation<Match> activation, Context context) {
+            protected void execute(Activation activation, Context context) {
                 // do nothing
             }
             @Override
-            protected void handleError(Activation<Match> activation, Exception exception, Context context) {
+            protected void handleError(Activation activation, Exception exception, Context context) {
                 // never happens!
                 checkState(false, "NopJob should never cause errors!");
             }
         };
     }
     
-    public static <Match extends IPatternMatch> Job<Match> newEnableJob(ActivationState activationState, IMatchProcessor<Match> processor) {
+    public static <Match extends IPatternMatch> Job newEnableJob(ActivationState activationState, IMatchProcessor<Match> processor) {
         return new EnableJob<Match>(activationState, processor);
     }
     

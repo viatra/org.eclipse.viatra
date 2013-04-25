@@ -34,7 +34,7 @@ public class FavouredMatcherRuleSpecification<Match extends IPatternMatch, Match
     private final Matcher matcher;
     
     public FavouredMatcherRuleSpecification(Matcher matcher, ActivationLifeCycle lifeCycle,
-            final Set<Job<Match>> jobs) {
+            final Set<Job> jobs) {
         super(getFactory(matcher), lifeCycle, jobs);
         this.matcher = matcher;
     }

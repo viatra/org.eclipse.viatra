@@ -20,7 +20,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
-import org.junit.Test
+import org.junit.Test
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))

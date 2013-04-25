@@ -33,7 +33,7 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
     
     public static final class ArbitraryConflictSet implements ConflictSet {
 
-        private final Set<Activation<?>> container;
+        private final Set<Activation> container;
         private final ArbitraryOrderConflictResolver resolver;
         /**
          * 
@@ -44,7 +44,7 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         }
         
         @Override
-        public Activation<?> getNextActivation() {
+        public Activation getNextActivation() {
             if(!container.isEmpty()) {
                 return container.iterator().next();
             }
@@ -52,12 +52,12 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         }
 
         @Override
-        public boolean addActivation(Activation<?> activation) {
+        public boolean addActivation(Activation activation) {
             return container.add(activation);
         }
 
         @Override
-        public boolean removeActivation(Activation<?> activation) {
+        public boolean removeActivation(Activation activation) {
             return container.remove(activation);
         }
 
@@ -67,12 +67,12 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         }
 
         @Override
-        public Set<Activation<?>> getNextActivations() {
+        public Set<Activation> getNextActivations() {
             return Collections.unmodifiableSet(container);
         }
 
         @Override
-        public Set<Activation<?>> getConflictingActivations() {
+        public Set<Activation> getConflictingActivations() {
             return Collections.unmodifiableSet(container);
         }
         

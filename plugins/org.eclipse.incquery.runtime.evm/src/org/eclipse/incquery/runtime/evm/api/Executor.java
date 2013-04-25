@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 
 /**
  * The executor is responsible for firing enabled activations of its ruleBase,
@@ -39,8 +39,8 @@ public class Executor {
      * 
      * @param engine
      */
-    protected Executor(final IncQueryEngine engine) {
-        this(engine, Context.create());
+    public Executor(final EventSource eventSource) {
+        this(eventSource, Context.create());
     }
 
     /**
@@ -51,9 +51,9 @@ public class Executor {
      * @param engine
      * @param context
      */
-    protected Executor(final IncQueryEngine engine, final Context context) {
+    public Executor(final EventSource eventSource, final Context context) {
         this.context = checkNotNull(context, "Cannot create trigger engine with null context!");
-        ruleBase = new RuleBase(engine);
+        ruleBase = new RuleBase(eventSource);
     }
 
     /**
@@ -72,9 +72,9 @@ public class Executor {
             return;
         }
         
-        Activation<?> nextActivation = null;
+        Activation nextActivation = null;
         while((nextActivation = ruleBase.getAgenda().getNextActivation()) != null) {
-            ruleBase.getIncQueryEngine().getLogger().debug("Executing: " + nextActivation + " in " + this);
+            ruleBase.getEventSource().getLogger().debug("Executing: " + nextActivation + " in " + this);
             nextActivation.fire(context);
         }
         
@@ -92,11 +92,11 @@ public class Executor {
      */
     protected synchronized boolean startScheduling() {
         if(scheduling) {
-            ruleBase.getIncQueryEngine().getLogger().debug(reentrantMessage);
+            ruleBase.getEventSource().getLogger().debug(reentrantMessage);
             return false;
         } else {
             scheduling = true;
-            ruleBase.getIncQueryEngine().getLogger().debug(startMessage);
+            ruleBase.getEventSource().getLogger().debug(startMessage);
             return true;
         }
     }
@@ -107,14 +107,14 @@ public class Executor {
      * state is set to false.
      */
     protected synchronized void endScheduling() {
-        ruleBase.getIncQueryEngine().getLogger().debug(endMessage);
+        ruleBase.getEventSource().getLogger().debug(endMessage);
         scheduling = false;
     }
 
     /**
      * @return the ruleBase
      */
-    public RuleBase getAgenda() {
+    public RuleBase getRuleBase() {
         return ruleBase;
     }
     

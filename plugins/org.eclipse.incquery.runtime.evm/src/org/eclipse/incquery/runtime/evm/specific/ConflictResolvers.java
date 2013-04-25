@@ -37,7 +37,7 @@ public final class ConflictResolvers {
         return new FixedPriorityConflictResolver();
     }
     
-    public static ComparingConflictResolver createComparingResolver(Comparator<Activation<?>> comparator) {
+    public static ComparingConflictResolver createComparingResolver(Comparator<Activation> comparator) {
         return new ComparingConflictResolver(comparator);
     }
     

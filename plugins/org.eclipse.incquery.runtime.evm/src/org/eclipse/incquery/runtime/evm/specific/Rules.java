@@ -40,7 +40,7 @@ public final class Rules {
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifecycle, Set<Job> jobs){
         return new SimpleMatcherRuleSpecification<Match, Matcher>(factory, lifecycle, jobs);
     }
     
@@ -52,7 +52,7 @@ public final class Rules {
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, Set<Job> jobs){
         return newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT, jobs);
     }
 

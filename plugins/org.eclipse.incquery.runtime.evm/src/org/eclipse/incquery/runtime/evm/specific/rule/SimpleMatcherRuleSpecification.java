@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.evm.specific.rule;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Comparator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
@@ -23,6 +22,10 @@ import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleInstance;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
+import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Objects;
@@ -33,7 +36,7 @@ import com.google.common.base.Objects;
  * @author Abel Hegedus
  *
  */
-public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends RuleSpecification<Match> {
+public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends RuleSpecification {
     
     private final IMatcherFactory<Matcher> factory;
     
@@ -45,35 +48,24 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
      * @param jobs
      */
     public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
-            final Set<Job<Match>> jobs) {
-        this(factory, lifeCycle, jobs, null);
-        
-    }
-
-    /**
-     * Creates a specification with the given factory, life-cycle, job list and activation comparator.
-     * 
-     * @param factory
-     * @param lifeCycle
-     * @param jobs
-     * @param comparator
-     */
-    public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
-            final Set<Job<Match>> jobs, final Comparator<Match> comparator) {
-        super(lifeCycle, jobs, comparator);
+            final Set<Job> jobs) {
+        super(lifeCycle, jobs);
         this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
     }
-    
+
     @Override
-    protected RuleInstance<Match> instantiateRule(IncQueryEngine engine, Match filter) {
-        try {
-            Matcher matcher = getMatcher(engine);
-            Match immutableFilter = (filter != null) ? matcher.newMatch(filter.toArray()) : null;
-            SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, immutableFilter);
-            ruleInstance.prepareInstance(matcher);
-            return ruleInstance;
-        } catch (IncQueryException e) {
-            engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
+    protected RuleInstance instantiateRule(EventSource eventSource, Atom filter) {
+        if(eventSource instanceof IncQueryEventSource) {
+            IncQueryEngine engine = ((IncQueryEventSource) eventSource).getEngine();
+            try {
+                Matcher matcher = getMatcher(engine);
+                @SuppressWarnings("unchecked")
+                SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, (PatternMatchAtom<Match>) filter);
+                ruleInstance.prepareInstance(matcher);
+                return ruleInstance;
+            } catch (IncQueryException e) {
+                engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
+            }
         }
         return null;
     }
@@ -91,6 +83,6 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
-                .add("lifecycle", getLifeCycle()).add("jobs", getJobs()).add("comparator", getComparator()).toString();
+                .add("lifecycle", getLifeCycle()).add("jobs", getJobs()).toString();
     }
 }
