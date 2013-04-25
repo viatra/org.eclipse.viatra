@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Akos Horvath, Gergely Varro - initial API and implementation
+ *    Akos Horvath, Gergely Varro - initial API and implementation from the VIATRA2 project
  *    Zoltan Ujhelyi - adaptation to EMF-IncQuery engine
  *******************************************************************************/
 

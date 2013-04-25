@@ -6,12 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Akos Horvath, Gergely Varro - initial API and implementation
+ *    Akos Horvath, Gergely Varro - initial API and implementation from the VIATRA2 project
  *    Zoltan Ujhelyi - update used in EMF-IncQuery API
  *******************************************************************************/
 
 package org.eclipse.incquery.runtime.localsearch;
 
+import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+
+import com.google.common.base.Preconditions;
 
 /**
  * MatchingFrame represents the actual mappings of variables to constants. A MatchingFrame maintains a reference to its
@@ -23,7 +26,7 @@ package org.eclipse.incquery.runtime.localsearch;
  * <li>ValueType => AnyModelElement</li>
  * </ul>
  */
-public class MatchingFrame implements Cloneable {
+public class MatchingFrame extends Tuple implements Cloneable {
 
 	/**
      * The pattern variant for which this MatchingFrame is a
@@ -42,12 +45,17 @@ public class MatchingFrame implements Cloneable {
     }
 
     /**
+     * Returns the value stored inside the matching frame.
      * 
      * @param position
-     * @return
+     * @return the element stored in the selected position in the frame, or null if it is not yet set
+     * @throws IndexOutOfBoundsException
+     *             if position is negative
+     * @throws IllegalArgumentException
+     *             if the position is larger then the length of the frame
      */
 	public Object getValue(Integer position) {
-		// TODO gervarro: return (position < frame.length ? frame[position] : pattern.get);
+        Preconditions.checkElementIndex(position, frame.length);
         return frame[position];
 	}
     
@@ -57,6 +65,7 @@ public class MatchingFrame implements Cloneable {
      * @param value
      */
     public void setValue(Integer position, Object value) {
+        Preconditions.checkElementIndex(position, frame.length);
         frame[position] = value;
     }
     
@@ -89,17 +98,14 @@ public class MatchingFrame implements Cloneable {
 		}
     	return buf.toString();
     }
-
-    public Object lookup(int position) {
-        if (position >= 0 && position < frame.length) {
-            return frame[position];
-        } else {
-            // TODO gervarro: Exception or return null;
-            return null;
-        }
-    }
     
-    public int size() {
+    @Override
+    public int getSize() {
     	return frame.length;
+    }
+
+    @Override
+    public Object get(int index) {
+        return getValue(index);
     }
 }
