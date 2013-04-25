@@ -23,10 +23,10 @@ import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
@@ -66,7 +66,7 @@ public class ConstraintAdapter {
         try {
             IncQueryEngine incQueryEngine = EngineManager.getInstance().getIncQueryEngine(notifier);
             ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
-            this.engine = EventDrivenVM.createExecutionSchema(incQueryEngine, schedulerFactory, rules);
+            this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
             IncQueryEngine.getDefaultLogger().error(
                     String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);

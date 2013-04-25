@@ -30,7 +30,7 @@ public class ExecutionSchema extends RuleEngine {
      * @param scheduler
      */
     protected ExecutionSchema(final Scheduler scheduler) {
-        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getAgenda());
+        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getRuleBase());
         this.scheduler = scheduler;
     }
 

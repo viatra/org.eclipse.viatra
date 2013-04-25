@@ -20,9 +20,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
@@ -77,7 +77,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * 
      */
     protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
-        this(EventDrivenVM.createExecutionSchema(engine,
+        this(ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQBaseSchedulerFactory(engine)));
     }
 

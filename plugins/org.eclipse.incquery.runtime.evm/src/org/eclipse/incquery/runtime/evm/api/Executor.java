@@ -39,7 +39,7 @@ public class Executor {
      * 
      * @param engine
      */
-    protected Executor(final EventSource eventSource) {
+    public Executor(final EventSource eventSource) {
         this(eventSource, Context.create());
     }
 
@@ -51,7 +51,7 @@ public class Executor {
      * @param engine
      * @param context
      */
-    protected Executor(final EventSource eventSource, final Context context) {
+    public Executor(final EventSource eventSource, final Context context) {
         this.context = checkNotNull(context, "Cannot create trigger engine with null context!");
         ruleBase = new RuleBase(eventSource);
     }
@@ -114,7 +114,7 @@ public class Executor {
     /**
      * @return the ruleBase
      */
-    public RuleBase getAgenda() {
+    public RuleBase getRuleBase() {
         return ruleBase;
     }
     

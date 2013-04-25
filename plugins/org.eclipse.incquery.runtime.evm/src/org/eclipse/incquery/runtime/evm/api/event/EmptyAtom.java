@@ -28,4 +28,9 @@ public enum EmptyAtom implements Atom {
         return false;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
 }

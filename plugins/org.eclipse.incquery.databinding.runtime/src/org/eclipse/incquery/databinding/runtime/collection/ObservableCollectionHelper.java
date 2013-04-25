@@ -21,10 +21,10 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
@@ -106,7 +106,7 @@ public final class ObservableCollectionHelper {
     }
 
     public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification specification, Match filter) {
-        RuleEngine ruleEngine = EventDrivenVM.createExecutionSchema(engine,
+        RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQBaseSchedulerFactory(engine));
         if(filter != null) {
             ruleEngine.addRule(specification, true, new PatternMatchAtom<IPatternMatch>(filter));

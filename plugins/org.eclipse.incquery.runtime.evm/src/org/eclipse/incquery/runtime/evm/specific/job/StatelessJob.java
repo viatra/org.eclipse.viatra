@@ -51,6 +51,7 @@ public class StatelessJob<Match extends IPatternMatch> extends Job {
                 "StatelessJob cannot be instantiated with null match processor");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void execute(final Activation activation, final Context context) {
         Atom atom = activation.getAtom();

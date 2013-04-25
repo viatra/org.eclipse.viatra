@@ -79,4 +79,16 @@ public class PatternMatchAtom<Match extends IPatternMatch> implements Atom {
         return Objects.hashCode(match);
     }
 
+    @Override
+    public boolean isEmpty() {
+        if (match != null) {
+            for (Object o : match.toArray()) {
+                if (o != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }

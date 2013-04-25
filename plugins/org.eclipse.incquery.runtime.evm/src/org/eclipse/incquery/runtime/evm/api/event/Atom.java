@@ -31,4 +31,5 @@ public interface Atom {
      */
     boolean isMutable();
     
+    boolean isEmpty();
 }
