@@ -30,19 +30,19 @@ public interface ConflictSet {
      * 
      * @return the next activation chosen by the resolver
      */
-    Activation<?> getNextActivation();
+    Activation getNextActivation();
     
     /**
      * 
      * @return the set of activations that are considered as equal by the resolver
      */
-    Set<Activation<?>> getNextActivations();
+    Set<Activation> getNextActivations();
     
     /**
      * 
      * @return the set of all activations that are in conflict (all enabled activations)
      */
-    Set<Activation<?>> getConflictingActivations();
+    Set<Activation> getConflictingActivations();
     
     /**
      * This method is called by the Agenda when an activation changes state and becomes or is still enabled.
@@ -50,7 +50,7 @@ public interface ConflictSet {
      * @param activation the activation that should be added to the conflict set
      * @return true, if the conflict set changed
      */
-    boolean addActivation(Activation<?> activation);
+    boolean addActivation(Activation activation);
     
     /**
      * This method is called by the Agenda when an activation changes state and becomes disabled.
@@ -58,6 +58,6 @@ public interface ConflictSet {
      * @param activation the activation that should be removed from the conflict set
      * @return true, if the conflict set changed
      */
-    boolean removeActivation(Activation<?> activation);
+    boolean removeActivation(Activation activation);
     
 }

@@ -13,41 +13,40 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.evm.api.event.Atom;
 
 import com.google.common.base.Objects;
 
 /**
  * An {@link Activation} is a created for a {@link RuleInstance} when the preconditions (LHS) are fully satisfied with
- * some domain model elements and the rule becomes eligible for execution.
+ * some domain model elements and the instance becomes eligible for execution.
  * 
  * <p>
- * An Activation holds a state, a pattern match, the corresponding rule 5nstance. The state of the
+ * An Activation holds a state, a pattern match, the corresponding instance 5nstance. The state of the
  * Activation can be either Inactive, Appeared, Disappeared, Upgraded or Fired, while its actual
- * state will be managed by the life-cycle of its rule.
+ * state will be managed by the life-cycle of its instance.
  * 
  * @author Tamas Szabo
  * 
  * @param <Match>
  *            the type of the pattern match
  */
-public class Activation<Match extends IPatternMatch> {
+public class Activation {
 
-    private Match patternMatch;
+    private Atom atom;
     private ActivationState state;
     private boolean enabled;
-    private RuleInstance<Match> rule;
+    private RuleInstance instance;
     private int cachedHash = -1;
 
-    protected <Matcher extends IncQueryMatcher<Match>> Activation(RuleInstance<Match> rule, Match patternMatch) {
-        this.patternMatch = checkNotNull(patternMatch,"Cannot create activation with null patternmatch");
-        this.rule = checkNotNull(rule,"Cannot create activation with null rule");
+    protected Activation(RuleInstance instance, Atom atom) {
+        this.atom = checkNotNull(atom,"Cannot create activation with null patternmatch");
+        this.instance = checkNotNull(instance,"Cannot create activation with null instance");
         this.state = ActivationState.INACTIVE;
     }
 
-    public Match getPatternMatch() {
-        return patternMatch;
+    public Atom getAtom() {
+        return atom;
     }
 
     public ActivationState getState() {
@@ -65,10 +64,10 @@ public class Activation<Match extends IPatternMatch> {
     }
     
     /**
-     * @return the rule
+     * @return the instance
      */
-    public RuleInstance<Match> getRule() {
-        return rule;
+    public RuleInstance getInstance() {
+        return instance;
     }
 
     /**
@@ -78,15 +77,15 @@ public class Activation<Match extends IPatternMatch> {
      */
     protected void setState(final ActivationState state) {
         this.state = checkNotNull(state, "Activation state cannot be null!");
-        enabled = rule.getSpecification().getEnabledStates().contains(state);
+        enabled = instance.getSpecification().getEnabledStates().contains(state);
     }
 
     /**
-     * The activation will be fired; the appropriate job of the rule will be executed based on the activation state.
+     * The activation will be fired; the appropriate job of the instance will be executed based on the activation state.
      */
     public void fire(final Context context) {
         checkNotNull(context,"Cannot fire activation with null context");
-        rule.fire(this, context);
+        instance.fire(this, context);
     }
 
     @Override
@@ -94,8 +93,8 @@ public class Activation<Match extends IPatternMatch> {
         if (this == obj) {
             return true;
         } else if (obj instanceof Activation) {
-            Activation<?> other = (Activation<?>) obj;
-            return (other.rule.equals(this.rule)) && (other.patternMatch.equals(this.patternMatch)
+            Activation other = (Activation) obj;
+            return (other.instance.equals(this.instance)) && (other.atom.equals(this.atom)
                     /*&& (other.state == this.state*/);
         } else {
             return false;
@@ -105,7 +104,7 @@ public class Activation<Match extends IPatternMatch> {
     @Override
     public int hashCode() {
         if (cachedHash == -1) {
-            cachedHash = Objects.hashCode(rule, patternMatch/*, state*/);
+            cachedHash = Objects.hashCode(instance, atom/*, state*/);
         }
         return cachedHash;
     }
@@ -116,7 +115,7 @@ public class Activation<Match extends IPatternMatch> {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).
-                add("match",patternMatch).
+                add("match",atom).
                 add("state",state).toString();
     }
 }

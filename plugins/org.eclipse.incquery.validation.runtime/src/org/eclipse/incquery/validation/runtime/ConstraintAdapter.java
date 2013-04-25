@@ -48,11 +48,10 @@ public class ConstraintAdapter {
     private Map<IPatternMatch, IMarker> markerMap;
     private RuleEngine engine;
 
-    @SuppressWarnings("unchecked")
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
-        Set<RuleSpecification<? extends IPatternMatch>> rules = Sets.newHashSet();
+        Set<RuleSpecification> rules = Sets.newHashSet();
 
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
@@ -79,7 +78,7 @@ public class ConstraintAdapter {
             try {
                 marker.delete();
             } catch (CoreException e) {
-                engine.getIncQueryEngine().getLogger().error(
+                engine.getEventSource().getLogger().error(
                         String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
             }
         }

@@ -19,6 +19,8 @@ import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 
 /**
  * This class represents a {@link Job} that uses an {@link IMatchProcessor} 
@@ -26,7 +28,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
  * 
  * @author Abel Hegedus
  */
-public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
+public class StatelessJob<Match extends IPatternMatch> extends Job {
 
     private IMatchProcessor<Match> matchProcessor;
 
@@ -50,12 +52,15 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     }
 
     @Override
-    protected void execute(final Activation<Match> activation, final Context context) {
-        matchProcessor.process(activation.getPatternMatch());
+    protected void execute(final Activation activation, final Context context) {
+        Atom atom = activation.getAtom();
+        if(atom instanceof PatternMatchAtom<?>) {
+            matchProcessor.process(((PatternMatchAtom<Match>) atom).getMatch());
+        }
     }
 
     @Override
-    protected void handleError(final Activation<Match> activation, final Exception exception, final Context context) {
+    protected void handleError(final Activation activation, final Exception exception, final Context context) {
         checkState(false,"Exception " + exception.getMessage() + " was thrown when executing " + activation
                 + "! Stateless job doesn't handle errors!", exception);
     }

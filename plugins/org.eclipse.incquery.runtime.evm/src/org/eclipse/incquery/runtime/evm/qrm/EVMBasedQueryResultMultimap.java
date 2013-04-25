@@ -39,7 +39,7 @@ import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecifica
 public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
         QueryResultMultimap<KeyType, ValueType> {
 
-    private final Set<Job<Match>> jobs;
+    private final Set<Job> jobs;
 
     private final ExecutionSchema schema;
 
@@ -49,9 +49,9 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * @param schema
      */
     protected EVMBasedQueryResultMultimap(final ExecutionSchema schema) {
-        super(schema.getIncQueryEngine().getLogger());
+        super(schema.getEventSource().getLogger());
         this.schema = schema;
-        this.jobs = new HashSet<Job<Match>>();
+        this.jobs = new HashSet<Job>();
         jobs.add(new StatelessJob<Match>(ActivationState.APPEARED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {

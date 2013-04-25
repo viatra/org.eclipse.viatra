@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.evm.notification;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
@@ -38,7 +37,7 @@ public interface IActivationNotificationListener {
      * @param oldState
      * @param event
      */
-    void activationChanged(final Activation<? extends IPatternMatch> activation, final ActivationState oldState,
+    void activationChanged(final Activation activation, final ActivationState oldState,
             final ActivationLifeCycleEvent event);
 
 }

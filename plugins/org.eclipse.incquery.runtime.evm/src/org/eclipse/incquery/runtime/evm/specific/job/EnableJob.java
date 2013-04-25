@@ -33,7 +33,7 @@ public class EnableJob<Match extends IPatternMatch> extends StatelessJob<Match> 
     }
 
     @Override
-    protected void execute(Activation<Match> activation, Context context) {
+    protected void execute(Activation activation, Context context) {
         if(enabled) {
             super.execute(activation, context);
         }

@@ -12,8 +12,6 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-
 /**
  * An execution schema is a special rule engine and a facade
  *  for accessing the EVM. In addition to the RuleEngine,
@@ -72,7 +70,7 @@ public class ExecutionSchema extends RuleEngine {
      * instead, an out-of-order schedule call is sent.
      */
     @Override
-    protected <Match extends IPatternMatch> void fireActivations(RuleInstance<Match> instance) {
+    protected void fireActivations(RuleInstance instance) {
         scheduler.schedule();
     }
 

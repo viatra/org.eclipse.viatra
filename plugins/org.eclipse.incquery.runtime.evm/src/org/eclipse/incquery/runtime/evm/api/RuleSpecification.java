@@ -13,12 +13,11 @@ package org.eclipse.incquery.runtime.evm.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
@@ -34,11 +33,10 @@ import com.google.common.collect.Multimap;
  * @author Abel Hegedus
  * 
  */
-public abstract class RuleSpecification<Match extends IPatternMatch> {
+public abstract class RuleSpecification {
 
     private final ActivationLifeCycle lifeCycle;
-    private final Multimap<ActivationState, Job<Match>> jobs;
-    private final Comparator<Match> comparator;
+    private final Multimap<ActivationState, Job> jobs;
     private final Set<ActivationState> enabledStates;
 
     /**
@@ -48,43 +46,29 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
      * @param jobs
      */
     public RuleSpecification(final ActivationLifeCycle lifeCycle,
-            final Set<Job<Match>> jobs) {
-        this(lifeCycle, jobs, null);
-    }
-
-    /**
-     * Creates a specification with the given life-cycle, job set and
-     * activation comparator.
-     * 
-     * @param lifeCycle
-     * @param jobs
-     * @param comparator
-     */
-    public RuleSpecification(final ActivationLifeCycle lifeCycle,
-            final Set<Job<Match>> jobs, final Comparator<Match> comparator) {
+            final Set<Job> jobs) {
         this.lifeCycle = checkNotNull(ActivationLifeCycle.copyOf(lifeCycle),
                 "Cannot create rule specification with null life cycle!");
         this.jobs = HashMultimap.create();
         Set<ActivationState> states = new TreeSet<ActivationState>();
         if (jobs != null && !jobs.isEmpty()) {
-            for (Job<Match> job : jobs) {
+            for (Job job : jobs) {
                 ActivationState state = job.getActivationState();
                 this.jobs.put(state, job);
                 states.add(state);
             }
         }
         this.enabledStates = ImmutableSet.copyOf(states);
-        this.comparator = comparator;
     }
     
     /**
-     * Instantiates the rule on the given IncQueryEngine with the given filter
+     * Instantiates the rule on the given EventSource with the given filter
      * .
-     * @param engine
+     * @param eventSource
      * @param filter
      * @return the instantiated rule
      */
-    protected abstract RuleInstance<Match> instantiateRule(final IncQueryEngine engine, final Match filter);
+    protected abstract RuleInstance instantiateRule(final EventSource eventSource, final Atom filter);
     
     /**
      * @return the lifeCycle
@@ -106,22 +90,15 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
      * @param state
      * @return the collection of jobs
      */
-    public Collection<Job<Match>> getJobs(final ActivationState state) {
+    public Collection<Job> getJobs(final ActivationState state) {
         return jobs.get(state);
     }
 
     /**
      * @return the jobs
      */
-    public Multimap<ActivationState, Job<Match>> getJobs() {
+    public Multimap<ActivationState, Job> getJobs() {
         return jobs;
-    }
-
-    /**
-     * @return the comparator
-     */
-    public Comparator<Match> getComparator() {
-        return comparator;
     }
 
     /*
@@ -131,6 +108,6 @@ public abstract class RuleSpecification<Match extends IPatternMatch> {
      */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).add("comparator", comparator).toString();
+        return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).toString();
     }
 }

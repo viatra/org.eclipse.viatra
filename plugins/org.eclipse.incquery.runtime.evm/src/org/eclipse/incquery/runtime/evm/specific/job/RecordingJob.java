@@ -20,6 +20,8 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
+import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -45,7 +47,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      */
     public static class RecordingJobContextData {
 
-        private Table<Activation<? extends IPatternMatch>, RecordingJob<? extends IPatternMatch>, Command> table;
+        private Table<Activation, RecordingJob<? extends IPatternMatch>, Command> table;
 
         /**
          * Creates a new data transfer object
@@ -57,7 +59,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
         /**
          * @return the table
          */
-        public Table<Activation<? extends IPatternMatch>, RecordingJob<? extends IPatternMatch>, Command> getTable() {
+        public Table<Activation, RecordingJob<? extends IPatternMatch>, Command> getTable() {
             return table;
         }
 
@@ -81,7 +83,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      * .api.Activation)
      */
     @Override
-    protected void execute(final Activation<Match> activation, final Context context) {
+    protected void execute(final Activation activation, final Context context) {
         Object target = findDomainTarget(activation, context);
         TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(target);
         if (domain == null) {
@@ -109,15 +111,19 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      * @param context
      * @return the object to be used for finding the domain
      */
-    private Object findDomainTarget(final Activation<Match> activation, final Context context) {
-        Match match = activation.getPatternMatch();
-        if(match.parameterNames().length > 0) {
-            for (int i = 0; i < match.parameterNames().length; i++) {
-                if(match.get(i) instanceof EObject) {
-                    return match.get(i);
+    private Object findDomainTarget(final Activation activation, final Context context) {
+        Atom atom = activation.getAtom();
+        if(atom instanceof PatternMatchAtom<?>) {
+            IPatternMatch match = ((PatternMatchAtom<?>) atom).getMatch();
+            if(match.parameterNames().length > 0) {
+                for (int i = 0; i < match.parameterNames().length; i++) {
+                    if(match.get(i) instanceof EObject) {
+                        return match.get(i);
+                    }
                 }
             }
         }
+        
         return context.get(TRANSACTIONAL_EDITING_DOMAIN);
     }
 
@@ -128,7 +134,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
      * @param context
      * @param command
      */
-    private void updateSessionData(final Activation<Match> activation, final Context context, final Command command) {
+    private void updateSessionData(final Activation activation, final Context context, final Command command) {
         Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
         RecordingJobContextData result = null;
         if (data instanceof RecordingJobContextData) {

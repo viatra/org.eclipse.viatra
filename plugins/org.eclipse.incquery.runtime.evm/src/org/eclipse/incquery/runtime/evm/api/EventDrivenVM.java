@@ -14,9 +14,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
+import org.eclipse.incquery.runtime.evm.api.event.EmptyAtom;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
 
 import com.google.common.collect.ImmutableSet;
 /**
@@ -33,7 +34,7 @@ public final class EventDrivenVM {
 
     private EventDrivenVM() {
     }
-
+    
     /**
      * Creates a new execution schema that is initialized over the given
      * IncQueryEngine, creates an executor and agenda with the given
@@ -45,13 +46,13 @@ public final class EventDrivenVM {
      * @return the prepared execution schema
      */
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<? extends IPatternMatch>> specifications) {
+            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> specifications) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
         checkNotNull(specifications, "Cannot create execution schema with null rule specification set");
-        Executor executor = new Executor(engine);
+        Executor executor = new Executor(IncQueryEventSource.create(engine));
         RuleBase ruleBase = executor.getAgenda();
-        for (RuleSpecification<?> specification : specifications) {
-            ruleBase.instantiateRule(specification);
+        for (RuleSpecification specification : specifications) {
+            ruleBase.instantiateRule(specification, EmptyAtom.INSTANCE);
         }
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
@@ -68,7 +69,7 @@ public final class EventDrivenVM {
      * @return the prepared execution schema
      */
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final RuleSpecification<? extends IPatternMatch>... specifications) {
+            final ISchedulerFactory schedulerFactory, final RuleSpecification... specifications) {
         return createExecutionSchema(engine, schedulerFactory, ImmutableSet.copyOf(specifications));
     }
     
@@ -84,7 +85,7 @@ public final class EventDrivenVM {
     public static ExecutionSchema createExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
-        Executor executor = new Executor(engine);
+        Executor executor = new Executor(IncQueryEventSource.create(engine));
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
     }
@@ -98,11 +99,11 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final Set<RuleSpecification<?>> specifications) {
+            final Set<RuleSpecification> specifications) {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
-        RuleBase ruleBase = new RuleBase(engine);
-        for (RuleSpecification<?> ruleSpecification : specifications) {
-            ruleBase.instantiateRule(ruleSpecification);
+        RuleBase ruleBase = new RuleBase(IncQueryEventSource.create(engine));
+        for (RuleSpecification ruleSpecification : specifications) {
+            ruleBase.instantiateRule(ruleSpecification, EmptyAtom.INSTANCE);
         }
 
         return RuleEngine.create(ruleBase);
@@ -117,7 +118,7 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine,
-            final RuleSpecification<?>... specifications) {
+            final RuleSpecification... specifications) {
         return createRuleEngine(engine, ImmutableSet.copyOf(specifications));
     }
     
@@ -129,7 +130,7 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final IncQueryEngine engine) {
-        RuleBase ruleBase = new RuleBase(engine);
+        RuleBase ruleBase = new RuleBase(IncQueryEventSource.create(engine));
         return RuleEngine.create(ruleBase);
     }
 }
