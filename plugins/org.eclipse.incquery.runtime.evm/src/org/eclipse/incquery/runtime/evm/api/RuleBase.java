@@ -102,7 +102,7 @@ public class RuleBase {
         RuleInstance instance = findInstance(specification, filter);
         if (instance != null) {
             instance.dispose();
-            ruleInstanceTable.remove(specification, instance);
+            ruleInstanceTable.remove(specification, filter);
             return true;
         }
         return false;
