@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.api.impl;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -33,7 +33,7 @@ public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? exten
 
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
-        IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(emfRoot);
+        IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot);
         return instantiate(engine);
     }
 

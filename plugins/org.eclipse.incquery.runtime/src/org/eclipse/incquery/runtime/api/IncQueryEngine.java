@@ -73,7 +73,7 @@ public class IncQueryEngine {
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
-    private final EngineManager manager;
+    private final IncQueryEngineManager manager;
     /**
      * The model to which the engine is attached.
      */
@@ -134,7 +134,7 @@ public class IncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    IncQueryEngine(EngineManager manager, Notifier emfRoot) throws IncQueryException {
+    IncQueryEngine(IncQueryEngineManager manager, Notifier emfRoot) throws IncQueryException {
         super();
         this.manager = manager;
         this.emfRoot = emfRoot;
@@ -478,7 +478,7 @@ public class IncQueryEngine {
     }
 
     /**
-     * Indicates whether the engine is managed by {@link EngineManager}.
+     * Indicates whether the engine is managed by {@link IncQueryEngineManager}.
      * 
      * <p>
      * If the engine is managed, there may be other clients using it. Care should be taken with {@link #wipe()} and

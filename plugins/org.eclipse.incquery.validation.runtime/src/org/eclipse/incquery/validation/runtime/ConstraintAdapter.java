@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
@@ -64,7 +64,7 @@ public class ConstraintAdapter {
         }
 
         try {
-            IncQueryEngine incQueryEngine = EngineManager.getInstance().getIncQueryEngine(notifier);
+            IncQueryEngine incQueryEngine = IncQueryEngineManager.getInstance().getIncQueryEngine(notifier);
             ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {

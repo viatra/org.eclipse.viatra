@@ -13,7 +13,7 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.emf.common.notify.Notifier
-import org.eclipse.incquery.runtime.api.EngineManager
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
@@ -78,7 +78,7 @@ class PatternMatcherClassInferrer {
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([
 				append('''this(''')
-				referClass(pattern, typeof(EngineManager))
+				referClass(pattern, typeof(IncQueryEngineManager))
 				append('''.getInstance().getIncQueryEngine(emfRoot));''')
 			])
 		]

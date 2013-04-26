@@ -44,13 +44,13 @@ import com.google.common.collect.Sets;
  * @author Bergmann Gabor
  * 
  */
-public class EngineManager {
-    private static EngineManager instance = new EngineManager();
+public class IncQueryEngineManager {
+    private static IncQueryEngineManager instance = new IncQueryEngineManager();
 
     /**
      * @return the singleton instance
      */
-    public static EngineManager getInstance() {
+    public static IncQueryEngineManager getInstance() {
         return instance;
     }
 
@@ -62,7 +62,7 @@ public class EngineManager {
      */
     Map<Notifier, WeakReference<IncQueryEngine>> engines;
 
-    EngineManager() {
+    IncQueryEngineManager() {
         super();
         engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngine>>();
         initializationListeners = new HashSet<IncQueryEngineInitializationListener>();

@@ -60,7 +60,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      *             if an error occurs during pattern matcher creation
      */
     public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) throws IncQueryException {
-        this(pattern, EngineManager.getInstance().getIncQueryEngine(emfRoot));
+        this(pattern, IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot));
     }
 
     /**

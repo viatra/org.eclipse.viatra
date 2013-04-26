@@ -13,7 +13,7 @@ package org.eclipse.incquery.testing.core
 
 import com.google.inject.Inject
 import java.util.Set
-import org.eclipse.incquery.runtime.api.EngineManager
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
@@ -176,7 +176,7 @@ class TestExecutor {
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
-		val engine = EngineManager::getInstance().getIncQueryEngine(input);
+		val engine = IncQueryEngineManager::getInstance().getIncQueryEngine(input);
 		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)

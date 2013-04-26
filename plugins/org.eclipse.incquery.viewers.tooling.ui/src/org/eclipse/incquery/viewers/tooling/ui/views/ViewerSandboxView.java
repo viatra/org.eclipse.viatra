@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
@@ -231,7 +231,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         if (engine != null) {
             engine.dispose();
         }
-        engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+        engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
         return engine;
     }
 

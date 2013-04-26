@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.incquery.runtime.api.EngineManager
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.GenericMatcherFactory
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry
@@ -113,7 +113,7 @@ class ModelLoadHelper {
 	}
 	
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
-		val engine = EngineManager::getInstance().getIncQueryEngine(emfRoot);
+		val engine = IncQueryEngineManager::getInstance().getIncQueryEngine(emfRoot);
 		model.initializeMatcherFromModel(engine,patternName)
 	}
 	/**

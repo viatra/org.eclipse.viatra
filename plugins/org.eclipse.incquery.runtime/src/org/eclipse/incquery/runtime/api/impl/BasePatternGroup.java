@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternGroup;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -32,7 +32,7 @@ public abstract class BasePatternGroup implements IPatternGroup {
 
     @Override
     public void prepare(Notifier emfRoot) throws IncQueryException {
-        prepare(EngineManager.getInstance().getIncQueryEngine(emfRoot));
+        prepare(IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot));
     }
 
     @Override
