@@ -15,7 +15,13 @@ package org.eclipse.incquery.application.common;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
@@ -53,8 +59,38 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				// assuming that there is a pattern definition registered matching 'patternFQN'
-				// would be nice: IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
-				IMatcherFactory<?> factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+				
+				Pattern p = null;
+				// would be nice: IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory
+				IMatcherFactory<?> factory = null;
+				
+				// use a trick to load Pattern models from a file
+				ResourceSet resourceSet = new ResourceSetImpl();
+				// here, we make use of the (undocumented) fact that the Pattern model is stored inside the hidden "queries" directory inside an EMF-IncQuery project
+			    URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/queries/globalEiqModel.xmi", false);
+			    Resource patternResource = resourceSet.getResource(fileURI, true);
+			    // navigate to the pattern definition that we want
+			    if (patternResource != null) {
+		            if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
+		                EObject topElement = patternResource.getContents().get(0);
+		                if (topElement instanceof PatternModel) {
+		                	for (Pattern _p  : ((PatternModel) topElement).getPatterns()) {
+		                		if (_p.getName().equals(patternFQN)) {
+		                			p = _p; break;
+		                		}
+		                	}
+		                }
+		            }
+		        }
+			    
+			    if (p!=null) {
+			    	factory = MatcherFactoryRegistry.getMatcherFactory(p);
+			    }
+			    else {
+			    	// fall back to the registry in case the pattern model extraction didn't work
+			    	factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+			    }
+				
 				if (factory!=null) {
 					IncQueryMatcher<? extends IPatternMatch> matcher = factory.getMatcher(engine);
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();

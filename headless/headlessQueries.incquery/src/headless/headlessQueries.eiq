@@ -6,6 +6,12 @@ pattern eClassNames(c: EClass, n : EString)= {
 	EClass.name(c,n);
 }
 
+pattern eClassNamesKeyword(c: EClass, n: EString, keyword:EString)
+{
+	EClass.name(c,n);
+	check(n.contains(keyword));
+}
+
 pattern eObject(o) {
 	EObject(o);
 }

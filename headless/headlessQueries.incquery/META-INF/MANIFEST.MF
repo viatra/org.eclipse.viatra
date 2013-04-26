@@ -8,6 +8,7 @@ Export-Package: headless,
  headless.classesinpackagehierarchy,
  headless.eclass,
  headless.eclassnames,
+ headless.eclassnameskeyword,
  headless.eobject,
  headless.epackage,
  headless.subpackage

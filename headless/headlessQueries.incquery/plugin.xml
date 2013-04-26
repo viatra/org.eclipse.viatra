@@ -10,6 +10,22 @@
       </matcher>
    </extension>
    <extension
+         id="headless.eClassNamesKeyword"
+         point="org.eclipse.incquery.runtime.matcherfactory">
+      <matcher
+            factoryProvider="headless.eclassnameskeyword.EClassNamesKeywordMatcherFactory$Provider"
+            id="headless.eClassNamesKeyword">
+      </matcher>
+   </extension>
+   <extension
+         id="headless.eClassNamesKeyword"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="headless.eclassnameskeyword.EClassNamesKeywordEvaluator1_1"
+            id="headless.eClassNamesKeyword_1_1">
+      </evaluator>
+   </extension>
+   <extension
          id="headless.eObject"
          point="org.eclipse.incquery.runtime.matcherfactory">
       <matcher
