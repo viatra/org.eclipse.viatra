@@ -30,7 +30,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-public class DatabindingAdapterUtil {
+public final class DatabindingAdapterUtil {
 
     public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
 
