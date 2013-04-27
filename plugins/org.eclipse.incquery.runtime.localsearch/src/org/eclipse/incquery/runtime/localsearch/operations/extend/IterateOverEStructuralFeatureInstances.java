@@ -13,17 +13,17 @@ package org.eclipse.incquery.runtime.localsearch.operations.extend;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Iterates all available {@link EStructuralReference} elements using an {@link NavigationHelper EMF-IncQuery Base
@@ -35,7 +35,7 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
     private NavigationHelper baseIndexNavigator;
     private EStructuralFeature feature;
     private Integer sourcePosition, targetPosition;
-    protected Iterator<FeatureEnds> it;
+    protected Iterator<Entry<EObject, Object>> it;
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature,
             NavigationHelper baseIndexNavigator) {
@@ -54,34 +54,24 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
 
     @Override
     public void onInitialize(MatchingFrame frame) {
+        final Map<EObject, Object> instances = Maps.newHashMap();
+        new BaseIndexProcessor(baseIndexNavigator).processFeatureInstances(feature, new IEStructuralFeatureProcessor() {
 
-        final Map<EObject, Set<Object>> featureInstances = baseIndexNavigator.getFeatureInstances(feature);
+            @Override
+            public void process(EStructuralFeature feature, EObject source, Object target) {
+                instances.put(source, target);
+            }
+        });
 
-        @SuppressWarnings("unchecked")
-        Iterable<FeatureEnds>[] iterators = new Iterable[featureInstances.size()];
-        int index = 0;
-        for (final Entry<EObject, Set<Object>> entry : featureInstances.entrySet()) {
-            final Iterable<FeatureEnds> pairIterator = Iterables.transform(entry.getValue(), new Function<Object, FeatureEnds>() {
-
-                @Override
-                public FeatureEnds apply(Object element) {
-                    return new FeatureEnds(entry.getKey(), element);
-                }
-
-            });
-            iterators[index] = pairIterator;
-            index++;
-        }
-
-        it = Iterables.concat(iterators).iterator();
+        it = instances.entrySet().iterator();
     }
 
     @Override
     public boolean execute(MatchingFrame frame) {
         if (it.hasNext()) {
-            FeatureEnds next = it.next();
-            frame.setValue(sourcePosition, next.getSrc());
-            frame.setValue(targetPosition, next.getTrg());
+            final Entry<EObject, Object> next = it.next();
+            frame.setValue(sourcePosition, next.getKey());
+            frame.setValue(targetPosition, next.getValue());
             return true;
         } else {
             return false;

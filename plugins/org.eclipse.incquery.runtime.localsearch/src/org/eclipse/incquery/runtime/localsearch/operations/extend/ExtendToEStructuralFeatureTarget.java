@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.Collection;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+
+import com.google.common.collect.Iterators;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper EMF-IncQuery Base indexer}.
@@ -24,26 +28,28 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
  */
 public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
 
-    private NavigationHelper baseIndexNavigator;
     private int sourcePosition;
     private EStructuralFeature feature;
 
-    public ExtendToEStructuralFeatureTarget(int sourcePosition, int targetPosition, EStructuralFeature feature,
-            NavigationHelper baseIndexNavigator) {
+    public ExtendToEStructuralFeatureTarget(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         super(targetPosition);
         this.sourcePosition = sourcePosition;
         this.feature = feature;
-        this.baseIndexNavigator = baseIndexNavigator;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame) throws LocalSearchException {
         try {
-            it = baseIndexNavigator.getFeatureTargets((EObject) frame.getValue(sourcePosition), feature)
-                .iterator();
+            final EObject value = (EObject) frame.getValue(sourcePosition);
+            if (feature.isMany()) {
+                it = ((Collection<Object>) value.eGet(feature)).iterator();
+            } else {
+                it = Iterators.singletonIterator(value.eGet(feature));
+            }
         } catch (ClassCastException e) {
             throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition));
         }
