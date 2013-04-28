@@ -45,7 +45,7 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
     /**
      * Creates an instance using the given specification. 
      */
-    protected SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification, final PatternMatchAtom<Match> filter) {
+    protected SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification, final Atom filter) {
         super(specification, filter);
     }
     

@@ -25,7 +25,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.Atom;
 import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
-import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Objects;
@@ -59,8 +58,7 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
             IncQueryEngine engine = ((IncQueryEventSource) eventSource).getEngine();
             try {
                 Matcher matcher = getMatcher(engine);
-                @SuppressWarnings("unchecked")
-                SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, (PatternMatchAtom<Match>) filter);
+                SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, filter);
                 ruleInstance.prepareInstance(matcher);
                 return ruleInstance;
             } catch (IncQueryException e) {
