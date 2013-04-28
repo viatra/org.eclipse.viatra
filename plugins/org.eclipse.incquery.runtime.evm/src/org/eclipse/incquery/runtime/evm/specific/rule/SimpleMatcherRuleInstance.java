@@ -160,7 +160,7 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
             checkNotNull(atom,"Cannot process null match!");
             
             // TODO check filter (this might be expensive!!!)
-            if(!atom.isCompatibleWith(getFilter())) {
+            if(!getFilter().isCompatibleWith(atom)) {
                 return;
             }
             
