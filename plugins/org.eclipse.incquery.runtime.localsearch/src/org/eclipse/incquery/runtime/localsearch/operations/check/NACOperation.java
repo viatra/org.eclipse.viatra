@@ -10,21 +10,26 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 
 /**
  * @author Zoltan Ujhelyi
  *
  */
-public class InequalityCheck extends CheckOperation {
+public class NACOperation extends CheckOperation {
 
-    Integer sourceLocation, targetLocation;
+    LocalSearchMatcher calledMatcher;
+    Map<Integer, Integer> frameMapping;
 
-    public InequalityCheck(int sourceLocation, int targetLocation) {
+    public NACOperation(LocalSearchMatcher calledMatcher, Map<Integer, Integer> frameMapping) {
         super();
-        this.sourceLocation = sourceLocation;
-        this.targetLocation = targetLocation;
+        this.calledMatcher = calledMatcher;
+        this.frameMapping = frameMapping;
     }
 
     /* (non-Javadoc)
@@ -32,15 +37,11 @@ public class InequalityCheck extends CheckOperation {
      */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        Object source = frame.getValue(sourceLocation);
-        Object target = frame.getValue(targetLocation);
-        if (source == null) {
-            throw new LocalSearchException("Source not bound.");
+        final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
+        for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
+            mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
         }
-        if (target == null) {
-            throw new LocalSearchException("Target not bound");
-        }
-        return !source.equals(target);
+        return !calledMatcher.hasMatch(mappedFrame);
     }
 
 }
