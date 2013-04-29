@@ -10,9 +10,6 @@
          <enabledForEditor
                editorId="org.eclipse.papyrus.infra.core.papyrusEditor">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.uml2.uml.editor.presentation.UMLEditorID">
-         </enabledForEditor>
       </constraint>
    </extension>
 
