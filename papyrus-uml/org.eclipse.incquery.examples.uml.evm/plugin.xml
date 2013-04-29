@@ -10,11 +10,11 @@
       </matcher>
    </extension>
    <extension
-         id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedProperties"
+         id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedOperations"
          point="org.eclipse.incquery.runtime.matcherfactory">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedproperties.OnlyInheritedPropertiesMatcherFactory$Provider"
-            id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedProperties">
+            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatcherFactory$Provider"
+            id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedOperations">
       </matcher>
    </extension>
    <extension

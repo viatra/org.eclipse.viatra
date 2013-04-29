@@ -6,8 +6,8 @@ import org.apache.log4j.Level;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedproperties.OnlyInheritedPropertiesMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedproperties.OnlyInheritedPropertiesProcessor;
+import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatcher;
+import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatcher;
 import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.superclass.SuperClassMatcher;
@@ -164,7 +164,7 @@ public class UMLexampleForEVM {
     }
 
     private RuleSpecification getCreateOperationRule() throws IncQueryException {
-        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new OnlyInheritedPropertiesProcessor() {
+        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new OnlyInheritedOperationsProcessor() {
             @Override
             public void process(Class cl) {
                 System.out.println("Found class " + cl + " without operation");
@@ -174,7 +174,7 @@ public class UMLexampleForEVM {
             }
         });
         DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-        IMatcherFactory<OnlyInheritedPropertiesMatcher> factory = OnlyInheritedPropertiesMatcher.factory();
+        IMatcherFactory<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.factory();
         RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }

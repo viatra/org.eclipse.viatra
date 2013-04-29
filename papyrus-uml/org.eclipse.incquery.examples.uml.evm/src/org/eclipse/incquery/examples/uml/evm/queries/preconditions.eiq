@@ -13,7 +13,7 @@ pattern possibleSuperClass(cl : Class, sup : Class) {
 /*
  * Precondition for create owned operation
  */
-pattern onlyInheritedProperties(cl : Class) {
+pattern onlyInheritedOperations(cl : Class) {
 	find hasOperation(cl, _op);
 	neg find ownsOperation(cl, _ownOp);
 }
