@@ -104,14 +104,18 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
 
     /**
      * This method is used to find a target that can be used for getting the {@link TransactionalEditingDomain}.
-     * If the match of the activation has an EObject parameter, it uses that, otherwise tries to retrieve the
-     * domain from the context.
+     * It tries to retrieve the domain from the context, otherwise it tries to find an EObject parameter in
+     * the match of the activation.
      * 
      * @param activation
      * @param context
      * @return the object to be used for finding the domain
      */
     private Object findDomainTarget(final Activation activation, final Context context) {
+        Object domainTarget = context.get(TRANSACTIONAL_EDITING_DOMAIN);
+        if(domainTarget != null) {
+            return domainTarget;
+        }
         Atom atom = activation.getAtom();
         if(atom instanceof PatternMatchAtom<?>) {
             IPatternMatch match = ((PatternMatchAtom<?>) atom).getMatch();
@@ -124,7 +128,7 @@ public class RecordingJob<Match extends IPatternMatch> extends StatelessJob<Matc
             }
         }
         
-        return context.get(TRANSACTIONAL_EDITING_DOMAIN);
+        return null;
     }
 
     /**

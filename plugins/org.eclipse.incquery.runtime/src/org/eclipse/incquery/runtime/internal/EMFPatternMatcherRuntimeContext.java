@@ -13,9 +13,6 @@ package org.eclipse.incquery.runtime.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
@@ -24,6 +21,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
@@ -301,15 +300,15 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     public void enumerateDirectBinaryEdgeInstances(Object typeObject, final ModelElementPairCrawler crawler) {
         final EStructuralFeature structural = (EStructuralFeature) typeObject;
         listener.ensure(structural);
-        final Map<EObject, Set<Object>> featureInstances = baseIndex.getFeatureInstances(structural);
-        final Set<Entry<EObject, Set<Object>>> entrySet = featureInstances.entrySet();
-        for (Entry<EObject, Set<Object>> entry : entrySet) {
-			final EObject holder = entry.getKey();
-			final Set<Object> values = entry.getValue();
-			for (Object value : values) {
-				crawler.crawl(holder, value);
-			}
-		}
+
+        new BaseIndexProcessor(baseIndex).processFeatureInstances(structural, new IEStructuralFeatureProcessor() {
+
+            @Override
+            public void process(EStructuralFeature feature, EObject source, Object target) {
+                crawler.crawl(source, target);
+            }
+        });
+
         // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
         // @Override
         // public void visitAttribute(EObject source, EAttribute feature, Object target) {

@@ -27,7 +27,7 @@ public class IncQueryEventSource implements EventSource {
     /**
      * 
      */
-    private IncQueryEventSource(IncQueryEngine engine) {
+    protected IncQueryEventSource(IncQueryEngine engine) {
         this.engine = engine;
     }
     

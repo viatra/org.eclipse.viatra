@@ -31,6 +31,8 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
+import com.google.common.collect.Lists;
+
 /**
  * Utility class for observing EMF-IncQuery related objects, such as match sets, match parameters.
  * 
@@ -167,20 +169,17 @@ public final class IncQueryObservables {
      */
     public static List<IObservableValue> observeFeatures(IPatternMatch match, IValueChangeListener changeListener,
             String message) {
+        if (message == null) {
+            return Lists.newArrayList();
+        }
+        
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
-        if (message != null) {
-            String[] tokens = message.split("\\$");
-
-            for (int i = 0; i < tokens.length; i++) {
-
-                // odd tokens
-                if (i % 2 != 0) {
-                    IObservableValue value = IncQueryObservables.getObservableValue(match, tokens[i]);
-                    if (value != null) {
-                        value.addValueChangeListener(changeListener);
-                        affectedValues.add(value);
-                    }
-                }
+        String[] tokens = message.split("\\$");
+        for (int i = 0; i < tokens.length; i = i + 2) { // odd tokens
+            IObservableValue value = IncQueryObservables.getObservableValue(match, tokens[i]);
+            if (value != null) {
+                value.addValueChangeListener(changeListener);
+                affectedValues.add(value);
             }
         }
         return affectedValues;

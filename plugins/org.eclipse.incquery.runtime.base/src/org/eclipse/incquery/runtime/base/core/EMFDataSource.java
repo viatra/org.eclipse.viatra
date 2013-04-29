@@ -12,14 +12,15 @@
 package org.eclipse.incquery.runtime.base.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphObserver;
@@ -123,14 +124,15 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 				allEObjects.addAll(navigationHelper.getAllInstances(clazz));
 			}
 	        for (EReference ref : references) {
-	            final Map<EObject, Set<Object>> featureInstances = navigationHelper.getFeatureInstances(ref);
-	            for (EObject source : featureInstances.keySet()) {
-	            	final Collection<Object> targets = featureInstances.get(source);
-	            	allEObjects.add(source, targets.size());
-	            	for (Object target : targets) {
-	            		allEObjects.add((EObject) target);
-					}
-				}
+                new BaseIndexProcessor(navigationHelper).processFeatureInstances(ref,
+                        new IEStructuralFeatureProcessor() {
+
+                            @Override
+                            public void process(EStructuralFeature feature, EObject source, Object target) {
+                                allEObjects.add(source);
+                                allEObjects.add((EObject) target);
+                            }
+                        });
 	        }		
 		}
 		return allEObjects;
