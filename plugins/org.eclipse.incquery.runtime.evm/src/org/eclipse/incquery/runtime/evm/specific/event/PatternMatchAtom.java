@@ -90,5 +90,10 @@ public class PatternMatchAtom<Match extends IPatternMatch> implements Atom {
         }
         return true;
     }
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper("Match").add("Params",match.prettyPrint()).toString();
+    }
 
 }

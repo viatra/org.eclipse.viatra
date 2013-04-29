@@ -115,7 +115,7 @@ public class Activation {
     @Override
     public String toString() {
         return Objects.toStringHelper(this).
-                add("match",atom).
+                add("atom",atom).
                 add("state",state).toString();
     }
 }

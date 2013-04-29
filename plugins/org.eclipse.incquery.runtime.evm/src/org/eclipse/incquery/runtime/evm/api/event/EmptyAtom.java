@@ -33,4 +33,8 @@ public enum EmptyAtom implements Atom {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Empty atom";
+    }
 }
