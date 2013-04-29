@@ -40,161 +40,143 @@ import com.google.common.collect.Sets;
 
 public class UMLexampleForEVM {
 
-	@Test
-	public void RuleEngineExample() {
+    @Test
+    public void RuleEngineExample() {
 
-		ResourceSet resourceSet = new ResourceSetImpl();
-		URI fileURI = URI
-				.createPlatformPluginURI(
-						"org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
-						false);
-		resourceSet.getResource(fileURI, true);
+        ResourceSet resourceSet = new ResourceSetImpl();
+        URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
+                false);
+        resourceSet.getResource(fileURI, true);
 
-		try {
-			// create IncQueryEngine for the resource set
-			IncQueryEngine engine = EngineManager.getInstance()
-					.createUnmanagedIncQueryEngine(resourceSet);
-			// set logger level to debug to see activation life-cycle events
-			engine.getLogger().setLevel(Level.DEBUG);
-			// create rule engine over IncQueryEngine
-			RuleEngine ruleEngine = RuleEngines
-					.createIncQueryRuleEngine(engine);
-			// create context for execution
-			Context context = Context.create();
+        try {
+            // create IncQueryEngine for the resource set
+            IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+            // set logger level to debug to see activation life-cycle events
+            engine.getLogger().setLevel(Level.DEBUG);
+            // create rule engine over IncQueryEngine
+            RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
+            // create context for execution
+            Context context = Context.create();
 
-			// prepare rule specifications
-			RuleSpecification createGeneralization = getCreateGeneralizationRule();
-			RuleSpecification createOperation = getCreateOperationRule();
+            // prepare rule specifications
+            RuleSpecification createGeneralization = getCreateGeneralizationRule();
+            RuleSpecification createOperation = getCreateOperationRule();
 
-			// add rule specifications to engine
-			ruleEngine.addRule(createGeneralization);
-			ruleEngine.addRule(createOperation);
+            // add rule specifications to engine
+            ruleEngine.addRule(createGeneralization);
+            ruleEngine.addRule(createOperation);
 
-			// check rule applicability
-			Set<Activation> createClassesActivations = ruleEngine
-					.getActivations(createGeneralization);
-			if (!createClassesActivations.isEmpty()) {
-				// fire activation of a given rule
-				createClassesActivations.iterator().next().fire(context);
-			}
+            // check rule applicability
+            Set<Activation> createClassesActivations = ruleEngine.getActivations(createGeneralization);
+            if (!createClassesActivations.isEmpty()) {
+                // fire activation of a given rule
+                createClassesActivations.iterator().next().fire(context);
+            }
 
-			// check for any applicable rules
-			while (!ruleEngine.getConflictingActivations().isEmpty()) {
-				// fire next activation as long as possible
-				ruleEngine.getNextActivation().fire(context);
-			}
+            // check for any applicable rules
+            while (!ruleEngine.getConflictingActivations().isEmpty()) {
+                // fire next activation as long as possible
+                ruleEngine.getNextActivation().fire(context);
+            }
 
-			// rules that are no longer needed can be removed
-			ruleEngine.removeRule(createGeneralization);
+            // rules that are no longer needed can be removed
+            ruleEngine.removeRule(createGeneralization);
 
-			// rule engine manages the activations of the added rules until
-			// disposed
-			ruleEngine.dispose();
+            // rule engine manages the activations of the added rules until
+            // disposed
+            ruleEngine.dispose();
 
-		} catch (IncQueryException e) {
-			e.printStackTrace();
-		}
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	@Test
-	public void ExecutionSchemaExample() {
+    @Test
+    public void ExecutionSchemaExample() {
 
-		ResourceSet resourceSet = new ResourceSetImpl();
-		URI fileURI = URI.createPlatformPluginURI(
-				"org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml", false);
-		resourceSet.getResource(fileURI, true);
+        ResourceSet resourceSet = new ResourceSetImpl();
+        URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
+                false);
+        resourceSet.getResource(fileURI, true);
 
-		try {
-			// create IncQueryEngine for the resource set
-			IncQueryEngine engine = EngineManager.getInstance()
-					.createUnmanagedIncQueryEngine(resourceSet);
-			// set logger level to debug to see activation life-cycle events
-			engine.getLogger().setLevel(Level.DEBUG);
-			// use IQBase update callback for scheduling execution
-			UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers
-					.getIQBaseSchedulerFactory(engine);
-			// create execution schema over IncQueryEngine
-			ExecutionSchema executionSchema = ExecutionSchemas
-					.createIncQueryExecutionSchema(engine, schedulerFactory);
+        try {
+            // create IncQueryEngine for the resource set
+            IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+            // set logger level to debug to see activation life-cycle events
+            engine.getLogger().setLevel(Level.DEBUG);
+            // use IQBase update callback for scheduling execution
+            UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(engine);
+            // create execution schema over IncQueryEngine
+            ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
 
-			// prepare rule specifications
-			RuleSpecification createGeneralization = getCreateGeneralizationRule();
-			RuleSpecification createOperation = getCreateOperationRule();
+            // prepare rule specifications
+            RuleSpecification createGeneralization = getCreateGeneralizationRule();
+            RuleSpecification createOperation = getCreateOperationRule();
 
-			// add rule specifications to engine
-			executionSchema.addRule(createGeneralization);
-			executionSchema.addRule(createOperation);
+            // add rule specifications to engine
+            executionSchema.addRule(createGeneralization);
+            executionSchema.addRule(createOperation);
 
-			// execution schema waits for a scheduling to fire activations
-			// we trigger this by removing one generalization at random
-			SuperClassMatcher.factory().getMatcher(engine)
-					.forOneArbitraryMatch(new SuperClassProcessor() {
+            // execution schema waits for a scheduling to fire activations
+            // we trigger this by removing one generalization at random
+            SuperClassMatcher.factory().getMatcher(engine).forOneArbitraryMatch(new SuperClassProcessor() {
 
-						@Override
-						public void process(Class sub, Class sup) {
-							sub.getGeneralizations().remove(0);
-						}
-					});
+                @Override
+                public void process(Class sub, Class sup) {
+                    sub.getGeneralizations().remove(0);
+                }
+            });
 
-			// rules that are no longer needed can be removed
-			executionSchema.removeRule(createGeneralization);
+            // rules that are no longer needed can be removed
+            executionSchema.removeRule(createGeneralization);
 
-			// execution schema manages and fires the activations of the added
-			// rules until disposed
-			executionSchema.dispose();
+            // execution schema manages and fires the activations of the added
+            // rules until disposed
+            executionSchema.dispose();
 
-		} catch (IncQueryException e) {
-			e.printStackTrace();
-		}
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	private RuleSpecification getCreateGeneralizationRule()
-			throws IncQueryException {
-		// the job specifies what to do when an activation is fired in the given
-		// state
-		Job job = Jobs.newStatelessJob(ActivationState.APPEARED,
-				new PossibleSuperClassProcessor() {
-					@Override
-					public void process(Class cl, Class sup) {
-						System.out.println("Found cl " + cl
-								+ " without superclass");
-						Generalization generalization = UMLFactory.eINSTANCE.createGeneralization();
-						generalization.setGeneral(sup);
-						generalization.setSpecific(cl);
-					}
-				});
-		// the life-cycle determines how events affect the state of activations
-		DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-		// the factory is used to initialize the matcher for the precondition
-		IMatcherFactory<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher
-				.factory();
-		// the rule specification is a model-independent definition that can be
-		// used to instantiate a rule
-		RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(
-				factory, lifecycle, Sets.newHashSet(job));
-		return spec;
-	}
+    private RuleSpecification getCreateGeneralizationRule() throws IncQueryException {
+        // the job specifies what to do when an activation is fired in the given
+        // state
+        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new PossibleSuperClassProcessor() {
+            @Override
+            public void process(Class cl, Class sup) {
+                System.out.println("Found cl " + cl + " without superclass");
+                Generalization generalization = UMLFactory.eINSTANCE.createGeneralization();
+                generalization.setGeneral(sup);
+                generalization.setSpecific(cl);
+            }
+        });
+        // the life-cycle determines how events affect the state of activations
+        DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+        // the factory is used to initialize the matcher for the precondition
+        IMatcherFactory<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.factory();
+        // the rule specification is a model-independent definition that can be
+        // used to instantiate a rule
+        RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        return spec;
+    }
 
-	private RuleSpecification getCreateOperationRule() throws IncQueryException {
-		Job job = Jobs.newStatelessJob(ActivationState.APPEARED,
-				new OnlyInheritedPropertiesProcessor() {
-					@Override
-					public void process(Class cl) {
-						System.out.println("Found class " + cl
-								+ " without operation");
-						Operation operation = UMLFactory.eINSTANCE.createOperation();
-						operation.setName("newOp");
-						operation.setClass_(cl);
-					}
-				});
-		DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-		IMatcherFactory<OnlyInheritedPropertiesMatcher> factory = OnlyInheritedPropertiesMatcher
-				.factory();
-		RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(
-				factory, lifecycle, Sets.newHashSet(job));
-		return spec;
-	}
+    private RuleSpecification getCreateOperationRule() throws IncQueryException {
+        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new OnlyInheritedPropertiesProcessor() {
+            @Override
+            public void process(Class cl) {
+                System.out.println("Found class " + cl + " without operation");
+                Operation operation = UMLFactory.eINSTANCE.createOperation();
+                operation.setName("newOp");
+                operation.setClass_(cl);
+            }
+        });
+        DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+        IMatcherFactory<OnlyInheritedPropertiesMatcher> factory = OnlyInheritedPropertiesMatcher.factory();
+        RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        return spec;
+    }
 
 }
