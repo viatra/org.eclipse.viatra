@@ -29,23 +29,23 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
  * @author Abel Hegedus
  *
  */
-public class FavouredMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends SimpleMatcherRuleSpecification<Match, Matcher> {
+public class FavouredMatcherRuleSpecification<Match extends IPatternMatch> extends SimpleMatcherRuleSpecification<Match> {
 
-    private final Matcher matcher;
+    private final IncQueryMatcher<Match> matcher;
     
-    public FavouredMatcherRuleSpecification(Matcher matcher, ActivationLifeCycle lifeCycle,
+    public FavouredMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
         super(getFactory(matcher), lifeCycle, jobs);
         this.matcher = matcher;
     }
 
     @SuppressWarnings("unchecked")
-    private static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IMatcherFactory<Matcher> getFactory(Matcher matcher) {
-        return (IMatcherFactory<Matcher>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
+    private static <Match extends IPatternMatch> IMatcherFactory<? extends IncQueryMatcher<Match>> getFactory(IncQueryMatcher<Match> matcher) {
+        return (IMatcherFactory<? extends IncQueryMatcher<Match>>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
     }
     
     @Override
-    protected Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
+    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
         if(matcher.getEngine().equals(engine)) {
             return matcher;
         }

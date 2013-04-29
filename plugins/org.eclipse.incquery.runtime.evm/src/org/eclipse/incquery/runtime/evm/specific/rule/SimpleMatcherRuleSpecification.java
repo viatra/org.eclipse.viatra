@@ -35,9 +35,9 @@ import com.google.common.base.Objects;
  * @author Abel Hegedus
  *
  */
-public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends RuleSpecification {
+public class SimpleMatcherRuleSpecification<Match extends IPatternMatch> extends RuleSpecification {
     
-    private final IMatcherFactory<Matcher> factory;
+    private final IMatcherFactory<? extends IncQueryMatcher<Match>> factory;
     
     /**
      * Creates a specification with the given factory, life-cycle and job list.
@@ -46,7 +46,7 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
      * @param lifeCycle
      * @param jobs
      */
-    public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    public SimpleMatcherRuleSpecification(final IMatcherFactory<? extends IncQueryMatcher<Match>> factory, final ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
         super(lifeCycle, jobs);
         this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
@@ -54,22 +54,24 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
 
     @Override
     protected RuleInstance instantiateRule(EventSource eventSource, Atom filter) {
+        SimpleMatcherRuleInstance<Match> ruleInstance = null;
         if(eventSource instanceof IncQueryEventSource) {
             IncQueryEngine engine = ((IncQueryEventSource) eventSource).getEngine();
             try {
-                Matcher matcher = getMatcher(engine);
-                SimpleMatcherRuleInstance<Match,Matcher> ruleInstance = new SimpleMatcherRuleInstance<Match,Matcher>(this, filter);
+                IncQueryMatcher<Match> matcher = getMatcher(engine);
+                ruleInstance = new SimpleMatcherRuleInstance<Match>(this, filter);
                 ruleInstance.prepareInstance(matcher);
-                return ruleInstance;
             } catch (IncQueryException e) {
                 engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
             }
+        } else {
+            eventSource.getLogger().error("Cannot instantiate rule with EvenSource " + eventSource + "! Should be IncQueryEventSource.");
         }
-        return null;
+        return ruleInstance;
     }
 
-    protected Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-        Matcher matcher = factory.getMatcher(engine);
+    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
+        IncQueryMatcher<Match> matcher = factory.getMatcher(engine);
         return matcher;
     }
     

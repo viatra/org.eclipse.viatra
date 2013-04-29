@@ -37,15 +37,15 @@ import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
  * @author Abel Hegedus
  *
  */
-public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends RuleInstance {
+public class SimpleMatcherRuleInstance<Match extends IPatternMatch> extends RuleInstance {
     
-    private Matcher matcher;
+    private IncQueryMatcher<Match> matcher;
     private IMatchUpdateListener<Match> matchUpdateListener;
     
     /**
      * Creates an instance using the given specification. 
      */
-    protected SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match,Matcher> specification, final Atom filter) {
+    protected SimpleMatcherRuleInstance(final SimpleMatcherRuleSpecification<Match> specification, final Atom filter) {
         super(specification, filter);
     }
     
@@ -54,9 +54,9 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
      * 
      * @param matcher
      */
-    protected void prepareInstance(final Matcher matcher) {
+    protected void prepareInstance(final IncQueryMatcher<Match> matcher) {
         prepareMatchUpdateListener();
-        prepateAttributeMonitor();
+        prepareAttributeMonitorAndListener();
         
         this.matcher = matcher;
         this.matcher.addCallbackOnMatchUpdate(getMatchUpdateListener(), true);
@@ -65,7 +65,7 @@ public class SimpleMatcherRuleInstance<Match extends IPatternMatch, Matcher exte
     /**
      * @return the matcher
      */
-    public IncQueryMatcher<?> getMatcher() {
+    public IncQueryMatcher<Match> getMatcher() {
         return matcher;
     }
     

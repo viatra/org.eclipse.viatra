@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
@@ -23,7 +24,6 @@ import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationProv
 import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -90,20 +90,17 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      */
     protected RuleInstance(final RuleSpecification specification, Atom filter) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
+        this.filter = checkNotNull(filter, "Cannot create rule instance with null filter! Use EmptyAtom.INSTANCE instead.");
+        checkArgument(!filter.isMutable(),String.format("Mutable filter %s is used in rule instance!",filter));
         this.activations = HashBasedTable.create();
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
-        
-        if(filter != null) {
-            Preconditions.checkArgument(!filter.isMutable(),String.format("Mutable filter %s is used in rule instance!",filter));
-        }
-        this.filter = filter;
     }
 
     /**
      * Prepares the attribute monitor
      */
-    protected void prepateAttributeMonitor() {
+    protected void prepareAttributeMonitorAndListener() {
         this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
         this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         this.attributeMonitor.addAttributeMonitorListener(attributeMonitorListener);

@@ -37,7 +37,7 @@ public class PatternMatchAtom<Match extends IPatternMatch> implements Atom {
         }
         if(other instanceof PatternMatchAtom<?>) {
             IPatternMatch otherMatch = ((PatternMatchAtom<?>) other).getMatch();
-            match.isCompatibleWith((IPatternMatch) otherMatch);
+            match.isCompatibleWith(otherMatch);
         }
         return false;
     }

@@ -93,7 +93,7 @@ public final class ObservableCollectionHelper {
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
         Set<Job> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return new FavouredMatcherRuleSpecification<Match, Matcher>(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return new FavouredMatcherRuleSpecification<Match>(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
 
     private static <Match extends IPatternMatch> Set<Job> getObservableCollectionJobs(

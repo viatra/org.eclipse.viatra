@@ -88,7 +88,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      */
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IMatcherFactory<Matcher> factory) {
-        schema.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(factory,
+        schema.addRule(new SimpleMatcherRuleSpecification<Match>(factory,
                 DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 
