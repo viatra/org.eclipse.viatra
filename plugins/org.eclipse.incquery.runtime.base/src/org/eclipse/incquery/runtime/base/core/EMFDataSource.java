@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
@@ -124,7 +123,7 @@ public class EMFDataSource implements IGraphDataSource<EObject> {
 				allEObjects.addAll(navigationHelper.getAllInstances(clazz));
 			}
 	        for (EReference ref : references) {
-                new BaseIndexProcessor(navigationHelper).processFeatureInstances(ref,
+                navigationHelper.processAllFeatureInstances(ref,
                         new IEStructuralFeatureProcessor() {
 
                             @Override
