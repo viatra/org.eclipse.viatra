@@ -12,8 +12,8 @@
 package org.eclipse.incquery.runtime.evm.notification;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 
 /**
  * The interface is used to observe the changes in the collection of activations.
@@ -37,7 +37,11 @@ public interface IActivationNotificationListener {
      * @param oldState
      * @param event
      */
-    void activationChanged(final Activation activation, final ActivationState oldState,
-            final ActivationLifeCycleEvent event);
+    void activationChanged(final Activation<?> activation, final ActivationState oldState,
+            final EventType event);
 
+    void activationCreated(final Activation<?> activation, final ActivationState inactiveState);
+
+    void activationRemoved(final Activation<?> activation, final ActivationState oldState);
+    
 }

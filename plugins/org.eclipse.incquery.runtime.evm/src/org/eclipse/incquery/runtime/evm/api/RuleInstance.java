@@ -12,16 +12,17 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.ActivationNotificationProvider;
-import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationProvider;
-import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
@@ -41,7 +42,7 @@ import com.google.common.collect.Table.Cell;
  * @author Abel Hegedus
  * 
  */
-public abstract class RuleInstance implements IActivationNotificationProvider{
+public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
     /**
      * A default implementation for providing activation state change 
@@ -54,33 +55,19 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
         @Override
         protected void listenerAdded(final IActivationNotificationListener listener, final boolean fireNow) {
             if (fireNow) {
-                for (Activation activation : getAllActivations()) {
-                    listener.activationChanged(activation, ActivationState.INACTIVE, ActivationLifeCycleEvent.MATCH_APPEARS);
+                ActivationState inactiveState = getActivationInactiveState();
+                for (Activation<EventAtom> activation : getAllActivations()) {
+                    listener.activationCreated(activation, inactiveState);
                 }
             }
         }
     }
 
-    
-
-    private final RuleSpecification specification;
-    private Table<ActivationState, Atom, Activation> activations;
-    private ActivationNotificationProvider activationNotificationProvider;
-    private IAttributeMonitorListener attributeMonitorListener;
-    private AttributeMonitor attributeMonitor;
-    private final Atom filter;
-    
-    /**
-     * @return the filter
-     */
-    public Atom getFilter() {
-        return filter;
-    }
-
-    protected Activation createActivation(Atom atom) {
-        return new Activation(this, atom);
-    }
-    
+    private final RuleSpecification<EventAtom> specification;
+    private final Table<ActivationState, EventAtom, Activation<EventAtom>> activations;
+    private final ActivationNotificationProvider activationNotificationProvider;
+    private EventHandler<EventAtom> handler;
+   
     /**
      * Creates an instance using a RuleSpecification.
      * 
@@ -88,40 +75,26 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * @param engine
      * @throws IllegalArgumentException if filter is mutable
      */
-    protected RuleInstance(final RuleSpecification specification, Atom filter) {
+    protected RuleInstance(final RuleSpecification<EventAtom> specification) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
-        this.filter = checkNotNull(filter, "Cannot create rule instance with null filter! Use EmptyAtom.INSTANCE instead.");
-        checkArgument(!filter.isMutable(),String.format("Mutable filter %s is used in rule instance!",filter));
         this.activations = HashBasedTable.create();
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
     }
-
-    /**
-     * Prepares the attribute monitor
-     */
-    protected void prepareAttributeMonitorAndListener() {
-        this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
-        this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
-        this.attributeMonitor.addAttributeMonitorListener(attributeMonitorListener);
+    
+    public void setHandler(EventHandler<EventAtom> handler) {
+        checkArgument(handler != null, "Handler cannot be null!");
+        checkState(this.handler == null || handler.equals(this.handler), "Handler already set!");
+        this.handler = handler;
     }
     
-    /**
-     * @return
-     */
-    protected abstract AttributeMonitor prepareAttributeMonitor();
-
-    /**
-     * @return the attributeMonitor
-     */
-    protected AttributeMonitor getAttributeMonitor() {
-        return attributeMonitor;
+    public Activation<EventAtom> createActivation(EventAtom atom) {
+        return new Activation<EventAtom>(this, atom, getActivationInactiveState());
     }
-    
-    /**
-     * @return
-     */
-    protected abstract IAttributeMonitorListener prepareAttributeMonitorListener();
+
+    private ActivationState getActivationInactiveState() {
+        return specification.getLifeCycle().getInactiveState();
+    }
 
     /**
      * Fires the given activation using the supplied context.
@@ -130,11 +103,11 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * @param activation
      * @param context
      */
-    public void fire(final Activation activation, final Context context) {
+    public void fire(final Activation<EventAtom> activation, final Context context) {
         checkNotNull(activation, "Cannot fire null activation!");
         checkNotNull(context,"Cannot fire activation with null context");
         ActivationState activationState = activation.getState();
-        Atom atom = activation.getAtom();
+        EventAtom atom = activation.getAtom();
 
         doFire(activation, activationState, atom, context);
     }
@@ -146,15 +119,15 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * activation state using the supplied context.
      * 
      * @param activation
-     * @param activationState
-     * @param patternMatch
+     * @param incQueryActivationStateEnum
+     * @param atom
      * @param context
      */
-    protected void doFire(final Activation activation, final ActivationState activationState, final Atom patternMatch, final Context context) {
-        if (activations.contains(activationState, patternMatch)) {
-            Collection<Job> jobs = specification.getJobs(activationState);
-            activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
-            for (Job job : jobs) {
+    protected void doFire(final Activation<EventAtom> activation, final ActivationState activationState, final EventAtom atom, final Context context) {
+        if (activations.contains(activationState, atom)) {
+            Collection<Job<EventAtom>> jobs = specification.getJobs(activationState);
+            activationStateTransition(activation, EventType.RuleEngineEventType.FIRE);
+            for (Job<? super EventAtom> job : jobs) {
                 try {
                     job.execute(activation, context);
                 } catch(Exception e) {
@@ -174,40 +147,35 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * @param event
      * @return the state of the activation after the transition
      */
-    protected ActivationState activationStateTransition(final Activation activation, final ActivationLifeCycleEvent event) {
+    public ActivationState activationStateTransition(final Activation<EventAtom> activation, final EventType event) {
         checkNotNull(activation, "Cannot perform state transition on null activation!");
         checkNotNull(event, "Cannot perform state transition with null event!");
         ActivationState activationState = activation.getState();
         ActivationState nextActivationState = specification.getLifeCycle().nextActivationState(activationState, event);
-        Atom atom = activation.getAtom();
+        EventAtom atom = activation.getAtom();
         if (nextActivationState != null) {
-            activations.remove(activationState, atom);
+            Activation<EventAtom> removed = activations.remove(activationState, atom);
             activation.setState(nextActivationState);
-            if (!nextActivationState.equals(ActivationState.INACTIVE)) {
+            if (!nextActivationState.isInactive()) {
                 activations.put(nextActivationState, atom, activation);
+                if(removed == null) { // activation did not exist
+                    activationNotificationProvider.notifyActivationCreated(activation, activationState);
+                } else { // still exists, only changed
+                    activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
+                }
             } else {
-                attributeMonitor.unregisterFor(atom);
+                // inactive state, remove
+                activationNotificationProvider.notifyActivationRemoved(activation, activationState);
             }
         } else {
             nextActivationState = activationState;
+            // no effect, but event occured
+            activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
         }
-        activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
         return nextActivationState;
     }
     
     
-
-    /**
-     * @return the specification
-     */
-    public RuleSpecification getSpecification() {
-        return specification;
-    }
-    
-    /**
-     * @return the logger
-     */
-    protected abstract Logger getLogger();
 
     /**
      * Delegate method for {@link ActivationNotificationProvider#addActivationNotificationListener}.
@@ -233,10 +201,26 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
     }
 
     /**
+     * @return the specification
+     */
+    public RuleSpecification<EventAtom> getSpecification() {
+        return specification;
+    }
+
+    public EventFilter<EventAtom> getFilter(){
+        checkState(handler != null, "Cannot get filter, bacause handler is null!");
+        return handler.getEventFilter();
+    }
+
+    public ActivationLifeCycle getLifeCycle() {
+        return specification.getLifeCycle();
+    }
+
+    /**
      * 
      * @return the live table of activations
      */
-    public Table<ActivationState, Atom, Activation> getActivations() {
+    public Table<ActivationState, EventAtom, Activation<EventAtom>> getActivations() {
         return activations;
     }
     
@@ -245,7 +229,7 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * 
      * @return the live set of activations
      */
-    public Collection<Activation> getAllActivations() {
+    public Collection<Activation<EventAtom>> getAllActivations() {
         return activations.values();
     }
 
@@ -254,7 +238,7 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * @param state
      * @return the live set of activations in the given state
      */
-    public Collection<Activation> getActivations(final ActivationState state) {
+    public Collection<Activation<EventAtom>> getActivations(final ActivationState state) {
         checkNotNull(state, "Cannot return activations for null state");
         return activations.row(state).values();
     }
@@ -267,20 +251,16 @@ public abstract class RuleInstance implements IActivationNotificationProvider{
      * 
      */
     protected void dispose() {
-        for (Cell<ActivationState, Atom, Activation> cell : activations.cellSet()) {
-            Activation activation = cell.getValue();
+        this.handler.dispose();
+        for (Cell<ActivationState, EventAtom, Activation<EventAtom>> cell : activations.cellSet()) {
+            Activation<EventAtom> activation = cell.getValue();
             ActivationState activationState = activation.getState();
-            activation.setState(ActivationState.INACTIVE);
-            activationNotificationProvider.notifyActivationChanged(activation, activationState, ActivationLifeCycleEvent.MATCH_DISAPPEARS);
+            activation.setState(specification.getLifeCycle().getInactiveState());
+            activationNotificationProvider.notifyActivationRemoved(activation, activationState);
         } 
         this.activationNotificationProvider.dispose();
-        this.attributeMonitor.removeAttributeMonitorListener(attributeMonitorListener);
-        this.attributeMonitor.dispose();
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("spec",specification).add("activations",activations).toString();

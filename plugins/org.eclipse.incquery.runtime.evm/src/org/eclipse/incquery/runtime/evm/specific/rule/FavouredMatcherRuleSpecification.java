@@ -18,7 +18,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 
 /**
@@ -28,6 +27,7 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
  * 
  * @author Abel Hegedus
  *
+ * @deprecated Use Rules.newSimpleMatcherRuleSpecification(Matcher) instead!
  */
 public class FavouredMatcherRuleSpecification<Match extends IPatternMatch> extends SimpleMatcherRuleSpecification<Match> {
 
@@ -36,7 +36,8 @@ public class FavouredMatcherRuleSpecification<Match extends IPatternMatch> exten
     public FavouredMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
         super(getFactory(matcher), lifeCycle, jobs);
-        this.matcher = matcher;
+        throw new UnsupportedOperationException("Do not use this subclass of rule specification!");
+        //this.matcher = matcher;
     }
 
     @SuppressWarnings("unchecked")
@@ -44,11 +45,11 @@ public class FavouredMatcherRuleSpecification<Match extends IPatternMatch> exten
         return (IMatcherFactory<? extends IncQueryMatcher<Match>>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
     }
     
-    @Override
-    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
-        if(matcher.getEngine().equals(engine)) {
-            return matcher;
-        }
-        return super.getMatcher(engine);
-    }
+//    @Override
+//    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
+//        if(matcher.getEngine().equals(engine)) {
+//            return matcher;
+//        }
+//        return super.getMatcher(engine);
+//    }
 }

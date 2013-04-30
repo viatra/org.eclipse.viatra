@@ -12,16 +12,12 @@ package org.eclipse.incquery.runtime.evm.api.event;
 
 
 /**
- * Basic interface that represents a source that is able to send notifications on events
+ * An event realm provides event sources that create events of the type specified by the realm and event handlers that
+ * can process these events.
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventSource<EventAtom> {
+public interface EventRealm {
     
-    EventSourceSpecification<EventAtom> getSourceSpecification();
-
-    EventRealm getRealm();
-    
-    void dispose();
 }

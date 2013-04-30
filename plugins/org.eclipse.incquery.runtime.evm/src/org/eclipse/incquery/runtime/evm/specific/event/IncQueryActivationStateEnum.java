@@ -9,25 +9,24 @@
  *   Tamas Szabo, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.evm.notification;
+package org.eclipse.incquery.runtime.evm.specific.event;
 
 
 /**
- * The interface exposes the {@link #notifyUpdate(Atom)} method to
- *  receive notifications when the attributes of the atom objects have changed.
  * 
- * @author Tamas Szabo
+ * This enumeration represents the possible states of an Activation.
  * 
- * @param <MatchType>
+ * @author Abel Hegedus
+ *
  */
-public interface IAttributeMonitorListener<Atom> {
-
-    /**
-     * This method is called by {@link AttributeMonitor} when a feature value
-     *  changes in one of the objects in the atom.
-     * 
-     * @param match
-     */
-    void notifyUpdate(final Atom atom);
-
+public enum IncQueryActivationStateEnum implements org.eclipse.incquery.runtime.evm.api.event.ActivationState {
+    INACTIVE, APPEARED, FIRED, UPDATED, DISAPPEARED;
+    
+    @Override
+    public boolean isInactive() {
+        if(this == INACTIVE) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -45,7 +45,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
     private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
     private final ListCollectionUpdate updater = new ListCollectionUpdate();
-    private RuleSpecification specification;
+    private RuleSpecification<Match> specification;
     
     /**
      * Creates an observable view of the match set of the given {@link IMatcherFactory} initialized on the given
@@ -121,7 +121,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine, Match filter) {
         this(factory);
-        engine.addRule(specification, true, new PatternMatchAtom<IPatternMatch>(filter));
+        engine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
     }
     
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory) {
@@ -161,7 +161,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     /**
      * @return the specification
      */
-    protected RuleSpecification getSpecification() {
+    protected RuleSpecification<Match> getSpecification() {
         return specification;
     }
 

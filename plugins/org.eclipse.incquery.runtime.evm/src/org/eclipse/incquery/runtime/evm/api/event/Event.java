@@ -14,27 +14,10 @@ package org.eclipse.incquery.runtime.evm.api.event;
  * @author Abel Hegedus
  *
  */
-public enum EmptyAtom implements Atom {
+public interface Event<EventAtom> {
 
-    INSTANCE;
+    EventType getEventType();
     
-    @Override
-    public boolean isCompatibleWith(Atom other) {
-        return true;
-    }
-
-    @Override
-    public boolean isMutable() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Empty atom";
-    }
+    EventAtom getEventAtom();
+    
 }

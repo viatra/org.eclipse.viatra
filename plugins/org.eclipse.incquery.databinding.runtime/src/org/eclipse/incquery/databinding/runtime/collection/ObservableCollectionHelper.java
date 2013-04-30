@@ -19,7 +19,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -27,12 +26,12 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
-import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.specific.rule.FavouredMatcherRuleSpecification;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Utility class to prepare a rule in an agenda for an observable collection. For use cases, see
@@ -49,12 +48,12 @@ public final class ObservableCollectionHelper {
      * @author Abel Hegedus
      */
     private static final class ObservableCollectionJob<Match extends IPatternMatch> extends StatelessJob<Match> {
-        private ObservableCollectionJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor) {
-            super(activationState, matchProcessor);
+        private ObservableCollectionJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> matchProcessor) {
+            super(incQueryActivationStateEnum, matchProcessor);
         }
 
         @Override
-        protected void handleError(Activation activation, Exception exception, Context context) {
+        protected void handleError(Activation<? extends Match> activation, Exception exception, Context context) {
             IncQueryEngine.getDefaultLogger().error("Exception occurred while updating observable collection!",
                     exception);
         }
@@ -74,10 +73,10 @@ public final class ObservableCollectionHelper {
      * @param factory
      *            the {@link IMatcherFactory} used to create the rule
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification createRuleSpecification(
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
 
-        Set<Job> jobs = getObservableCollectionJobs(observableCollectionUpdate);
+        Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
         return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
     
@@ -89,27 +88,27 @@ public final class ObservableCollectionHelper {
      * @param factory
      *            the {@link IncQueryMatcher} used to create the rule
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification createRuleSpecification(
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
-        Set<Job> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return new FavouredMatcherRuleSpecification<Match>(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
+        return Rules.newSimpleMatcherRuleSpecification(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
 
-    private static <Match extends IPatternMatch> Set<Job> getObservableCollectionJobs(
+    private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate) {
-        Job insertJob = new ObservableCollectionJob<Match>(ActivationState.APPEARED,
+        Job<Match> insertJob = new ObservableCollectionJob<Match>(IncQueryActivationStateEnum.APPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate));
-        Job deleteJob = new ObservableCollectionJob<Match>(ActivationState.DISAPPEARED,
+        Job<Match> deleteJob = new ObservableCollectionJob<Match>(IncQueryActivationStateEnum.DISAPPEARED,
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate));
-        return Sets.newHashSet(insertJob, deleteJob);
+        return ImmutableSet.of(insertJob, deleteJob);
     }
 
-    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification specification, Match filter) {
+    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQBaseSchedulerFactory(engine));
         if(filter != null) {
-            ruleEngine.addRule(specification, true, new PatternMatchAtom<IPatternMatch>(filter));
+            ruleEngine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
         } else {
             ruleEngine.addRule(specification, true);
         }

@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.evm.api;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 
 import com.google.common.collect.HashMultimap;
@@ -36,30 +38,47 @@ public class Agenda {
      */
     private final class DefaultActivationNotificationListener implements IActivationNotificationListener {
         @Override
-        public void activationChanged(final Activation activation,
-                final ActivationState oldState, final ActivationLifeCycleEvent event) {
-            ruleBase.getEventSource().getLogger().debug(
+        public void activationChanged(final Activation<?> activation,
+                final ActivationState oldState, final EventType event) {
+            ruleBase.getLogger().debug(
                     String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
             getActivations().remove(oldState, activation);
             ActivationState state = activation.getState();
-            switch (state) {
-            case INACTIVE:
+            if(state.isInactive()) {
                 conflictSet.removeActivation(activation);
-                break;
-            default:
-                if (activation.isEnabled()) {
-                    conflictSet.addActivation(activation);
-                } else {
-                    conflictSet.removeActivation(activation);
-                }
-                getActivations().put(state, activation);
-                break;
+            } else {
+                refreshActivation(activation, state);
             }
+        }
+
+        @Override
+        public void activationCreated(Activation<?> activation, ActivationState inactiveState) {
+            ruleBase.getLogger().debug(
+                    String.format("%s -- CREATE --> %s on %s", inactiveState, activation.getState(), activation));
+            ActivationState state = activation.getState();
+            refreshActivation(activation, state);
+        }
+
+        @Override
+        public void activationRemoved(Activation<?> activation, ActivationState oldState) {
+            ruleBase.getLogger().debug(
+                    String.format("%s -- REMOVE --> %s on %s", oldState, activation.getState(), activation));
+            getActivations().remove(oldState, activation);
+            conflictSet.removeActivation(activation);
+        }
+
+        private void refreshActivation(final Activation<?> activation, ActivationState state) {
+            if (activation.isEnabled()) {
+                conflictSet.addActivation(activation);
+            } else {
+                conflictSet.removeActivation(activation);
+            }
+            getActivations().put(state, activation);
         }
     }
 
     
-    private Multimap<ActivationState, Activation> activations;
+    private Multimap<ActivationState, Activation<?>> activations;
     private ConflictSet conflictSet;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
@@ -77,7 +96,7 @@ public class Agenda {
     /**
      * @return the activations
      */
-    public Multimap<ActivationState, Activation> getActivations() {
+    public Multimap<ActivationState, Activation<?>> getActivations() {
         return activations;
     }
 
@@ -87,7 +106,7 @@ public class Agenda {
      * @param state
      * @return the activations in the given state
      */
-    public Collection<Activation> getActivations(final ActivationState state) {
+    public Collection<Activation<?>> getActivations(final ActivationState state) {
         return getActivations().get(state);
     }
     
@@ -95,28 +114,28 @@ public class Agenda {
      * 
      * @return all activations in a single collection
      */
-    public Collection<Activation> getAllActivations() {
+    public Collection<Activation<?>> getAllActivations() {
         return getActivations().values();
     }
     
     /**
      * @return the activation selected as next in order by the conflict resolver
      */
-    public Activation getNextActivation() {
+    public Activation<?> getNextActivation() {
         return conflictSet.getNextActivation();
     }
 
     /**
      * @return the set of activations that are considered equal by the conflict resolver
      */
-    public Set<Activation> getNextActivations() {
+    public Set<Activation<?>> getNextActivations() {
         return conflictSet.getNextActivations();
     }
 
     /**
      * @return the set of activations in conflict (i.e. enabled)
      */
-    public Set<Activation> getConflictingActivations() {
+    public Set<Activation<?>> getConflictingActivations() {
         return conflictSet.getConflictingActivations();
     }
     
@@ -133,7 +152,7 @@ public class Agenda {
      */
     public void setConflictResolver(ConflictResolver<?> resolver) {
         ConflictSet set = resolver.createConflictSet();
-        for (Activation act : conflictSet.getConflictingActivations()) {
+        for (Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
         this.conflictSet = set;

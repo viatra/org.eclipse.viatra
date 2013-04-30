@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 
 /**
  * @author Abel Hegedus
@@ -40,8 +40,8 @@ public class ExecutionSchemas {
      * @return the prepared execution schema
      */
     public static ExecutionSchema createIncQueryExecutionSchema(final IncQueryEngine engine,
-            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification> specifications) {
-        return EventDrivenVM.createExecutionSchema(IncQueryEventSource.create(engine), schedulerFactory, specifications);
+            final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
+        return EventDrivenVM.createExecutionSchema(IncQueryEventRealm.create(engine), schedulerFactory, specifications);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ExecutionSchemas {
     public static ExecutionSchema createIncQueryExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
-        Executor executor = new Executor(IncQueryEventSource.create(engine));
+        Executor executor = new Executor(IncQueryEventRealm.create(engine));
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
     }

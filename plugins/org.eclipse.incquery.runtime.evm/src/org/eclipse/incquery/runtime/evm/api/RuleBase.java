@@ -11,17 +11,15 @@
 
 package org.eclipse.incquery.runtime.evm.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
-import org.eclipse.incquery.runtime.evm.api.event.EmptyAtom;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
 import com.google.common.collect.HashBasedTable;
@@ -31,7 +29,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
 /**
- * An RuleBase is associated to an {@link EventSource} and 
+ * An RuleBase is associated to an {@link EventRealm} and 
  * it is responsible for creating, managing and disposing rules in
  * the Rule Engine. It provides an unmodifiable view for the collection of applicable activations.
  * 
@@ -40,38 +38,39 @@ import com.google.common.collect.Table;
  */
 public class RuleBase {
 
-    private final EventSource eventSource;
-    private final Table<RuleSpecification,Atom, RuleInstance> ruleInstanceTable;
-    private Agenda agenda; 
+    private final EventRealm eventRealm;
+    private final Table<RuleSpecification<?>,EventFilter<?>,RuleInstance<?>> ruleInstanceTable;
+    private final Agenda agenda; 
+    private Logger logger;
     
     /**
-     * Instantiates a new RuleBase instance with the given {@link EventSource}.
+     * Instantiates a new RuleBase instance with the given {@link EventRealm}.
      * 
-     * @param eventSource
-     *            the {@link EventSource} instance
+     * @param eventRealm
+     *            the {@link EventRealm} instance
      */
-    protected RuleBase(final EventSource eventSource) {
-        this.eventSource = checkNotNull(eventSource, "Cannot create RuleBase with null event source");
+    protected RuleBase(final EventRealm eventRealm) {
+        this.eventRealm = checkNotNull(eventRealm, "Cannot create RuleBase with null event source");
         this.ruleInstanceTable = HashBasedTable.create();
         this.agenda = new Agenda(this, new ArbitraryOrderConflictResolver());
+        this.logger = Logger.getLogger(this.toString());
     }
 
     /**
-     * Instantiates the given specification over the EventSource of the RuleBase.
+     * Instantiates the given specification over the EventRealm of the RuleBase.
      * If the specification was already instantiated, the existing instance is returned.
      * 
      * @param specification the rule to be instantiated
      * @return the created or existing rule instance
      */
-    protected <Match extends IPatternMatch> RuleInstance instantiateRule(
-            final RuleSpecification specification, final Atom filter) {
+    protected <EventAtom> RuleInstance<EventAtom> instantiateRule(
+            final RuleSpecification<EventAtom> specification, final EventFilter<EventAtom> filter) {
         checkNotNull(specification, "Cannot instantiate null rule!");
         checkNotNull(filter, "Cannot instantiate rule with null filter!");
-        checkArgument(!filter.isMutable(), "Cannot instantiate rule with mutable filter!");
         if(ruleInstanceTable.containsRow(specification)) {
             return findInstance(specification, filter);
         }
-        RuleInstance rule = specification.instantiateRule(eventSource, filter);
+        RuleInstance<EventAtom> rule = specification.instantiateRule(eventRealm, filter);
         rule.addActivationNotificationListener(agenda.getActivationListener(), true);
         ruleInstanceTable.put(specification, filter, rule);
         return rule;
@@ -82,8 +81,8 @@ public class RuleBase {
      * @param instance
      * @return true, if the instance was part of the RuleBase
      */
-    protected boolean removeRule(
-            final RuleInstance instance) {
+    protected <EventAtom> boolean removeRule(
+            final RuleInstance<EventAtom> instance) {
         checkNotNull(instance, "Cannot remove null rule instance!");
         return removeRule(instance.getSpecification(), instance.getFilter());
     }
@@ -95,11 +94,11 @@ public class RuleBase {
      * @param filter the partial match used as filter
      * @return true, if the specification had an instance in the RuleBase
      */
-    protected boolean removeRule(
-            final RuleSpecification specification, Atom filter) {
+    protected <EventAtom> boolean removeRule(
+            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
         checkNotNull(specification, "Cannot remove null rule specification!");
         checkNotNull(filter, "Cannot remove instance for null filter");
-        RuleInstance instance = findInstance(specification, filter);
+        RuleInstance<?> instance = findInstance(specification, filter);
         if (instance != null) {
             instance.dispose();
             ruleInstanceTable.remove(specification, filter);
@@ -113,23 +112,23 @@ public class RuleBase {
      * 
      */
     protected void dispose() {
-        for (RuleInstance instance : ruleInstanceTable
+        for (RuleInstance<?> instance : ruleInstanceTable
                 .values()) {
             instance.dispose();
         }
     }
 
     /**
-     * @return the eventSource
+     * @return the eventRealm
      */
-    public EventSource getEventSource() {
-        return eventSource;
+    public EventRealm getEventRealm() {
+        return eventRealm;
     }
 
-    public Multimap<RuleSpecification, Atom> getRuleSpecificationMultimap(){
-        Multimap<RuleSpecification, Atom> ruleMap = HashMultimap.create();
-        Map<RuleSpecification, Map<Atom, RuleInstance>> rowMap = ruleInstanceTable.rowMap();
-        for (Entry<RuleSpecification, Map<Atom, RuleInstance>> entry : rowMap.entrySet()) {
+    public Multimap<RuleSpecification<?>, EventFilter<?>> getRuleSpecificationMultimap(){
+        Multimap<RuleSpecification<?>, EventFilter<?>> ruleMap = HashMultimap.create();
+        Map<RuleSpecification<?>, Map<EventFilter<?>, RuleInstance<?>>> rowMap = ruleInstanceTable.rowMap();
+        for (Entry<RuleSpecification<?>, Map<EventFilter<?>, RuleInstance<?>>> entry : rowMap.entrySet()) {
             ruleMap.putAll(entry.getKey(), entry.getValue().keySet());
         }
         return ruleMap;
@@ -138,7 +137,7 @@ public class RuleBase {
     /**
      * @return an immutable copy of the set of rule instances
      */
-    public Set<RuleInstance> getRuleInstances() {
+    public Set<RuleInstance<?>> getRuleInstances() {
         return ImmutableSet.copyOf(ruleInstanceTable.values());
     }
 
@@ -149,21 +148,22 @@ public class RuleBase {
      * @param filter the partial match to be used as filter
      * @return the instance, if it exists, null otherwise
      */
-    public RuleInstance getInstance(
-            final RuleSpecification specification, Atom filter) {
+    public <EventAtom> RuleInstance<EventAtom> getInstance(
+            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
         checkNotNull(specification, "Cannot get instance for null specification");
         checkNotNull(filter, "Cannot get instance for null filter");
         
         return findInstance(specification, filter);
     }
 
-    private RuleInstance findInstance(RuleSpecification specification, Atom filter) {
+    @SuppressWarnings("unchecked")
+    private <EventAtom> RuleInstance<EventAtom> findInstance(RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
 //        Collection<RuleInstance> instances = ruleInstanceTable.get(specification);
 //        if(instances.size() > 0) {
 //            
-//            // TODO Atom realFilter = checkNotEmpty(filter);
+//            // Atom realFilter = checkNotEmpty(filter);
 //            Atom realFilter = filter;
-//            // TODO always use filter (EmptyAtom.INSTANCE)
+//            // always use filter (EmptyAtom.INSTANCE)
 //            for (RuleInstance ruleInstance : instances) {
 //                Atom instanceFilter = ruleInstance.getFilter();
 //                if (realFilter != null && instanceFilter != null && realFilter.equals(instanceFilter)) {
@@ -175,11 +175,11 @@ public class RuleBase {
 //            }
 //        }
 //        return null;
-        Atom realFilter = filter;
-        if(filter.isEmpty()) {
-            realFilter = EmptyAtom.INSTANCE;
-        }
-        return ruleInstanceTable.get(specification, realFilter);
+//        EventFilter<EventAtom> realFilter = filter;
+//        if(filter.isEmpty()) {
+//            realFilter = EmptyAtom.INSTANCE;
+//        }
+        return (RuleInstance<EventAtom>) ruleInstanceTable.get(specification, filter);
         
     }
 
@@ -188,6 +188,13 @@ public class RuleBase {
      */
     public Agenda getAgenda() {
         return agenda;
+    }
+    
+    /**
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return logger;
     }
     
 }

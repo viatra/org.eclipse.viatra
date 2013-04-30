@@ -13,8 +13,8 @@ package org.eclipse.incquery.runtime.evm.specific.lifecycle;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 
 import com.google.common.collect.Table.Cell;
 
@@ -27,24 +27,28 @@ import com.google.common.collect.Table.Cell;
  */
 public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle#addStateTransition(org.eclipse.incquery.runtime.evm.api.ActivationState, org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle.ActivationLifeCycleEvent, org.eclipse.incquery.runtime.evm.api.ActivationState)
+    /**
+     * @param inactiveState
      */
+    protected UnmodifiableActivationLifeCycle(ActivationState inactiveState) {
+        super(inactiveState);
+    }
+
     @Override
-    public boolean addStateTransition(final ActivationState from, final ActivationLifeCycleEvent event, final ActivationState to) {
+    public boolean addStateTransition(final ActivationState from, final EventType event, final ActivationState to) {
         throw new UnsupportedOperationException("Life cycle is unmodifiable!");
     }
     
     /**
      * Internal method to add transitions to an unmodifiable life-cycle.
      *  
-     * @param from
-     * @param event
-     * @param to
+     * @param activationState
+     * @param eventType
+     * @param activationState2
      * @return
      */
-    protected boolean internalAddStateTransition(final ActivationState from, final ActivationLifeCycleEvent event, final ActivationState to) {
-        return super.addStateTransition(from, event, to);
+    protected boolean internalAddStateTransition(final ActivationState activationState, final EventType eventType, final ActivationState activationState2) {
+        return super.addStateTransition(activationState, eventType, activationState2);
     }
     
     /**
@@ -58,8 +62,8 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
             return (UnmodifiableActivationLifeCycle) lifeCycle;
         } else {
             checkNotNull(lifeCycle,"Null life cycle cannot be copied!");
-            UnmodifiableActivationLifeCycle lc = new UnmodifiableActivationLifeCycle();
-            for (Cell<ActivationState, ActivationLifeCycleEvent, ActivationState> cell : lifeCycle.getStateTransitionTable().cellSet()) {
+            UnmodifiableActivationLifeCycle lc = new UnmodifiableActivationLifeCycle(lifeCycle.getInactiveState());
+            for (Cell<ActivationState, EventType, ActivationState> cell : lifeCycle.getStateTransitionTable().cellSet()) {
                 lc.internalAddStateTransition(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
             }
             return lc; 

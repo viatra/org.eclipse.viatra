@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api.event;
 
-
 /**
- * Basic interface that represents a source that is able to send notifications on events
+ * Interface for specifying a type of event that is provided by an event source.
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventSource<EventAtom> {
+public interface EventType {
     
-    EventSourceSpecification<EventAtom> getSourceSpecification();
-
-    EventRealm getRealm();
-    
-    void dispose();
+    public enum RuleEngineEventType implements EventType{
+        FIRE;
+    }
 }

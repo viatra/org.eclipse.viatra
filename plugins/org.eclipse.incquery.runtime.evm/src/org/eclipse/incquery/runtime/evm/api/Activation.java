@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 
 import com.google.common.base.Objects;
 
@@ -31,21 +31,21 @@ import com.google.common.base.Objects;
  * @param <Match>
  *            the type of the pattern match
  */
-public class Activation {
+public class Activation<EventAtom> {
 
-    private Atom atom;
+    private EventAtom atom;
     private ActivationState state;
     private boolean enabled;
-    private RuleInstance instance;
+    private RuleInstance<EventAtom> instance;
     private int cachedHash = -1;
 
-    protected Activation(RuleInstance instance, Atom atom) {
+    protected Activation(RuleInstance<EventAtom> instance, EventAtom atom, ActivationState initState) {
         this.atom = checkNotNull(atom,"Cannot create activation with null patternmatch");
         this.instance = checkNotNull(instance,"Cannot create activation with null instance");
-        this.state = ActivationState.INACTIVE;
+        this.state = checkNotNull(initState, "Cannot create activation with null initial state");
     }
 
-    public Atom getAtom() {
+    public EventAtom getAtom() {
         return atom;
     }
 
@@ -66,7 +66,7 @@ public class Activation {
     /**
      * @return the instance
      */
-    public RuleInstance getInstance() {
+    public RuleInstance<EventAtom> getInstance() {
         return instance;
     }
 
@@ -93,7 +93,7 @@ public class Activation {
         if (this == obj) {
             return true;
         } else if (obj instanceof Activation) {
-            Activation other = (Activation) obj;
+            Activation<?> other = (Activation<?>) obj;
             return (other.instance.equals(this.instance)) && (other.atom.equals(this.atom)
                     /*&& (other.state == this.state*/);
         } else {

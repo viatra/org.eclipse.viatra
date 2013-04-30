@@ -23,9 +23,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
-import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 
 /**
  * Default implementation of the {@link AttributeMonitor} that uses EMF Data binding to 
@@ -35,17 +33,17 @@ import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
  *
  * @param <MatchType>
  */
-public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor {
+public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 
     private ChangeListener changeListener;
-    private Map<IObservableValue, PatternMatchAtom<?>> observableMap;
-    private Map<PatternMatchAtom<?>, List<IObservableValue>> observableMapReversed;
+    private Map<IObservableValue, MatchType> observableMap;
+    private Map<MatchType, List<IObservableValue>> observableMapReversed;
 
     public DefaultAttributeMonitor() {
         super();
         this.changeListener = new ChangeListener();
-        this.observableMap = new HashMap<IObservableValue, PatternMatchAtom<?>>();
-        this.observableMapReversed = new HashMap<PatternMatchAtom<?>, List<IObservableValue>>();
+        this.observableMap = new HashMap<IObservableValue, MatchType>();
+        this.observableMapReversed = new HashMap<MatchType, List<IObservableValue>>();
     }
 
     /**
@@ -65,24 +63,21 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
     }
 
     @Override
-    public void registerFor(final Atom atom) {
+    public void registerFor(final MatchType atom) {
         List<IObservableValue> values = new ArrayList<IObservableValue>();
-        if(atom instanceof PatternMatchAtom<?>) {
-            IPatternMatch match = ((PatternMatchAtom<?>) atom).getMatch();
-            for (String param : match.parameterNames()) {
-                Object location = match.get(param);
+            for (String param : atom.parameterNames()) {
+                Object location = atom.get(param);
                 List<IObservableValue> observableValues = observeAllAttributes(changeListener, location);
                 values.addAll(observableValues);
             }
             
             // inserting {observable,match} pairs
             for (IObservableValue val : values) {
-                observableMap.put(val, (PatternMatchAtom<?>) atom);
+                observableMap.put(val, atom);
             }
-        }
 
         // inserting {match, list(observable)} pairs
-        observableMapReversed.put((PatternMatchAtom<?>) atom, values);
+        observableMapReversed.put(atom, values);
     }
 
     /**
@@ -106,13 +101,13 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
 
     @Override
     public void unregisterForAll() {
-        for (PatternMatchAtom<?> atom : observableMapReversed.keySet()) {
+        for (MatchType atom : observableMapReversed.keySet()) {
             unregisterFor(atom);
         }
     }
 
     @Override
-    public void unregisterFor(final Atom atom) {
+    public void unregisterFor(final MatchType atom) {
         List<IObservableValue> observables = observableMapReversed.get(atom);
         if (observables != null) {
             for (IObservableValue val : observables) {

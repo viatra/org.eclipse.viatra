@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
-import org.eclipse.incquery.runtime.evm.api.event.EmptyAtom;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -72,9 +72,9 @@ public class RuleEngine {
      *  
      * @param specification
      */
-    public <Match extends IPatternMatch> void addRule(
-            final RuleSpecification specification) {
-        addRule(specification, false, EmptyAtom.INSTANCE);
+    public <EventAtom> void addRule(
+            final RuleSpecification<EventAtom> specification) {
+        addRule(specification, false, specification.createEmptyFilter());
     }
 
     /**
@@ -84,9 +84,9 @@ public class RuleEngine {
      * @param specification
      * @param fireNow if true, all enabled activations of the new rule are fired immediately
      */
-    public void addRule(
-            final RuleSpecification specification, boolean fireNow) {
-                addRule(specification, fireNow, EmptyAtom.INSTANCE);
+    public <EventAtom> void addRule(
+            final RuleSpecification<EventAtom> specification, boolean fireNow) {
+                addRule(specification, fireNow, specification.createEmptyFilter());
             }
 
     /**
@@ -97,12 +97,12 @@ public class RuleEngine {
      * @param fireNow if true, all enabled activations of the new rule are fired immediately
      * @param filter the partial match to be used as a filter for activations
      */
-    public void addRule(
-            final RuleSpecification specification, boolean fireNow, Atom filter) {
+    public <EventAtom> void addRule(
+            final RuleSpecification<EventAtom> specification, boolean fireNow, EventFilter<EventAtom> filter) {
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        checkArgument(!filter.isMutable(), "Cannot instantiate rule with mutable filter!");
-        RuleInstance instance;
+        //checkArgument(!filter.isMutable(), "Cannot instantiate rule with mutable filter!");
+        RuleInstance<EventAtom> instance;
         instance = ruleBase.instantiateRule(specification, filter);
         if(fireNow) {
             fireActivations(instance);
@@ -113,7 +113,7 @@ public class RuleEngine {
      * 
      * @return a copy of the multimap containing all activations
      */
-    public Multimap<ActivationState, Activation> getActivations() {
+    public Multimap<ActivationState, Activation<?>> getActivations() {
         return ImmutableMultimap.copyOf(ruleBase.getAgenda().getActivations());
     }
 
@@ -121,7 +121,7 @@ public class RuleEngine {
      * 
      * @return the next enabled activation if exists, selected by the conflict resolver
      */
-    public Activation getNextActivation() {
+    public Activation<?> getNextActivation() {
         return ruleBase.getAgenda().getNextActivation();
     }
 
@@ -129,7 +129,7 @@ public class RuleEngine {
      * 
      * @return an immutable set of conflicting activations
      */
-    public Set<Activation> getConflictingActivations() {
+    public Set<Activation<?>> getConflictingActivations() {
         return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictingActivations());
         //return Collections.unmodifiableSet(ruleBase.getAgenda().getConflictingActivations());
     }
@@ -139,7 +139,7 @@ public class RuleEngine {
      * @param state
      * @return an immutable set of the activations in the given state
      */
-    public Set<Activation> getActivations(final ActivationState state) {
+    public Set<Activation<?>> getActivations(final IncQueryActivationStateEnum state) {
         checkNotNull(state, "Activation state must be specified!");
         return ImmutableSet.copyOf(ruleBase.getAgenda().getActivations(state));
     }
@@ -149,8 +149,8 @@ public class RuleEngine {
      * @param specification
      * @return the immutable set of activations of the given specification
      */
-    public Set<Activation> getActivations(final RuleSpecification specification) {
-        return getActivations(specification, EmptyAtom.INSTANCE);
+    public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification) {
+        return getActivations(specification, specification.createEmptyFilter());
     }
 
     /**
@@ -159,7 +159,7 @@ public class RuleEngine {
      * @param filter
      * @return the immutable set of activations of the given filtered specification
      */
-    public Set<Activation> getActivations(final RuleSpecification specification, Atom filter) {
+    public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         return ImmutableSet.copyOf(ruleBase.getInstance(specification, filter).getAllActivations());
@@ -172,21 +172,21 @@ public class RuleEngine {
      * @return the immutable set of activations of the given specification
      * with the given state
      */
-    public <Match extends IPatternMatch> Set<Activation> getActivations(final RuleSpecification specification,
+    public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification,
             final ActivationState state) {
-        return getActivations(specification, EmptyAtom.INSTANCE, state);
+        return getActivations(specification, specification.createEmptyFilter(), state);
     }
 
     /**
-     * 
-     * @param specification
-     * @param filter TODO
+     * TODO javadoc
+     * @param specification 
+     * @param filter 
      * @param state
      * @return the immutable set of activations of the given specification
      * with the given state
      */
-    public <Match extends IPatternMatch> Set<Activation> getActivations(
-            final RuleSpecification specification, Atom filter, final ActivationState state) {
+    public <EventAtom> Set<Activation<EventAtom>> getActivations(
+            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter, final ActivationState state) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(state, "Activation state must be specified!");
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
@@ -200,9 +200,9 @@ public class RuleEngine {
      * 
      * @param instance
      */
-    protected void fireActivations(RuleInstance instance) {
+    protected <EventAtom> void fireActivations(RuleInstance<EventAtom> instance) {
         Context context = new Context();
-        for (Activation act : instance.getAllActivations()) {
+        for (Activation<EventAtom> act : instance.getAllActivations()) {
             act.fire(context);
         }
     }
@@ -211,11 +211,11 @@ public class RuleEngine {
      * 
      * @return the immutable set of rules in the EVM
      */
-    public Set<RuleSpecification> getRuleSpecifications() {
+    public Set<RuleSpecification<?>> getRuleSpecifications() {
         return ImmutableSet.copyOf(ruleBase.getRuleSpecificationMultimap().keySet());
     }
     
-    public Multimap<RuleSpecification, Atom> getRuleSpecificationMultimap(){
+    public Multimap<RuleSpecification<?>, EventFilter<?>> getRuleSpecificationMultimap(){
         return ImmutableMultimap.copyOf(ruleBase.getRuleSpecificationMultimap());
     }
 
@@ -225,9 +225,9 @@ public class RuleEngine {
      * @param specification
      * @return true, if the rule existed
      */
-    public boolean removeRule(final RuleSpecification specification) {
+    public <EventAtom> boolean removeRule(final RuleSpecification<EventAtom> specification) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        return ruleBase.removeRule(specification, EmptyAtom.INSTANCE);
+        return ruleBase.removeRule(specification, specification.createEmptyFilter());
     }
 
     /**
@@ -237,8 +237,8 @@ public class RuleEngine {
      * @param filter the partial match used as a filter
      * @return true, if the rule existed
      */
-    public boolean removeRule(
-            final RuleSpecification specification, Atom filter) {
+    public <EventAtom> boolean removeRule(
+            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         return ruleBase.removeRule(specification, filter);
@@ -250,13 +250,17 @@ public class RuleEngine {
     protected RuleBase getRuleBase() {
         return ruleBase;
     }
-
+    
     /**
      * 
      * @return the IncQueryEngine of the ruleBase
      */
-    public EventSource getEventSource() {
-        return ruleBase.getEventSource();
+    public EventRealm getEventSource() {
+        return ruleBase.getEventRealm();
+    }
+    
+    public Logger getLogger() {
+        return ruleBase.getLogger();
     }
 
     /**

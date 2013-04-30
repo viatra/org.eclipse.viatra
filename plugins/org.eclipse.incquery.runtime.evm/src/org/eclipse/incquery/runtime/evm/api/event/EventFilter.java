@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api.event;
 
-
 /**
- * Basic interface that represents a source that is able to send notifications on events
+ * Interface for filters
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventSource<EventAtom> {
-    
-    EventSourceSpecification<EventAtom> getSourceSpecification();
+public interface EventFilter<EventAtom> {
 
-    EventRealm getRealm();
-    
-    void dispose();
+   boolean isProcessable(EventAtom eventAtom);
 }

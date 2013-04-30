@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.eclipse.incquery.runtime.evm.api.event.AbstractRuleInstanceBuilder;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
@@ -33,11 +36,12 @@ import com.google.common.collect.Multimap;
  * @author Abel Hegedus
  * 
  */
-public abstract class RuleSpecification {
+public class RuleSpecification<EventAtom> {
 
     private final ActivationLifeCycle lifeCycle;
-    private final Multimap<ActivationState, Job> jobs;
+    private final Multimap<ActivationState, Job<EventAtom>> jobs;
     private final Set<ActivationState> enabledStates;
+    private final EventSourceSpecification<EventAtom> sourceSpecification;
 
     /**
      * Creates a specification with the given life-cycle and job set.
@@ -45,14 +49,15 @@ public abstract class RuleSpecification {
      * @param lifeCycle
      * @param jobs
      */
-    public RuleSpecification(final ActivationLifeCycle lifeCycle,
-            final Set<Job> jobs) {
-        this.lifeCycle = checkNotNull(ActivationLifeCycle.copyOf(lifeCycle),
-                "Cannot create rule specification with null life cycle!");
+    public RuleSpecification(final EventSourceSpecification<EventAtom> sourceSpecification, final ActivationLifeCycle lifeCycle,
+            final Set<Job<EventAtom>> jobs) {
+        checkArgument(sourceSpecification != null, "Cannot create rule specification with null source definition!");
+        this.sourceSpecification = sourceSpecification;
+        this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
         this.jobs = HashMultimap.create();
         Set<ActivationState> states = new TreeSet<ActivationState>();
         if (jobs != null && !jobs.isEmpty()) {
-            for (Job job : jobs) {
+            for (Job<EventAtom> job : jobs) {
                 ActivationState state = job.getActivationState();
                 this.jobs.put(state, job);
                 states.add(state);
@@ -62,13 +67,38 @@ public abstract class RuleSpecification {
     }
     
     /**
-     * Instantiates the rule on the given EventSource with the given filter
+     * Instantiates the rule on the given EventRealm with the given filter
      * .
-     * @param eventSource
+     * @param eventRealm
      * @param filter
      * @return the instantiated rule
      */
-    protected abstract RuleInstance instantiateRule(final EventSource eventSource, final Atom filter);
+    protected RuleInstance<EventAtom> instantiateRule(final EventRealm eventRealm, final EventFilter<EventAtom> filter) {
+//        boolean valid = eventRealm.validateSourceSpecification(sourceSpecification, filter);
+//        if(valid) {
+//            @SuppressWarnings("unchecked")
+//            EventRealm<EventAtom> realRealm = (EventRealm<EventAtom>) eventRealm;
+//            EventSource<EventAtom> eventSource = eventRealm.createSource(sourceSpecification);
+//            EventHandler<EventAtom> eventHandler = eventSource.createHandler(filter);
+            RuleInstance<EventAtom> ruleInstance = new RuleInstance<EventAtom>(this);
+            AbstractRuleInstanceBuilder<EventAtom> builder = sourceSpecification.getRuleInstanceBuilder(eventRealm);
+            builder.prepareRuleInstance(ruleInstance, filter);
+            return ruleInstance;
+//        }
+//        return null;
+        
+    }
+    
+    /**
+     * @return the sourceSpecification
+     */
+    public EventSourceSpecification<EventAtom> getSourceSpecification() {
+        return sourceSpecification;
+    }
+    
+    public EventFilter<EventAtom> createEmptyFilter() {
+        return sourceSpecification.createEmptyFilter();
+    }
     
     /**
      * @return the lifeCycle
@@ -90,14 +120,14 @@ public abstract class RuleSpecification {
      * @param state
      * @return the collection of jobs
      */
-    public Collection<Job> getJobs(final ActivationState state) {
+    public Collection<Job<EventAtom>> getJobs(final ActivationState state) {
         return jobs.get(state);
     }
 
     /**
      * @return the jobs
      */
-    public Multimap<ActivationState, Job> getJobs() {
+    public Multimap<ActivationState, Job<EventAtom>> getJobs() {
         return jobs;
     }
 

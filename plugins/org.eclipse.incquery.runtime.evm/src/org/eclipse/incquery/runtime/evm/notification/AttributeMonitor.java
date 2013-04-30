@@ -14,20 +14,18 @@ package org.eclipse.incquery.runtime.evm.notification;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
-
 /**
  * The class defines the operations that are required to observe the EMF attribute changes on atom objects.
  * 
  * @author Tamas Szabo
  * 
  */
-public abstract class AttributeMonitor {
+public abstract class AttributeMonitor<Atom> {
 
-    private List<IAttributeMonitorListener> listeners;
+    private List<IAttributeMonitorListener<Atom>> listeners;
 
     public AttributeMonitor() {
-        this.listeners = new ArrayList<IAttributeMonitorListener>();
+        this.listeners = new ArrayList<IAttributeMonitorListener<Atom>>();
     }
     
     /**
@@ -39,7 +37,7 @@ public abstract class AttributeMonitor {
      * 
      * @param listener
      */
-    public void addAttributeMonitorListener(final IAttributeMonitorListener listener) {
+    public void addAttributeMonitorListener(final IAttributeMonitorListener<Atom> listener) {
         this.listeners.add(listener);
     }
 
@@ -49,7 +47,7 @@ public abstract class AttributeMonitor {
      * 
      * @param listener
      */
-    public void removeAttributeMonitorListener(final IAttributeMonitorListener listener) {
+    public void removeAttributeMonitorListener(final IAttributeMonitorListener<Atom> listener) {
         this.listeners.remove(listener);
     }
 
@@ -78,7 +76,7 @@ public abstract class AttributeMonitor {
      * @param match
      */
     protected void notifyListeners(final Atom atom) {
-        for (IAttributeMonitorListener listener : listeners) {
+        for (IAttributeMonitorListener<Atom> listener : listeners) {
             listener.notifyUpdate(atom);
         }
     }

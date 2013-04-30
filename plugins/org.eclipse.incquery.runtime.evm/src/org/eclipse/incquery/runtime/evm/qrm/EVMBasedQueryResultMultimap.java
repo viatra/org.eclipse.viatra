@@ -13,20 +13,21 @@ package org.eclipse.incquery.runtime.evm.qrm;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
+import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecification;
 
 /**
  * This {@link QueryResultMultimap} implementation uses the EVM to provide a query-based multimap.
@@ -39,7 +40,7 @@ import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecifica
 public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, KeyType, ValueType> extends
         QueryResultMultimap<KeyType, ValueType> {
 
-    private final Set<Job> jobs;
+    private final Set<Job<Match>> jobs;
 
     private final ExecutionSchema schema;
 
@@ -49,10 +50,10 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * @param schema
      */
     protected EVMBasedQueryResultMultimap(final ExecutionSchema schema) {
-        super(schema.getEventSource().getLogger());
+        super(Logger.getLogger(EVMBasedQueryResultMultimap.class));
         this.schema = schema;
-        this.jobs = new HashSet<Job>();
-        jobs.add(new StatelessJob<Match>(ActivationState.APPEARED, new IMatchProcessor<Match>() {
+        this.jobs = new HashSet<Job<Match>>();
+        jobs.add(new StatelessJob<Match>(IncQueryActivationStateEnum.APPEARED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {
                 KeyType key = getKeyFromMatch(match);
@@ -61,7 +62,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
             }
         }));
 
-        jobs.add(new StatelessJob<Match>(ActivationState.DISAPPEARED, new IMatchProcessor<Match>() {
+        jobs.add(new StatelessJob<Match>(IncQueryActivationStateEnum.DISAPPEARED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {
                 KeyType key = getKeyFromMatch(match);
@@ -88,7 +89,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      */
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IMatcherFactory<Matcher> factory) {
-        schema.addRule(new SimpleMatcherRuleSpecification<Match>(factory,
+        schema.addRule(Rules.newSimpleMatcherRuleSpecification(factory,
                 DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 

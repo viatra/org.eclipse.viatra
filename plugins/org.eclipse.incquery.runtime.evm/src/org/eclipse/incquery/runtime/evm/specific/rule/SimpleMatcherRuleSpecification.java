@@ -10,30 +10,20 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.rule;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.RuleInstance;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-
-import com.google.common.base.Objects;
 
 /**
  * This class implements a rule specification that uses a single matcher factory to prepare instances. 
  * 
  * @author Abel Hegedus
- *
+ * @deprecated Use Rules.newSimpleMatcherRuleSpecification instead!
  */
 public class SimpleMatcherRuleSpecification<Match extends IPatternMatch> extends RuleSpecification {
     
@@ -48,41 +38,42 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch> extends
      */
     public SimpleMatcherRuleSpecification(final IMatcherFactory<? extends IncQueryMatcher<Match>> factory, final ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
-        super(lifeCycle, jobs);
-        this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
+        super(null, lifeCycle, jobs);
+        throw new UnsupportedOperationException("Do not use this subclass of rule specification!");
+        //this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
     }
 
-    @Override
-    protected RuleInstance instantiateRule(EventSource eventSource, Atom filter) {
-        SimpleMatcherRuleInstance<Match> ruleInstance = null;
-        if(eventSource instanceof IncQueryEventSource) {
-            IncQueryEngine engine = ((IncQueryEventSource) eventSource).getEngine();
-            try {
-                IncQueryMatcher<Match> matcher = getMatcher(engine);
-                ruleInstance = new SimpleMatcherRuleInstance<Match>(this, filter);
-                ruleInstance.prepareInstance(matcher);
-            } catch (IncQueryException e) {
-                engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
-            }
-        } else {
-            eventSource.getLogger().error("Cannot instantiate rule with EvenSource " + eventSource + "! Should be IncQueryEventSource.");
-        }
-        return ruleInstance;
-    }
-
-    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
-        IncQueryMatcher<Match> matcher = factory.getMatcher(engine);
-        return matcher;
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
-                .add("lifecycle", getLifeCycle()).add("jobs", getJobs()).toString();
-    }
+//    @Override
+//    protected RuleInstance instantiateRule(EventRealm eventRealm, Atom filter) {
+//        SimpleMatcherRuleInstance<Match> ruleInstance = null;
+//        if(eventRealm instanceof IncQueryEventRealm) {
+//            IncQueryEngine engine = ((IncQueryEventRealm) eventRealm).getEngine();
+//            try {
+//                IncQueryMatcher<Match> matcher = getMatcher(engine);
+//                ruleInstance = new SimpleMatcherRuleInstance<Match>(this, filter);
+//                ruleInstance.prepareInstance(matcher);
+//            } catch (IncQueryException e) {
+//                engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
+//            }
+//        } else {
+//            eventRealm.getLogger().error("Cannot instantiate rule with EvenSource " + eventRealm + "! Should be IncQueryEventRealm.");
+//        }
+//        return ruleInstance;
+//    }
+//
+//    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
+//        IncQueryMatcher<Match> matcher = factory.getMatcher(engine);
+//        return matcher;
+//    }
+//    
+//    /*
+//     * (non-Javadoc)
+//     * 
+//     * @see java.lang.Object#toString()
+//     */
+//    @Override
+//    public String toString() {
+//        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
+//                .add("lifecycle", getLifeCycle()).add("jobs", getJobs()).toString();
+//    }
 }

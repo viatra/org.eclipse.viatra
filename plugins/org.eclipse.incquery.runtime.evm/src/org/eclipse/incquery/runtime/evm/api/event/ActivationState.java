@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api.event;
 
-
 /**
- * Basic interface that represents a source that is able to send notifications on events
+ * Interface for specifying a state that an activation can be in.
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventSource<EventAtom> {
-    
-    EventSourceSpecification<EventAtom> getSourceSpecification();
+public interface ActivationState {
 
-    EventRealm getRealm();
+    boolean isInactive();
     
-    void dispose();
 }

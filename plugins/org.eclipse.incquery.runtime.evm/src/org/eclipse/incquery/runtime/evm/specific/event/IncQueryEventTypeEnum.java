@@ -8,20 +8,19 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api.event;
+package org.eclipse.incquery.runtime.evm.specific.event;
 
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 
 /**
- * Basic interface that represents a source that is able to send notifications on events
+ * This enumeration defines the initial set of events that are 
+ * defined for the EVM.
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventSource<EventAtom> {
+public enum IncQueryEventTypeEnum implements EventType{
     
-    EventSourceSpecification<EventAtom> getSourceSpecification();
-
-    EventRealm getRealm();
+    MATCH_APPEARS, MATCH_DISAPPEARS, MATCH_UPDATES;
     
-    void dispose();
 }

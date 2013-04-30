@@ -18,8 +18,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.event.EmptyAtom;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 
 /**
  * @author Abel Hegedus
@@ -35,7 +34,8 @@ public class RuleEngines {
      * @return the prepared rule engine
      */
     public static RuleEngine createIncQueryRuleEngine(final IncQueryEngine engine) {
-        return EventDrivenVM.createRuleEngine(IncQueryEventSource.create(engine));
+        //return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
+        return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
     }
 
     /**
@@ -47,11 +47,11 @@ public class RuleEngines {
      * @return the prepared rule engine
      */
     public static RuleEngine createIncQueryRuleEngine(final IncQueryEngine engine,
-            final Set<RuleSpecification> specifications) {
+            final Set<RuleSpecification<?>> specifications) {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
         RuleEngine ruleEngine = createIncQueryRuleEngine(engine);
-        for (RuleSpecification ruleSpecification : specifications) {
-            ruleEngine.addRule(ruleSpecification, false, EmptyAtom.INSTANCE);
+        for (RuleSpecification<?> ruleSpecification : specifications) {
+            ruleEngine.addRule(ruleSpecification, false);
         }
         return ruleEngine;
     }
