@@ -12,8 +12,8 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
@@ -31,29 +31,29 @@ import org.eclipse.incquery.runtime.evm.specific.rule.SimpleMatcherRuleSpecifica
 public final class Rules {
     
     /**
-     * Creates a {@link SimpleMatcherRuleSpecification} with the given factory, life-cycle and jobs.
+     * Creates a {@link SimpleMatcherRuleSpecification} with the given query specification, life-cycle and jobs.
      * 
      * For default life-cycle implementations, see {@link DefaultActivationLifeCycle}.
      *        
-     * @param factory
+     * @param querySpecification
      * @param lifecycle
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, ActivationLifeCycle lifecycle, Set<Job> jobs){
-        return new SimpleMatcherRuleSpecification<Match, Matcher>(factory, lifecycle, jobs);
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IQuerySpecification<Matcher> querySpecification, ActivationLifeCycle lifecycle, Set<Job> jobs){
+        return new SimpleMatcherRuleSpecification<Match, Matcher>(querySpecification, lifecycle, jobs);
     }
     
     /**
-     * Creates a {@link SimpleMatcherRuleSpecification} with the given factory and jobs,
+     * Creates a {@link SimpleMatcherRuleSpecification} with the given query specification and jobs,
      *  using the {@link DefaultActivationLifeCycle#DEFAULT} life-cycle.
      * 
-     * @param factory
+     * @param querySpecification
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IMatcherFactory<Matcher> factory, Set<Job> jobs){
-        return newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT, jobs);
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification newSimpleMatcherRuleSpecification(IQuerySpecification<Matcher> querySpecification, Set<Job> jobs){
+        return newSimpleMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
     }
 
 }

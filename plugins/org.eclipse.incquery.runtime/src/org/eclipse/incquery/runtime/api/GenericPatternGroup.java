@@ -43,19 +43,19 @@ public class GenericPatternGroup extends BasePatternGroup {
     }
 
     /**
-     * Creates a generic {@link IPatternGroup} instance from {@link IMatcherFactory} objects.
+     * Creates a generic {@link IPatternGroup} instance from {@link IQuerySpecification} objects.
      * 
-     * @param matcherFactories
+     * @param querySpecifications
      * @return
      */
-    public static IPatternGroup of(Set<IMatcherFactory<?>> matcherFactories) {
-        return new GenericPatternGroup(patterns(matcherFactories));
+    public static IPatternGroup of(Set<IQuerySpecification<?>> querySpecifications) {
+        return new GenericPatternGroup(patterns(querySpecifications));
     }
 
     /**
      * Creates a generic {@link IPatternGroup} instance from {@link Pattern} objects.
      * 
-     * @param matcherFactories
+     * @param querySpecifications
      * @return
      */
     public static IPatternGroup of(Pattern... patterns) {
@@ -63,19 +63,19 @@ public class GenericPatternGroup extends BasePatternGroup {
     }
 
     /**
-     * Creates a generic {@link IPatternGroup} instance from {@link IMatcherFactory} objects.
+     * Creates a generic {@link IPatternGroup} instance from {@link IQuerySpecification} objects.
      * 
-     * @param matcherFactories
+     * @param querySpecifications
      * @return
      */
-    public static IPatternGroup of(IMatcherFactory<?>... matcherFactories) {
-        return of(new HashSet<IMatcherFactory<?>>(Arrays.asList(matcherFactories)));
+    public static IPatternGroup of(IQuerySpecification<?>... querySpecifications) {
+        return of(new HashSet<IQuerySpecification<?>>(Arrays.asList(querySpecifications)));
     }
 
     /**
      * Creates a generic {@link IPatternGroup} instance from other {@link IPatternGroup} objects (subgroups).
      * 
-     * @param matcherFactories
+     * @param querySpecifications
      * @return
      */
     public static IPatternGroup of(IPatternGroup... subGroups) {

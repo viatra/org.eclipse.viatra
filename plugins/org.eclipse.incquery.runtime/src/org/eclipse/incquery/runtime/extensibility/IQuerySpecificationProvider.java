@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.extensibility;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Provides a MatcherFactory. Used e.g. as a plug-in extension.
+ * Provides an IQuerySpecification. Used e.g. as a plug-in extension.
  * 
  * @author Bergmann Gabor
  * 
  */
-public interface IMatcherFactoryProvider<Factory extends IMatcherFactory<?>> {
-    public Factory get() throws IncQueryException;
+public interface IQuerySpecificationProvider<Specification extends IQuerySpecification<?>> {
+    public Specification get() throws IncQueryException;
 }

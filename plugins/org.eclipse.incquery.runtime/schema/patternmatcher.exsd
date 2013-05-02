@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.incquery.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.incquery.runtime" id="matcherfactory" name="EMF-IncQuery Pattern Matcher"/>
+         <meta.schema plugin="org.eclipse.incquery.runtime" id="queryspecification" name="EMF-IncQuery Pattern Matcher"/>
       </appInfo>
       <documentation>
          A registered patternmatcher that is included in the pattern matcher registry.
@@ -56,13 +56,13 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="factoryProvider" type="string" use="required">
+         <attribute name="querySpecificationProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  A generated matcher factory for the pattern
+                  A generated query specification for the pattern
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.extensibility.IMatcherFactoryProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider"/>
                </appInfo>
             </annotation>
          </attribute>

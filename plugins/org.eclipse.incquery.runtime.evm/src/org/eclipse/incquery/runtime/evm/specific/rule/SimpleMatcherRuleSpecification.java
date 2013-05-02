@@ -14,8 +14,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
@@ -30,26 +30,26 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import com.google.common.base.Objects;
 
 /**
- * This class implements a rule specification that uses a single matcher factory to prepare instances. 
+ * This class implements a rule specification that uses a single query specification to prepare instances. 
  * 
  * @author Abel Hegedus
  *
  */
 public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends RuleSpecification {
     
-    private final IMatcherFactory<Matcher> factory;
+    private final IQuerySpecification<Matcher> querySpecification;
     
     /**
-     * Creates a specification with the given factory, life-cycle and job list.
+     * Creates a specification with the given query specification, life-cycle and job list.
      * 
-     * @param factory
+     * @param querySpecification
      * @param lifeCycle
      * @param jobs
      */
-    public SimpleMatcherRuleSpecification(final IMatcherFactory<Matcher> factory, final ActivationLifeCycle lifeCycle,
+    public SimpleMatcherRuleSpecification(final IQuerySpecification<Matcher> querySpecification, final ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
         super(lifeCycle, jobs);
-        this.factory = checkNotNull(factory, "Cannot create rule specification with null matcher factory!");
+        this.querySpecification = checkNotNull(querySpecification, "Cannot create rule specification with null query specification!");
     }
 
     @Override
@@ -62,14 +62,14 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
                 ruleInstance.prepareInstance(matcher);
                 return ruleInstance;
             } catch (IncQueryException e) {
-                engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",factory.getPatternFullyQualifiedName(),this), e);
+                engine.getLogger().error(String.format("Could not initialize matcher for pattern %s in rule specification %s",querySpecification.getPatternFullyQualifiedName(),this), e);
             }
         }
         return null;
     }
 
     protected Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-        Matcher matcher = factory.getMatcher(engine);
+        Matcher matcher = querySpecification.getMatcher(engine);
         return matcher;
     }
     
@@ -80,7 +80,7 @@ public class SimpleMatcherRuleSpecification<Match extends IPatternMatch, Matcher
      */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("pattern", factory.getPatternFullyQualifiedName())
+        return Objects.toStringHelper(this).add("pattern", querySpecification.getPatternFullyQualifiedName())
                 .add("lifecycle", getLifeCycle()).add("jobs", getJobs()).toString();
     }
 }

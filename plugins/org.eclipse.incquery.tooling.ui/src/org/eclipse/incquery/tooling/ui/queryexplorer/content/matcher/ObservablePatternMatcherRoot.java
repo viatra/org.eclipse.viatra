@@ -199,7 +199,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
             String message = null;
             try {
                 if (isGenerated) {
-                    matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(key.getEngine());
+                    matcher = DatabindingUtil.getQuerySpecificationForGeneratedPattern(pattern).getMatcher(key.getEngine());
                 } else {
                     matcher = new GenericPatternMatcher(pattern, key.getEngine());
                 }

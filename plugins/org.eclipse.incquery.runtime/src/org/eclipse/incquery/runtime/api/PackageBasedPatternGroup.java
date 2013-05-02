@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.impl.BasePatternGroup;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * Package based {@link BasePatternGroup} implementation. It handles patterns as a group within the same package.
@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
  */
 public class PackageBasedPatternGroup extends BasePatternGroup {
 
-    private final Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
+    private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
     private final String packageName;
     private final boolean includeSubPackages;
 
@@ -42,7 +42,7 @@ public class PackageBasedPatternGroup extends BasePatternGroup {
 
     @Override
     public Set<Pattern> getPatterns() {
-        return patterns(getMatcherFactories());
+        return patterns(getQuerySpecifications());
     }
 
     /**
@@ -53,10 +53,10 @@ public class PackageBasedPatternGroup extends BasePatternGroup {
     }
 
     /**
-     * @return the matcherFactories
+     * @return the querySpecifications
      */
-    public Set<IMatcherFactory<?>> getMatcherFactories() {
-        return matcherFactories;
+    public Set<IQuerySpecification<?>> getQuerySpecifications() {
+        return querySpecifications;
     }
 
     /**
@@ -75,9 +75,9 @@ public class PackageBasedPatternGroup extends BasePatternGroup {
 
     private void refreshInternal() {
         if (isIncludeSubPackages()) {
-            this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternSubTree(this.packageName));
+            this.querySpecifications.addAll(QuerySpecificationRegistry.getPatternSubTree(this.packageName));
         } else {
-            this.matcherFactories.addAll(MatcherFactoryRegistry.getPatternGroup(this.packageName));
+            this.querySpecifications.addAll(QuerySpecificationRegistry.getPatternGroup(this.packageName));
         }
     }
 

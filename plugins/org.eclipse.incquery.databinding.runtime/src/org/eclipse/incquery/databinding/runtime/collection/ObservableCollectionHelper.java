@@ -13,8 +13,8 @@ package org.eclipse.incquery.databinding.runtime.collection;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
@@ -71,14 +71,14 @@ public final class ObservableCollectionHelper {
      * 
      * @param observableCollectionUpdate
      *            the observable collection to handle
-     * @param factory
-     *            the {@link IMatcherFactory} used to create the rule
+     * @param querySpecification
+     *            the {@link IQuerySpecification} used to create the rule
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification createRuleSpecification(
-            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IMatcherFactory<Matcher> factory) {
+            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IQuerySpecification<Matcher> querySpecification) {
 
         Set<Job> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return Rules.newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return Rules.newSimpleMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
     
     /**
@@ -86,7 +86,7 @@ public final class ObservableCollectionHelper {
      * 
      * @param observableCollectionUpdate
      *            the observable collection to handle
-     * @param factory
+     * @param matcher
      *            the {@link IncQueryMatcher} used to create the rule
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification createRuleSpecification(

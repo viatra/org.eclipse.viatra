@@ -25,13 +25,13 @@ import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum;
 
 /**
- * Provides common functionality of pattern-specific generated matcher factories.
+ * Provides common functionality of pattern-specific generated query specifications.
  * 
  * @author Bergmann Gábor
  * @author Mark Czotter
  */
-public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
-        BaseMatcherFactory<Matcher> {
+public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
+        BaseQuerySpecification<Matcher> {
 
     private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();
 
@@ -39,7 +39,7 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
 
     private final Pattern pattern;
 
-    public BaseGeneratedMatcherFactory() throws IncQueryException {
+    public BaseGeneratedQuerySpecification() throws IncQueryException {
         pattern = parsePattern();
         // if (pattern == null)
         // throw new IncQueryException(
@@ -139,34 +139,5 @@ public abstract class BaseGeneratedMatcherFactory<Matcher extends IncQueryMatche
         }
     }
 
-    // private PatternModel parseRoot(InputStream inputStream) {
-    // final Injector injector = IncQueryRuntimePlugin.getDefault().getInjector();
-    // final ResourceSet resourceSet = injector.getProvider(XtextResourceSet.class).get();
-    // final IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
-    // Resource resource = resourceFactory.createResource(computeUnusedUri(resourceSet));
-    // resourceSet.getResources().add(resource);
-    // try {
-    // resource.load(inputStream, null);
-    // final PatternModel root = (PatternModel) (resource.getContents().isEmpty() ? null :
-    // resource.getContents().get(0));
-    // return root;
-    // } catch (IOException e) {
-    // throw new WrappedException(e);
-    // }
-    // }
-
-    // protected InputStream getAsStream(CharSequence text) {
-    // return new StringInputStream(text == null ? "" : text.toString());
-    // }
-
-    // protected URI computeUnusedUri(ResourceSet resourceSet) {
-    // String name = "__patternRuntime";
-    // for (int i = 0; i < Integer.MAX_VALUE; i++) {
-    // URI syntheticUri = URI.createURI(name + i + ".eiq");
-    // if (resourceSet.getResource(syntheticUri, false) == null)
-    // return syntheticUri;
-    // }
-    // throw new IllegalStateException();
-    // }
 
 }

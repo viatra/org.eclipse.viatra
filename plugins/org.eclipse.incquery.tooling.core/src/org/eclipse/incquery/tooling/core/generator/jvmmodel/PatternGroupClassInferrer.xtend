@@ -60,9 +60,9 @@ class PatternGroupClassInferrer {
 			it.exceptions += incQueryException
 			it.setBody([
 				for (matcherRef : matcherReferences) {
-					append('''matcherFactories.add(''')
+					append('''querySpecifications.add(''')
 					serialize(matcherRef, model)
-					append('''.factory());''')
+					append('''.querySpecification());''')
 					newLine
 				}
 			])

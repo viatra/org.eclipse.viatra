@@ -243,13 +243,13 @@ class PatternMatchClassInferrer {
 			it.setBody([
 				append('''
 				try {
-					return «pattern.matcherClassName».factory().getPattern();
+					return «pattern.matcherClassName».querySpecification().getPattern();
 				} catch (''') 
 				referClass(pattern, typeof (IncQueryException)) 
 				append(" ")
 				append(''' 
 				ex) {
-				 	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+				 	// This cannot happen, as the match object can only be instantiated if the query specification exists
 				 	throw new ''')
 				referClass(pattern, typeof (IllegalStateException))
 				append('''

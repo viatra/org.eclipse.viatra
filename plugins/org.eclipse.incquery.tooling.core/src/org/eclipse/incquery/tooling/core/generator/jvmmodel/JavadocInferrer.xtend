@@ -48,12 +48,12 @@ class JavadocInferrer {
 		</pre></code>
 		
 		@see «pattern.matchClassName»
-		@see «pattern.matcherFactoryClassName»
+		@see «pattern.querySpecificationClassName»
 		@see «pattern.processorClassName»
    	'''
    	
-   	def javadocMatcherFactoryClass(Pattern pattern) '''
-	 	A pattern-specific matcher factory that can instantiate «pattern.matcherClassName» in a type-safe way.
+   	def javadocQuerySpecificationClass(Pattern pattern) '''
+	 	A pattern-specific query specification that can instantiate «pattern.matcherClassName» in a type-safe way.
 	 	
 	 	@see «pattern.matcherClassName»
 	 	@see «pattern.matchClassName»
@@ -185,13 +185,13 @@ class JavadocInferrer {
 		@return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
 	'''
 	
-	def javadocFactoryMethod(Pattern pattern) '''
-		@return the singleton instance of the factory of this pattern
+	def javadocQuerySpecificationMethod(Pattern pattern) '''
+		@return the singleton instance of the query specification of this pattern
 		@throws IncQueryException if the pattern definition could not be loaded
 	'''
 	
-	def javadocFactoryInstanceMethod(Pattern pattern) '''
-		@return the singleton instance of the matcher factory
+	def javadocQuerySpecificationInstanceMethod(Pattern pattern) '''
+		@return the singleton instance of the query specification
 		@throws IncQueryException if the pattern definition could not be loaded
 	'''
 }

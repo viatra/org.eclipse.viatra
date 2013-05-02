@@ -31,7 +31,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 
 /**
@@ -55,7 +55,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         public void run() {
             String patternName = matcher.getPatternName();
             try {
-                matcher = (IncQueryMatcher<IPatternMatch>) MatcherFactoryRegistry.getMatcherFactory(patternName)
+                matcher = (IncQueryMatcher<IPatternMatch>) QuerySpecificationRegistry.getQuerySpecification(patternName)
                         .getMatcher(matcher.getEngine());
             } catch (IncQueryException e) {
                 matcher.getEngine().getLogger()

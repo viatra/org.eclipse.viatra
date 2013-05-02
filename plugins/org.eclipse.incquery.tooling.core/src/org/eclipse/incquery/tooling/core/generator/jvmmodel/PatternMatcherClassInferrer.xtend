@@ -89,7 +89,7 @@ class PatternMatcherClassInferrer {
 			it.documentation = pattern.javadocMatcherConstructorEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
-			it.setBody([append('''super(engine, factory());''')])
+			it.setBody([append('''super(engine, querySpecification());''')])
 		]
    	}
    	

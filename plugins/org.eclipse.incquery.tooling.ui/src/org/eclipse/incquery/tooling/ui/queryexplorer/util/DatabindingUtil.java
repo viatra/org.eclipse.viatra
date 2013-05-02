@@ -50,10 +50,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -74,7 +74,7 @@ public class DatabindingUtil {
     private static ILog logger = IncQueryGUIPlugin.getDefault().getLog();
     private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
     private static List<Pattern> generatedPatterns;
-    private static Map<Pattern, IMatcherFactory<?>> generatedMatcherFactories;
+    private static Map<Pattern, IQuerySpecification<?>> generatedQuerySpecifications;
 
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
@@ -112,16 +112,16 @@ public class DatabindingUtil {
         }
     }
 
-    private static Map<Pattern, IMatcherFactory<?>> collectGeneratedMatcherFactories() {
-        Map<Pattern, IMatcherFactory<?>> factories = new HashMap<Pattern, IMatcherFactory<?>>();
-        for (IMatcherFactory<?> factory : MatcherFactoryRegistry.getContributedMatcherFactories()) {
-            Pattern pattern = factory.getPattern();
+    private static Map<Pattern, IQuerySpecification<?>> collectGeneratedQuerySpecifications() {
+        Map<Pattern, IQuerySpecification<?>> querySpecifications = new HashMap<Pattern, IQuerySpecification<?>>();
+        for (IQuerySpecification<?> querySpecification : QuerySpecificationRegistry.getContributedQuerySpecifications()) {
+            Pattern pattern = querySpecification.getPattern();
             Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
             if (annotationValue != null && annotationValue) {
-                factories.put(pattern, factory);
+                querySpecifications.put(pattern, querySpecification);
             }
         }
-        return factories;
+        return querySpecifications;
     }
 
     public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
@@ -139,11 +139,11 @@ public class DatabindingUtil {
         }
     }
 
-    public static synchronized Collection<IMatcherFactory<?>> getGeneratedMatcherFactories() {
-        if (generatedMatcherFactories == null) {
-            generatedMatcherFactories = collectGeneratedMatcherFactories();
+    public static synchronized Collection<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
+        if (generatedQuerySpecifications == null) {
+            generatedQuerySpecifications = collectGeneratedQuerySpecifications();
         }
-        return Collections.unmodifiableCollection(generatedMatcherFactories.values());
+        return Collections.unmodifiableCollection(generatedQuerySpecifications.values());
     }
 
     public static synchronized List<Pattern> getGeneratedPatterns() {
@@ -155,8 +155,8 @@ public class DatabindingUtil {
 
     private static List<Pattern> collectGeneratedPatterns() {
         List<Pattern> patterns = new ArrayList<Pattern>();
-        for (IMatcherFactory<?> factory : getGeneratedMatcherFactories()) {
-            patterns.add(factory.getPattern());
+        for (IQuerySpecification<?> querySpecification : getGeneratedQuerySpecifications()) {
+            patterns.add(querySpecification.getPattern());
         }
         return patterns;
     }
@@ -417,14 +417,14 @@ public class DatabindingUtil {
     }
 
     /**
-     * Returns the generated matcher factory for the given generated pattern.
+     * Returns the generated query specification for the given generated pattern.
      * 
      * @param pattern
      *            the pattern instance
-     * @return the matcher factory for the given pattern
+     * @return the query specification for the given pattern
      */
-    public static IMatcherFactory<?> getMatcherFactoryForGeneratedPattern(Pattern pattern) {
-        return generatedMatcherFactories.get(pattern);
+    public static IQuerySpecification<?> getQuerySpecificationForGeneratedPattern(Pattern pattern) {
+        return generatedQuerySpecifications.get(pattern);
     }
 
     /**

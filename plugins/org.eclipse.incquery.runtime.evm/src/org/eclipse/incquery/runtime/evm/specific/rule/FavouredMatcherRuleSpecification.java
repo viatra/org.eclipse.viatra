@@ -12,19 +12,19 @@ package org.eclipse.incquery.runtime.evm.specific.rule;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * A rule specification that is created using a designated {@link IncQueryMatcher} already initialized
- * on an {@link IncQueryEngine}. When the rule is instantiated in a different engine, the factory returned 
- * by the {@link MatcherFactoryRegistry} is used. 
+ * on an {@link IncQueryEngine}. When the rule is instantiated in a different engine, the query specification returned 
+ * by the {@link QuerySpecificationRegistry} is used. 
  * 
  * @author Abel Hegedus
  *
@@ -35,13 +35,13 @@ public class FavouredMatcherRuleSpecification<Match extends IPatternMatch, Match
     
     public FavouredMatcherRuleSpecification(Matcher matcher, ActivationLifeCycle lifeCycle,
             final Set<Job> jobs) {
-        super(getFactory(matcher), lifeCycle, jobs);
+        super(getQuerySpecification(matcher), lifeCycle, jobs);
         this.matcher = matcher;
     }
 
     @SuppressWarnings("unchecked")
-    private static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IMatcherFactory<Matcher> getFactory(Matcher matcher) {
-        return (IMatcherFactory<Matcher>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
+    private static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IQuerySpecification<Matcher> getQuerySpecification(Matcher matcher) {
+        return (IQuerySpecification<Matcher>) QuerySpecificationRegistry.getOrCreateQuerySpecification(matcher.getPattern());
     }
     
     @Override

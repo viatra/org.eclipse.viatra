@@ -189,6 +189,7 @@ class SampleUIGenerator implements IGenerationFragment {
 		import org.eclipse.ui.handlers.HandlerUtil;
 		import org.eclipse.incquery.tooling.ui.dialog.SampleUIDialogCreator;
 		import org.eclipse.incquery.runtime.exception.IncQueryException;
+		import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 		import «pattern.packageName + "." + pattern.matchClassName»;
@@ -211,7 +212,7 @@ class SampleUIGenerator implements IGenerationFragment {
 
 				«pattern.matcherClassName» matcher;
 				try{
-					matcher = «pattern.matcherClassName».factory().getMatcher(resource /* or resourceSet */);
+					matcher = «pattern.matcherClassName».querySpecification().getMatcher(resource /* or resourceSet */);
 				} catch (IncQueryException ex) {
 					throw new ExecutionException("Error creating pattern matcher", ex);
 				}
@@ -234,7 +235,7 @@ class SampleUIGenerator implements IGenerationFragment {
 «««		
 «««				if(emfRoot != null) {	
 «««					//get all matches of the pattern
-«««					«pattern.matcherClassName» matcher = «pattern.matcherClassName».FACTORY.getMatcher(emfRoot);
+«««					«pattern.matcherClassName» matcher = «pattern.matcherClassName».querySpecification().getMatcher(IncQueryEngine.on(emfRoot));
 «««					Collection<«pattern.matchClassName»> matches = matcher.getAllMatches();
 «««					//serializes the current match into the string builder
 «««					if(matches.size() > 0)

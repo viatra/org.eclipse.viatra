@@ -33,7 +33,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * 
  * @author Bergmann Gábor
  * @see GenericPatternMatch
- * @see GenericMatcherFactory
+ * @see GenericQuerySpecification
  * @see GenericMatchProcessor
  */
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {

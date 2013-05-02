@@ -20,11 +20,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * Utility class for instantiating query-based feature handlers ({@link IQueryBasedFeatureHandler}).
@@ -135,10 +135,10 @@ public final class QueryBasedFeatureHelper {
         QueryBasedFeatureHandler newDerivedFeature = new QueryBasedFeatureHandler(feature, kind, keepCache);
         features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(newDerivedFeature));
 
-        IMatcherFactory<?> matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
-        if (matcherFactory != null) {
+        IQuerySpecification<?> querySpecification = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+        if (querySpecification != null) {
             try {
-                IncQueryMatcher<?> matcher = matcherFactory.getMatcher(notifier);
+                IncQueryMatcher<?> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
                 newDerivedFeature.initialize(matcher, sourceParamName, targetParamName);
                 newDerivedFeature.startMonitoring();
             } catch (IncQueryException e) {
@@ -148,7 +148,7 @@ public final class QueryBasedFeatureHelper {
         } else {
             IncQueryEngine
                     .getDefaultLogger()
-                    .error("Handler initialization failed, matcher factory is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
+                    .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
         }
 
         return newDerivedFeature;

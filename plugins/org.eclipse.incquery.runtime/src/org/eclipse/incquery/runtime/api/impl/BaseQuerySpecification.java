@@ -14,20 +14,20 @@ package org.eclipse.incquery.runtime.api.impl;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Base implementation of IMatcherFactory.
+ * Base implementation of IQuerySpecification.
  * 
  * @author Bergmann Gábor
  * 
  */
-public abstract class BaseMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
-        IMatcherFactory<Matcher> {
+public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
+        IQuerySpecification<Matcher> {
 
     protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
 

@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistryUtil;
 import org.eclipse.incquery.runtime.patternregistry.PatternTypeEnum;
@@ -29,7 +29,7 @@ public class PatternInfo implements IPatternInfo {
 
     private final Pattern pattern;
 
-    private final IMatcherFactory<?> matcherFactory;
+    private final IQuerySpecification<?> querySpecification;
 
     private final String id;
 
@@ -46,11 +46,11 @@ public class PatternInfo implements IPatternInfo {
     private final List<IPatternInfo> patternDependecies;
 
     public PatternInfo(PatternTypeEnum patternTypeEnum, Pattern pattern, IFile relatedFile,
-            IMatcherFactory<?> matcherFactory) {
+            IQuerySpecification<?> querySpecification) {
         super();
         this.patternTypeEnum = patternTypeEnum;
         this.pattern = pattern;
-        this.matcherFactory = matcherFactory;
+        this.querySpecification = querySpecification;
         this.fqn = PatternRegistryUtil.getFQN(pattern);
         this.relatedFile = relatedFile;
         this.id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
@@ -77,8 +77,8 @@ public class PatternInfo implements IPatternInfo {
     }
 
     @Override
-    public IMatcherFactory<?> getMatcherFactory() {
-        return matcherFactory;
+    public IQuerySpecification<?> getQuerySpecification() {
+        return querySpecification;
     }
 
     @Override

@@ -12,12 +12,12 @@
 package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.impl.BaseMatcherFactory;
+import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * This is a generic factory for EMF-IncQuery pattern matchers, for "interpretative" query execution. Instantiate the
- * factory with any registered pattern, and then use the factory to obtain an actual pattern matcher operating on a
+ * This is a generic query specification for EMF-IncQuery pattern matchers, for "interpretative" query execution. Instantiate the
+ * specification with any registered pattern, and then use the specification to obtain an actual pattern matcher operating on a
  * given model.
  * 
  * <p>
@@ -32,17 +32,16 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @see GenericMatchProcessor
  * @author Bergmann Gábor
  */
-public class GenericMatcherFactory extends BaseMatcherFactory<GenericPatternMatcher> implements
-        IMatcherFactory<GenericPatternMatcher> {
+public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> {
     public Pattern pattern;
 
     /**
-     * Initializes a generic pattern factory for a given pattern.
+     * Initializes a generic query specification for a given pattern.
      * 
      * @param patternName
      *            the name of the pattern for which matchers are to be constructed.
      */
-    public GenericMatcherFactory(Pattern pattern) {
+    public GenericQuerySpecification(Pattern pattern) {
         super();
         this.pattern = pattern;
     }

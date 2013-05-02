@@ -19,7 +19,7 @@ package org.eclipse.incquery.runtime;
  */
 public interface IExtensions {
 
-    public static final String MATCHERFACTORY_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + ".matcherfactory";
+    public static final String QUERY_SPECIFICATION_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + ".queryspecification";
 
     // Extension point for registering the generated java codes from the xbase xexpressions
     public static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID

@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -84,11 +84,11 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
     /**
      * Adds the given query into the results of the multimap. 
      * 
-     * @param factory
+     * @param querySpecification
      */
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
-            final IMatcherFactory<Matcher> factory) {
-        schema.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(factory,
+            final IQuerySpecification<Matcher> querySpecification) {
+        schema.addRule(new SimpleMatcherRuleSpecification<Match, Matcher>(querySpecification,
                 DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
     }
 

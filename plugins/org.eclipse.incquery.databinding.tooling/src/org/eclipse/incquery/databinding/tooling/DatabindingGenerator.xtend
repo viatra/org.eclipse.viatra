@@ -18,13 +18,13 @@ import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmMod
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl
 import org.eclipse.xtext.generator.IFileSystemAccess
-
-import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.core.runtime.Path
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil
+
+import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
 class DatabindingGenerator implements IGenerationFragment {
 	
@@ -92,7 +92,7 @@ class DatabindingGenerator implements IGenerationFragment {
 					exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
 					exGen.contribAttribute(it, "message", message)
-					exGen.contribAttribute(it, "matcherFactoryClass", pattern.packageName+"."+pattern.matcherFactoryClassName)
+					exGen.contribAttribute(it, "querySpecificationClass", pattern.packageName+"."+pattern.querySpecificationClassName)
 				]
 			]
 			)

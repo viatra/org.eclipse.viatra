@@ -21,8 +21,6 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
-
-import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
@@ -30,6 +28,8 @@ import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
+
+import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -195,19 +195,19 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 
 		import org.eclipse.incquery.validation.runtime.Constraint;
 		import org.eclipse.incquery.validation.runtime.ValidationUtil;
-		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 		import org.eclipse.incquery.runtime.exception.IncQueryException;
 		
 		import «pattern.packageName + "." + pattern.matchClassName»;
-		import «pattern.packageName + "." + pattern.matcherFactoryClassName»;
+		import «pattern.packageName + "." + pattern.querySpecificationClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 
 		public class «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)» extends «annotationLiteral»<«pattern.matchClassName»> {
 
-			private «pattern.matcherFactoryClassName» matcherFactory;
+			private «pattern.querySpecificationClassName» querySpecification;
 
 			public «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)»() throws IncQueryException {
-				matcherFactory = «pattern.matcherFactoryClassName».instance();
+				querySpecification = «pattern.querySpecificationClassName».instance();
 			}
 
 			@Override
@@ -239,8 +239,8 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			}
 			
 			@Override
-			public BaseGeneratedMatcherFactory<«pattern.matcherClassName»> getMatcherFactory() {
-				return matcherFactory;
+			public BaseGeneratedQuerySpecification<«pattern.matcherClassName»> getQuerySpecification() {
+				return querySpecification;
 			}
 		}
 	'''

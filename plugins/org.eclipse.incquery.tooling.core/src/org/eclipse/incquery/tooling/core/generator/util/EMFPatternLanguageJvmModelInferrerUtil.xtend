@@ -77,26 +77,26 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		name
 	}
 	/**
-	 * Returns the MatcherFactoryClass name based on the Pattern's name
+	 * Returns the QuerySpecificationClass name based on the Pattern's name
 	 */
-	def matcherFactoryClassName(Pattern pattern) {
+	def querySpecificationClassName(Pattern pattern) {
 		var name = pattern.name
 		if (name.contains(".")) {
 			name = pattern.realPatternName
 		}
-		name.toFirstUpper+"MatcherFactory"
+		name.toFirstUpper+"QuerySpecification"
 	}
 	
 	/**
-	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 * Returns the IQuerySpecificationProvider class name based on the Pattern's name
 	 */
-	def matcherFactoryProviderClassName(Pattern pattern) {
+	def querySpecificationProviderClassName(Pattern pattern) {
 		"Provider"
 	}	
 	/**
-	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 * Returns the holder class name based on the Pattern's name
 	 */
-	def matcherFactoryHolderClassName(Pattern pattern) {
+	def querySpecificationHolderClassName(Pattern pattern) {
 		"LazyHolder"
 	}	
 

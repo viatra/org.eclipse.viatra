@@ -16,13 +16,13 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Interface for an IncQuery matcher factory. Each factory is associated with a pattern. Methods instantiate a matcher
+ * Interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
  * 
  * @author Bergmann Gábor
  * 
  */
-public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatternMatch>> {
+public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> {
 
     /**
      * @throws IncQueryException
@@ -40,6 +40,7 @@ public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatt
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
      * matcher is already constructed with the same root, only a lightweight reference is created.
      * 
+     * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
      * <p>
@@ -49,11 +50,14 @@ public interface IMatcherFactory<Matcher extends IncQueryMatcher<? extends IPatt
      * The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so
      * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
      * 
+     * @deprecated use {@link #getMatcher(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+     *  
      * @param emfRoot
      *            the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
      */
+    @Deprecated
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException;
 
     /**

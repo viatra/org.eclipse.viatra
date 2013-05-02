@@ -18,28 +18,28 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.lib.Pair
-
-import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 
-class GenerateMatcherFactoryExtension {
+import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
+
+class GenerateQuerySpecificationExtension {
 	
 	@Inject	IJvmModelAssociations associations
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil 
 	
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::MATCHERFACTORY_EXTENSION_POINT_ID) [
+		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
 			exGen.contribElement(it, "matcher") [
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
 				
-				val matcherFactoryClass = associations.getJvmElements(pattern).
-				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.matcherFactoryClassName)] as JvmDeclaredType 
-				val providerClass = matcherFactoryClass.members.
-				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.matcherFactoryProviderClassName)]) as JvmIdentifiableElement
+				val querySpecificationClass = associations.getJvmElements(pattern).
+				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType 
+				val providerClass = querySpecificationClass.members.
+				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.querySpecificationProviderClassName)]) as JvmIdentifiableElement
 				  
-				exGen.contribAttribute(it, "factoryProvider", providerClass.qualifiedName)
+				exGen.contribAttribute(it, "querySpecificationProvider", providerClass.qualifiedName)
 			]
 		]
 		)
@@ -47,7 +47,7 @@ class GenerateMatcherFactoryExtension {
 	
 	def static getRemovableExtensionIdentifiers() {
 		newArrayList(
-			Pair::of("", IExtensions::MATCHERFACTORY_EXTENSION_POINT_ID)
+			Pair::of("", IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID)
 		)
 	}
 }

@@ -14,7 +14,7 @@ package org.eclipse.incquery.validation.runtime;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcherFactory;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 
 public abstract class Constraint<T extends IPatternMatch> {
 
@@ -32,5 +32,5 @@ public abstract class Constraint<T extends IPatternMatch> {
 
     public abstract int getSeverity();
 
-    public abstract BaseGeneratedMatcherFactory<? extends BaseGeneratedMatcher<T>> getMatcherFactory();
+    public abstract BaseGeneratedQuerySpecification<? extends BaseGeneratedMatcher<T>> getQuerySpecification();
 }

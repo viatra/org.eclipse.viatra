@@ -56,8 +56,8 @@ import com.google.inject.Injector;
  * <ul>
  * <li>Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this
  * engine or the EMF model root.
- * <li>Use the matcher factory associated with the generated matcher class to achieve the same.
- * <li>Use {@link GenericPatternMatcher} or {@link GenericMatcherFactory} instead of the various generated classes.
+ * <li>Use the query specification associated with the generated matcher class to achieve the same.
+ * <li>Use {@link GenericPatternMatcher} or {@link GenericQuerySpecification} instead of the various generated classes.
  * </ul>
  * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; this improves
  * the performance of pattern matcher construction, unless the engine is in wildcard mode.
@@ -70,6 +70,12 @@ import com.google.inject.Injector;
  */
 public class IncQueryEngine {
 
+	// TODO JAVADOC ME
+	public static IncQueryEngine on(Notifier emfScopeRoot) throws IncQueryException {
+		return IncQueryEngineManager.getInstance().getIncQueryEngine(emfScopeRoot);
+	}
+	
+	
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
@@ -163,8 +169,8 @@ public class IncQueryEngine {
     
     // TODO JavaDoc missing!
     @SuppressWarnings("unchecked")
-    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IMatcherFactory<Matcher> factory) {
-        Pattern pattern = factory.getPattern();
+    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) {
+        Pattern pattern = querySpecification.getPattern();
         if(matchers.containsKey(pattern)) {
             IncQueryMatcher<?> matcher = matchers.get(pattern);
             // TODO this cast is not safe when a pattern with generated matcher is also created with generic API

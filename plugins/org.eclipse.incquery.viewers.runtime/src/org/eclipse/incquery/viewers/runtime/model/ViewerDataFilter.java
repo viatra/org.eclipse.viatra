@@ -15,11 +15,11 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -76,11 +76,11 @@ public class ViewerDataFilter {
 
     public IObservableList getObservableList(Pattern pattern, IncQueryEngine engine) {
         @SuppressWarnings("unchecked")
-        IMatcherFactory<IncQueryMatcher<IPatternMatch>> factory = (IMatcherFactory<IncQueryMatcher<IPatternMatch>>) MatcherFactoryRegistry
-                .getOrCreateMatcherFactory(pattern);
+        IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
+                .getOrCreateQuerySpecification(pattern);
 
-        IObservableList obslist = isFiltered(pattern) ? IncQueryObservables.observeMatchesAsList(factory, engine,
-                getFilter(pattern)) : IncQueryObservables.observeMatchesAsList(factory, engine);
+        IObservableList obslist = isFiltered(pattern) ? IncQueryObservables.observeMatchesAsList(querySpecification, engine,
+                getFilter(pattern)) : IncQueryObservables.observeMatchesAsList(querySpecification, engine);
         return obslist;
     }
 }
