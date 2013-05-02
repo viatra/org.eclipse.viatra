@@ -3,17 +3,17 @@
 
    <extension
          id="headless.eClassNames"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.eclassnames.EClassNamesMatcherFactory$Provider"
+            querySpecificationProvider="headless.eclassnames.EClassNamesQuerySpecification$Provider"
             id="headless.eClassNames">
       </matcher>
    </extension>
    <extension
          id="headless.eClassNamesKeyword"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.eclassnameskeyword.EClassNamesKeywordMatcherFactory$Provider"
+            querySpecificationProvider="headless.eclassnameskeyword.EClassNamesKeywordQuerySpecification$Provider"
             id="headless.eClassNamesKeyword">
       </matcher>
    </extension>
@@ -27,49 +27,49 @@
    </extension>
    <extension
          id="headless.eObject"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.eobject.EObjectMatcherFactory$Provider"
+            querySpecificationProvider="headless.eobject.EObjectQuerySpecification$Provider"
             id="headless.eObject">
       </matcher>
    </extension>
    <extension
          id="headless.classesInPackage"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.classesinpackage.ClassesInPackageMatcherFactory$Provider"
+            querySpecificationProvider="headless.classesinpackage.ClassesInPackageQuerySpecification$Provider"
             id="headless.classesInPackage">
       </matcher>
    </extension>
    <extension
          id="headless.subPackage"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.subpackage.SubPackageMatcherFactory$Provider"
+            querySpecificationProvider="headless.subpackage.SubPackageQuerySpecification$Provider"
             id="headless.subPackage">
       </matcher>
    </extension>
    <extension
          id="headless.classesInPackageHierarchy"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.classesinpackagehierarchy.ClassesInPackageHierarchyMatcherFactory$Provider"
+            querySpecificationProvider="headless.classesinpackagehierarchy.ClassesInPackageHierarchyQuerySpecification$Provider"
             id="headless.classesInPackageHierarchy">
       </matcher>
    </extension>
    <extension
          id="headless.ePackage"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.epackage.EPackageMatcherFactory$Provider"
+            querySpecificationProvider="headless.epackage.EPackageQuerySpecification$Provider"
             id="headless.ePackage">
       </matcher>
    </extension>
    <extension
          id="headless.eClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="headless.eclass.EClassMatcherFactory$Provider"
+            querySpecificationProvider="headless.eclass.EClassQuerySpecification$Provider"
             id="headless.eClass">
       </matcher>
    </extension>

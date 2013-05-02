@@ -21,12 +21,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * @author Abel Hegedus
@@ -90,7 +90,7 @@ public class IncQueryHeadlessBenchmark {
 			try {
 				// get all matches of the pattern
 				long startMatching = System.nanoTime();
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
 				EObjectMatcher matcher = new EObjectMatcher(engine);
 				long matcherInit = System.nanoTime();
 				Collection<EObjectMatch> matches = matcher.getAllMatches();
@@ -127,8 +127,8 @@ public class IncQueryHeadlessBenchmark {
 		if (resource != null) {
 			try {
 				long startMatching = System.nanoTime();
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
-				IncQueryMatcher matcher = MatcherFactoryRegistry.getMatcherFactory(patternFQN).getMatcher(engine);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryMatcher matcher = QuerySpecificationRegistry.getQuerySpecification(patternFQN).getMatcher(engine);
 				long matcherInit = System.nanoTime();
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				if (matcher!=null) {

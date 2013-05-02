@@ -20,8 +20,8 @@ import headless.eobject.EObjectMatcher;
 import headless.eobject.EObjectProcessor;
 import headless.epackage.EPackageMatch;
 import headless.epackage.EPackageMatcher;
-import headless.epackage.EPackageMatcherFactory;
 import headless.epackage.EPackageProcessor;
+import headless.epackage.EPackageQuerySpecification;
 
 import java.util.Collection;
 
@@ -37,9 +37,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -76,7 +77,7 @@ public class IncQueryHeadless {
 				// get all matches of the pattern
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
 				// phase 2: the matcher itself
 				EObjectMatcher matcher = new EObjectMatcher(engine);
 				// get all matches of the pattern
@@ -117,7 +118,7 @@ public class IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
 				// phase 2: the group of pattern matchers
 				GroupOfFileHeadlessQueries patternGroup = new GroupOfFileHeadlessQueries();
 				patternGroup.prepare(engine);
@@ -177,7 +178,7 @@ public class IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
 				// phase 2: pattern matcher for packages
 				EPackageMatcher matcher = new EPackageMatcher(engine);
 				matcher.forEachMatch(new EPackageProcessor() {
@@ -187,7 +188,7 @@ public class IncQueryHeadless {
 					}
 				});
 				// phase 3: prepare for change processing
-				changeProcessing_databinding(results, EPackageMatcherFactory.instance(), engine);
+				changeProcessing_databinding(results, matcher);
 				// phase 4: modify model, change processor will update results accordingly
 				performModelModification(resource);
 			}
@@ -203,7 +204,7 @@ public class IncQueryHeadless {
 
 
 	
-	private void changeProcessing_databinding(final StringBuilder results, EPackageMatcherFactory factory,IncQueryEngine engine) {
+	private void changeProcessing_databinding(final StringBuilder results, IncQueryMatcher<?> matcher) {
 		// (+) changes can also be tracked using JFace Databinding
 		// this approach provides good performance, as the observable callbacks are guaranteed to be called
 		//   in a consistent state, and only when there is a relevant change; anything
@@ -212,7 +213,7 @@ public class IncQueryHeadless {
 		//     * is does not support generics, hence typesafe programming is not possible
 		//     * a "Realm" needs to be set up for headless execution
 		DefaultRealm realm = new DefaultRealm();
-		IObservableSet set = IncQueryObservables.observeMatchesAsSet(factory, engine);
+		IObservableSet set = IncQueryObservables.observeMatchesAsSet(matcher);
 		set.addSetChangeListener(new ISetChangeListener() {
 			@Override
 			public void handleSetChange(SetChangeEvent event) {

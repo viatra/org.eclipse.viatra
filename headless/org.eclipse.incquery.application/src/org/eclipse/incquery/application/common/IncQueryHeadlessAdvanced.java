@@ -22,15 +22,16 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 
 /**
@@ -56,13 +57,13 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				// get all matches of the pattern
 				// create an *unmanaged* engine to ensure that noone else is going
 				// to use our engine
-				IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				
 				Pattern p = null;
 				// would be nice: IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory
-				IMatcherFactory<?> factory = null;
+				IQuerySpecification<?> querySpecification = null;
 				
 				// use a trick to load Pattern models from a file
 				ResourceSet resourceSet = new ResourceSetImpl();
@@ -84,15 +85,15 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		        }
 			    
 			    if (p!=null) {
-			    	factory = MatcherFactoryRegistry.getMatcherFactory(p);
+			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(p);
 			    }
 			    else {
 			    	// fall back to the registry in case the pattern model extraction didn't work
-			    	factory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
+			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
 			    }
 				
-				if (factory!=null) {
-					IncQueryMatcher<? extends IPatternMatch> matcher = factory.getMatcher(engine);
+				if (querySpecification!=null) {
+					IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(engine);
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
 					prettyPrintMatches(results, matches);
 				}
@@ -127,9 +128,9 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = EngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
 				// phase 2: pattern matcher for packages
-				IncQueryMatcher<? extends IPatternMatch> matcher = MatcherFactoryRegistry.getMatcherFactory(patternFQN).getMatcher(engine);
+				IncQueryMatcher<? extends IPatternMatch> matcher = QuerySpecificationRegistry.getQuerySpecification(patternFQN).getMatcher(engine);
 				matcher.forEachMatch(new IMatchProcessor<IPatternMatch>() {
 					@Override
 					public void process(IPatternMatch match) {
@@ -181,9 +182,10 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		// that propagates through the matcher, i.e. also when the updates do not actually
 		// influence the result set you are interested in. Hence, the performance is somewhat
 		// lower than for the "lowlevel" option.
-		matcher.addCallbackAfterUpdates(new Runnable() {
+		matcher.getEngine().addModelUpdateListener(new IncQueryModelUpdateListener() {
+
 			@Override
-			public void run() {
+			public void notifyChanged(ChangeLevel changeLevel) {
 				for (IPatternMatch newMatch : dm.matchFoundEvents) {
 					results.append("\tNew match found by changeset delta monitor: " + newMatch.prettyPrint()+"\n");
 				}
@@ -192,7 +194,14 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				}
 				dm.clear();
 			}
+
+			@Override
+			public ChangeLevel getLevel() {
+				return ChangeLevel.MATCHSET;
+			}
+			
 		});
+				
 	}
 	
 	
