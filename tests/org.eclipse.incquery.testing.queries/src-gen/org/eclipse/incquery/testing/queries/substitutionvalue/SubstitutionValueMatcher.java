@@ -4,17 +4,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
-import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcherFactory;
+import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueQuerySpecification;
 
 /**
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 
@@ -51,7 +51,7 @@ import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueM
  * </pre></code>
  * 
  * @see SubstitutionValueMatch
- * @see SubstitutionValueMatcherFactory
+ * @see SubstitutionValueQuerySpecification
  * @see SubstitutionValueProcessor
  * 
  */
@@ -84,7 +84,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    * 
    */
   public SubstitutionValueMatcher(final IncQueryEngine engine) throws IncQueryException {
-    super(engine, factory());
+    super(engine, querySpecification());
   }
   
   /**
@@ -294,11 +294,11 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
   }
   
   /**
-   * @return the singleton instance of the factory of this pattern
+   * @return the singleton instance of the query specification of this pattern
    * @throws IncQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IMatcherFactory<SubstitutionValueMatcher> factory() throws IncQueryException {
-    return SubstitutionValueMatcherFactory.instance();
+  public static IQuerySpecification<SubstitutionValueMatcher> querySpecification() throws IncQueryException {
+    return SubstitutionValueQuerySpecification.instance();
   }
 }

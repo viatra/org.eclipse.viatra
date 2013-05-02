@@ -8,9 +8,9 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
 
 public final class GroupOfFileMatchRecord extends BaseGeneratedPatternGroup {
   public GroupOfFileMatchRecord() throws IncQueryException {
-    matcherFactories.add(RecordRoleValueMatcher.factory());
-    matcherFactories.add(UnexpectedMatchRecordMatcher.factory());
-    matcherFactories.add(SubstitutionValueMatcher.factory());
+    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
+    querySpecifications.add(SubstitutionValueMatcher.querySpecification());
+    querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
     
   }
 }

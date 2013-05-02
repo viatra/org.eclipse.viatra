@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -15,7 +15,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcherFactory;
+import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordQuerySpecification;
 
 /**
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 
@@ -38,7 +38,7 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
  * </pre></code>
  * 
  * @see UnexpectedMatchRecordMatch
- * @see UnexpectedMatchRecordMatcherFactory
+ * @see UnexpectedMatchRecordQuerySpecification
  * @see UnexpectedMatchRecordProcessor
  * 
  */
@@ -73,7 +73,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * 
    */
   public UnexpectedMatchRecordMatcher(final IncQueryEngine engine) throws IncQueryException {
-    super(engine, factory());
+    super(engine, querySpecification());
   }
   
   /**
@@ -329,11 +329,11 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
   }
   
   /**
-   * @return the singleton instance of the factory of this pattern
+   * @return the singleton instance of the query specification of this pattern
    * @throws IncQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IMatcherFactory<UnexpectedMatchRecordMatcher> factory() throws IncQueryException {
-    return UnexpectedMatchRecordMatcherFactory.instance();
+  public static IQuerySpecification<UnexpectedMatchRecordMatcher> querySpecification() throws IncQueryException {
+    return UnexpectedMatchRecordQuerySpecification.instance();
   }
 }

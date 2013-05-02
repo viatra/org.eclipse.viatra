@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry
 import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.InputSpecification
@@ -28,6 +27,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -283,8 +283,8 @@ class SnapshotHelper {
 			}
 		') as PatternModel
 		patternModel.patterns.forEach()[
-			val factory = MatcherFactoryRegistry::getOrCreateMatcherFactory(it)
-			MatcherFactoryRegistry::registerMatcherFactory(factory);
+			val factory = QuerySpecificationRegistry::getOrCreateQuerySpecification(it)
+			QuerySpecificationRegistry::registerQuerySpecification(factory);
 		]
 	}
 }

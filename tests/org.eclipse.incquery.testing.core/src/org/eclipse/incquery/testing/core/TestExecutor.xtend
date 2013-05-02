@@ -93,7 +93,8 @@ class TestExecutor {
 		val snapshot = expected.eContainer as IncQuerySnapshot
 		
 		// 2. Initialize matcher for comparison
-		val unexpectedMatcher = UnexpectedMatchRecordMatcher::factory().getMatcher(snapshot.EMFRootForSnapshot)
+		val engine = IncQueryEngine::on(snapshot.EMFRootForSnapshot)
+		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
 		
 		// 3. Save match results into snapshot
 		val partialMatch = matcher.createMatchForMachRecord(expected.filter)
