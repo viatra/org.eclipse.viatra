@@ -21,7 +21,6 @@ import headless.eobject.EObjectProcessor;
 import headless.epackage.EPackageMatch;
 import headless.epackage.EPackageMatcher;
 import headless.epackage.EPackageProcessor;
-import headless.epackage.EPackageQuerySpecification;
 
 import java.util.Collection;
 
@@ -39,7 +38,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
@@ -77,9 +75,9 @@ public class IncQueryHeadless {
 				// get all matches of the pattern
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngine.on(resource);
 				// phase 2: the matcher itself
-				EObjectMatcher matcher = new EObjectMatcher(engine);
+				EObjectMatcher matcher = EObjectMatcher.on(engine);
 				// get all matches of the pattern
 				Collection<EObjectMatch> matches = matcher.getAllMatches();
 				prettyPrintMatches(results, matches);
@@ -93,7 +91,7 @@ public class IncQueryHeadless {
 				// matching with partially bound input parameters
 				// a new matcher initialization will trigger a new traversal of the model
 				// unless you use pattern groups, see executePatternSpecific_PatternGroups below
-				EClassNamesMatcher matcher2 = new EClassNamesMatcher(engine);
+				EClassNamesMatcher matcher2 = EClassNamesMatcher.on(engine);
 				// defining an input mask by binding "name" to "A" ->
 				matcher2.forEachMatch( matcher2.newMatch(null, "A") , new EClassNamesProcessor() {
 					@Override
@@ -118,12 +116,12 @@ public class IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngine.on(resource);
 				// phase 2: the group of pattern matchers
 				GroupOfFileHeadlessQueries patternGroup = new GroupOfFileHeadlessQueries();
 				patternGroup.prepare(engine);
 				// from here on everything is the same
-				EObjectMatcher matcher = new EObjectMatcher(engine);
+				EObjectMatcher matcher = EObjectMatcher.on(engine);
 				// get all matches of the pattern
 				Collection<EObjectMatch> matches = matcher.getAllMatches();
 				prettyPrintMatches(results, matches);
@@ -136,7 +134,7 @@ public class IncQueryHeadless {
 				});
 				// matching with partially bound input parameters
 				// because EClassNamesMatcher is included in the patterngroup, *no new traversal* will be done here
-				EClassNamesMatcher matcher2 = new EClassNamesMatcher(engine);
+				EClassNamesMatcher matcher2 = EClassNamesMatcher.on(engine);
 				// defining an input mask by binding "name" to "A" ->
 				matcher2.forEachMatch(null, "A" , new EClassNamesProcessor() {
 					@Override
@@ -178,9 +176,9 @@ public class IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
+				IncQueryEngine engine = IncQueryEngine.on(resource);
 				// phase 2: pattern matcher for packages
-				EPackageMatcher matcher = new EPackageMatcher(engine);
+				EPackageMatcher matcher = EPackageMatcher.on(engine);
 				matcher.forEachMatch(new EPackageProcessor() {
 					@Override
 					public void process(EPackage p) {
