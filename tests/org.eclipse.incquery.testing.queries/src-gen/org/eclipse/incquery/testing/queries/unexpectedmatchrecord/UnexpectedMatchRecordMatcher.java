@@ -43,6 +43,18 @@ import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatc
  * 
  */
 public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<UnexpectedMatchRecordMatch> {
+  /**
+   * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+   * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+   * The match set will be incrementally refreshed upon updates.
+   * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
+   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * 
+   */
+  public static UnexpectedMatchRecordMatcher on(final IncQueryEngine engine) throws IncQueryException {
+    return new UnexpectedMatchRecordMatcher(engine);
+  }
+  
   private final static int POSITION_ACTUALSET = 0;
   
   private final static int POSITION_EXPECTEDSET = 1;
@@ -58,8 +70,10 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
    * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @deprecated use {@link #on(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}
    * 
    */
+  @Deprecated
   public UnexpectedMatchRecordMatcher(final Notifier emfRoot) throws IncQueryException {
     this(IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot));
   }
@@ -70,8 +84,10 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
    * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @deprecated use {@link #on(IncQueryEngine)} instead
    * 
    */
+  @Deprecated
   public UnexpectedMatchRecordMatcher(final IncQueryEngine engine) throws IncQueryException {
     super(engine, querySpecification());
   }
