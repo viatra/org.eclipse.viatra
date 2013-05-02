@@ -12,7 +12,7 @@
 package org.eclipse.incquery.application.common;
 
 
-import headless.GroupOfFileHeadlessQueries;
+import headless.HeadlessQueries;
 import headless.eclassnames.EClassNamesMatcher;
 import headless.eclassnames.EClassNamesProcessor;
 import headless.eobject.EObjectMatch;
@@ -118,7 +118,7 @@ public class IncQueryHeadless {
 				// phase 1: (managed) IncQueryEngine
 				IncQueryEngine engine = IncQueryEngine.on(resource);
 				// phase 2: the group of pattern matchers
-				GroupOfFileHeadlessQueries patternGroup = new GroupOfFileHeadlessQueries();
+				HeadlessQueries patternGroup = new HeadlessQueries();
 				patternGroup.prepare(engine);
 				// from here on everything is the same
 				EObjectMatcher matcher = EObjectMatcher.on(engine);
