@@ -24,6 +24,8 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.incquery.runtime.exception.IncQueryException
+import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.xtext.common.types.util.TypeReferences
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -36,6 +38,7 @@ class PatternMatcherClassInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
 	@Inject extension PatternMatcherClassMethodInferrer
+	@Inject extension TypeReferences types
 
 	/**
 	 * Infers the {@link IncQueryMatcher} implementation class from a {@link Pattern}.
@@ -47,11 +50,13 @@ class PatternMatcherClassInferrer {
 			//it.annotations += pattern.toAnnotation(typeof (SuppressWarnings), "unused")
    			it.superTypes += pattern.newTypeRef(typeof(BaseGeneratedMatcher), cloneWithProxies(matchClassRef))
    		]
+   		matcherClass.inferStaticMethods(pattern, matcherClass)
    		matcherClass.inferFields(pattern)
    		matcherClass.inferConstructors(pattern)
    		matcherClass.inferMethods(pattern, matchClassRef)
    		return matcherClass
    	}
+
    	
    	/**
    	 * Infers fields for Match class based on the input 'pattern'.
@@ -66,12 +71,30 @@ class PatternMatcherClassInferrer {
    		}
    	}
    	
+   	/**
+   	 * Infers static methods for Matcher class based on the input 'pattern'.
+   	 * NOTE: queryDefinition() will be inferred later, in EMFPatternLanguageJvmModelInferrer 
+   	 */
+   	def inferStaticMethods(JvmGenericType type, Pattern pattern, JvmGenericType matcherClass) { 
+   		matcherClass.members += pattern.toMethod("on", types.createTypeRef(matcherClass)) [
+   			it.setStatic(true)
+			it.visibility = JvmVisibility::PUBLIC
+			it.documentation = pattern.javadocMatcherStaticOnEngine.toString
+			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
+			it.setBody([append('''return new «matcherClass.simpleName»(engine);''')])
+   		]
+   	}
+   	
+   	
+   	
 	/**
    	 * Infers constructors for Matcher class based on the input 'pattern'.
    	 */
    	def inferConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
    		matcherClass.members += pattern.toConstructor [
    			it.simpleName = pattern.matcherClassName
+			it.annotations += pattern.toAnnotation(typeof (Deprecated))
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorNotifier.toString
 			it.parameters += pattern.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
@@ -85,6 +108,7 @@ class PatternMatcherClassInferrer {
 		
 		matcherClass.members += pattern.toConstructor [
 			it.simpleName = pattern.matcherClassName
+			it.annotations += pattern.toAnnotation(typeof (Deprecated))
 			it.visibility = JvmVisibility::PUBLIC
 			it.documentation = pattern.javadocMatcherConstructorEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))

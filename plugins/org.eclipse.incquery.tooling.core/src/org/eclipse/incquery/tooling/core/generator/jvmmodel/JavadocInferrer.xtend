@@ -83,6 +83,7 @@ class JavadocInferrer {
 		multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
 		@throws IncQueryException if an error occurs during pattern matcher creation
+		@deprecated use {@link #on(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}
 	'''
 	
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
@@ -91,8 +92,17 @@ class JavadocInferrer {
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
 		@throws IncQueryException if an error occurs during pattern matcher creation
+		@deprecated use {@link #on(IncQueryEngine)} instead
 	'''
 	
+	def javadocMatcherStaticOnEngine(Pattern pattern) '''
+		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		The match set will be incrementally refreshed upon updates.
+		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
+		@throws IncQueryException if an error occurs during pattern matcher creation
+	'''
+
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
 		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
 		«FOR p : pattern.parameters»
