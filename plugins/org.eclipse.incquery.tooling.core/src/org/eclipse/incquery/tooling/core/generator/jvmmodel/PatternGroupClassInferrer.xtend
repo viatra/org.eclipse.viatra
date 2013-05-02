@@ -48,7 +48,7 @@ class PatternGroupClassInferrer {
 	
 	def String groupClassName(PatternModel model) {
 		val fileName = model.modelFileName 
-		return "GroupOfFile" + fileName.toFirstUpper
+		return fileName.toFirstUpper
 	}
 	
 	def JvmConstructor inferConstructor(PatternModel model) {
