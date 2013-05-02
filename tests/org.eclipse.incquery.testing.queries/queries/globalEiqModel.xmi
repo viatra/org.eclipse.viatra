@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage">
-  <patterns name="org.eclipse.incquery.testing.queries.IncorrectSubstitution" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.IncorrectSubstitution" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
@@ -119,7 +119,7 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecords" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecords" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
@@ -152,7 +152,7 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
@@ -206,7 +206,7 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
         <value xsi:type="patternLanguage:BoolValue"/>
@@ -299,7 +299,7 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.incquery.testing.queries.RecordRoleValue" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.RecordRoleValue" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
         <value xsi:type="patternLanguage:BoolValue"/>
@@ -371,7 +371,7 @@
       </constraints>
     </bodies>
   </patterns>
-  <patterns name="org.eclipse.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecord.eiq">
+  <patterns name="org.eclipse.incquery.testing.queries.SubstitutionValue" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
     <annotations name="QueryExplorer">
       <parameters name="display">
         <value xsi:type="patternLanguage:BoolValue"/>
