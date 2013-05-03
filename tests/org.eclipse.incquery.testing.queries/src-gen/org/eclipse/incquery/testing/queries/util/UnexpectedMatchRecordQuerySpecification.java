@@ -1,10 +1,10 @@
-package org.eclipse.incquery.testing.queries.unexpectedmatchrecord;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher;
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
 
 /**
  * A pattern-specific query specification that can instantiate UnexpectedMatchRecordMatcher in a type-safe way.
@@ -31,7 +31,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   
   @Override
   protected UnexpectedMatchRecordMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
-    return new UnexpectedMatchRecordMatcher(engine);
+    return UnexpectedMatchRecordMatcher.on(engine);
     
   }
   

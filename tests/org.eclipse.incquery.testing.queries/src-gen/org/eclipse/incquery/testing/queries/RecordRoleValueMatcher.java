@@ -1,4 +1,4 @@
-package org.eclipse.incquery.testing.queries.recordrolevalue;
+package org.eclipse.incquery.testing.queries;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,8 +14,8 @@ import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
-import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
-import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueQuerySpecification;
+import org.eclipse.incquery.testing.queries.RecordRoleValueMatch;
+import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification;
 
 /**
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 

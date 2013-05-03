@@ -1,10 +1,10 @@
-package org.eclipse.incquery.testing.queries.substitutionvalue;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
-import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatcher;
+import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
 
 /**
  * A pattern-specific query specification that can instantiate SubstitutionValueMatcher in a type-safe way.
@@ -31,7 +31,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
   
   @Override
   protected SubstitutionValueMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
-    return new SubstitutionValueMatcher(engine);
+    return SubstitutionValueMatcher.on(engine);
     
   }
   

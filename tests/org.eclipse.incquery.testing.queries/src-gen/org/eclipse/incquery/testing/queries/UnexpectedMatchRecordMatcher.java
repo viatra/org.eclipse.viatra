@@ -1,4 +1,4 @@
-package org.eclipse.incquery.testing.queries.unexpectedmatchrecord;
+package org.eclipse.incquery.testing.queries;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,8 +14,8 @@ import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordQuerySpecification;
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatch;
+import org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpecification;
 
 /**
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 

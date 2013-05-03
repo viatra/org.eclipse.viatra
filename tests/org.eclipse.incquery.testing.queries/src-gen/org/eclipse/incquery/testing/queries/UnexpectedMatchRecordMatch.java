@@ -1,4 +1,4 @@
-package org.eclipse.incquery.testing.queries.unexpectedmatchrecord;
+package org.eclipse.incquery.testing.queries;
 
 import java.util.Arrays;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;

@@ -19,10 +19,10 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 import static org.junit.Assert.*
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.

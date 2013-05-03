@@ -1,8 +1,8 @@
-package org.eclipse.incquery.testing.queries.substitutionvalue;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
-import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
+import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
 
 /**
  * A match processor tailored for the org.eclipse.incquery.testing.queries.SubstitutionValue pattern.

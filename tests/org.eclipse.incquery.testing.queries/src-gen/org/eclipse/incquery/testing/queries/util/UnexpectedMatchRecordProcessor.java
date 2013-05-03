@@ -1,9 +1,9 @@
-package org.eclipse.incquery.testing.queries.unexpectedmatchrecord;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatch;
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatch;
 
 /**
  * A match processor tailored for the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern.

@@ -1,4 +1,4 @@
-package org.eclipse.incquery.testing.queries.substitutionvalue;
+package org.eclipse.incquery.testing.queries;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,8 +13,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
-import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueMatch;
-import org.eclipse.incquery.testing.queries.substitutionvalue.SubstitutionValueQuerySpecification;
+import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
+import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification;
 
 /**
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 

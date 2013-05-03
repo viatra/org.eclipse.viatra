@@ -1,10 +1,10 @@
-package org.eclipse.incquery.testing.queries.recordrolevalue;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
-import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatcher;
+import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
 
 /**
  * A pattern-specific query specification that can instantiate RecordRoleValueMatcher in a type-safe way.
@@ -31,7 +31,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   
   @Override
   protected RecordRoleValueMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
-    return new RecordRoleValueMatcher(engine);
+    return RecordRoleValueMatcher.on(engine);
     
   }
   

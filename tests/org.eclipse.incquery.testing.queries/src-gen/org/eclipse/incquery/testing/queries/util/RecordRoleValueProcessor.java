@@ -1,9 +1,9 @@
-package org.eclipse.incquery.testing.queries.recordrolevalue;
+package org.eclipse.incquery.testing.queries.util;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
-import org.eclipse.incquery.testing.queries.recordrolevalue.RecordRoleValueMatch;
+import org.eclipse.incquery.testing.queries.RecordRoleValueMatch;
 
 /**
  * A match processor tailored for the org.eclipse.incquery.testing.queries.RecordRoleValue pattern.
