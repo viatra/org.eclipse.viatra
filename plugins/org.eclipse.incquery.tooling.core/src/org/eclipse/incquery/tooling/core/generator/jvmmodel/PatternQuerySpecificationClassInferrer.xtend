@@ -80,7 +80,7 @@ class PatternQuerySpecificationClassInferrer {
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([append('''
-				return new «pattern.matcherClassName»(engine);
+				return «pattern.matcherClassName».on(engine);
 			''')])
 		]
 //		querySpecificationClass.members += pattern.toMethod("patternString", pattern.newTypeRef(typeof (String))) [
