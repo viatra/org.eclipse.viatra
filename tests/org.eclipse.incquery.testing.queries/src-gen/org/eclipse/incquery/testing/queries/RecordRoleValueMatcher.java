@@ -21,6 +21,11 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
  * providing pattern-specific query methods.
  * 
+ * Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
+ * e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+ * 
+ * <p>Matches of the pattern will be represented as {@link RecordRoleValueMatch}.
+ * 
  * <p>Original source:
  * <code><pre>
  * {@literal @}QueryExplorer(display = false)
@@ -38,21 +43,28 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
  * </pre></code>
  * 
  * @see RecordRoleValueMatch
- * @see RecordRoleValueQuerySpecification
  * @see RecordRoleValueProcessor
+ * @see RecordRoleValueQuerySpecification
  * 
  */
 public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValueMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-   * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+   * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
    * @throws IncQueryException if an error occurs during pattern matcher creation
    * 
    */
   public static RecordRoleValueMatcher on(final IncQueryEngine engine) throws IncQueryException {
-    return new RecordRoleValueMatcher(engine);
+    // check if matcher already exists
+    RecordRoleValueMatcher matcher = 
+    	(RecordRoleValueMatcher) engine.getExistingMatcher(querySpecification());
+    if (matcher == null) {
+    	matcher = new RecordRoleValueMatcher(engine);
+    	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
+    } 	
+    return matcher;
   }
   
   private final static int POSITION_RECORD = 0;
@@ -61,7 +73,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
-   * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+   * If a pattern matcher is already constructed with the same root, only a light-weight reference is returned.
    * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
    * The match set will be incrementally refreshed upon updates from this scope.
    * <p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
@@ -78,7 +90,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
   
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-   * If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+   * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
    * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
    * @throws IncQueryException if an error occurs during pattern matcher creation
