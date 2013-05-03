@@ -69,7 +69,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      */
 	public static GenericPatternMatcher on(IncQueryEngine engine, GenericQuerySpecification querySpecification) throws IncQueryException {
 		// check if matcher already exists
-        GenericPatternMatcher matcher = (GenericPatternMatcher) engine.getExistingMatcher(querySpecification);
+        GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {
         	matcher = new GenericPatternMatcher(engine, querySpecification);
         	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it

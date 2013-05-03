@@ -168,18 +168,18 @@ public class IncQueryEngine {
     }
     
     // TODO JavaDoc missing!
-    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+    public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
         return querySpecification.getMatcher(this);
     }
 
     // TODO JavaDoc missing!
-    // TODO invoke / peek at Matcher.on() and specification.getMatcher()?
-	public <Matcher extends IncQueryMatcher<?>> IncQueryMatcher<?> getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
-		return matchers.get(querySpecification);
+	@SuppressWarnings("unchecked")
+	public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
+		return (Matcher) matchers.get(querySpecification);
 	}
     
     // TODO JavaDoc missing!
-    public IncQueryMatcher<?> getMatcher(Pattern pattern) throws IncQueryException {
+    public IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = 
         		QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
         return getMatcher(querySpecification);

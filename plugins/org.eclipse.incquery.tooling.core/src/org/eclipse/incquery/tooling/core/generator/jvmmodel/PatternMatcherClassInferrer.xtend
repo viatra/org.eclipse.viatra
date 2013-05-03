@@ -84,8 +84,7 @@ class PatternMatcherClassInferrer {
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([append('''
 				// check if matcher already exists
-				«matcherClass.simpleName» matcher = 
-					(«matcherClass.simpleName») engine.getExistingMatcher(querySpecification());
+				«matcherClass.simpleName» matcher = engine.getExistingMatcher(querySpecification());
 				if (matcher == null) {
 					matcher = new «matcherClass.simpleName»(engine);
 					// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
