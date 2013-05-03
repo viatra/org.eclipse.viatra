@@ -53,7 +53,7 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
 
     @Override
     public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryException {
-        return new GenericPatternMatcher(engine, this);
+        return GenericPatternMatcher.on(engine, this);
     }
     
     /* (non-Javadoc)

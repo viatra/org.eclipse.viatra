@@ -42,14 +42,19 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
+		Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
+		e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+		
+		<p>Matches of the pattern will be represented as {@link «pattern.matchClassName»}.
+
 		<p>Original source:
 		<code><pre>
 		«pattern.serializeToJavadoc»
 		</pre></code>
 		
 		@see «pattern.matchClassName»
-		@see «pattern.querySpecificationClassName»
 		@see «pattern.processorClassName»
+		@see «pattern.querySpecificationClassName»
    	'''
    	
    	def javadocQuerySpecificationClass(Pattern pattern) '''
@@ -76,7 +81,7 @@ class JavadocInferrer {
    	
    	def javadocMatcherConstructorNotifier(Pattern pattern) '''
 		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
-		If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+		If a pattern matcher is already constructed with the same root, only a light-weight reference is returned.
 		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 		The match set will be incrementally refreshed upon updates from this scope.
 		<p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
@@ -88,7 +93,7 @@ class JavadocInferrer {
 	
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
 		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
 		@throws IncQueryException if an error occurs during pattern matcher creation
@@ -97,7 +102,7 @@ class JavadocInferrer {
 	
 	def javadocMatcherStaticOnEngine(Pattern pattern) '''
 		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
 		@throws IncQueryException if an error occurs during pattern matcher creation

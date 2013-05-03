@@ -24,17 +24,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
-import org.eclipse.incquery.runtime.api.GenericPatternMatcher;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
 import org.eclipse.ui.IEditorPart;
 
@@ -194,15 +192,11 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private void addMatchersForPatterns(Pattern... patterns) {
         for (Pattern pattern : patterns) {
-            IncQueryMatcher<? extends IPatternMatch> matcher = null;
+            IncQueryMatcher<? extends IPatternMatch> matcher = null; 
             boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
             String message = null;
             try {
-                if (isGenerated) {
-                    matcher = DatabindingUtil.getQuerySpecificationForGeneratedPattern(pattern).getMatcher(key.getEngine());
-                } else {
-                    matcher = new GenericPatternMatcher(pattern, key.getEngine());
-                }
+                matcher = key.getEngine().getMatcher(pattern);
             } catch (Exception e) {
                 logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
                         "Cannot initialize pattern matcher for pattern "

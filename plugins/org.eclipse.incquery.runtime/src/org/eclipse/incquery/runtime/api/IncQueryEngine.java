@@ -30,6 +30,7 @@ import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
@@ -168,17 +169,23 @@ public class IncQueryEngine {
     }
     
     // TODO JavaDoc missing!
-    // TODO invoke / peek at Matcher.on()?
-    @SuppressWarnings("unchecked")
     public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
-        IncQueryMatcher<?> matcher = matchers.get(querySpecification);
-        if (matcher == null) {
-        	matcher = querySpecification.getMatcher(this);
-        	// do not have to "put" it, reportMatcherInitialized() will take care of it
-        }
-        return (Matcher) matcher;
+        return querySpecification.getMatcher(this);
     }
+
+    // TODO JavaDoc missing!
+    // TODO invoke / peek at Matcher.on() and specification.getMatcher()?
+	public <Matcher extends IncQueryMatcher<?>> IncQueryMatcher<?> getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
+		return matchers.get(querySpecification);
+	}
     
+    // TODO JavaDoc missing!
+    public IncQueryMatcher<?> getMatcher(Pattern pattern) throws IncQueryException {
+        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = 
+        		QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
+        return getMatcher(querySpecification);
+    }
+        
     // TODO JavaDoc missing!
     // TODO make it package-only visible when implementation class is moved to impl package
     public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {

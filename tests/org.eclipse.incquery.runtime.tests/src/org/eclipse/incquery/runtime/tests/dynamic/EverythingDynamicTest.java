@@ -1,5 +1,6 @@
 package org.eclipse.incquery.runtime.tests.dynamic;
 
+import java.util.Collection;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -25,8 +26,9 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
-import org.eclipse.incquery.runtime.api.GenericPatternMatch;
-import org.eclipse.incquery.runtime.api.GenericPatternMatcher;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.junit.Test;
 
@@ -116,16 +118,17 @@ public class EverythingDynamicTest {
         patternModel.getPatterns().add(pattern);
 
         // Matching
-        List<GenericPatternMatch> matches = null;
+        Collection<? extends IPatternMatch> matches = null;
         try {
-            GenericPatternMatcher matcher = new GenericPatternMatcher(pattern, bookStoreObject);
-            matches = (List<GenericPatternMatch>) matcher.getAllMatches();
+            IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(pattern);
+            matches = matcher.getAllMatches();
         } catch (IncQueryException incQueryException) {
             logger.error("Matcher initialization and matching failed in the testcase.", incQueryException);
         }
 
         Assert.assertNotNull(matches);
-        GenericPatternMatch match = matches.get(0);
+        Assert.assertSame(1, matches.size());
+        IPatternMatch match = matches.iterator().next();
         Assert.assertEquals("\"X\"=Harry Potter and the Deathly Hallows", match.prettyPrint());
     }
 

@@ -82,7 +82,16 @@ class PatternMatcherClassInferrer {
 			it.documentation = pattern.javadocMatcherStaticOnEngine.toString
 			it.parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
-			it.setBody([append('''return new «matcherClass.simpleName»(engine);''')])
+			it.setBody([append('''
+				// check if matcher already exists
+				«matcherClass.simpleName» matcher = 
+					(«matcherClass.simpleName») engine.getExistingMatcher(querySpecification());
+				if (matcher == null) {
+					matcher = new «matcherClass.simpleName»(engine);
+					// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
+				} 	
+				return matcher;''')
+		    ])
    		]
    	}
    	
