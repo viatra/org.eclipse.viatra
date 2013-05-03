@@ -53,7 +53,25 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
 
     @Override
     public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryException {
-        return new GenericPatternMatcher(pattern, engine);
+        return new GenericPatternMatcher(engine, this);
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+    	return (obj == this) || 
+    			(obj instanceof GenericQuerySpecification && 
+    					pattern.equals(((GenericQuerySpecification)obj).pattern));
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+    	return pattern.hashCode();
     }
 
 }

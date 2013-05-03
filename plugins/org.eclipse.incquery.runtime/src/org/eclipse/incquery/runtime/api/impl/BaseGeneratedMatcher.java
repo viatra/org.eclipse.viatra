@@ -11,48 +11,27 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 
 /**
  * Provides common functionality of pattern-specific generated matchers.
  * 
+ * Currently unused.
+ * 
  * @author Bergmann Gábor
- * @param <Signature>
+ * @param <Match>
  * 
  */
-public abstract class BaseGeneratedMatcher<Signature extends IPatternMatch> extends BaseMatcher<Signature> {
+public abstract class BaseGeneratedMatcher<Match extends IPatternMatch> extends BaseMatcher<Match> {
 
-    protected IQuerySpecification<? extends BaseGeneratedMatcher<Signature>> querySpecification;
 
     public BaseGeneratedMatcher(IncQueryEngine engine,
-            IQuerySpecification<? extends BaseGeneratedMatcher<Signature>> querySpecification) throws IncQueryException {
-        super(engine, accessMatcher(engine, querySpecification.getPattern()), querySpecification.getPattern());
-        this.querySpecification = querySpecification;
+            IQuerySpecification<? extends BaseMatcher<Match>> querySpecification) throws IncQueryException {
+        super(engine, querySpecification);
     }
 
-    static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
-        checkPattern(engine, pattern);
-        try {
-            return engine.getReteEngine().accessMatcher(pattern);
-        } catch (RetePatternBuildException e) {
-            throw new IncQueryException(e);
-        }
-    }
-
-    @Override
-    public Pattern getPattern() {
-        return querySpecification.getPattern();
-    }
-
-    @Override
-    public String getPatternName() {
-        return querySpecification.getPatternFullyQualifiedName();
-    }
 
 }

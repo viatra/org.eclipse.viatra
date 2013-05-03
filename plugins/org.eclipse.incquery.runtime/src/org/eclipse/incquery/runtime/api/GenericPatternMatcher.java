@@ -14,12 +14,9 @@ package org.eclipse.incquery.runtime.api;
 import java.util.Arrays;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
@@ -37,8 +34,6 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * @see GenericMatchProcessor
  */
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
-
-    Pattern pattern;
 
     /**
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
@@ -76,23 +71,12 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      *             if an error occurs during pattern matcher creation
      */
     public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {
-        super(engine, accessMatcher(pattern, engine), pattern);
-        this.pattern = pattern;
+        this(engine, new GenericQuerySpecification(pattern));
     }
 
-    @Override
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    private String fullyQualifiedName;
-
-    @Override
-    public String getPatternName() {
-        if (fullyQualifiedName == null)
-            fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
-        return fullyQualifiedName;
-    }
+    GenericPatternMatcher(IncQueryEngine engine, GenericQuerySpecification specification) throws IncQueryException {
+        super(engine, specification);
+    }    
 
     @Override
     public GenericPatternMatch arrayToMatch(Object[] parameters) {
@@ -109,12 +93,4 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
         return new GenericPatternMatch.Immutable(this, t.getElements());
     }
 
-    private static RetePatternMatcher accessMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {
-        checkPattern(engine, pattern);
-        try {
-            return engine.getReteEngine().accessMatcher(pattern);
-        } catch (RetePatternBuildException e) {
-            throw new IncQueryException(e);
-        }
-    }
 }

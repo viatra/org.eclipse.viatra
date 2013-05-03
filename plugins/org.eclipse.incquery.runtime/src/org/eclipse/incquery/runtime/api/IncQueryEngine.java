@@ -84,7 +84,7 @@ public class IncQueryEngine {
      * The model to which the engine is attached.
      */
     private final Notifier emfRoot;
-    private final Map<Pattern, IncQueryMatcher<?>> matchers;
+    private final Map<IQuerySpecification<? extends IncQueryMatcher<?>>, IncQueryMatcher<?>> matchers;
 
     /**
      * The base index keeping track of basic EMF contents of the model.
@@ -163,31 +163,32 @@ public class IncQueryEngine {
     }
     
     // TODO JavaDoc missing!
-    public Set<? extends IncQueryMatcher<? extends IPatternMatch>> getMatchers(){
+    public Set<? extends IncQueryMatcher<? extends IPatternMatch>> getCurrentMatchers(){
         return ImmutableSet.copyOf(matchers.values());
     }
     
     // TODO JavaDoc missing!
+    // TODO invoke / peek at Matcher.on()?
     @SuppressWarnings("unchecked")
-    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) {
-        Pattern pattern = querySpecification.getPattern();
-        if(matchers.containsKey(pattern)) {
-            IncQueryMatcher<?> matcher = matchers.get(pattern);
-            // TODO this cast is not safe when a pattern with generated matcher is also created with generic API
-            return (Matcher) matcher;
+    public <Matcher extends IncQueryMatcher<?>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+        IncQueryMatcher<?> matcher = matchers.get(querySpecification);
+        if (matcher == null) {
+        	matcher = querySpecification.getMatcher(this);
+        	// do not have to "put" it, reportMatcherInitialized() will take care of it
         }
-        // TODO getMatcher usually initiates the matcher, should it here as well?
-        return null;
+        return (Matcher) matcher;
     }
     
     // TODO JavaDoc missing!
     // TODO make it package-only visible when implementation class is moved to impl package
-    public <Matcher extends IncQueryMatcher<?>> void matcherInitialized(Pattern pattern, Matcher matcher) {
-        if(matchers.containsKey(pattern)) {
+    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
+        if(matchers.containsKey(querySpecification)) {
             // TODO simply dropping the matcher can cause problems
-            logger.debug("Pattern " + CorePatternLanguageHelper.getFullyQualifiedName(pattern) + " already initialized in IncQueryEngine!");
+            logger.debug("Pattern " + 
+            		CorePatternLanguageHelper.getFullyQualifiedName(querySpecification.getPattern()) + 
+            		" already initialized in IncQueryEngine!");
         } else {
-            matchers.put(pattern, matcher);
+            matchers.put(querySpecification, matcher);
             lifecycleProvider.matcherInstantiated(matcher);
         }
     }

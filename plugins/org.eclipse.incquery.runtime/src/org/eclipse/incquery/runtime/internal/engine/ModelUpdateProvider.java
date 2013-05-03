@@ -80,7 +80,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
             // add listener to new matchers (use lifecycle listener)
             this.incQueryEngine.addLifecycleListener(selfListener);
             // add matchUpdateListener to all matchers
-            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getMatchers()) {
+            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
                 this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
             }
         }
@@ -116,7 +116,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         if(maxLevel.compareTo(ChangeLevel.MATCHSET) < 0) {
             // remove listener from matchers
             this.incQueryEngine.removeLifecycleListener(selfListener);
-            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getMatchers()) {
+            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
                 this.incQueryEngine.removeMatchUpdateListener(matcher, matchSetListener);
             }
         }

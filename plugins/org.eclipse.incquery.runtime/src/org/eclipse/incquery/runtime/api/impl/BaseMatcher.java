@@ -23,11 +23,13 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
+import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
@@ -48,18 +50,30 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     protected RetePatternMatcher patternMatcher;
     protected ReteEngine<Pattern> reteEngine;
     protected NavigationHelper baseIndex;
+    protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
-    public BaseMatcher(IncQueryEngine engine, RetePatternMatcher patternMatcher, Pattern pattern)
+    public BaseMatcher(IncQueryEngine engine,  
+    		IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
             throws IncQueryException {
         super();
         this.engine = engine;
-        this.patternMatcher = patternMatcher;
+        this.querySpecification = querySpecification;
+        this.patternMatcher = accessMatcher(engine, querySpecification.getPattern());
         this.reteEngine = engine.getReteEngine();
         this.baseIndex = engine.getBaseIndex();
-        this.engine.matcherInitialized(pattern, this);
+        this.engine.reportMatcherInitialized(querySpecification, this);
     }
 
     // HELPERS
+    
+    private static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+        checkPattern(engine, pattern);
+        try {
+            return engine.getReteEngine().accessMatcher(pattern);
+        } catch (RetePatternBuildException e) {
+            throw new IncQueryException(e);
+        }
+    }
 
     /**
      * Call this to sanitize the pattern before usage.
@@ -322,7 +336,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
-    @Override
+    @Deprecated
+	@Override
     public DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart) {
         DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
             @Override
@@ -348,7 +363,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return the delta monitor.
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
-    protected DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
+    @Deprecated
+	protected DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
         final int length = parameters.length;
         DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
             @Override
@@ -373,7 +389,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
-    @Override
+    @Deprecated
+	@Override
     public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
         return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());
     }
@@ -471,4 +488,14 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     public IncQueryEngine getEngine() {
         return engine;
     }
+
+	@Override
+	public Pattern getPattern() {
+	    return querySpecification.getPattern();
+	}
+
+	@Override
+	public String getPatternName() {
+	    return querySpecification.getPatternFullyQualifiedName();
+	}
 }
