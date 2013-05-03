@@ -12,15 +12,15 @@
 package org.eclipse.incquery.application.common;
 
 
+import headless.EClassNamesMatcher;
+import headless.EObjectMatch;
+import headless.EObjectMatcher;
+import headless.EPackageMatch;
+import headless.EPackageMatcher;
 import headless.HeadlessQueries;
-import headless.eclassnames.EClassNamesMatcher;
-import headless.eclassnames.EClassNamesProcessor;
-import headless.eobject.EObjectMatch;
-import headless.eobject.EObjectMatcher;
-import headless.eobject.EObjectProcessor;
-import headless.epackage.EPackageMatch;
-import headless.epackage.EPackageMatcher;
-import headless.epackage.EPackageProcessor;
+import headless.util.EClassNamesProcessor;
+import headless.util.EObjectProcessor;
+import headless.util.EPackageProcessor;
 
 import java.util.Collection;
 

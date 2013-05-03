@@ -5,7 +5,7 @@
          id="headless.eClassNames"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.eclassnames.EClassNamesQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.EClassNamesQuerySpecification$Provider"
             id="headless.eClassNames">
       </matcher>
    </extension>
@@ -13,7 +13,7 @@
          id="headless.eClassNamesKeyword"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.eclassnameskeyword.EClassNamesKeywordQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.EClassNamesKeywordQuerySpecification$Provider"
             id="headless.eClassNamesKeyword">
       </matcher>
    </extension>
@@ -21,7 +21,7 @@
          id="headless.eClassNamesKeyword"
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
-            evaluatorClass="headless.eclassnameskeyword.EClassNamesKeywordEvaluator1_1"
+            evaluatorClass="headless.util.EClassNamesKeywordEvaluator1_1"
             id="headless.eClassNamesKeyword_1_1">
       </evaluator>
    </extension>
@@ -29,7 +29,7 @@
          id="headless.eObject"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.eobject.EObjectQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.EObjectQuerySpecification$Provider"
             id="headless.eObject">
       </matcher>
    </extension>
@@ -37,7 +37,7 @@
          id="headless.classesInPackage"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.classesinpackage.ClassesInPackageQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.ClassesInPackageQuerySpecification$Provider"
             id="headless.classesInPackage">
       </matcher>
    </extension>
@@ -45,7 +45,7 @@
          id="headless.subPackage"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.subpackage.SubPackageQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.SubPackageQuerySpecification$Provider"
             id="headless.subPackage">
       </matcher>
    </extension>
@@ -53,7 +53,7 @@
          id="headless.classesInPackageHierarchy"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.classesinpackagehierarchy.ClassesInPackageHierarchyQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.ClassesInPackageHierarchyQuerySpecification$Provider"
             id="headless.classesInPackageHierarchy">
       </matcher>
    </extension>
@@ -61,7 +61,7 @@
          id="headless.ePackage"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.epackage.EPackageQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.EPackageQuerySpecification$Provider"
             id="headless.ePackage">
       </matcher>
    </extension>
@@ -69,7 +69,7 @@
          id="headless.eClass"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="headless.eclass.EClassQuerySpecification$Provider"
+            querySpecificationProvider="headless.util.EClassQuerySpecification$Provider"
             id="headless.eClass">
       </matcher>
    </extension>

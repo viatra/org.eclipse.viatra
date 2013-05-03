@@ -4,14 +4,7 @@ Bundle-Name: headlessQueries.incquery
 Bundle-SymbolicName: headlessQueries.incquery;singleton:=true
 Bundle-Version: 0.0.3.qualifier
 Export-Package: headless,
- headless.classesinpackage,
- headless.classesinpackagehierarchy,
- headless.eclass,
- headless.eclassnames,
- headless.eclassnameskeyword,
- headless.eobject,
- headless.epackage,
- headless.subpackage
+ headless.util
 Require-Bundle: org.eclipse.pde.core,
  org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,

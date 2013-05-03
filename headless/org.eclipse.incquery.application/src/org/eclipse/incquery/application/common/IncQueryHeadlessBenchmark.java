@@ -12,8 +12,8 @@
 package org.eclipse.incquery.application.common;
 
 
-import headless.eobject.EObjectMatch;
-import headless.eobject.EObjectMatcher;
+import headless.EObjectMatch;
+import headless.EObjectMatcher;
 
 import java.util.Collection;
 
