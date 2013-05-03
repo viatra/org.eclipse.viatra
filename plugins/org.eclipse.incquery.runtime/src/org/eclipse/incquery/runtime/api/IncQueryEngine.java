@@ -55,10 +55,9 @@ import com.google.inject.Injector;
  * <p>
  * Pattern matchers within this engine may be instantiated in the following ways:
  * <ul>
- * <li>Instantiate the specific matcher class generated for the pattern, by passing to the constructor either this
- * engine or the EMF model root.
- * <li>Use the query specification associated with the generated matcher class to achieve the same.
- * <li>Use {@link GenericPatternMatcher} or {@link GenericQuerySpecification} instead of the various generated classes.
+ * <li>Recommended: instantiate the specific matcher class generated for the pattern by e.g. MyPatternMatcher.on(engine).
+ * <li>Use {@link #getMatcher(Pattern)} if the pattern-specific generated matcher API is not available.
+ * <li>Advanced: use the query specification associated with the generated matcher class to achieve the same.
  * </ul>
  * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; this improves
  * the performance of pattern matcher construction, unless the engine is in wildcard mode.
