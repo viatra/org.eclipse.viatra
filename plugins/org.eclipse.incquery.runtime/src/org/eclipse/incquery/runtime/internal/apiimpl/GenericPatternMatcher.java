@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.internal.genericimpl;
+package org.eclipse.incquery.runtime.internal.apiimpl;
 
 import java.util.Arrays;
 

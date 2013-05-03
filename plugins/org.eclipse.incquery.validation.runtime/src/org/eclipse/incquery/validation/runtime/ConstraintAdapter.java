@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.ui.IEditorPart;
 
 import com.google.common.collect.Sets;
@@ -68,7 +69,7 @@ public class ConstraintAdapter {
             ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
-            IncQueryEngine.getDefaultLogger().error(
+            IncQueryLoggingUtil.getDefaultLogger().error(
                     String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
     }

@@ -23,6 +23,8 @@ import java.util.WeakHashMap;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
+import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.Sets;
 
@@ -60,11 +62,11 @@ public class IncQueryEngineManager {
      * <p>
      * it will not be GC'ed before because of {@link BaseIndexListener#iqEngine}
      */
-    Map<Notifier, WeakReference<IncQueryEngine>> engines;
+    Map<Notifier, WeakReference<IncQueryEngineImpl>> engines;
 
     IncQueryEngineManager() {
         super();
-        engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngine>>();
+        engines = new WeakHashMap<Notifier, WeakReference<IncQueryEngineImpl>>();
         initializationListeners = new HashSet<IncQueryEngineInitializationListener>();
     }
 
@@ -83,11 +85,11 @@ public class IncQueryEngineManager {
      * @return a new or previously existing engine
      * @throws IncQueryException
      */
-    public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
-        IncQueryEngine engine = getEngineInternal(emfRoot);
+    public AdvancedIncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
+    	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null) {
-            engine = new IncQueryEngine(this, emfRoot);
-            engines.put(emfRoot, new WeakReference<IncQueryEngine>(engine));
+            engine = new IncQueryEngineImpl(this, emfRoot);
+            engines.put(emfRoot, new WeakReference<IncQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }
         return engine;
@@ -100,7 +102,7 @@ public class IncQueryEngineManager {
      *            the root of the EMF containment hierarchy where this engine operates.
      * @return a previously existing engine, or null if no engine is active for the given EMF model root
      */
-    public IncQueryEngine getIncQueryEngineIfExists(Notifier emfRoot) {
+    public AdvancedIncQueryEngine getIncQueryEngineIfExists(Notifier emfRoot) {
         return getEngineInternal(emfRoot);
     }
 
@@ -109,10 +111,10 @@ public class IncQueryEngineManager {
      * 
      * @return set of engines if there is any, otherwise EMTPY_SET
      */
-    public Set<IncQueryEngine> getExistingIncQueryEngines(){
-        Set<IncQueryEngine> existingEngines = null;
-        for (WeakReference<IncQueryEngine> engineRef : engines.values()) {
-            IncQueryEngine engine = engineRef == null ? null : engineRef.get();
+    public Set<AdvancedIncQueryEngine> getExistingIncQueryEngines(){
+        Set<AdvancedIncQueryEngine> existingEngines = null;
+        for (WeakReference<IncQueryEngineImpl> engineRef : engines.values()) {
+        	IncQueryEngineImpl engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
                 existingEngines = Sets.newHashSet();
             }
@@ -130,6 +132,10 @@ public class IncQueryEngineManager {
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches.
      * 
+     * <p> 
+     * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface 
+     * {@link AdvancedIncQueryEngine}.
+     * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
      * The match set of any patterns will be incrementally refreshed upon updates from this scope.
@@ -140,8 +146,8 @@ public class IncQueryEngineManager {
      * @return a new existing engine
      * @throws IncQueryException
      */
-    public IncQueryEngine createUnmanagedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
-        return new IncQueryEngine(null, emfRoot);
+    public AdvancedIncQueryEngine createUnmanagedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
+        return new IncQueryEngineImpl(null, emfRoot);
     }
 
     /**
@@ -160,7 +166,7 @@ public class IncQueryEngineManager {
      * @return true is an engine was found and disconnected, false if no engine was found for the given root.
      */
     public boolean disposeEngine(Notifier emfRoot) {
-        IncQueryEngine engine = getEngineInternal(emfRoot);
+    	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null)
             return false;
         else {
@@ -198,7 +204,7 @@ public class IncQueryEngineManager {
      * 
      * @param engine the initialized engine
      */
-    protected void notifyInitializationListeners(IncQueryEngine engine) {
+    protected void notifyInitializationListeners(AdvancedIncQueryEngine engine) {
         try {
             if (!initializationListeners.isEmpty()) {
                 for (IncQueryEngineInitializationListener listener : Sets.newHashSet(initializationListeners)) {
@@ -206,7 +212,7 @@ public class IncQueryEngineManager {
                 }
             }
         } catch (Exception ex) {
-            IncQueryEngine.getDefaultLogger().fatal(
+        	IncQueryLoggingUtil.getDefaultLogger().fatal(
                     "EMF-IncQuery Engine Manager encountered an error in delivering notifications"
                             + " about engine initialization. ", ex);
         }
@@ -223,9 +229,9 @@ public class IncQueryEngineManager {
      * @param emfRoot
      * @return
      */
-    private IncQueryEngine getEngineInternal(Notifier emfRoot) {
-        final WeakReference<IncQueryEngine> engineRef = engines.get(emfRoot);
-        IncQueryEngine engine = engineRef == null ? null : engineRef.get();
+    private IncQueryEngineImpl getEngineInternal(Notifier emfRoot) {
+        final WeakReference<IncQueryEngineImpl> engineRef = engines.get(emfRoot);
+        IncQueryEngineImpl engine = engineRef == null ? null : engineRef.get();
         return engine;
     }
 

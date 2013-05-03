@@ -107,7 +107,7 @@ public class ObservablePatternMatcher {
                     return ChangeLevel.MATCHSET;
                 }
             };
-            this.matcher.getEngine().addModelUpdateListener(modelUpdateListener);
+            parent.getKey().getEngine().addModelUpdateListener(modelUpdateListener);
 //            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
             this.processMatchesRunnable.run();
         }
@@ -144,7 +144,7 @@ public class ObservablePatternMatcher {
             for (ObservablePatternMatch pm : matches) {
                 pm.dispose();
             }
-            this.matcher.getEngine().removeModelUpdateListener(modelUpdateListener);
+            parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
 //            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
             processMatchesRunnable = null;
         }
@@ -351,7 +351,7 @@ public class ObservablePatternMatcher {
      * the user
      */
     public void stopMonitoring() {
-        this.matcher.getEngine().removeModelUpdateListener(modelUpdateListener);
+    	parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
 //        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
     }
 }

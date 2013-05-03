@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPreferences;
@@ -81,7 +81,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 }
                 // final IncQueryEngine engine =
                 // EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
-                final IncQueryEngine engine = root.getKey().getEngine();
+                final AdvancedIncQueryEngine engine = root.getKey().getEngine();
                 if (engine != null) {
                     engine.wipe();
                 }

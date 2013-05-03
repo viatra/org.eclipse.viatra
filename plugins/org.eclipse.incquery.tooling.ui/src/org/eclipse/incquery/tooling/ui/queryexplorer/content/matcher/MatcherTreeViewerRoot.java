@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.ui.IEditorPart;
@@ -56,7 +56,7 @@ public class MatcherTreeViewerRoot {
             // disposing IncQueryEngine instance associated to the given Notifier
             // EngineManager.getInstance().disposeEngine(notifier);
             ObservablePatternMatcherRoot root = this.roots.get(key);
-            IncQueryEngine engine = root.getKey().getEngine();
+            AdvancedIncQueryEngine engine = root.getKey().getEngine();
             if (engine != null) {
                 engine.dispose();
             }

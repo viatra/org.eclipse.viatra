@@ -26,9 +26,9 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.internal.genericimpl.GenericQuerySpecification;
+import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * Registry for accessing query specification instances based on Pattern or pattern ID
@@ -73,7 +73,7 @@ public final class QuerySpecificationRegistry {
                     if (el.getName().equals("matcher")) {
                         prepareQuerySpecification(specifications, duplicates, el);
                     } else {
-                        IncQueryEngine.getDefaultLogger().error(
+                    	IncQueryLoggingUtil.getDefaultLogger().error(
                                 "[QuerySpecificationRegistry] Unknown configuration element " + el.getName()
                                         + " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
                     }
@@ -86,7 +86,7 @@ public final class QuerySpecificationRegistry {
                 for (String fqn : duplicates) {
                     duplicateSB.append(String.format("\t%s%n", fqn));
                 }
-                IncQueryEngine.getDefaultLogger().warn(duplicateSB.toString());
+                IncQueryLoggingUtil.getDefaultLogger().warn(duplicateSB.toString());
             }
         }
     }
@@ -112,7 +112,7 @@ public final class QuerySpecificationRegistry {
                         + el.getDeclaringExtension().getUniqueIdentifier());
             }
         } catch (Exception e) {
-            IncQueryEngine.getDefaultLogger().error(
+        	IncQueryLoggingUtil.getDefaultLogger().error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization "
                             + e.getMessage(), e);
         }
@@ -128,7 +128,7 @@ public final class QuerySpecificationRegistry {
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
         } else {
-            IncQueryEngine
+        	IncQueryLoggingUtil
                     .getDefaultLogger()
                     .warn(String
                             .format("[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!",

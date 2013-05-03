@@ -31,6 +31,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.rule.FavouredMatcherRuleSpecification;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.Sets;
 
@@ -55,7 +56,7 @@ public final class ObservableCollectionHelper {
 
         @Override
         protected void handleError(Activation activation, Exception exception, Context context) {
-            IncQueryEngine.getDefaultLogger().error("Exception occurred while updating observable collection!",
+            IncQueryLoggingUtil.getDefaultLogger().error("Exception occurred while updating observable collection!",
                     exception);
         }
     }

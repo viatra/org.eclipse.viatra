@@ -25,6 +25,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * Utility class for instantiating query-based feature handlers ({@link IQueryBasedFeatureHandler}).
@@ -142,11 +143,11 @@ public final class QueryBasedFeatureHelper {
                 newDerivedFeature.initialize(matcher, sourceParamName, targetParamName);
                 newDerivedFeature.startMonitoring();
             } catch (IncQueryException e) {
-                IncQueryEngine.getDefaultLogger().error("Handler initialization failed", e);
+            	IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
                 return null;
             }
         } else {
-            IncQueryEngine
+        	IncQueryLoggingUtil
                     .getDefaultLogger()
                     .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
         }

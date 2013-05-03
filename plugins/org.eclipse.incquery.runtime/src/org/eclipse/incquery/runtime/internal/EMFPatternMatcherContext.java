@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
@@ -34,12 +34,12 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
  */
 public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern> {
 
-    protected IncQueryEngine iqEngine;
+    protected IncQueryEngineImpl iqEngine;
 
     /**
      * @param iqEngine
      */
-    public EMFPatternMatcherContext(IncQueryEngine iqEngine) {
+    public EMFPatternMatcherContext(IncQueryEngineImpl iqEngine) {
         super();
         this.iqEngine = iqEngine;
     }

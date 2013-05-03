@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
@@ -37,7 +37,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
     /**
      * 
      */
-    private final IncQueryEngine incQueryEngine;
+    private final AdvancedIncQueryEngine incQueryEngine;
     private ChangeLevel currentChange = ChangeLevel.NO_CHANGE;
     private ChangeLevel maxLevel = ChangeLevel.NO_CHANGE;
     private final Multimap<ChangeLevel, IncQueryModelUpdateListener> listenerMap;
@@ -46,7 +46,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
      * @param incQueryEngine TODO
      * 
      */
-    public ModelUpdateProvider(IncQueryEngine incQueryEngine) {
+    public ModelUpdateProvider(AdvancedIncQueryEngine incQueryEngine) {
         super();
         this.incQueryEngine = incQueryEngine;
         Map<ChangeLevel, Collection<IncQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);

@@ -25,10 +25,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternTypeEnum;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 public class GeneratedPatternSource {
 
@@ -68,14 +68,14 @@ public class GeneratedPatternSource {
                     return patternInfo;
                 }
             } else {
-                IncQueryEngine.getDefaultLogger().warn(
+                IncQueryLoggingUtil.getDefaultLogger().warn(
                         "[Pattern Registry] Id attribute value " + idAttributeInExtension
                                 + " does not equal pattern FQN of query specification " + patternFullyQualifiedName
                                 + " in plugin.xml of "
                                 + configurationElement.getDeclaringExtension().getUniqueIdentifier());
             }
         } catch (Exception exception) {
-            IncQueryEngine.getDefaultLogger().error(
+        	IncQueryLoggingUtil.getDefaultLogger().error(
                     "[Pattern Registry] Exception during query specification registry initialization", exception);
         }
 

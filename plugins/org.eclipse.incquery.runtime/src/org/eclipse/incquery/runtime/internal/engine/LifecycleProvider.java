@@ -12,8 +12,8 @@ package org.eclipse.incquery.runtime.internal.engine;
 
 import java.util.ArrayList;
 
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
@@ -22,12 +22,12 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
         /**
          * 
          */
-        private final IncQueryEngine incQueryEngine;
+        private final AdvancedIncQueryEngine incQueryEngine;
 
         /**
          * @param incQueryEngine
          */
-        public LifecycleProvider(IncQueryEngine incQueryEngine) {
+        public LifecycleProvider(AdvancedIncQueryEngine incQueryEngine) {
             this.incQueryEngine = incQueryEngine;
         }
 

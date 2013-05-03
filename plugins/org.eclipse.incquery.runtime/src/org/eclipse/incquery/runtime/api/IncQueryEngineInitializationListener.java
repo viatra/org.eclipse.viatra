@@ -23,6 +23,6 @@ public interface IncQueryEngineInitializationListener {
      * 
      * @param engine the initialized engine
      */
-    void engineInitialized(IncQueryEngine engine);
+    void engineInitialized(AdvancedIncQueryEngine engine);
     
 }

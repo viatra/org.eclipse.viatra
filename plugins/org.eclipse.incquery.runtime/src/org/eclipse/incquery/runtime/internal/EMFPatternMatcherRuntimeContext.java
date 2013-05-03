@@ -20,10 +20,10 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
@@ -183,7 +183,7 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
      * 
      * @param notifier
      */
-    public EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine, NavigationHelper baseIndex) {
+    public EMFPatternMatcherRuntimeContext(IncQueryEngineImpl iqEngine, NavigationHelper baseIndex) {
         super(iqEngine);
         this.baseIndex = baseIndex;
         // this.waitingVisitors = new ArrayList<EMFVisitor>();

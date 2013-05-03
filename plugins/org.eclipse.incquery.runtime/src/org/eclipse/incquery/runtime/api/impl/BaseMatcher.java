@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
@@ -57,16 +58,17 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
             throws IncQueryException {
         super();
         this.engine = engine;
+        IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
-        this.patternMatcher = accessMatcher(engine, querySpecification.getPattern());
-        this.reteEngine = engine.getReteEngine();
-        this.baseIndex = engine.getBaseIndex();
-        this.engine.reportMatcherInitialized(querySpecification, this);
+        this.patternMatcher = accessMatcher(engineImpl, querySpecification.getPattern());
+        this.reteEngine = engineImpl.getReteEngine();
+        this.baseIndex = engineImpl.getBaseIndex();
+        engineImpl.reportMatcherInitialized(querySpecification, this);
     }
 
     // HELPERS
     
-    private static RetePatternMatcher accessMatcher(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+    private static RetePatternMatcher accessMatcher(IncQueryEngineImpl engine, Pattern pattern) throws IncQueryException {
         checkPattern(engine, pattern);
         try {
             return engine.getReteEngine().accessMatcher(pattern);
@@ -81,7 +83,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @throws IncQueryException
      *             if the pattern has errors
      */
-    protected static void checkPattern(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+    protected static void checkPattern(IncQueryEngineImpl engine, Pattern pattern) throws IncQueryException {
         final boolean admissible = engine.getSanitizer().admit(pattern);
         if (!admissible)
             throw new IncQueryException(

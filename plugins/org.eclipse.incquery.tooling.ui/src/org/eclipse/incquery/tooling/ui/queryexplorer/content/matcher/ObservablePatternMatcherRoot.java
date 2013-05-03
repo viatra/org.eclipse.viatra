@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
@@ -58,7 +59,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         sortedMatchers = new LinkedList<ObservablePatternMatcher>();
         this.key = key;
 
-        IncQueryEngine engine = key.getEngine();
+        AdvancedIncQueryEngine engine = key.getEngine();
         if (engine == null) {
             key.setEngine(createEngine());
         }
@@ -67,9 +68,9 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         }
     }
 
-    private IncQueryEngine createEngine() {
+    private AdvancedIncQueryEngine createEngine() {
         try {
-            IncQueryEngine engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(key.getNotifier());
+        	AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(key.getNotifier());
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
@@ -126,14 +127,14 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         for (ObservablePatternMatcher pm : this.matchers.values()) {
             pm.dispose();
         }
-        IncQueryEngine engine = key.getEngine();// createEngine();
+        AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
         if (engine != null) {
             engine.getLogger().removeAppender(this);
         }
     }
 
     public boolean isTainted() {
-        IncQueryEngine engine = key.getEngine();// createEngine();
+    	AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
         return (engine == null) ? true : engine.isTainted();
     }
 

@@ -24,15 +24,16 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEList;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -56,9 +57,9 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
             String patternName = matcher.getPatternName();
             try {
                 matcher = (IncQueryMatcher<IPatternMatch>) QuerySpecificationRegistry.getQuerySpecification(patternName)
-                        .getMatcher(matcher.getEngine());
+                        .getMatcher(engineForMatcher());
             } catch (IncQueryException e) {
-                matcher.getEngine().getLogger()
+                engineForMatcher().getLogger()
                         .error("[IncqueryFeatureHandler] Exception during wipe callback: " + e.getMessage(), e);
             }
             dm = matcher.newDeltaMonitor(false);
@@ -82,7 +83,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
                 checkUnhandledNewMatch();
                 sendNextNotfication();
             } catch (IncQueryException e) {
-                matcher.getEngine().getLogger()
+                engineForMatcher().getLogger()
                         .error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
             }
         }
@@ -129,7 +130,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
     @SuppressWarnings("unchecked")
     protected void initialize(final IncQueryMatcher matcher, String sourceParamName, String targetParamName) {
         if (initialized) {
-            IncQueryEngine.getDefaultLogger().error("[IncqueryFeatureHandler] Feature already initialized!");
+            IncQueryLoggingUtil.getDefaultLogger().error("[IncqueryFeatureHandler] Feature already initialized!");
             return;
         }
         initialized = true;
@@ -137,15 +138,15 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         this.sourceParamName = sourceParamName;
         this.targetParamName = targetParamName;
         if (matcher.getPositionOfParameter(sourceParamName) == null) {
-            matcher.getEngine().getLogger()
+            engineForMatcher().getLogger()
                     .error("[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
         }
         if (targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
-            matcher.getEngine().getLogger()
+            engineForMatcher().getLogger()
                     .error("[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
         }
         if ((targetParamName == null) != (kind == QueryBasedFeatureKind.COUNTER)) {
-            matcher.getEngine().getLogger()
+            engineForMatcher().getLogger()
                     .error("[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
         }
         // IPatternMatch partialMatch = matcher.newEmptyMatch();
@@ -158,7 +159,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
     private void sendNextNotfication() {
         while (!notifications.isEmpty()) {
             ENotificationImpl remove = notifications.remove(0);
-            // matcher.getEngine().getLogger().logError(this + " : " +remove.toString());
+            // engineForMatcher().getLogger().logError(this + " : " +remove.toString());
             ((Notifier) remove.getNotifier()).eNotify(remove);
         }
     }
@@ -174,7 +175,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         this(feature);
         this.kind = kind;
         if (kind == QueryBasedFeatureKind.SUM && !(feature instanceof EAttribute)) {
-            IncQueryEngine.getDefaultLogger().error(
+        	IncQueryLoggingUtil.getDefaultLogger().error(
                     "[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
         }
     }
@@ -191,7 +192,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
      * Call this once to start handling callbacks.
      */
     protected void startMonitoring() {
-        IncQueryEngine engine = matcher.getEngine();
+        AdvancedIncQueryEngine engine = engineForMatcher();
         engine.addLifecycleListener(new IncQueryEngineLifecycleListener() {
             
             @Override
@@ -222,6 +223,10 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         });
         processMatchesRunnable.run();
     }
+
+	private AdvancedIncQueryEngine engineForMatcher() {
+		return (AdvancedIncQueryEngine) matcher.getEngine();
+	}
 
     @Override
     public Object getValue(Object source) {
@@ -259,7 +264,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
             IPatternMatch match = matcher.newEmptyMatch();
             match.set(sourceParamName, source);
             if (matcher.countMatches(match) > 1) {
-                matcher.getEngine()
+                engineForMatcher()
                         .getLogger()
                         .warn("[IncqueryFeatureHandler] Single reference derived feature has multiple possible values, returning one arbitrary value");
             }
@@ -323,7 +328,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
         if (keepCache) {
             List<Object> values = manyRefMemory.get(source);
             if (values == null) {
-                matcher.getEngine()
+                engineForMatcher()
                         .getLogger()
                         .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): removing from list that doesn't exist");
             }
@@ -361,7 +366,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
                             addToManyRefMemory(source, target);
                         } else {
                             if (updateMemory.get(source) != null) {
-                                matcher.getEngine()
+                                engineForMatcher()
                                         .getLogger()
                                         .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source");
                             } else {
@@ -471,7 +476,7 @@ public class QueryBasedFeatureHandler implements IQueryBasedFeatureHandler {
     private void decreaseCounter(InternalEObject source, int delta) throws IncQueryException {
         Integer value = counterMemory.get(source);
         if (value == null) {
-            matcher.getEngine()
+            engineForMatcher()
                     .getLogger()
                     .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
         } else if (value >= delta) {
