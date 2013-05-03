@@ -199,6 +199,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                     doPostGenerateExpressionEvaluator(project, extensionGenerator, pattern);
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
+                    ensureSupport.exportPackage(project, util.getUtilPackageName(pattern));
                 }
             }
         }
