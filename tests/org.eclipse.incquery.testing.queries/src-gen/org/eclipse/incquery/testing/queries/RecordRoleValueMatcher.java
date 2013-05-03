@@ -58,8 +58,7 @@ public class RecordRoleValueMatcher extends BaseGeneratedMatcher<RecordRoleValue
    */
   public static RecordRoleValueMatcher on(final IncQueryEngine engine) throws IncQueryException {
     // check if matcher already exists
-    RecordRoleValueMatcher matcher = 
-    	(RecordRoleValueMatcher) engine.getExistingMatcher(querySpecification());
+    RecordRoleValueMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
     	matcher = new RecordRoleValueMatcher(engine);
     	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it

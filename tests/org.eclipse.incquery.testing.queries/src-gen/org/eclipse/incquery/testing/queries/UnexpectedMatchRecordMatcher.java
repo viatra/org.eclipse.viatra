@@ -58,8 +58,7 @@ public class UnexpectedMatchRecordMatcher extends BaseGeneratedMatcher<Unexpecte
    */
   public static UnexpectedMatchRecordMatcher on(final IncQueryEngine engine) throws IncQueryException {
     // check if matcher already exists
-    UnexpectedMatchRecordMatcher matcher = 
-    	(UnexpectedMatchRecordMatcher) engine.getExistingMatcher(querySpecification());
+    UnexpectedMatchRecordMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
     	matcher = new UnexpectedMatchRecordMatcher(engine);
     	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it

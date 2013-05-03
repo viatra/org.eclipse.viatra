@@ -71,8 +71,7 @@ public class SubstitutionValueMatcher extends BaseGeneratedMatcher<SubstitutionV
    */
   public static SubstitutionValueMatcher on(final IncQueryEngine engine) throws IncQueryException {
     // check if matcher already exists
-    SubstitutionValueMatcher matcher = 
-    	(SubstitutionValueMatcher) engine.getExistingMatcher(querySpecification());
+    SubstitutionValueMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
     	matcher = new SubstitutionValueMatcher(engine);
     	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
