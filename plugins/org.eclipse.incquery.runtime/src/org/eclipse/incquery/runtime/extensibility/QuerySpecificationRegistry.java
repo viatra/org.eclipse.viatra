@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
-import org.eclipse.incquery.runtime.api.GenericQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.internal.genericimpl.GenericQuerySpecification;
 
 /**
  * Registry for accessing query specification instances based on Pattern or pattern ID
@@ -164,10 +164,11 @@ public final class QuerySpecificationRegistry {
      */
     public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(Pattern pattern) {
         String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        if (QUERY_SPECIFICATIONS.containsKey(fullyQualifiedName)) {
-            return QUERY_SPECIFICATIONS.get(fullyQualifiedName);
-        }
-        return null;
+        final IQuerySpecification<?> contributedSpecification = QUERY_SPECIFICATIONS.get(fullyQualifiedName);
+        if (contributedSpecification != null && pattern.equals(contributedSpecification.getPattern())) 
+        	return contributedSpecification;
+        else 
+        	return null;
     }
 
     /**
@@ -177,11 +178,11 @@ public final class QuerySpecificationRegistry {
      * @return
      */
     public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateQuerySpecification(Pattern pattern) {
-        String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        if (QUERY_SPECIFICATIONS.containsKey(fullyQualifiedName)) {
-            return QUERY_SPECIFICATIONS.get(fullyQualifiedName);
-        }
-        return new GenericQuerySpecification(pattern);
+    	IQuerySpecification<?> specification = getQuerySpecification(pattern);
+        if (specification != null) 
+        	return specification;
+        else 
+        	return new GenericQuerySpecification(pattern);
     }
 
     /**

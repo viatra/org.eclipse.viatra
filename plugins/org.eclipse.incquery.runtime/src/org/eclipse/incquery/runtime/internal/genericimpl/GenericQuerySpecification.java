@@ -9,9 +9,11 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.api;
+package org.eclipse.incquery.runtime.internal.genericimpl;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 

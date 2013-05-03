@@ -22,7 +22,6 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
-import org.eclipse.incquery.runtime.api.GenericQuerySpecification
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -107,8 +106,7 @@ class ModelLoadHelper {
 			}
 		]
 		if(patterns.size == 1){
-			val specification = new GenericQuerySpecification(patterns.iterator.next)
-			specification.getMatcher(engine)
+			engine.getMatcher(patterns.iterator.next)
 		}
 	}
 	
@@ -120,8 +118,8 @@ class ModelLoadHelper {
 	 * Initialize a registered matcher for the pattern FQN on the selected EMF root.
 	 */
 	def initializeMatcherFromRegistry(Notifier emfRoot, String patternFQN){
-		val factory = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
-		factory.getMatcher(emfRoot)
+		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
+		querySpecification.getMatcher(IncQueryEngine::on(emfRoot))
 	}
 	
 	/**

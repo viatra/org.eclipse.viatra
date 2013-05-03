@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
-import org.eclipse.incquery.runtime.api.GenericQuerySpecification;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
 
@@ -114,7 +114,7 @@ public enum PatternRegistry {
         }
 
         // Create new PatternInfo
-        IQuerySpecification<?> querySpecification = new GenericQuerySpecification(pattern);
+        IQuerySpecification<?> querySpecification = QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
         PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERIC, pattern, relatedFile, querySpecification);
         addPatternToRegistry(patternInfo);
 
