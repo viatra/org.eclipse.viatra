@@ -85,10 +85,10 @@ public class IncQueryEngineManager {
      * @return a new or previously existing engine
      * @throws IncQueryException
      */
-    public AdvancedIncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
+    public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null) {
-            engine = new IncQueryEngineImpl(this, emfRoot);
+            engine = new IncQueryEngineImpl(this, emfRoot, false);
             engines.put(emfRoot, new WeakReference<IncQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }
@@ -102,7 +102,7 @@ public class IncQueryEngineManager {
      *            the root of the EMF containment hierarchy where this engine operates.
      * @return a previously existing engine, or null if no engine is active for the given EMF model root
      */
-    public AdvancedIncQueryEngine getIncQueryEngineIfExists(Notifier emfRoot) {
+    public IncQueryEngine getIncQueryEngineIfExists(Notifier emfRoot) {
         return getEngineInternal(emfRoot);
     }
 
@@ -111,8 +111,8 @@ public class IncQueryEngineManager {
      * 
      * @return set of engines if there is any, otherwise EMTPY_SET
      */
-    public Set<AdvancedIncQueryEngine> getExistingIncQueryEngines(){
-        Set<AdvancedIncQueryEngine> existingEngines = null;
+    public Set<IncQueryEngine> getExistingIncQueryEngines(){
+        Set<IncQueryEngine> existingEngines = null;
         for (WeakReference<IncQueryEngineImpl> engineRef : engines.values()) {
         	IncQueryEngineImpl engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
@@ -127,7 +127,7 @@ public class IncQueryEngineManager {
     }
     
     /**
-     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * Creates a new advanced and unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches.
@@ -146,8 +146,8 @@ public class IncQueryEngineManager {
      * @return a new existing engine
      * @throws IncQueryException
      */
-    public AdvancedIncQueryEngine createUnmanagedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
-        return new IncQueryEngineImpl(null, emfRoot);
+    public AdvancedIncQueryEngine createAdvancedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
+        return new IncQueryEngineImpl(null, emfRoot, true);
     }
 
     /**
@@ -160,14 +160,13 @@ public class IncQueryEngineManager {
      * matchers or the engine, GC'ing the engine and its caches is presumably made easier, although (due to weak
      * references) a dispose() call is not strictly necessary.
      * <p>
-     * If the engine is managed (see {@link IncQueryEngine#isManaged()}), there may be other clients using it. Care
-     * should be taken with disposing such engines.
+     * If the engine is managed (see {@link IncQueryEngine#isManaged()}), there may be other clients using it. Such engines will not be disposed.
      * 
      * @return true is an engine was found and disconnected, false if no engine was found for the given root.
      */
     public boolean disposeEngine(Notifier emfRoot) {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
-        if (engine == null)
+        if (engine == null || engine.isManaged())
             return false;
         else {
             engine.dispose();

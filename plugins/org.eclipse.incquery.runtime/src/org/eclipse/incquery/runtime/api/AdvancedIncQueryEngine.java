@@ -12,6 +12,9 @@ package org.eclipse.incquery.runtime.api;
 
 import org.apache.log4j.Appender;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 
 
 /**
@@ -135,4 +138,10 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 		manager.killInternal(emfRoot);
 	}
 
+	/**
+	 * TODO javadoc
+	 * @return
+	 */
+	public abstract ReteEngine<Pattern> getReteEngine() throws IncQueryException;
+	
 }

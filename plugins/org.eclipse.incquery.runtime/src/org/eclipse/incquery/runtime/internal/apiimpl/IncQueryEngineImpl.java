@@ -89,28 +89,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      */
     private PatternSanitizer sanitizer = null;
 
-    /**
-     * Indicates whether the engine is in a tainted, inconsistent state.
-     */
-    private boolean tainted = false;
-    private EngineTaintListener taintListener;
 
-    private static class SelfTaintListener extends EngineTaintListener {
-        WeakReference<IncQueryEngineImpl> iqEngRef;
-
-        public SelfTaintListener(IncQueryEngineImpl iqEngine) {
-            this.iqEngRef = new WeakReference<IncQueryEngineImpl>(iqEngine);
-        }
-
-        @Override
-        public void engineBecameTainted() {
-            final IncQueryEngineImpl iqEngine = iqEngRef.get();
-            iqEngine.tainted = true;
-            iqEngine.lifecycleProvider.engineBecameTainted();
-        }
-    }
-
-//  private final Set<Runnable> afterWipeCallbacks;
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
     private Logger logger;
@@ -119,19 +98,23 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * EXPERIMENTAL
      */
     private final int reteThreads = 0;
-/**
+    
+    
+    private boolean isAdvanced = false;
+    
+    /**
      * @param manager
      *            null if unmanaged
      * @param emfRoot
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean _isAdvanced) throws IncQueryException {
         super();
+        this.isAdvanced = _isAdvanced;
         this.manager = manager;
         this.emfRoot = emfRoot;
         this.matchers = Maps.newHashMap();
-//        this.afterWipeCallbacks = new HashSet<Runnable>();
         this.lifecycleProvider = new LifecycleProvider(this);
         this.modelUpdateProvider = new ModelUpdateProvider(this);
         if (!(emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet))
@@ -168,19 +151,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return getMatcher(querySpecification);
     }
         
-    // TODO JavaDoc missing!
-    // TODO make it package-only visible when implementation class is moved to impl package
-    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
-        if(matchers.containsKey(querySpecification)) {
-            // TODO simply dropping the matcher can cause problems
-            logger.debug("Pattern " + 
-            		CorePatternLanguageHelper.getFullyQualifiedName(querySpecification.getPattern()) + 
-            		" already initialized in IncQueryEngine!");
-        } else {
-            matchers.put(querySpecification, matcher);
-            lifecycleProvider.matcherInstantiated(matcher);
-        }
-    }
+    
 
     /**
      * Internal accessor for the base index.
@@ -241,10 +212,56 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return getBaseIndexInternal();
     }
 
+   
+
+    @Override
+	public Logger getLogger() {
+        if (logger == null) {
+            final int hash = System.identityHashCode(this);
+            logger = Logger.getLogger(IncQueryLoggingUtil.getDefaultLogger().getName() + "." + hash);
+            if (logger == null)
+                throw new AssertionError(
+                        "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
+
+            // if an error is logged, the engine becomes tainted
+            taintListener = new SelfTaintListener(this);
+            logger.addAppender(taintListener);
+        }
+        return logger;
+    }
+
+    
+    @Override
+    public void setWildcardMode(boolean wildcardMode) throws IncQueryException {
+        if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
+            throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
+
+        if (wildcardMode != WILDCARD_MODE_DEFAULT)
+            getBaseIndexInternal(wildcardMode, true);
+    }
+
+    
+    ///////////////// internal stuff //////////////
+
+    // TODO JavaDoc missing!
+    // TODO make it package-only visible when implementation class is moved to impl package
+    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
+        if(matchers.containsKey(querySpecification)) {
+            // TODO simply dropping the matcher can cause problems
+            logger.debug("Pattern " + 
+                    CorePatternLanguageHelper.getFullyQualifiedName(querySpecification.getPattern()) + 
+                    " already initialized in IncQueryEngine!");
+        } else {
+            matchers.put(querySpecification, matcher);
+            lifecycleProvider.matcherInstantiated(matcher);
+        }
+    }
+
     /**
      * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
      * 
      * @noreference A typical user would not need to call this method.
+     * TODO make it package visible only
      */
     public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
@@ -273,45 +290,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 
     }
 
-    @Override
-	public void dispose() {
-        if (manager != null) {
-            managerKillInternal(manager, emfRoot);
-            logger.warn(String.format("Managed engine disposed for notifier %s !", emfRoot));
-        }
-        killInternal();
-        lifecycleProvider.engineDisposed();
-    }
-
-    @Override
-	public void wipe() {
-        if (manager != null) {
-            logger.warn(String.format("Managed engine wiped for notifier %s !", emfRoot));
-        }
-        if (reteEngine != null) {
-            reteEngine.killEngine();
-            reteEngine = null;
-        }
-        sanitizer = null;
-        lifecycleProvider.engineWiped();
-    }
-
-//    /**
-//     * This will run before wipes.
-//     */
-    // * If there are any such, updates are settled before they are run.
-//    private void runAfterWipeCallbacks() {
-//        try {
-//            if (!afterWipeCallbacks.isEmpty()) {
-//                // settle();
-//                for (Runnable runnable : new ArrayList<Runnable>(afterWipeCallbacks)) {
-//                    runnable.run();
-//                }
-//            }
-//        } catch (Exception ex) {
-//            logger.fatal("EMF-IncQuery encountered an error in delivering notifications about wipe. ", ex);
-//        }
-//    }
+    
 
     private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) {
         ReteEngine<Pattern> engine;
@@ -323,6 +302,19 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return engine;
     }
 
+    
+    
+    /**
+     * @return the sanitizer
+     * TODO make this package visible only
+     */
+    public PatternSanitizer getSanitizer() {
+        if (sanitizer == null) {
+            sanitizer = new PatternSanitizer(getLogger());
+        }
+        return sanitizer;
+    }
+    
     /**
      * To be called after already removed from engineManager.
      */
@@ -334,58 +326,62 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         getLogger().removeAppender(taintListener);
         
     }
-
+    
+    
+    ///////////////// advanced stuff /////////////
+    
     @Override
-	public Logger getLogger() {
-        if (logger == null) {
-            final int hash = System.identityHashCode(this);
-            logger = Logger.getLogger(IncQueryLoggingUtil.getDefaultLogger().getName() + "." + hash);
-            if (logger == null)
-                throw new AssertionError(
-                        "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
-
-            // if an error is logged, the engine becomes tainted
-            taintListener = new SelfTaintListener(this);
-            logger.addAppender(taintListener);
+    public void dispose() {
+        if (!isAdvanced) {
+            return;
         }
-        return logger;
+        if (manager != null) {
+            managerKillInternal(manager, emfRoot);
+            logger.warn(String.format("Managed engine disposed for notifier %s !", emfRoot));
+        }
+        killInternal();
+        lifecycleProvider.engineDisposed();
     }
 
-    //
-    //
-    // /**
-    // * Run-time events (such as exceptions during expression evaluation) will be logged to the specified logger.
-    // * <p>
-    // * DEFAULT BEHAVIOUR:
-    // * If Eclipse is running, the default logger pipes to the Eclipse Error Log.
-    // * Otherwise, messages are written to stderr.
-    // * In both cases, debug messages are ignored.
-    // * </p>
-    // * @param logger a custom logger that errors will be logged to during runtime execution.
-    // */
-    // public void setLogger(EMFIncQueryRuntimeLogger logger) {
-    // this.logger = logger;
-    // }
+    @Override
+    public void wipe() {
+        if (!isAdvanced) {
+            return;
+        }
+        if (manager != null) {
+            logger.warn(String.format("Managed engine wiped for notifier %s !", emfRoot));
+        }
+        if (reteEngine != null) {
+            reteEngine.killEngine();
+            reteEngine = null;
+        }
+        sanitizer = null;
+        lifecycleProvider.engineWiped();
+    }
 
+    
+    
     /**
-     * @return the sanitizer
+     * Indicates whether the engine is in a tainted, inconsistent state.
      */
-    public PatternSanitizer getSanitizer() {
-        if (sanitizer == null) {
-            sanitizer = new PatternSanitizer(getLogger());
+    private boolean tainted = false;
+    private EngineTaintListener taintListener;
+
+    private static class SelfTaintListener extends EngineTaintListener {
+        WeakReference<IncQueryEngineImpl> iqEngRef;
+
+        public SelfTaintListener(IncQueryEngineImpl iqEngine) {
+            this.iqEngRef = new WeakReference<IncQueryEngineImpl>(iqEngine);
         }
-        return sanitizer;
+
+        @Override
+        public void engineBecameTainted() {
+            final IncQueryEngineImpl iqEngine = iqEngRef.get();
+            iqEngine.tainted = true;
+            iqEngine.lifecycleProvider.engineBecameTainted();
+        }
     }
-
-    @Override
-	public void setWildcardMode(boolean wildcardMode) throws IncQueryException {
-        if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
-            throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
-
-        if (wildcardMode != WILDCARD_MODE_DEFAULT)
-            getBaseIndexInternal(wildcardMode, true);
-    }
-
+    
     @Override
 	public boolean isTainted() {
         return tainted;
@@ -394,14 +390,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public boolean isManaged() {
         return manager != null;
+        // return isAdvanced; ???
     }
 
-//    /**
-//     * @return the set of callbacks that will be issued after a wipe
-//     */
-//    public Set<Runnable> getAfterWipeCallbacks() {
-//        return afterWipeCallbacks;
-//    }
 
     @Override
 	public <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,

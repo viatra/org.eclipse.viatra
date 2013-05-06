@@ -70,7 +70,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private AdvancedIncQueryEngine createEngine() {
         try {
-        	AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(key.getNotifier());
+        	AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(key.getNotifier());
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
