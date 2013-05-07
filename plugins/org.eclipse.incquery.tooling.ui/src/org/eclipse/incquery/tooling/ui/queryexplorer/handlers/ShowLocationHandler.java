@@ -20,7 +20,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -62,7 +62,7 @@ public class ShowLocationHandler extends AbstractHandler {
     }
 
     protected void setSelectionToXTextEditor(Pattern pattern) {
-        IFile file = PatternRegistry.getInstance().getFileForPattern(pattern);
+        IFile file = QueryExplorerPatternRegistry.getInstance().getFileForPattern(pattern);
 
         for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                 .getEditorReferences()) {

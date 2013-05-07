@@ -14,7 +14,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -37,7 +37,7 @@ public final class MatcherConfigurationLabelProvider extends LabelProvider imple
             } else if (mc.getFilter() instanceof EObject) {
                 EObject eObj = (EObject) mc.getFilter();
                 URI uri = eObj.eClass().eResource().getURI();
-                AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+                AdapterFactoryLabelProvider lp = DisplayUtil.getAdapterFactoryLabelProvider(uri);
                 if (lp != null) {
                     return lp.getText(eObj);
                 }

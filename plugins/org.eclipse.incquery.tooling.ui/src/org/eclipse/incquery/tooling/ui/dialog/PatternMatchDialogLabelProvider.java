@@ -13,7 +13,7 @@ package org.eclipse.incquery.tooling.ui.dialog;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -85,7 +85,7 @@ public class PatternMatchDialogLabelProvider implements ILabelProvider {
     @Override
     public String getText(Object element) {
         if (element instanceof IPatternMatch) {
-            String message = DatabindingUtil.getMessage((IPatternMatch) element, true);
+            String message = DisplayUtil.getMessage((IPatternMatch) element, true);
             if (message != null) {
                 return DatabindingAdapterUtil.getMessage((IPatternMatch) element, message);
             } else {

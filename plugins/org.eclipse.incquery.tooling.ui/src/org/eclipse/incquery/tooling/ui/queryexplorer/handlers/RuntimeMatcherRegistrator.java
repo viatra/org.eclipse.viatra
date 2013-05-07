@@ -26,8 +26,8 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTree
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 import com.google.inject.Inject;
 
@@ -45,7 +45,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
     private final IFile file;
 
     @Inject
-    DatabindingUtil dbUtil;
+    DisplayUtil dbUtil;
 
     public RuntimeMatcherRegistrator(IFile file) {
         this.file = file;
@@ -57,11 +57,11 @@ public class RuntimeMatcherRegistrator implements Runnable {
         if (queryExplorerInstance != null) {
             MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
             PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
-            List<Pattern> oldParsedModel = PatternRegistry.getInstance().getRegisteredPatternsForFile(file);
+            List<Pattern> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
             PatternModel newParsedModel = dbUtil.parseEPM(file);
 
             // if no patterns were registered before, open the patterns viewer
-            if (PatternRegistry.getInstance().isEmpty()) {
+            if (QueryExplorerPatternRegistry.getInstance().isEmpty()) {
                 FlyoutControlComposite flyout = queryExplorerInstance.getPatternsViewerFlyout();
                 flyout.getPreferences().setState(IFlyoutPreferences.STATE_OPEN);
                 // redraw();
@@ -70,9 +70,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
 
             // UNREGISTERING PATTERNS
 
-            List<Pattern> allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
+            List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
             // deactivate patterns within the given file
-            PatternRegistry.getInstance().unregisterPatternModel(file);
+            QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
 
             // unregister all active patterns from the roots and wipe the appropriate iq engine
             for (ObservablePatternMatcherRoot root : vr.getRoots()) {
@@ -100,8 +100,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
             // REGISTERING PATTERNS
 
             // registering patterns from file
-            List<Pattern> newPatterns = PatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
-            allActivePatterns = PatternRegistry.getInstance().getActivePatterns();
+            List<Pattern> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+            allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
 
             // now the active patterns also contain of the new patterns
             for (ObservablePatternMatcherRoot root : vr.getRoots()) {

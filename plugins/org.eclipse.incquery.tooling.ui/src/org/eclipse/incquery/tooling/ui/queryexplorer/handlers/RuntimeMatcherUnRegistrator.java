@@ -19,7 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
 
@@ -32,7 +32,7 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
     @Override
     public void run() {
         MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-        List<Pattern> removedPatterns = PatternRegistry.getInstance().unregisterPatternModel(file);
+        List<Pattern> removedPatterns = QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
         for (Pattern pattern : removedPatterns) {
             for (ObservablePatternMatcherRoot root : vr.getRoots()) {
                 root.unregisterPattern(pattern);

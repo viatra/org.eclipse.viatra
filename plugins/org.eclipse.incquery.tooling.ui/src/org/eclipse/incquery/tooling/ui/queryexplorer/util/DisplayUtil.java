@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -39,7 +35,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.incquery.databinding.runtime.adapter.GenericDatabindingAdapter;
+import org.eclipse.incquery.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -47,37 +43,32 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
- * The util contains several useful methods for the databinding operations.
+ * The util contains several useful methods for the query displaying operations.
  */
 @Singleton
-public class DatabindingUtil {
+public class DisplayUtil {
 
-    private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
+
     private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
     private static Map<URI, IConfigurationElement> uriConfElementMap = null;
     private static ILog logger = IncQueryGUIPlugin.getDefault().getLog();
     private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
-    private static List<Pattern> generatedPatterns;
-    private static Map<Pattern, IQuerySpecification<?>> generatedQuerySpecifications;
+    
 
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
+
     
     @Inject
     private IResourceSetProvider resSetProvider;
@@ -93,7 +84,7 @@ public class DatabindingUtil {
      */
     public static void addOrderByPatternWarning(String patternFqn, String message) {
         if (orderByPatternMarkers.get(patternFqn) == null) {
-            Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+            Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
             URI uri = pattern.eResource().getURI();
             String platformString = uri.toPlatformString(true);
             IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
@@ -112,55 +103,7 @@ public class DatabindingUtil {
         }
     }
 
-    private static Map<Pattern, IQuerySpecification<?>> collectGeneratedQuerySpecifications() {
-        Map<Pattern, IQuerySpecification<?>> querySpecifications = new HashMap<Pattern, IQuerySpecification<?>>();
-        for (IQuerySpecification<?> querySpecification : QuerySpecificationRegistry.getContributedQuerySpecifications()) {
-            Pattern pattern = querySpecification.getPattern();
-            Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
-            if (annotationValue != null && annotationValue) {
-                querySpecifications.put(pattern, querySpecification);
-            }
-        }
-        return querySpecifications;
-    }
-
-    public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
-        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern,
-                IExtensions.QUERY_EXPLORER_ANNOTATION);
-        if (annotation == null) {
-            return null;
-        } else {
-            for (AnnotationParameter ap : annotation.getParameters()) {
-                if (ap.getName().equalsIgnoreCase("display")) {
-                    return Boolean.valueOf(((BoolValueImpl) ap.getValue()).isValue());
-                }
-            }
-            return Boolean.TRUE;
-        }
-    }
-
-    public static synchronized Collection<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
-        if (generatedQuerySpecifications == null) {
-            generatedQuerySpecifications = collectGeneratedQuerySpecifications();
-        }
-        return Collections.unmodifiableCollection(generatedQuerySpecifications.values());
-    }
-
-    public static synchronized List<Pattern> getGeneratedPatterns() {
-        if (generatedPatterns == null) {
-            generatedPatterns = collectGeneratedPatterns();
-        }
-        return Collections.unmodifiableList(generatedPatterns);
-    }
-
-    private static List<Pattern> collectGeneratedPatterns() {
-        List<Pattern> patterns = new ArrayList<Pattern>();
-        for (IQuerySpecification<?> querySpecification : getGeneratedQuerySpecifications()) {
-            patterns.add(querySpecification.getPattern());
-        }
-        return patterns;
-    }
-
+    
     /**
      * Removes the marker for the given pattern if it is present.
      * 
@@ -289,41 +232,20 @@ public class DatabindingUtil {
      */
     public static String getMessage(IPatternMatch match, boolean generatedMatcher) {
         if (generatedMatcher) {
-            return getMessageForGeneratedMatcher(match);
+            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
         } else {
             return getMessageForGenericMatcher(match);
         }
     }
 
-    private static String getMessageForGeneratedMatcher(IPatternMatch match) {
-        String patternName = match.patternName();
-        try {
-            IExtensionRegistry reg = Platform.getExtensionRegistry();
-            IExtensionPoint ep = reg.getExtensionPoint(DATABINDING_EXTENSION);
-            for (IExtension e : ep.getExtensions()) {
-                for (IConfigurationElement ce : e.getConfigurationElements()) {
-                    String[] tokens = patternName.split("\\.");
-                    String pattern = tokens[tokens.length - 1];
-
-                    if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(pattern)) {
-                        return ce.getAttribute("message");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Message could not be retrieved for generated matcher.", e));
-        }
-
-        return null;
-    }
+    
 
     private static String getMessageForGenericMatcher(IPatternMatch match) {
         String patternName = match.patternName();
         Pattern pattern = null;
 
         // find PatternUI annotation
-        for (Pattern p : PatternRegistry.getInstance().getPatterns()) {
+        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getPatterns()) {
             if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
                 pattern = p;
 
@@ -374,73 +296,22 @@ public class DatabindingUtil {
      * @param patternName
      *            the name of the pattern
      * @return an instance of the DatabindingAdapter class generated for the pattern
+     * TODO move into {@link DatabindingUtil} once Pattern Registry refactoring is done
      */
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
+        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
         if (generatedMatcher) {
-            return getDatabindingAdapterForGeneratedMatcher(patternName);
+            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
         } else {
-            return getDatabindingAdapterForGenericMatcher(patternName);
+            return DatabindingUtil.getDatabindingAdapterForGenericMatcher(pattern);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGeneratedMatcher(String patternName) {
-        try {
-            IExtensionRegistry reg = Platform.getExtensionRegistry();
-            IExtensionPoint ep = reg.getExtensionPoint(DATABINDING_EXTENSION);
-            for (IExtension e : ep.getExtensions()) {
-                for (IConfigurationElement ce : e.getConfigurationElements()) {
-                    String[] tokens = patternName.split("\\.");
-                    String pattern = tokens[tokens.length - 1];
 
-                    if (ce.getName().equals("databinding") && ce.getAttribute("patternName").equalsIgnoreCase(pattern)) {
-                        Object obj = ce.createExecutableExtension("class");
 
-                        if (obj instanceof DatabindingAdapter) {
-                            return (DatabindingAdapter<IPatternMatch>) obj;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Could not find DatabindableMatcher for pattern named: " + patternName, e));
-        }
 
-        return null;
-    }
 
-    private static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(String patternName) {
-        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternName);
-        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(pattern);
-        return adapter;
-    }
-
-    /**
-     * Returns the generated query specification for the given generated pattern.
-     * 
-     * @param pattern
-     *            the pattern instance
-     * @return the query specification for the given pattern
-     */
-    public static IQuerySpecification<?> getQuerySpecificationForGeneratedPattern(Pattern pattern) {
-        return generatedQuerySpecifications.get(pattern);
-    }
-
-    /**
-     * Create a PatternMatcher root for the given key element.
-     * 
-     * @param key
-     *            the key element (editorpart + notifier)
-     * @return the PatternMatcherRoot element
-     */
-    public static ObservablePatternMatcherRoot createPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
-        ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
-        List<Pattern> activePatterns = PatternRegistry.getInstance().getActivePatterns();
-        // runtime & generated matchers
-        root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));
-        return root;
-    }
+    
 
     /**
      * Parses the given .eiq file into a {@link PatternModel}.

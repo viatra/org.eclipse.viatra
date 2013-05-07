@@ -31,7 +31,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -70,7 +70,7 @@ public class ObservablePatternMatcher {
         this.orderParameter = null;
         this.exceptionMessage = exceptionMessage;
 
-        DatabindingUtil.removeOrderByPatternWarning(patternFqn);
+        DisplayUtil.removeOrderByPatternWarning(patternFqn);
 
         if (matcher != null) {
             initOrdering();
@@ -118,7 +118,7 @@ public class ObservablePatternMatcher {
      */
     private void initOrdering() {
         Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(matcher.getPattern(),
-                DatabindingUtil.ORDERBY_ANNOTATION);
+                DisplayUtil.ORDERBY_ANNOTATION);
         if (annotation != null) {
             for (AnnotationParameter ap : annotation.getParameters()) {
                 if (ap.getName().matches("key")) {
@@ -193,12 +193,12 @@ public class ObservablePatternMatcher {
                         }
                     }
                 } else {
-                    DatabindingUtil.addOrderByPatternWarning(
+                    DisplayUtil.addOrderByPatternWarning(
                             CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
                             KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
                 }
             } else {
-                DatabindingUtil.addOrderByPatternWarning(
+                DisplayUtil.addOrderByPatternWarning(
                         CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
                         KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
             }
@@ -313,7 +313,7 @@ public class ObservablePatternMatcher {
      * @return the label
      */
     public String getText() {
-        return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(),
+        return DisplayUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(),
                 exceptionMessage);
     }
 

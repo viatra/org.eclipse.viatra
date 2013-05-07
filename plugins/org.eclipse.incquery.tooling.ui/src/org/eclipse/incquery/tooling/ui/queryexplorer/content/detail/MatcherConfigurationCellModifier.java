@@ -14,7 +14,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Item;
@@ -39,7 +39,7 @@ public class MatcherConfigurationCellModifier implements ICellModifier {
             if (conf.getFilter() instanceof EObject) {
                 EObject eObj = (EObject) conf.getFilter();
                 URI uri = eObj.eClass().eResource().getURI();
-                AdapterFactoryLabelProvider lp = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+                AdapterFactoryLabelProvider lp = DisplayUtil.getAdapterFactoryLabelProvider(uri);
                 if (lp != null) {
                     return lp.getText(eObj);
                 }

@@ -34,7 +34,7 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -194,7 +194,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     private void addMatchersForPatterns(Pattern... patterns) {
         for (Pattern pattern : patterns) {
             IncQueryMatcher<? extends IPatternMatch> matcher = null; 
-            boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
+            boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(pattern);
             String message = null;
             try {
                 matcher = key.getEngine().getMatcher(pattern);
@@ -212,5 +212,20 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     public void unregisterPattern(Pattern pattern) {
         removeMatcher(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+    }
+
+    /**
+     * Create a PatternMatcher root for the given key element.
+     * 
+     * @param key
+     *            the key element (editorpart + notifier)
+     * @return the PatternMatcherRoot element
+     */
+    public static ObservablePatternMatcherRoot createPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
+        ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
+        List<Pattern> activePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        // runtime & generated matchers
+        root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));
+        return root;
     }
 }
