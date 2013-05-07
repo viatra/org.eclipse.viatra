@@ -87,7 +87,7 @@ public abstract class IncQueryEngine {
 	public abstract IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException;
 	
 	/**
-	 * Access a pattern matcher based on a (generated) {@link IQuerySpecification}.
+	 * Access a pattern matcher based on a {@link IQuerySpecification}.
 	 * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
 	 * @return a pattern matcher corresponding to the specification
 	 * @throws IncQueryException if the matcher could not be initialized
@@ -95,7 +95,7 @@ public abstract class IncQueryEngine {
     public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException;
 
     /**
-     * Access an existing pattern matcher based on a (generated) {@link IQuerySpecification}.
+     * Access an existing pattern matcher based on a {@link IQuerySpecification}.
      * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      */
