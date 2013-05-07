@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api.event;
 
-import org.apache.log4j.Logger;
 
 /**
  * Basic interface that represents a source that is able to send notifications on events
@@ -18,11 +17,11 @@ import org.apache.log4j.Logger;
  * @author Abel Hegedus
  *
  */
-public interface EventSource {
-
-    /**
-     * @return
-     */
-    Logger getLogger();
+public interface EventSource<EventAtom> {
     
+    EventSourceSpecification<EventAtom> getSourceSpecification();
+
+    EventRealm getRealm();
+    
+    void dispose();
 }

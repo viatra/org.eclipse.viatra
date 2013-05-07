@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.api.event;
 
+
 /**
  * Basic interface for handling a given event received from an {@link EventSource}.
  * 
  * @author Abel Hegedus
  *
  */
-public interface EventHandler {
+public interface EventHandler<EventAtom> {
 
+    void handleEvent(Event<EventAtom> event);
+    
+    EventSource<EventAtom> getSource();
+    
+    EventFilter<EventAtom> getEventFilter();
+    
+    void dispose();
 }

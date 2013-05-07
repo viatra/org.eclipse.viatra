@@ -70,7 +70,7 @@ public class ExecutionSchema extends RuleEngine {
      * instead, an out-of-order schedule call is sent.
      */
     @Override
-    protected void fireActivations(RuleInstance instance) {
+    protected <EventAtom> void fireActivations(RuleInstance<EventAtom> instance) {
         scheduler.schedule();
     }
 

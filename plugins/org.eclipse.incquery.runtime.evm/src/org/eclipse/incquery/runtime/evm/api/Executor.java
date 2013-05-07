@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 
 /**
  * The executor is responsible for firing enabled activations of its ruleBase,
@@ -39,8 +39,8 @@ public class Executor {
      * 
      * @param engine
      */
-    public Executor(final EventSource eventSource) {
-        this(eventSource, Context.create());
+    public Executor(final EventRealm eventRealm) {
+        this(eventRealm, Context.create());
     }
 
     /**
@@ -51,9 +51,9 @@ public class Executor {
      * @param engine
      * @param context
      */
-    public Executor(final EventSource eventSource, final Context context) {
+    public Executor(final EventRealm eventRealm, final Context context) {
         this.context = checkNotNull(context, "Cannot create trigger engine with null context!");
-        ruleBase = new RuleBase(eventSource);
+        ruleBase = new RuleBase(eventRealm);
     }
 
     /**
@@ -72,9 +72,9 @@ public class Executor {
             return;
         }
         
-        Activation nextActivation = null;
+        Activation<?> nextActivation = null;
         while((nextActivation = ruleBase.getAgenda().getNextActivation()) != null) {
-            ruleBase.getEventSource().getLogger().debug("Executing: " + nextActivation + " in " + this);
+            ruleBase.getLogger().debug("Executing: " + nextActivation + " in " + this);
             nextActivation.fire(context);
         }
         
@@ -92,11 +92,11 @@ public class Executor {
      */
     protected synchronized boolean startScheduling() {
         if(scheduling) {
-            ruleBase.getEventSource().getLogger().debug(reentrantMessage);
+            ruleBase.getLogger().debug(reentrantMessage);
             return false;
         } else {
             scheduling = true;
-            ruleBase.getEventSource().getLogger().debug(startMessage);
+            ruleBase.getLogger().debug(startMessage);
             return true;
         }
     }
@@ -107,7 +107,7 @@ public class Executor {
      * state is set to false.
      */
     protected synchronized void endScheduling() {
-        ruleBase.getEventSource().getLogger().debug(endMessage);
+        ruleBase.getLogger().debug(endMessage);
         scheduling = false;
     }
 

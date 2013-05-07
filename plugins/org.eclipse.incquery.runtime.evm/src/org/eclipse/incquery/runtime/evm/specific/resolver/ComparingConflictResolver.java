@@ -31,12 +31,12 @@ import com.google.common.collect.Sets;
  */
 public class ComparingConflictResolver implements ConflictResolver<ComparingConflictSet> {
 
-    private final Comparator<Activation> comparator;
+    private final Comparator<Activation<?>> comparator;
     
     /**
      * 
      */
-    public ComparingConflictResolver(Comparator<Activation> comparator) {
+    public ComparingConflictResolver(Comparator<Activation<?>> comparator) {
         this.comparator = comparator;
     }
     
@@ -48,26 +48,26 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
     /**
      * @return the comparator
      */
-    public Comparator<Activation> getComparator() {
+    public Comparator<Activation<?>> getComparator() {
         return comparator;
     }
     
     public static class ComparingConflictSet implements ConflictSet {
     
-        private SortedSet<Activation> set;
+        private SortedSet<Activation<?>> set;
         private ComparingConflictResolver resolver;
         
         /**
          * 
          */
-        protected ComparingConflictSet(ComparingConflictResolver resolver, Comparator<Activation> comparator) {
+        protected ComparingConflictSet(ComparingConflictResolver resolver, Comparator<Activation<?>> comparator) {
             checkArgument(comparator != null, "Comparator cannot be null!");
             this.resolver = resolver;
             set = Sets.newTreeSet(comparator);
         }
         
         @Override
-        public Activation getNextActivation() {
+        public Activation<?> getNextActivation() {
             if(!set.isEmpty()) {
                 return set.first();
             }
@@ -75,13 +75,13 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         }
     
         @Override
-        public boolean addActivation(Activation activation) {
+        public boolean addActivation(Activation<?> activation) {
             checkArgument(activation != null, "Activation cannot be null!");
             return set.add(activation);
         }
     
         @Override
-        public boolean removeActivation(Activation activation) {
+        public boolean removeActivation(Activation<?> activation) {
             checkArgument(activation != null, "Activation cannot be null!");
             return set.remove(activation);
         }
@@ -92,14 +92,14 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         }
 
         @Override
-        public Set<Activation> getNextActivations() {
-            HashSet<Activation> hashSet = new HashSet<Activation>();
+        public Set<Activation<?>> getNextActivations() {
+            Set<Activation<?>> hashSet = new HashSet<Activation<?>>();
             hashSet.add(getNextActivation());
             return Collections.unmodifiableSet(hashSet);
         }
 
         @Override
-        public Set<Activation> getConflictingActivations() {
+        public Set<Activation<?>> getConflictingActivations() {
             return Collections.unmodifiableSet(set);
         }
         

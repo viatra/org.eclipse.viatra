@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.event.PatternMatchAtom;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.Sets;
@@ -45,7 +45,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
     private final Set<Match> cache = Collections.synchronizedSet(new HashSet<Match>());
     private final SetCollectionUpdate updater = new SetCollectionUpdate();
-    private RuleSpecification specification;
+    private RuleSpecification<Match> specification;
 
     /**
      * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
@@ -120,7 +120,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             RuleEngine engine, Match filter) {
         this(querySpecification);
-        engine.addRule(specification, true, new PatternMatchAtom<IPatternMatch>(filter));
+        engine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
     }
 
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification) {
@@ -155,7 +155,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     /**
      * @return the specification
      */
-    protected RuleSpecification getSpecification() {
+    protected RuleSpecification<Match> getSpecification() {
         return specification;
     }
 

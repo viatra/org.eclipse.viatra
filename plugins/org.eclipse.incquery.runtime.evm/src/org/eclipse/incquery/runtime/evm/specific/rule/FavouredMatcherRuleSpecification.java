@@ -18,7 +18,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
@@ -28,27 +27,29 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
  * 
  * @author Abel Hegedus
  *
+ * @deprecated Use Rules.newSimpleMatcherRuleSpecification(Matcher) instead!
  */
-public class FavouredMatcherRuleSpecification<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends SimpleMatcherRuleSpecification<Match, Matcher> {
+public class FavouredMatcherRuleSpecification<Match extends IPatternMatch> extends SimpleMatcherRuleSpecification<Match> {
 
-    private final Matcher matcher;
+    private final IncQueryMatcher<Match> matcher;
     
-    public FavouredMatcherRuleSpecification(Matcher matcher, ActivationLifeCycle lifeCycle,
-            final Set<Job> jobs) {
+    public FavouredMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifeCycle,
+            final Set<Job<Match>> jobs) {
         super(getQuerySpecification(matcher), lifeCycle, jobs);
         this.matcher = matcher;
+        throw new UnsupportedOperationException("Do not use this subclass of rule specification!");
     }
 
     @SuppressWarnings("unchecked")
-    private static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IQuerySpecification<Matcher> getQuerySpecification(Matcher matcher) {
-        return (IQuerySpecification<Matcher>) QuerySpecificationRegistry.getOrCreateQuerySpecification(matcher.getPattern());
+    private static <Match extends IPatternMatch> IQuerySpecification<? extends IncQueryMatcher<Match>> getQuerySpecification(IncQueryMatcher<Match> matcher) {
+        return (IQuerySpecification<? extends IncQueryMatcher<Match>>) QuerySpecificationRegistry.getOrCreateQuerySpecification(matcher.getPattern());
     }
     
-    @Override
-    protected Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-        if(matcher.getEngine().equals(engine)) {
-            return matcher;
-        }
-        return super.getMatcher(engine);
-    }
+//    @Override
+//    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
+//        if(matcher.getEngine().equals(engine)) {
+//            return matcher;
+//        }
+//        return super.getMatcher(engine);
+//    }
 }

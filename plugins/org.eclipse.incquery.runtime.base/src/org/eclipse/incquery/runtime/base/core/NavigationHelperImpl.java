@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
@@ -225,6 +226,16 @@ public class NavigationHelperImpl implements NavigationHelper {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valMap.get(attribute));
+        }
+    }
+
+    @Override
+    public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
+        final Map<Object, Set<EObject>> instanceMap = contentAdapter.getValueToFeatureToHolderMap().column(feature);
+        for (Entry<Object, Set<EObject>> entry : instanceMap.entrySet()) {
+            for (EObject src : entry.getValue()) {
+                processor.process(feature, src, entry.getKey());
+            }
         }
     }
 

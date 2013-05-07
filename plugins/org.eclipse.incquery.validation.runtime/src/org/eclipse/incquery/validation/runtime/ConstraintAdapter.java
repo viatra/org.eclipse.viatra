@@ -22,7 +22,6 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
@@ -30,11 +29,13 @@ import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.ui.IEditorPart;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -52,16 +53,16 @@ public class ConstraintAdapter {
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
-        Set<RuleSpecification> rules = Sets.newHashSet();
+        Set<RuleSpecification<?>> rules = Sets.newHashSet();
 
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
             rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getQuerySpecification(),
-                    DefaultActivationLifeCycle.DEFAULT, Sets.newHashSet(
-                            Jobs.newStatelessJob(ActivationState.APPEARED, new MarkerPlacerJob(this,constraint, logger)),
-                            Jobs.newStatelessJob(ActivationState.DISAPPEARED, new MarkerEraserJob(this, logger)),
-                            Jobs.newStatelessJob(ActivationState.UPDATED, new MarkerUpdaterJob(this,constraint, logger)))));
+                    DefaultActivationLifeCycle.DEFAULT, ImmutableSet.of(
+                            Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger)),
+                            Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger)),
+                            Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger)))));
         }
 
         try {
@@ -79,7 +80,7 @@ public class ConstraintAdapter {
             try {
                 marker.delete();
             } catch (CoreException e) {
-                engine.getEventSource().getLogger().error(
+                engine.getLogger().error(
                         String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
             }
         }

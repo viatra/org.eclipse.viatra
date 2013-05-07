@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.evm.notification;
 
-import org.eclipse.incquery.runtime.evm.api.event.Atom;
 
 /**
  * The interface exposes the {@link #notifyUpdate(Atom)} method to
@@ -21,7 +20,7 @@ import org.eclipse.incquery.runtime.evm.api.event.Atom;
  * 
  * @param <MatchType>
  */
-public interface IAttributeMonitorListener {
+public interface IAttributeMonitorListener<Atom> {
 
     /**
      * This method is called by {@link AttributeMonitor} when a feature value

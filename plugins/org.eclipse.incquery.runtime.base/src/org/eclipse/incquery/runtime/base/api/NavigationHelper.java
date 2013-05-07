@@ -545,4 +545,18 @@ public interface NavigationHelper {
      */
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature);
 
+    /**
+     * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Will only find those EAttributes that have already been registered using
+     * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
+     * {@link #isInWildcardMode()}).
+     * 
+     * @param feature
+     * @param processor
+     */
+    public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor);
+
 }

@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycleEvent;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 
 /**
  * Classes implement this interface to provide notifications about the changes in the collection of activations within
@@ -64,12 +64,42 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
      * @param oldState
      * @param event
      */
-    public void notifyActivationChanged(final Activation activation,
-            final ActivationState oldState, final ActivationLifeCycleEvent event) {
+    public void notifyActivationChanged(final Activation<?> activation,
+            final ActivationState oldState, final EventType event) {
         for (IActivationNotificationListener listener : this.activationNotificationListeners) {
             listener.activationChanged(activation, oldState, event);
         }
     }
+    
+    /**
+     * Notifies listeners about an activation creation.
+     * 
+     * @param activation
+     * @param oldState
+     * @param event
+     */
+    public void notifyActivationCreated(final Activation<?> activation,
+            final ActivationState inactiveState) {
+        for (IActivationNotificationListener listener : this.activationNotificationListeners) {
+            listener.activationCreated(activation, inactiveState);
+        }
+    }
+    
+    /**
+     * Notifies listeners about an activation removal.
+     * 
+     * @param activation
+     * @param oldState
+     * @param event
+     */
+    public void notifyActivationRemoved(final Activation<?> activation,
+            final ActivationState oldState) {
+        for (IActivationNotificationListener listener : this.activationNotificationListeners) {
+            listener.activationRemoved(activation, oldState);
+        }
+    }
+    
+    
 
     /**
      * Disposes of the provider by unregistering all listeners.

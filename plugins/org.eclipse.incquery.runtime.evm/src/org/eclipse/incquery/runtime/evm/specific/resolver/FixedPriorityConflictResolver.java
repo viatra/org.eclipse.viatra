@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  */
 public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver<FixedPriorityConflictSet> {
 
-    private Map<RuleSpecification, Integer> priorities;
+    private Map<RuleSpecification<?>, Integer> priorities;
     
     /**
      * 
@@ -46,7 +46,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         priorities = Maps.newHashMap();
     }
 
-    public void setPriority(RuleSpecification specification, int priority) {
+    public void setPriority(RuleSpecification<?> specification, int priority) {
         checkArgument(specification != null, "Specification cannot be null!");
         Integer oldPriority = priorities.get(specification);
         if(oldPriority != null && oldPriority == priority) {
@@ -67,12 +67,12 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         return new FixedPriorityConflictSet(this, priorities);
     }
 
-    private static Integer getRulePriority(Activation activation, Map<RuleSpecification, Integer> priorityMap) {
-        RuleSpecification specification = activation.getInstance().getSpecification();
+    private static Integer getRulePriority(Activation<?> activation, Map<RuleSpecification<?>, Integer> priorityMap) {
+        RuleSpecification<?> specification = activation.getInstance().getSpecification();
         return getRulePriority(specification, priorityMap);
     }
 
-    private static Integer getRulePriority(RuleSpecification specification, Map<RuleSpecification, Integer> priorityMap) {
+    private static Integer getRulePriority(RuleSpecification<?> specification, Map<RuleSpecification<?>, Integer> priorityMap) {
         Integer rulePriority = 0;
         if(priorityMap.containsKey(specification)) {
             rulePriority = priorityMap.get(specification);
@@ -82,66 +82,66 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
 
     public static final class FixedPriorityConflictSet implements ConflictSet {
 
-        private final Multimap<Integer, Activation> priorityBuckets;
-        private Map<RuleSpecification, Integer> cachedPriorities;
+        private final Multimap<Integer, Activation<?>> priorityBuckets;
+        private Map<RuleSpecification<?>, Integer> cachedPriorities;
         private FixedPriorityConflictResolver resolver;
         
         /**
          * 
          */
-        protected FixedPriorityConflictSet(FixedPriorityConflictResolver resolver, Map<RuleSpecification, Integer> priorities) {
+        protected FixedPriorityConflictSet(FixedPriorityConflictResolver resolver, Map<RuleSpecification<?>, Integer> priorities) {
             this.resolver = resolver;
             checkArgument(priorities != null, "Priority map cannot be null!");
             cachedPriorities = Maps.newHashMap(priorities);
-            Map<Integer, Collection<Activation>> treeMap = new TreeMap<Integer, Collection<Activation>>();
-            Multimap<Integer, Activation> multimap = Multimaps.newSetMultimap(treeMap, new Supplier<Set<Activation>>() {
+            Map<Integer, Collection<Activation<?>>> treeMap = new TreeMap<Integer, Collection<Activation<?>>>();
+            Multimap<Integer, Activation<?>> multimap = Multimaps.newSetMultimap(treeMap, new Supplier<Set<Activation<?>>>() {
                 @Override
-                public Set<Activation> get() {
-                    return new HashSet<Activation>();
+                public Set<Activation<?>> get() {
+                    return new HashSet<Activation<?>>();
                 }
             });
             this.priorityBuckets = multimap;
         }
         
         @Override
-        public Activation getNextActivation() {
-            Collection<Activation> firstBucket = getFirstBucket();
+        public Activation<?> getNextActivation() {
+            Collection<Activation<?>> firstBucket = getFirstBucket();
             if(!firstBucket.isEmpty()) {
                 return firstBucket.iterator().next();
             }
             return null;
         }
 
-        private Collection<Activation> getFirstBucket() {
+        private Collection<Activation<?>> getFirstBucket() {
             if(priorityBuckets.isEmpty()) {
                 return Collections.emptySet();
             } else {
                 Integer firstKey = priorityBuckets.keySet().iterator().next();
-                Collection<Activation> firstBucket = priorityBuckets.get(firstKey);
+                Collection<Activation<?>> firstBucket = priorityBuckets.get(firstKey);
                 return firstBucket;
             }
         }
 
         @Override
-        public boolean addActivation(Activation activation) {
+        public boolean addActivation(Activation<?> activation) {
             checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation, cachedPriorities);
             return priorityBuckets.put(rulePriority, activation);
         }
 
         @Override
-        public boolean removeActivation(Activation activation) {
+        public boolean removeActivation(Activation<?> activation) {
             checkArgument(activation != null, "Activation cannot be null!");
             Integer rulePriority = getRulePriority(activation, cachedPriorities);
             return priorityBuckets.remove(rulePriority, activation);
         }
 
-        protected void setPriority(RuleSpecification specification, int priority) {
+        protected void setPriority(RuleSpecification<?> specification, int priority) {
             checkArgument(specification != null, "Specification cannot be null");
             Integer rulePriority = getRulePriority(specification, cachedPriorities);
             cachedPriorities.put(specification, priority);
-            Set<Activation> removed = new HashSet<Activation>();
-            for (Activation act : priorityBuckets.get(rulePriority)) {
+            Set<Activation<?>> removed = new HashSet<Activation<?>>();
+            for (Activation<?> act : priorityBuckets.get(rulePriority)) {
                 if(specification.equals(act.getInstance().getSpecification())) {
                     removed.add(act);
                 }
@@ -156,12 +156,12 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         }
 
         @Override
-        public Set<Activation> getNextActivations() {
+        public Set<Activation<?>> getNextActivations() {
             return Collections.unmodifiableSet(Sets.newHashSet(getFirstBucket()));
         }
 
         @Override
-        public Set<Activation> getConflictingActivations() {
+        public Set<Activation<?>> getConflictingActivations() {
             return Collections.unmodifiableSet(Sets.newHashSet(priorityBuckets.values()));
         }
         

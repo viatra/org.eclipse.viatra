@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
@@ -301,7 +300,7 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         final EStructuralFeature structural = (EStructuralFeature) typeObject;
         listener.ensure(structural);
 
-        new BaseIndexProcessor(baseIndex).processFeatureInstances(structural, new IEStructuralFeatureProcessor() {
+        baseIndex.processAllFeatureInstances(structural, new IEStructuralFeatureProcessor() {
 
             @Override
             public void process(EStructuralFeature feature, EObject source, Object target) {

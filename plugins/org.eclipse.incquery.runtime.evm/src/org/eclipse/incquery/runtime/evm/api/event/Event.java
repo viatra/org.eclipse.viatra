@@ -11,25 +11,13 @@
 package org.eclipse.incquery.runtime.evm.api.event;
 
 /**
- * Basic interface that represents a single data transfer object 
- * 
  * @author Abel Hegedus
  *
  */
-public interface Atom {
+public interface Event<EventAtom> {
 
-    /**
-     * Used for filtering
-     * 
-     * @param other
-     * @return true, if this Atom is compatible with the other Atom
-     */
-    boolean isCompatibleWith(Atom other);
-
-    /**
-     * @return
-     */
-    boolean isMutable();
+    EventType getEventType();
     
-    boolean isEmpty();
+    EventAtom getEventAtom();
+    
 }

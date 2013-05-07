@@ -8,29 +8,17 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api.event;
+package org.eclipse.incquery.runtime.evm.specific.job;
+
+import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.incquery.runtime.evm.api.Context;
 
 /**
  * @author Abel Hegedus
  *
  */
-public enum EmptyAtom implements Atom {
+public interface EventAtomDomainObjectProvider<EventAtom> {
 
-    INSTANCE;
+    Object findDomainObject(Activation<? extends EventAtom> activation, Context context);
     
-    @Override
-    public boolean isCompatibleWith(Atom other) {
-        return true;
-    }
-
-    @Override
-    public boolean isMutable() {
-        return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
 }
