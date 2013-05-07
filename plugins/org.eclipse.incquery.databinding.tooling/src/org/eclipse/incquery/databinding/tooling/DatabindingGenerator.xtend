@@ -92,7 +92,7 @@ class DatabindingGenerator implements IGenerationFragment {
 					exGen.contribAttribute(it, "class", pattern.packageName+"."+pattern.name.toFirstUpper+"DatabindingAdapter")
 					exGen.contribAttribute(it, "patternName", pattern.fullyQualifiedName)
 					exGen.contribAttribute(it, "message", message)
-					exGen.contribAttribute(it, "querySpecificationClass", pattern.packageName+"."+pattern.querySpecificationClassName)
+					exGen.contribAttribute(it, "querySpecificationClass", pattern.utilPackageName+"."+pattern.querySpecificationClassName)
 				]
 			]
 			)
