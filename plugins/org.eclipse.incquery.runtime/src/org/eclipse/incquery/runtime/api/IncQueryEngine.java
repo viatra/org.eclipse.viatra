@@ -42,8 +42,13 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * 
  */
 public abstract class IncQueryEngine {
-
-	// TODO JAVADOC ME
+    
+    /**
+     * Initialize a (managed) {@link IncQueryEngine} on a matcher scope specified by a scope root of type {@link Notifier}.
+     * @param emfScopeRoot the scope in which matches supported by the engine should be registered
+     * @return a (managed) {@link IncQueryEngine} instance
+     * @throws IncQueryException on initialization errors.
+     */
 	public static IncQueryEngine on(Notifier emfScopeRoot) throws IncQueryException {
 		return IncQueryEngineManager.getInstance().getIncQueryEngine(emfScopeRoot);
 	}
@@ -61,8 +66,7 @@ public abstract class IncQueryEngine {
      *             if baseIndex is already constructed in the opposite mode, since the mode can not be changed once
      *             applied
      */
-	public abstract void setWildcardMode(boolean wildcardMode)
-			throws IncQueryException;
+	public abstract void setWildcardMode(boolean wildcardMode) throws IncQueryException;
 
     /**
      * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF
@@ -74,16 +78,34 @@ public abstract class IncQueryEngine {
      */
 	public abstract NavigationHelper getBaseIndex() throws IncQueryException;
 
-    // TODO JavaDoc missing!
+	/**
+	 * Access a pattern matcher for a given {@link Pattern} specification.
+	 * @param pattern a {@link Pattern} specification (EMF model) that describes an EMF-IncQuery graph pattern
+	 * @return a pattern matcher corresponding to the specification
+	 * @throws IncQueryException if the matcher could not be initialized
+	 */
 	public abstract IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException;
+	
+	/**
+	 * Access a pattern matcher based on a (generated) {@link IQuerySpecification}.
+	 * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
+	 * @return a pattern matcher corresponding to the specification
+	 * @throws IncQueryException if the matcher could not be initialized
+	 */
+    public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException;
 
-    // TODO JavaDoc missing!
+    /**
+     * Access an existing pattern matcher based on a (generated) {@link IQuerySpecification}.
+     * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
+     * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
+     */
 	public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification);
 
-    // TODO JavaDoc missing!
-	public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException;
-
-    // TODO JavaDoc missing!
+    
+    /**
+     * Access a copy of available {@link IncQueryMatcher} pattern matchers.
+     * @return a copy of the set of currently available pattern matchers registered on this engine instance
+     */
 	public abstract Set<? extends IncQueryMatcher<? extends IPatternMatch>> getCurrentMatchers();
 
     /**

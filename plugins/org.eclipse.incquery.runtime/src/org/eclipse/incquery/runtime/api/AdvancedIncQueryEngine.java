@@ -38,39 +38,39 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 
     /**
-     * TODO JavaDoc missing!
-     * @param listener
+     * Add an engine lifecycle listener to this engine instance.
+     * @param listener the {@link IncQueryEngineLifecycleListener} that should listen to lifecycle events from this engine
      */
 	public abstract void addLifecycleListener(IncQueryEngineLifecycleListener listener);
     /**
-     * TODO JavaDoc missing!
-     * @param listener
+     * Remove an existing lifecycle listener from this engine instance.
+     * @param listener the {@link IncQueryEngineLifecycleListener} that should not listen to lifecycle events from this engine anymore
      */
 	public abstract void removeLifecycleListener(IncQueryEngineLifecycleListener listener);
 
     /**
-     * TODO JavaDoc missing!
-     * @param listener
+     * Add an model update event listener to this engine instance (that fires its callbacks according to its notification level).
+     * @param listener the {@link IncQueryModelUpdateListener} that should listen to model update events from this engine.
      */
 	public abstract void addModelUpdateListener(IncQueryModelUpdateListener listener);
     /**
-     * TODO JavaDoc missing!
-     * @param listener
+     * Remove an existing model update event listener to this engine instance.
+     * @param listener the {@link IncQueryModelUpdateListener} that should not listen to model update events from this engine anymore
      */
 	public abstract void removeModelUpdateListener(IncQueryModelUpdateListener listener);
 
     /**
-     * TODO JavaDoc missing!
-     * @param matcher
-     * @param listener
-     * @param fireNow
+     * Add a match update event listener to this engine instance (that fires its callbacks whenever query result i.e. match set changes occur).
+     * @param matcher the {@link IncQueryMatcher} for which this listener should be active
+     * @param listener the {@link IMatchUpdateListener} to receive the callbacks
+     * @param fireNow if true, the listener will receive a callback right after it has been added, for each element of the current match set
      */
 	public abstract <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher, IMatchUpdateListener<? super Match> listener,
 			boolean fireNow);
     /**
-     * TODO JavaDoc missing!
-     * @param matcher
-     * @param listener
+     * Remove an existing match update event listener to this engine instance.
+     * @param matcher the {@link IncQueryMatcher} for which this listener should not be active anymore
+     * @param listener the {@link IMatchUpdateListener} that should not receive the callbacks anymore
      */
 	public abstract <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher, IMatchUpdateListener<? super Match> listener);
 
@@ -139,8 +139,8 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	}
 
 	/**
-	 * TODO javadoc
-	 * @return
+	 * Access the internal Rete pattern matching network (for advanced debugging purposes only).
+	 * @noreference for internal use only
 	 */
 	public abstract ReteEngine<Pattern> getReteEngine() throws IncQueryException;
 	

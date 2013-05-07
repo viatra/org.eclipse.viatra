@@ -243,8 +243,13 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     
     ///////////////// internal stuff //////////////
 
-    // TODO JavaDoc missing!
-    // TODO make it package-only visible when implementation class is moved to impl package
+    /**
+     * Report when a pattern matcher has been completely initialized, so that it can be registered into the engine.
+     * @param querySpecification the {@link IQuerySpecification} that corresponds to the matcher
+     * @param matcher the {@link IncQueryMatcher} that has finished its initialization process
+     * 
+     * TODO make it package-only visible when implementation class is moved to impl package
+     */
     public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
         if(matchers.containsKey(querySpecification)) {
             // TODO simply dropping the matcher can cause problems
