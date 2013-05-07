@@ -6,8 +6,10 @@ import org.apache.log4j.Level;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatch;
 import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatcher;
 import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsProcessor;
+import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatch;
 import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatcher;
 import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.superclass.SuperClassMatcher;
@@ -16,7 +18,6 @@ import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
@@ -27,6 +28,7 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -51,23 +53,23 @@ public class UMLexampleForEVM {
         try {
             // create IncQueryEngine for the resource set
             IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
-            // set logger level to debug to see activation life-cycle events
-            engine.getLogger().setLevel(Level.DEBUG);
             // create rule engine over IncQueryEngine
             RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
+            // set logger level to debug to see activation life-cycle events
+            ruleEngine.getLogger().setLevel(Level.DEBUG);
             // create context for execution
             Context context = Context.create();
 
             // prepare rule specifications
-            RuleSpecification createGeneralization = getCreateGeneralizationRule();
-            RuleSpecification createOperation = getCreateOperationRule();
+            RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
+            RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
 
             // add rule specifications to engine
             ruleEngine.addRule(createGeneralization);
             ruleEngine.addRule(createOperation);
 
             // check rule applicability
-            Set<Activation> createClassesActivations = ruleEngine.getActivations(createGeneralization);
+            Set<Activation<PossibleSuperClassMatch>> createClassesActivations = ruleEngine.getActivations(createGeneralization);
             if (!createClassesActivations.isEmpty()) {
                 // fire activation of a given rule
                 createClassesActivations.iterator().next().fire(context);
@@ -103,16 +105,17 @@ public class UMLexampleForEVM {
         try {
             // create IncQueryEngine for the resource set
             IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
-            // set logger level to debug to see activation life-cycle events
-            engine.getLogger().setLevel(Level.DEBUG);
             // use IQBase update callback for scheduling execution
             UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(engine);
             // create execution schema over IncQueryEngine
             ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
+            // set logger level to debug to see activation life-cycle events
+            executionSchema.getLogger().setLevel(Level.DEBUG);
 
+            
             // prepare rule specifications
-            RuleSpecification createGeneralization = getCreateGeneralizationRule();
-            RuleSpecification createOperation = getCreateOperationRule();
+            RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
+            RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
 
             // add rule specifications to engine
             executionSchema.addRule(createGeneralization);
@@ -141,10 +144,10 @@ public class UMLexampleForEVM {
 
     }
 
-    private RuleSpecification getCreateGeneralizationRule() throws IncQueryException {
+    private RuleSpecification<PossibleSuperClassMatch> getCreateGeneralizationRule() throws IncQueryException {
         // the job specifies what to do when an activation is fired in the given
         // state
-        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new PossibleSuperClassProcessor() {
+        Job<PossibleSuperClassMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new PossibleSuperClassProcessor() {
             @Override
             public void process(Class cl, Class sup) {
                 System.out.println("Found cl " + cl + " without superclass");
@@ -159,12 +162,12 @@ public class UMLexampleForEVM {
         IMatcherFactory<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.factory();
         // the rule specification is a model-independent definition that can be
         // used to instantiate a rule
-        RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        RuleSpecification<PossibleSuperClassMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
-    private RuleSpecification getCreateOperationRule() throws IncQueryException {
-        Job job = Jobs.newStatelessJob(ActivationState.APPEARED, new OnlyInheritedOperationsProcessor() {
+    private RuleSpecification<OnlyInheritedOperationsMatch> getCreateOperationRule() throws IncQueryException {
+        Job<OnlyInheritedOperationsMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new OnlyInheritedOperationsProcessor() {
             @Override
             public void process(Class cl) {
                 System.out.println("Found class " + cl + " without operation");
@@ -175,7 +178,7 @@ public class UMLexampleForEVM {
         });
         DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
         IMatcherFactory<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.factory();
-        RuleSpecification spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
