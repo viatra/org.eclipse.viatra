@@ -199,7 +199,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 		import org.eclipse.incquery.runtime.exception.IncQueryException;
 		
 		import «pattern.packageName + "." + pattern.matchClassName»;
-		import «pattern.packageName + "." + pattern.querySpecificationClassName»;
+		import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
 
 		public class «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)» extends «annotationLiteral»<«pattern.matchClassName»> {
