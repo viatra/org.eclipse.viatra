@@ -75,7 +75,7 @@ class DatabindingGenerator implements IGenerationFragment {
 			var tmp = ""
 			
 			for (a : pattern.annotations) {
-				if (a.name.matches("PatternUI")) {
+				if (a.name.matches("PatternUI") || a.name.matches("QueryExplorer")) {
 					for (ap : a.parameters) {
 						if (ap.name.matches("message")) {
 							tmp = (ap.value as StringValueImpl).value
