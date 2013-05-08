@@ -91,7 +91,8 @@ public abstract class IncQueryEngine {
 	public abstract NavigationHelper getBaseIndex() throws IncQueryException;
 
 	/**
-	 * Access a pattern matcher for a given {@link Pattern} specification.
+	 * Access a pattern matcher for a given {@link Pattern} specification. 
+	 * Multiple calls will return the same matcher. 
 	 * @param pattern a {@link Pattern} specification (EMF model) that describes an EMF-IncQuery graph pattern
 	 * @return a pattern matcher corresponding to the specification
 	 * @throws IncQueryException if the matcher could not be initialized
@@ -99,13 +100,26 @@ public abstract class IncQueryEngine {
 	public abstract IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException;
 	
 	/**
-	 * Access a pattern matcher based on a {@link IQuerySpecification}.
+	 * Access a pattern matcher based on a {@link IQuerySpecification}. 
+	 * Multiple calls will return the same matcher.
 	 * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
 	 * @return a pattern matcher corresponding to the specification
 	 * @throws IncQueryException if the matcher could not be initialized
 	 */
     public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException;
 
+	/**
+	 * Access a pattern matcher for the graph pattern with the given fully qualified name. 
+	 * Will succeed only if a matcher for this pattern has already been constructed in this engine, 
+	 *  or else if the matcher for the pattern has been generated and registered. 
+	 * Multiple calls will return the same matcher. 
+	 * 
+	 * @param patternFQN the fully qualified name of an EMF-IncQuery graph pattern
+	 * @return a pattern matcher corresponding to the specification
+	 * @throws IncQueryException if the matcher could not be initialized
+	 */
+	public abstract IncQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException;
+    
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}.
      * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query

@@ -163,5 +163,13 @@ public class PatternSanitizer {
     public Set<Pattern> getAdmittedPatterns() {
         return Collections.unmodifiableSet(admittedPatterns);
     }
+    
+    /**
+     * @param fqn the fully qualified name of the pattern
+     * @returns the admitted pattern with the given qualified name, or null of there is no such admitted pattern
+     */
+    public Pattern getAdmittedPatternByName(String fqn) {
+    	return patternsByName.get(fqn);
+    }
 
 }

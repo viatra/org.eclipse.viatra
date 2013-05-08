@@ -151,7 +151,25 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return getMatcher(querySpecification);
     }
         
-    
+    @Override
+    public IncQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException {
+    	Pattern pattern = getSanitizer().getAdmittedPatternByName(patternFQN);
+    	if (pattern!=null) {
+    		return getMatcher(pattern);
+    	} else {
+    		IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = 
+    				QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+    		if (querySpecification != null) {
+    			return getMatcher(querySpecification);
+    		} else {
+    			throw new IncQueryException(
+    				String.format(
+    					"No matcher could be constructed for the pattern with FQN %s; if the generated matcher class is not available, please access for the first time using getMatcher(Pattern)", 
+    				patternFQN),  
+    				"No matcher could be constructed for given pattern FQN.");
+    		}
+    	}
+    }
 
     /**
      * Internal accessor for the base index.

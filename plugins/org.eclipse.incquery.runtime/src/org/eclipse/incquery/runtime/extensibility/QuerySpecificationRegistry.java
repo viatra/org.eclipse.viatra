@@ -31,7 +31,8 @@ import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
- * Registry for accessing query specification instances based on Pattern or pattern ID
+ * Registry for generated query specifications contributed via the plug-in mechanism. 
+ * Allows accessing query specification instances based on the Pattern object or the fully qualified name of the pattern.
  * 
  * @author Abel Hegedus
  * 
@@ -144,23 +145,18 @@ public final class QuerySpecificationRegistry {
     }
 
     /**
-     * Returns the specific pattern query specification, if it is registered, null otherwise
-     * 
-     * @param patternFqn
-     * @return
+     * @param patternFQN the fully qualified name of a registered generated pattern
+     * @return the generated query specification of the pattern with the given fully qualified name, if it is registered, or null if there is no such generated pattern
      */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(String patternFqn) {
-        if (QUERY_SPECIFICATIONS.containsKey(patternFqn)) {
-            return QUERY_SPECIFICATIONS.get(patternFqn);
+    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(String patternFQN) {
+        if (QUERY_SPECIFICATIONS.containsKey(patternFQN)) {
+            return QUERY_SPECIFICATIONS.get(patternFQN);
         }
         return null;
     }
 
     /**
-     * Returns the specific pattern query specification, if it is registered, null otherwise
-     * 
-     * @param pattern
-     * @return
+     * @return the generated query specification for the pattern, if it is registered, null otherwise
      */
     public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(Pattern pattern) {
         String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
@@ -172,10 +168,7 @@ public final class QuerySpecificationRegistry {
     }
 
     /**
-     * Returns a generic pattern query specification if a specific query specification is not registered
-     * 
-     * @param pattern
-     * @return
+     * Returns a generic pattern query specification if a generated query specification is not registered
      */
     public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateQuerySpecification(Pattern pattern) {
     	IQuerySpecification<?> specification = getQuerySpecification(pattern);
