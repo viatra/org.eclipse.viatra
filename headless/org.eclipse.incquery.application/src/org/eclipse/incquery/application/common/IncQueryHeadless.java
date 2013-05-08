@@ -21,6 +21,7 @@ import headless.HeadlessQueries;
 import headless.util.EClassNamesProcessor;
 import headless.util.EObjectProcessor;
 import headless.util.EPackageProcessor;
+import headless.util.EPackageQuerySpecification;
 
 import java.util.Collection;
 
@@ -211,7 +212,13 @@ public class IncQueryHeadless {
 		//     * is does not support generics, hence typesafe programming is not possible
 		//     * a "Realm" needs to be set up for headless execution
 		DefaultRealm realm = new DefaultRealm();
-		IObservableSet set = IncQueryObservables.observeMatchesAsSet(matcher);
+		//IObservableSet set = IncQueryObservables.observeMatchesAsSet(matcher);
+		IObservableSet set;
+		try {
+			set = IncQueryObservables.observeMatchesAsSet(EPackageQuerySpecification.instance(),
+					matcher.getEngine());
+		
+		
 		set.addSetChangeListener(new ISetChangeListener() {
 			@Override
 			public void handleSetChange(SetChangeEvent event) {
@@ -225,6 +232,12 @@ public class IncQueryHeadless {
 				}
 			}
 		});
+		
+		
+		} catch (IncQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/* the same could also be done with a list:
 		IObservableList list = IncQueryObservables.observeMatchesAsList(factory, engine);
 		list.addListChangeListener(new IListChangeListener() {
