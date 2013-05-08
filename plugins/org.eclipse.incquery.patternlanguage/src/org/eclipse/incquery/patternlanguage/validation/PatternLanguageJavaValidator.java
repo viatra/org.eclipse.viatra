@@ -383,6 +383,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check
     public void checkPackageDeclaration(PatternModel model) {
         String packageName = model.getPackageName();
+        
+        if (packageName == null || packageName.isEmpty()) {
+            error("The package declaration must not be empty", PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_EMPTY);
+        }
+        
         if (packageName != null && !packageName.equals(packageName.toLowerCase())) {
             error("Only lowercase package names supported",
                     PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
