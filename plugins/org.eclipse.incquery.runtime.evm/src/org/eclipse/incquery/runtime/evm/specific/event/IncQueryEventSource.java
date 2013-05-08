@@ -54,8 +54,8 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
         this.realm = realm;
         this.sourceDefinition = sourceDefinition;
         IMatcherFactory<? extends IncQueryMatcher<Match>> factory = sourceDefinition.getFactory();
-        IncQueryMatcher<Match> newMatcher = factory.getMatcher(realm.getEngine());
-        this.matcher = newMatcher;
+        IncQueryMatcher<Match> matcher = factory.getMatcher(realm.getEngine());
+        this.matcher = matcher;
         this.handlers = Sets.newHashSet();
     }
 
@@ -78,6 +78,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
 
     protected boolean addHandler(EventHandler<Match> handler) {
         checkArgument(handler != null, "Handler cannot be null!");
+        resendEventsForExistingMatches(handler);
         if(handlers.isEmpty()) {
             this.matcher.addCallbackOnMatchUpdate(matchUpdateListener, false);
         }
@@ -133,7 +134,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
         return new MatchUpdateAdapter<Match>(matchAppearProcessor, matchDisppearProcessor);
     }
     
-    protected void resendEventsForExistingMatches(final EventHandler<Match> handler) {
+    private void resendEventsForExistingMatches(final EventHandler<Match> handler) {
         matcher.forEachMatch(new IMatchProcessor<Match>() {
             @Override
             public void process(Match match) {
