@@ -99,9 +99,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      */
     private final int reteThreads = 0;
     
-    
-    private boolean isAdvanced = false;
-    
     /**
      * @param manager
      *            null if unmanaged
@@ -109,9 +106,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean _isAdvanced) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot) throws IncQueryException {
         super();
-        this.isAdvanced = _isAdvanced;
         this.manager = manager;
         this.emfRoot = emfRoot;
         this.matchers = Maps.newHashMap();
@@ -268,7 +264,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @noreference A typical user would not need to call this method.
      * TODO make it package visible only
      */
-    public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
+    @Override
+	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
             // if uninitialized, don't initialize yet
             getBaseIndexInternal(WILDCARD_MODE_DEFAULT, false);
@@ -337,12 +334,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     
     @Override
     public void dispose() {
-        if (!isAdvanced) {
-            return;
-        }
         if (manager != null) {
-            managerKillInternal(manager, emfRoot);
-            logger.warn(String.format("Managed engine disposed for notifier %s !", emfRoot));
+        	throw new UnsupportedOperationException(
+        			String.format("Cannot dispose() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
         }
         killInternal();
         lifecycleProvider.engineDisposed();
@@ -350,11 +344,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 
     @Override
     public void wipe() {
-        if (!isAdvanced) {
-            return;
-        }
         if (manager != null) {
-            logger.warn(String.format("Managed engine wiped for notifier %s !", emfRoot));
+        	throw new UnsupportedOperationException(
+        			String.format("Cannot wipe() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
         }
         if (reteEngine != null) {
             reteEngine.killEngine();

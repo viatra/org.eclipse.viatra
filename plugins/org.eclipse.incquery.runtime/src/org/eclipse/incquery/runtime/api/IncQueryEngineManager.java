@@ -88,7 +88,7 @@ public class IncQueryEngineManager {
     public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null) {
-            engine = new IncQueryEngineImpl(this, emfRoot, false);
+            engine = new IncQueryEngineImpl(this, emfRoot);
             engines.put(emfRoot, new WeakReference<IncQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }
@@ -145,9 +145,11 @@ public class IncQueryEngineManager {
      *            ResourceSet.
      * @return a new existing engine
      * @throws IncQueryException
+     * @deprecated use {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier)}
      */
+    @Deprecated
     public AdvancedIncQueryEngine createAdvancedIncQueryEngine(Notifier emfRoot) throws IncQueryException {
-        return new IncQueryEngineImpl(null, emfRoot, true);
+        return AdvancedIncQueryEngine.createUnmanagedEngine(emfRoot);
     }
 
     /**
@@ -163,7 +165,9 @@ public class IncQueryEngineManager {
      * If the engine is managed (see {@link IncQueryEngine#isManaged()}), there may be other clients using it. Such engines will not be disposed.
      * 
      * @return true is an engine was found and disconnected, false if no engine was found for the given root.
+     * @deprecated use engine.dispose() instead
      */
+    @Deprecated
     public boolean disposeEngine(Notifier emfRoot) {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null || engine.isManaged())
@@ -217,12 +221,11 @@ public class IncQueryEngineManager {
         }
     }
     
-    /**
-     * @param emfRoot
-     */
+/*
     void killInternal(Notifier emfRoot) {
         engines.remove(emfRoot);
     }
+*/
 
     /**
      * @param emfRoot

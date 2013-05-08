@@ -35,7 +35,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * 
  * <p>
  * By default, IncQueryEngines do not need to be separately disposed; they will be garbage collected along with the model. 
- * Advanced users: see {@link IncQueryEngineManager} and {@link AdvancedIncQueryEngine} if you want fine control over the lifecycle of an engine.
+ * Advanced users: see {@link AdvancedIncQueryEngine} if you want fine control over the lifecycle of an engine.
  * 
  * 
  * @author Bergmann Gábor
@@ -44,7 +44,19 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public abstract class IncQueryEngine {
     
     /**
-     * Initialize a (managed) {@link IncQueryEngine} on a matcher scope specified by a scope root of type {@link Notifier}.
+     * Obtain a (managed) {@link IncQueryEngine} on a matcher scope specified by a scope root of type {@link Notifier}.
+     * 
+     * <p> For a given matcher scope, the same engine will be returned to any client. 
+     * This facilitates the reuse of internal caches of the engine, greatly improving performance.  
+     * 
+     * <p> The lifecycle of this engine is centrally managed, and will not be disposed as long as the model is retained in memory. 
+     * The engine will be garbage collected along with the model. 
+     * 
+     * <p>
+     * Advanced users: see {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier)} to obtain a private, 
+     * 
+     * unmanaged engine that is not shared with other clients and allows tight control over its lifecycle. 
+     * 
      * @param emfScopeRoot the scope in which matches supported by the engine should be registered
      * @return a (managed) {@link IncQueryEngine} instance
      * @throws IncQueryException on initialization errors.
