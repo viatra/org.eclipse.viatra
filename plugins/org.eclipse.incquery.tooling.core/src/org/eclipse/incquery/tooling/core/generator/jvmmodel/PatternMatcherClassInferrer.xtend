@@ -109,8 +109,8 @@ class PatternMatcherClassInferrer {
 			it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			it.setBody([
 				append('''this(''')
-				referClass(pattern, typeof(IncQueryEngineManager))
-				append('''.getInstance().getIncQueryEngine(emfRoot));''')
+				referClass(pattern, typeof(IncQueryEngine))
+				append('''.on(emfRoot));''')
 			])
 		]
 		

@@ -17,7 +17,6 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
@@ -99,7 +98,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 	 */
 	@Deprecated
     public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) throws IncQueryException {
-        this(pattern, IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot));
+        this(pattern, IncQueryEngine.on(emfRoot));
     }
 
     /**

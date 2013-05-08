@@ -27,7 +27,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
@@ -70,7 +69,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private AdvancedIncQueryEngine createEngine() {
         try {
-        	AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(key.getNotifier());
+        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier());
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "

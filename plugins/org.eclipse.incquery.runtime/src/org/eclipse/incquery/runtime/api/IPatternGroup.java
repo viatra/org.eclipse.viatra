@@ -55,7 +55,9 @@ public interface IPatternGroup {
      *            ResourceSet.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
+     * @deprecated use {@link #prepare(IncQueryEngine) instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}}            
      */
+	@Deprecated
     public void prepare(Notifier emfRoot) throws IncQueryException;
 
     /**

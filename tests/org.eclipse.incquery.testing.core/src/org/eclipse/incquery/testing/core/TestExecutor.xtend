@@ -177,7 +177,7 @@ class TestExecutor {
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
-		val engine = IncQueryEngineManager::getInstance().getIncQueryEngine(input);
+		val engine = IncQueryEngine::on(input);
 		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)

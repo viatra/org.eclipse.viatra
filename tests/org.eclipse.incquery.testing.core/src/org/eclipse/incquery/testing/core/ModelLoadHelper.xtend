@@ -111,7 +111,7 @@ class ModelLoadHelper {
 	}
 	
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
-		val engine = IncQueryEngineManager::getInstance().getIncQueryEngine(emfRoot);
+		val engine = IncQueryEngine::on(emfRoot);
 		model.initializeMatcherFromModel(engine,patternName)
 	}
 	/**

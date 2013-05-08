@@ -153,9 +153,7 @@ public class IncQueryEngineManager {
     }
 
     /**
-     * Disconnects the managed engine that was previously attached at the given EMF model root. Matcher objects will
-     * continue to return stale results. Subsequent invocations of {@link #getIncQueryEngine(Notifier)} with the same
-     * EMF root will return a new managed engine.
+     * Disconnects an unmanaged engine.
      * 
      * <p>
      * The engine will not impose on the model its update overhead anymore. If no references are retained to the

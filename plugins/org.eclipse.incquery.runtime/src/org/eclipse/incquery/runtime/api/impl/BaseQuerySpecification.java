@@ -16,7 +16,6 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
@@ -33,7 +32,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
-        IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(emfRoot);
+        IncQueryEngine engine = IncQueryEngine.on(emfRoot);
         return instantiate(engine);
     }
 
