@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -57,7 +58,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				// get all matches of the pattern
 				// create an *unmanaged* engine to ensure that noone else is going
 				// to use our engine
-				IncQueryEngine engine = IncQueryEngineManager.getInstance().createUnmanagedIncQueryEngine(resource);
+				AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(resource);
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				
@@ -128,7 +129,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				IncQueryEngine engine = IncQueryEngineManager.getInstance().getIncQueryEngine(resource);
+				AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(resource);
 				// phase 2: pattern matcher for packages
 				IncQueryMatcher<? extends IPatternMatch> matcher = QuerySpecificationRegistry.getQuerySpecification(patternFQN).getMatcher(engine);
 				matcher.forEachMatch(new IMatchProcessor<IPatternMatch>() {
@@ -137,9 +138,9 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 						results.append("\tMatch before modification: " + match.prettyPrint()+"\n");
 					}
 				});
-				// phase 3: prepare for change processing
-				changeProcessing_lowlevel(results, matcher);
-				changeProcessing_deltaMonitor(results, matcher);
+				// phase 3: prepare for advanced change processing
+				changeProcessing_lowlevel(results, matcher, engine);
+				changeProcessing_deltaMonitor(results, matcher, engine);
 				// phase 4: modify model, change processor will update results accordingly
 				performModelModification(resource);
 			}
@@ -153,7 +154,9 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		return results.toString();
 	}
 
-	private void changeProcessing_lowlevel(final StringBuilder results, IncQueryMatcher<? extends IPatternMatch> matcher) {
+	private void changeProcessing_lowlevel(final StringBuilder results, 
+			IncQueryMatcher<? extends IPatternMatch> matcher,
+			AdvancedIncQueryEngine engine) {
 		// (+) these update callbacks are called whenever there is an actual change in the
 		// result set of the pattern you are interested in. Hence, they are called fewer times
 		// than the "afterUpdates" option, giving better performance.
@@ -161,7 +164,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		// state (i.e. when the update propagation is settled), hence
 		//  * you must not invoke pattern matching and model manipulation _inside_ the callback method
 		//  * the callbacks might encounter "hazards", i.e. when an appearance is followed immediately by a disappearance.
-		matcher.addCallbackOnMatchUpdate(new IMatchUpdateListener<IPatternMatch>() {
+		engine.addMatchUpdateListener(matcher, new IMatchUpdateListener<IPatternMatch>() {
 			@Override
 			public void notifyDisappearance(IPatternMatch match) {
 				// left empty
@@ -173,7 +176,10 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		}, false);
 	}
 	
-	private void changeProcessing_deltaMonitor(final StringBuilder results, IncQueryMatcher<? extends IPatternMatch> matcher) {
+	@Deprecated
+	private void changeProcessing_deltaMonitor(final StringBuilder results,
+			IncQueryMatcher<? extends IPatternMatch> matcher,
+			AdvancedIncQueryEngine engine) {
 		final DeltaMonitor<? extends IPatternMatch> dm = matcher.newDeltaMonitor(false);
 		// (+) these updates are guaranteed to be called in a *consistent* state,
 		// i.e. when the pattern matcher is guaranteed to be consistent with the model
@@ -182,7 +188,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		// that propagates through the matcher, i.e. also when the updates do not actually
 		// influence the result set you are interested in. Hence, the performance is somewhat
 		// lower than for the "lowlevel" option.
-		matcher.getEngine().addModelUpdateListener(new IncQueryModelUpdateListener() {
+		engine.addModelUpdateListener(new IncQueryModelUpdateListener() {
 
 			@Override
 			public void notifyChanged(ChangeLevel changeLevel) {
