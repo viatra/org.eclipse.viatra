@@ -183,8 +183,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * @param listener
      *            the listener that will be notified of each new match that appears or disappears, starting from now.
      */
-    // TODO MOVE TO INCQUERY ENGINE
-    public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
+    // MOVED TO  ADVANCED INCQUERY ENGINE
+    //public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
 
     /**
      * Unregisters a callback registered by {@link #addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)}.
@@ -192,8 +192,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * @param listener
      *            the listener that will no longer be notified.
      */
-    // TODO MOVE TO INCQUERY ENGINE
-    public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
+    // MOVED TO ADVANCED INCQUERY ENGINE
+    //public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
 
     /**
      * Registers a new delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes (delta) in

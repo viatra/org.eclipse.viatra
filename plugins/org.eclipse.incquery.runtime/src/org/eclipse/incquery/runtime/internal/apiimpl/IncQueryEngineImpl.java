@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -40,15 +41,18 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.internal.PatternSanitizer;
+import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.rete.construction.ReteContainerBuildable;
+import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -404,7 +408,26 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         checkArgument(listener != null, "Cannot add null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-        matcher.addCallbackOnMatchUpdate(listener, fireNow);
+       
+        //((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
+        
+        final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
+        
+        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
+                this, listener) {
+            @Override
+            public Match statelessConvert(Tuple t) {
+                //return bm.tupleToMatch(t);
+                return bm.newMatch(t.getElements());
+            }
+        };
+        try {
+            reteEngine.accessMatcher(matcher.getPattern()).connect(callbackNode, listener, fireNow);
+        } catch (RetePatternBuildException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
     
     @Override
@@ -412,7 +435,13 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-        matcher.removeCallbackOnMatchUpdate(listener);
+        //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
+        try {
+            reteEngine.accessMatcher(matcher.getPattern()).disconnectByTag(listener);
+        } catch (RetePatternBuildException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     @Override

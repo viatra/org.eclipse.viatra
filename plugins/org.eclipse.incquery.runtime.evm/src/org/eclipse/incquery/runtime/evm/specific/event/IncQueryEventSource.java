@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -79,7 +80,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
     protected boolean addHandler(EventHandler<Match> handler) {
         checkArgument(handler != null, "Handler cannot be null!");
         if(handlers.isEmpty()) {
-            this.matcher.addCallbackOnMatchUpdate(matchUpdateListener, false);
+            ((AdvancedIncQueryEngine)this.matcher.getEngine()).addMatchUpdateListener(this.matcher, matchUpdateListener, false);
         }
         return handlers.add(handler);
     }
@@ -88,7 +89,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
         checkArgument(handler != null, "Handler cannot be null!");
         boolean removed = handlers.remove(handler);
         if(handlers.isEmpty()) {
-            this.matcher.removeCallbackOnMatchUpdate(matchUpdateListener);
+            ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
         }
         return removed;
     }
@@ -144,7 +145,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
 
     @Override
     public void dispose() {
-        this.matcher.removeCallbackOnMatchUpdate(matchUpdateListener);
+        ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
         for (EventHandler<Match> handler : this.handlers) {
             handler.dispose();
         }
