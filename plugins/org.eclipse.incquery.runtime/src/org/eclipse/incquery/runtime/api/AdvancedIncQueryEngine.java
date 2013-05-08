@@ -100,12 +100,28 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @param listener the {@link IncQueryModelUpdateListener} that should not listen to model update events from this engine anymore
      */
 	public abstract void removeModelUpdateListener(IncQueryModelUpdateListener listener);
-
-    /**
-     * Add a match update event listener to this engine instance (that fires its callbacks whenever query result i.e. match set changes occur).
-     * @param matcher the {@link IncQueryMatcher} for which this listener should be active
-     * @param listener the {@link IMatchUpdateListener} to receive the callbacks
-     * @param fireNow if true, the listener will receive a callback right after it has been added, for each element of the current match set
+	
+	/**
+     * Registers low-level callbacks for match appearance and disappearance on this pattern matcher.
+     * 
+     * <p>
+     * This is a low-level callback that is invoked when the pattern matcher is not necessarily in a consistent state
+     * yet. Importantly, no model modification permitted during the callback. Most users should use the agenda and trigger engine instead. TODO reference
+     * 
+     * <p>
+     * Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)},
+     * but prone to "signal hazards", e.g. spurious match appearances that will disappear immediately afterwards.
+     * 
+     * <p>
+     * The callback can be unregistered via {@link #removeCallbackOnMatchUpdate(IMatchUpdateListener)}.
+     * 
+     * @param fireNow
+     *            if true, appearCallback will be immediately invoked on all current matches as a one-time effect. See
+     *            also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
+     * @param listener
+     *            the listener that will be notified of each new match that appears or disappears, starting from now.
+     * @param matcher 
+     *            the {@link IncQueryMatcher} for which this listener should be active
      */
 	public abstract <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher, IMatchUpdateListener<? super Match> listener,
 			boolean fireNow);

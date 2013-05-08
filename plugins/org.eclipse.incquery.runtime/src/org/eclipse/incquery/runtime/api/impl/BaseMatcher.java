@@ -104,7 +104,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     protected Object[] matchToArray(Match partialMatch) {
         return partialMatch.toArray();
     }
-    
+    // TODO make me public for performance reasons
     protected abstract Match tupleToMatch(Tuple t);
 
     private static Object[] fEmptyArray;
@@ -318,8 +318,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
-    @Override
-    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+ //   @Override
+ /*   public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
                 engine, listener) {
             @Override
@@ -329,12 +329,12 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         };
         patternMatcher.connect(callbackNode, listener, fireNow);
     }
-
-    @Override
-    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
+*/
+//    @Override
+/*    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
         patternMatcher.disconnectByTag(listener);
     }
-
+*/
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
