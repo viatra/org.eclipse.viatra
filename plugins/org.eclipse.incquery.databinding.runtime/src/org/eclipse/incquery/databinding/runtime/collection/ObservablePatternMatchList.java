@@ -141,6 +141,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+        ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
     }
 
     @Override
