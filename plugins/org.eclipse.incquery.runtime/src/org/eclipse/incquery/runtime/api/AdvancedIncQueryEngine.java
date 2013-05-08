@@ -105,8 +105,11 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * Registers low-level callbacks for match appearance and disappearance on this pattern matcher.
      * 
      * <p>
+     * <b>Caution: </b>
      * This is a low-level callback that is invoked when the pattern matcher is not necessarily in a consistent state
-     * yet. Importantly, no model modification permitted during the callback. Most users should use the agenda and trigger engine instead. TODO reference
+     * yet. Importantly, no model modification permitted during the callback. 
+     * Most users should use the databinding support (org.eclipse.incquery.databinding.runtime.api.IncQueryObservables) 
+     * or the event-driven API (org.eclipse.incquery.runtime.evm.api.EventDrivenVM) instead. 
      * 
      * <p>
      * Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)},
