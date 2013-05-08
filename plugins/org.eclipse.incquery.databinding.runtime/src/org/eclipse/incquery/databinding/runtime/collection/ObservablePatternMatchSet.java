@@ -140,6 +140,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) {
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+        ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
     }
     
     @Override
