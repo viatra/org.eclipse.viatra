@@ -86,7 +86,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
         checkArgument(instance != null, "Instance cannot be null!");
         this.instance.setHandler(this);
         prepareEventProcessors(processors);
-        source.resendEventsForExistingMatches(this);
+        source.addHandler(this);
         attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         attributeMonitor.addAttributeMonitorListener(source.getAttributeMonitorListener());
     }
