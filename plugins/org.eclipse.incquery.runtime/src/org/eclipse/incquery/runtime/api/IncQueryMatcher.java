@@ -204,7 +204,9 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            if true, all current matches are reported as new match events; if false, the delta monitor starts
      *            empty.
      * @return the delta monitor.
-     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
+     * @deprecated 
+     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
+     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
     public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 
@@ -221,7 +223,9 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
      *            a fixed value.
      * @return the delta monitor.
-     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
+     * @deprecated 
+     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
+     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
     public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 
