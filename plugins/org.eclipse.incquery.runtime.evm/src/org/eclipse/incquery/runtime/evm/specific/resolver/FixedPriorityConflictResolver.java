@@ -68,7 +68,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
     }
 
     private static Integer getRulePriority(Activation<?> activation, Map<RuleSpecification<?>, Integer> priorityMap) {
-        RuleSpecification<?> specification = activation.getRule().getSpecification();
+        RuleSpecification<?> specification = activation.getInstance().getSpecification();
         return getRulePriority(specification, priorityMap);
     }
 
@@ -142,7 +142,7 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
             cachedPriorities.put(specification, priority);
             Set<Activation<?>> removed = new HashSet<Activation<?>>();
             for (Activation<?> act : priorityBuckets.get(rulePriority)) {
-                if(specification.equals(act.getRule().getSpecification())) {
+                if(specification.equals(act.getInstance().getSpecification())) {
                     removed.add(act);
                 }
             }

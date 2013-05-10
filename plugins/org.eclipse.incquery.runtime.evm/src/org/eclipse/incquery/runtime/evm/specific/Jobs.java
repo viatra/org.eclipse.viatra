@@ -12,13 +12,16 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.job.EnableJob;
+import org.eclipse.incquery.runtime.evm.specific.job.EventAtomDomainObjectProvider;
 import org.eclipse.incquery.runtime.evm.specific.job.RecordingJob;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
 
@@ -40,12 +43,12 @@ public final class Jobs {
      * Creates a {@link StatelessJob} for the given state with the given processor.
      * A stateless job simply processes the match in the activation during execution.
      * 
-     * @param activationState
+     * @param incQueryActivationStateEnum
      * @param processor
      * @return
      */
-    public static <Match extends IPatternMatch> Job<Match> newStatelessJob(ActivationState activationState, IMatchProcessor<Match> processor){
-        return new StatelessJob<Match>(activationState, processor);
+    public static <Match extends IPatternMatch> Job<Match> newStatelessJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
+        return new StatelessJob<Match>(incQueryActivationStateEnum, processor);
     }
     
     /**
@@ -53,12 +56,30 @@ public final class Jobs {
      * A recording job attempts to find the transactional editing domain for the EVM
      * and wraps the execution inside a command, that is accessible from the context afterwards.
      * 
-     * @param activationState
+     * @param incQueryActivationStateEnum
      * @param processor
      * @return
+     * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
      */
-    public static <Match extends IPatternMatch> Job<Match> newRecordingJob(ActivationState activationState, IMatchProcessor<Match> processor){
-        return new RecordingJob<Match>(activationState, processor);
+    public static <Match extends IPatternMatch> Job<Match> newRecordingJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
+        return new RecordingJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor), new EventAtomDomainObjectProvider<Match>() {
+            @Override
+            public Object findDomainObject(Activation<? extends Match> activation, Context context) {
+              Match match = activation.getAtom();
+              if(match.parameterNames().length > 0) {
+                  for (int i = 0; i < match.parameterNames().length; i++) {
+                      if(match.get(i) instanceof EObject) {
+                          return match.get(i);
+                      }
+                  }
+              }
+              return null;
+            }
+        });
+    }
+    
+    public static <EventAtom> Job<EventAtom> newRecordingJob(Job<EventAtom> job){
+        return new RecordingJob<EventAtom>(job);
     }
     
     /**
@@ -67,25 +88,36 @@ public final class Jobs {
      * 
      * Consider using your own LifeCycle instead of Nop jobs!
      * 
-     * @param activationState
+     * @param incQueryActivationStateEnum
      * @return
      */
-    public static final <Match extends IPatternMatch> Job<Match> newNopJob(ActivationState activationState) {
-        return new Job<Match>(activationState) {
+    public static final <EventAtom> Job<EventAtom> newNopJob(ActivationState activationState) {
+        return new Job<EventAtom>(activationState) {
             @Override
-            protected void execute(Activation<Match> activation, Context context) {
+            protected void execute(Activation<? extends EventAtom> activation, Context context) {
                 // do nothing
             }
             @Override
-            protected void handleError(Activation<Match> activation, Exception exception, Context context) {
+            protected void handleError(Activation<? extends EventAtom> activation, Exception exception, Context context) {
                 // never happens!
                 checkState(false, "NopJob should never cause errors!");
             }
         };
     }
     
-    public static <Match extends IPatternMatch> Job<Match> newEnableJob(ActivationState activationState, IMatchProcessor<Match> processor) {
-        return new EnableJob<Match>(activationState, processor);
+    /**
+     * 
+     * @param incQueryActivationStateEnum
+     * @param processor
+     * @return
+     * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
+     */
+    public static <Match extends IPatternMatch> Job<Match> newEnableJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor) {
+        return new EnableJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor));
+    }
+
+    public static <EventAtom> Job<EventAtom> newEnableJob(Job<EventAtom> job) {
+        return new EnableJob<EventAtom>(job);
     }
     
 }

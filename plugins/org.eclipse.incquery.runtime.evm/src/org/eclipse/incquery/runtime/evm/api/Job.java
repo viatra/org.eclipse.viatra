@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 
 /**
  * A job represents an action that can be executed on an activation
@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * @author Abel Hegedus
  *
  */
-public abstract class Job<Match extends IPatternMatch> {
+public abstract class Job<EventAtom> {
 
     private ActivationState activationState;
     
@@ -35,7 +35,7 @@ public abstract class Job<Match extends IPatternMatch> {
     /**
      * Creates a new job corresponding to the given state.
      */
-    public Job(final ActivationState activationState) {
+    protected Job(final ActivationState activationState) {
         this.activationState = checkNotNull(activationState, "Cannot create job with null activation state!");
     }
     
@@ -45,7 +45,7 @@ public abstract class Job<Match extends IPatternMatch> {
      * @param activation
      * @param context
      */
-    protected abstract void execute(final Activation<Match> activation, final Context context);
+    protected abstract void execute(final Activation<? extends EventAtom> activation, final Context context);
     
     /**
      * Called if the {@link #execute} method has thrown an exception to allow jobs to handle their own errors.
@@ -54,5 +54,6 @@ public abstract class Job<Match extends IPatternMatch> {
      * @param exception
      * @param context
      */
-    protected abstract void handleError(final Activation<Match> activation, final Exception exception, final Context context);
+    protected abstract void handleError(final Activation<? extends EventAtom> activation, final Exception exception, final Context context);
+    
 }

@@ -93,7 +93,7 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
 
         @Override
         public Set<Activation<?>> getNextActivations() {
-            HashSet<Activation<?>> hashSet = new HashSet<Activation<?>>();
+            Set<Activation<?>> hashSet = new HashSet<Activation<?>>();
             hashSet.add(getNextActivation());
             return Collections.unmodifiableSet(hashSet);
         }

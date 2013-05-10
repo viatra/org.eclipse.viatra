@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import java.util.Set;
 
+
 /**
  * A conflict set is responsible for managing and ordering the set of enabled activations.
  * 
@@ -24,7 +25,7 @@ public interface ConflictSet {
      * 
      * @return the resolver corresponding to the conflict set
      */
-    ConflictResolver<?> getConflictResolver();
+    ConflictResolver<? extends ConflictSet> getConflictResolver();
     
     /**
      * 
@@ -47,13 +48,19 @@ public interface ConflictSet {
     /**
      * This method is called by the Agenda when an activation changes state and becomes or is still enabled.
      * 
+     * <p/>NOTE: The ConflictSet is responsible for handling that <code>add</code> may be called
+     *  multiple times on an Activation already in the conflict set! 
+     * 
      * @param activation the activation that should be added to the conflict set
      * @return true, if the conflict set changed
      */
     boolean addActivation(Activation<?> activation);
     
     /**
-     * This method is called by the Agenda when an activation changes state and becomes disabled.
+     * This method is called by the Agenda when an activation changes state and becomes or is still disabled.
+     * 
+     * <p/>NOTE: The ConflictSet is responsible for handling that <code>remove</code> may be called
+     * on Activations that are not in the conflict set! 
      * 
      * @param activation the activation that should be removed from the conflict set
      * @return true, if the conflict set changed

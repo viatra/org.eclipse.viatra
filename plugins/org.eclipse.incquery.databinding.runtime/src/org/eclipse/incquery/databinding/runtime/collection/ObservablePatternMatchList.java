@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -120,7 +121,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory,
             RuleEngine engine, Match filter) {
         this(factory);
-        engine.addRule(specification, true, filter);
+        engine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
     }
     
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IMatcherFactory<Matcher> factory) {
@@ -140,6 +141,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+        ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
     }
 
     @Override

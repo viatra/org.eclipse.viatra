@@ -186,7 +186,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     }
                     kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
                 } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.MANY_REFERENCE).equals(kindStr)) {
-                    if (feature.getUpperBound() != -1 || feature.getUpperBound() < 2) {
+                    if (feature.getUpperBound() != -1 && feature.getUpperBound() < 2) {
                         validator.error(String
                                 .format("Upper bound of feature %s should be -1 or larger than 1 for many 'kind'.",
                                         featureName), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,

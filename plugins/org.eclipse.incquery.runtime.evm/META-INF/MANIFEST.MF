@@ -12,13 +12,14 @@ Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.7.0",
  org.eclipse.core.databinding.property,
  org.eclipse.emf.workspace;bundle-version="1.5.1"
 Export-Package: org.eclipse.incquery.runtime.evm.api,
+ org.eclipse.incquery.runtime.evm.api.event,
  org.eclipse.incquery.runtime.evm.notification,
  org.eclipse.incquery.runtime.evm.qrm,
  org.eclipse.incquery.runtime.evm.specific,
+ org.eclipse.incquery.runtime.evm.specific.event,
  org.eclipse.incquery.runtime.evm.specific.job,
  org.eclipse.incquery.runtime.evm.specific.lifecycle,
  org.eclipse.incquery.runtime.evm.specific.resolver,
- org.eclipse.incquery.runtime.evm.specific.rule,
  org.eclipse.incquery.runtime.evm.specific.scheduler,
  org.eclipse.incquery.runtime.evm.update
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

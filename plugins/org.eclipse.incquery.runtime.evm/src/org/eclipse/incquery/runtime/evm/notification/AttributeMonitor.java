@@ -14,25 +14,22 @@ package org.eclipse.incquery.runtime.evm.notification;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-
 /**
- * The class defines the operations that are required to observe the EMF attribute changes on pattern match objects.
+ * The class defines the operations that are required to observe the EMF attribute changes on atom objects.
  * 
  * @author Tamas Szabo
  * 
- * @param <MatchType>
  */
-public abstract class AttributeMonitor<MatchType extends IPatternMatch> {
+public abstract class AttributeMonitor<Atom> {
 
-    private List<IAttributeMonitorListener<MatchType>> listeners;
+    private List<IAttributeMonitorListener<Atom>> listeners;
 
     public AttributeMonitor() {
-        this.listeners = new ArrayList<IAttributeMonitorListener<MatchType>>();
+        this.listeners = new ArrayList<IAttributeMonitorListener<Atom>>();
     }
     
     /**
-     * Registers a listener for notifications when a feature value of an object in a match changes.
+     * Registers a listener for notifications when a feature value of an object in a atom changes.
      * 
      * <p>
      * The listener can be unregistered via
@@ -40,7 +37,7 @@ public abstract class AttributeMonitor<MatchType extends IPatternMatch> {
      * 
      * @param listener
      */
-    public void addAttributeMonitorListener(final IAttributeMonitorListener<MatchType> listener) {
+    public void addAttributeMonitorListener(final IAttributeMonitorListener<Atom> listener) {
         this.listeners.add(listener);
     }
 
@@ -50,42 +47,42 @@ public abstract class AttributeMonitor<MatchType extends IPatternMatch> {
      * 
      * @param listener
      */
-    public void removeAttributeMonitorListener(final IAttributeMonitorListener<MatchType> listener) {
+    public void removeAttributeMonitorListener(final IAttributeMonitorListener<Atom> listener) {
         this.listeners.remove(listener);
     }
 
     /**
-     * Register the attribute monitor to watch feature values  of object defined in the given match.
+     * Register the attribute monitor to watch feature values  of object defined in the given atom.
      *  
-     * @param match
+     * @param atom
      */
-    public abstract void registerFor(final MatchType match);
+    public abstract void registerFor(final Atom atom);
 
     /**
-     * Remove the attribute monitor from watching registered matches.
+     * Remove the attribute monitor from watching registered atoms.
      */
     public abstract void unregisterForAll();
 
     /**
-     * Remove the attribute monitor from watching the given match.
+     * Remove the attribute monitor from watching the given atom.
      * 
      * @param match
      */
-    public abstract void unregisterFor(final MatchType match);
+    public abstract void unregisterFor(final Atom atom);
 
     /**
-     * Sends notification to listeners when the given match is updated.
+     * Sends notification to listeners when the given atom is updated.
      * 
      * @param match
      */
-    protected void notifyListeners(final MatchType match) {
-        for (IAttributeMonitorListener<MatchType> listener : listeners) {
-            listener.notifyUpdate(match);
+    protected void notifyListeners(final Atom atom) {
+        for (IAttributeMonitorListener<Atom> listener : listeners) {
+            listener.notifyUpdate(atom);
         }
     }
 
     /**
-     * Disposes of the attribute monitor by unregistering from each match.
+     * Disposes of the attribute monitor by unregistering from each atom.
      * 
      * TODO should we clear the listener list?
      */

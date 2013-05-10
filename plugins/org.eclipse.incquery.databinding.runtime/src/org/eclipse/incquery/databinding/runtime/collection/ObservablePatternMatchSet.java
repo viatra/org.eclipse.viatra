@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -26,6 +25,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.Sets;
@@ -36,8 +36,7 @@ import com.google.common.collect.Sets;
  * 
  * <p>
  * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be instantiated
- * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and either a {@link Notifier},
- * {@link IncQueryEngine} or {@link RuleEngine}.
+ * using either an existing {@link IncQueryMatcher}, or an {@link IMatcherFactory} and {@link IncQueryEngine} or {@link RuleEngine}.
  * 
  * @author Abel Hegedus
  * 
@@ -121,7 +120,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory,
             RuleEngine engine, Match filter) {
         this(factory);
-        engine.addRule(specification, true, filter);
+        engine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
     }
 
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IMatcherFactory<Matcher> factory) {
@@ -141,6 +140,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(Matcher matcher) {
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+        ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
     }
     
     @Override

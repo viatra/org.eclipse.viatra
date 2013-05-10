@@ -63,21 +63,21 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
     }
 
     @Override
-    public void registerFor(final MatchType match) {
+    public void registerFor(final MatchType atom) {
         List<IObservableValue> values = new ArrayList<IObservableValue>();
-        for (String param : match.parameterNames()) {
-            Object location = match.get(param);
-            List<IObservableValue> observableValues = observeAllAttributes(changeListener, location);
-            values.addAll(observableValues);
-        }
-
-        // inserting {observable,match} pairs
-        for (IObservableValue val : values) {
-            observableMap.put(val, match);
-        }
+            for (String param : atom.parameterNames()) {
+                Object location = atom.get(param);
+                List<IObservableValue> observableValues = observeAllAttributes(changeListener, location);
+                values.addAll(observableValues);
+            }
+            
+            // inserting {observable,match} pairs
+            for (IObservableValue val : values) {
+                observableMap.put(val, atom);
+            }
 
         // inserting {match, list(observable)} pairs
-        observableMapReversed.put(match, values);
+        observableMapReversed.put(atom, values);
     }
 
     /**
@@ -101,14 +101,14 @@ public class DefaultAttributeMonitor<MatchType extends IPatternMatch> extends At
 
     @Override
     public void unregisterForAll() {
-        for (MatchType match : observableMapReversed.keySet()) {
-            unregisterFor(match);
+        for (MatchType atom : observableMapReversed.keySet()) {
+            unregisterFor(atom);
         }
     }
 
     @Override
-    public void unregisterFor(final MatchType match) {
-        List<IObservableValue> observables = observableMapReversed.get(match);
+    public void unregisterFor(final MatchType atom) {
+        List<IObservableValue> observables = observableMapReversed.get(atom);
         if (observables != null) {
             for (IObservableValue val : observables) {
                 val.removeValueChangeListener(changeListener);

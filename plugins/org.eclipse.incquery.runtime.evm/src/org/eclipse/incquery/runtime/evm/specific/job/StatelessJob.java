@@ -16,9 +16,9 @@ import static com.google.common.base.Preconditions.checkState;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 
 /**
  * This class represents a {@link Job} that uses an {@link IMatchProcessor} 
@@ -29,7 +29,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
 
     private IMatchProcessor<Match> matchProcessor;
-
+    
     /**
      * @return the matchProcessor
      */
@@ -40,22 +40,22 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     /**
      * Creates a stateless job for the given state and processor.
      * 
-     * @param activationState
+     * @param incQueryActivationStateEnum
      * @param matchProcessor
      */
-    public StatelessJob(final ActivationState activationState, final IMatchProcessor<Match> matchProcessor) {
-        super(activationState);
+    public StatelessJob(final IncQueryActivationStateEnum incQueryActivationStateEnum, final IMatchProcessor<Match> matchProcessor) {
+        super(incQueryActivationStateEnum);
         this.matchProcessor = checkNotNull(matchProcessor,
                 "StatelessJob cannot be instantiated with null match processor");
     }
 
     @Override
-    protected void execute(final Activation<Match> activation, final Context context) {
-        matchProcessor.process(activation.getPatternMatch());
+    protected void execute(final Activation<? extends Match> activation, final Context context) {
+        matchProcessor.process(activation.getAtom());
     }
 
     @Override
-    protected void handleError(final Activation<Match> activation, final Exception exception, final Context context) {
+    protected void handleError(final Activation<? extends Match> activation, final Exception exception, final Context context) {
         checkState(false,"Exception " + exception.getMessage() + " was thrown when executing " + activation
                 + "! Stateless job doesn't handle errors!", exception);
     }

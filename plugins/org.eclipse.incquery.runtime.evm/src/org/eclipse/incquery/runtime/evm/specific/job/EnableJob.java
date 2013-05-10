@@ -10,30 +10,28 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.job;
 
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.CompositeJob;
 import org.eclipse.incquery.runtime.evm.api.Context;
+import org.eclipse.incquery.runtime.evm.api.Job;
 
 /**
  * @author Abel Hegedus
  *
  * @param <Match>
  */
-public class EnableJob<Match extends IPatternMatch> extends StatelessJob<Match> {
-    private boolean enabled = false;
-
+public class EnableJob<EventAtom> extends CompositeJob<EventAtom> {
     /**
-     * @param activationState
-     * @param matchProcessor
+     * @param job
      */
-    public EnableJob(ActivationState activationState, IMatchProcessor<Match> matchProcessor) {
-        super(activationState, matchProcessor);
+    public EnableJob(Job<EventAtom> job) {
+        super(job);
     }
 
+    private boolean enabled = false;
+
     @Override
-    protected void execute(Activation<Match> activation, Context context) {
+    protected void execute(Activation<? extends EventAtom> activation, Context context) {
         if(enabled) {
             super.execute(activation, context);
         }

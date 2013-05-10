@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
@@ -216,6 +217,33 @@ public class NavigationHelperImpl implements NavigationHelper {
             return Collections.unmodifiableSet(valMap.get(feature));
         }
     }
+    
+    @Override
+    public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
+        final Map<Object, Set<EObject>> instanceMap = contentAdapter.getValueToFeatureToHolderMap().column(feature);
+        for (Entry<Object, Set<EObject>> entry : instanceMap.entrySet()) {
+            for (EObject src : entry.getValue()) {
+                processor.process(feature, src, entry.getKey());
+            }
+        }
+    }
+
+    // @Override
+    // public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
+    // Set<Setting> retSet = new HashSet<Setting>();
+    //
+    // for (Object value : contentAdapter.featureMap.keySet()) {
+    // if (value.getClass().equals(clazz)) {
+    // for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
+    // for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
+    // retSet.add(new NavigationHelperSetting(attr, holder, value));
+    // }
+    // }
+    // }
+    // }
+    //
+    // return retSet;
+    // }
 
     @Override
     public Collection<Setting> getInverseReferences(EObject target) {

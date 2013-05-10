@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-public class ValidationUtil {
+public final class ValidationUtil {
 
     /**
      * Constructor hidden for utility class

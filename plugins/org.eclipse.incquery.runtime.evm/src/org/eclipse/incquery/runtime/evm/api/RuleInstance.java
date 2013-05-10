@@ -12,30 +12,22 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
+import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
+import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.ActivationNotificationProvider;
-import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationProvider;
-import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
-import org.eclipse.incquery.runtime.evm.specific.DefaultAttributeMonitor;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
-import com.google.common.collect.TreeBasedTable;
 
 /**
  * The rule instance is created in the EVM for a rule specification. 
@@ -50,7 +42,7 @@ import com.google.common.collect.TreeBasedTable;
  * @author Abel Hegedus
  * 
  */
-public abstract class RuleInstance<Match extends IPatternMatch> implements IActivationNotificationProvider{
+public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
 
     /**
      * A default implementation for providing activation state change 
@@ -63,154 +55,19 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
         @Override
         protected void listenerAdded(final IActivationNotificationListener listener, final boolean fireNow) {
             if (fireNow) {
-                for (Activation<Match> activation : getAllActivations()) {
-                    listener.activationChanged(activation, ActivationState.INACTIVE, ActivationLifeCycleEvent.MATCH_APPEARS);
+                ActivationState inactiveState = getActivationInactiveState();
+                for (Activation<EventAtom> activation : getAllActivations()) {
+                    listener.activationCreated(activation, inactiveState);
                 }
             }
         }
     }
 
-    /**
-     * This class is the common supertype for default event prcessors
-     *  in the rule instance.
-     *  
-     * @author Abel Hegedus
-     *
-     */
-    private abstract class DefaultMatchEventProcessor {
-        
-        /**
-         * This method is called with the match corresponding to the
-         * activation that is affected by the event.
-         * 
-         * @param match
-         */
-        protected void processMatchEvent(Match match) {
-            checkNotNull(match,"Cannot process null match!");
-            
-            // TODO check filter (this might be expensive!!!)
-            if(!match.isCompatibleWith(filter)) {
-                return;
-            }
-            
-            Map<ActivationState, Activation<Match>> column = activations.column(match);
-            if(column.size() > 0) {
-                checkArgument(column.size() == 1, String.format("%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple"));
-                Activation<Match> act = column.values().iterator().next();
-                activationExists(act);
-            } else {
-                activationMissing(match);
-            }
-        }
-        
-        /**
-         * This method is called by processMatchEvent if the activation
-         * already exists for the given match.
-         * 
-         * @param activation
-         */
-        protected abstract void activationExists(Activation<Match> activation);
-        
-        /**
-         * This method is called by processMatchEvent if the activation
-         * does not exists for the given match.
-         * 
-         * @param match
-         */
-        protected abstract void activationMissing(Match match);
-    }
-    
-    /**
-     * Default implementation for the event handler when a match appears.
-     * 
-     * @author Abel Hegedus
-     *
-     */
-    private final class DefaultMatchAppearProcessor extends DefaultMatchEventProcessor implements IMatchProcessor<Match> {
-
-        @Override
-        protected void activationExists(Activation<Match> activation) {
-            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_APPEARS);
-        }
-
-        @Override
-        protected void activationMissing(Match match) {
-            Activation<Match> activation = new Activation<Match>(RuleInstance.this, match);
-            if(specification.getLifeCycle().containsTo(ActivationState.UPDATED)) {
-                attributeMonitor.registerFor(match);
-            }
-            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_APPEARS);
-        }
-
-        @Override
-        public void process(Match match) {
-            processMatchEvent(match);
-        }
-    }
-
-    /**
-     * Default implementation for the event handler when a match disappears.
-     * 
-     * @author Abel Hegedus
-     *
-     */
-    private final class DefaultMatchDisappearProcessor extends DefaultMatchEventProcessor implements IMatchProcessor<Match> {
-
-        @Override
-        protected void activationExists(Activation<Match> activation) {
-            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_DISAPPEARS);
-        }
-
-        @Override
-        protected void activationMissing(Match match) {
-            getLogger().error(String.format("Match %s disappeared without existing activation in rule instance %s!",match,this));
-        }
-
-        @Override
-        public void process(Match match) {
-            processMatchEvent(match);
-        }
-    }
-
-    /**
-     * Default implementation for the event handler when a match updates.
-     * 
-     * @author Abel Hegedus
-     *
-     */
-    private final class DefaultAttributeMonitorListener extends DefaultMatchEventProcessor implements IAttributeMonitorListener<Match> {
-        @Override
-        public void notifyUpdate(final Match match) {
-            processMatchEvent(match);
-        }
-
-        @Override
-        protected void activationExists(Activation<Match> activation) {
-            activationStateTransition(activation, ActivationLifeCycleEvent.MATCH_UPDATES);
-        }
-
-        @Override
-        protected void activationMissing(Match match) {
-            getLogger().error(String.format("Match %s updated without existing activation in rule instance %s!",match,this));
-        }
-
-    }
-
-    private final RuleSpecification<Match> specification;
-    private Table<ActivationState, Match, Activation<Match>> activations;
-    private ActivationNotificationProvider activationNotificationProvider;
-    private IMatchUpdateListener<Match> matchUpdateListener;
-    private IAttributeMonitorListener<Match> attributeMonitorListener;
-    private AttributeMonitor<Match> attributeMonitor;
-    private final Match filter;
-    
-    /**
-     * @return the filter
-     */
-    public Match getFilter() {
-        return filter;
-    }
-
+    private final RuleSpecification<EventAtom> specification;
+    private final Table<ActivationState, EventAtom, Activation<EventAtom>> activations;
+    private final ActivationNotificationProvider activationNotificationProvider;
+    private EventHandler<EventAtom> handler;
+   
     /**
      * Creates an instance using a RuleSpecification.
      * 
@@ -218,71 +75,27 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * @param engine
      * @throws IllegalArgumentException if filter is mutable
      */
-    protected RuleInstance(final RuleSpecification<Match> specification, Match filter) {
+    protected RuleInstance(final RuleSpecification<EventAtom> specification) {
         this.specification = checkNotNull(specification, "Cannot create rule instance for null specification!");
-        Comparator<Match> columnComparator = specification.getComparator();
-        Ordering<ActivationState> rowComparator = Ordering.natural();
-        if(columnComparator != null) {
-            this.activations = TreeBasedTable.create(rowComparator, columnComparator);
-        } else {
-            this.activations = HashBasedTable.create();
-        }
+        this.activations = HashBasedTable.create();
         
         this.activationNotificationProvider = new DefaultActivationNotificationProvider();
-        
-        if(filter != null) {
-            Preconditions.checkArgument(!filter.isMutable(),String.format("Mutable filter %s is used in rule instance!",filter));
-        }
-        this.filter = filter;
-    }
-
-    /**
-     * Prepares the event processors for match appearance and disappearance.
-     */
-    protected void prepareMatchUpdateListener() {
-        IMatchProcessor<Match> matchAppearProcessor = checkNotNull(prepareMatchAppearProcessor(), "Prepared match appearance processor is null!");
-        IMatchProcessor<Match> matchDisppearProcessor = checkNotNull(prepareMatchDisppearProcessor(), "Prepared match disappearance processor is null!");
-        this.setMatchUpdateListener(new MatchUpdateAdapter<Match>(matchAppearProcessor,
-                matchDisppearProcessor));
     }
     
-    /**
-     * Prepares the attribute monitor
-     */
-    protected void prepateAttributeMonitor() {
-        this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(), "Prepared attribute monitor listener is null!");
-        this.attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
-        this.attributeMonitor.addAttributeMonitorListener(attributeMonitorListener);
-    }
-
-    /**
-     * @return the match appears event processor
-     */
-    protected IMatchProcessor<Match> prepareMatchAppearProcessor() {
-        return new DefaultMatchAppearProcessor();
+    public void setHandler(EventHandler<EventAtom> handler) {
+        checkArgument(handler != null, "Handler cannot be null!");
+        checkState(this.handler == null || handler.equals(this.handler), "Handler already set!");
+        this.handler = handler;
     }
     
-    /**
-     * @return the match disappears event processor
-     */
-    protected IMatchProcessor<Match> prepareMatchDisppearProcessor() {
-        return new DefaultMatchDisappearProcessor();
+    public Activation<EventAtom> createActivation(EventAtom atom) {
+        return new Activation<EventAtom>(this, atom, getActivationInactiveState());
     }
 
-    /**
-     * @return the attribute monitor
-     */
-    protected AttributeMonitor<Match> prepareAttributeMonitor(){
-        return new DefaultAttributeMonitor<Match>();
+    private ActivationState getActivationInactiveState() {
+        return specification.getLifeCycle().getInactiveState();
     }
 
-    /**
-     * @return the attribute monitor listener
-     */
-    protected IAttributeMonitorListener<Match> prepareAttributeMonitorListener() {
-        return new DefaultAttributeMonitorListener();
-    }
-    
     /**
      * Fires the given activation using the supplied context.
      * Delegates to the doFire method
@@ -290,13 +103,13 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * @param activation
      * @param context
      */
-    public void fire(final Activation<Match> activation, final Context context) {
+    public void fire(final Activation<EventAtom> activation, final Context context) {
         checkNotNull(activation, "Cannot fire null activation!");
         checkNotNull(context,"Cannot fire activation with null context");
         ActivationState activationState = activation.getState();
-        Match patternMatch = activation.getPatternMatch();
+        EventAtom atom = activation.getAtom();
 
-        doFire(activation, activationState, patternMatch, context);
+        doFire(activation, activationState, atom, context);
     }
 
     /**
@@ -306,15 +119,15 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * activation state using the supplied context.
      * 
      * @param activation
-     * @param activationState
-     * @param patternMatch
+     * @param incQueryActivationStateEnum
+     * @param atom
      * @param context
      */
-    protected void doFire(final Activation<Match> activation, final ActivationState activationState, final Match patternMatch, final Context context) {
-        if (activations.contains(activationState, patternMatch)) {
-            Collection<Job<Match>> jobs = specification.getJobs(activationState);
-            activationStateTransition(activation, ActivationLifeCycleEvent.ACTIVATION_FIRES);
-            for (Job<Match> job : jobs) {
+    protected void doFire(final Activation<EventAtom> activation, final ActivationState activationState, final EventAtom atom, final Context context) {
+        if (activations.contains(activationState, atom)) {
+            Collection<Job<EventAtom>> jobs = specification.getJobs(activationState);
+            activationStateTransition(activation, EventType.RuleEngineEventType.FIRE);
+            for (Job<? super EventAtom> job : jobs) {
                 try {
                     job.execute(activation, context);
                 } catch(Exception e) {
@@ -334,54 +147,35 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * @param event
      * @return the state of the activation after the transition
      */
-    protected ActivationState activationStateTransition(final Activation<Match> activation, final ActivationLifeCycleEvent event) {
+    public ActivationState activationStateTransition(final Activation<EventAtom> activation, final EventType event) {
         checkNotNull(activation, "Cannot perform state transition on null activation!");
         checkNotNull(event, "Cannot perform state transition with null event!");
         ActivationState activationState = activation.getState();
         ActivationState nextActivationState = specification.getLifeCycle().nextActivationState(activationState, event);
-        Match patternMatch = activation.getPatternMatch();
+        EventAtom atom = activation.getAtom();
         if (nextActivationState != null) {
-            activations.remove(activationState, patternMatch);
+            Activation<EventAtom> removed = activations.remove(activationState, atom);
             activation.setState(nextActivationState);
-            if (!nextActivationState.equals(ActivationState.INACTIVE)) {
-                activations.put(nextActivationState, patternMatch, activation);
+            if (!nextActivationState.isInactive()) {
+                activations.put(nextActivationState, atom, activation);
+                if(removed == null) { // activation did not exist
+                    activationNotificationProvider.notifyActivationCreated(activation, activationState);
+                } else { // still exists, only changed
+                    activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
+                }
             } else {
-                attributeMonitor.unregisterFor(patternMatch);
+                // inactive state, remove
+                activationNotificationProvider.notifyActivationRemoved(activation, activationState);
             }
         } else {
             nextActivationState = activationState;
+            // no effect, but event occured
+            activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
         }
-        activationNotificationProvider.notifyActivationChanged(activation, activationState, event);
         return nextActivationState;
     }
     
     
-
-    /**
-     * @return the specification
-     */
-    public RuleSpecification<Match> getSpecification() {
-        return specification;
-    }
-    
-    /**
-     * @return the matchUpdateListener
-     */
-    protected IMatchUpdateListener<Match> getMatchUpdateListener() {
-        return matchUpdateListener;
-    }
-
-    /**
-     * @return the logger
-     */
-    protected abstract Logger getLogger();
-
-    /**
-     * @param matchUpdateListener the matchUpdateListener to set
-     */
-    public void setMatchUpdateListener(IMatchUpdateListener<Match> matchUpdateListener) {
-        this.matchUpdateListener = matchUpdateListener;
-    }
 
     /**
      * Delegate method for {@link ActivationNotificationProvider#addActivationNotificationListener}.
@@ -407,10 +201,26 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
     }
 
     /**
+     * @return the specification
+     */
+    public RuleSpecification<EventAtom> getSpecification() {
+        return specification;
+    }
+
+    public EventFilter<EventAtom> getFilter(){
+        checkState(handler != null, "Cannot get filter, bacause handler is null!");
+        return handler.getEventFilter();
+    }
+
+    public ActivationLifeCycle getLifeCycle() {
+        return specification.getLifeCycle();
+    }
+
+    /**
      * 
      * @return the live table of activations
      */
-    public Table<ActivationState, Match, Activation<Match>> getActivations() {
+    public Table<ActivationState, EventAtom, Activation<EventAtom>> getActivations() {
         return activations;
     }
     
@@ -419,7 +229,7 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * 
      * @return the live set of activations
      */
-    public Collection<Activation<Match>> getAllActivations() {
+    public Collection<Activation<EventAtom>> getAllActivations() {
         return activations.values();
     }
 
@@ -428,7 +238,7 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * @param state
      * @return the live set of activations in the given state
      */
-    public Collection<Activation<Match>> getActivations(final ActivationState state) {
+    public Collection<Activation<EventAtom>> getActivations(final ActivationState state) {
         checkNotNull(state, "Cannot return activations for null state");
         return activations.row(state).values();
     }
@@ -441,20 +251,16 @@ public abstract class RuleInstance<Match extends IPatternMatch> implements IActi
      * 
      */
     protected void dispose() {
-        for (Cell<ActivationState, Match, Activation<Match>> cell : activations.cellSet()) {
-            Activation<Match> activation = cell.getValue();
+        this.handler.dispose();
+        for (Cell<ActivationState, EventAtom, Activation<EventAtom>> cell : activations.cellSet()) {
+            Activation<EventAtom> activation = cell.getValue();
             ActivationState activationState = activation.getState();
-            activation.setState(ActivationState.INACTIVE);
-            activationNotificationProvider.notifyActivationChanged(activation, activationState, ActivationLifeCycleEvent.MATCH_DISAPPEARS);
+            activation.setState(specification.getLifeCycle().getInactiveState());
+            activationNotificationProvider.notifyActivationRemoved(activation, activationState);
         } 
         this.activationNotificationProvider.dispose();
-        this.attributeMonitor.removeAttributeMonitorListener(attributeMonitorListener);
-        this.attributeMonitor.dispose();
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("spec",specification).add("activations",activations).toString();
