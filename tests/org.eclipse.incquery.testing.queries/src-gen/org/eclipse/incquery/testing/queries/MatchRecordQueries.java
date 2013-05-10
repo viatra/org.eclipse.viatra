@@ -8,9 +8,9 @@ import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
 
 public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   public MatchRecordQueries() throws IncQueryException {
-    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
-    querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
     querySpecifications.add(SubstitutionValueMatcher.querySpecification());
+    querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
+    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
     
   }
 }
