@@ -51,6 +51,7 @@ class CheckConstraintTypesTest {
 	@Test
 	def booleanCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(C) = {
@@ -65,6 +66,7 @@ class CheckConstraintTypesTest {
 	@Test
 	def accessEClassInCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(C) = {
@@ -78,6 +80,7 @@ class CheckConstraintTypesTest {
 	@Test
 	def booleanBlockExpressionCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(C) = {
@@ -96,6 +99,7 @@ class CheckConstraintTypesTest {
 	@Test
 	def booleanBlockExpressionWithReturnCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(C) = {
@@ -114,6 +118,7 @@ class CheckConstraintTypesTest {
 	@Test
 	def nonBooleanCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(S) = {

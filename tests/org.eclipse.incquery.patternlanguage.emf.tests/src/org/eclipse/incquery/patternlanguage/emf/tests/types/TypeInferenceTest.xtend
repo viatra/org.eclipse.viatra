@@ -61,6 +61,7 @@ class TypeInferenceTest {
 	@Test
 	def zeroLevelType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern first(class1) = {
@@ -78,6 +79,7 @@ class TypeInferenceTest {
 	@Test
 	def firstLevelFindType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern first(class1) = {
@@ -102,6 +104,7 @@ class TypeInferenceTest {
 	@Test
 	def secondLevelFindType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern first(class1) = {
@@ -133,6 +136,7 @@ class TypeInferenceTest {
 	@Test
 	def zeroLevelPathType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern firstPath(class1, attribute1) = {
@@ -153,6 +157,7 @@ class TypeInferenceTest {
 	@Test
 	def firstLevelPathType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern firstPath(class1, attribute1) = {
@@ -183,6 +188,7 @@ class TypeInferenceTest {
 	@Test
 	def injectivityConstraintTest() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern injectivity1(class1, class2) = {
@@ -204,6 +210,7 @@ class TypeInferenceTest {
 	@Test
 	def parameterTest() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern parameterTest(parameter) = {
@@ -229,6 +236,7 @@ class TypeInferenceTest {
 	@Test
 	def parameterTest2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern parameterTest2(parameter : EClassifier) = {
@@ -254,6 +262,7 @@ class TypeInferenceTest {
 	@Test
 	def intLiteralType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern literalValue(literalType) = {
 				literalType == 10;
 			}
@@ -269,6 +278,7 @@ class TypeInferenceTest {
 	@Test
 	def stringLiteralType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern literalValue(literalType) = {
 				literalType == "helloworld";
 			}
@@ -284,6 +294,7 @@ class TypeInferenceTest {
 	@Test
 	def boolLiteralType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern literalValue(literalType) = {
 				literalType == true;
 			}
@@ -299,6 +310,7 @@ class TypeInferenceTest {
 	@Test
 	def doubleLiteralType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern literalValue(literalType) = {
 				literalType == 3.14;
 			}
@@ -314,6 +326,7 @@ class TypeInferenceTest {
 	@Test
 	def countAggregatedComputationValueType() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern literalValue(literalType) = {
 				uselessVariable == 10;
 				literalType == count find patternToFind(uselessVariable);
@@ -336,6 +349,7 @@ class TypeInferenceTest {
 	@Test
 	def errorTypeTest1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern errorTypeTest(parameter) = {
@@ -349,6 +363,7 @@ class TypeInferenceTest {
 	@Test
 	def errorTypeTest2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern warningTypeTest1(parameter : EClass) = {
@@ -366,6 +381,7 @@ class TypeInferenceTest {
 	@Test
 	def errorTypeTest3() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern warningTypeTest2(parameter : EDataType) = {
@@ -383,6 +399,7 @@ class TypeInferenceTest {
 	@Test
 	def warningTypeTest1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern warningTypeTest3(parameter : EClassifier) = {

@@ -48,7 +48,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void duplicatePatterns() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -63,7 +64,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void duplicatePatternsIgnoreCase() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -78,7 +80,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void duplicateParameters() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, p) = {
 				Pattern(p);
@@ -96,7 +99,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void testTooFewParameters() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, p2) = {
 				Pattern(p);
@@ -112,7 +116,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void testTooMuchParameters() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -127,7 +132,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void testSymbolicParameterSafe() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -139,7 +145,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void testQuantifiedLocalVariable() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -157,7 +164,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 						   p: Pattern is a positive reference.")
 	def void testNegativeCallCircle() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);

@@ -39,6 +39,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassResolutionSuccess() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -55,6 +56,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassifierResolutionSuccess() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern ECoreNamedElement(Name) = {
@@ -71,6 +73,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassResolutionFailed() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -87,6 +90,7 @@ class EClassResolutionTest {
 	@Test
 	def eClassResolutionFailedMissingImport() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
 			}

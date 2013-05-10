@@ -51,6 +51,7 @@ class CartesianProductTest {
 	@Test
 	def testGood1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -66,6 +67,7 @@ class CartesianProductTest {
 	@Test
 	def testGood2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -87,6 +89,7 @@ class CartesianProductTest {
 	@Test
 	def testGood3() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -110,6 +113,7 @@ class CartesianProductTest {
 	@Test
 	def testGood4() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -139,6 +143,7 @@ class CartesianProductTest {
 	@Test
 	def testGood5() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -162,6 +167,7 @@ class CartesianProductTest {
 	@Test
 	def testGood6() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -182,6 +188,7 @@ class CartesianProductTest {
 	@Test
 	def testGood7() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -202,6 +209,7 @@ class CartesianProductTest {
 	@Test
 	def testGood8() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good1(X, Y) {
@@ -223,6 +231,7 @@ class CartesianProductTest {
 	@Test
 	def testSoft1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Soft1(X, Y) {
@@ -237,6 +246,7 @@ class CartesianProductTest {
 	@Test
 	def testSoft2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Good1(X, Y) {
@@ -257,6 +267,7 @@ class CartesianProductTest {
 	@Test
 	def testSoft3() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Good1(X, Y) {
@@ -277,6 +288,7 @@ class CartesianProductTest {
 	@Test
 	def testSoft4() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Soft4(X, Y) {
@@ -291,6 +303,7 @@ class CartesianProductTest {
 	@Test
 	def testStrict1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Strict1(X, Y) {
@@ -304,6 +317,7 @@ class CartesianProductTest {
 	@Test
 	def testStrict2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
 			pattern Strict1(X) {

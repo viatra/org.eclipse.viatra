@@ -47,7 +47,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionShortName() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p")
 			pattern pattern2(p : Pattern) = {
@@ -60,7 +61,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionFullName() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p.name")
 			pattern pattern2(p : Pattern) = {
@@ -72,7 +74,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void labelExpressionFullName() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", labelExpression = "$p.name$")
 			pattern pattern2(p : Pattern) = {
@@ -84,7 +87,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void labelExpressionFullNameUnescaped() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", labelExpression = "p.name")
 			pattern pattern2(p : Pattern) = {
@@ -97,7 +101,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionEmpty() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "")
 			pattern pattern2(p : Pattern) = {
@@ -110,6 +115,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionMismatch1() {
 		val model = parseHelper.parse('''
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name")
@@ -122,6 +128,7 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionMismatch2() {
 		val model = parseHelper.parse('''
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p", labelExpression="label $p.name$")
@@ -135,7 +142,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionInDollars() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "$p.name$")
 			pattern pattern2(p : Pattern) = {
@@ -148,7 +156,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionInvalidParameter1() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p1")
 			pattern pattern2(p : Pattern) = {
@@ -160,7 +169,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionInvalidParameter2() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p1.name")
 			pattern pattern2(p : Pattern) = {
@@ -172,7 +182,8 @@ class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void expressionInvalidFeature() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@ObservableValue(name = "name", expression = "p.notExists")
 			pattern pattern2(p : Pattern) = {

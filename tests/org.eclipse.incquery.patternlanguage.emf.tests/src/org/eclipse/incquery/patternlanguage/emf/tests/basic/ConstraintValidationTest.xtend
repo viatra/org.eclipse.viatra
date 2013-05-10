@@ -46,6 +46,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def intConstantCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
@@ -57,6 +58,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def stringDoubleConstantCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
@@ -71,6 +73,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def enumIntConstantCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
@@ -85,6 +88,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightVariableCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				1 == Name;
@@ -97,6 +101,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def rightNewVariableCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
@@ -110,6 +115,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftVariableCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(Name) = {
 				Name == "Test";
@@ -122,6 +128,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def leftNewVariableCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern constantCompareTest(A) = {
 				Pattern(A);
@@ -135,6 +142,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def bothVariableCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern constantCompareTest(Name) = {
 				Name == Name2;
 				Pattern(Name2);
@@ -145,6 +153,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	@Test
 	def selfCompareValidation() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			pattern constantCompareTest(Name) = {
 				Name == Name;
 			}
@@ -155,17 +164,18 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 		)
 	}
-  @Test
-  def referenceIsNotRepresentable(){
-    val model = parseHelper.parse('
-      import "http://www.eclipse.org/emf/2002/Ecore"
+	@Test
+ 	def referenceIsNotRepresentable(){
+		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
 
-      pattern IntAndClassPattern(X, Y) {
-        EInt(X);
-        EClass(Y);
-        EClass.eAttributes.upperBound(Y,X);
-      }
-    ') as PatternModel
-    tester.validate(model).assertWarning(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE)
-  }
+			pattern IntAndClassPattern(X, Y) {
+			  EInt(X);
+			  EClass(Y);
+			  EClass.eAttributes.upperBound(Y,X);
+			}
+		') as PatternModel
+		tester.validate(model).assertWarning(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE)
+	}
 }

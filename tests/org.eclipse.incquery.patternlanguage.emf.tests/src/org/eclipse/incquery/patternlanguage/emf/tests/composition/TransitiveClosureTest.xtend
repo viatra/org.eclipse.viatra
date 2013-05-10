@@ -46,7 +46,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void validClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);
@@ -64,6 +65,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	def void wrongArityClosure() {
 		val model = parseHelper.parse(
 			'''
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern, c) = {
@@ -83,6 +85,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	def void wrongTypedClosure() {
 		val model = parseHelper.parse(
 			'''
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			
 			pattern bodyOfPattern(p : Pattern, b : PatternBody) {
@@ -99,7 +102,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void negatedClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);
@@ -116,7 +120,8 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 	@Test
 	def void aggregatedClosure() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern patternDependency(p1 : Pattern, p2 : Pattern) = {
 				Pattern.bodies.constraints(p1,c);

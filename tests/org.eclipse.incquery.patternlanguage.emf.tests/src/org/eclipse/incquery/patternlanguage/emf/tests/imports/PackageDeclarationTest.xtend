@@ -48,6 +48,17 @@ class PackageDeclarationTest {
 		assertEquals(packageName, "school");
 	}
 	@Test
+	def noPackage() {
+		val model = parseHelper.parse('
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern resolutionTest(Name) = {
+				Pattern(Name);
+			}
+		') as PatternModel
+		model.assertError(PatternLanguagePackage$Literals::PATTERN_MODEL, IssueCodes::PACKAGE_NAME_EMPTY)
+	}
+	@Test
 	def hierarchicPackage() {
 		val model = parseHelper.parse('
 			package hu.bme.mit.school;

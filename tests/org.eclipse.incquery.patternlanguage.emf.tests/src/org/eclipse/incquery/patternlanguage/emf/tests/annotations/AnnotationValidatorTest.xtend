@@ -46,7 +46,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void unknownAnnotation() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@NonExistent
 			pattern pattern2(p : Pattern) = {
@@ -58,7 +59,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void unknownAnnotationAttribute() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Optional(unknown=1)
 			pattern pattern2(p : Pattern) = {
@@ -70,7 +72,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void unknownAnnotationAttributeTogetherWithValid() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1="1", unknown=1)
 			pattern pattern2(p : Pattern) = {
@@ -82,7 +85,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void missingRequiredAttribute() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p2=1)
 			pattern pattern2(p : Pattern) = {
@@ -94,7 +98,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void onlyRequiredAttributeSet() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=1)
 			pattern pattern2(p : Pattern) = {
@@ -106,7 +111,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void bothRequiredAndOptionalAttributeSet() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=1,p2=1)
 			pattern pattern2(p : Pattern) = {
@@ -118,7 +124,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeStringExpectedIntFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1=1)
 			pattern pattern2(p : Pattern) = {
@@ -130,7 +137,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeStringExpectedBoolFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1=true)
 			pattern pattern2(p : Pattern) = {
@@ -142,7 +150,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeStringExpectedVariableFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1=p)
 			pattern pattern2(p : Pattern) = {
@@ -154,7 +163,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeStringExpectedDoubleFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1=1.1)
 			pattern pattern2(p : Pattern) = {
@@ -166,7 +176,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeStringExpectedListFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param1(p1={1,2,3})
 			pattern pattern2(p : Pattern) = {
@@ -178,7 +189,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedIntFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=1)
 			pattern pattern2(p : Pattern) = {
@@ -190,7 +202,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedBoolFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=true)
 			pattern pattern2(p : Pattern) = {
@@ -202,7 +215,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedVariableFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=p)
 			pattern pattern2(p : Pattern) = {
@@ -214,7 +228,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedDoubleFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1=1.1)
 			pattern pattern2(p : Pattern) = {
@@ -226,7 +241,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedListFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1={1,2,3})
 			pattern pattern2(p : Pattern) = {
@@ -238,7 +254,8 @@ class AnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void parameterTypeUncheckedStringFound() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@Param2(p1="{1,2,3}")
 			pattern pattern2(p : Pattern) = {

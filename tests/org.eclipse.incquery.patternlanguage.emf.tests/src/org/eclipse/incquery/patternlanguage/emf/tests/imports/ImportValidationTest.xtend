@@ -51,6 +51,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	@Test
 	def duplicateImport() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
@@ -65,6 +66,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	@Test
 	def implicitJavaImport() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(D) = {			
@@ -79,6 +81,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	@Test
 	def javaClassImport() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			uses java.util.Calendar
 
@@ -93,6 +96,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 	@Test
 	def javaPackageImport() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			uses java.util.*
 

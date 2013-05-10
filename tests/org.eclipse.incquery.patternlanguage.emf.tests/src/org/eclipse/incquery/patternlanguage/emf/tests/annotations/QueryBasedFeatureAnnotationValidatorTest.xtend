@@ -46,7 +46,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void tooFewParameters() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@QueryBasedFeature
 			pattern pattern2(p : Pattern) = {
@@ -59,7 +60,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void emptyFeatureName() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@QueryBasedFeature(feature = "")
 			pattern pattern2(p : Pattern, pb : PatternBody) = {
@@ -72,7 +74,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void notFoundFeature() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@QueryBasedFeature
 			pattern pattern2(p : Pattern, pb : PatternBody) = {
@@ -85,7 +88,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void incorrectFeature() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@QueryBasedFeature
 			pattern bodies(p : Pattern, pb : PatternBody) = {
@@ -101,7 +105,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	@Test
 	def void notVolatileFeature() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			@QueryBasedFeature
 			pattern variables(pb : PatternBody, v : Variable) = {

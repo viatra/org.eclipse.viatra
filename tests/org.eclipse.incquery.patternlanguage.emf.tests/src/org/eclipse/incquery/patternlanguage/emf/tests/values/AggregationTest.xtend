@@ -33,7 +33,8 @@ class AggregationTest {
 	@Test
 	def void testCountNothingPassed() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -53,7 +54,8 @@ class AggregationTest {
 	@Test
 	def void testCountSomeStuffPassed() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -73,7 +75,8 @@ class AggregationTest {
 	@Test
 	def void testCountSomeStuffPassedNoReturn() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -91,7 +94,8 @@ class AggregationTest {
 	@Test
 	def void testCountAllPassed() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -112,6 +116,7 @@ class AggregationTest {
 	def void testMissingComposition() {
 		var parsed = parseHelper.parse(
 			'
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern callerPattern(p : Pattern, output) = {
