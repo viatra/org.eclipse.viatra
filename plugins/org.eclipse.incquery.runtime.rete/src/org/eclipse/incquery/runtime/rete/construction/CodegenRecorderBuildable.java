@@ -299,8 +299,8 @@ public abstract class CodegenRecorderBuildable<PatternDescription> implements
         return new Stub<String>(new FlatTuple(constantNames), resultVar);
     }
 
-    public Stub<String> buildTrimmer(Stub<String> stub, TupleMask trimMask) {
-        String[] arguments = { gen(stub), gen(trimMask) };
+    public Stub<String> buildTrimmer(Stub<String> stub, TupleMask trimMask, boolean enforceUniqueness) {
+        String[] arguments = { gen(stub), gen(trimMask), gen(enforceUniqueness) };
         String resultVar = emitFunctionCall(coordinator.stubType, "buildTrimmer", arguments);
         return new Stub<String>(stub, trimMask.transform(stub.getVariablesTuple()), resultVar);
     }

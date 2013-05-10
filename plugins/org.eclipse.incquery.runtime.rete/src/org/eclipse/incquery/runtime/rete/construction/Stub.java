@@ -34,7 +34,8 @@ public class Stub<HandleType> {
     private Set<PConstraint> constraints;
     private Stub<HandleType> primaryParentStub;
     private Stub<HandleType> secondaryParentStub;
-	private final Set<PVariable> variablesSet;
+    /** TODO may contain variables that have been trimmed and are no longer in the tuple */
+	private final Set<PVariable> variablesSet; 
 
     private Stub(Map<Object, Integer> variablesIndex, Tuple variablesTuple, HandleType handle) {
         super();

@@ -64,7 +64,7 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
 
     public Stub<StubHandle> buildTransitiveClosure(Stub<StubHandle> stub);
 
-    public Stub<StubHandle> buildTrimmer(Stub<StubHandle> stub, TupleMask trimMask);
+    public Stub<StubHandle> buildTrimmer(Stub<StubHandle> stub, TupleMask trimMask, boolean enforceUniqueness);
 
     public Stub<StubHandle> buildBetaNode(Stub<StubHandle> primaryStub, Stub<StubHandle> sideStub,
             TupleMask primaryMask, TupleMask sideMask, TupleMask complementer, boolean negative);

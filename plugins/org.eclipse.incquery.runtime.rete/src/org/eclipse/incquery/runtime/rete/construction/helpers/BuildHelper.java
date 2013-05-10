@@ -11,14 +11,20 @@
 
 package org.eclipse.incquery.runtime.rete.construction.helpers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper;
 import org.eclipse.incquery.runtime.rete.construction.Buildable;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
+import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
@@ -53,21 +59,33 @@ public class BuildHelper {
 
     /**
      * Trims the results in the stub into a collector, by selecting exported variables in a particular order.
-     * 
-     * @return the derived stub that contains the additional checkers, or the original if no action was neccessary.
      */
     public static <StubHandle, Collector> void projectIntoCollector(Buildable<?, StubHandle, Collector> buildable,
             Stub<StubHandle> stub, Collector collector, PVariable[] selectedVariables) {
-        int paramNum = selectedVariables.length;
+        Stub<StubHandle> trimmer = project(buildable, stub, selectedVariables, false);
+        buildable.buildConnection(trimmer, collector);
+    }
+
+    /**
+     * Trims the results in the stub by selecting exported variables in a particular order.
+     * 
+     * @return the derived stub.
+     * @param enforceUniqueness if true, uniqueness after projection will be enforced
+     */
+	public static <StubHandle, Collector> Stub<StubHandle> project(
+			Buildable<?, StubHandle, Collector> buildable,
+			Stub<StubHandle> stub, PVariable[] selectedVariables,
+			boolean enforceUniqueness) {
+		int paramNum = selectedVariables.length;
         int[] tI = new int[paramNum];
         for (int i = 0; i < paramNum; i++) {
             tI[i] = stub.getVariablesIndex().get(selectedVariables[i]);
         }
         int tiW = stub.getVariablesTuple().getSize();
         TupleMask trim = new TupleMask(tI, tiW);
-        Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim);
-        buildable.buildConnection(trimmer, collector);
-    }
+        Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim, enforceUniqueness);
+		return trimmer;
+	}
 
     /**
      * Calculated index mappings for a join, based on the common variables of the two parent stubs.
@@ -148,5 +166,56 @@ public class BuildHelper {
         return buildable.buildBetaNode(primaryStub, secondaryStub, joinHelper.getPrimaryMask(),
                 joinHelper.getSecondaryMask(), joinHelper.getComplementerMask(), false);
     }
+    
+    
+    /**
+     * Reduces the number of tuples by trimming (existentially quantifying) the set of variables that <ul>
+     * <li> are in the tuple, 
+     * <li> are not exported parameters, 
+     * <li> have all their constraints already enforced,
+     * </ul> and thus will not be needed anymore.
+     * 
+     * @param onlyIfNotDetermined if true, no trimming performed unless there is at least one such variable  
+     * @return the stub after the trimming (possibly the original)
+     */
+    public static <StubHandle> Stub<StubHandle> trimUnneccessaryVariables(Buildable<?, StubHandle, ?> buildable,
+            Stub<StubHandle> stub, boolean onlyIfNotDetermined) {
+    	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
+    	Set<PVariable> variablesInTuple = stub.getVariablesTuple().getDistinctElements();
+    	for (PVariable trimCandidate : variablesInTuple) {
+    		if (trimCandidate.getReferringConstraintsOfType(ExportedParameter.class).isEmpty()) {
+    			if (stub.getAllEnforcedConstraints().containsAll(trimCandidate.getReferringConstraints()))
+    				canBeTrimmed.add(trimCandidate);
+    		}
+    	}
+		final Set<PVariable> retainedVars = setMinus(variablesInTuple, canBeTrimmed);   	
+    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(stub, retainedVars, canBeTrimmed))) {
+    		// TODO add ordering? 
+    		final PVariable[] selectedVariablesArray = new ArrayList<PVariable>(retainedVars).toArray(new PVariable[retainedVars.size()]);
+    		stub = project(buildable, stub, selectedVariablesArray, true);
+    	}
+    	return stub;
+    }
+    
+    
+    /**
+     * @return true iff one set of given variables functionally determine the other set according to the stub's constraints
+     */
+    public static <StubHandle> boolean areVariablesDetermined(Stub<StubHandle> stub, Set<PVariable> determining, Set<PVariable> determined) {
+        Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
+        for (PConstraint pConstraint : stub.getAllEnforcedConstraints())
+            dependencies.putAll(pConstraint.getFunctionalDependencies());
+		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
+		final boolean isDetermined = closure.contains(determined);
+		return isDetermined;
+	}
+
+	private static <T> Set<T> setMinus(Set<T> a, Set<T> b) {
+		Set<T> difference = new HashSet<T>(a);
+		difference.removeAll(b);
+		return difference;
+	}
+    
+    
 
 }

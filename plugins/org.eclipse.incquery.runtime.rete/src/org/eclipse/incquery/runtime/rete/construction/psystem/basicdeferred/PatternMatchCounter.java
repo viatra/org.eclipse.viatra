@@ -84,7 +84,7 @@ public class PatternMatchCounter<PatternDescription, StubHandle> extends
             int resultPositionFinal = counterBetaStub.getVariablesTuple().getSize() - 1; // appended to the last position
             final Stub<StubHandle> equalityCheckerStub = 
             		buildable.buildEqualityChecker(counterBetaStub, new int[]{resultPositionFinal, resultPositionLeft});
-            return buildable.buildTrimmer(equalityCheckerStub, TupleMask.omit(resultPositionFinal, 1+resultPositionFinal));
+            return buildable.buildTrimmer(equalityCheckerStub, TupleMask.omit(resultPositionFinal, 1+resultPositionFinal), false);
         }
 
     }
