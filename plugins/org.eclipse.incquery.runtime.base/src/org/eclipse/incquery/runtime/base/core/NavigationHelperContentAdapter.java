@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -100,7 +101,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private Multimap<String, EStructuralFeature> knownFeatures = null;
 
     private boolean isDynamicModel;
-    private static Map<ENamedElement, String> cachedId = new HashMap<ENamedElement, String>();
+    private static Map<ENamedElement, String> cachedId = new WeakHashMap<ENamedElement, String>();
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper, boolean isDynamicModel) {
         this.navigationHelper = navigationHelper;
