@@ -68,7 +68,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
             final Set<EClass> newClasses = Collections.singleton(eClass);
             if (!baseIndex.isInWildcardMode())
                 baseIndex.registerEClasses(newClasses);
-            baseIndex.registerInstanceListener(newClasses, this);
+            baseIndex.addInstanceListener(newClasses, this);
         }
     }
 
@@ -77,7 +77,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
             final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
             if (!baseIndex.isInWildcardMode())
                 baseIndex.registerEDataTypes(newDataTypes);
-            baseIndex.registerDataTypeListener(newDataTypes, this);
+            baseIndex.addDataTypeListener(newDataTypes, this);
         }
     }
 
@@ -86,7 +86,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
             final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
             if (!baseIndex.isInWildcardMode())
                 baseIndex.registerEStructuralFeatures(newFeatures);
-            baseIndex.registerFeatureListener(newFeatures, this);
+            baseIndex.addFeatureListener(newFeatures, this);
         }
     }
 
@@ -134,11 +134,11 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 
     @Override
     public void disconnect() {
-        baseIndex.unregisterFeatureListener(features, this);
+        baseIndex.removeFeatureListener(features, this);
         features.clear();
-        baseIndex.unregisterInstanceListener(classes, this);
+        baseIndex.removeInstanceListener(classes, this);
         classes.clear();
-        baseIndex.unregisterDataTypeListener(dataTypes, this);
+        baseIndex.removeDataTypeListener(dataTypes, this);
         dataTypes.clear();
     }
 

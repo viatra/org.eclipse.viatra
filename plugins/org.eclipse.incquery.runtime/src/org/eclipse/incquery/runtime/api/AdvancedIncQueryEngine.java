@@ -187,13 +187,13 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	public abstract void wipe();
 
     /**
-     * Completely disconnects and dismantles the engine.
+     * Completely disconnects and dismantles the engine. Cannot be reversed.
      * <p>
      * Matcher objects will continue to return stale results. If no references are retained to the matchers or the
      * engine, they can eventually be GC'ed, and they won't block the EMF model from being GC'ed anymore.
-     * 
      * <p>
-     * Cannot be reversed.
+     * The base indexer (see {@link #getBaseIndex()}) built on the model will be disposed alongside the engine, unless the user has 
+     *  manually added listeners on the base index that were not removed yet.
      * <p>
      * Disallowed if the engine is managed (see {@link #isManaged()}), as there may be other clients using it.
      * <p>

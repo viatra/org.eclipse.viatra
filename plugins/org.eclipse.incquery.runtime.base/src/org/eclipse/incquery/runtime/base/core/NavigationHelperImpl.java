@@ -39,8 +39,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
@@ -174,6 +174,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void dispose() {
+    	ensureNoListenersForDispose();
         for (Notifier root : modelRoots) {
             contentAdapter.removeAdapter(root);
         }
@@ -375,7 +376,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+    public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {
         Collection<EClass> registered = this.instanceListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EClass>();
@@ -385,7 +386,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+    public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener) {
         Collection<EClass> restriction = this.instanceListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(classes);
@@ -396,7 +397,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EStructuralFeature>();
@@ -406,7 +407,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> restriction = this.featureListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(features);
@@ -417,7 +418,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+    public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
         Collection<EDataType> registered = this.dataTypeListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EDataType>();
@@ -427,7 +428,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+    public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
         Collection<EDataType> restriction = this.dataTypeListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(types);
@@ -876,5 +877,10 @@ public class NavigationHelperImpl implements NavigationHelper {
     		if (!Collections.disjoint(observedTypes, listenerTypes))
     			throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
     }
+    private void ensureNoListenersForDispose() {
+    	if (!(baseIndexChangeListeners.isEmpty() && featureListeners.isEmpty() && dataTypeListeners.isEmpty() && instanceListeners.isEmpty()))
+    		throw new IllegalStateException("Cannot dispose while there are active listeners");
+    }
+
 
 }

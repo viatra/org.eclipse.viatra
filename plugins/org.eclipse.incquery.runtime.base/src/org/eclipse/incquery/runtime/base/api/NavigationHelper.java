@@ -312,6 +312,10 @@ public interface NavigationHelper {
     /**
      * Call this method to dispose the NavigationHelper instance. The NavigationHelper instance will unregister itself
      * from the list of EContentAdapters of the given Notifier instance.
+     * 
+     * <dt><b>Precondition:</b><dd> no listeners can be registered at all.
+     * @throws IllegalStateException if there are any active listeners
+     * 
      */
     public void dispose();
 
@@ -324,7 +328,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener);
+    public void addInstanceListener(Collection<EClass> classes, InstanceListener listener);
 
     /**
      * Unregisters an instance listener for the given classes.
@@ -334,7 +338,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener);
+    public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener);
 
     /**
      * Registers a data type listener for the navigation helper. The listener will be notified about only the data type
@@ -345,7 +349,7 @@ public interface NavigationHelper {
      * @param listener
      *            the data type instance
      */
-    public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
+    public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
 
     /**
      * Unregisters a data type listener for the given types.
@@ -355,7 +359,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void unregisterDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
+    public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
 
     /**
      * Registers a feature listener for the navigation helper. The listener will be notified about only the settings
@@ -366,7 +370,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Unregisters a feature listener for the given features.
@@ -376,12 +380,13 @@ public interface NavigationHelper {
      * @param features
      *            the collection of features
      */
-    public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Manually turns on indexing for the given types (indexing of others are unaffected). Note that
      * registering new types will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
+     * @throws IllegalStateException if in wildcard mode
      * 
      * @param classes
      *            the set of classes to observe (null okay)
@@ -398,7 +403,7 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given types.
-     * 
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * @param classes
      *            the set of classes that will be ignored again from now on (null okay)
      * @param dataTypes
@@ -413,6 +418,7 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
      * registering new features will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
+     * @throws IllegalStateException if in wildcard mode
      * 
      * @param features
      *            the set of features to observe
@@ -425,6 +431,7 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given features.
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * 
      * @param features
      *            the set of features that will be ignored again from now on
@@ -436,6 +443,7 @@ public interface NavigationHelper {
      * subclasses will also be indexed. Note that registering new classes will result in a single iteration through the whole
      * attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
+     * @throws IllegalStateException if in wildcard mode
      * 
      * @param classes
      *            the set of classes to observe
@@ -448,7 +456,7 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given classes.
-
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * @param classes
      *            the set of classes that will be ignored again from now on
      */
@@ -458,6 +466,7 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
      * registering new data types will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
+     * @throws IllegalStateException if in wildcard mode
      * 
      * @param dataTypes
      *            the set of data types to observe
@@ -470,6 +479,7 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given datatypes.
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * 
      * @param dataTypes
      *            the set of data types that will be ignored again from now on

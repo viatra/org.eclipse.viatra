@@ -339,19 +339,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return sanitizer;
     }
     
-    /**
-     * To be called after already removed from engineManager.
-     */
-    void killInternal() {
-        wipe();
-        if (baseIndex != null) {
-            baseIndex.dispose();
-        }
-        getLogger().removeAppender(taintListener);
-        
-    }
-    
-    
     ///////////////// advanced stuff /////////////
     
     @Override
@@ -360,7 +347,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         	throw new UnsupportedOperationException(
         			String.format("Cannot dispose() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
         }
-        killInternal();
+        wipe();
+        
+        try{
+	        if (baseIndex != null) {
+	            baseIndex.dispose();
+	        }
+        } catch (IllegalStateException ex) {
+        	getLogger().warn(
+        			"The base index could not be disposed along with the EMF-InQuery engine, as there are still active listeners on it.");
+        }
+        getLogger().removeAppender(taintListener);
         lifecycleProvider.engineDisposed();
     }
 

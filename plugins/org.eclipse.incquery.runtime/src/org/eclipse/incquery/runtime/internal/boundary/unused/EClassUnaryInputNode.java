@@ -84,7 +84,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 		this.clazz = clazz;
 		setTag(clazz.getName());
 						
-		baseIndex.registerInstanceListener(Collections.singleton(clazz), listener);
+		baseIndex.addInstanceListener(Collections.singleton(clazz), listener);
 		reteEngine.addDisconnectable(this);
 	}
 
