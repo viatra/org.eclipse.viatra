@@ -206,7 +206,7 @@ public class BuildHelper {
         for (PConstraint pConstraint : stub.getAllEnforcedConstraints())
             dependencies.putAll(pConstraint.getFunctionalDependencies());
 		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
-		final boolean isDetermined = closure.contains(determined);
+		final boolean isDetermined = closure.containsAll(determined);
 		return isDetermined;
 	}
 
