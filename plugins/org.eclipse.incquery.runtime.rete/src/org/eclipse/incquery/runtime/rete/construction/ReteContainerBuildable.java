@@ -23,7 +23,6 @@ import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
-import org.eclipse.incquery.runtime.rete.network.Tunnel;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.EqualityFilterNode;
 import org.eclipse.incquery.runtime.rete.single.InequalityFilterNode;
@@ -91,10 +90,9 @@ public class ReteContainerBuildable<PatternDescription> implements
     public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask, boolean enforceUniqueness) {
         Address<TrimmerNode> trimmer = library.accessTrimmerNode(stub.getHandle(), trimMask);
         final Tuple trimmedVariables = trimMask.transform(stub.getVariablesTuple());
-        Address<? extends Tunnel> resultNode;
+        Address<? extends Supplier> resultNode;
         if (enforceUniqueness) {
-        	resultNode = library.newUniquenessEnforcerNode(trimmedVariables.getSize(), trimMask);
-        	reteNet.connectRemoteNodes(trimmer, resultNode, true);
+        	resultNode = library.accessUniquenessEnforcerNode(trimmer, trimmedVariables.getSize());
         } else {
         	resultNode = trimmer;
         }
