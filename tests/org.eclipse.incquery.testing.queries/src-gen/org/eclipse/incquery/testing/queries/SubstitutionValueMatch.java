@@ -1,6 +1,7 @@
 package org.eclipse.incquery.testing.queries;
 
 import java.util.Arrays;
+import java.util.List;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
@@ -25,7 +26,7 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   
   private Object fValue;
   
-  private static String[] parameterNames = {"Substitution", "Value"};
+  private static List<String> parameterNames = makeImmutableList("Substitution", "Value");
   
   private SubstitutionValueMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
     this.fSubstitution = pSubstitution;
@@ -85,7 +86,7 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   }
   
   @Override
-  public String[] parameterNames() {
+  public List<String> parameterNames() {
     return SubstitutionValueMatch.parameterNames;
     
   }

@@ -1,6 +1,7 @@
 package org.eclipse.incquery.testing.queries;
 
 import java.util.Arrays;
+import java.util.List;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
@@ -28,7 +29,7 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   
   private MatchRecord fRecord;
   
-  private static String[] parameterNames = {"ActualSet", "ExpectedSet", "Record"};
+  private static List<String> parameterNames = makeImmutableList("ActualSet", "ExpectedSet", "Record");
   
   private UnexpectedMatchRecordMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     this.fActualSet = pActualSet;
@@ -105,7 +106,7 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   }
   
   @Override
-  public String[] parameterNames() {
+  public List<String> parameterNames() {
     return UnexpectedMatchRecordMatch.parameterNames;
     
   }
