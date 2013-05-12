@@ -61,13 +61,15 @@ public final class Jobs {
      * @return
      * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
      */
-    public static <Match extends IPatternMatch> Job<Match> newRecordingJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
+    @Deprecated
+	public static <Match extends IPatternMatch> Job<Match> newRecordingJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
         return new RecordingJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor), new EventAtomDomainObjectProvider<Match>() {
             @Override
             public Object findDomainObject(Activation<? extends Match> activation, Context context) {
               Match match = activation.getAtom();
-              if(match.parameterNames().length > 0) {
-                  for (int i = 0; i < match.parameterNames().length; i++) {
+              final int arity = match.parameterNames().size();
+              if(arity > 0) {
+                  for (int i = 0; i < arity; i++) {
                       if(match.get(i) instanceof EObject) {
                           return match.get(i);
                       }
@@ -112,7 +114,8 @@ public final class Jobs {
      * @return
      * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
      */
-    public static <Match extends IPatternMatch> Job<Match> newEnableJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor) {
+    @Deprecated
+	public static <Match extends IPatternMatch> Job<Match> newEnableJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor) {
         return new EnableJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor));
     }
 

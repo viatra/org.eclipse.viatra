@@ -259,11 +259,13 @@ public class ObservablePatternMatcher {
 
     private void initFilter() {
         if (matcher != null) {
-            parameterFilter = new Object[this.matcher.getParameterNames().length];
+            final int arity = this.matcher.getParameterNames().size();
+			parameterFilter = new Object[arity];
 
-            for (int i = 0; i < this.matcher.getParameterNames().length; i++) {
-                parameterFilter[i] = null;
-            }
+			// WTF was this here?
+//            for (int i = 0; i < arity; i++) {
+//                parameterFilter[i] = null;
+//            }
 
             this.filter = this.matcher.newMatch(parameterFilter);
         }
@@ -288,7 +290,7 @@ public class ObservablePatternMatcher {
 
     private boolean isFiltered() {
         if (matcher != null) {
-            for (int i = 0; i < this.matcher.getParameterNames().length; i++) {
+            for (int i = 0; i < this.matcher.getParameterNames().size(); i++) {
                 if (parameterFilter[i] != null) {
                     return true;
                 }

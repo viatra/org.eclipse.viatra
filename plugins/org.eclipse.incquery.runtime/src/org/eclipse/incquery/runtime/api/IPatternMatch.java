@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.api;
 
+import java.util.List;
+
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 
 /**
@@ -30,7 +32,7 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
     public String patternName();
 
     /** Returns the list of symbolic parameter names. */
-    public String[] parameterNames();
+    public List<String> parameterNames();
 
     /** Returns the value of the parameter with the given name, or null if name is invalid. */
     public Object get(String parameterName);

@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.api;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -36,7 +37,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
     public abstract Integer getPositionOfParameter(String parameterName);
 
     /** Returns the array of symbolic parameter names. */
-    public abstract String[] getParameterNames();
+    public abstract List<String> getParameterNames();
 
     // ALL MATCHES
     /**
@@ -208,7 +209,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
      *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
-    public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
+    @Deprecated
+	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 
     /**
      * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
@@ -227,7 +229,8 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
      *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
-    public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
+    @Deprecated
+	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 
     /**
      * Registers a callback that will be run each time EMF-IncQuery match sets are refreshed after a model update.

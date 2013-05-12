@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.internal.apiimpl;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -91,11 +92,10 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     @Override
     public String prettyPrint() {
         StringBuilder result = new StringBuilder();
-        String[] parameterNames = parameterNames();
         for (int i = 0; i < array.length; ++i) {
             if (i != 0)
                 result.append(", ");
-            result.append("\"" + parameterNames[i] + "\"=" + prettyPrintValue(array[i]));
+            result.append("\"" + parameterNames().get(i) + "\"=" + prettyPrintValue(array[i]));
         }
         return result.toString();
     }
@@ -111,7 +111,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     }
 
     @Override
-    public String[] parameterNames() {
+    public List<String> parameterNames() {
         return matcher.getParameterNames();
     }
 

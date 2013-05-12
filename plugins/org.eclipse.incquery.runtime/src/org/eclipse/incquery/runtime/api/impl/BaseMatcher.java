@@ -12,8 +12,11 @@
 package org.eclipse.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -137,20 +140,21 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return getPosMapping().get(parameterName);
     }
 
-    private String[] parameterNames;
+    private List<String> parameterNames;
 
     @Override
-    public String[] getParameterNames() {
+    public List<String> getParameterNames() {
         if (parameterNames == null) {
             Map<String, Integer> rawPosMapping = getPosMapping();
-            parameterNames = new String[rawPosMapping.size()];
+            String[] parameterNameArray = new String[rawPosMapping.size()];
             for (Entry<String, Integer> entry : rawPosMapping.entrySet()) {
-                parameterNames[entry.getValue()] = entry.getKey();
+            	parameterNameArray[entry.getValue()] = entry.getKey();
             }
+            parameterNames = Collections.unmodifiableList(Arrays.asList(parameterNameArray));
         }
         return parameterNames;
     }
-
+    
     // BASE IMPLEMENTATION
 
     @Override
@@ -419,7 +423,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     @Override
     public Match newEmptyMatch() {
-        return arrayToMatchMutable(new Object[getParameterNames().length]);
+        return arrayToMatchMutable(new Object[getParameterNames().size()]);
     }
 
     @Override
@@ -450,8 +454,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      *         parameters[position] is set, empty set if there are no matches
      */
     protected Set<Object> rawGetAllValues(final int position, Object[] parameters) {
-        if (position >= 0 && position < getParameterNames().length) {
-            if (parameters.length == getParameterNames().length) {
+        if (position >= 0 && position < getParameterNames().size()) {
+            if (parameters.length == getParameterNames().size()) {
                 if (parameters[position] == null) {
                     final Set<Object> results = new HashSet<Object>();
                     rawAccumulateAllValues(position, parameters, results);
