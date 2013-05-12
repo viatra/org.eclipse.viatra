@@ -13,8 +13,8 @@ package org.eclipse.incquery.validation.runtime;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 public abstract class Constraint<T extends IPatternMatch> {
 
@@ -32,5 +32,5 @@ public abstract class Constraint<T extends IPatternMatch> {
 
     public abstract int getSeverity();
 
-    public abstract BaseGeneratedQuerySpecification<? extends BaseGeneratedMatcher<T>> getQuerySpecification();
+    public abstract IQuerySpecification<? extends IncQueryMatcher<T>> getQuerySpecification();
 }

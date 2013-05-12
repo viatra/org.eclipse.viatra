@@ -13,18 +13,17 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.emf.common.notify.Notifier
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager
-import org.eclipse.incquery.runtime.api.IncQueryEngine
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedMatcher
-import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
-import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.runtime.api.IncQueryEngine
+import org.eclipse.incquery.runtime.api.impl.BaseMatcher
+import org.eclipse.incquery.runtime.exception.IncQueryException
+import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
+import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.incquery.runtime.exception.IncQueryException
-import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.util.TypeReferences
 
 /**
@@ -48,7 +47,7 @@ class PatternMatcherClassInferrer {
    			it.packageName = matcherPackageName
    			it.documentation = pattern.javadocMatcherClass.toString
 			//it.annotations += pattern.toAnnotation(typeof (SuppressWarnings), "unused")
-   			it.superTypes += pattern.newTypeRef(typeof(BaseGeneratedMatcher), cloneWithProxies(matchClassRef))
+   			it.superTypes += pattern.newTypeRef(typeof(BaseMatcher), cloneWithProxies(matchClassRef))
    		]
    		matcherClass.inferStaticMethods(pattern, matcherClass)
    		matcherClass.inferFields(pattern)
