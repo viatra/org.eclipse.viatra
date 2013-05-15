@@ -68,8 +68,10 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     }
 
     private AdvancedIncQueryEngine createEngine() {
+        boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
+                .getBoolean(PreferenceConstants.WILDCARD_MODE);
         try {
-        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier());
+        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(), wildcardMode);
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
@@ -157,17 +159,10 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     }
 
     public void registerPattern(final Pattern... patterns) {
-        boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.WILDCARD_MODE);
         IncQueryEngine engine;
         try {
             // engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
             engine = key.getEngine();
-            try {
-                engine.setWildcardMode(wildcardMode);
-            } catch (IllegalStateException ex) {
-                // could not set wildcard mode
-            }
 
             if (engine.getBaseIndex().isInWildcardMode()) {
                 addMatchersForPatterns(patterns);

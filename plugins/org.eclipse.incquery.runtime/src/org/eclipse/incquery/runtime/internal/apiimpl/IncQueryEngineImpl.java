@@ -83,7 +83,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     /**
      * Whether to initialize the base index in wildcard mode.
      */
-    private static final boolean WILDCARD_MODE_DEFAULT = false;
+	private boolean wildcardMode;
     /**
      * The RETE pattern matcher component of the EMF-IncQuery engine.
      */
@@ -110,8 +110,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean wildcardMode) throws IncQueryException {
         super();
+        this.wildcardMode = wildcardMode;
         this.manager = manager;
         this.emfRoot = emfRoot;
         this.matchers = Maps.newHashMap();
@@ -179,7 +180,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      *             if the base index could not be constructed
      */
     protected NavigationHelper getBaseIndexInternal() throws IncQueryException {
-        return getBaseIndexInternal(WILDCARD_MODE_DEFAULT, true);
+        return getBaseIndexInternal(true);
     }
 
     /**
@@ -191,7 +192,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryBaseException
      *             if the base index could not be constructed
      */
-    protected NavigationHelper getBaseIndexInternal(boolean wildcardMode, boolean initNow) throws IncQueryException {
+    protected NavigationHelper getBaseIndexInternal(boolean initNow) throws IncQueryException {
         if (baseIndex == null) {
             try {
                 // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this
@@ -247,17 +248,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         }
         return logger;
     }
-
-    
-    @Override
-    public void setWildcardMode(boolean wildcardMode) throws IncQueryException {
-        if (baseIndex != null && baseIndex.isInWildcardMode() != wildcardMode)
-            throw new IllegalStateException("Base index already built, cannot change wildcard mode anymore");
-
-        if (wildcardMode != WILDCARD_MODE_DEFAULT)
-            getBaseIndexInternal(wildcardMode, true);
-    }
-
     
     ///////////////// internal stuff //////////////
 
@@ -290,7 +280,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
             // if uninitialized, don't initialize yet
-            getBaseIndexInternal(WILDCARD_MODE_DEFAULT, false);
+            getBaseIndexInternal(false);
 
             EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, baseIndex);
             // if (emfRoot instanceof EObject)

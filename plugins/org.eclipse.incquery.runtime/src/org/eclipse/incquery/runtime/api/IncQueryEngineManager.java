@@ -48,6 +48,7 @@ import com.google.common.collect.Sets;
  */
 public class IncQueryEngineManager {
     private static IncQueryEngineManager instance = new IncQueryEngineManager();
+    
 
     /**
      * @return the singleton instance
@@ -88,7 +89,7 @@ public class IncQueryEngineManager {
     public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null) {
-            engine = new IncQueryEngineImpl(this, emfRoot);
+            engine = new IncQueryEngineImpl(this, emfRoot, IncQueryEngine.WILDCARD_MODE_DEFAULT);
             engines.put(emfRoot, new WeakReference<IncQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }

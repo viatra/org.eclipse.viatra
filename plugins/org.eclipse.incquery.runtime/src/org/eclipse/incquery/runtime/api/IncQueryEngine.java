@@ -24,6 +24,10 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * will listen on EMF update notifications stemming from the given model in order to maintain live results.
  * 
  * <p>
+ * By default, IncQueryEngines do not need to be separately disposed; they will be garbage collected along with the model. 
+ * Advanced users: see {@link AdvancedIncQueryEngine} if you want fine control over the lifecycle of an engine.
+ * 
+ * <p>
  * Pattern matchers within this engine may be instantiated in the following ways:
  * <ul>
  * <li>Recommended: instantiate the specific matcher class generated for the pattern by e.g. MyPatternMatcher.on(engine).
@@ -31,11 +35,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * <li>Advanced: use the query specification associated with the generated matcher class to achieve the same.
  * </ul>
  * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; this improves
- * the performance of pattern matcher construction, unless the engine is in wildcard mode.
- * 
- * <p>
- * By default, IncQueryEngines do not need to be separately disposed; they will be garbage collected along with the model. 
- * Advanced users: see {@link AdvancedIncQueryEngine} if you want fine control over the lifecycle of an engine.
+ * the performance of pattern matcher construction, unless the engine is specifically constructed in wildcard mode 
+ * (see {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier, boolean)}).
  * 
  * 
  * @author Bergmann Gábor
@@ -64,21 +65,6 @@ public abstract class IncQueryEngine {
 	public static IncQueryEngine on(Notifier emfScopeRoot) throws IncQueryException {
 		return IncQueryEngineManager.getInstance().getIncQueryEngine(emfScopeRoot);
 	}
-	
-
-    /**
-     * Specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for the
-     * explanation of wildcard mode.
-     * 
-     * @param wildcardMode
-     *            the wildcardMode to set
-     * @throws IncQueryException
-     *             if the base index could not be initialized
-     * @throws IllegalStateException
-     *             if baseIndex is already constructed in the opposite mode, since the mode can not be changed once
-     *             applied
-     */
-	public abstract void setWildcardMode(boolean wildcardMode) throws IncQueryException;
 
     /**
      * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF
@@ -151,5 +137,10 @@ public abstract class IncQueryEngine {
 	public abstract Logger getLogger();
 
 
- 
+	/**
+	 * By default, engines will be constructed with wildcard mode as false. 
+	 * Use {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier, boolean)} to override.
+	 */
+    protected static final boolean WILDCARD_MODE_DEFAULT = false; 
+
 }

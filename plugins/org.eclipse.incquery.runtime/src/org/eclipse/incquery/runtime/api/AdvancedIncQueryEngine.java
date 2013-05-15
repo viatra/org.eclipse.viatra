@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.api;
 import org.apache.log4j.Appender;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
@@ -62,10 +63,40 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      *            ResourceSet.
      * @return the advanced interface to a newly created unmanaged engine
      * @throws IncQueryException
+     * 
+     * @see {@link #createUnmanagedEngine(Notifier, boolean)} for performance tuning
      */
 	public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
-        return new IncQueryEngineImpl(null, emfScopeRoot);
+        return createUnmanagedEngine(emfScopeRoot, IncQueryEngine.WILDCARD_MODE_DEFAULT);
 	}
+	
+    /**
+     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * invocations will return different instances, so other clients are unable to independently access and influence
+     * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
+     * sharing incrementally maintained indices and caches between multiple clients using the same managed engine instance.
+     * 
+     * <p> 
+     * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface 
+     * {@link AdvancedIncQueryEngine}.
+     * 
+     * <p>
+     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+     * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+     * 
+     * @param emfScopeRoot
+     *            the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or
+     *            ResourceSet.
+     * @param wildcardMode
+     *            specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for the
+     *            explanation of wildcard mode. Defaults to false.				
+     * @return the advanced interface to a newly created unmanaged engine
+     * @throws IncQueryException
+     */
+	public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode) throws IncQueryException {
+        return new IncQueryEngineImpl(null, emfScopeRoot, wildcardMode);
+	}	
+	
 	/**
 	 * Provides access to a given existing engine through the advanced interface.
 	 * 
