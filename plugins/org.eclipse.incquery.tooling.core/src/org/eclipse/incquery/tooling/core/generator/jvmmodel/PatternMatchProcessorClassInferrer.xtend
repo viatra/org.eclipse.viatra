@@ -52,7 +52,7 @@ class PatternMatchProcessorClassInferrer {
 			it.documentation = pattern.javadocProcessMethod.toString
 			it.setAbstract (true)
 			for (parameter : pattern.parameters){
-				it.parameters += parameter.toParameter(parameter.name, parameter.calculateType)
+				it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
 			}
 		]
 		processorClass.members += pattern.toMethod("process", null) [

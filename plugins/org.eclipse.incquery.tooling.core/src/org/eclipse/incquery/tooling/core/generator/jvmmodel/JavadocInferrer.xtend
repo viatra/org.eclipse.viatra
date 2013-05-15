@@ -16,6 +16,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 
 class JavadocInferrer {
 	
@@ -42,7 +43,7 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
-		Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
+		<p>Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
 		e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
 		
 		<p>Matches of the pattern will be represented as {@link «pattern.matchClassName»}.
@@ -209,4 +210,21 @@ class JavadocInferrer {
 		@return the singleton instance of the query specification
 		@throws IncQueryException if the pattern definition could not be loaded
 	'''
+	
+	def javadocGroupClass(PatternModel model) '''
+		A pattern group formed of all patterns defined in «model.modelFileName».eiq.
+		
+		<p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare 
+		an EMF-IncQuery engine for matching all patterns originally defined in file «model.modelFileName».eiq,
+		in order to achieve better performance than one-by-one on-demand matcher initialization.
+		
+		<p> From package «model.packageName», the group contains the definition of the following patterns: <ul>
+		«FOR p : model.patterns»
+		  <li>«p.name»</li>
+		«ENDFOR»
+		</ul>
+		
+		@see IPatternGroup
+   	'''
+	
 }

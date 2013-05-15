@@ -19,7 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
  * Generic interface for a single match of a pattern. Each instance is a (partial) substitution of pattern parameters,
  * essentially a parameter to value mapping.
  * 
- * Can also represent a partial match; unsubstituted parameters are assigned to null. Pattern matchers must never return
+ * <p>Can also represent a partial match; unsubstituted parameters are assigned to null. Pattern matchers must never return
  * a partial match, but they accept partial matches as method parameters.
  * 
  * @author Bergmann Gábor
@@ -65,7 +65,7 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
     /**
      * Returns whether the match object can be further modified after its creation. Setters work only if the match is mutable. 
      * 
-     * Matches computed by the pattern matchers are not mutable, so that the match set cannot be modified externally. 
+     * <p>Matches computed by the pattern matchers are not mutable, so that the match set cannot be modified externally. 
      * Partial matches used as matcher input, however, can be mutable; such match objects can be created using {@link IncQueryMatcher#newEmptyMatch()}. 
      * 
      * @return whether the match can be modified
