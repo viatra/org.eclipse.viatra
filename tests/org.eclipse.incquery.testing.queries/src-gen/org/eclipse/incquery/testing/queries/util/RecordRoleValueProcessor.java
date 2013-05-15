@@ -18,7 +18,7 @@ public abstract class RecordRoleValueProcessor implements IMatchProcessor<Record
    * @param pRole the value of pattern parameter Role in the currently processed match 
    * 
    */
-  public abstract void process(final MatchRecord Record, final RecordRole Role);
+  public abstract void process(final MatchRecord pRecord, final RecordRole pRole);
   
   @Override
   public void process(final RecordRoleValueMatch match) {

@@ -19,7 +19,7 @@ public abstract class UnexpectedMatchRecordProcessor implements IMatchProcessor<
    * @param pRecord the value of pattern parameter Record in the currently processed match 
    * 
    */
-  public abstract void process(final MatchSetRecord ActualSet, final MatchSetRecord ExpectedSet, final MatchRecord Record);
+  public abstract void process(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord);
   
   @Override
   public void process(final UnexpectedMatchRecordMatch match) {

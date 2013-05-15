@@ -20,7 +20,7 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
  * Generated pattern matcher API of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
  * providing pattern-specific query methods.
  * 
- * Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
+ * <p>Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
  * e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
  * 
  * <p>Matches of the pattern will be represented as {@link RecordRoleValueMatch}.
