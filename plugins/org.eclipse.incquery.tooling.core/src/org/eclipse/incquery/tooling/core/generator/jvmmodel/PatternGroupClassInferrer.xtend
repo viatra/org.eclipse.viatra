@@ -72,9 +72,10 @@ class PatternGroupClassInferrer {
 	def JvmOperation inferInstanceMethod(PatternModel model, JvmGenericType groupClass) { 
 		val incQueryException = model.newTypeRef(typeof (IncQueryException)) 
 		model.toMethod("instance", types.createTypeRef(groupClass)) [
+			it.documentation = model.javadocGroupClassInstanceMethod.toString
 			it.visibility = JvmVisibility::PUBLIC
-			it.exceptions += incQueryException
 			it.setStatic(true)
+			it.exceptions += incQueryException
 			it.setBody[append('''
 				if (INSTANCE == null) {
 					INSTANCE = new ''') 

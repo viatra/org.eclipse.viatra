@@ -226,5 +226,11 @@ class JavadocInferrer {
 		
 		@see IPatternGroup
    	'''
+	def javadocGroupClassInstanceMethod(PatternModel model) '''
+		Access the pattern group.
+		
+		@return the singleton instance of the group
+		@throws IncQueryException if there was an error loading the generated code of pattern specifications
+   	'''
 	
 }
