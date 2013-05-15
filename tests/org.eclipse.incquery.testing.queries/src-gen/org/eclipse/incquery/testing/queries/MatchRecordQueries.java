@@ -44,9 +44,9 @@ public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   private static MatchRecordQueries INSTANCE;
   
   private MatchRecordQueries() throws IncQueryException {
-    querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
-    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
     querySpecifications.add(SubstitutionValueMatcher.querySpecification());
+    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
+    querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
     
   }
 }
