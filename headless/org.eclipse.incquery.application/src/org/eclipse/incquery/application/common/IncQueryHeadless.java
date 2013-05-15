@@ -119,7 +119,7 @@ public class IncQueryHeadless {
 				// phase 1: (managed) IncQueryEngine
 				IncQueryEngine engine = IncQueryEngine.on(resource);
 				// phase 2: the group of pattern matchers
-				HeadlessQueries patternGroup = new HeadlessQueries();
+				HeadlessQueries patternGroup = HeadlessQueries.instance();
 				patternGroup.prepare(engine);
 				// from here on everything is the same
 				EObjectMatcher matcher = EObjectMatcher.on(engine);
