@@ -406,8 +406,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         checkArgument(listener != null, "Cannot add null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
        
-        //((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
-        
+        ((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
+        // TODO the solution below turned out to be problematic, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=408459
+
+        /*
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
@@ -424,7 +426,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+        */
     }
     
     @Override
@@ -432,13 +434,16 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-        //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
+        ((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
+        // TODO the solution below turned out to be problematic, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=408459
+        /*
         try {
             reteEngine.accessMatcher(matcher.getPattern()).disconnectByTag(listener);
-        } catch (RetePatternBuildException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
     }
     
     @Override

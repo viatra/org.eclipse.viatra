@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
@@ -322,7 +323,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     // with input binding as pattern-specific parameters: not declared in interface
 
  //   @Override
- /*   public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+    // TODO investigate whether this can be removed from here
+    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
                 engine, listener) {
             @Override
@@ -332,12 +334,13 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         };
         patternMatcher.connect(callbackNode, listener, fireNow);
     }
-*/
+
 //    @Override
-/*    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
+    // TODO investigate whether this can be removed from here
+    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
         patternMatcher.disconnectByTag(listener);
     }
-*/
+
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */
