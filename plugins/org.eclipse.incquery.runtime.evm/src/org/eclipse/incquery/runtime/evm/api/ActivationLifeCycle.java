@@ -122,6 +122,10 @@ public class ActivationLifeCycle {
         return lc;
     }
     
+    public static ActivationLifeCycle create(final ActivationState inactiveState) {
+        return new ActivationLifeCycle(inactiveState);
+    }
+    
     /**
      * Returns a copy of the transition table.
      * 
