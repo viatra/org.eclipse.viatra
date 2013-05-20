@@ -184,6 +184,7 @@ class JavadocInferrer {
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return the delta monitor.
+		@deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
 	'''
 	
 	def javadocNewMatchMethod(Pattern pattern) '''

@@ -101,6 +101,7 @@ class PatternMatcherClassMethodInferrer {
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
    				}
+   				it.annotations += pattern.toAnnotation(typeof (Deprecated))
    				it.setBody([append('''
    					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
    				])
