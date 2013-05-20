@@ -2,7 +2,7 @@
 <compositeCheatsheet name="Getting Started with EMF-IncQuery">
    <taskGroup kind="set" name="Query your models using IncQuery" skip="false">
       <intro>
-         <a href="http://viatra.inf.mit.bme.hu/incquery">EMF-IncQuery</a> is a technology that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. After completing the tasks, you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through simple example that works immediately.
+         <a href="http://eclipse.org/incquery">EMF-IncQuery</a> is a technology that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. After completing the tasks, you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through simple example that works immediately.
       </intro>
       <onCompletion>
       </onCompletion>
