@@ -34,12 +34,21 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
         super();
         Preconditions.checkNotNull(helper, "Cannot create provider with null helper!");
         this.modelUpdateListener = new BaseIndexListener();
-
         this.helper = helper;
-        helper.addBaseIndexChangeListener(modelUpdateListener);
-//        helper.getAfterUpdateCallbacks().add(modelUpdateListener);
     }
 
+    @Override
+    protected void firstListenerAdded() {
+        super.firstListenerAdded();
+        helper.addBaseIndexChangeListener(modelUpdateListener);
+    }
+    
+    @Override
+    protected void lastListenerRemoved() {
+        super.lastListenerRemoved();
+        helper.removeBaseIndexChangeListener(modelUpdateListener);
+    }
+    
     /**
      * Callback class invoked by the {@link NavigationHelper}.
      * 
@@ -57,13 +66,6 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
         public void notifyChanged(boolean indexChanged) {
             updateCompleted();
         }
-    }
-
-    @Override
-    public void dispose() {
-        helper.removeBaseIndexChangeListener(modelUpdateListener);
-//        helper.getAfterUpdateCallbacks().remove(modelUpdateListener);
-        super.dispose();
     }
 
 }

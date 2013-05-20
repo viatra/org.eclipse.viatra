@@ -35,17 +35,21 @@ public class IQEngineUpdateCompleteProvider extends UpdateCompleteProvider {
         super();
         Preconditions.checkArgument(engine != null, "Cannot create provider with null engine!");
         this.engine = AdvancedIncQueryEngine.from(engine);
-        
         this.modelUpdateListener = new ModelUpdateListener();
+    }
+    
+    @Override
+    protected void firstListenerAdded() {
+        super.firstListenerAdded();
         this.engine.addModelUpdateListener(modelUpdateListener);
     }
     
     @Override
-    public void dispose() {
+    protected void lastListenerRemoved() {
+        super.lastListenerRemoved();
         engine.removeModelUpdateListener(modelUpdateListener);
-        super.dispose();
     }
-
+    
     /**
      * Callback class invoked by the {@link IncQueryEngine}
      * 
