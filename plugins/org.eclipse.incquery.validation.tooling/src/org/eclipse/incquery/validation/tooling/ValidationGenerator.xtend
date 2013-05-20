@@ -30,6 +30,7 @@ import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
+import org.eclipse.xtext.util.Strings
 
 class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
 	
@@ -212,7 +213,7 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 
 			@Override
 			public String getMessage() {
-				return "«getElementOfConstraintAnnotation(annotation, "message")»";
+				return "«Strings::convertToJavaString(getElementOfConstraintAnnotation(annotation, "message"))»";
 			}
 
 			@Override
