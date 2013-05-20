@@ -41,7 +41,7 @@ public class ProtoApp {
         RuleEngine engine = EventDrivenVM.createRuleEngine(protoRealm);
         engine.getLogger().setLevel(Level.DEBUG);
 
-        ActivationLifeCycle lifeCycle = new ActivationLifeCycle(ProtoActivationStates.IS_NOT);
+        ActivationLifeCycle lifeCycle = ActivationLifeCycle.create(ProtoActivationStates.IS_NOT);
         lifeCycle.addStateTransition(ProtoActivationStates.IS_NOT, ProtoEventType.PUSH, ProtoActivationStates.IS);
         lifeCycle.addStateTransition(ProtoActivationStates.IS, RuleEngineEventType.FIRE, ProtoActivationStates.IS_NOT);
 
