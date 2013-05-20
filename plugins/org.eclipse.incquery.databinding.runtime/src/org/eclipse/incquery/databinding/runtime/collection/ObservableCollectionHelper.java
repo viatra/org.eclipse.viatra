@@ -107,7 +107,7 @@ public final class ObservableCollectionHelper {
 
     public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQBaseSchedulerFactory(engine));
+                Schedulers.getIQEngineSchedulerFactory(engine));
         if(filter != null) {
             ruleEngine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
         } else {

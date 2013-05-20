@@ -15,8 +15,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
@@ -79,7 +79,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      */
     protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
         this(ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQBaseSchedulerFactory(engine)));
+                Schedulers.getIQEngineSchedulerFactory(engine)));
     }
 
     /**

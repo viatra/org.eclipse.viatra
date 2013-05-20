@@ -66,7 +66,7 @@ public class ConstraintAdapter {
 
         try {
             IncQueryEngine incQueryEngine = IncQueryEngine.on(notifier);
-            ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
+            ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
             IncQueryLoggingUtil.getDefaultLogger().error(

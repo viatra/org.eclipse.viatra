@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.scheduler;
 
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.Scheduler;
-import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.update.IUpdateCompleteListener;
 import org.eclipse.incquery.runtime.evm.update.IUpdateCompleteProvider;
 
@@ -43,30 +40,6 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         super(executor);
     }
 
-    /**
-     * Creates a scheduler factory that creates schedulers by registering to the
-     *  after update callback on the NavigationHelper of the given engine.
-     *    
-     * @param engine
-     * @return
-     * @deprecated Use {@link Schedulers#getIQBaseSchedulerFactory(IncQueryEngine)} instead
-     */
-    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IncQueryEngine engine) {
-        return Schedulers.getIQBaseSchedulerFactory(engine);
-    }
-    
-    /**
-     * Creates a scheduler factory that creates schedulers by registering a listener
-     *  for the transaction events on the given domain.
-     *  
-     * @param domain
-     * @return
-     * @deprecated Use {@link Schedulers#getTransactionSchedulerFactory(TransactionalEditingDomain)} instead
-     */
-    public static UpdateCompleteBasedSchedulerFactory getTransactionSchedulerFactory(final TransactionalEditingDomain domain) {
-        return Schedulers.getTransactionSchedulerFactory(domain);
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.evm.api.Scheduler#dispose()
      */
