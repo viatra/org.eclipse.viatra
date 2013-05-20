@@ -27,8 +27,6 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -58,7 +56,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				// get all matches of the pattern
 				// create an *unmanaged* engine to ensure that noone else is going
 				// to use our engine
-				AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(resource);
+				AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resource);
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				
@@ -129,7 +127,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 			try {
 				// initialization
 				// phase 1: (managed) IncQueryEngine
-				AdvancedIncQueryEngine engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(resource);
+				AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resource);
 				// phase 2: pattern matcher for packages
 				IncQueryMatcher<? extends IPatternMatch> matcher = QuerySpecificationRegistry.getQuerySpecification(patternFQN).getMatcher(engine);
 				matcher.forEachMatch(new IMatchProcessor<IPatternMatch>() {
