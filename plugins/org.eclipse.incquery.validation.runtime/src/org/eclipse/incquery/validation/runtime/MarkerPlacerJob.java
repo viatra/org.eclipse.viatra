@@ -51,6 +51,10 @@ public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
             URI uri = location.eResource().getURI();
             String platformString = uri.toPlatformString(true);
             IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+            if(markerLoc == null) {
+                logger.error("Marker location " + platformString + " for " + location + "is not in workspace!");
+                return;
+            }
             try {
                 IMarker marker = markerLoc.createMarker(EValidator.MARKER);
                 marker.setAttribute(IMarker.SEVERITY, constraint.getSeverity());

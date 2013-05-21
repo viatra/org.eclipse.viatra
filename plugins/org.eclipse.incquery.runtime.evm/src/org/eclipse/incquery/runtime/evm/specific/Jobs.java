@@ -123,4 +123,8 @@ public final class Jobs {
         return new EnableJob<EventAtom>(job);
     }
     
+    public static <EventAtom> Job<EventAtom> newErrorLoggingJob(Job<EventAtom> job) {
+        return newErrorLoggingJob(job);
+    }
+    
 }

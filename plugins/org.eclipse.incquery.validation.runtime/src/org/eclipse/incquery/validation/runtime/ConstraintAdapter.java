@@ -59,9 +59,9 @@ public class ConstraintAdapter {
 
             rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getQuerySpecification(),
                     DefaultActivationLifeCycle.DEFAULT, ImmutableSet.of(
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger)),
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger)),
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger)))));
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger))),
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger))),
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger))))));
         }
 
         try {
