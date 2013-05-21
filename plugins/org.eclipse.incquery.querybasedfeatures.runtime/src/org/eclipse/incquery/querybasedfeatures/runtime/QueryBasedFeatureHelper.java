@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -133,13 +135,34 @@ public final class QueryBasedFeatureHelper {
             return derivedFeature;
         }
 
-        QueryBasedFeatureHandler newDerivedFeature = new QueryBasedFeatureHandler(feature, kind, keepCache);
-        features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(newDerivedFeature));
+        QueryBasedFeature newDerivedFeature = null;
+        switch(kind) {
+            case SINGLE_REFERENCE:
+                newDerivedFeature = QueryBasedFeatures.newSingleValueFeature(feature, keepCache);
+                break;
+            case MANY_REFERENCE:
+                newDerivedFeature = QueryBasedFeatures.newMultiValueFeatue(feature, keepCache);
+                break;
+            case SUM:
+                newDerivedFeature = QueryBasedFeatures.newSumFeature(feature);
+                break;
+            case COUNTER:
+                newDerivedFeature = QueryBasedFeatures.newCounterFeature(feature);
+                break;
+            case ITERATION:
+                // fall-through
+            default:
+                IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed, feature kind " + kind + " not supported!");
+                break;
+        }
+        
+        QueryBasedFeatureHandler queryBasedFeatureHandler = new QueryBasedFeatureHandler(newDerivedFeature);
+        features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
-        IQuerySpecification<?> querySpecification = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+        IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
         if (querySpecification != null) {
             try {
-                IncQueryMatcher<?> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
+                IncQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
                 newDerivedFeature.initialize(matcher, sourceParamName, targetParamName);
                 newDerivedFeature.startMonitoring();
             } catch (IncQueryException e) {
@@ -152,7 +175,7 @@ public final class QueryBasedFeatureHelper {
                     .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
         }
 
-        return newDerivedFeature;
+        return queryBasedFeatureHandler;
     }
 
     /**

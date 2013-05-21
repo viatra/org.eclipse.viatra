@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime;
 
+
 /**
  * 
  * @author Abel Hegedus
  *
  */
 public enum QueryBasedFeatureKind {
-    SINGLE_REFERENCE, MANY_REFERENCE, SUM, COUNTER, ITERATION;
+    SINGLE_REFERENCE, MANY_REFERENCE, SUM, /** @deprecated Use <code>count find</code> in query definition instead!*/ COUNTER, ITERATION;
     
     public static String getStringValue(QueryBasedFeatureKind kind) {
         if(SINGLE_REFERENCE.equals(kind)) {

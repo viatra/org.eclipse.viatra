@@ -205,7 +205,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     }
                     kind = QueryBasedFeatureKind.COUNTER;
                 } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.ITERATION).equals(kindStr)) {
-                    validator.warning("Don't forget to subclass QueryBasedFeatureHandler for iteration 'kind'.", ref,
+                    validator.warning("Don't forget to subclass QueryBasedFeature for iteration 'kind'.", ref,
                             PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
                     kind = QueryBasedFeatureKind.ITERATION;
                 }
