@@ -64,7 +64,7 @@ public class IQEngineUpdateCompleteProvider extends UpdateCompleteProvider {
     
         @Override
         public ChangeLevel getLevel() {
-            return ChangeLevel.INDEX;
+            return ChangeLevel.MODEL;
         }
     }
 

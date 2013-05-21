@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
 import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
-import org.eclipse.incquery.runtime.evm.specific.DefaultAttributeMonitor;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.Maps;
 
@@ -79,7 +79,14 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
      * @return a new attribute monitor
      */
     protected AttributeMonitor<Match> prepareAttributeMonitor(){
-        return new DefaultAttributeMonitor<Match>();
+        //return new DefaultAttributeMonitor<Match>();
+        LightweightAttributeMonitor<Match> monitor = null;
+        try {
+            monitor = new LightweightAttributeMonitor<Match>(source.getMatcher().getEngine().getBaseIndex());
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+        }
+        return monitor;
     }
     
     protected void setInstance(RuleInstance<Match> instance) {

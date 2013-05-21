@@ -9,7 +9,7 @@
  *   Tamas Szabo, Abel Hegedus - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.evm.specific;
+package org.eclipse.incquery.databinding.runtime.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

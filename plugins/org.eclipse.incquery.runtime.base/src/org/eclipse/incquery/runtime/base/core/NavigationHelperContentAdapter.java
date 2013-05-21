@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 
@@ -137,11 +138,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 switch (eventType) {
                 case Notification.ADD:
                     featureUpdate(true, notifier, feature, newValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.ADD_MANY:
                     for (Object newElement : (Collection<?>) newValue) {
                         featureUpdate(true, notifier, feature, newElement);
                     }
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.CREATE:
                     break;
@@ -149,11 +152,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     break; // currently no support for ordering
                 case Notification.REMOVE:
                     featureUpdate(false, notifier, feature, oldValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.REMOVE_MANY:
                     for (Object oldElement : (Collection<?>) oldValue) {
                         featureUpdate(false, notifier, feature, oldElement);
                     }
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.REMOVING_ADAPTER:
                     break;
@@ -163,7 +168,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 case Notification.UNSET:
                 case Notification.SET:
                     featureUpdate(false, notifier, feature, oldValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     featureUpdate(true, notifier, feature, newValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 }
             }
@@ -628,6 +635,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                         entry.getKey().instanceDeleted(sup, instance);
                     }
                 }
+            }
+        }
+    }
+    
+    private void notifyLightweightObservers(EObject host, EStructuralFeature feature, Notification notification) {
+        for (Entry<LightweightEObjectObserver, Collection<EObject>> entry : navigationHelper.getLightweightObservers().entrySet()) {
+            if(entry.getValue().contains(host)) {
+                entry.getKey().notifyFeatureChanged(host, feature, notification);
             }
         }
     }

@@ -383,6 +383,22 @@ public interface NavigationHelper {
     public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
 
     /**
+     * Register a lightweight observer that is notified if the value of any feature of the given EObject changes.
+     * 
+     * @param observer the listener instance
+     * @param observedObject the observed EObject
+     */
+    public void addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
+    
+    /**
+     * Unregisters a lightweight observer for the given EObject.
+     * 
+     * @param observer the listener instance
+     * @param observedObjectt the observed EObject
+     */
+    public void removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
+    
+    /**
      * Manually turns on indexing for the given types (indexing of others are unaffected). Note that
      * registering new types will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>

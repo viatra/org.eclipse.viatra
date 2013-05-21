@@ -42,6 +42,7 @@ import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -73,6 +74,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     private final Map<InstanceListener, Collection<EClass>> instanceListeners;
     private final Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
     private final Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+    private final Map<LightweightEObjectObserver, Collection<EObject>> lightweightObservers;
 
     /**
      * Feature registration and model traversal is delayed while true
@@ -139,6 +141,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
         this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
         this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
+        this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
         this.directlyObservedClasses = new HashSet<EClass>();
         this.observedFeatures = new HashSet<EStructuralFeature>();
         this.observedDataTypes = new HashSet<EDataType>();
@@ -455,6 +458,34 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     public Set<EDataType> getObservedDataTypes() {
         return observedDataTypes;
+    }
+    
+    @Override
+    public void addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject){
+        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+        if(observedObjects == null) {
+            observedObjects = new HashSet<EObject>();
+            observedObjects.add(observedObject);
+        }
+        lightweightObservers.put(observer, observedObjects);
+    }
+    
+    @Override
+    public void removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
+        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+        if(observedObjects != null) {
+            observedObjects.remove(observedObject);
+            if(observedObjects.isEmpty()) {
+                lightweightObservers.remove(observedObjects);
+            }
+        }
+    }
+    
+    /**
+     * @return the lightweightObservers
+     */
+    public Map<LightweightEObjectObserver, Collection<EObject>> getLightweightObservers() {
+        return lightweightObservers;
     }
 
     /**
