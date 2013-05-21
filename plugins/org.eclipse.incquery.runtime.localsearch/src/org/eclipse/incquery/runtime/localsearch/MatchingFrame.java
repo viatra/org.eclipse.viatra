@@ -12,6 +12,8 @@
 
 package org.eclipse.incquery.runtime.localsearch;
 
+import java.util.Arrays;
+
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
@@ -39,8 +41,11 @@ public class MatchingFrame extends Tuple implements Cloneable {
 	 */
     private Object[] frame;
 
-    public MatchingFrame(Object pattern, int frameSize) {
+    private int keySize;
+
+    public MatchingFrame(Object pattern, int keySize, int frameSize) {
         this.pattern = pattern;
+        this.keySize = keySize;
         this.frame = new Object[frameSize];
     }
 
@@ -85,8 +90,12 @@ public class MatchingFrame extends Tuple implements Cloneable {
         return pattern;
     }
     
+    public MatchingKey getKey() {
+        return new MatchingKey(Arrays.copyOfRange(frame, 0, keySize));
+    }
+
     public MatchingFrame clone() {
-        MatchingFrame clone = new MatchingFrame(pattern, frame.length);
+        MatchingFrame clone = new MatchingFrame(pattern, keySize, frame.length);
         clone.frame = frame.clone();
         return clone;
     }

@@ -36,8 +36,8 @@ public class ExpressionCheck extends CheckOperation {
      */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        checker.evaluateXExpression(frame, nameMap);
-        return false;
+        boolean result = (Boolean) checker.evaluateXExpression(frame, nameMap);
+        return result;
     }
 
 }

@@ -12,6 +12,8 @@ Require-Bundle: org.eclipse.incquery.runtime.base;bundle-version="0.7.0",
  org.eclipse.incquery.runtime;bundle-version="0.7.0"
 Export-Package: org.eclipse.incquery.runtime.localsearch,
  org.eclipse.incquery.runtime.localsearch.exceptions,
+ org.eclipse.incquery.runtime.localsearch.matcher,
  org.eclipse.incquery.runtime.localsearch.operations,
+ org.eclipse.incquery.runtime.localsearch.operations.check,
  org.eclipse.incquery.runtime.localsearch.operations.extend,
  org.eclipse.incquery.runtime.localsearch.plan

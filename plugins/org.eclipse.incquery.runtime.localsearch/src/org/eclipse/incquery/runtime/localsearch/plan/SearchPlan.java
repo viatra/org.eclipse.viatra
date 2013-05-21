@@ -68,6 +68,10 @@ public class SearchPlan {
         return (currentOperation > upperBound);
     }
     
+    public void resetPlan() {
+        currentOperation = -1;
+    }
+
     public void printDebugInformation() {
         for (int i = 0; i < operations.length; i++) {
             System.out.println("[" + i + "]\t" + operations[i].toString());

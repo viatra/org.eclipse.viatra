@@ -56,7 +56,7 @@ public class MatchingTable extends AbstractCollection<MatchingFrame> {
         }
     }
 
-    MatchingTable() {
+    public MatchingTable() {
         matchings = new HashMap<MatchingKey, Collection<MatchingFrame>>();
     }
     
@@ -70,12 +70,12 @@ public class MatchingTable extends AbstractCollection<MatchingFrame> {
         return matchings.keySet().size();
     }
 
-    void put(MatchingKey key, MatchingFrame value) {
+    public void put(MatchingKey key, MatchingFrame value) {
         Collection<MatchingFrame> coll = matchings.get(key);
         if (coll == null) {
             coll = new HashSet<MatchingFrame>();
+            matchings.put(key, coll);
         }
         coll.add(value);
-        matchings.put(key, coll);
     }
 }

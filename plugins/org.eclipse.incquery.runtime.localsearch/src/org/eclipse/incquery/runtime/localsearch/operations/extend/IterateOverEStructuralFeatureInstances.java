@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.runtime.base.api.BaseIndexProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
@@ -55,7 +54,7 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
     @Override
     public void onInitialize(MatchingFrame frame) {
         final Map<EObject, Object> instances = Maps.newHashMap();
-        new BaseIndexProcessor(baseIndexNavigator).processFeatureInstances(feature, new IEStructuralFeatureProcessor() {
+        baseIndexNavigator.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
 
             @Override
             public void process(EStructuralFeature feature, EObject source, Object target) {

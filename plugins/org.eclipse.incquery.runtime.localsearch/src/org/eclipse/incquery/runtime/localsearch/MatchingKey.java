@@ -12,6 +12,8 @@
 
 package org.eclipse.incquery.runtime.localsearch;
 
+import java.util.Arrays;
+
 /**
  * VariableType will be mapped to PatternVariable in the interpreted
  * engine.
@@ -26,11 +28,12 @@ public class MatchingKey {
     public boolean equals(Object other) {
         if (other != null && other instanceof MatchingKey) {
             MatchingKey otherKey = (MatchingKey) other;
-            for (int i = 0; i < keys.length; i++) {
-                if (! keys[i].equals(otherKey.keys[i])) {
-                    return false;
-                }
-            }
+            // for (int i = 0; i < keys.length; i++) {
+            // if (! keys[i].equals(otherKey.keys[i])) {
+            // return false;
+            // }
+            // }
+            Arrays.equals(keys, otherKey.keys);
             return true;
         } else {
             return false;
@@ -38,7 +41,7 @@ public class MatchingKey {
     }
     
     public int hashCode() {
-        return toString().hashCode();
+        return Arrays.hashCode(keys);
     }
     
     public String toString() {

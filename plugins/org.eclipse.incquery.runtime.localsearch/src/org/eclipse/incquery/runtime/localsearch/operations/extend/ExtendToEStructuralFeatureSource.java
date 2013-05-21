@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.Collection;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -39,7 +41,10 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
      */
     @Override
     public void onInitialize(MatchingFrame frame) {
-        it = baseIndexNavigator.findByFeatureValue(frame.getValue(targetPosition), feature)
+        final Collection<EObject> values = baseIndexNavigator.findByFeatureValue(frame.getValue(targetPosition), feature);
+        // System.out.println("**FeatureSource " + feature.getContainerClass().getName() + "." + feature.getName() + " "
+        // + values.size());
+        it = values
                 .iterator();
     }
 

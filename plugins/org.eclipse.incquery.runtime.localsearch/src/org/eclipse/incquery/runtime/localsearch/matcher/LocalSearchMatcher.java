@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.localsearch.matcher;
 import java.util.Collection;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
+import org.eclipse.incquery.runtime.localsearch.MatchingTable;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlan;
 
@@ -28,7 +29,8 @@ import com.google.common.collect.UnmodifiableIterator;
 public class LocalSearchMatcher {
 
     private ImmutableList<SearchPlan> plan;
-    private int framesize;
+    private int frameSize;
+    private int keySize;
 
     private static class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
 
@@ -40,20 +42,23 @@ public class LocalSearchMatcher {
             this.frame = initialFrame.clone();
             Preconditions.checkArgument(plan.size() > 0);
             iterator = plan.iterator();
+            getNextPlan();
+        }
+
+        private void getNextPlan() {
             currentPlan = iterator.next();
+            currentPlan.resetPlan();
         }
 
         @Override
         public boolean hasNext() {
             try {
-                if (currentPlan.execute(frame)) {
-                    return true;
-                } else if (iterator.hasNext()) {
-                    currentPlan = iterator.next();
-                    return hasNext();
-                } else {
-                    return false;
+                boolean foundMatch = currentPlan.execute(frame);
+                while ((!foundMatch) && iterator.hasNext()) {
+                    getNextPlan();
+                    foundMatch = currentPlan.execute(frame);
                 }
+                return foundMatch;
             } catch (LocalSearchException e) {
                 throw new RuntimeException(e);
             }
@@ -73,10 +78,11 @@ public class LocalSearchMatcher {
     protected LocalSearchMatcher() {
     }
 
-    public LocalSearchMatcher(SearchPlan plan, int framesize) {
+    public LocalSearchMatcher(SearchPlan plan, int keySize, int framesize) {
         super();
+        this.keySize = keySize;
         this.plan = ImmutableList.of(plan);
-        this.framesize = framesize;
+        this.frameSize = framesize;
     }
 
     protected void setPlan(SearchPlan plan) {
@@ -88,12 +94,16 @@ public class LocalSearchMatcher {
         this.plan = ImmutableList.copyOf(plan);
     }
 
-    protected void setFramesize(int framesize) {
-        this.framesize = framesize;
+    protected void setFramesize(int frameSize) {
+        this.frameSize = frameSize;
+    }
+
+    protected void setKeysize(int keySize) {
+        this.keySize = keySize;
     }
 
     public MatchingFrame editableMatchingFrame() {
-        return new MatchingFrame(null, framesize);
+        return new MatchingFrame(null, keySize, frameSize);
     }
 
     public boolean hasMatch() throws LocalSearchException {
@@ -133,6 +143,11 @@ public class LocalSearchMatcher {
 
     public Collection<MatchingFrame> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
-        return ImmutableList.copyOf(it);
+        MatchingTable results = new MatchingTable();
+        while (it.hasNext()) {
+            final MatchingFrame frame = it.next();
+            results.put(frame.getKey(), frame);
+        }
+        return ImmutableList.copyOf(results.iterator());
     }
 }

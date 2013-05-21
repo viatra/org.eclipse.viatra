@@ -45,10 +45,20 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
     public void onInitialize(MatchingFrame frame) throws LocalSearchException {
         try {
             final EObject value = (EObject) frame.getValue(sourcePosition);
+            final Object featureValue = value.eGet(feature);
             if (feature.isMany()) {
-                it = ((Collection<Object>) value.eGet(feature)).iterator();
+                if (featureValue != null) {
+                    final Collection<Object> objectCollection = (Collection<Object>) featureValue;
+                    it = objectCollection.iterator();
+                } else {
+                    it = Iterators.emptyIterator();
+                }
             } else {
-                it = Iterators.singletonIterator(value.eGet(feature));
+                if (featureValue != null) {
+                    it = Iterators.singletonIterator(featureValue);
+                } else {
+                    it = Iterators.emptyIterator();
+                }
             }
         } catch (ClassCastException e) {
             throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition));
