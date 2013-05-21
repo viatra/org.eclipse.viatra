@@ -26,6 +26,7 @@ public class IncQueryNature implements IProjectNature {
      * The project nature identifier used for defining the project nature of an IncQuery project.
      */
     public static final String NATURE_ID = "org.eclipse.incquery.projectnature"; //$NON-NLS-1$
+    public static final String XTEXT_NATURE_ID = "org.eclipse.xtext.ui.shared.xtextNature"; //$NON-NLS-1$
     public static final String BUILDER_ID = "org.eclipse.incquery.tooling.core.projectbuilder";//$NON-NLS-1$
     public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
     public static final String SRC_DIR = "src/"; //$NON-NLS-1$
@@ -64,8 +65,8 @@ public class IncQueryNature implements IProjectNature {
         ICommand command = desc.newCommand();
         command.setBuilderName(BUILDER_ID);
         ICommand[] newCommandList = new ICommand[commands.length + 1];
-        System.arraycopy(commands, 0, newCommandList, 0, commands.length);
-        newCommandList[commands.length] = command;
+        System.arraycopy(commands, 0, newCommandList, 1, commands.length);
+        newCommandList[0] = command;
         desc.setBuildSpec(newCommandList);
         project.setDescription(desc, null);
     }
@@ -76,7 +77,7 @@ public class IncQueryNature implements IProjectNature {
         int index = 0;
         for (; index < commands.length; index++) {
             if (commands[index].getBuilderName().equals(BUILDER_ID)) {
-                break; // Builder is already configured, returning
+                break; // Builder found
             }
         }
         if (index == commands.length) {
@@ -85,9 +86,10 @@ public class IncQueryNature implements IProjectNature {
         ICommand command = desc.newCommand();
         command.setBuilderName(BUILDER_ID);
         ICommand[] newCommandList = new ICommand[commands.length - 1];
-        System.arraycopy(commands, 0, newCommandList, 0, index);
-        System.arraycopy(commands, index + 1, desc, index, commands.length - index);
-        newCommandList[commands.length] = command;
+        if (newCommandList.length > 0) {
+            System.arraycopy(commands, 0, newCommandList, 0, index);
+            System.arraycopy(commands, index + 1, newCommandList, index, commands.length - index);
+        }
         desc.setBuildSpec(newCommandList);
         project.setDescription(desc, null);
     }

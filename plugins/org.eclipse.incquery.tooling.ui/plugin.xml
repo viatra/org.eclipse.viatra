@@ -261,6 +261,10 @@
             class="org.eclipse.incquery.tooling.ui.queryexplorer.handlers.ResetUIHandler"
             commandId="org.eclipse.incquery.tooling.ui.resetui">
       </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.ui.handlers.ProjectNatureUpdater"
+            commandId="org.eclipse.incquery.tooling.ui.addnature">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -440,6 +444,59 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.addnature"
+               icon="icons/logo2.png"
+               label="Update EMF-IncQuery Nature"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <and>
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.eclipse.incquery.projectnature">
+                        </test>
+                        <test
+                              property="org.eclipse.core.resources.open"
+                              value="true">
+                        </test>
+                     </and>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.addnature"
+               icon="icons/logo2.png"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <and>
+                        <not>
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="org.eclipse.incquery.projectnature">
+                           </test>
+                        </not>
+                        <test
+                              property="org.eclipse.core.resources.open"
+                              value="true">
+                        </test>
+                     </and>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -506,6 +563,11 @@
             categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.resetui"
             name="Reset UI">
+      </command>
+      <command
+            categoryId="org.eclipse.incquery.tooling.category"
+            id="org.eclipse.incquery.tooling.ui.addnature"
+            name="Add EMF-IncQuery Nature">
       </command>
    </extension>
    <extension
