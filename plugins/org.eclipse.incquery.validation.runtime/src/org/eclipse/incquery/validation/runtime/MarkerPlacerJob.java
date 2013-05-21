@@ -50,6 +50,10 @@ public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
         if (location != null && location.eResource() != null) {
             URI uri = location.eResource().getURI();
             String platformString = uri.toPlatformString(true);
+            if (platformString==null) {
+                logger.error("Marker location for " + location.toString() + " is invalid!");
+                return;
+            }
             IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
             if(markerLoc == null) {
                 logger.error("Marker location " + platformString + " for " + location + "is not in workspace!");
