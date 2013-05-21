@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.job.EnableJob;
+import org.eclipse.incquery.runtime.evm.specific.job.ErrorLoggingJob;
 import org.eclipse.incquery.runtime.evm.specific.job.EventAtomDomainObjectProvider;
 import org.eclipse.incquery.runtime.evm.specific.job.RecordingJob;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
@@ -124,7 +125,7 @@ public final class Jobs {
     }
     
     public static <EventAtom> Job<EventAtom> newErrorLoggingJob(Job<EventAtom> job) {
-        return newErrorLoggingJob(job);
+        return new ErrorLoggingJob<EventAtom>(job);
     }
     
 }

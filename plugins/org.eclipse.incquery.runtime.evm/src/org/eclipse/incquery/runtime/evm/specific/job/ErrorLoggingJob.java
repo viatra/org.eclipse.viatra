@@ -25,7 +25,7 @@ public class ErrorLoggingJob<EventAtom> extends CompositeJob<EventAtom> {
     /**
      * @param job
      */
-    protected ErrorLoggingJob(Job<EventAtom> job) {
+    public ErrorLoggingJob(Job<EventAtom> job) {
         super(job);
     }
 
