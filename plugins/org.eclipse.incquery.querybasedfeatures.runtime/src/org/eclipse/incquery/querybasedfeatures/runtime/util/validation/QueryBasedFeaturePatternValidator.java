@@ -97,14 +97,12 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
             featureName = pattern.getName();
             contextForFeature = pattern;
             contextESFForFeature = PatternLanguagePackage.Literals.PATTERN__NAME;
-        } else {
-            if (ref instanceof StringValue) {
-                featureName = ((StringValue) ref).getValue();
-                contextForFeature = ref;
-                contextESFForFeature = PatternLanguagePackage.Literals.STRING_VALUE__VALUE;
-            }
+        } else if (ref instanceof StringValue) {
+            featureName = ((StringValue) ref).getValue();
+            contextForFeature = ref;
+            contextESFForFeature = PatternLanguagePackage.Literals.STRING_VALUE__VALUE;
         }
-        if (featureName.isEmpty()) {
+        if (featureName == null || featureName.isEmpty()) {
             validator.error("The 'feature' parameter must not be empty.", ref,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
             return;
@@ -212,23 +210,19 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
             }
         }
         
-        if (classifier != targetClassifier && (kind == QueryBasedFeatureKind.SINGLE_REFERENCE || kind == QueryBasedFeatureKind.MANY_REFERENCE)) {
+        if (!classifier.equals(targetClassifier) && (kind == QueryBasedFeatureKind.SINGLE_REFERENCE || kind == QueryBasedFeatureKind.MANY_REFERENCE)) {
             validator.warning(String.format("The 'target' parameter type %s is not equal to actual feature type %s.",
                     featureName, sourceClass.getName()), target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
         }
         // 6. keepCache (if set) is correct for the kind
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
-        if (ref != null) {
-            if (ref instanceof BoolValue) {
-                boolean keepCache = ((BoolValue) ref).isValue();
-                if (keepCache == false) {
-                    if (kind != QueryBasedFeatureKind.SINGLE_REFERENCE && kind != QueryBasedFeatureKind.MANY_REFERENCE) {
-                        validator.error("Cacheless behavior only available for single and many kinds.", ref,
-                                PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
-                        return;
-                    }
-                }
+        if (ref != null && ref instanceof BoolValue) {
+            boolean keepCache = ((BoolValue) ref).isValue();
+            if (keepCache == false && kind != QueryBasedFeatureKind.SINGLE_REFERENCE && kind != QueryBasedFeatureKind.MANY_REFERENCE) {
+                validator.error("Cacheless behavior only available for single and many kinds.", ref,
+                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                return;
             }
         }
 

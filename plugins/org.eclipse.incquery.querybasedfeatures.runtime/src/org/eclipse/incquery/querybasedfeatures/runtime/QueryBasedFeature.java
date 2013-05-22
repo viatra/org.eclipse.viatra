@@ -96,7 +96,6 @@ public abstract class QueryBasedFeature {
     private final EStructuralFeature feature;
     private String sourceParamName;
     private String targetParamName;
-    private QueryBasedFeatureKind kind;
 
     private boolean keepCache = true;
     private boolean initialized = false;
@@ -124,7 +123,7 @@ public abstract class QueryBasedFeature {
             engineForMatcher().getLogger().error(
                     "[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
         }
-        if ((targetParamName == null) != (kind == QueryBasedFeatureKind.COUNTER)) {
+        if ((targetParamName == null) != (getKind() == QueryBasedFeatureKind.COUNTER)) {
             engineForMatcher().getLogger().error(
                     "[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
         }

@@ -57,7 +57,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
         if (delta == null && countOnly) {
             delta = 1;
         }
-        if (oldValue <= Integer.MAX_VALUE - delta) {
+        if (delta != null && oldValue <= Integer.MAX_VALUE - delta) {
             int tempMemory = oldValue + delta;
             counterMemory.put(source, tempMemory);
             return new ENotificationImpl(source, Notification.SET, getFeature(), getIntValue(source), tempMemory);
@@ -66,7 +66,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
                     .getLogger()
                     .error(String
                             .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s reached the maximum value of int!",
-                                    source, getFeature(), "Counter reached maximum value of int"));
+                                    source, getFeature()));
         }
         return null;
     }
@@ -93,7 +93,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
                     .getLogger()
                     .error(String
                             .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s cannot go below zero!",
-                                    source, getFeature(), "Counter cannot go below zero"));
+                                    source, getFeature()));
         }
         return null;
     }

@@ -55,8 +55,8 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
         this.realm = realm;
         this.sourceDefinition = sourceDefinition;
         IQuerySpecification<? extends IncQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
-        IncQueryMatcher<Match> matcher = factory.getMatcher(realm.getEngine());
-        this.matcher = matcher;
+        IncQueryMatcher<Match> _matcher = factory.getMatcher(realm.getEngine());
+        this.matcher = _matcher;
         this.handlers = Sets.newHashSet();
     }
 

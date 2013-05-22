@@ -87,7 +87,7 @@ public final class QueryBasedFeatureHelper {
                 while (top.eContainer() != null) {
                     top = top.eContainer();
                 }
-                if(top != source) {
+                if(!top.equals(source)) {
                     return prepareNotifierForSource(top);
                 }
             }
@@ -135,36 +135,22 @@ public final class QueryBasedFeatureHelper {
             return derivedFeature;
         }
 
-        QueryBasedFeature newDerivedFeature = null;
-        switch(kind) {
-            case SINGLE_REFERENCE:
-                newDerivedFeature = QueryBasedFeatures.newSingleValueFeature(feature, keepCache);
-                break;
-            case MANY_REFERENCE:
-                newDerivedFeature = QueryBasedFeatures.newMultiValueFeatue(feature, keepCache);
-                break;
-            case SUM:
-                newDerivedFeature = QueryBasedFeatures.newSumFeature(feature);
-                break;
-            case COUNTER:
-                newDerivedFeature = QueryBasedFeatures.newCounterFeature(feature);
-                break;
-            case ITERATION:
-                // fall-through
-            default:
-                IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed, feature kind " + kind + " not supported!");
-                break;
+        QueryBasedFeature newFeature = createQueryBasedFeature(feature, kind, keepCache);
+        if(newFeature == null) {
+            IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed, feature kind " + kind + " not supported!");
+            return null;
         }
         
-        QueryBasedFeatureHandler queryBasedFeatureHandler = new QueryBasedFeatureHandler(newDerivedFeature);
+        QueryBasedFeatureHandler queryBasedFeatureHandler = new QueryBasedFeatureHandler(newFeature);
         features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
+        @SuppressWarnings("unchecked")
         IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
         if (querySpecification != null) {
             try {
                 IncQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
-                newDerivedFeature.initialize(matcher, sourceParamName, targetParamName);
-                newDerivedFeature.startMonitoring();
+                newFeature.initialize(matcher, sourceParamName, targetParamName);
+                newFeature.startMonitoring();
             } catch (IncQueryException e) {
             	IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
                 return null;
@@ -176,6 +162,30 @@ public final class QueryBasedFeatureHelper {
         }
 
         return queryBasedFeatureHandler;
+    }
+
+    private static QueryBasedFeature createQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind,
+            boolean keepCache) {
+        QueryBasedFeature newFeature = null;
+        switch(kind) {
+            case SINGLE_REFERENCE:
+                newFeature = QueryBasedFeatures.newSingleValueFeature(feature, keepCache);
+                break;
+            case MANY_REFERENCE:
+                newFeature = QueryBasedFeatures.newMultiValueFeatue(feature, keepCache);
+                break;
+            case SUM:
+                newFeature = QueryBasedFeatures.newSumFeature(feature);
+                break;
+            case COUNTER:
+                newFeature = QueryBasedFeatures.newCounterFeature(feature);
+                break;
+            case ITERATION:
+                // fall-through
+            default:
+                break;
+        }
+        return newFeature;
     }
 
     /**
