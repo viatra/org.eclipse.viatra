@@ -6,16 +6,17 @@ import org.apache.log4j.Level;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatch;
-import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsProcessor;
-import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatch;
-import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassProcessor;
-import org.eclipse.incquery.examples.uml.evm.queries.superclass.SuperClassMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.superclass.SuperClassProcessor;
-import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.examples.uml.evm.queries.OnlyInheritedOperationsMatch;
+import org.eclipse.incquery.examples.uml.evm.queries.OnlyInheritedOperationsMatcher;
+import org.eclipse.incquery.examples.uml.evm.queries.util.OnlyInheritedOperationsProcessor;
+import org.eclipse.incquery.examples.uml.evm.queries.PossibleSuperClassMatch;
+import org.eclipse.incquery.examples.uml.evm.queries.PossibleSuperClassMatcher;
+import org.eclipse.incquery.examples.uml.evm.queries.util.PossibleSuperClassProcessor;
+import org.eclipse.incquery.examples.uml.evm.queries.SuperClassMatcher;
+import org.eclipse.incquery.examples.uml.evm.queries.util.SuperClassProcessor;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.Context;
@@ -52,7 +53,7 @@ public class UMLexampleForEVM {
 
         try {
             // create IncQueryEngine for the resource set
-            IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+            IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
             // create rule engine over IncQueryEngine
             RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
             // set logger level to debug to see activation life-cycle events
@@ -104,9 +105,9 @@ public class UMLexampleForEVM {
 
         try {
             // create IncQueryEngine for the resource set
-            IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+            IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
             // use IQBase update callback for scheduling execution
-            UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(engine);
+            UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(engine);
             // create execution schema over IncQueryEngine
             ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
             // set logger level to debug to see activation life-cycle events
@@ -123,7 +124,7 @@ public class UMLexampleForEVM {
 
             // execution schema waits for a scheduling to fire activations
             // we trigger this by removing one generalization at random
-            SuperClassMatcher.factory().getMatcher(engine).forOneArbitraryMatch(new SuperClassProcessor() {
+            SuperClassMatcher.querySpecification().getMatcher(engine).forOneArbitraryMatch(new SuperClassProcessor() {
 
                 @Override
                 public void process(Class sub, Class sup) {
@@ -159,7 +160,7 @@ public class UMLexampleForEVM {
         // the life-cycle determines how events affect the state of activations
         DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
         // the factory is used to initialize the matcher for the precondition
-        IMatcherFactory<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.factory();
+        IQuerySpecification<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.querySpecification();
         // the rule specification is a model-independent definition that can be
         // used to instantiate a rule
         RuleSpecification<PossibleSuperClassMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
@@ -177,7 +178,7 @@ public class UMLexampleForEVM {
             }
         });
         DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-        IMatcherFactory<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.factory();
+        IQuerySpecification<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.querySpecification();
         RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }

@@ -3,89 +3,89 @@
 
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.possibleSuperClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.possiblesuperclass.PossibleSuperClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.PossibleSuperClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.possibleSuperClass">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedOperations"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.onlyinheritedoperations.OnlyInheritedOperationsMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.OnlyInheritedOperationsQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.onlyInheritedOperations">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.superClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.superclass.SuperClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.SuperClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.superClass">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.transitiveSuperClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.transitivesuperclass.TransitiveSuperClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.TransitiveSuperClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.transitiveSuperClass">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.superOrEqualClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.superorequalclass.SuperOrEqualClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.SuperOrEqualClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.superOrEqualClass">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.ownsOperation"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.ownsoperation.OwnsOperationMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.OwnsOperationQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.ownsOperation">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.ownsProperty"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.ownsproperty.OwnsPropertyMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.OwnsPropertyQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.ownsProperty">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.hasOperation"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.hasoperation.HasOperationMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.HasOperationQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.hasOperation">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.hasProperty"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.hasproperty.HasPropertyMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.HasPropertyQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.hasProperty">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.emptyClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.emptyclass.EmptyClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.EmptyClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.emptyClass">
       </matcher>
    </extension>
    <extension
          id="org.eclipse.incquery.examples.uml.evm.queries.nonEmptyClass"
-         point="org.eclipse.incquery.runtime.matcherfactory">
+         point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            factoryProvider="org.eclipse.incquery.examples.uml.evm.queries.nonemptyclass.NonEmptyClassMatcherFactory$Provider"
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.NonEmptyClassQuerySpecification$Provider"
             id="org.eclipse.incquery.examples.uml.evm.queries.nonEmptyClass">
       </matcher>
    </extension>
