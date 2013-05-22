@@ -361,6 +361,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             reteEngine.killEngine();
             reteEngine = null;
         }
+        matchers.clear();
         sanitizer = null;
         lifecycleProvider.engineWiped();
     }
