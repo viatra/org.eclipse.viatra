@@ -19,6 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Item.HierarchyPolicy;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
@@ -33,6 +34,7 @@ public class ItemConverter implements IConverter {
 
     private String parameterName;
     private String labelParameterName;
+    private HierarchyPolicy policy;
     private Multimap<Object, Item> itemMap;
     private FormatSpecification format;
 
@@ -50,7 +52,10 @@ public class ItemConverter implements IConverter {
         StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "label");
         labelParameterName = labelParam == null ? "" : labelParam.getValue();
-
+        StringValue hierarchyParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
+                "hierarchy");
+        policy = hierarchyParam == null ? HierarchyPolicy.ALWAYS : HierarchyPolicy.valueOf(hierarchyParam.getValue().toUpperCase());
+        
         if (formatAnnotation != null) {
             format = FormatParser.parseFormatAnnotation(formatAnnotation);
         }
@@ -71,7 +76,7 @@ public class ItemConverter implements IConverter {
         IPatternMatch match = (IPatternMatch) fromObject;
 
         EObject param = (EObject) match.get(parameterName);
-        Item item = new Item(match, param, labelParameterName);
+        Item item = new Item(match, param, labelParameterName, policy);
         item.setSpecification(format);
         itemMap.put(param, item);
         return item;

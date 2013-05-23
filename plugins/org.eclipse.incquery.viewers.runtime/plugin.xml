@@ -21,6 +21,12 @@
                name="label"
                type="string">
          </annotationparameter>
+         <annotationparameter
+               mandatory="false"
+               multiple="false"
+               name="hierarchy"
+               type="string">
+         </annotationparameter>
       </annotation>
       <annotation
             description="An annotation describing a containment relation between two items."

@@ -86,6 +86,10 @@ public class ZestContentProvider extends ListContentProvider implements IGraphEn
     private EdgeListChangeListener edgeListener;
 
     private GraphViewer viewer;
+    
+    public ZestContentProvider() {
+        super(false);
+    }
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         this.viewer = (GraphViewer) viewer;

@@ -27,7 +27,7 @@ public class IncQueryViewerSupport {
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
         if (!(viewer.getContentProvider() instanceof ListContentProvider)) { 
-            viewer.setContentProvider(new ListContentProvider());
+            viewer.setContentProvider(new ListContentProvider(false));
         }
         if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
             viewer.setLabelProvider(new QueryLabelProvider()); 
@@ -38,7 +38,7 @@ public class IncQueryViewerSupport {
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
         if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
-            viewer.setContentProvider(new ListContentProvider());
+            viewer.setContentProvider(new ListContentProvider(false));
         }
         if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
             viewer.setLabelProvider(new QueryLabelProvider()); 

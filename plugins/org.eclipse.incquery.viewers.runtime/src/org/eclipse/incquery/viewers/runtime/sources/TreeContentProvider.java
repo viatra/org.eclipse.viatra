@@ -102,6 +102,10 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     Map<Item, Item> parentMap;
     private AbstractTreeViewer viewer;
 
+    public TreeContentProvider() {
+        super(true);
+    }
+    
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         this.viewer = (AbstractTreeViewer) viewer;
         super.initializeContent(viewer, vmodel, filter);

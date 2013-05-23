@@ -16,23 +16,66 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
+import com.google.common.base.Predicate;
+
 /**
  * @author Zoltan Ujhelyi
  * 
  */
 public class Item extends FormattableElement {
 
+    /**
+     * The hierarchy policy of a node describes where it needs to be presented in containment hierarchies.
+     * 
+     */
+    public enum HierarchyPolicy {
+        /**
+         * Represented both as root and child elements (default)
+         */
+        ALWAYS,
+        /**
+         * Represented only as child element
+         */
+        CHILD,
+        /**
+         * Represented only as root element
+         */
+        ROOT
+    }
+
+    public static final class RootItem implements Predicate<Item> {
+
+        @Override
+        public boolean apply(Item item) {
+            return item.getPolicy() == HierarchyPolicy.ROOT || item.getPolicy() == HierarchyPolicy.ALWAYS;
+        }
+    }
+
+    public static final class ChildItem implements Predicate<Item> {
+
+        @Override
+        public boolean apply(Item item) {
+            return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS;
+        }
+    }
+
     public static final String ANNOTATION_ID = "Item";
 
     private final IPatternMatch sourceMatch;
+    private final HierarchyPolicy policy;
     private String labelDefinition;
 
     private EObject paramObject;
 
     public Item(IPatternMatch match, EObject paramObject, String labelDefinition) {
+        this(match, paramObject, labelDefinition, HierarchyPolicy.ALWAYS);
+    }
+
+    public Item(IPatternMatch match, EObject paramObject, String labelDefinition, HierarchyPolicy policy) {
         sourceMatch = match;
         this.paramObject = paramObject;
         this.labelDefinition = labelDefinition;
+        this.policy = policy;
     }
 
     /**
@@ -48,6 +91,15 @@ public class Item extends FormattableElement {
 
     public EObject getParamObject() {
         return paramObject;
+    }
+
+    /**
+     * Returns whether a node shall be displayed only as root or only as child element or both.
+     * 
+     * @return the policy
+     */
+    public HierarchyPolicy getPolicy() {
+        return policy;
     }
 
     @Override
