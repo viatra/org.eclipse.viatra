@@ -21,13 +21,6 @@
                name="label"
                type="string">
          </annotationparameter>
-         <annotationparameter
-               description="A project-relative path to an icon."
-               mandatory="false"
-               multiple="false"
-               name="icon"
-               type="string">
-         </annotationparameter>
       </annotation>
       <annotation
             description="An annotation describing a containment relation between two items."
