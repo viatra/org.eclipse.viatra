@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.list.ComputedList;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -23,6 +25,7 @@ import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
 
 /**
  * A converter from {@link IPatternMatch} matches to displayable {@link Edge} objects.
@@ -30,43 +33,43 @@ import com.google.common.base.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ContainmentConverter implements IConverter {
+public class ContainmentList extends ComputedList {
     private String containerParameterName;
     private String destParameterName;
-    private Map<Object, Item> itemMap;
+    private Multimap<Object, Item> itemMap;
+    private IObservableList patternMatchList;
 
-    public ContainmentConverter(Annotation itemAnnotation, Map<Object, Item> itemMap) {
+    public ContainmentList(Annotation itemAnnotation, Multimap<Object, Item> itemMap2, IObservableList patternMatchList) {
         Preconditions.checkArgument(Containment.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Edge.ANNOTATION_ID + " annotation.");
-        this.itemMap = itemMap;
+        this.itemMap = itemMap2;
 
         containerParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "container")).getValue().getVar();
         destParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "item")).getValue().getVar();
+        this.patternMatchList = patternMatchList;
     }
 
     @Override
-    public Object getToType() {
-        return Containment.class;
-    }
+    public List<Containment> calculate() {
+        List<Containment> edgeList = new ArrayList<Containment>();
+        for (Object _match : patternMatchList) {
+            
+            IPatternMatch match = (IPatternMatch) _match;
 
-    @Override
-    public Object getFromType() {
-        return IPatternMatch.class;
-    }
+            EObject sourceValue = (EObject) match.get(containerParameterName);
+            EObject destValue = (EObject) match.get(destParameterName);
 
-    @Override
-    public Object convert(Object fromObject) {
-        IPatternMatch match = (IPatternMatch) fromObject;
-
-        EObject containerValue = (EObject) match.get(containerParameterName);
-        EObject itemValue = (EObject) match.get(destParameterName);
-
-        Item containerItem = itemMap.get(containerValue);
-        Item item = itemMap.get(itemValue);
-
-        Containment edge = new Containment(containerItem, item, match);
-        return edge;
+            for (Object _sourceItem : itemMap.get(sourceValue)) {
+                Item sourceItem = (Item) _sourceItem;
+                for (Object _destItem : itemMap.get(destValue)) {
+                    Item destItem = (Item) _destItem;
+                    Containment edge = new Containment(sourceItem, destItem, match);
+                    edgeList.add(edge);
+                }
+            }
+        }
+        return edgeList;
     }
 }

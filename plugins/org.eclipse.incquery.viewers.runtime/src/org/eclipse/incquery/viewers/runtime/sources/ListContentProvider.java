@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
@@ -92,7 +92,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         if (vmodel == null) {
-            nodeList = new ObservableList(new ArrayList(), new Object()) {};
+            nodeList = new WritableList(Collections.emptyList(), new Object());
         }
         else {
             if (filter == null) {

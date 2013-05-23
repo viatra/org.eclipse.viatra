@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.list.ComputedList;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -24,6 +26,7 @@ import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
 
 /**
  * A converter from {@link IPatternMatch} matches to displayable {@link Edge} objects.
@@ -31,14 +34,15 @@ import com.google.common.base.Preconditions;
  * @author Zoltan Ujhelyi
  * 
  */
-public class EdgeConverter implements IConverter {
+public class EdgeList extends ComputedList {
     private String labelParameterName;
     private String sourceParameterName;
     private String destParameterName;
-    private Map<Object, Item> itemMap;
+    private Multimap<Object, Item> itemMap;
     private FormatSpecification format;
+    private IObservableList patternMatchList;
 
-    public EdgeConverter(Annotation itemAnnotation, Annotation formatAnnotation, Map<Object, Item> itemMap) {
+    public EdgeList(Annotation itemAnnotation, Annotation formatAnnotation, Multimap<Object, Item> itemMap, IObservableList patternMatchList) {
         Preconditions.checkArgument(Edge.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Edge.ANNOTATION_ID + " annotation.");
         this.itemMap = itemMap;
@@ -54,30 +58,29 @@ public class EdgeConverter implements IConverter {
         if (formatAnnotation != null) {
             format = FormatParser.parseFormatAnnotation(formatAnnotation);
         }
+        this.patternMatchList = patternMatchList;
     }
 
     @Override
-    public Object getToType() {
-        return Edge.class;
-    }
+    protected List<Edge> calculate() {
+        List<Edge> edgeList = new ArrayList<Edge>();
+        for (Object _match : patternMatchList) {
+            
+            IPatternMatch match = (IPatternMatch) _match;
 
-    @Override
-    public Object getFromType() {
-        return IPatternMatch.class;
-    }
+            EObject sourceValue = (EObject) match.get(sourceParameterName);
+            EObject destValue = (EObject) match.get(destParameterName);
 
-    @Override
-    public Object convert(Object fromObject) {
-        IPatternMatch match = (IPatternMatch) fromObject;
-
-        EObject sourceValue = (EObject) match.get(sourceParameterName);
-        EObject destValue = (EObject) match.get(destParameterName);
-
-        Item sourceItem = itemMap.get(sourceValue);
-        Item destItem = itemMap.get(destValue);
-
-        Edge edge = new Edge(sourceItem, destItem, match, labelParameterName);
-        edge.setSpecification(format);
-        return edge;
+            for (Object _sourceItem : itemMap.get(sourceValue)) {
+                Item sourceItem = (Item) _sourceItem;
+                for (Object _destItem : itemMap.get(destValue)) {
+                    Item destItem = (Item) _destItem;
+                    Edge edge = new Edge(sourceItem, destItem, match, labelParameterName);
+                    edge.setSpecification(format);
+                    edgeList.add(edge);
+                }
+            }
+        }
+        return edgeList;
     }
 }

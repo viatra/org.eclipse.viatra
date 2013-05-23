@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -107,7 +107,7 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
         super.initializeContent(viewer, vmodel, filter);
 
         if (vmodel == null) {
-            containmentList = new ObservableList(new ArrayList(), new Object()) {};
+            containmentList = new ObservableList(Collections.emptyList(), new Object()) {};
         }
         else {
             if (filter == null) {
@@ -155,7 +155,7 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
      */
     @Override
     public boolean hasChildren(Object element) {
-        return !(elementMap.get((Item) element).isEmpty());
+        return elementMap.containsKey((Item)element);
     }
 
     /*
