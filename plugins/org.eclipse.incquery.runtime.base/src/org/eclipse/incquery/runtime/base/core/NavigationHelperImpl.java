@@ -476,7 +476,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if(observedObjects != null) {
             observedObjects.remove(observedObject);
             if(observedObjects.isEmpty()) {
-                lightweightObservers.remove(observedObjects);
+                lightweightObservers.remove(observer);
             }
         }
     }

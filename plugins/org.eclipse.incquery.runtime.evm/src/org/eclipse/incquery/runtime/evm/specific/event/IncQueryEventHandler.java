@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.Maps;
 
@@ -84,7 +85,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
         try {
             monitor = new LightweightAttributeMonitor<Match>(source.getMatcher().getEngine().getBaseIndex());
         } catch (IncQueryException e) {
-            e.printStackTrace();
+            IncQueryLoggingUtil.getDefaultLogger().error("Error happened while accessing base index", e);
         }
         return monitor;
     }

@@ -40,22 +40,22 @@ public abstract class LightweightEObjectObserverAdapter implements LightweightEO
     
     public void observeAdditionalFeature(EStructuralFeature observedFeature) {
         checkArgument(observedFeature != null, "Cannot observe null feature!");
-        observedFeatures.add(observedFeature);
+        this.observedFeatures.add(observedFeature);
     }
     
     public void observeAdditionalFeatures(Collection<EStructuralFeature> observedFeatures) {
         checkArgument(observedFeatures != null, "List of additional observed features must not be null!");
-        observedFeatures.addAll(observedFeatures);
+        this.observedFeatures.addAll(observedFeatures);
     }
     
     public void removeObservedFeature(EStructuralFeature observedFeature) {
         checkArgument(observedFeature != null, "Cannot remove null observed feature!");
-        observedFeatures.remove(observedFeature);
+        this.observedFeatures.remove(observedFeature);
     }
     
     public void removeObservedFeatures(Collection<EStructuralFeature> observedFeatures) {
         checkArgument(observedFeatures != null, "List of observed features to remove must not be null!");
-        observedFeatures.removeAll(observedFeatures);
+        this.observedFeatures.removeAll(observedFeatures);
     }
     
     /* (non-Javadoc)
@@ -63,7 +63,7 @@ public abstract class LightweightEObjectObserverAdapter implements LightweightEO
      */
     @Override
     public void notifyFeatureChanged(EObject host, EStructuralFeature feature, Notification notification) {
-        if(observedFeatures.contains(feature)) {
+        if(this.observedFeatures.contains(feature)) {
             observedFeatureUpdate(host, feature, notification);
         }
     }

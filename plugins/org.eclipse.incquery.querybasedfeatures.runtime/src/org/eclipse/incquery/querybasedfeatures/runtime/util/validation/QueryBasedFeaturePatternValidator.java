@@ -172,41 +172,39 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         // 5. "kind" (if set) is valid enum value
         QueryBasedFeatureKind kind = null;
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "kind");
-        if (ref != null) {
-            if (ref instanceof StringValue) {
-                String kindStr = ((StringValue) ref).getValue();
-                if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SINGLE_REFERENCE).equals(kindStr)) {
-                    if (feature.getUpperBound() != 1) {
-                        validator.error(
-                                String.format("Upper bound of feature %s should be 1 for single 'kind'.", featureName),
-                                ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, METAMODEL_ISSUE_CODE);
-                        return;
-                    }
-                    kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
-                } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.MANY_REFERENCE).equals(kindStr)) {
-                    if (feature.getUpperBound() != -1 && feature.getUpperBound() < 2) {
-                        validator.error(String
-                                .format("Upper bound of feature %s should be -1 or larger than 1 for many 'kind'.",
-                                        featureName), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
-                                        METAMODEL_ISSUE_CODE);
-                        return;
-                    }
-                    kind = QueryBasedFeatureKind.MANY_REFERENCE;
-                } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.COUNTER).equals(kindStr)
-                        || QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SUM).equals(kindStr)) {
-                    if (!classifier.equals(EcorePackage.Literals.EINT)) {
-                        validator
-                                .error(String.format("Type of feature %s should be EInt for %s 'kind'.", featureName,
-                                        kindStr), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
-                                        METAMODEL_ISSUE_CODE);
-                        return;
-                    }
-                    kind = QueryBasedFeatureKind.COUNTER;
-                } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.ITERATION).equals(kindStr)) {
-                    validator.warning("Don't forget to subclass QueryBasedFeature for iteration 'kind'.", ref,
-                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
-                    kind = QueryBasedFeatureKind.ITERATION;
+        if (ref instanceof StringValue) {
+            String kindStr = ((StringValue) ref).getValue();
+            if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SINGLE_REFERENCE).equals(kindStr)) {
+                if (feature.getUpperBound() != 1) {
+                    validator.error(
+                            String.format("Upper bound of feature %s should be 1 for single 'kind'.", featureName),
+                            ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE, METAMODEL_ISSUE_CODE);
+                    return;
                 }
+                kind = QueryBasedFeatureKind.SINGLE_REFERENCE;
+            } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.MANY_REFERENCE).equals(kindStr)) {
+                if (feature.getUpperBound() != -1 && feature.getUpperBound() < 2) {
+                    validator.error(String
+                            .format("Upper bound of feature %s should be -1 or larger than 1 for many 'kind'.",
+                                    featureName), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
+                                    METAMODEL_ISSUE_CODE);
+                    return;
+                }
+                kind = QueryBasedFeatureKind.MANY_REFERENCE;
+            } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.COUNTER).equals(kindStr)
+                    || QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SUM).equals(kindStr)) {
+                if (!classifier.equals(EcorePackage.Literals.EINT)) {
+                    validator
+                            .error(String.format("Type of feature %s should be EInt for %s 'kind'.", featureName,
+                                    kindStr), ref, PatternLanguagePackage.Literals.STRING_VALUE__VALUE,
+                                    METAMODEL_ISSUE_CODE);
+                    return;
+                }
+                kind = QueryBasedFeatureKind.COUNTER;
+            } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.ITERATION).equals(kindStr)) {
+                validator.warning("Don't forget to subclass QueryBasedFeature for iteration 'kind'.", ref,
+                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                kind = QueryBasedFeatureKind.ITERATION;
             }
         }
         
@@ -217,12 +215,19 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         // 6. keepCache (if set) is correct for the kind
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
-        if (ref != null && ref instanceof BoolValue) {
+        if (ref instanceof BoolValue) {
             boolean keepCache = ((BoolValue) ref).isValue();
-            if (keepCache == false && kind != QueryBasedFeatureKind.SINGLE_REFERENCE && kind != QueryBasedFeatureKind.MANY_REFERENCE) {
-                validator.error("Cacheless behavior only available for single and many kinds.", ref,
-                        PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
-                return;
+            if (keepCache == false) {
+                switch (kind) {
+                case SINGLE_REFERENCE:
+                case MANY_REFERENCE:
+                    // OK
+                    break;
+                default:
+                    validator.error("Cacheless behavior only available for single and many kinds.", ref,
+                            PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
+                    break;
+                }
             }
         }
 
