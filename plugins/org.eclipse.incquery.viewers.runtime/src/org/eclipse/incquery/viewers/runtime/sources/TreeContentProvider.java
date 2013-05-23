@@ -24,6 +24,7 @@ import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Item.ChildItem;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -141,7 +143,8 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof Item) {
             Collection<Item> children = elementMap.get((Item) parentElement);
-            return children.toArray(new Item[children.size()]);
+
+            return Iterables.toArray(Iterables.filter(children, new ChildItem()), Item.class);
         }
         return null;
     }
