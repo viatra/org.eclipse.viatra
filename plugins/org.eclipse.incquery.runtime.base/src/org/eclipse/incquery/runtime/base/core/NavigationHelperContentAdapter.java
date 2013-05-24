@@ -45,8 +45,10 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -89,6 +91,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // static for eclass -> all subtypes in knownClasses
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
     
+    // static maps between metamodel elements and their unique IDs
+    private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
+    private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
+    private static Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
+    private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
+    
+    
     // move optimization to avoid removing and re-adding entire subtrees
     EObject ignoreInsertionAndDeletion = null;
     //Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
@@ -108,8 +117,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @return A unique string id generated from the classifier's package nsuri and the name.
      */
     private static String getUniqueIdentifier(EClassifier classifier) {
-        Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-        return classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+    	String id = uniqueIDFromClassifier.get(classifier);
+    	if (id == null) {
+    		Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
+    		id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+    		uniqueIDFromClassifier.put(classifier, id);
+    		uniqueIDToClassifier.put(id, classifier);
+    	}
+        return id;
     }
 
     /**
@@ -117,8 +132,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
     private static String getUniqueIdentifier(ETypedElement typedElement) {
-        Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
-        return getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
+    	String id = uniqueIDFromTypedElement.get(typedElement);
+    	if (id == null) {
+    		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
+    		id = getUniqueIdentifier(typedElement.getEType()) + "###" + typedElement.getName();
+    		uniqueIDFromTypedElement.put(typedElement, id);
+    		uniqueIDToTypedElement.put(id, typedElement);
+    	}
+        return id;
     }
 
     @Override
