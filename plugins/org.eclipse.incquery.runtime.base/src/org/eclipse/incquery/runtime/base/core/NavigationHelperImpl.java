@@ -894,6 +894,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         expandToAdditionalRoot(emfRoot);
     }
     
+    @Override
+    public Set<EClass> getAllCurrentClasses() {
+    	return contentAdapter.getAllCurrentClasses();
+    }
+    
     protected void processingError(Throwable ex, String task) {
         contentAdapter.processingError(ex, task);
     }

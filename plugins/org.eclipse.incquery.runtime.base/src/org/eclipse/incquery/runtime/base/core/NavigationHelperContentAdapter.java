@@ -50,6 +50,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
@@ -863,6 +864,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return subTypeMap;
     }
 
+    /**
+     * Returns all EClasses that currently have direct instances cached by the index. 
+     * <p>Supertypes will not be returned, unless they have direct instances in the model as well. If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.  
+     * <p>Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned. 
+     */
+    public Set<EClass> getAllCurrentClasses() {
+    	Set<EClass> result = Sets.newHashSet();
+    	Set<String> classIDs = instanceMap.keySet();
+    	for (String id : classIDs) {
+    		Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(id);
+    		if (!classifiersOfThisID.isEmpty())
+    			result.add((EClass) classifiersOfThisID.iterator().next());
+		}
+    	return result;
+    }
+    
+    
 
 
 }

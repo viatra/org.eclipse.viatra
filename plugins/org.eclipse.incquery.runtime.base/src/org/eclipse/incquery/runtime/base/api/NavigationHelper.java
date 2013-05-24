@@ -584,5 +584,15 @@ public interface NavigationHelper {
      * @param processor
      */
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor);
+    
+    /**
+     * Returns all EClasses that currently have direct instances cached by the index. <ul>
+     * <li> Supertypes will not be returned, unless they have direct instances in the model as well.
+     * <li> If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be considered.
+     * <li> Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned.
+     * </ul>
+     */
+    public Set<EClass> getAllCurrentClasses();
+
 
 }
