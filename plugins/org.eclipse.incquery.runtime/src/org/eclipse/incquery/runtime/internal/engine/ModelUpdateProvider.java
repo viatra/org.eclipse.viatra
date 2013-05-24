@@ -127,13 +127,14 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
     }
 
     private void handleUnsuccesfulRemove(IncQueryModelUpdateListener listener) {
-        this.incQueryEngine.getLogger().error("Listener "+listener+" change level changed since initialization!");
         for (Entry<ChangeLevel, IncQueryModelUpdateListener> entry : listenerMap.entries()) {
             if(entry.getValue().equals(listener)) {
+                this.incQueryEngine.getLogger().error("Listener "+listener+" change level changed since initialization!");
                 listenerMap.remove(entry.getKey(), entry.getValue());
-                break; // listener is contained only once
+                return; // listener is contained only once
             }
         }
+        this.incQueryEngine.getLogger().error("Listener "+listener+" already removed from map (e.g. engine was already disposed)!");
     }
 
     private void notifyListeners() {

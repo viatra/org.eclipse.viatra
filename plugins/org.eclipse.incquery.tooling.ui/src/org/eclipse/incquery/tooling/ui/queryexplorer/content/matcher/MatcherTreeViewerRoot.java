@@ -55,11 +55,11 @@ public class MatcherTreeViewerRoot {
             // disposing IncQueryEngine instance associated to the given Notifier
             // EngineManager.getInstance().disposeEngine(notifier);
             ObservablePatternMatcherRoot root = this.roots.get(key);
+            root.dispose();
             AdvancedIncQueryEngine engine = root.getKey().getEngine();
             if (engine != null) {
                 engine.dispose();
             }
-            root.dispose();
             this.roots.remove(key);
             if (QueryExplorer.getInstance() != null) {
                 QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
