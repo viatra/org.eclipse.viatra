@@ -41,18 +41,15 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.internal.PatternSanitizer;
-import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.rete.construction.ReteContainerBuildable;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -339,6 +336,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         }
         wipe();
         
+        // called before base index disposal to allow removal of base listeners
+        lifecycleProvider.engineDisposed();
+        
         try{
 	        if (baseIndex != null) {
 	            baseIndex.dispose();
@@ -348,7 +348,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         			"The base index could not be disposed along with the EMF-InQuery engine, as there are still active listeners on it.");
         }
         getLogger().removeAppender(taintListener);
-        lifecycleProvider.engineDisposed();
     }
 
     @Override

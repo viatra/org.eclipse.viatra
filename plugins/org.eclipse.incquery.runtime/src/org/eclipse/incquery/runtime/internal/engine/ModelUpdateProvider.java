@@ -67,7 +67,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
             try {
                 this.incQueryEngine.getBaseIndex().addBaseIndexChangeListener(indexListener);
             } catch (IncQueryException e) {
-                throw new RuntimeException("Model update listener used on engine without base index", e);
+                throw new IllegalStateException("Model update listener used on engine without base index", e);
             }
         }
         
@@ -76,7 +76,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         // increase or keep max level of listeners
         ChangeLevel oldMaxLevel = maxLevel;
         maxLevel = maxLevel.changeOccured(changeLevel); 
-        if(maxLevel != oldMaxLevel  && ChangeLevel.MATCHSET.compareTo(oldMaxLevel) > 0 && ChangeLevel.MATCHSET.compareTo(maxLevel) <= 0) {
+        if(!maxLevel.equals(oldMaxLevel) && ChangeLevel.MATCHSET.compareTo(oldMaxLevel) > 0 && ChangeLevel.MATCHSET.compareTo(maxLevel) <= 0) {
             // add listener to new matchers (use lifecycle listener)
             this.incQueryEngine.addLifecycleListener(selfListener);
             // add matchUpdateListener to all matchers
@@ -97,11 +97,15 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         updateMaxLevel();
         
         if(listenerMap.isEmpty()) {
-            try {
-                this.incQueryEngine.getBaseIndex().removeBaseIndexChangeListener(indexListener);
-            } catch (IncQueryException e) {
-                throw new RuntimeException("Model update listener used on engine without base index", e);
-            }
+            removeBaseIndexChangeListener();
+        }
+    }
+
+    private void removeBaseIndexChangeListener() {
+        try {
+            this.incQueryEngine.getBaseIndex().removeBaseIndexChangeListener(indexListener);
+        } catch (IncQueryException e) {
+            throw new IllegalStateException("Model update listener used on engine without base index", e);
         }
     }
 
@@ -197,7 +201,11 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         public void engineWiped() {}
         
         @Override
-        public void engineDisposed() {}
+        public void engineDisposed() {
+            removeBaseIndexChangeListener();
+            listenerMap.clear();
+            maxLevel = ChangeLevel.NO_CHANGE;
+        }
         
         @Override
         public void engineBecameTainted() {}
