@@ -66,6 +66,8 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         if(listenerMap.isEmpty()) {
             try {
                 this.incQueryEngine.getBaseIndex().addBaseIndexChangeListener(indexListener);
+                // add listener to new matchers (use lifecycle listener)
+                this.incQueryEngine.addLifecycleListener(selfListener);
             } catch (IncQueryException e) {
                 throw new IllegalStateException("Model update listener used on engine without base index", e);
             }
@@ -77,8 +79,6 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         ChangeLevel oldMaxLevel = maxLevel;
         maxLevel = maxLevel.changeOccured(changeLevel); 
         if(!maxLevel.equals(oldMaxLevel) && ChangeLevel.MATCHSET.compareTo(oldMaxLevel) > 0 && ChangeLevel.MATCHSET.compareTo(maxLevel) <= 0) {
-            // add listener to new matchers (use lifecycle listener)
-            this.incQueryEngine.addLifecycleListener(selfListener);
             // add matchUpdateListener to all matchers
             for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
                 this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
@@ -97,6 +97,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         updateMaxLevel();
         
         if(listenerMap.isEmpty()) {
+            this.incQueryEngine.removeLifecycleListener(selfListener);
             removeBaseIndexChangeListener();
         }
     }
@@ -119,7 +120,6 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         }
         if(maxLevel.compareTo(ChangeLevel.MATCHSET) < 0) {
             // remove listener from matchers
-            this.incQueryEngine.removeLifecycleListener(selfListener);
             for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
                 this.incQueryEngine.removeMatchUpdateListener(matcher, matchSetListener);
             }
@@ -194,7 +194,9 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         
         @Override
         public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
-            ModelUpdateProvider.this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
+            if (maxLevel.compareTo(ChangeLevel.MATCHSET) > 0) {
+                ModelUpdateProvider.this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
+            }
         }
         
         @Override
