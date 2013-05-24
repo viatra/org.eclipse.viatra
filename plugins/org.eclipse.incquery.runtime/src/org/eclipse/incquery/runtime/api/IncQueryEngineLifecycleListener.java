@@ -14,7 +14,8 @@ package org.eclipse.incquery.runtime.api;
 /**
  * Listener interface for getting notification on changes in an {@link IncQueryEngine}.
  * 
- * You can use 
+ * You can use it to remove any other listeners that you attached to matchers or the engine,
+ * or to handle matchers that are initialized after you started using the engine.
  * 
  * @author Abel Hegedus
  *
