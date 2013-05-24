@@ -41,15 +41,19 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.internal.PatternSanitizer;
+import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.rete.construction.ReteContainerBuildable;
+import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
+import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -405,11 +409,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         checkArgument(listener != null, "Cannot add null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-       
-        ((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
-        // TODO the solution below turned out to be problematic, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=408459
-
-        /*
+        checkArgument(reteEngine != null, "Cannot register listener on matcher of disposed engine!");
+        //((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
@@ -421,29 +422,26 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             }
         };
         try {
-            reteEngine.accessMatcher(matcher.getPattern()).connect(callbackNode, listener, fireNow);
+            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getPattern());
+            patternMatcher.connect(callbackNode, listener, fireNow);
         } catch (RetePatternBuildException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Could not access matcher " + matcher.getPatternName(), e);
         }
-        */
     }
     
     @Override
 	public <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
-        checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-        ((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
-        // TODO the solution below turned out to be problematic, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=408459
-        /*
+        checkArgument(matcher.getEngine() == this, "Cannot remove listener from matcher of different engine!");
+        checkArgument(reteEngine != null, "Cannot remove listener from matcher of disposed engine!");
+        //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
         try {
-            reteEngine.accessMatcher(matcher.getPattern()).disconnectByTag(listener);
+            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getPattern());
+            patternMatcher.disconnectByTag(listener);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("Could not access matcher " + matcher.getPatternName(), e);
         }
-        */
     }
     
     @Override
