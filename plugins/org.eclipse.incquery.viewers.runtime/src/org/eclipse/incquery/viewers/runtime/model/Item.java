@@ -47,6 +47,9 @@ public class Item extends FormattableElement {
 
         @Override
         public boolean apply(Item item) {
+            if (item == null) {
+                return false;
+            }
             return item.getPolicy() == HierarchyPolicy.ROOT || item.getPolicy() == HierarchyPolicy.ALWAYS;
         }
     }
@@ -55,6 +58,9 @@ public class Item extends FormattableElement {
 
         @Override
         public boolean apply(Item item) {
+            if (item == null) {
+                return false;
+            }
             return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS;
         }
     }

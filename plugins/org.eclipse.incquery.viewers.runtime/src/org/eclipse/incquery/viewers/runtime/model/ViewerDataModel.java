@@ -164,7 +164,7 @@ public class ViewerDataModel {
                         if (element instanceof Item) {
                             Item item = (Item) element;
                             EObject paramObject = item.getParamObject();
-                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).equals(item)) {
+                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).contains(item)) {
                                 itemMap.remove(paramObject, element);
                             }
                         }
