@@ -77,26 +77,26 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		name
 	}
 	/**
-	 * Returns the MatcherFactoryClass name based on the Pattern's name
+	 * Returns the QuerySpecificationClass name based on the Pattern's name
 	 */
-	def matcherFactoryClassName(Pattern pattern) {
+	def querySpecificationClassName(Pattern pattern) {
 		var name = pattern.name
 		if (name.contains(".")) {
 			name = pattern.realPatternName
 		}
-		name.toFirstUpper+"MatcherFactory"
+		name.toFirstUpper+"QuerySpecification"
 	}
 	
 	/**
-	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 * Returns the IQuerySpecificationProvider class name based on the Pattern's name
 	 */
-	def matcherFactoryProviderClassName(Pattern pattern) {
+	def querySpecificationProviderClassName(Pattern pattern) {
 		"Provider"
 	}	
 	/**
-	 * Returns the IMatcherFactoryProvider class name based on the Pattern's name
+	 * Returns the holder class name based on the Pattern's name
 	 */
-	def matcherFactoryHolderClassName(Pattern pattern) {
+	def querySpecificationHolderClassName(Pattern pattern) {
 		"LazyHolder"
 	}	
 
@@ -271,9 +271,24 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	}
   	
   	/**
-  	 * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
+  	 * Returns the packageName: PatternModel.packageName or "" when nullOrEmpty.
   	 */
   	def getPackageName(Pattern pattern) {
+  		var packageName = (pattern.eContainer as PatternModel).packageName
+	   	if (packageName.nullOrEmpty) {
+	   		packageName = ""
+	   	}
+	   	return packageName.toLowerCase
+  	}
+  	
+  	def getUtilPackageName(Pattern pattern) {
+  		return getPackageName(pattern)+".util"
+  	}
+	
+	/**
+  	 * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
+  	 */
+  	def getPackageNameOld(Pattern pattern) {
   		var packageName = (pattern.eContainer as PatternModel).packageName
 	   	if (packageName.nullOrEmpty) {
 	   		packageName = ""
@@ -282,6 +297,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	   	}
 	   	return (packageName + pattern.name).toLowerCase
   	}
+	
 	
 	def getPackagePath(Pattern pattern) {
 		pattern.packageName.replace(".","/")

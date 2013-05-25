@@ -41,7 +41,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
-import org.eclipse.incquery.tooling.core.generator.GenerateMatcherFactoryExtension;
+import org.eclipse.incquery.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.incquery.tooling.core.generator.GenerateXExpressionEvaluatorExtension;
 import org.eclipse.incquery.tooling.core.generator.builder.xmi.XmiModelSupport;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment;
@@ -91,7 +91,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     private EclipseResourceSupport eclipseResourceSupport;
 
     @Inject
-    private GenerateMatcherFactoryExtension matcherFactoryExtensionGenerator;
+    private GenerateQuerySpecificationExtension querySpecificationExtensionGenerator;
 
     @Inject
     private GenerateXExpressionEvaluatorExtension xExpressionEvaluatorExtensionGenerator;
@@ -168,7 +168,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
     /**
      * From all {@link Pattern} instance in the current deltaResource, computes various additions to the modelProject,
-     * and executes the provided fragments. Various contribution: package export, MatcherFactory extension, validation
+     * and executes the provided fragments. Various contribution: package export, QuerySpecification extension, validation
      * constraint stuff.
      * 
      * @param deltaResource
@@ -192,13 +192,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
                 if (isPublic || CorePatternLanguageHelper.hasCheckExpression(pattern)) {
                     if (isPublic) {
-                        Iterable<IPluginExtension> matcherFactoryExtensionContribution = matcherFactoryExtensionGenerator
+                        Iterable<IPluginExtension> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
                                 .extensionContribution(pattern, extensionGenerator);
-                        ensureSupport.appendAllExtension(project, matcherFactoryExtensionContribution);
+                        ensureSupport.appendAllExtension(project, querySpecificationExtensionContribution);
                     }
                     doPostGenerateExpressionEvaluator(project, extensionGenerator, pattern);
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
+                    ensureSupport.exportPackage(project, util.getUtilPackageName(pattern));
                 }
             }
         }

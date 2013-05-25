@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -24,6 +24,7 @@ import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Item.ChildItem;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -102,12 +104,16 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     Map<Item, Item> parentMap;
     private AbstractTreeViewer viewer;
 
+    public TreeContentProvider() {
+        super(true);
+    }
+    
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         this.viewer = (AbstractTreeViewer) viewer;
         super.initializeContent(viewer, vmodel, filter);
 
         if (vmodel == null) {
-            containmentList = new ObservableList(new ArrayList(), new Object()) {};
+            containmentList = new ObservableList(Collections.emptyList(), new Object()) {};
         }
         else {
             if (filter == null) {
@@ -137,7 +143,8 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof Item) {
             Collection<Item> children = elementMap.get((Item) parentElement);
-            return children.toArray(new Item[children.size()]);
+
+            return Iterables.toArray(Iterables.filter(children, new ChildItem()), Item.class);
         }
         return null;
     }
@@ -155,7 +162,7 @@ public class TreeContentProvider extends ListContentProvider implements ITreeCon
      */
     @Override
     public boolean hasChildren(Object element) {
-        return !(elementMap.get((Item) element).isEmpty());
+        return elementMap.containsKey((Item)element);
     }
 
     /*

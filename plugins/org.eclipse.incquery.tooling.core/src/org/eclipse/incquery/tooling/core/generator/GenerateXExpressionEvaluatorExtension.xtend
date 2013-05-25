@@ -28,7 +28,7 @@ class GenerateXExpressionEvaluatorExtension {
 			exGen.contribExtension(pattern.fullyQualifiedName, IExtensions::XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID) [
 				exGen.contribElement(it, "evaluator") [
 					exGen.contribAttribute(it, "id", expressionUniqueID)
-					exGen.contribAttribute(it, "evaluatorClass", pattern.packageName + "." + pattern.evaluatorClassName + expressionUniqueNameInPattern)
+					exGen.contribAttribute(it, "evaluatorClass", pattern.utilPackageName + "." + pattern.evaluatorClassName + expressionUniqueNameInPattern)
 				]
 			]
 		)

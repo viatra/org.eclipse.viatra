@@ -28,9 +28,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -57,6 +58,7 @@ public class ObservablePatternMatcher {
     private String orderParameter;
     private boolean descendingOrder;
     private final String exceptionMessage;
+    private IncQueryModelUpdateListener modelUpdateListener;
 
     public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher,
             String patternFqn, boolean generated, String exceptionMessage) {
@@ -68,7 +70,7 @@ public class ObservablePatternMatcher {
         this.orderParameter = null;
         this.exceptionMessage = exceptionMessage;
 
-        DatabindingUtil.removeOrderByPatternWarning(patternFqn);
+        DisplayUtil.removeOrderByPatternWarning(patternFqn);
 
         if (matcher != null) {
             initOrdering();
@@ -93,7 +95,20 @@ public class ObservablePatternMatcher {
                 }
             };
 
-            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
+            modelUpdateListener = new IncQueryModelUpdateListener() {
+                
+                @Override
+                public void notifyChanged(ChangeLevel changeLevel) {
+                    processMatchesRunnable.run();
+                }
+                
+                @Override
+                public ChangeLevel getLevel() {
+                    return ChangeLevel.MATCHSET;
+                }
+            };
+            parent.getKey().getEngine().addModelUpdateListener(modelUpdateListener);
+//            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
             this.processMatchesRunnable.run();
         }
     }
@@ -103,7 +118,7 @@ public class ObservablePatternMatcher {
      */
     private void initOrdering() {
         Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(matcher.getPattern(),
-                DatabindingUtil.ORDERBY_ANNOTATION);
+                DisplayUtil.ORDERBY_ANNOTATION);
         if (annotation != null) {
             for (AnnotationParameter ap : annotation.getParameters()) {
                 if (ap.getName().matches("key")) {
@@ -129,7 +144,8 @@ public class ObservablePatternMatcher {
             for (ObservablePatternMatch pm : matches) {
                 pm.dispose();
             }
-            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+            parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
+//            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
             processMatchesRunnable = null;
         }
     }
@@ -177,12 +193,12 @@ public class ObservablePatternMatcher {
                         }
                     }
                 } else {
-                    DatabindingUtil.addOrderByPatternWarning(
+                    DisplayUtil.addOrderByPatternWarning(
                             CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
                             KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
                 }
             } else {
-                DatabindingUtil.addOrderByPatternWarning(
+                DisplayUtil.addOrderByPatternWarning(
                         CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
                         KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
             }
@@ -243,11 +259,13 @@ public class ObservablePatternMatcher {
 
     private void initFilter() {
         if (matcher != null) {
-            parameterFilter = new Object[this.matcher.getParameterNames().length];
+            final int arity = this.matcher.getParameterNames().size();
+			parameterFilter = new Object[arity];
 
-            for (int i = 0; i < this.matcher.getParameterNames().length; i++) {
-                parameterFilter[i] = null;
-            }
+			// WTF was this here?
+//            for (int i = 0; i < arity; i++) {
+//                parameterFilter[i] = null;
+//            }
 
             this.filter = this.matcher.newMatch(parameterFilter);
         }
@@ -272,7 +290,7 @@ public class ObservablePatternMatcher {
 
     private boolean isFiltered() {
         if (matcher != null) {
-            for (int i = 0; i < this.matcher.getParameterNames().length; i++) {
+            for (int i = 0; i < this.matcher.getParameterNames().size(); i++) {
                 if (parameterFilter[i] != null) {
                     return true;
                 }
@@ -297,7 +315,7 @@ public class ObservablePatternMatcher {
      * @return the label
      */
     public String getText() {
-        return DatabindingUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(),
+        return DisplayUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(),
                 exceptionMessage);
     }
 
@@ -335,6 +353,7 @@ public class ObservablePatternMatcher {
      * the user
      */
     public void stopMonitoring() {
-        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+    	parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
+//        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
     }
 }

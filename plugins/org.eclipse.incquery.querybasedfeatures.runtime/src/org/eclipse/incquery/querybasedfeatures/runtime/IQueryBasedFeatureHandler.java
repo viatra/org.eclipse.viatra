@@ -30,11 +30,4 @@ public interface IQueryBasedFeatureHandler {
 
     EList getManyReferenceValueAsEList(Object source);
 
-    /**
-     * Called when getValue method is called for Iteration kind
-     * 
-     * @return the value of the feature
-     */
-    Object getValueIteration(Object source);
-
 }

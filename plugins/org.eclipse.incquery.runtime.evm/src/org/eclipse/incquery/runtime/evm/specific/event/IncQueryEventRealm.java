@@ -12,8 +12,8 @@ package org.eclipse.incquery.runtime.evm.specific.event;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
@@ -93,7 +93,7 @@ public class IncQueryEventRealm implements EventRealm {
         return new IncQueryEventFilter<Match>(filterMatch);
     }
     
-    public static <Match extends IPatternMatch> IncQueryEventSourceSpecification<Match> createSourceSpecification(IMatcherFactory<? extends IncQueryMatcher<Match>> factory){
+    public static <Match extends IPatternMatch> IncQueryEventSourceSpecification<Match> createSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory){
         return new IncQueryEventSourceSpecification<Match>(factory);
     }
     

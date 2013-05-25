@@ -50,6 +50,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 	@Test
 	def validateEnum() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -63,6 +64,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 	@Test
 	def validateQualifiedEnum() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -76,6 +78,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 	@Test
 	def validateQualifiedEnumWithEquality() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -91,6 +94,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 	@Test
 	def validateIncorrectEnum() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -103,6 +107,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 	@Test
 	def validateEnumConstraintPatternCall() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 

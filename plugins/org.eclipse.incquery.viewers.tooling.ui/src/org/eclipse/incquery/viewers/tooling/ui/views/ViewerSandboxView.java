@@ -25,8 +25,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
@@ -67,7 +67,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     private List<IViewerSandboxTab> tabList;
     private CTabFolder folder;
-    private IncQueryEngine engine;
+    private AdvancedIncQueryEngine engine;
 
     public static ViewerSandboxView getInstance() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -219,19 +219,18 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (resourceSet != null) {
-            ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns),
-                    getEngine(resourceSet));
+            ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns), getEngine(resourceSet));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindModel(viewmodel, filter);
             }
         }
     }
 
-    private IncQueryEngine getEngine(ResourceSet resourceSet) throws IncQueryException {
+    private AdvancedIncQueryEngine getEngine(ResourceSet resourceSet) throws IncQueryException {
         if (engine != null) {
             engine.dispose();
         }
-        engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(resourceSet);
+        engine = IncQueryEngineManager.getInstance().createAdvancedIncQueryEngine(resourceSet);
         return engine;
     }
 

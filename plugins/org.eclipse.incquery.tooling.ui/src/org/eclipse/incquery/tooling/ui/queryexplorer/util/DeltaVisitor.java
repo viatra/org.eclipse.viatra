@@ -33,7 +33,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
         if (res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
 
             IFile file = (IFile) res;
-            if (PatternRegistry.getInstance().getFiles().contains(file)) {
+            if (QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
                 RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file);
                 injector.injectMembers(registrator);
                 Display.getDefault().asyncExec(registrator);

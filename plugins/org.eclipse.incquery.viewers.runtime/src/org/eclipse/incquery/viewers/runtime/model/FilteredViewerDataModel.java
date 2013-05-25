@@ -26,7 +26,7 @@ public class FilteredViewerDataModel {
     public FilteredViewerDataModel(ViewerDataModel model, ViewerDataFilter filter) {
         super();
         this.model = model;
-        this.filter = filter;
+        this.filter = ViewerDataFilter.cloneFilter(filter);
     }
 
     public ViewerDataModel getModel() {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.base.core;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +40,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -48,10 +52,10 @@ import com.google.common.collect.Multiset;
 public class NavigationHelperImpl implements NavigationHelper {
 
     protected boolean inWildcardMode;
-    protected HashSet<EClass> directlyObservedClasses;
-    protected HashSet<EClass> allObservedClasses = null; // including subclasses
-    protected HashSet<EDataType> observedDataTypes;
-    protected HashSet<EStructuralFeature> observedFeatures;
+    protected Set<EClass> directlyObservedClasses;
+    protected Set<EClass> allObservedClasses = null; // including subclasses
+    protected Set<EDataType> observedDataTypes;
+    protected Set<EStructuralFeature> observedFeatures;
 
     protected Notifier notifier;
     protected Set<Notifier> modelRoots;
@@ -64,11 +68,13 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * These global listeners will be called after updates.
      */
-    protected Set<Runnable> afterUpdateCallbacks;
+    //private final Set<Runnable> afterUpdateCallbacks;
+    private final Set<IncQueryBaseIndexChangeListener> baseIndexChangeListeners;
 
     private final Map<InstanceListener, Collection<EClass>> instanceListeners;
     private final Map<FeatureListener, Collection<EStructuralFeature>> featureListeners;
     private final Map<DataTypeListener, Collection<EDataType>> dataTypeListeners;
+    private final Map<LightweightEObjectObserver, Collection<EObject>> lightweightObservers;
 
     /**
      * Feature registration and model traversal is delayed while true
@@ -122,12 +128,14 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.instanceListeners = new HashMap<InstanceListener, Collection<EClass>>();
         this.featureListeners = new HashMap<FeatureListener, Collection<EStructuralFeature>>();
         this.dataTypeListeners = new HashMap<DataTypeListener, Collection<EDataType>>();
+        this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
         this.directlyObservedClasses = new HashSet<EClass>();
         this.observedFeatures = new HashSet<EStructuralFeature>();
         this.observedDataTypes = new HashSet<EDataType>();
         this.contentAdapter = new NavigationHelperContentAdapter(this, dynamicModel);
         // this.visitor = new NavigationHelperVisitor(this);
-        this.afterUpdateCallbacks = new HashSet<Runnable>();
+        //this.afterUpdateCallbacks = new HashSet<Runnable>();
+        this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
 
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
@@ -146,7 +154,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return contentAdapter;
     }
 
-    public HashSet<EStructuralFeature> getObservedFeatures() {
+    public Set<EStructuralFeature> getObservedFeatures() {
         return observedFeatures;
     }
 
@@ -156,6 +164,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void dispose() {
+    	ensureNoListenersForDispose();
         for (Notifier root : modelRoots) {
             contentAdapter.removeAdapter(root);
         }
@@ -375,7 +384,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+    public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {
         Collection<EClass> registered = this.instanceListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EClass>();
@@ -385,7 +394,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+    public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener) {
         Collection<EClass> restriction = this.instanceListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(classes);
@@ -396,7 +405,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EStructuralFeature>();
@@ -406,7 +415,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> restriction = this.featureListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(features);
@@ -417,7 +426,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void registerDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+    public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
         Collection<EDataType> registered = this.dataTypeListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EDataType>();
@@ -427,7 +436,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+    public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
         Collection<EDataType> restriction = this.dataTypeListeners.get(listener);
         if (restriction != null) {
             restriction.removeAll(types);
@@ -455,33 +464,74 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Set<EDataType> getObservedDataTypes() {
         return observedDataTypes;
     }
+    
+    @Override
+    public void addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject){
+        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+        if(observedObjects == null) {
+            observedObjects = new HashSet<EObject>();
+            observedObjects.add(observedObject);
+        }
+        lightweightObservers.put(observer, observedObjects);
+    }
+    
+    @Override
+    public void removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
+        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+        if(observedObjects != null) {
+            observedObjects.remove(observedObject);
+            if(observedObjects.isEmpty()) {
+                lightweightObservers.remove(observer);
+            }
+        }
+    }
+    
+    /**
+     * @return the lightweightObservers
+     */
+    public Map<LightweightEObjectObserver, Collection<EObject>> getLightweightObservers() {
+        return lightweightObservers;
+    }
 
     /**
      * These runnables will be called after updates by the manipulationListener at its own discretion. Can be used e.g.
      * to check delta monitors.
+     * 
+     * @deprecated use {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)} instead! 
      */
-    @Override
-    public Set<Runnable> getAfterUpdateCallbacks() {
-        return afterUpdateCallbacks;
-    }
+//    @Override
+//    public Set<Runnable> getAfterUpdateCallbacks() {
+//        return afterUpdateCallbacks;
+//    }
 
     /**
      * This will run after updates.
      */
-    // * If there are any such, updates are settled before they are run.
-    public void runAfterUpdateCallbacks() {
-        if (!afterUpdateCallbacks.isEmpty()) {
-            // settle();
-            for (Runnable runnable : new ArrayList<Runnable>(afterUpdateCallbacks)) {
+    protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
+        if (!baseIndexChangeListeners.isEmpty()) {
+            for (IncQueryBaseIndexChangeListener listener : new ArrayList<IncQueryBaseIndexChangeListener>(baseIndexChangeListeners)) {
                 try {
-                    runnable.run();
+                    if(!listener.onlyOnIndexChange() || baseIndexChanged) {
+                        listener.notifyChanged(baseIndexChanged);
+                    }
                 } catch (Exception ex) {
                     logger.fatal("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
                             ex);
-                    // throw new IncQueryRuntimeException(IncQueryRuntimeException.EMF_MODEL_PROCESSING_ERROR, ex);
                 }
             }
         }
+    }
+
+    @Override
+    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+        checkArgument(listener != null, "Cannot add null listener!");
+        baseIndexChangeListeners.add(listener);
+    }
+
+    @Override
+    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+        checkArgument(listener != null, "Cannot remove null listener!");
+        baseIndexChangeListeners.remove(listener);
     }
 
     protected void considerForExpansion(EObject obj) {
@@ -499,7 +549,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 expansionAllowed = true;
             }
             contentAdapter.addAdapter(root);
-            contentAdapter.runCallbacksIfDirty();
+            contentAdapter.notifyBaseIndexChangeListeners();
         }
     }
 
@@ -778,7 +828,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (Notifier root : modelRoots) {
             EMFModelComprehension.traverseModel(visitor, root);
         }
-        contentAdapter.runCallbacksIfDirty();
+        contentAdapter.notifyBaseIndexChangeListeners();
     }
 
     /**
@@ -850,6 +900,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         expandToAdditionalRoot(emfRoot);
     }
     
+    @Override
+    public Set<EClass> getAllCurrentClasses() {
+    	return contentAdapter.getAllCurrentClasses();
+    }
+    
     protected void processingError(Throwable ex, String task) {
         contentAdapter.processingError(ex, task);
     }
@@ -864,5 +919,10 @@ public class NavigationHelperImpl implements NavigationHelper {
     		if (!Collections.disjoint(observedTypes, listenerTypes))
     			throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
     }
+    private void ensureNoListenersForDispose() {
+    	if (!(baseIndexChangeListeners.isEmpty() && featureListeners.isEmpty() && dataTypeListeners.isEmpty() && instanceListeners.isEmpty()))
+    		throw new IllegalStateException("Cannot dispose while there are active listeners");
+    }
+
 
 }

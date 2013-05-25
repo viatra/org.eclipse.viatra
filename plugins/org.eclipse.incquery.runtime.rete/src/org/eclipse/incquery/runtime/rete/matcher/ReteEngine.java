@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.rete.matcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -58,6 +57,8 @@ public class ReteEngine<PatternDescription> {
     protected IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
+    
+    private boolean disposedOrUninitialized = true;
 
     // while RETE does its job.
 
@@ -86,7 +87,7 @@ public class ReteEngine<PatternDescription> {
      * initializes engine components
      */
     synchronized private void initEngine() {
-
+    	this.disposedOrUninitialized = false;
         this.disconnectables = new LinkedList<Disconnectable>();
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
@@ -108,6 +109,7 @@ public class ReteEngine<PatternDescription> {
      * deconstructs engine components
      */
     synchronized private void deconstructEngine() {
+    	ensureInitialized();
         reteNet.kill();
 
         for (Disconnectable disc : disconnectables) {
@@ -125,6 +127,7 @@ public class ReteEngine<PatternDescription> {
         this.manipulationListener = null;
         this.traceListener = null;
 
+    	this.disposedOrUninitialized = true;
     }
 
     /**
@@ -160,7 +163,8 @@ public class ReteEngine<PatternDescription> {
      */
     public synchronized RetePatternMatcher accessMatcher(final PatternDescription gtPattern)
             throws RetePatternBuildException {
-        RetePatternMatcher matcher;
+    	ensureInitialized();
+    	RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
         // String name = gtPattern.getName();
         // String fqn = namespace + "." + name;
@@ -221,7 +225,8 @@ public class ReteEngine<PatternDescription> {
      */
     public synchronized void buildMatchersCoalesced(final Collection<PatternDescription> patterns)
             throws RetePatternBuildException {
-        context.modelReadLock();
+    	ensureInitialized();
+       context.modelReadLock();
         try {
             if (parallelExecutionEnabled)
                 reteNet.getStructuralChangeLock().lock();
@@ -317,6 +322,7 @@ public class ReteEngine<PatternDescription> {
      * @return the Indexer.
      */
     synchronized Indexer accessProjection(Production production, TupleMask mask) {
+    	ensureInitialized();
         Library library = reteNet.getHeadContainer().getLibrary();
         Indexer result = library.peekProjectionIndexer(production, mask);
         if (result == null) {
@@ -364,6 +370,7 @@ public class ReteEngine<PatternDescription> {
      * Waits until the pattern matcher is in a steady state and output can be retrieved.
      */
     public void settle() {
+    	ensureInitialized();
         reteNet.waitForReteTermination();
     }
 
@@ -375,6 +382,7 @@ public class ReteEngine<PatternDescription> {
      *            the action to be run when reaching the steady-state.
      */
     public void settle(Runnable action) {
+    	ensureInitialized();
         reteNet.waitForReteTermination(action);
     }
 
@@ -389,13 +397,15 @@ public class ReteEngine<PatternDescription> {
      * @return the reteNet
      */
     public Network getReteNet() {
-        return reteNet;
+       ensureInitialized();
+       return reteNet;
     }
 
     /**
      * @return the boundary
      */
     public ReteBoundary<PatternDescription> getBoundary() {
+    	ensureInitialized();
         return boundary;
     }
 
@@ -412,6 +422,7 @@ public class ReteEngine<PatternDescription> {
      */
     public void setBuilder(
             IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder) {
+    	ensureInitialized();
         this.builder = builder;
     }
 
@@ -419,13 +430,15 @@ public class ReteEngine<PatternDescription> {
      * @return the manipulationListener
      */
     public IManipulationListener getManipulationListener() {
-        return manipulationListener;
+    	ensureInitialized();
+       return manipulationListener;
     }
 
     /**
      * @return the traceListener
      */
     public IPredicateTraceListener geTraceListener() {
+    	ensureInitialized();
         return traceListener;
     }
 
@@ -434,6 +447,7 @@ public class ReteEngine<PatternDescription> {
      *            the new Disconnectable adapter.
      */
     public void addDisconnectable(Disconnectable disc) {
+    	ensureInitialized();
         disconnectables.add(disc);
     }
 
@@ -448,11 +462,13 @@ public class ReteEngine<PatternDescription> {
      * @return the context
      */
     public IPatternMatcherRuntimeContext<PatternDescription> getContext() {
+    	ensureInitialized();
         return context;
     }
 
     public IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> getBuilder() {
-        return builder;
+    	ensureInitialized();
+       return builder;
     }
 
     // /**
@@ -475,5 +491,11 @@ public class ReteEngine<PatternDescription> {
     // public Throwable getNextLoggedEvaluatorException() {
     // return caughtExceptions.poll();
     // }
+    
+    void ensureInitialized() {
+    	if (disposedOrUninitialized)
+    		throw new IllegalStateException("Trying to use a Rete engine that has been disposed or has not yet been initialized.");
+    	
+    }
 
 }

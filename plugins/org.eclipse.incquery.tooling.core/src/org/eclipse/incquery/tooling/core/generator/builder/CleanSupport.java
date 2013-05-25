@@ -37,7 +37,7 @@ import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum;
-import org.eclipse.incquery.tooling.core.generator.GenerateMatcherFactoryExtension;
+import org.eclipse.incquery.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.incquery.tooling.core.generator.GenerateXExpressionEvaluatorExtension;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
@@ -132,7 +132,7 @@ public class CleanSupport {
         cleanAllFragment(modelProject);
         // clean current model project
         List<Pair<String, String>> removableExtensions = new ArrayList<Pair<String, String>>();
-        removableExtensions.addAll(GenerateMatcherFactoryExtension.getRemovableExtensionIdentifiers());
+        removableExtensions.addAll(GenerateQuerySpecificationExtension.getRemovableExtensionIdentifiers());
         removableExtensions.addAll(GenerateXExpressionEvaluatorExtension.getRemovableExtensionIdentifiers());
         ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);
         removeExportedPackages(modelProject);
@@ -312,7 +312,7 @@ public class CleanSupport {
         // only the extension id and point name is needed for removal
         String extensionId = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         ensureSupport
-                .removeExtension(modelProject, Pair.of(extensionId, IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID));
+                .removeExtension(modelProject, Pair.of(extensionId, IExtensions.QUERY_SPECIFICATION_EXTENSION_POINT_ID));
         ensureSupport.removeExtension(modelProject,
                 Pair.of(extensionId, IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
     }
@@ -320,7 +320,7 @@ public class CleanSupport {
     private List<String> getPathsForJvmInferredClasses(Pattern pattern) {
         final String packageName = jvmInferrerUtil.getPackagePath(pattern);
         List<String> classNames = Lists.newArrayList(jvmInferrerUtil.matchClassName(pattern),
-                jvmInferrerUtil.matcherClassName(pattern), jvmInferrerUtil.matcherFactoryClassName(pattern),
+                jvmInferrerUtil.matcherClassName(pattern), jvmInferrerUtil.querySpecificationClassName(pattern),
                 jvmInferrerUtil.processorClassName(pattern));
         return Lists.transform(classNames, new Function<String, String>() {
             @Override

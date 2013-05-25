@@ -24,7 +24,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
@@ -48,7 +48,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableNoReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			
 			pattern testPattern(p) = {
 				Pattern(h);
@@ -61,7 +62,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableOnePositiveReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(p) = {
 				Pattern(p);
@@ -73,7 +75,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testParametersEqualityError() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(p, p2) = {
 				p == p2;
@@ -88,7 +91,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableOneNegativeReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -103,7 +107,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
@@ -122,7 +127,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableNoPositiveReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -141,7 +147,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariablePositiveReferenceAsParameter() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -159,7 +166,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testSymbolicVariableAllReferences() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -179,7 +187,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOnePositiveReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(c) = {
 				Pattern(c);
@@ -192,7 +201,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOneNegativeReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(P) = {
 				Pattern(P);
@@ -208,7 +218,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
@@ -227,7 +238,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableMultiplePositiveReferences() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(c) = {
 				Pattern(c);
@@ -241,7 +253,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOnePositiveOneNegativeReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -258,7 +271,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOnePositiveOneReadOnlyReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
@@ -277,7 +291,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testMultipleUseOfSingleUseVariables() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(c) = {
 				Pattern(c);
@@ -290,7 +305,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testReadOnlyReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern testPattern(c) = {
 				Pattern(c);
@@ -304,7 +320,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableMultipleNegativeReferences() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern helper(p) = {
 				Pattern(p);
@@ -326,7 +343,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableOneNegativeOneReadOnlyReference() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {
@@ -346,7 +364,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 	@Test
 	def testLocalVariableMultipleReadOnlyReferences() {
 		val model = parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern helper(p) = {

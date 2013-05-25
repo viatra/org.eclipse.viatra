@@ -15,11 +15,11 @@ import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternGroup;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
 /**
@@ -32,31 +32,32 @@ public abstract class BasePatternGroup implements IPatternGroup {
 
     @Override
     public void prepare(Notifier emfRoot) throws IncQueryException {
-        prepare(EngineManager.getInstance().getIncQueryEngine(emfRoot));
+        prepare(IncQueryEngine.on(emfRoot));
     }
 
     @Override
     public void prepare(IncQueryEngine engine) throws IncQueryException {
         try {
             final Set<Pattern> patterns = getPatterns();
-            engine.getSanitizer().admit(patterns);
-            engine.getReteEngine().buildMatchersCoalesced(patterns);
+            final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
+			engineImpl.getSanitizer().admit(patterns);
+			engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
         } catch (RetePatternBuildException e) {
             throw new IncQueryException(e);
         }
     }
 
     /**
-     * Returns a set of {@link Pattern} objects, accessible from the {@link IMatcherFactory} objects.
+     * Returns a set of {@link Pattern} objects, accessible from the {@link IQuerySpecification} objects.
      * 
-     * @see IMatcherFactory#getPattern()
-     * @param matcherFactories
+     * @see IQuerySpecification#getPattern()
+     * @param querySpecifications
      * @return
      */
-    public static Set<Pattern> patterns(Set<IMatcherFactory<?>> matcherFactories) {
+    public static Set<Pattern> patterns(Set<IQuerySpecification<?>> querySpecifications) {
         Set<Pattern> result = new HashSet<Pattern>();
-        for (IMatcherFactory<?> factory : matcherFactories) {
-            result.add(factory.getPattern());
+        for (IQuerySpecification<?> querySpecification : querySpecifications) {
+            result.add(querySpecification.getPattern());
         }
         return result;
     }

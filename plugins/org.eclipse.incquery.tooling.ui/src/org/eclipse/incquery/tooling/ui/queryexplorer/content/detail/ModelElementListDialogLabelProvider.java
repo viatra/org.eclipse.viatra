@@ -14,7 +14,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -46,7 +46,7 @@ public class ModelElementListDialogLabelProvider implements ILabelProvider {
         if (element instanceof EObject) {
             EObject eObj = (EObject) element;
             URI uri = eObj.eClass().eResource().getURI();
-            AdapterFactoryLabelProvider al = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+            AdapterFactoryLabelProvider al = DisplayUtil.getAdapterFactoryLabelProvider(uri);
             if (al != null) {
                 return al.getImage(element);
             }
@@ -59,7 +59,7 @@ public class ModelElementListDialogLabelProvider implements ILabelProvider {
         if (element instanceof EObject) {
             EObject eObj = (EObject) element;
             URI uri = eObj.eClass().eResource().getURI();
-            AdapterFactoryLabelProvider al = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+            AdapterFactoryLabelProvider al = DisplayUtil.getAdapterFactoryLabelProvider(uri);
             if (al != null) {
                 return al.getText(element);
             }

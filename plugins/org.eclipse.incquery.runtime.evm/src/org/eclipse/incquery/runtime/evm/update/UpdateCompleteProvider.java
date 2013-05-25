@@ -31,16 +31,30 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
 
     @Override
     public boolean addUpdateCompleteListener(final IUpdateCompleteListener listener, final boolean fireNow) {
+        boolean empty = listeners.isEmpty();
         boolean added = listeners.add(listener);
         if (added) {
-            listener.updateComplete();
+            if(empty) {
+                firstListenerAdded();
+            }
+            if(fireNow) {
+                listener.updateComplete();
+            }
         }
         return added;
     }
+    
+    protected void firstListenerAdded() {};
+    
+    protected void lastListenerRemoved() {};
 
     @Override
     public boolean removeUpdateCompleteListener(final IUpdateCompleteListener listener) {
-        return this.listeners.remove(listener);
+        boolean removed = this.listeners.remove(listener);
+        if(removed && listeners.isEmpty()) {
+            lastListenerRemoved();
+        }
+        return removed;
     }
 
     /**
@@ -56,6 +70,9 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
      * Disposes of the provider by clearing the listener list
      */
     public void dispose() {
+        if(!listeners.isEmpty()) {
+            lastListenerRemoved();
+        }
         listeners.clear();
     }
 

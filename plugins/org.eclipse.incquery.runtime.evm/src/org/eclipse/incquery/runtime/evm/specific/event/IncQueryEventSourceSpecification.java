@@ -12,8 +12,8 @@ package org.eclipse.incquery.runtime.evm.specific.event;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.event.AbstractRuleInstanceBuilder;
@@ -28,7 +28,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 public class IncQueryEventSourceSpecification<Match extends IPatternMatch> implements EventSourceSpecification<Match> {
 
-    private IMatcherFactory<? extends IncQueryMatcher<Match>> factory;
+    private IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification;
     private final EventFilter<Match> EMPTY_FILTER = new EventFilter<Match>() {
         @Override
         public boolean isProcessable(Match eventAtom) {
@@ -36,9 +36,9 @@ public class IncQueryEventSourceSpecification<Match extends IPatternMatch> imple
         }
     };
     
-    protected IncQueryEventSourceSpecification(IMatcherFactory<? extends IncQueryMatcher<Match>> factory) {
-        checkArgument(factory != null, "Cannot create source definition for null factory!");
-        this.factory = factory;
+    protected IncQueryEventSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory) {
+        checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
+        this.querySpecification = factory;
     }
 
     public EventFilter<Match> createFilter(Match eventAtom) {
@@ -57,14 +57,14 @@ public class IncQueryEventSourceSpecification<Match extends IPatternMatch> imple
     }
     
     /**
-     * @return the factory
+     * @return the querySpecification
      */
-    public IMatcherFactory<? extends IncQueryMatcher<Match>> getFactory() {
-        return factory;
+    public IQuerySpecification<? extends IncQueryMatcher<Match>> getQuerySpecification() {
+        return querySpecification;
     }
     
     protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
-        IncQueryMatcher<Match> matcher = factory.getMatcher(engine);
+        IncQueryMatcher<Match> matcher = querySpecification.getMatcher(engine);
         return matcher;
     }
     

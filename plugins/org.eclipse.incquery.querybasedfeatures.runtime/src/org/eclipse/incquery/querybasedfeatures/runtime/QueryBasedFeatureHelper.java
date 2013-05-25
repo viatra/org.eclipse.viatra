@@ -20,11 +20,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * Utility class for instantiating query-based feature handlers ({@link IQueryBasedFeatureHandler}).
@@ -84,7 +87,7 @@ public final class QueryBasedFeatureHelper {
                 while (top.eContainer() != null) {
                     top = top.eContainer();
                 }
-                if(top != source) {
+                if(!top.equals(source)) {
                     return prepareNotifierForSource(top);
                 }
             }
@@ -132,26 +135,57 @@ public final class QueryBasedFeatureHelper {
             return derivedFeature;
         }
 
-        QueryBasedFeatureHandler newDerivedFeature = new QueryBasedFeatureHandler(feature, kind, keepCache);
-        features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(newDerivedFeature));
+        QueryBasedFeature newFeature = createQueryBasedFeature(feature, kind, keepCache);
+        if(newFeature == null) {
+            IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed, feature kind " + kind + " not supported!");
+            return null;
+        }
+        
+        QueryBasedFeatureHandler queryBasedFeatureHandler = new QueryBasedFeatureHandler(newFeature);
+        features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
-        IMatcherFactory<?> matcherFactory = MatcherFactoryRegistry.getMatcherFactory(patternFQN);
-        if (matcherFactory != null) {
+        @SuppressWarnings("unchecked")
+        IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+        if (querySpecification != null) {
             try {
-                IncQueryMatcher<?> matcher = matcherFactory.getMatcher(notifier);
-                newDerivedFeature.initialize(matcher, sourceParamName, targetParamName);
-                newDerivedFeature.startMonitoring();
+                IncQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
+                newFeature.initialize(matcher, sourceParamName, targetParamName);
+                newFeature.startMonitoring();
             } catch (IncQueryException e) {
-                IncQueryEngine.getDefaultLogger().error("Handler initialization failed", e);
+            	IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
                 return null;
             }
         } else {
-            IncQueryEngine
+        	IncQueryLoggingUtil
                     .getDefaultLogger()
-                    .error("Handler initialization failed, matcher factory is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
+                    .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
         }
 
-        return newDerivedFeature;
+        return queryBasedFeatureHandler;
+    }
+
+    private static QueryBasedFeature createQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind,
+            boolean keepCache) {
+        QueryBasedFeature newFeature = null;
+        switch(kind) {
+            case SINGLE_REFERENCE:
+                newFeature = QueryBasedFeatures.newSingleValueFeature(feature, keepCache);
+                break;
+            case MANY_REFERENCE:
+                newFeature = QueryBasedFeatures.newMultiValueFeatue(feature, keepCache);
+                break;
+            case SUM:
+                newFeature = QueryBasedFeatures.newSumFeature(feature);
+                break;
+            case COUNTER:
+                newFeature = QueryBasedFeatures.newCounterFeature(feature);
+                break;
+            case ITERATION:
+                // fall-through
+            default:
+                break;
+        }
+        return newFeature;
     }
 
     /**

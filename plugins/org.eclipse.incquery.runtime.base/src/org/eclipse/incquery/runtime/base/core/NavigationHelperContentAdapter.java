@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -28,7 +27,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -40,16 +38,19 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
+import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
@@ -91,6 +92,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // static for eclass -> all subtypes in knownClasses
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
 
+    // static maps between metamodel elements and their unique IDs
+    private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
+    private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
+    private static Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
+    private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
+
     // move optimization to avoid removing and re-adding entire subtrees
     EObject ignoreInsertionAndDeletion = null;
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
@@ -101,7 +108,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private Multimap<String, EStructuralFeature> knownFeatures = null;
 
     private boolean isDynamicModel;
-    private static Map<ENamedElement, String> cachedId = new WeakHashMap<ENamedElement, String>();
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper, boolean isDynamicModel) {
         this.navigationHelper = navigationHelper;
@@ -119,37 +125,38 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @param classifier
      * @return A unique string id generated from the classifier's package nsuri and the name.
      */
-    static String getUniqueIdentifier(EClassifier classifier) {
-        Preconditions.checkArgument(!classifier.eIsProxy(),
-                String.format("Classifier %s is an unresolved proxy", classifier));
-        String generatedId = cachedId.get(classifier);
-        if (generatedId == null) {
-            generatedId = classifier.getEPackage().getNsURI() + "#" + classifier.getName();
-            cachedId.put(classifier, generatedId);
-        }
-        return generatedId;
+    protected static String getUniqueIdentifier(EClassifier classifier) {
+    	String id = uniqueIDFromClassifier.get(classifier);
+    	if (id == null) {
+    		Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
+    		id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+    		uniqueIDFromClassifier.put(classifier, id);
+    		uniqueIDToClassifier.put(id, classifier);
+    	}
+        return id;
     }
 
     /**
      * @param typedElement
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
-    static String getUniqueIdentifier(ETypedElement typedElement) {
-        Preconditions.checkArgument(!typedElement.eIsProxy(),
-                String.format("Element %s is an unresolved proxy", typedElement));
-        String generatedId = cachedId.get(typedElement);
-        if (generatedId == null) {
-            EClassifier classifier = null;
+    protected static String getUniqueIdentifier(ETypedElement typedElement) {
+    	String id = uniqueIDFromTypedElement.get(typedElement);
+    	if (id == null) {
+    		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
+    		
+    		EClassifier classifier = null;
             if (typedElement.eContainer() instanceof EClass) {
                 classifier = (EClass) typedElement.eContainer();
             } else {
                 classifier = typedElement.eContainer().eClass();
             }
-            generatedId = getUniqueIdentifier(classifier) + "#" + typedElement.getEType().getName() + "#"
-                    + typedElement.getName();
-            cachedId.put(typedElement, generatedId);
-        }
-        return generatedId;
+
+    		id = getUniqueIdentifier(classifier) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
+    		uniqueIDFromTypedElement.put(typedElement, id);
+    		uniqueIDToTypedElement.put(id, typedElement);
+    	}
+        return id;
     }
 
     @SuppressWarnings("deprecation")
@@ -170,11 +177,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 switch (eventType) {
                 case Notification.ADD:
                     featureUpdate(true, notifier, feature, newValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.ADD_MANY:
                     for (Object newElement : (Collection<?>) newValue) {
                         featureUpdate(true, notifier, feature, newElement);
                     }
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.CREATE:
                     break;
@@ -182,11 +191,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     break; // currently no support for ordering
                 case Notification.REMOVE:
                     featureUpdate(false, notifier, feature, oldValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.REMOVE_MANY:
                     for (Object oldElement : (Collection<?>) oldValue) {
                         featureUpdate(false, notifier, feature, oldElement);
                     }
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.REMOVING_ADAPTER:
                     break;
@@ -196,7 +207,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 case Notification.UNSET:
                 case Notification.SET:
                     featureUpdate(false, notifier, feature, oldValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     featureUpdate(true, notifier, feature, newValue);
+                    notifyLightweightObservers(notifier, feature, notification);
                     break;
                 }
             }
@@ -204,17 +217,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             processingError(ex, "handle the following update notification: " + notification);
         }
 
-        runCallbacksIfDirty();
+        notifyBaseIndexChangeListeners();
 
     }
 
-    /**
-     * 
-     */
-    protected void runCallbacksIfDirty() {
+    protected void notifyBaseIndexChangeListeners() {
+        navigationHelper.notifyBaseIndexChangeListeners(isDirty);
         if (isDirty) {
             isDirty = false;
-            navigationHelper.runAfterUpdateCallbacks();
         }
     }
 
@@ -294,7 +304,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the original {@link EStructuralFeature}. 
+     * This method uses the original {@link EStructuralFeature} instance. 
      */
     private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
         Set<EObject> setVal = (isDynamicModel ? valueToFeatureToHolderMap.get(value, getUniqueIdentifier(feature))
@@ -312,7 +322,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
      */
     private void addToReversedFeatureMap(Object feature, EObject holder) {
         Multiset<EObject> setVal = featureToHolderMap.get(feature);
@@ -325,7 +335,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
      */
     private void addToDirectFeatureMap(EObject holder, Object feature, Object value) {
         Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
@@ -338,7 +348,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
      */
     private void removeFromReversedFeatureMap(Object feature, EObject holder) {
         final Multiset<EObject> setVal = featureToHolderMap.get(feature);
@@ -352,7 +362,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the original {@link EStructuralFeature}. 
+     * This method uses the original {@link EStructuralFeature} instance. 
      */
     private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
         final Set<EObject> setHolder = (isDynamicModel ? valueToFeatureToHolderMap.get(value,
@@ -371,7 +381,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the transformed {@link EStructuralFeature} (String id or the original one). 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
      */
     private void removeFromDirectFeatureMap(EObject holder, Object feature, Object value) {
         final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
@@ -542,13 +552,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // END ********* DataTypeMap *********
 
     /**
-     * Returns true if sup is a supertype of sub.
+     * This method can be used to efficiently (internal cache) determine subtype relationships.
      * 
-     * @param sub
-     *            subtype
-     * @param sup
-     *            supertype
-     * @return
+     * @param sub subtype
+     * @param sup supertype
+     * @return true if sup is the supertype of sub, false otherwise
      */
     private boolean isSubTypeOf(EClass sub, EClass sup) {
         Set<EClass> set = subTypeMap.get(sup);
@@ -624,6 +632,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             }
         }
     }
+    
+    private void notifyLightweightObservers(EObject host, EStructuralFeature feature, Notification notification) {
+        for (Entry<LightweightEObjectObserver, Collection<EObject>> entry : navigationHelper.getLightweightObservers().entrySet()) {
+            if(entry.getValue().contains(host)) {
+                entry.getKey().notifyFeatureChanged(host, feature, notification);
+            }
+        }
+    }
 
     private void initReversedFeatureMap() {
         for (Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
@@ -654,7 +670,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // - and once when said iteration of resources reaches the end of the
     // resource list in the ResourceSet
     // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385039
-
     @Override
     protected void setTarget(ResourceSet target) {
         basicSetTarget(target);
@@ -818,6 +833,27 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         } else {
             return features.iterator().next();
         }
+    }
+
+    /**
+     * Returns all EClasses that currently have direct instances cached by the index. 
+     * <p>Supertypes will not be returned, unless they have direct instances in the model as well. If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.  
+     * <p>Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned. 
+     */
+    public Set<EClass> getAllCurrentClasses() {
+    	Set<EClass> result = Sets.newHashSet();
+    	Set<Object> classes = instanceMap.keySet();
+       	for (Object clazz : classes) {
+       	    if (isDynamicModel) {
+        		Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get((String) clazz);
+        		if (!classifiersOfThisID.isEmpty())
+        			result.add((EClass) classifiersOfThisID.iterator().next());
+    		}
+       	    else {
+       	        result.add((EClass) clazz);
+       	    }
+    	}
+    	return result;
     }
 
     public boolean isDynamicModel() {

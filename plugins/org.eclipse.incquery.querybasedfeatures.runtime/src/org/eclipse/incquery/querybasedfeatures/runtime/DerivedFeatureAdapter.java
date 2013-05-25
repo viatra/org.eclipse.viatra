@@ -28,9 +28,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -134,12 +134,12 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     if (tempOldValue != null) {
                         tempOldValue.eAdapters().remove(path.getDependantAdapter());
                     } else {
-                        IncQueryEngine.getDefaultLogger().debug("[DerivedFeatureAdapter] oldValue is not set");
+                    	IncQueryLoggingUtil.getDefaultLogger().debug("[DerivedFeatureAdapter] oldValue is not set");
                     }
                     if (newValue != null) {
                         newValue.eAdapters().add(path.getDependantAdapter());
                     } else {
-                        IncQueryEngine.getDefaultLogger().debug("[DerivedFeatureAdapter] new value is not set");
+                    	IncQueryLoggingUtil.getDefaultLogger().debug("[DerivedFeatureAdapter] new value is not set");
                     }
                     break;
                 case Notification.ADD:
@@ -172,7 +172,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 case Notification.REMOVING_ADAPTER:
                     break;
                 default:
-                    IncQueryEngine.getDefaultLogger().debug(
+                	IncQueryLoggingUtil.getDefaultLogger().debug(
                             "[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
                     return; // No notification
                 }
@@ -220,7 +220,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 }
             }
         } catch (Exception ex) {
-            IncQueryEngine.getDefaultLogger().error(
+        	IncQueryLoggingUtil.getDefaultLogger().error(
                     "The derived feature adapter encountered an error in processing the EMF model. "
                             + "This happened while maintaining the derived feature " + derivedFeature.getName()
                             + " of object " + source, ex);

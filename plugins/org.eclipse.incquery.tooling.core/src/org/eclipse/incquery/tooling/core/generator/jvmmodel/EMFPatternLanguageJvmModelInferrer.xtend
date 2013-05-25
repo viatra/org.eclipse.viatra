@@ -13,7 +13,6 @@ package org.eclipse.incquery.tooling.core.generator.jvmmodel
 
 import com.google.inject.Inject
 import org.apache.log4j.Logger
-import org.eclipse.incquery.runtime.api.IMatcherFactory
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
@@ -30,6 +29,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import java.util.List
+import org.eclipse.incquery.runtime.api.IQuerySpecification
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -50,7 +50,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension PatternMatchClassInferrer
 	@Inject extension PatternMatcherClassInferrer
-	@Inject extension PatternMatcherFactoryClassInferrer
+	@Inject extension PatternQuerySpecificationClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
 	@Inject extension PatternMatchEvaluatorClassInferrer
 	@Inject extension PatternGroupClassInferrer
@@ -74,36 +74,37 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			logger.debug("Inferring Jvm Model for " + pattern.name);
 	   		try {
 	   			val packageName = pattern.getPackageName
+	   			val utilPackageName = pattern.utilPackageName
 
 			   	if (isPublic) {
 			   		val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
 			   		val matchClassRef = types.createTypeRef(matchClass)
 			   		val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
 			   		val matcherClassRef = types.createTypeRef(matcherClass)
-			   		val matcherFactoryClass = pattern.inferMatcherFactoryClass(isPrelinkingPhase, packageName, matchClassRef, matcherClassRef)
-			   		val matcherFactoryClassRef = types.createTypeRef(matcherFactoryClass)
-			   		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, packageName, matchClassRef)
+			   		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName, matchClassRef, matcherClassRef)
+			   		val querySpecificationClassRef = types.createTypeRef(querySpecificationClass)
+			   		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClassRef)
 			   	
-			   		// add Factory field to Matcher class
-			   		matcherClass.members += pattern.toMethod("factory", pattern.newTypeRef(typeof(IMatcherFactory), cloneWithProxies(matcherClassRef))) [
+			   		// add querySpecification() field to Matcher class
+			   		matcherClass.members += pattern.toMethod("querySpecification", pattern.newTypeRef(typeof(IQuerySpecification), cloneWithProxies(matcherClassRef))) [
 			   			it.visibility = JvmVisibility::PUBLIC
 			   			it.setStatic(true)
-						it.documentation = pattern.javadocFactoryMethod.toString
+						it.documentation = pattern.javadocQuerySpecificationMethod.toString
 						it.exceptions += pattern.newTypeRef(typeof (IncQueryException))
 						it.setBody([append('''
-							return ''') serialize(matcherFactoryClassRef, pattern) append('''.instance();''')
+							return ''') serialize(querySpecificationClassRef, pattern) append('''.instance();''')
 						])
 					]
 				
 			   		associator.associatePrimary(pattern, matcherClass)
 			   		acceptor.accept(matchClass)
 			   		acceptor.accept(matcherClass)
-			   		acceptor.accept(matcherFactoryClass)
+			   		acceptor.accept(querySpecificationClass)
 			   		acceptor.accept(processorClass)
 			   	}
 			   	
 			   	if (hasCheckExpression) {
-			   		val List<JvmDeclaredType> evaluatorClassList = pattern.inferEvaluatorClass(packageName)
+			   		val List<JvmDeclaredType> evaluatorClassList = pattern.inferEvaluatorClass(utilPackageName)
 		   			for (JvmDeclaredType evaluatorClass : evaluatorClassList) {
 			   			acceptor.accept(evaluatorClass)
 			   		}

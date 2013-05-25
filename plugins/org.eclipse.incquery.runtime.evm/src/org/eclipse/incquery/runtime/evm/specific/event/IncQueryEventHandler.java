@@ -27,7 +27,8 @@ import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
 import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
-import org.eclipse.incquery.runtime.evm.specific.DefaultAttributeMonitor;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.Maps;
 
@@ -79,15 +80,22 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
      * @return a new attribute monitor
      */
     protected AttributeMonitor<Match> prepareAttributeMonitor(){
-        return new DefaultAttributeMonitor<Match>();
+        //return new DefaultAttributeMonitor<Match>();
+        LightweightAttributeMonitor<Match> monitor = null;
+        try {
+            monitor = new LightweightAttributeMonitor<Match>(source.getMatcher().getEngine().getBaseIndex());
+        } catch (IncQueryException e) {
+            IncQueryLoggingUtil.getDefaultLogger().error("Error happened while accessing base index", e);
+        }
+        return monitor;
     }
     
     protected void setInstance(RuleInstance<Match> instance) {
         checkArgument(instance != null, "Instance cannot be null!");
         this.instance.setHandler(this);
+        attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         prepareEventProcessors(processors);
         source.addHandler(this);
-        attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
         attributeMonitor.addAttributeMonitorListener(source.getAttributeMonitorListener());
     }
 

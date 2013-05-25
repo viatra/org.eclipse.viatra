@@ -43,7 +43,7 @@ public class IncQueryRuntimePlugin extends Plugin {
         // TODO Builder registry may be used later
         // BuilderRegistry.initRegistry();
         XtextInjectorProvider.INSTANCE.setInjector(createInjector());
-        // MatcherFactoryRegistry.initRegistry();
+        // QuerySpecificationRegistry.initRegistry();
     }
 
     /*

@@ -53,6 +53,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def countFind() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -71,6 +72,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def innerCountFind() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -88,6 +90,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def doubleCountFind() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -106,6 +109,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def normalFind() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -124,6 +128,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def normalFindError() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -141,6 +146,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantWarning1() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -159,6 +165,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantWarning2() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -177,6 +184,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantMismatchError() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -197,6 +205,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantComputationMismatchError() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {
@@ -214,6 +223,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantInPathExpressionGood() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern ConstantInPathExpressionGood(X) = {
@@ -227,6 +237,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def constantInPathExpressionMismatch() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern ConstantInPathExpressionMismatch(X) = {
@@ -239,6 +250,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 	@Test
 	def countFindInPathExpressionMismatch() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern Good(X) {

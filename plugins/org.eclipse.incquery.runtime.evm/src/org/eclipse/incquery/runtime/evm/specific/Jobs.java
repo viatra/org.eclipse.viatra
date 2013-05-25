@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.job.EnableJob;
+import org.eclipse.incquery.runtime.evm.specific.job.ErrorLoggingJob;
 import org.eclipse.incquery.runtime.evm.specific.job.EventAtomDomainObjectProvider;
 import org.eclipse.incquery.runtime.evm.specific.job.RecordingJob;
 import org.eclipse.incquery.runtime.evm.specific.job.StatelessJob;
@@ -61,13 +62,15 @@ public final class Jobs {
      * @return
      * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
      */
-    public static <Match extends IPatternMatch> Job<Match> newRecordingJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
+    @Deprecated
+	public static <Match extends IPatternMatch> Job<Match> newRecordingJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor){
         return new RecordingJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor), new EventAtomDomainObjectProvider<Match>() {
             @Override
             public Object findDomainObject(Activation<? extends Match> activation, Context context) {
               Match match = activation.getAtom();
-              if(match.parameterNames().length > 0) {
-                  for (int i = 0; i < match.parameterNames().length; i++) {
+              final int arity = match.parameterNames().size();
+              if(arity > 0) {
+                  for (int i = 0; i < arity; i++) {
                       if(match.get(i) instanceof EObject) {
                           return match.get(i);
                       }
@@ -112,12 +115,17 @@ public final class Jobs {
      * @return
      * @deprecated Use newStatelessJob and call newRecordingJob(Job) with the result!
      */
-    public static <Match extends IPatternMatch> Job<Match> newEnableJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor) {
+    @Deprecated
+	public static <Match extends IPatternMatch> Job<Match> newEnableJob(IncQueryActivationStateEnum incQueryActivationStateEnum, IMatchProcessor<Match> processor) {
         return new EnableJob<Match>(new StatelessJob<Match>(incQueryActivationStateEnum, processor));
     }
 
     public static <EventAtom> Job<EventAtom> newEnableJob(Job<EventAtom> job) {
         return new EnableJob<EventAtom>(job);
+    }
+    
+    public static <EventAtom> Job<EventAtom> newErrorLoggingJob(Job<EventAtom> job) {
+        return new ErrorLoggingJob<EventAtom>(job);
     }
     
 }

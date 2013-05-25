@@ -34,11 +34,15 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternGroup;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentConverter;
-import org.eclipse.incquery.viewers.runtime.model.converters.EdgeConverter;
+import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
+import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 /**
@@ -52,7 +56,7 @@ public class ViewerDataModel {
     private Logger logger;
     private ResourceSet model;
     private Set<Pattern> patterns;
-    private Map<Object, Item> itemMap;
+    private Multimap<Object, Item> itemMap;
 
     /**
      * Initializes a viewer model from a group of patterns over a
@@ -77,8 +81,22 @@ public class ViewerDataModel {
         this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
-        itemMap = Maps.newHashMap();
+        itemMap = initializeItemMap();
         logger = engine.getLogger();
+    }
+
+    private Multimap<Object,Item> initializeItemMap() {
+        Map<Object, Collection<Item>> map = Maps.newHashMap();
+        return Multimaps.newListMultimap(map, new Supplier<List<Item>>() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public List<Item> get() {
+                ArrayList<Item> list = Lists.newArrayList();
+                return new WritableList(list, Item.class);
+            }
+            
+        });
     }
 
     public IncQueryEngine getEngine() {
@@ -118,7 +136,7 @@ public class ViewerDataModel {
      * @return an observable list of {@link Item} elements representing the match results in the model.
      */
     public IObservableList initializeObservableItemList(ViewerDataFilter filter) {
-        itemMap.clear();
+        itemMap = initializeItemMap();
         List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
         final String annotationName = Item.ANNOTATION_ID;
         for (final Pattern nodePattern : getPatterns(annotationName)) {
@@ -146,8 +164,8 @@ public class ViewerDataModel {
                         if (element instanceof Item) {
                             Item item = (Item) element;
                             EObject paramObject = item.getParamObject();
-                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).equals(item)) {
-                                itemMap.remove(paramObject);
+                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).contains(item)) {
+                                itemMap.remove(paramObject, element);
                             }
                         }
                     }
@@ -171,7 +189,9 @@ public class ViewerDataModel {
     /**
      * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
      * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-     * {@link ViewerDataModel#initializeObservableEdgeList(ViewerDataFilter)} with an empty filter.
+     * {@link ViewerDataModel#initializeObservableEdgeList(ViewerDataFilter)} with an empty filter.</p>
+     * 
+     * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
@@ -181,7 +201,9 @@ public class ViewerDataModel {
 
     /**
      * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-     * responsibility of the caller to dispose of the unnecessary observables.
+     * responsibility of the caller to dispose of the unnecessary observables.</p>
+     * 
+     * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
      * 
      * @param filter
      *            filter specification
@@ -190,30 +212,27 @@ public class ViewerDataModel {
      */
     public MultiList initializeObservableEdgeList(ViewerDataFilter filter) {
         final String annotationName = Edge.ANNOTATION_ID;
-        List<ObservableList> edgeListsObservable = new ArrayList<ObservableList>();
+        List<IObservableList> edgeListsObservable = new ArrayList<IObservableList>();
         for (final Pattern edgePattern : getPatterns(annotationName)) {
-            DataBindingContext ctx = new DataBindingContext();
-
-            IObservableList obspatternmatchlist = filter.getObservableList(edgePattern, engine);
+            final IObservableList obspatternmatchlist = filter.getObservableList(edgePattern, engine);
 
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
-                ObservableList resultList = new WritableList();
+                IObservableList resultList = new EdgeList(annotation, formatAnnotation, itemMap, obspatternmatchlist);
                 edgeListsObservable.add(resultList);
-
-                ctx.bindList(resultList, obspatternmatchlist, null,
-                        new UpdateListStrategy().setConverter(new EdgeConverter(annotation, formatAnnotation, itemMap)));
             }
         }
-        MultiList list = new MultiList(edgeListsObservable.toArray(new ObservableList[edgeListsObservable.size()]));
+        MultiList list = new MultiList(edgeListsObservable.toArray(new IObservableList[edgeListsObservable.size()]));
         return list;
     }
 
     /**
      * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
      * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-     * {@link #initializeObservableContainmentList(ViewerDataFilter)} with an empty filter.
+     * {@link #initializeObservableContainmentList(ViewerDataFilter)} with an empty filter.</p>
+     * 
+     * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
@@ -223,7 +242,9 @@ public class ViewerDataModel {
 
     /**
      * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-     * responsibility of the caller to dispose of the unnecessary observables.
+     * responsibility of the caller to dispose of the unnecessary observables.</p>
+     * 
+     * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
      * 
      * @param filter
      *            filter specification
@@ -232,21 +253,17 @@ public class ViewerDataModel {
      */
     public MultiList initializeObservableContainmentList(ViewerDataFilter filter) {
         final String annotationName = Containment.ANNOTATION_ID;
-        List<ObservableList> containmentListsObservable = new ArrayList<ObservableList>();
+        List<IObservableList> containmentListsObservable = new ArrayList<IObservableList>();
         for (final Pattern containmentPattern : getPatterns(annotationName)) {
-            DataBindingContext ctx = new DataBindingContext();
-
             IObservableList obspatternmatchlist = filter.getObservableList(containmentPattern, engine);
 
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
-                ObservableList resultList = new WritableList();
+                IObservableList resultList = new ContainmentList(annotation, itemMap, obspatternmatchlist);
                 containmentListsObservable.add(resultList);
-
-                ctx.bindList(resultList, obspatternmatchlist, null,
-                        new UpdateListStrategy().setConverter(new ContainmentConverter(annotation, itemMap)));
             }
         }
-        MultiList list = new MultiList(containmentListsObservable.toArray(new ObservableList[containmentListsObservable.size()]));
+        MultiList list = new MultiList(containmentListsObservable.toArray(new IObservableList[containmentListsObservable.size()]));
         return list;
     }
+
 }

@@ -98,7 +98,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		this.feature = feature;
 		setTag(feature.getName());
 		
-		baseIndex.registerFeatureListener(Collections.singleton(feature), listener);
+		baseIndex.addFeatureListener(Collections.singleton(feature), listener);
 		reteEngine.addDisconnectable(this);
 	}
 
@@ -119,7 +119,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	 */
 	@Override
 	public void disconnect() {
-		baseIndex.unregisterFeatureListener(Collections.singleton(feature), listener);
+		baseIndex.removeFeatureListener(Collections.singleton(feature), listener);
 	}
 	
 	protected Tuple makeTuple(EObject source, Object target) {

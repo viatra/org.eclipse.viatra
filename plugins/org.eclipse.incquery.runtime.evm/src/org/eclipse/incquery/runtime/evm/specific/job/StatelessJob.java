@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.evm.specific.job;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Arrays;
+
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
@@ -57,6 +59,6 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     @Override
     protected void handleError(final Activation<? extends Match> activation, final Exception exception, final Context context) {
         checkState(false,"Exception " + exception.getMessage() + " was thrown when executing " + activation
-                + "! Stateless job doesn't handle errors!", exception);
+                + "! Stateless job doesn't handle errors!"+Arrays.toString(exception.getStackTrace()));
     }
 }

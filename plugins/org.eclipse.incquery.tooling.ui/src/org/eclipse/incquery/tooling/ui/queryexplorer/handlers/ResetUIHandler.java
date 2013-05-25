@@ -18,7 +18,7 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 public class ResetUIHandler extends AbstractHandler {
 
@@ -30,10 +30,10 @@ public class ResetUIHandler extends AbstractHandler {
             for (IModelConnector modelConnector : explorer.getModelConnectorMap().values()) {
                 modelConnector.unloadModel();
             }
-            for (Pattern pattern : PatternRegistry.getInstance().getActivePatterns()) {
+            for (Pattern pattern : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-                PatternRegistry.getInstance().unregisterPattern(pattern);
-                PatternRegistry.getInstance().removeActivePattern(pattern);
+                QueryExplorerPatternRegistry.getInstance().unregisterPattern(pattern);
+                QueryExplorerPatternRegistry.getInstance().removeActivePattern(pattern);
                 explorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
             }
 

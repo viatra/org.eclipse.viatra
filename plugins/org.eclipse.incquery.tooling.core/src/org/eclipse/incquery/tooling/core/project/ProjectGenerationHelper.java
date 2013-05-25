@@ -15,7 +15,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -128,8 +130,8 @@ public abstract class ProjectGenerationHelper {
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             // Adding IncQuery-specific natures
-            ProjectGenerationHelper.addNatures(proj, new String[] { IncQueryNature.NATURE_ID,
-                    "org.eclipse.xtext.ui.shared.xtextNature" }, monitor);
+            ProjectGenerationHelper.addNatures(proj,
+                    ImmutableList.of(IncQueryNature.NATURE_ID, IncQueryNature.XTEXT_NATURE_ID), monitor);
         } finally {
             monitor.done();
             if (context != null && ref != null) {
@@ -140,22 +142,24 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Adds a collection of natures to the project
-     * 
-     * @param proj
-     * @param natures
-     * @param monitor
-     * @return
-     * @throws CoreException
      */
-    public static IProjectDescription addNatures(IProject proj, String[] natures, IProgressMonitor monitor)
+    public static void addNatures(IProject proj, Collection<String> natures, IProgressMonitor monitor)
             throws CoreException {
+        updateNatures(proj, natures, ImmutableList.<String> of(), monitor);
+    }
+
+    /**
+     * Updates the set of project natures of a selected project
+     */
+    public static void updateNatures(IProject proj, Collection<String> naturesToAdd,
+            Collection<String> naturesToRemove, IProgressMonitor monitor) throws CoreException {
         IProjectDescription desc = proj.getDescription();
-        List<String> newNatures = new ArrayList<String>();
+        Set<String> newNatures = new LinkedHashSet<String>();
         newNatures.addAll(Arrays.asList(desc.getNatureIds()));
-        newNatures.addAll(Arrays.asList(natures));
+        newNatures.addAll(naturesToAdd);
+        newNatures.removeAll(naturesToRemove);
         desc.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
         proj.setDescription(desc, monitor);
-        return desc;
     }
 
     /**

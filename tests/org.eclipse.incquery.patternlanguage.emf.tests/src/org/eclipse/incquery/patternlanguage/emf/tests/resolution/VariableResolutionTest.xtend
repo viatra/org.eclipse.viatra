@@ -39,6 +39,7 @@ class VariableResolutionTest {
 	@Test
 	def parameterResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -55,6 +56,7 @@ class VariableResolutionTest {
 	@Test
 	def singleUseResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -71,6 +73,7 @@ class VariableResolutionTest {
 	@Test
 	def anonymVariablesResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			pattern helper(A,B,C) = {
 				Pattern(A);
@@ -92,6 +95,7 @@ class VariableResolutionTest {
 	@Test
 	def parameterResolutionFailed() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -109,6 +113,7 @@ class VariableResolutionTest {
 	@Test
 	def constraintVariableResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {

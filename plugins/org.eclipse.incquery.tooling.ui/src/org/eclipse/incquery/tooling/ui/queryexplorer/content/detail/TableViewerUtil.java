@@ -20,8 +20,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.TableViewer;
@@ -79,7 +79,7 @@ public class TableViewerUtil {
         viewer.setCellModifier(new DetailElementCellModifier());
         viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 
-        DatabindingAdapter<IPatternMatch> databindableMatcher = DatabindingUtil.getDatabindingAdapter(match
+        DatabindingAdapter<IPatternMatch> databindableMatcher = DisplayUtil.getDatabindingAdapter(match
                 .getPatternMatch().patternName(), match.getParent().isGenerated());
 
         if (databindableMatcher == null) {
@@ -113,7 +113,7 @@ public class TableViewerUtil {
 
         viewer.setCellEditors(editors);
 
-        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
         Object[] filter = observableMatcher.getFilter();
         MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
         if (filter != null) {

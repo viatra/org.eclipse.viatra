@@ -50,6 +50,7 @@ class CheckConstraintTest {
 	@Test
 	def whitelistedCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(D) = {			
@@ -64,6 +65,7 @@ class CheckConstraintTest {
 	@Test
 	def nonWhitelistedCheck() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(L) = {

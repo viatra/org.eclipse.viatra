@@ -16,6 +16,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 
 class JavadocInferrer {
 	
@@ -42,18 +43,23 @@ class JavadocInferrer {
 		Generated pattern matcher API of the «pattern.fullyQualifiedName» pattern, 
 		providing pattern-specific query methods.
 		
+		<p>Use the pattern matcher on a given model via {@link #on(IncQueryEngine)}, 
+		e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+		
+		<p>Matches of the pattern will be represented as {@link «pattern.matchClassName»}.
+
 		<p>Original source:
 		<code><pre>
 		«pattern.serializeToJavadoc»
 		</pre></code>
 		
 		@see «pattern.matchClassName»
-		@see «pattern.matcherFactoryClassName»
 		@see «pattern.processorClassName»
+		@see «pattern.querySpecificationClassName»
    	'''
    	
-   	def javadocMatcherFactoryClass(Pattern pattern) '''
-	 	A pattern-specific matcher factory that can instantiate «pattern.matcherClassName» in a type-safe way.
+   	def javadocQuerySpecificationClass(Pattern pattern) '''
+	 	A pattern-specific query specification that can instantiate «pattern.matcherClassName» in a type-safe way.
 	 	
 	 	@see «pattern.matcherClassName»
 	 	@see «pattern.matchClassName»
@@ -76,23 +82,33 @@ class JavadocInferrer {
    	
    	def javadocMatcherConstructorNotifier(Pattern pattern) '''
 		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
-		If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
+		If a pattern matcher is already constructed with the same root, only a light-weight reference is returned.
 		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
 		The match set will be incrementally refreshed upon updates from this scope.
 		<p>The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so 
 		multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
 		@throws IncQueryException if an error occurs during pattern matcher creation
+		@deprecated use {@link #on(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}
 	'''
 	
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
 		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-		If the pattern matcher is already constructed in the engine, only a lightweight reference is created.
+		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
+		The match set will be incrementally refreshed upon updates.
+		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
+		@throws IncQueryException if an error occurs during pattern matcher creation
+		@deprecated use {@link #on(IncQueryEngine)} instead
+	'''
+	
+	def javadocMatcherStaticOnEngine(Pattern pattern) '''
+		Initializes the pattern matcher within an existing EMF-IncQuery engine. 
+		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
 		@throws IncQueryException if an error occurs during pattern matcher creation
 	'''
-	
+
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
 		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
 		«FOR p : pattern.parameters»
@@ -168,6 +184,7 @@ class JavadocInferrer {
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return the delta monitor.
+		@deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
 	'''
 	
 	def javadocNewMatchMethod(Pattern pattern) '''
@@ -185,13 +202,36 @@ class JavadocInferrer {
 		@return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
 	'''
 	
-	def javadocFactoryMethod(Pattern pattern) '''
-		@return the singleton instance of the factory of this pattern
+	def javadocQuerySpecificationMethod(Pattern pattern) '''
+		@return the singleton instance of the query specification of this pattern
 		@throws IncQueryException if the pattern definition could not be loaded
 	'''
 	
-	def javadocFactoryInstanceMethod(Pattern pattern) '''
-		@return the singleton instance of the matcher factory
+	def javadocQuerySpecificationInstanceMethod(Pattern pattern) '''
+		@return the singleton instance of the query specification
 		@throws IncQueryException if the pattern definition could not be loaded
 	'''
+	
+	def javadocGroupClass(PatternModel model) '''
+		A pattern group formed of all patterns defined in «model.modelFileName».eiq.
+		
+		<p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare 
+		an EMF-IncQuery engine for matching all patterns originally defined in file «model.modelFileName».eiq,
+		in order to achieve better performance than one-by-one on-demand matcher initialization.
+		
+		<p> From package «model.packageName», the group contains the definition of the following patterns: <ul>
+		«FOR p : model.patterns»
+		  <li>«p.name»</li>
+		«ENDFOR»
+		</ul>
+		
+		@see IPatternGroup
+   	'''
+	def javadocGroupClassInstanceMethod(PatternModel model) '''
+		Access the pattern group.
+		
+		@return the singleton instance of the group
+		@throws IncQueryException if there was an error loading the generated code of pattern specifications
+   	'''
+	
 }

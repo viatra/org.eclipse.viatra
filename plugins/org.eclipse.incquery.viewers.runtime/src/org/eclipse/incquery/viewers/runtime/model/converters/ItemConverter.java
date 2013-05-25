@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
-import java.util.Map;
-
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -21,8 +19,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Item.HierarchyPolicy;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
 
 /**
  * A converter from {@link IPatternMatch} matches to displayable {@link Item} objects.
@@ -34,24 +34,28 @@ public class ItemConverter implements IConverter {
 
     private String parameterName;
     private String labelParameterName;
-    private Map<Object, Item> itemMap;
+    private HierarchyPolicy policy;
+    private Multimap<Object, Item> itemMap;
     private FormatSpecification format;
 
     /**
-     * @param itemMap
+     * @param itemMap2
      * @param itemAnnotation
      *            an Item annotation to initialize the converter with.
      */
-    public ItemConverter(Map<Object, Item> itemMap, Annotation itemAnnotation, Annotation formatAnnotation) {
+    public ItemConverter(Multimap<Object, Item> itemMap2, Annotation itemAnnotation, Annotation formatAnnotation) {
         Preconditions.checkArgument(Item.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Item.ANNOTATION_ID + " annotation.");
-        this.itemMap = itemMap;
+        this.itemMap = itemMap2;
         parameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation, "item"))
                 .getValue().getVar();
         StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
                 "label");
         labelParameterName = labelParam == null ? "" : labelParam.getValue();
-
+        StringValue hierarchyParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
+                "hierarchy");
+        policy = hierarchyParam == null ? HierarchyPolicy.ALWAYS : HierarchyPolicy.valueOf(hierarchyParam.getValue().toUpperCase());
+        
         if (formatAnnotation != null) {
             format = FormatParser.parseFormatAnnotation(formatAnnotation);
         }
@@ -72,7 +76,7 @@ public class ItemConverter implements IConverter {
         IPatternMatch match = (IPatternMatch) fromObject;
 
         EObject param = (EObject) match.get(parameterName);
-        Item item = new Item(match, param, labelParameterName);
+        Item item = new Item(match, param, labelParameterName, policy);
         item.setSpecification(format);
         itemMap.put(param, item);
         return item;

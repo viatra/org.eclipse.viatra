@@ -21,7 +21,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
 
 /**
@@ -61,9 +61,9 @@ public class PatternUnregistrationHandler extends AbstractHandler {
      *            the fully qualified name of the pattern
      */
     private void unregisterPattern(String patternFqn) {
-        Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
-        if (!PatternRegistry.getInstance().isGenerated(pattern)) {
-            PatternRegistry.getInstance().unregisterPattern(pattern);
+        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
+        if (!QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
+            QueryExplorerPatternRegistry.getInstance().unregisterPattern(pattern);
             QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
 
             // unregister patterns from observable roots
@@ -72,7 +72,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
             }
 
             // the pattern is not active anymore
-            PatternRegistry.getInstance().removeActivePattern(pattern);
+            QueryExplorerPatternRegistry.getInstance().removeActivePattern(pattern);
         }
     }
 }

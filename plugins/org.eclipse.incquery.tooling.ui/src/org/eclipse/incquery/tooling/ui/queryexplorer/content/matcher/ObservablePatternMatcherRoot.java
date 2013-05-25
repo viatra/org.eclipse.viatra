@@ -24,8 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.EngineManager;
-import org.eclipse.incquery.runtime.api.GenericPatternMatcher;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -34,8 +33,7 @@ import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -60,7 +58,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         sortedMatchers = new LinkedList<ObservablePatternMatcher>();
         this.key = key;
 
-        IncQueryEngine engine = key.getEngine();
+        AdvancedIncQueryEngine engine = key.getEngine();
         if (engine == null) {
             key.setEngine(createEngine());
         }
@@ -69,9 +67,11 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         }
     }
 
-    private IncQueryEngine createEngine() {
+    private AdvancedIncQueryEngine createEngine() {
+        boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
+                .getBoolean(PreferenceConstants.WILDCARD_MODE);
         try {
-            IncQueryEngine engine = EngineManager.getInstance().createUnmanagedIncQueryEngine(key.getNotifier());
+        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(), wildcardMode);
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
@@ -128,14 +128,14 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         for (ObservablePatternMatcher pm : this.matchers.values()) {
             pm.dispose();
         }
-        IncQueryEngine engine = key.getEngine();// createEngine();
+        AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
         if (engine != null) {
             engine.getLogger().removeAppender(this);
         }
     }
 
     public boolean isTainted() {
-        IncQueryEngine engine = key.getEngine();// createEngine();
+    	AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
         return (engine == null) ? true : engine.isTainted();
     }
 
@@ -159,17 +159,10 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     }
 
     public void registerPattern(final Pattern... patterns) {
-        boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
-                .getBoolean(PreferenceConstants.WILDCARD_MODE);
         IncQueryEngine engine;
         try {
             // engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
             engine = key.getEngine();
-            try {
-                engine.setWildcardMode(wildcardMode);
-            } catch (IllegalStateException ex) {
-                // could not set wildcard mode
-            }
 
             if (engine.getBaseIndex().isInWildcardMode()) {
                 addMatchersForPatterns(patterns);
@@ -194,15 +187,11 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private void addMatchersForPatterns(Pattern... patterns) {
         for (Pattern pattern : patterns) {
-            IncQueryMatcher<? extends IPatternMatch> matcher = null;
-            boolean isGenerated = PatternRegistry.getInstance().isGenerated(pattern);
+            IncQueryMatcher<? extends IPatternMatch> matcher = null; 
+            boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(pattern);
             String message = null;
             try {
-                if (isGenerated) {
-                    matcher = DatabindingUtil.getMatcherFactoryForGeneratedPattern(pattern).getMatcher(key.getEngine());
-                } else {
-                    matcher = new GenericPatternMatcher(pattern, key.getEngine());
-                }
+                matcher = key.getEngine().getMatcher(pattern);
             } catch (Exception e) {
                 logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
                         "Cannot initialize pattern matcher for pattern "
@@ -217,5 +206,20 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     public void unregisterPattern(Pattern pattern) {
         removeMatcher(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+    }
+
+    /**
+     * Create a PatternMatcher root for the given key element.
+     * 
+     * @param key
+     *            the key element (editorpart + notifier)
+     * @return the PatternMatcherRoot element
+     */
+    public static ObservablePatternMatcherRoot createPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
+        ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
+        List<Pattern> activePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        // runtime & generated matchers
+        root.registerPattern(activePatterns.toArray(new Pattern[activePatterns.size()]));
+        return root;
     }
 }

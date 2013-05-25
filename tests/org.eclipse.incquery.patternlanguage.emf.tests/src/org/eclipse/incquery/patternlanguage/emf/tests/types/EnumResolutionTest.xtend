@@ -39,6 +39,7 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionSuccess() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -59,6 +60,7 @@ class EnumResolutionTest {
 	@Test
 	def eQualifiedEnumResolutionSuccess() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -79,6 +81,7 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionInvalidLiteral() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -92,6 +95,7 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionNotEnum() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {
@@ -107,6 +111,7 @@ class EnumResolutionTest {
 	@Test
 	def eEnumResolutionMissingQualifier() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 
@@ -125,6 +130,7 @@ class EnumResolutionTest {
 	@Test
 	def validateIncorrectEnumWithEquality() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
 			pattern resolutionTest(Model) = {

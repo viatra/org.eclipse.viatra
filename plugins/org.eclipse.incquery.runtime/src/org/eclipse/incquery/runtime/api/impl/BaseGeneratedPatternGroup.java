@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 
 /**
  * @author Mark Czotter
@@ -24,11 +24,11 @@ public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 
     @Override
     public Set<Pattern> getPatterns() {
-        return patterns(matcherFactories);
+        return patterns(querySpecifications);
     }
 
     /**
-     * Returns {@link IMatcherFactory} objects for handling them as a group. To be filled by constructors of subclasses.
+     * Returns {@link IQuerySpecification} objects for handling them as a group. To be filled by constructors of subclasses.
      */
-    protected Set<IMatcherFactory<?>> matcherFactories = new HashSet<IMatcherFactory<?>>();
+    protected Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
 }

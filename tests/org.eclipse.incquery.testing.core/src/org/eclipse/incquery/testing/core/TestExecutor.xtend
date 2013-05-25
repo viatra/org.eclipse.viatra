@@ -13,16 +13,16 @@ package org.eclipse.incquery.testing.core
 
 import com.google.inject.Inject
 import java.util.Set
-import org.eclipse.incquery.runtime.api.EngineManager
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
-import org.eclipse.incquery.testing.queries.unexpectedmatchrecord.UnexpectedMatchRecordMatcher
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 import static org.junit.Assert.*
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -93,7 +93,8 @@ class TestExecutor {
 		val snapshot = expected.eContainer as IncQuerySnapshot
 		
 		// 2. Initialize matcher for comparison
-		val unexpectedMatcher = UnexpectedMatchRecordMatcher::factory().getMatcher(snapshot.EMFRootForSnapshot)
+		val engine = IncQueryEngine::on(snapshot.EMFRootForSnapshot)
+		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
 		
 		// 3. Save match results into snapshot
 		val partialMatch = matcher.createMatchForMachRecord(expected.filter)
@@ -176,7 +177,7 @@ class TestExecutor {
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
-		val engine = EngineManager::getInstance().getIncQueryEngine(input);
+		val engine = IncQueryEngine::on(input);
 		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)

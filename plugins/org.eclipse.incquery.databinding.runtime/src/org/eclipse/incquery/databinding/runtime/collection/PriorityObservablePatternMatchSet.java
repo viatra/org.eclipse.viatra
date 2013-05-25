@@ -10,7 +10,7 @@
 // *******************************************************************************/
 //package org.eclipse.incquery.databinding.runtime.collection;
 //
-//import org.eclipse.incquery.runtime.api.IMatcherFactory;
+//import org.eclipse.incquery.runtime.api.IMatcherquerySpecification;
 //import org.eclipse.incquery.runtime.api.IPatternMatch;
 //import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 //import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -26,23 +26,23 @@
 //     * Priority support is only available with an existing engine that has a
 //     * {@link RulePriorityActivationComparator} set up.
 //     *
-//     * @param factory
+//     * @param querySpecification
 //     * @param engine
 //     */
-//    public <Matcher extends IncQueryMatcher<Match>> PriorityObservablePatternMatchSet(IMatcherFactory<Matcher> factory, RuleEngine engine, int priority) {
-//        this(factory, engine, priority, null);
+//    public <Matcher extends IncQueryMatcher<Match>> PriorityObservablePatternMatchSet(IMatcherquerySpecification<Matcher> querySpecification, RuleEngine engine, int priority) {
+//        this(querySpecification, engine, priority, null);
 //    }
 //
 //    /**
 //     * Priority support is only available with an existing engine that has a
 //     * {@link RulePriorityActivationComparator} set up.
 //     *
-//     * @param factory
+//     * @param querySpecification
 //     * @param engine
 //     * @param filter TODO
 //     */
-//    public <Matcher extends IncQueryMatcher<Match>> PriorityObservablePatternMatchSet(IMatcherFactory<Matcher> factory, RuleEngine engine, int priority, Match filter) {
-//        super(factory);
+//    public <Matcher extends IncQueryMatcher<Match>> PriorityObservablePatternMatchSet(IMatcherquerySpecification<Matcher> querySpecification, RuleEngine engine, int priority, Match filter) {
+//        super(querySpecification);
 //        ObservableCollectionHelper.addPrioritizedRuleSpecification(engine, getSpecification(), priority, filter);
 //    }
 //

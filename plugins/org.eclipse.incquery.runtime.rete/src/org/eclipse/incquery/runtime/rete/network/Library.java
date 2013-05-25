@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -52,6 +51,7 @@ public class Library {
 
     ReteContainer reteContainer;
 
+    Map<Tuple, UniquenessEnforcerNode> reusableUniquenessEnforcers; // Tuple<supplierId>
     Map<Tuple, ProjectionIndexer> projectionIndexers; // Tuple<supplierId, mask>
     Map<Tuple, CountNode> countNodes; // Tuple<supplierId, mask>
     Map<Tuple, JoinNode> joinNodes; // Tuple<Indexer primarySlot, Indexer
@@ -83,6 +83,7 @@ public class Library {
 
         projectionIndexers = //new HashMap<Tuple, ProjectionIndexer>();
                 CollectionsFactory.getMap();
+        reusableUniquenessEnforcers = CollectionsFactory.getMap();
         joinNodes = CollectionsFactory.getMap();//new HashMap<Tuple, JoinNode>();
         existenceNodes = CollectionsFactory.getMap();//new HashMap<Tuple, ExistenceNode>();
         ineqFilters = CollectionsFactory.getMap();//new HashMap<Tuple, InequalityFilterNode>();
@@ -427,6 +428,22 @@ public class Library {
     // projectionIndexers.put(params, indexer);
     // }
     // }
+    public synchronized Address<UniquenessEnforcerNode> accessUniquenessEnforcerNode(
+            Address<? extends Supplier> supplierAddress, int width) {
+        Supplier supplier = asSupplier(supplierAddress);
+        Object[] paramsArray = { supplier.getNodeId() };
+        Tuple params = new FlatTuple(paramsArray);
+        UniquenessEnforcerNode result = reusableUniquenessEnforcers.get(params);
+        if (result == null) {
+            result = new UniquenessEnforcerNode(reteContainer, width);
+            // reteContainer.connectAndSynchronize(supplier, result);
+            reteContainer.connectAndSynchronize(supplier, result);
+
+            if (Options.nodeSharingOption == Options.NodeSharingOption.ALL)
+            	reusableUniquenessEnforcers.put(params, result);
+        }
+        return reteContainer.makeAddress(result);
+    }
 
     public synchronized Address<UniquenessEnforcerNode> newUniquenessEnforcerNode(int tupleWidth, Object tag) {
         UniquenessEnforcerNode node = new UniquenessEnforcerNode(reteContainer, tupleWidth);

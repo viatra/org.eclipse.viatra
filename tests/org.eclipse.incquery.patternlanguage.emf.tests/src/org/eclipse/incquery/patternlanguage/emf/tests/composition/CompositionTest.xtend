@@ -36,7 +36,8 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	@Test
 	def void testSimpleComposition() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -51,7 +52,8 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	@Test
 	def void testRecursiveComposition() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -64,7 +66,8 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	@Test
 	def void testNegativeComposition() {
 		parseHelper.parse(
-			'import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern calledPattern(p : Pattern) = {
 				Pattern(p);
@@ -77,6 +80,7 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	def void testMissingComposition() {
 		var parsed = parseHelper.parse(
 			'
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern callPattern(p : Pattern) = {

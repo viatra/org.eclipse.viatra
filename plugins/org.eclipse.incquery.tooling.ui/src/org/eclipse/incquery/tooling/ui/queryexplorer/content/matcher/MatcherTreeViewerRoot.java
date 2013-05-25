@@ -18,9 +18,8 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.ui.IEditorPart;
 
 public class MatcherTreeViewerRoot {
@@ -37,7 +36,7 @@ public class MatcherTreeViewerRoot {
 
     public void addPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
         if (!roots.containsKey(key)) {
-            ObservablePatternMatcherRoot root = DatabindingUtil.createPatternMatcherRoot(key);
+            ObservablePatternMatcherRoot root = ObservablePatternMatcherRoot.createPatternMatcherRoot(key);
             this.roots.put(key, root);
             if (QueryExplorer.getInstance() != null) {
                 QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
@@ -56,11 +55,11 @@ public class MatcherTreeViewerRoot {
             // disposing IncQueryEngine instance associated to the given Notifier
             // EngineManager.getInstance().disposeEngine(notifier);
             ObservablePatternMatcherRoot root = this.roots.get(key);
-            IncQueryEngine engine = root.getKey().getEngine();
+            root.dispose();
+            AdvancedIncQueryEngine engine = root.getKey().getEngine();
             if (engine != null) {
                 engine.dispose();
             }
-            root.dispose();
             this.roots.remove(key);
             if (QueryExplorer.getInstance() != null) {
                 QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);

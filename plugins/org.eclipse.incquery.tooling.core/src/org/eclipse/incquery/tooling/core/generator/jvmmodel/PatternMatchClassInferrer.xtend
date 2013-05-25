@@ -26,6 +26,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import java.util.List
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -71,9 +72,9 @@ class PatternMatchClassInferrer {
    		for (Variable variable : pattern.parameters) {
    			matchClass.members += variable.toField(variable.fieldName, variable.calculateType)
    		}
-		matchClass.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
+		matchClass.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
  			it.setStatic(true);
-   			it.setInitializer([append('''{«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»}''')])
+   			it.setInitializer([append('''makeImmutableList(«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»)''')])
    		]
    	}
    	
@@ -164,7 +165,7 @@ class PatternMatchClassInferrer {
    			''')])
    		]
 		// add extra methods like equals, hashcode, toArray, parameterNames
-		matchClass.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (String)).addArrayTypeDimension) [
+		matchClass.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.setBody([append('''
    				return «pattern.matchClassName».parameterNames;
@@ -243,13 +244,13 @@ class PatternMatchClassInferrer {
 			it.setBody([
 				append('''
 				try {
-					return «pattern.matcherClassName».factory().getPattern();
+					return «pattern.matcherClassName».querySpecification().getPattern();
 				} catch (''') 
 				referClass(pattern, typeof (IncQueryException)) 
 				append(" ")
 				append(''' 
 				ex) {
-				 	// This cannot happen, as the match object can only be instantiated if the matcher factory exists
+				 	// This cannot happen, as the match object can only be instantiated if the query specification exists
 				 	throw new ''')
 				referClass(pattern, typeof (IllegalStateException))
 				append('''

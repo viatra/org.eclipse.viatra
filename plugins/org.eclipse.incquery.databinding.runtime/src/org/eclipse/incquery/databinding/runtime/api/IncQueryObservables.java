@@ -26,8 +26,8 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
@@ -70,18 +70,18 @@ public final class IncQueryObservables {
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
      * 
      * <p>
-     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
      * 
-     * @param factory
-     *            the matcher factory for the query to observe
+     * @param querySpecification
+     *            the matcher querySpecification for the query to observe
      * @param engine
      *            the engine used with the matcher
      * @return an observable list of matches
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
-            IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
-        return new ObservablePatternMatchList<Match>(factory, engine);
+            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
+        return new ObservablePatternMatchList<Match>(querySpecification, engine);
     }
 
     /**
@@ -91,19 +91,19 @@ public final class IncQueryObservables {
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
      * 
      * <p>
-     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
      * 
-     * @param factory
-     *            the matcher factory for the query to observe
+     * @param querySpecification
+     *            the matcher querySpecification for the query to observe
      * @param engine
      *            the engine used with the matcher
      * @param filter the partial match to be used as filter
      * @return an observable list of matches
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
-            IMatcherFactory<Matcher> factory, IncQueryEngine engine, Match filter) {
-        return new ObservablePatternMatchList<Match>(factory, engine, filter);
+            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
+        return new ObservablePatternMatchList<Match>(querySpecification, engine, filter);
     }
 
     /**
@@ -122,37 +122,37 @@ public final class IncQueryObservables {
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
      * 
      * <p>
-     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
      * 
-     * @param factory
-     *            the matcher factory for the query to observe
+     * @param querySpecification
+     *            the matcher querySpecification for the query to observe
      * @param engine
      *            the engine used with the matcher
      * @return an observable set of matches
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
-            IMatcherFactory<Matcher> factory, IncQueryEngine engine) {
-        return new ObservablePatternMatchSet<Match>(factory, engine);
+            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
+        return new ObservablePatternMatchSet<Match>(querySpecification, engine);
     }
 
     /**
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
      * 
      * <p>
-     * Use the generated matcher factories for initialization, in the generic case, you may have to accept an unchecked
+     * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
      * 
-     * @param factory
-     *            the matcher factory for the query to observe
+     * @param querySpecification
+     *            the matcher querySpecification for the query to observe
      * @param engine
      *            the engine used with the matcher
      * @param filter the partial match to be used as filter
      * @return an observable set of matches
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
-            IMatcherFactory<Matcher> factory, IncQueryEngine engine, Match filter) {
-        return new ObservablePatternMatchSet<Match>(factory, engine, filter);
+            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
+        return new ObservablePatternMatchSet<Match>(querySpecification, engine, filter);
     }
 
     /**

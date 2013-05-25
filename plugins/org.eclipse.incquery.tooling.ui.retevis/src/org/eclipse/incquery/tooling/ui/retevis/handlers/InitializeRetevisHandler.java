@@ -15,6 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
@@ -42,7 +43,7 @@ public class InitializeRetevisHandler extends AbstractHandler {
             try {
                 ObservablePatternMatcher pm = root.getMatchers().get(0);
                 // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
-                ReteBoundary<Pattern> rb = pm.getMatcher().getEngine().getReteEngine().getBoundary();
+                ReteBoundary<Pattern> rb = ((AdvancedIncQueryEngine)pm.getMatcher().getEngine()).getReteEngine().getBoundary();
                 ReteVisView.getInstance().setContent(rb);
             } catch (IncQueryException e) {
                 throw new ExecutionException("Error initializing pattern matcher.", e);

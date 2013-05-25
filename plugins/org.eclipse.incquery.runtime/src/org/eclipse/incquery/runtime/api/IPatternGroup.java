@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 /**
  * Generic interface for group of patterns.
  * 
- * It handles more than one patterns as a group, and provides functionality to initialize the patterns together (which
+ * <p>It handles more than one patterns as a group, and provides functionality to initialize the matchers together (which
  * has performance benefits).
  * 
  * @author Mark Czotter
@@ -28,16 +28,17 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public interface IPatternGroup {
 
     /**
-     * Initializes the contained patterns within an {@link IncQueryEngine}. If some of the pattern matchers are already
+     * Initializes matchers for the group of patterns within an {@link IncQueryEngine}. If some of the pattern matchers are already
      * constructed in the engine, no task is performed for them.
      * 
      * <p>
-     * This preparation step has the advantage that it build pattern matchers for an arbitrary number of patterns in a
-     * single-pass traversal of the EMF model. This performance benefit only manifests itself if the engine is not in
-     * wildcard mode).
+     * This preparation step has the advantage that it prepares pattern matchers for an arbitrary number of patterns in a
+     * single-pass traversal of the EMF model. 
+     * This is typically more efficient than traversing the EMF model each time an individual pattern matcher is initialized on demand. 
+     * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
      * @param engine
-     *            the existing EMF-IncQuery engine in which this matcher will be created.
+     *            the existing EMF-IncQuery engine in which the matchers will be created.
      * @throws IncQueryException
      *             if there was an error in preparing the engine
      */
@@ -47,7 +48,7 @@ public interface IPatternGroup {
      * Initializes the contained patterns over a given EMF model root (recommended: Resource or ResourceSet). If a
      * pattern matcher engine with the same root already exists, it will be reused.
      * 
-     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+     * <p>The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
      * The match set will be incrementally refreshed upon updates from this scope.
      * 
      * @param emfRoot
@@ -55,7 +56,9 @@ public interface IPatternGroup {
      *            ResourceSet.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
+     * @deprecated use {@link #prepare(IncQueryEngine) instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}}            
      */
+	@Deprecated
     public void prepare(Notifier emfRoot) throws IncQueryException;
 
     /**

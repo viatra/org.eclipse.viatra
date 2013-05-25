@@ -43,9 +43,8 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.Patt
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerInput;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateListener;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DoubleClickListener;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.ResourceChangeListener;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -301,9 +300,9 @@ public class QueryExplorer extends ViewPart {
                     tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
                     String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher()
                             .getPattern());
-                    Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+                    Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
                     List<PatternComponent> components = null;
-                    if (PatternRegistry.getInstance().isGenerated(pattern)) {
+                    if (QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
                         components = patternsViewerInput.getGeneratedPatternsRoot().find(patternFqn);
                         components.add(0, patternsViewerInput.getGeneratedPatternsRoot());
                     } else {
@@ -325,10 +324,10 @@ public class QueryExplorer extends ViewPart {
     }
 
     private void initPatternsViewerWithGeneratedPatterns() {
-        for (Pattern pattern : DatabindingUtil.getGeneratedPatterns()) {
+        for (Pattern pattern : QueryExplorerPatternRegistry.getGeneratedPatterns()) {
             String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-            PatternRegistry.getInstance().addGeneratedPattern(pattern, patternFqn);
-            PatternRegistry.getInstance().addActivePattern(pattern);
+            QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern, patternFqn);
+            QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
             patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
         }
 

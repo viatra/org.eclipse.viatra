@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -23,6 +27,10 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  */
 public abstract class BasePatternMatch implements IPatternMatch {
 
+	protected static <T> List<T> makeImmutableList(T... elements) {
+		return Collections.unmodifiableList(Arrays.asList(elements));
+	}
+	
     public static String prettyPrintValue(Object o) {
         if (o == null) {
             return "(null)";
@@ -56,8 +64,8 @@ public abstract class BasePatternMatch implements IPatternMatch {
 
     @Override
     public Object get(int position) {
-        if (position >= 0 && position < parameterNames().length)
-            return get(parameterNames()[position]);
+        if (position >= 0 && position < parameterNames().size())
+            return get(parameterNames().get(position));
         else
             return null;
     }
@@ -65,8 +73,8 @@ public abstract class BasePatternMatch implements IPatternMatch {
     @Override
     public boolean set(int position, Object newValue) {
     	if (!isMutable()) throw new UnsupportedOperationException();
-        if (position >= 0 && position < parameterNames().length) {
-            return set(parameterNames()[position], newValue);
+        if (position >= 0 && position < parameterNames().size()) {
+            return set(parameterNames().get(position), newValue);
         } else {
             return false;
         }
@@ -86,7 +94,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
         if (!pattern().equals(other.pattern())) {
             return false;
         }
-        for (int i = 0; i < parameterNames().length; i++) {
+        for (int i = 0; i < parameterNames().size(); i++) {
             Object value = get(i);
             Object otherValue = other.get(i);
             if(value != null && otherValue != null && !value.equals(otherValue)) {

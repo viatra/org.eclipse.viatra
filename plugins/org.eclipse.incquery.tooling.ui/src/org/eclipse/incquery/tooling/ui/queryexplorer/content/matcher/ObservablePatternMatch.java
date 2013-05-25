@@ -20,7 +20,7 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**
  * A PatternMatch is associated to every match of a matcher. It is the lowest level element is the treeviewer.
@@ -40,7 +40,7 @@ public class ObservablePatternMatch {
     public ObservablePatternMatch(ObservablePatternMatcher parent, IPatternMatch match) {
         this.parent = parent;
         this.match = match;
-        this.message = DatabindingUtil.getMessage(match, parent.isGenerated());
+        this.message = DisplayUtil.getMessage(match, parent.isGenerated());
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
             setText(DatabindingAdapterUtil.getMessage(match, message));

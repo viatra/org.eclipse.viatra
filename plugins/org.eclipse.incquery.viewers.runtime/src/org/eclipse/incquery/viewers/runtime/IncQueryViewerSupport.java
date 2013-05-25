@@ -26,29 +26,43 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 public class IncQueryViewerSupport {
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-        viewer.setContentProvider(new ListContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider());
+        if (!(viewer.getContentProvider() instanceof ListContentProvider)) { 
+            viewer.setContentProvider(new ListContentProvider(false));
+        }
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider()); 
+        }
         viewer.setInput(model);
         viewer.refresh();
     }
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-        viewer.setContentProvider(new ListContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider());
+        if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
+            viewer.setContentProvider(new ListContentProvider(false));
+        }
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider()); 
+        }
         viewer.setInput(new FilteredViewerDataModel(model, filter));
         viewer.refresh();
     }
 
     public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
         viewer.setContentProvider(new TreeContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider());
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider()); 
+        }
         viewer.setInput(model);
         viewer.refresh();
     }
 
     public static void bind(AbstractTreeViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-        viewer.setContentProvider(new TreeContentProvider());
-        viewer.setLabelProvider(new QueryLabelProvider());
+        if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
+            viewer.setContentProvider(new TreeContentProvider());
+        }
+        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+            viewer.setLabelProvider(new QueryLabelProvider()); 
+        }
         viewer.setInput(new FilteredViewerDataModel(model, filter));
         viewer.refresh();
     }

@@ -12,11 +12,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.adapters;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -82,7 +86,8 @@ public class EMFModelConnector implements IModelConnector {
         IStructuredSelection preparedSelection = prepareSelection(locationObjects);
         navigateToElements(key.getEditorPart(), preparedSelection);
         workbenchPage.bringToTop(key.getEditorPart());
-
+        //workbenchPage.activate(key.getEditorPart());
+        reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
 
     // XXX This is only needed for the current QueryExplorer. In the future these should be removed.
@@ -114,17 +119,25 @@ public class EMFModelConnector implements IModelConnector {
         return result;
     }
 
-    // private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
-    // try {
-    // Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-    // m.invoke(editorPart, preparedSelection.toList());
-    // } catch (NoSuchMethodException e) {
-    // logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer method not found",
-    // e));
-    // } catch (Exception e) {
-    // logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer call failed", e));
-    // }
-    // }
+    /**
+     * This is a somewhat "hackish" workaround in case the selection setting through the provider doesn't work.
+     * 
+     * Unfortunately, this seems to be the most reliable way to do this. *sigh*
+     * 
+     */
+    private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
+        try {
+            Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+            if (m!=null) {
+                m.invoke(editorPart, preparedSelection.toList());
+            }
+        } catch (NoSuchMethodException e) {
+            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer method not found",
+                    e));
+        } catch (Exception e) {
+            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer call failed", e));
+        }
+    }
 
     protected TreeSelection prepareSelection(Object[] locationObjects) {
         List<TreePath> paths = new ArrayList<TreePath>();
@@ -144,7 +157,8 @@ public class EMFModelConnector implements IModelConnector {
     }
 
     protected void navigateToElements(IEditorPart editorPart, IStructuredSelection selection) {
-        ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
+        // ISelectionProvider selectionProvider = editorPart.getEditorSite().getSelectionProvider();
+        ISelectionProvider selectionProvider = editorPart.getSite().getSelectionProvider();
         selectionProvider.setSelection(selection);
     }
 

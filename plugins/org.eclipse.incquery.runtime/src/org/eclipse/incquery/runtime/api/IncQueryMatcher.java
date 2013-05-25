@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.api;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -36,7 +37,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
     public abstract Integer getPositionOfParameter(String parameterName);
 
     /** Returns the array of symbolic parameter names. */
-    public abstract String[] getParameterNames();
+    public abstract List<String> getParameterNames();
 
     // ALL MATCHES
     /**
@@ -163,35 +164,12 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
 
     // CHANGE MONITORING
     // attach delta monitor for high-level change detection
-    /**
-     * Registers low-level callbacks for match appearance and disappearance on this pattern matcher.
-     * 
-     * <p>
-     * This is a low-level callback that is invoked when the pattern matcher is not necessarily in a consistent state
-     * yet. Importantly, no model modification permitted during the callback. Most users should use the agenda and trigger engine instead. TODO reference
-     * 
-     * <p>
-     * Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)},
-     * but prone to "signal hazards", e.g. spurious match appearances that will disappear immediately afterwards.
-     * 
-     * <p>
-     * The callback can be unregistered via {@link #removeCallbackOnMatchUpdate(IMatchUpdateListener)}.
-     * 
-     * @param fireNow
-     *            if true, appearCallback will be immediately invoked on all current matches as a one-time effect. See
-     *            also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
-     * @param listener
-     *            the listener that will be notified of each new match that appears or disappears, starting from now.
-     */
-    public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
 
-    /**
-     * Unregisters a callback registered by {@link #addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)}.
-     * 
-     * @param listener
-     *            the listener that will no longer be notified.
-     */
-    public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
+    // MOVED TO  ADVANCED INCQUERY ENGINE
+    //public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
+
+    // MOVED TO ADVANCED INCQUERY ENGINE
+    //public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
 
     /**
      * Registers a new delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes (delta) in
@@ -202,8 +180,12 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            if true, all current matches are reported as new match events; if false, the delta monitor starts
      *            empty.
      * @return the delta monitor.
+     * @deprecated 
+     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
+     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
-    public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
+    @Deprecated
+	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 
     /**
      * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
@@ -218,55 +200,24 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
      *            a fixed value.
      * @return the delta monitor.
+     * @deprecated 
+     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
+     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
      */
-    public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
+    @Deprecated
+	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 
-    /**
-     * Registers a callback that will be run each time EMF-IncQuery match sets are refreshed after a model update.
-     * Typically useful to check delta monitors. When the callback is issued, the pattern match sets are guaranteed to
-     * reflect the post-state after the update.
-     * <p>
-     * Callbacks are issued after each elementary change (i.e. possibly at incomplete transient states). This can have a
-     * negative effect on performance, therefore clients are advised to use it as a last resort only. Consider
-     * coarser-grained timing (e.g EMF Transaction pre/post-commit) instead, whenever available.
-     * 
-     * @param callback
-     *            a Runnable to execute after each update.
-     * @return false if the callback was already registered.
-     */
-    public boolean addCallbackAfterUpdates(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean addCallbackAfterUpdates(Runnable callback);
 
-    /**
-     * Removes a previously registered callback. See addCallbackAfterUpdates().
-     * 
-     * @param callback
-     *            the callback to remove.
-     * @return false if the callback was not registered.
-     */
-    public boolean removeCallbackAfterUpdates(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean removeCallbackAfterUpdates(Runnable callback);
 
-    /**
-     * Registers a callback that will be run each time the EMF-IncQuery engine is wiped or disposed. Typically useful if
-     * delta monitors are used, especially of the {@link IncQueryEngine} is managed.
-     * 
-     * <p>
-     * When the callback is issued, the wipe has already occurred and pattern matchers will continue to return stale
-     * results.
-     * 
-     * @param callback
-     *            a Runnable to execute after each wipe.
-     * @return false if the callback was already registered.
-     */
-    public boolean addCallbackAfterWipes(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean addCallbackAfterWipes(Runnable callback);
 
-    /**
-     * Removes a previously registered callback. See {@link #addCallbackAfterWipes()}.
-     * 
-     * @param callback
-     *            the callback to remove.
-     * @return false if the callback was not registered.
-     */
-    public boolean removeCallbackAfterWipes(Runnable callback);
+    // MOVED TO INCQUERY ENGINE
+    //public boolean removeCallbackAfterWipes(Runnable callback);
 
     /**
      * Returns an empty, mutable Match for the matcher. 

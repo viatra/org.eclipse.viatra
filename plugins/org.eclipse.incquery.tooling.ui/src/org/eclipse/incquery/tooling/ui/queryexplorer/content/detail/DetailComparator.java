@@ -12,6 +12,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,10 +24,10 @@ public class DetailComparator implements Comparator<String> {
 
     private Map<String, Integer> parameterMap;
 
-    public DetailComparator(String[] parameterNames) {
+    public DetailComparator(List<String> parameterNames) {
         parameterMap = new HashMap<String, Integer>();
-        for (int i = 0; i < parameterNames.length; i++) {
-            parameterMap.put(parameterNames[i], Integer.valueOf(i));
+        for (int i = 0; i < parameterNames.size(); i++) {
+            parameterMap.put(parameterNames.get(i), Integer.valueOf(i));
         }
     }
 

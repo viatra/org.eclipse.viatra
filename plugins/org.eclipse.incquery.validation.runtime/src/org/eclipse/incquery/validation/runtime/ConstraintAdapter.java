@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.EngineManager;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -32,6 +31,7 @@ import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.ui.IEditorPart;
 
 import com.google.common.collect.ImmutableSet;
@@ -57,19 +57,19 @@ public class ConstraintAdapter {
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
-            rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getMatcherFactory(),
+            rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getQuerySpecification(),
                     DefaultActivationLifeCycle.DEFAULT, ImmutableSet.of(
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger)),
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger)),
-                            Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger)))));
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger))),
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger))),
+                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger))))));
         }
 
         try {
-            IncQueryEngine incQueryEngine = EngineManager.getInstance().getIncQueryEngine(notifier);
-            ISchedulerFactory schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine);
+            IncQueryEngine incQueryEngine = IncQueryEngine.on(notifier);
+            ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
-            IncQueryEngine.getDefaultLogger().error(
+            IncQueryLoggingUtil.getDefaultLogger().error(
                     String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
     }

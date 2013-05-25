@@ -10,20 +10,26 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.Item.RootItem;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Zoltan Ujhelyi
@@ -45,10 +51,20 @@ public class ListContentProvider implements IStructuredContentProvider {
     protected ViewerDataModel vmodel;
     protected ViewerDataFilter vFilter;
     private AbstractListViewer viewer;
+    private Predicate<Item> rootFilter = new RootItem();
 
+    public ListContentProvider(boolean onlyRoots) {
+        if (onlyRoots) {
+            rootFilter = new RootItem();
+        } else {
+            rootFilter = Predicates.alwaysTrue();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
     @Override
-    public Object[] getElements(Object inputElement) {
-        return nodeList.toArray();
+    public Object[] getElements(Object inputElement) {        
+        return Iterables.toArray(Iterables.filter(nodeList, rootFilter), Item.class);
     }
 
     /**
@@ -57,10 +73,13 @@ public class ListContentProvider implements IStructuredContentProvider {
     protected void handleListChanges(ListDiff diff) {
         try {
         for (ListDiffEntry entry : diff.getDifferences()) {
-            if (entry.isAddition()) {
-                viewer.insert(entry.getElement(), entry.getPosition());
-            } else {
-                viewer.remove(entry.getElement());
+            Item item = (Item) entry.getElement();
+            if (rootFilter.apply(item)) {
+                    if (entry.isAddition()) {
+                        viewer.insert(item, entry.getPosition());
+                    } else {
+                        viewer.remove(item);
+                    }
             }
         }
         } catch (Exception e) {
@@ -92,7 +111,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 
     protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
         if (vmodel == null) {
-            nodeList = new ObservableList(new ArrayList(), new Object()) {};
+            nodeList = new WritableList(Collections.emptyList(), new Object());
         }
         else {
             if (filter == null) {

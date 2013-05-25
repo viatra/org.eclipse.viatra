@@ -44,13 +44,14 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
         return new Scaffold(pSystem).run();
     }
 
-    public class Scaffold {
+	public class Scaffold {
         PSystem<PatternDescription, StubHandle, Collector> pSystem;
         PatternDescription pattern;
         IPatternMatcherContext<PatternDescription> context;
         Buildable<PatternDescription, StubHandle, Collector> buildable;
 
         Set<DeferredPConstraint> deferredConstraints = null;
+        Set<EnumerablePConstraint> enumerableConstraints = null;
         Set<Stub<StubHandle>> forefront = new LinkedHashSet<Stub<StubHandle>>();
 
         Scaffold(PSystem<PatternDescription, StubHandle, Collector> pSystem) {
@@ -81,12 +82,12 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
 
                 // PROCESS CONSTRAINTS
                 deferredConstraints = pSystem.getConstraintsOfType(DeferredPConstraint.class);
-                Set<EnumerablePConstraint> enumerables = pSystem.getConstraintsOfType(EnumerablePConstraint.class);
-                for (EnumerablePConstraint<PatternDescription, StubHandle> enumerable : enumerables) {
+                enumerableConstraints = pSystem.getConstraintsOfType(EnumerablePConstraint.class);
+                for (EnumerablePConstraint<PatternDescription, StubHandle> enumerable : enumerableConstraints) {
                     Stub<StubHandle> stub = enumerable.getStub();
                     admitStub(stub);
                 }
-                if (enumerables.isEmpty()) { // EXTREME CASE
+                if (enumerableConstraints.isEmpty()) { // EXTREME CASE
                     Stub<StubHandle> stub = buildable.buildStartStub(new Object[] {}, new Object[] {});
                     admitStub(stub);
                 }
@@ -130,6 +131,13 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
         }
 
         private void admitStub(Stub<StubHandle> stub) throws RetePatternBuildException {
+        	// are there any variables that will not be needed anymore and are worth trimming?
+        	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
+        	if (!stub.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+        		final Stub<StubHandle> trimmed = BuildHelper.trimUnneccessaryVariables(buildable, stub, true);
+				stub = trimmed;
+        	}        	
+        	// are there any checkable constraints?
             for (DeferredPConstraint<PatternDescription, StubHandle> deferred : deferredConstraints) {
                 if (!stub.getAllEnforcedConstraints().contains(deferred)) {
                     if (deferred.isReadyAt(stub)) {
@@ -138,6 +146,7 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
                     }
                 }
             }
+            // if no checkable constraints and no unused variables
             forefront.add(stub);
         }
 

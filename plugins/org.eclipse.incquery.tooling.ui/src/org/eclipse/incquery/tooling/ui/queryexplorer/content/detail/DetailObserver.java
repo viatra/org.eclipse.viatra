@@ -28,7 +28,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**
  * The class is used to provide input for the tableviewer for a given PatternMatch. All of the declared ObservableValues
@@ -70,7 +70,7 @@ public class DetailObserver extends AbstractObservableList {
         } else if (value instanceof EObject) {
             EObject obj = (EObject) value;
             URI uri = obj.eClass().eResource().getURI();
-            AdapterFactoryLabelProvider labelProvider = DatabindingUtil.getAdapterFactoryLabelProvider(uri);
+            AdapterFactoryLabelProvider labelProvider = DisplayUtil.getAdapterFactoryLabelProvider(uri);
             if (labelProvider != null) {
                 return labelProvider.getText(obj);
             }

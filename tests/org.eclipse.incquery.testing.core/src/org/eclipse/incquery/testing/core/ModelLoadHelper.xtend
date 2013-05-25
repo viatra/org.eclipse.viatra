@@ -15,14 +15,13 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.incquery.runtime.api.EngineManager
-import org.eclipse.incquery.runtime.api.GenericMatcherFactory
+import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry
 import org.eclipse.incquery.runtime.util.XmiModelUtil
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -107,21 +106,20 @@ class ModelLoadHelper {
 			}
 		]
 		if(patterns.size == 1){
-			val factory = new GenericMatcherFactory(patterns.iterator.next)
-			factory.getMatcher(engine)
+			engine.getMatcher(patterns.iterator.next)
 		}
 	}
 	
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
-		val engine = EngineManager::getInstance().getIncQueryEngine(emfRoot);
+		val engine = IncQueryEngine::on(emfRoot);
 		model.initializeMatcherFromModel(engine,patternName)
 	}
 	/**
 	 * Initialize a registered matcher for the pattern FQN on the selected EMF root.
 	 */
 	def initializeMatcherFromRegistry(Notifier emfRoot, String patternFQN){
-		val factory = MatcherFactoryRegistry::getMatcherFactory(patternFQN)
-		factory.getMatcher(emfRoot)
+		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
+		querySpecification.getMatcher(IncQueryEngine::on(emfRoot))
 	}
 	
 	/**

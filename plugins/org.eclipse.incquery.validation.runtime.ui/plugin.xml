@@ -37,7 +37,7 @@
                <visibleWhen
                      checkEnabled="false">
                   <with
-                        variable="activeEditorId">
+                        variable="activePartId">
                      <test
                            forcePluginActivation="true"
                            property="org.eclipse.incquery.validation.runtime.ui.hasConstraint">
@@ -59,7 +59,7 @@
             <visibleWhen
                   checkEnabled="false">
                <with
-                     variable="activeEditorId">
+                     variable="activePartId">
                   <equals
                         value="org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID">
                   </equals>
@@ -76,7 +76,7 @@
             <visibleWhen
                   checkEnabled="false">
                <with
-                     variable="activeEditorId">
+                     variable="activePartId">
                   <equals
                         value="org.eclipse.emf.ecore.presentation.ReflectiveEditorID">
                   </equals>
@@ -93,7 +93,7 @@
             <visibleWhen
                   checkEnabled="false">
                   <with
-                     variable="activeEditorId">
+                     variable="activePartId">
                   <equals
                         value="org.eclipse.emf.genericEditor">
                   </equals>

@@ -59,8 +59,8 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
 		if (!navigationHelper.isInWildcardMode())
 			navigationHelper.registerObservedTypes(classes, null, features);
         
-		this.navigationHelper.registerFeatureListener(features, this);
-		this.navigationHelper.registerInstanceListener(classes, this);
+		this.navigationHelper.addFeatureListener(features, this);
+		this.navigationHelper.addInstanceListener(classes, this);
 		
 		this.dataSource = new EMFDataSource(navigationHelper, references, classes);
 		
@@ -119,8 +119,8 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
     @Override
     public void dispose() {
         this.sccAlg.dispose();
-        this.navigationHelper.unregisterInstanceListener(classes, this);
-        this.navigationHelper.unregisterFeatureListener(features, this);
+        this.navigationHelper.removeInstanceListener(classes, this);
+        this.navigationHelper.removeFeatureListener(features, this);
         
         if (disposeBaseIndexWhenDisposed)
         	this.navigationHelper.dispose();

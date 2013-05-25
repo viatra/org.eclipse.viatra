@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
 
 /**
@@ -38,7 +38,7 @@ public class PatternRegitryShowLocationHandler extends ShowLocationHandler {
 
         if (firstElement instanceof PatternLeaf) {
             String patternFqn = ((PatternLeaf) firstElement).getFullPatternNamePrefix();
-            Pattern pattern = PatternRegistry.getInstance().getPatternByFqn(patternFqn);
+            Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
             setSelectionToXTextEditor(pattern);
         }
 

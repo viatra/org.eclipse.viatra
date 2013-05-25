@@ -24,11 +24,11 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.extensibility.IMatcherFactoryProvider;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternTypeEnum;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 public class GeneratedPatternSource {
 
@@ -37,7 +37,7 @@ public class GeneratedPatternSource {
         IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
         if (extensionRegistry != null) {
             IExtensionPoint extensionPoint = extensionRegistry
-                    .getExtensionPoint(IExtensions.MATCHERFACTORY_EXTENSION_POINT_ID);
+                    .getExtensionPoint(IExtensions.QUERY_SPECIFICATION_EXTENSION_POINT_ID);
             if (extensionPoint != null) {
                 for (IExtension extension : extensionPoint.getExtensions()) {
                     for (IConfigurationElement configurationElement : extension.getConfigurationElements()) {
@@ -57,26 +57,26 @@ public class GeneratedPatternSource {
     private static IPatternInfo intializeFromConfigurationElement(IConfigurationElement configurationElement) {
         try {
             String idAttributeInExtension = configurationElement.getAttribute("id");
-            IMatcherFactoryProvider<?> matcherFactoryProvider = (IMatcherFactoryProvider<?>) configurationElement
-                    .createExecutableExtension("factoryProvider");
-            IMatcherFactory<?> matcherFactory = matcherFactoryProvider.get();
-            String patternFullyQualifiedName = matcherFactory.getPatternFullyQualifiedName();
+            IQuerySpecificationProvider<?> querySpecificationProvider = (IQuerySpecificationProvider<?>) configurationElement
+                    .createExecutableExtension("querySpecificationProvider");
+            IQuerySpecification<?> querySpecification = querySpecificationProvider.get();
+            String patternFullyQualifiedName = querySpecification.getPatternFullyQualifiedName();
             if (idAttributeInExtension.equals(patternFullyQualifiedName)) {
-                Pattern pattern = matcherFactory.getPattern();
+                Pattern pattern = querySpecification.getPattern();
                 if (hasQueryExplorerAnnotation(pattern)) {
-                    PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERATED, pattern, null, matcherFactory);
+                    PatternInfo patternInfo = new PatternInfo(PatternTypeEnum.GENERATED, pattern, null, querySpecification);
                     return patternInfo;
                 }
             } else {
-                IncQueryEngine.getDefaultLogger().warn(
+                IncQueryLoggingUtil.getDefaultLogger().warn(
                         "[Pattern Registry] Id attribute value " + idAttributeInExtension
-                                + " does not equal pattern FQN of factory " + patternFullyQualifiedName
+                                + " does not equal pattern FQN of query specification " + patternFullyQualifiedName
                                 + " in plugin.xml of "
                                 + configurationElement.getDeclaringExtension().getUniqueIdentifier());
             }
         } catch (Exception exception) {
-            IncQueryEngine.getDefaultLogger().error(
-                    "[Pattern Registry] Exception during matcher factory registry initialization", exception);
+        	IncQueryLoggingUtil.getDefaultLogger().error(
+                    "[Pattern Registry] Exception during query specification registry initialization", exception);
         }
 
         return null;

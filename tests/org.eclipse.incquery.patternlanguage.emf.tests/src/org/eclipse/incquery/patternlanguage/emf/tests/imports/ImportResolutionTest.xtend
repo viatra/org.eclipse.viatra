@@ -36,6 +36,7 @@ class ImportResolutionTest {
 	@Test
 	def importResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name) = {
@@ -52,6 +53,7 @@ class ImportResolutionTest {
 	@Test
 	def multipleImportResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage";
 			import "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage";
 
@@ -74,6 +76,7 @@ class ImportResolutionTest {
 	@Test
 	def importResolutionFailed() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://nonexisting.package.uri"
 
 			pattern resolutionTest(Name) = {

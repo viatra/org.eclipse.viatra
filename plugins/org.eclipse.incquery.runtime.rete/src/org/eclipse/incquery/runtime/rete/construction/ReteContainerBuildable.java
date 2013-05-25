@@ -87,9 +87,16 @@ public class ReteContainerBuildable<PatternDescription> implements
         this.library = targetContainer.getLibrary();
     }
 
-    public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask) {
-        Address<TrimmerNode> bodyTerminator = library.accessTrimmerNode(stub.getHandle(), trimMask);
-        return new Stub<Address<? extends Supplier>>(stub, trimMask.transform(stub.getVariablesTuple()), bodyTerminator);
+    public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask, boolean enforceUniqueness) {
+        Address<TrimmerNode> trimmer = library.accessTrimmerNode(stub.getHandle(), trimMask);
+        final Tuple trimmedVariables = trimMask.transform(stub.getVariablesTuple());
+        Address<? extends Supplier> resultNode;
+        if (enforceUniqueness) {
+        	resultNode = library.accessUniquenessEnforcerNode(trimmer, trimmedVariables.getSize());
+        } else {
+        	resultNode = trimmer;
+        }
+		return new Stub<Address<? extends Supplier>>(stub, trimmedVariables, resultNode);
     }
 
     public void buildConnection(Stub<Address<? extends Supplier>> stub, Address<? extends Receiver> collector) {

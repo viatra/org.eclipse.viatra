@@ -39,6 +39,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolution() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Body) = {
@@ -56,6 +57,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionChain() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Constraint) = {
@@ -76,6 +78,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionEscapedKeyword() {
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage"
 
 			pattern keywordAsIdentifier(A,B) = {
@@ -92,6 +95,7 @@ class EReferenceResolutionTest {
 	@Test
 	def referenceResolutionInvalid(){
 		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
 			pattern resolutionTest(Name : Pattern, Constraint) = {

@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.DatabindingUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -39,7 +39,7 @@ public class SampleUIDialogCreator {
         final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
                 new PatternMatchDialogLabelProvider(), new PatternMatchDialogContentProvider(matcher, matches));
         dialog.setTitle(String.format("Matchset of the pattern %s", patternFqn));
-        dialog.setMessage(DatabindingUtil.getMessage(matcher, matches.size(), patternFqn));
+        dialog.setMessage(DisplayUtil.getMessage(matcher, matches.size(), patternFqn));
         dialog.setEmptyListMessage("No matches!");
         dialog.setAllowMultiple(false);
         dialog.setDoubleClickSelects(false);

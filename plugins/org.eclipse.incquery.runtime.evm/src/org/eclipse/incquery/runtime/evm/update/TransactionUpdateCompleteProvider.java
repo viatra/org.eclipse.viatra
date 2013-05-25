@@ -37,9 +37,20 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
     public TransactionUpdateCompleteProvider(final TransactionalEditingDomain editingDomain) {
         this.transactionListener = new TransactionListener();
         this.lifecycle = TransactionUtil.getAdapter(editingDomain, Lifecycle.class);
-        this.lifecycle.addTransactionalEditingDomainListener(transactionListener);
     }
 
+    @Override
+    protected void firstListenerAdded() {
+        super.firstListenerAdded();
+        this.lifecycle.addTransactionalEditingDomainListener(transactionListener);
+    }
+    
+    @Override
+    protected void lastListenerRemoved() {
+        super.lastListenerRemoved();
+        this.lifecycle.removeTransactionalEditingDomainListener(transactionListener);
+    }
+    
     /**
      * Listener implementation that is invoked by the transaction life-cycle.
      * 
@@ -89,9 +100,4 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
         }
     }
 
-    @Override
-    public void dispose() {
-        this.lifecycle.removeTransactionalEditingDomainListener(transactionListener);
-        super.dispose();
-    }
 }

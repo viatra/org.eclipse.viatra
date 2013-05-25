@@ -22,10 +22,10 @@
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="A project-relative path to an icon."
+               description="Describes whether an item should display only as &apos;root&apos; (top-level) element, only as &apos;child&apos; (not root but as a child) or &apos;always&apos;."
                mandatory="false"
                multiple="false"
-               name="icon"
+               name="hierarchy"
                type="string">
          </annotationparameter>
       </annotation>

@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.evm.specific.scheduler;
 
 import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.Scheduler;
-import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 
 /**
  * A timed scheduler is similar to the {@link UpdateCompleteBasedScheduler} but it schedules in a periodic manner.
@@ -69,16 +68,6 @@ public class TimedScheduler extends Scheduler {
     @Override
     public void dispose() {
         interrupted = true;
-    }
-    
-    /**
-     * Creates a scheduler factory with the given interval.
-     * @param interval
-     * @return
-     * @deprecated Use {@link Schedulers#getTimedSchedulerFactory(long)} instead
-     */
-    public static TimedSchedulerFactory getTimedSchedulerFactory(long interval) {
-        return Schedulers.getTimedSchedulerFactory(interval);
     }
     
     /**

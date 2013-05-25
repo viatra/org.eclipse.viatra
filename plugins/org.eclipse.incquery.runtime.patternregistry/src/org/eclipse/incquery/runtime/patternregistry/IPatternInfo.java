@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 
 public interface IPatternInfo {
 
@@ -24,7 +24,7 @@ public interface IPatternInfo {
 
     public Pattern getPattern();
 
-    public IMatcherFactory<?> getMatcherFactory();
+    public IQuerySpecification<?> getQuerySpecification();
 
     public String getId();
 

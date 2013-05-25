@@ -14,7 +14,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -28,7 +28,7 @@ public class ModelConnectorTreeViewerKey {
 
     private IEditorPart editorPart;
     private Notifier notifier;
-    private IncQueryEngine engine;
+    private AdvancedIncQueryEngine engine;
 
     public ModelConnectorTreeViewerKey(IEditorPart editor, Notifier notifier) {
         super();
@@ -104,7 +104,7 @@ public class ModelConnectorTreeViewerKey {
     /**
      * @return the engine
      */
-    public IncQueryEngine getEngine() {
+    public AdvancedIncQueryEngine getEngine() {
         return engine;
     }
 
@@ -112,7 +112,7 @@ public class ModelConnectorTreeViewerKey {
      * @param engine
      *            the engine to set
      */
-    public void setEngine(IncQueryEngine engine) {
+    public void setEngine(AdvancedIncQueryEngine engine) {
         this.engine = engine;
     }
 

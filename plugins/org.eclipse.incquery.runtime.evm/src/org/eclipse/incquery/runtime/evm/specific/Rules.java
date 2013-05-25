@@ -12,8 +12,8 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IMatcherFactory;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSourceSpecification;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * 
@@ -35,29 +35,29 @@ import org.eclipse.incquery.runtime.extensibility.MatcherFactoryRegistry;
 public final class Rules {
     
     /**
-     * Creates a {@link RuleSpecification} with the given factory, life-cycle and jobs.
+     * Creates a {@link RuleSpecification} with the given query specification, life-cycle and jobs.
      * 
      * For default life-cycle implementations, see {@link DefaultActivationLifeCycle}.
      *        
-     * @param factory
+     * @param querySpecification
      * @param lifecycle
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IMatcherFactory<? extends IncQueryMatcher<Match>> factory, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
-        return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(factory), lifecycle, jobs);
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+        return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
     }
     
     /**
-     * Creates a {@link RuleSpecification} with the given factory and jobs,
+     * Creates a {@link RuleSpecification} with the given query specification and jobs,
      *  using the {@link DefaultActivationLifeCycle#DEFAULT} life-cycle.
      * 
-     * @param factory
+     * @param querySpecification
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IMatcherFactory<? extends IncQueryMatcher<Match>> factory, Set<Job<Match>> jobs){
-        return newSimpleMatcherRuleSpecification(factory, DefaultActivationLifeCycle.DEFAULT, jobs);
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
+        return newSimpleMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
     }
     
     public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
@@ -73,13 +73,13 @@ public final class Rules {
          * 
          */
         public FavouredMatcherSourceSpecification(IncQueryMatcher<Match> matcher) {
-            super(getFactory(matcher));
+            super(getQuerySpecification(matcher));
             this.matcher = matcher;
         }
         
         @SuppressWarnings("unchecked")
-        private static <Match extends IPatternMatch> IMatcherFactory<? extends IncQueryMatcher<Match>> getFactory(IncQueryMatcher<Match> matcher) {
-            return (IMatcherFactory<? extends IncQueryMatcher<Match>>) MatcherFactoryRegistry.getOrCreateMatcherFactory(matcher.getPattern());
+        private static <Match extends IPatternMatch> IQuerySpecification<? extends IncQueryMatcher<Match>> getQuerySpecification(IncQueryMatcher<Match> matcher) {
+            return (IQuerySpecification<? extends IncQueryMatcher<Match>>) QuerySpecificationRegistry.getOrCreateQuerySpecification(matcher.getPattern());
         }
         
         @Override
