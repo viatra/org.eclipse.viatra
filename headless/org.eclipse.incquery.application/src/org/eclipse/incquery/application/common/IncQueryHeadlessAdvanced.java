@@ -83,6 +83,7 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 		            }
 		        }
 			    
+			    // attempt to retrieve a registered query specification
 			    if (p!=null) {
 			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(p);
 			    }
@@ -91,11 +92,22 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
 			    }
 				
+			    IncQueryMatcher<? extends IPatternMatch> matcher;
+			    
 				if (querySpecification!=null) {
-					IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(engine);
+					// if the query specification could be found
+					matcher = querySpecification.getMatcher(engine);	
+				}
+				else /* if (p!=null) */ {
+					// fall back to using only the pattern object
+					matcher = engine.getMatcher(p);
+				}
+				
+				if (matcher!=null) {
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
 					prettyPrintMatches(results, matches);
 				}
+				
 				// wipe the engine
 				engine.wipe();
 				// after a wipe, new patterns can be rebuilt with much less overhead than 
