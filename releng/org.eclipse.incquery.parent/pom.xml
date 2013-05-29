@@ -33,7 +33,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-		<module>../../plugins/org.eclipse.incquery.databinding.tooling</module>
+<!--		<module>../../plugins/org.eclipse.incquery.databinding.tooling</module> -->
 		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
@@ -54,7 +54,7 @@
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module>
+<!--		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module> -->
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
@@ -89,7 +89,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
 		<!-- This property should not<sonar.surefire.reportsPath>../../target/surefire-reports/</sonar.surefire.reportsPath> -->
-		<sonar.skippedModules>org.eclipse.incquery.runtime.feature,org.eclipse.incquery.databinding.runtime.feature,org.eclipse.incquery.databinding.tooling.feature,org.eclipse.incquery.sdk.feature.feature,org.eclipse.incquery.validation.runtime.feature,org.eclipse.incquery.validation.tooling.feature,org.eclipse.incquery.licence.feature,org.eclipse.incquery.update,school,school.edit,school.editor,org.eclipse.incquery.snapshot,org.eclipse.incquery.snapshot.edit,org.eclipse.incquery.snapshot.editor</sonar.skippedModules>
+		<sonar.skippedModules>org.eclipse.incquery.runtime.feature,org.eclipse.incquery.databinding.runtime.feature,org.eclipse.incquery.sdk.feature.feature,org.eclipse.incquery.validation.runtime.feature,org.eclipse.incquery.validation.tooling.feature,org.eclipse.incquery.licence.feature,org.eclipse.incquery.update,school,school.edit,school.editor,org.eclipse.incquery.snapshot,org.eclipse.incquery.snapshot.edit,org.eclipse.incquery.snapshot.editor</sonar.skippedModules>
 	</properties>
 	<build>
 		<plugins>

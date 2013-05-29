@@ -80,7 +80,7 @@ public class TableViewerUtil {
         viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 
         DatabindingAdapter<IPatternMatch> databindableMatcher = DisplayUtil.getDatabindingAdapter(match
-                .getPatternMatch().patternName(), match.getParent().isGenerated());
+                .getPatternMatch().patternName());//, match.getParent().isGenerated());
 
         if (databindableMatcher == null) {
             viewer.setInput(null);

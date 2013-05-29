@@ -230,12 +230,13 @@ public class DisplayUtil {
      *            the name of the pattern
      * @return the content of the message attribute
      */
-    public static String getMessage(IPatternMatch match, boolean generatedMatcher) {
-        if (generatedMatcher) {
-            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
-        } else {
+    public static String getMessage(IPatternMatch match)//, boolean generatedMatcher) 
+    {
+//        if (generatedMatcher) {
+//            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
+//        } else {
             return getMessageForGenericMatcher(match);
-        }
+//      }
     }
 
     
@@ -298,13 +299,14 @@ public class DisplayUtil {
      * @return an instance of the DatabindingAdapter class generated for the pattern
      * TODO move into {@link DatabindingUtil} once Pattern Registry refactoring is done
      */
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
+    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName)//, boolean generatedMatcher)
+    {
         Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
-        if (generatedMatcher) {
-            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
-        } else {
+//        if (generatedMatcher) {
+//            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
+//        } else {
             return DatabindingUtil.getDatabindingAdapterForGenericMatcher(pattern);
-        }
+//        }
     }
 
 

@@ -40,7 +40,7 @@ public class ObservablePatternMatch {
     public ObservablePatternMatch(ObservablePatternMatcher parent, IPatternMatch match) {
         this.parent = parent;
         this.match = match;
-        this.message = DisplayUtil.getMessage(match, parent.isGenerated());
+        this.message = DisplayUtil.getMessage(match);//, parent.isGenerated());
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
             setText(DatabindingAdapterUtil.getMessage(match, message));
