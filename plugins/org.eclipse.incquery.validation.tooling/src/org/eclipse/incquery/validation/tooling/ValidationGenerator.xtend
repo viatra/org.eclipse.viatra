@@ -12,27 +12,30 @@
 package org.eclipse.incquery.validation.tooling
 
 import com.google.inject.Inject
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
+import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
-import org.eclipse.incquery.databinding.tooling.DatabindingGenerator
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.eclipse.xtext.xbase.lib.Pair
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
-import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
-import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.util.Strings
+import org.eclipse.xtext.xbase.lib.Pair
+
+import static org.eclipse.incquery.validation.tooling.ValidationGenerator.*
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import org.eclipse.xtext.util.Strings
+import org.eclipse.core.runtime.Path
 
-class ValidationGenerator extends DatabindingGenerator implements IGenerationFragment {
+class ValidationGenerator //extends DatabindingGenerator 
+implements IGenerationFragment {
 	
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	
@@ -245,5 +248,9 @@ class ValidationGenerator extends DatabindingGenerator implements IGenerationFra
 			}
 		}
 	'''
+	
+	override getAdditionalBinIncludes() {
+		return newArrayList(new Path("plugin.xml"))
+	}
 	
 }

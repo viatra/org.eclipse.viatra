@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.util;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.incquery.databinding.runtime.IncQueryDatabindingRuntimePlugin;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.databinding.runtime.adapter.GenericDatabindingAdapter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -23,9 +21,9 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  */
 public class DatabindingUtil {
 
-    private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
+ //   private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
 
-    private static ILog logger = IncQueryDatabindingRuntimePlugin.getDefault().getLog();
+ //   private static ILog logger = IncQueryDatabindingRuntimePlugin.getDefault().getLog();
     
 
    /* removed generated databinding adapter functionality entirely
