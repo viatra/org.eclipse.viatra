@@ -264,12 +264,23 @@ public class QueryExplorerPatternRegistry {
      * 
      * @return the list of (generic) patterns registered
      */
-    public List<Pattern> getPatterns() {
+    public List<Pattern> getGenericPatterns() {
         List<Pattern> patterns = new ArrayList<Pattern>();
         for (List<Pattern> pm : registeredPatterModels.values()) {
             patterns.addAll(pm);
         }
         return Collections.unmodifiableList(patterns);
+    }
+    
+    /**
+     * Return a list of all known patterns.
+     * @return a union of getGeneratedPatterns and getGenericPatterns
+     */
+    public List<Pattern> getAllPatterns() {
+        ArrayList<Pattern> r = new ArrayList<Pattern>();
+        r.addAll(getGeneratedPatterns());
+        r.addAll(getGenericPatterns());
+        return Collections.unmodifiableList(r);
     }
 
     /**

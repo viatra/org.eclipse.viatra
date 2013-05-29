@@ -57,7 +57,7 @@ public class DatabindingUtil {
     */
     
     
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(Pattern pattern) {
+    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(Pattern pattern) {
         GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(pattern);
         return adapter;
     }

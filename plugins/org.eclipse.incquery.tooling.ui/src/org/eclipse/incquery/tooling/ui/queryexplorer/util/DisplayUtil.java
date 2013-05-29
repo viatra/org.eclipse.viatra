@@ -235,18 +235,18 @@ public class DisplayUtil {
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
 //        } else {
-            return getMessageForGenericMatcher(match);
+            return getMessageForMatch(match);
 //      }
     }
 
     
 
-    private static String getMessageForGenericMatcher(IPatternMatch match) {
+    private static String getMessageForMatch(IPatternMatch match) {
         String patternName = match.patternName();
         Pattern pattern = null;
 
         // find PatternUI annotation
-        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getPatterns()) {
+        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getAllPatterns()) {
             if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
                 pattern = p;
 
@@ -305,7 +305,7 @@ public class DisplayUtil {
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
 //        } else {
-            return DatabindingUtil.getDatabindingAdapterForGenericMatcher(pattern);
+            return DatabindingUtil.getDatabindingAdapter(pattern);
 //        }
     }
 
