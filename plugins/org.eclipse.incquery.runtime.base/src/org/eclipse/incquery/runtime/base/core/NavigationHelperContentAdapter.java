@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
@@ -45,7 +46,6 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -95,8 +95,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // static maps between metamodel elements and their unique IDs
     private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
-    private static Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
-    private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
+    
+    //changed from Multimap to simple Map, becuase it is not allowed for two different EClassifiers or ETypedElements to have the same id 
+    private static Map<String,EClassifier> uniqueIDToClassifier = new HashMap<String, EClassifier>();
+    private static Map<String,ETypedElement> uniqueIDToTypedElement = new HashMap<String, ETypedElement>();
 
     // move optimization to avoid removing and re-adding entire subtrees
     EObject ignoreInsertionAndDeletion = null;
@@ -122,8 +124,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * @param classifier
-     * @return A unique string id generated from the classifier's package nsuri and the name.
+     * Returns a String id representation for the given {@link EClassifier} instance. 
+     * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
+     * and (2) throw an error message if two elements (for which equals evaluates to false) yield the same unique id. 
+     * 
+     * @param classifier the classifier instance
+     * @return A unique string id generated from the classifier's name and the NsURI of its {@link EPackage}.
      */
     protected static String getUniqueIdentifier(EClassifier classifier) {
     	String id = uniqueIDFromClassifier.get(classifier);
@@ -133,29 +139,37 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     		uniqueIDFromClassifier.put(classifier, id);
     		uniqueIDToClassifier.put(id, classifier);
     	}
+    	else {
+    	   EClassifier other = uniqueIDToClassifier.get(id);
+    	   if (!other.equals(classifier)) {
+    	       System.err.println("Id collision between classifiers "+other+" and "+classifier);
+    	   }
+    	}
         return id;
     }
 
     /**
-     * @param typedElement
+     * Returns a String id representation for the given {@link ETypedElement} instance. 
+     * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
+     * and (2) throw an error message if two elements (for which equals evaluates to false) yield the same unique id. 
+     * 
+     * @param typedElement the typed element instance
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
     protected static String getUniqueIdentifier(ETypedElement typedElement) {
     	String id = uniqueIDFromTypedElement.get(typedElement);
     	if (id == null) {
     		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
-    		
-    		EClassifier classifier = null;
-            if (typedElement.eContainer() instanceof EClass) {
-                classifier = (EClass) typedElement.eContainer();
-            } else {
-                classifier = typedElement.eContainer().eClass();
-            }
-
-    		id = getUniqueIdentifier(classifier) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
+    		id = getUniqueIdentifier((EClassifier) typedElement.eContainer()) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
     		uniqueIDFromTypedElement.put(typedElement, id);
     		uniqueIDToTypedElement.put(id, typedElement);
     	}
+    	else {
+            ETypedElement other = uniqueIDToTypedElement.get(id);
+            if (!other.equals(typedElement)) {
+                System.err.println("Id collision between typed elements "+other+" and "+typedElement);
+            }
+         }
         return id;
     }
 
@@ -845,9 +859,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     	Set<Object> classes = instanceMap.keySet();
        	for (Object clazz : classes) {
        	    if (isDynamicModel) {
-        		Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get((String) clazz);
-        		if (!classifiersOfThisID.isEmpty())
-        			result.add((EClass) classifiersOfThisID.iterator().next());
+        		EClassifier classifierOfThisID = uniqueIDToClassifier.get((String) clazz);
+        		if (classifierOfThisID != null) {
+        			result.add((EClass) classifierOfThisID);
+        		}
     		}
        	    else {
        	        result.add((EClass) clazz);
