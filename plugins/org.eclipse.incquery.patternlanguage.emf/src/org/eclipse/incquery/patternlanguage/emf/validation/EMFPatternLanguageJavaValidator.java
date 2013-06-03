@@ -449,6 +449,31 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             }
         }
 
+        // Remove variables which are equated to constants
+        for (Constraint constraint : patternBody.getConstraints()) {
+            if (constraint instanceof CompareConstraint) {
+                // Just equality
+                CompareConstraint compareConstraint = (CompareConstraint) constraint;
+                if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
+                    ValueReference leftValueReference = compareConstraint.getLeftOperand();
+                    ValueReference rightValueReference = compareConstraint.getRightOperand();
+                    if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof EnumValue)
+                            && rightValueReference instanceof VariableValue) {
+                        VariableValue variableValue = (VariableValue) rightValueReference;
+                        Variable variableToRemove = variableValue.getValue().getVariable();
+                        generalUnionFindForVariables.removeVariable(variableToRemove);
+                        justPositiveUnionFindForVariables.removeVariable(variableToRemove);
+                    } else if (leftValueReference instanceof VariableValue
+                            && (rightValueReference instanceof LiteralValueReference || rightValueReference instanceof EnumValue)) {
+                        VariableValue variableValue = (VariableValue) leftValueReference;
+                        Variable variableToRemove = variableValue.getValue().getVariable();
+                        generalUnionFindForVariables.removeVariable(variableToRemove);
+                        justPositiveUnionFindForVariables.removeVariable(variableToRemove);
+                    }
+                }
+            }
+        }
+
         if (generalUnionFindForVariables.isMoreThanOneUnion()) {
             // Giving strict warning in this case
             warning("The pattern body contains isolated constraints (\"cartesian products\") that can lead to severe performance and memory footprint issues. The independent partitions are: "
@@ -607,11 +632,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             }
         }
     }
-    
+
     /**
-     * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a warning
-     * on each that is not representable by EMF-IncQuery. This is a warning, since we only see well-behaving extensions
-     * in the host.
+     * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a
+     * warning on each that is not representable by EMF-IncQuery. This is a warning, since we only see well-behaving
+     * extensions in the host.
      * 
      * @param pathExpressionConstraint
      */
@@ -626,8 +651,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 warning("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
                         + " used in the path expression is not representable in EMF-IncQuery."
-                        + " For details, consult the documentation on well-behaving features.", tail.getKey().getType(), null,
-                        EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
+                        + " For details, consult the documentation on well-behaving features.",
+                        tail.getKey().getType(), null, EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             }
         }
     }
