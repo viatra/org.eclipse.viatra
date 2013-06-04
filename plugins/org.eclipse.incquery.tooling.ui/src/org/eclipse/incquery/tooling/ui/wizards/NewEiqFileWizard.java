@@ -170,7 +170,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
         for (EPackage importedPackage : imports) {
             PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
             importDecl.setEPackage(importedPackage);
-            pm.getImportPackages().add(importDecl);
+            pm.getImportPackages().getPackageImport().add(importDecl);
         }
 
         // Creating pattern

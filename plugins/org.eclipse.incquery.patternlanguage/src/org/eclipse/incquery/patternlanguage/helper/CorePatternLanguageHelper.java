@@ -44,7 +44,9 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -134,8 +136,13 @@ public final class CorePatternLanguageHelper {
         return posMapping;
     }
 
-    /** Finds all pattern variables referenced from the given XExpression. */
-    public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression) {
+    /**
+	 * Finds all pattern variables referenced from the given XExpression. </p>
+	 * <p>
+	 * <strong>Warning</strong> This method cannot be used in JvmModelInferrer,
+	 * as that is used to set up the list of available local variables.
+	 */
+    public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression, IJvmModelAssociations associations) {
         Set<Variable> result = new HashSet<Variable>();
         if (xExpression != null) {
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
@@ -143,8 +150,12 @@ public final class CorePatternLanguageHelper {
                 EObject expression = eAllContents.next();
                 EList<EObject> eCrossReferences = expression.eCrossReferences();
                 for (EObject eObject : eCrossReferences) {
-                    if (eObject instanceof Variable && !EcoreUtil.isAncestor(xExpression, eObject)) {
-                        result.add((Variable) eObject);
+                    if (eObject instanceof JvmFormalParameter && !EcoreUtil.isAncestor(xExpression, eObject)) {
+                    	for (EObject obj : associations.getSourceElements(eObject)) {
+                    		if (obj instanceof Variable) {
+                    		result.add((Variable) obj);
+                    		}
+                    	}
                     }
                 }
             }
