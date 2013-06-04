@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractScopeProvider;
+import org.eclipse.xtext.scoping.impl.SimpleScope;
 import org.eclipse.xtext.util.PolymorphicDispatcher;
 
 import com.google.common.base.Predicate;
@@ -43,6 +44,7 @@ import com.google.inject.name.Named;
 public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
 
     public static final String NAMED_DELEGATE = "org.eclipse.xtext.scoping.impl.MyAbstractDeclarativeScopeProvider.delegate";
+//    public static final String NAMED_DELEGATE2 = "org.eclipse.xtext.scoping.impl.MyAbstractDeclarativeScopeProvider.delegate2";
     public static final String NAMED_ERROR_HANDLER = "org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.errorHandler";
 
     public final Logger logger = Logger.getLogger(getClass());
@@ -50,17 +52,15 @@ public class MyAbstractDeclarativeScopeProvider extends AbstractScopeProvider {
     @Inject
     @Named(NAMED_DELEGATE)
     private IScopeProvider delegate;
+    
+//    @Inject
+//    @Named(NAMED_DELEGATE2)
+//    private IScopeProvider delegate2;
 
     protected IScope delegateGetScope(EObject context, EReference reference) {
-        return getDelegate().getScope(context, reference);
-    }
-
-    public void setDelegate(IScopeProvider delegate) {
-        this.delegate = delegate;
-    }
-
-    public IScopeProvider getDelegate() {
-        return delegate;
+        //IScope scope = delegate.getScope(context, reference);
+		//return new SimpleScope(scope, delegate2.getScope(context, reference).getAllElements());
+    	return delegate.getScope(context, reference);
     }
 
     @Inject(optional = true)

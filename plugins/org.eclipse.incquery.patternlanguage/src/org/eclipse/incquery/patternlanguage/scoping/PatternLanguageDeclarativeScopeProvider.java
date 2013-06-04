@@ -76,9 +76,12 @@ public class PatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarati
      * Custom scoping for patternRef in {@link PatternCall}. Currently returns all Pattern that is visible from the
      * current context.
      * 
+     * TODO redo
+     * 
      * @param ctx
      * @param ref
      * @return
+     * 
      */
     public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
         IScope scope = delegateGetScope(ctx, ref);
