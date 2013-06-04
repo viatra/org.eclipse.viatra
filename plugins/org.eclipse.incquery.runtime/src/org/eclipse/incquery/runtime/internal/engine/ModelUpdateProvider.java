@@ -195,7 +195,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         
         @Override
         public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
-            if (maxLevel.compareTo(ChangeLevel.MATCHSET) > 0) {
+            if (maxLevel.compareTo(ChangeLevel.MATCHSET) >= 0) {
                 ModelUpdateProvider.this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
             }
         }
