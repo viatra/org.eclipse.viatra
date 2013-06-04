@@ -150,7 +150,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		variable.EOpposite = varRefs
 		
 		val op = EcoreFactory::eINSTANCE.createEOperation
-		op.eType = varClass
+		op.EType = varClass
 		op.name = "getVariable"
 		op.upperBound = 1
 		val body = EcoreFactory::eINSTANCE.createEAnnotation
