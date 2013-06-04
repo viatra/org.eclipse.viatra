@@ -79,7 +79,7 @@ class XmiModelBuilder {
 //					}
 //				}
 			}
-			xmiModelRoot.importPackages.addAll(importDeclarations.map[
+			xmiModelRoot.importPackages?.packageImport?.addAll(importDeclarations.map[
 				val imp = EMFPatternLanguageFactory::eINSTANCE.createPackageImport
 				imp.setEPackage(it)
 				return imp

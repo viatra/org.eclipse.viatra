@@ -127,6 +127,7 @@ class PatternMatchClassInferrer {
    	 */
    	def inferMatchClassSetters(JvmDeclaredType matchClass, Pattern pattern) {
    		matchClass.members += pattern.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
+   			it.returnType = pattern.newTypeRef(Boolean::TYPE)
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    			it.parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
@@ -145,6 +146,7 @@ class PatternMatchClassInferrer {
    		]
    		for (Variable variable : pattern.parameters) {
    			matchClass.members += variable.toMethod(variable.setterMethodName, null) [
+   				it.returnType = pattern.newTypeRef(Void::TYPE)
    				it.parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
    				it.setBody([append('''
    					if (!isMutable()) throw new java.lang.UnsupportedOperationException();

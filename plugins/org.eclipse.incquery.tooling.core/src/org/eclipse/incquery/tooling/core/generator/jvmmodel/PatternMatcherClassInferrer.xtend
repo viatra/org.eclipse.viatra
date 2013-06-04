@@ -62,7 +62,7 @@ class PatternMatcherClassInferrer {
    	 */
    	def inferFields(JvmDeclaredType matchClass, Pattern pattern) {
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += pattern.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
+   			matchClass.members += variable.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
 	 			it.setStatic(true)
 	 			it.setFinal(true)
    				it.setInitializer([append('''«pattern.parameters.indexOf(variable)»''')])
