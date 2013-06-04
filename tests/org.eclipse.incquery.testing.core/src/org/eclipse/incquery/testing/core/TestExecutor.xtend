@@ -13,7 +13,6 @@ package org.eclipse.incquery.testing.core
 
 import com.google.inject.Inject
 import java.util.Set
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
@@ -234,7 +233,7 @@ class TestExecutor {
 		"Logger output not recorded"
 	}
 	
-	def logDifference(Set<Object> diff){
+	def logDifference(Set<? extends Object> diff){
 		val stringBuilder = new StringBuilder()
 		diff.logDifference(stringBuilder)
 		stringBuilder.toString
@@ -247,7 +246,7 @@ class TestExecutor {
 		stringBuilder.toString
 	}
 	
-	def private logDifference(Set<Object> diff, StringBuilder stringBuilder){
+	def private logDifference(Set<? extends Object> diff, StringBuilder stringBuilder){
 		diff.forEach()[
 			stringBuilder.append("\n" + it)
 		]
