@@ -82,7 +82,7 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.6.2.201302030002</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.3.1</xtend.compiler.version>
+		<xtend.compiler.version>2.4.1</xtend.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
