@@ -83,7 +83,7 @@ class ImportResolutionTest {
 				Pattern(Name2);
 			}
 		') as PatternModel
-		val importDecl = model.importPackages.get(0)
+		val importDecl = model.importPackages.packageImport.get(0)
 		importDecl.assertError(EMFPatternLanguagePackage$Literals::PACKAGE_IMPORT,
 			Diagnostic::LINKING_DIAGNOSTIC, "reference to EPackage"
 		)

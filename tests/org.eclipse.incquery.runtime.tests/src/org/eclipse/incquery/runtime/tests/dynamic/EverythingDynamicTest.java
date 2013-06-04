@@ -89,7 +89,7 @@ public class EverythingDynamicTest {
         patternModel.setPackageName("TestPatternPackage");
         PackageImport packageImport = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
         packageImport.setEPackage(bookStoreEPackage);
-        patternModel.getImportPackages().add(packageImport);
+        patternModel.getImportPackages().getPackageImport().add(packageImport);
 
         Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
         PatternBody patternBody = PatternLanguageFactory.eINSTANCE.createPatternBody();
