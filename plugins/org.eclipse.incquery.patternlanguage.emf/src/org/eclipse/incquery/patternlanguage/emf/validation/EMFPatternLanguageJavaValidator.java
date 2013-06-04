@@ -55,6 +55,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.inject.Inject;
 
@@ -77,6 +78,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Inject
     private IEMFTypeProvider emfTypeProvider;
+    
+    @Inject
+    private IJvmModelAssociations associations;
 
     @Override
     protected List<EPackage> getEPackages() {
@@ -383,7 +387,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 // Variables used together in check expression, always negative
                 CheckConstraint checkConstraint = (CheckConstraint) constraint;
                 generalVariables.addAll(CorePatternLanguageHelper
-                        .getReferencedPatternVariablesOfXExpression(checkConstraint.getExpression()));
+                        .getReferencedPatternVariablesOfXExpression(checkConstraint.getExpression(), associations));
             }
             justPositiveUnionFindForVariables.unite(positiveVariables);
             generalUnionFindForVariables.unite(generalVariables);
@@ -622,7 +626,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
         for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint
-                .getExpression())) {
+                .getExpression(), associations)) {
             EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
             if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
                                                                            // NPE for classifier.getName()

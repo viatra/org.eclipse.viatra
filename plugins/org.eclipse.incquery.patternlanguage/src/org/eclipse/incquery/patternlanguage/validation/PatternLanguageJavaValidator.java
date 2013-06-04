@@ -20,11 +20,8 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationValidator;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -58,11 +55,10 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeConformanceComputer;
-import org.eclipse.xtext.resource.ClasspathUriResolutionException;
-import org.eclipse.xtext.resource.ClasspathUriUtil;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.common.collect.ImmutableSet;
@@ -103,6 +99,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private TypeConformanceComputer typeConformance;
     @Inject
     private Primitives primitives;
+    @Inject
+    private IJvmModelAssociations associations;
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -392,27 +390,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             error("Only lowercase package names supported",
                     PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
         }
-        Resource res = model.eResource();
-        if (res == null || res.getURI().isRelative() || res.getResourceSet() == null) {
-            return;
-        }
-        URI resourceURI = res.getURI();
-        String packageDecl = model.getPackageName();
-        StringBuilder uriSB = new StringBuilder(ClasspathUriUtil.CLASSPATH_SCHEME);
-        uriSB.append(":/");
-        if (packageDecl != null) {
-            uriSB.append(packageDecl.replace(".", "/")).append("/");
-        }
-        uriSB.append(resourceURI.lastSegment());
-        URI classpathURI = URI.createURI(uriSB.toString());
-        URIConverter converter = res.getResourceSet().getURIConverter();
-        try {
-            URI normalizedURI = converter.normalize(classpathURI);
-            if (!resourceURI.equals(normalizedURI))
-                reportInvalidPackage(packageDecl);
-        } catch (ClasspathUriResolutionException e) {
-            reportInvalidPackage(packageDecl);
-        }
     }
 
     private void reportInvalidPackage(String packageDecl) {
@@ -550,7 +527,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (obj instanceof CheckConstraint) {
                 CheckConstraint constraint = (CheckConstraint) obj;
                 for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(constraint
-                        .getExpression())) {
+                        .getExpression(), associations)) {
                     refCounters.get(var).incrementCounter(ReferenceType.READ_ONLY);
                 }
                 it.prune();
