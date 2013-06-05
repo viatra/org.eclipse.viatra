@@ -20,5 +20,6 @@ Require-Bundle: org.eclipse.incquery.patternlanguage;bundle-version="0.7.0";visi
 Import-Package: org.apache.log4j,
  org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.incquery.patternlanguage.ui.contentassist
+Export-Package: org.eclipse.incquery.patternlanguage.ui.contentassist,
+ org.eclipse.incquery.patternlanguage.ui.quickfix
 Bundle-Activator: org.eclipse.incquery.patternlanguage.ui.internal.PatternLanguageActivator

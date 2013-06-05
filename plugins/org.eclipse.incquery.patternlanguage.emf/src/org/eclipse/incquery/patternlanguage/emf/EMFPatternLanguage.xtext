@@ -20,7 +20,7 @@ generate eMFPatternLanguage "http://www.eclipse.org/incquery/patternlanguage/emf
 EMFPatternModel returns core::PatternModel:
 	{PatternModel}
 	('package' packageName = QualifiedName ';'?)?
-	importPackages=XImportSection?
+	importPackages=XImportSection
 	patterns+=Pattern*;
 	
 XImportSection:
