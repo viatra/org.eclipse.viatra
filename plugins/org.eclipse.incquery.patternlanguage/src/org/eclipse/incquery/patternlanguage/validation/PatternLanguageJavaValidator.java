@@ -56,6 +56,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeConformanceComputer;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
@@ -221,7 +222,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkAnnotation(Annotation annotation) {
         if (annotationProvider.hasValidator(annotation.getName())) {
             IPatternAnnotationValidator validator = annotationProvider.getValidator(annotation.getName());
@@ -410,7 +411,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkVariableNames(PatternBody body) {
         for (Variable var1 : body.getVariables()) {
             Variable otherVar = null;
@@ -437,7 +438,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkVariableUsageCounters(PatternBody body) {
         Map<Variable, VariableReferenceCount> refCounters = calculateUsageCounts(body);
         UnionFindForVariables variableUnions = calculateEqualVariables(body);
@@ -621,7 +622,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         return name != null && name.startsWith("_") && name.contains("<");
     }
 
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
         XExpression xExpression = checkConstraint.getExpression();
         Set<String> elementsWithWarnings = new HashSet<String>();
