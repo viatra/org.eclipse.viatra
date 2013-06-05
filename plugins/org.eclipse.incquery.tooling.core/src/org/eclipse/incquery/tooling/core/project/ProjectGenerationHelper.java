@@ -78,7 +78,7 @@ import com.google.common.collect.Multimap;
 @SuppressWarnings("restriction")
 public abstract class ProjectGenerationHelper {
 
-    private static final String INVALID_PROJECT_MESSAGE = "Only existing, open plug-in projects are supported by the generator.";
+    private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
 
     private static final class IDToRequireBundleTransformer implements Function<String, IRequiredBundleDescription> {
         private final IBundleProjectService service;
@@ -268,7 +268,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static boolean checkBundleDependency(IProject project, String dependency) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
@@ -336,7 +336,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureBundleDependencies(IProject project, final List<String> dependencies,
             IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (dependencies.isEmpty()) {
             return;
         }
@@ -404,7 +404,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensurePackageExports(IProject project, final Collection<String> exports, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (exports.isEmpty()) {
             return;
         }
@@ -437,7 +437,7 @@ public abstract class ProjectGenerationHelper {
     public static void removePackageExports(IProject project, final List<String> dependencies, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (dependencies.isEmpty()) {
             return;
         }
@@ -538,7 +538,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
 
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
@@ -738,7 +738,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
