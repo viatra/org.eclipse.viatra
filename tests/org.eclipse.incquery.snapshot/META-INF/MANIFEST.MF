@@ -9,9 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot,
  org.eclipse.incquery.snapshot.EIQSnapshot.impl,
  org.eclipse.incquery.snapshot.EIQSnapshot.util
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.incquery.runtime;bundle-version="0.7.0",
+Require-Bundle: org.eclipse.incquery.runtime,
  org.eclipse.incquery.querybasedfeatures.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

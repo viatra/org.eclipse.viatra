@@ -25,6 +25,7 @@ import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
  * @see IPatternGroup
  * 
  */
+@SuppressWarnings("all")
 public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   /**
    * Access the pattern group.
@@ -45,8 +46,8 @@ public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   
   private MatchRecordQueries() throws IncQueryException {
     querySpecifications.add(SubstitutionValueMatcher.querySpecification());
-    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
     querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
+    querySpecifications.add(RecordRoleValueMatcher.querySpecification());
     
   }
 }

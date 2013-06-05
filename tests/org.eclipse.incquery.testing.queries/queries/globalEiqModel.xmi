@@ -569,10 +569,12 @@
       </constraints>
     </bodies>
   </patterns>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
-  </importPackages>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://www.eclipse.org/incquery/snapshot#/"/>
+  <importPackages>
+    <packageImport>
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </packageImport>
+    <packageImport>
+      <ePackage href="http://www.eclipse.org/incquery/snapshot#/"/>
+    </packageImport>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

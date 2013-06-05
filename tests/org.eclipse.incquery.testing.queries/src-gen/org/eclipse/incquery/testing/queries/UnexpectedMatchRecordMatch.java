@@ -22,6 +22,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
  * @see UnexpectedMatchRecordProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   private MatchSetRecord fActualSet;
   
@@ -172,6 +173,8 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends UnexpectedMatchRecordMatch {
     Mutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
       super(pActualSet, pExpectedSet, pRecord);
@@ -184,6 +187,8 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends UnexpectedMatchRecordMatch {
     Immutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
       super(pActualSet, pExpectedSet, pRecord);

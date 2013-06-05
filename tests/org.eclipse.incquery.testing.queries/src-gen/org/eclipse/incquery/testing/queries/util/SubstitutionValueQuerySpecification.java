@@ -13,6 +13,7 @@ import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
  * @see SubstitutionValueMatch
  * 
  */
+@SuppressWarnings("all")
 public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuerySpecification<SubstitutionValueMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
   private SubstitutionValueQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<SubstitutionValueQuerySpecification> {
     @Override
     public SubstitutionValueQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static SubstitutionValueQuerySpecification INSTANCE = make();
     

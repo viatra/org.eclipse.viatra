@@ -21,6 +21,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
  * @see SubstitutionValueProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class SubstitutionValueMatch extends BasePatternMatch {
   private MatchSubstitutionRecord fSubstitution;
   
@@ -148,6 +149,8 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends SubstitutionValueMatch {
     Mutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
       super(pSubstitution, pValue);
@@ -160,6 +163,8 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends SubstitutionValueMatch {
     Immutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
       super(pSubstitution, pValue);

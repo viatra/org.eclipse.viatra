@@ -13,6 +13,7 @@ import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
  * @see UnexpectedMatchRecordMatch
  * 
  */
+@SuppressWarnings("all")
 public final class UnexpectedMatchRecordQuerySpecification extends BaseGeneratedQuerySpecification<UnexpectedMatchRecordMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<UnexpectedMatchRecordQuerySpecification> {
     @Override
     public UnexpectedMatchRecordQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static UnexpectedMatchRecordQuerySpecification INSTANCE = make();
     

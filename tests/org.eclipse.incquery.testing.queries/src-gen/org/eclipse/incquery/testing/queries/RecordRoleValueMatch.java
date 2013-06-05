@@ -22,6 +22,7 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
  * @see RecordRoleValueProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class RecordRoleValueMatch extends BasePatternMatch {
   private MatchRecord fRecord;
   
@@ -149,6 +150,8 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends RecordRoleValueMatch {
     Mutable(final MatchRecord pRecord, final RecordRole pRole) {
       super(pRecord, pRole);
@@ -161,6 +164,8 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends RecordRoleValueMatch {
     Immutable(final MatchRecord pRecord, final RecordRole pRole) {
       super(pRecord, pRole);

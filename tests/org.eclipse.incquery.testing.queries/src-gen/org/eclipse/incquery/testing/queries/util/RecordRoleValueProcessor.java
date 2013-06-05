@@ -11,6 +11,7 @@ import org.eclipse.incquery.testing.queries.RecordRoleValueMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class RecordRoleValueProcessor implements IMatchProcessor<RecordRoleValueMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -22,7 +23,7 @@ public abstract class RecordRoleValueProcessor implements IMatchProcessor<Record
   
   @Override
   public void process(final RecordRoleValueMatch match) {
-    process(match.getRecord(), match.getRole());  				
+    process(match.getRecord(), match.getRole());
     
   }
 }
