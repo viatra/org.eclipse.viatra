@@ -27,6 +27,7 @@ import org.eclipse.incquery.runtime.rete.boundary.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XExpression;
@@ -54,8 +55,12 @@ public class XBaseEvaluator extends AbstractEvaluator {
 
     private IMatchChecker matchChecker;
 
+    @Inject
     private XbaseInterpreter interpreter;
+    @Inject
     private Provider<IEvaluationContext> contextProvider;
+    @Inject
+    private IQualifiedNameConverter nameConverter;
 
     /**
      * @param xExpression
@@ -90,8 +95,6 @@ public class XBaseEvaluator extends AbstractEvaluator {
 
         // Second option, setup the attributes for the interpreted approach
         if (matchChecker == null) {
-            Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-            interpreter = (XbaseInterpreter) injector.getInstance(IExpressionInterpreter.class);
             try {
                 ClassLoader classLoader = ClassLoaderUtil.getClassLoader(CheckExpressionUtil.getIFile(pattern));
                 if (classLoader != null) {
@@ -102,7 +105,6 @@ public class XBaseEvaluator extends AbstractEvaluator {
             } catch (CoreException coreException) {
                 logger.error("XBase Java evaluator extension point initialization failed.", coreException);
             }
-            contextProvider = injector.getProvider(IEvaluationContext.class);
         }
     }
 
@@ -116,7 +118,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
         // Second option: try to evaluate with the interpreted approach
         IEvaluationContext context = contextProvider.get();
         for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
-            context.newValue(QualifiedName.create(entry.getKey()), tuple.get(entry.getValue()));
+            context.newValue(nameConverter.toQualifiedName(entry.getKey()), tuple.get(entry.getValue()));
         }
         IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
         if (result == null)

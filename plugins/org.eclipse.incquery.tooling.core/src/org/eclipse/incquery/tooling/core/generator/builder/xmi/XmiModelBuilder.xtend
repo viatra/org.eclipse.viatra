@@ -11,27 +11,28 @@
 
 package org.eclipse.incquery.tooling.core.generator.builder.xmi
 
+import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.HashSet
+import java.util.Map
 import org.apache.log4j.Logger
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.emf.ecore.xmi.XMLResource
-import org.eclipse.incquery.tooling.core.generator.util.EMFPatternURIHandler
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator
+import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.incquery.tooling.core.generator.util.EMFPatternURIHandler
+import org.eclipse.xtext.common.types.JvmFormalParameter
+import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
-import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator
-import com.google.inject.Inject
-import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus
-import java.util.Map
 
 /**
  * @author Mark Czotter
@@ -47,8 +48,10 @@ class XmiModelBuilder {
 	def build(ResourceSet resourceSet, String fileFullPath) {
 		try {
 			// create the model in memory
-			val xmiModelRoot = EMFPatternLanguageFactory::eINSTANCE.createPatternModel()
+			val xmiModelRoot = EMFPatternLanguageFactory::eINSTANCE.createPatternModel
+			xmiModelRoot.setImportPackages(EMFPatternLanguageFactory::eINSTANCE.createXImportSection)
 			val xmiResource = resourceSet.createResource(URI::createPlatformResourceURI(fileFullPath, true))
+			xmiResource.contents.add(xmiModelRoot)
 			// add import declarations 
 			val HashSet<EPackage> importDeclarations = newHashSet()
 			/*
@@ -79,18 +82,20 @@ class XmiModelBuilder {
 //					}
 //				}
 			}
-			xmiModelRoot.importPackages?.packageImport?.addAll(importDeclarations.map[
+			xmiModelRoot.importPackages?.packageImport.addAll(importDeclarations.map[
 				val imp = EMFPatternLanguageFactory::eINSTANCE.createPackageImport
 				imp.setEPackage(it)
 				return imp
 			])
 			// first add all error-free patterns
+			val newParameters = new ArrayList
 			val Map<String, Pattern> fqnToPatternMap = newHashMap();
 			for (pattern : resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
 				if (validator.validateTransitively(pattern).status != PatternValidationStatus::ERROR){
-					pattern.copyPattern(fqnToPatternMap, xmiModelRoot)
+					newParameters += pattern.copyPattern(fqnToPatternMap, xmiModelRoot)
 				}
 			}
+			xmiModelRoot.eResource.contents += newParameters
 			// then iterate over all added PatternCall and change the patternRef
 			for (call : xmiModelRoot.eAllContents.toIterable.filter(typeof (PatternCall))) {
 				val fqn = CorePatternLanguageHelper::getFullyQualifiedName(call.patternRef)
@@ -102,7 +107,6 @@ class XmiModelBuilder {
 				}
 			}
 			// save the xmi file 
-			xmiResource.contents.add(xmiModelRoot)
 			val options = newHashMap(XMLResource::OPTION_URI_HANDLER -> new EMFPatternURIHandler(importDeclarations))
 			xmiResource.save(options) 
 		} catch(Exception e) {
@@ -111,7 +115,11 @@ class XmiModelBuilder {
 	}
 	
 	def copyPattern(Pattern pattern, Map<String, Pattern> fqnToPatternMap, PatternModel xmiModelRoot) {
-		val p = (EcoreUtil2::copy(pattern)) as Pattern //casting required to avoid build error
+		
+		val copier = new EcoreUtil$Copier();
+    	val p = copier.copy(pattern) as Pattern;
+    	copier.copyReferences();
+    
 		val fqn = CorePatternLanguageHelper::getFullyQualifiedName(pattern)
 		p.name = fqn
 		p.fileName = pattern.eResource.URI.toString
@@ -121,32 +129,28 @@ class XmiModelBuilder {
 			fqnToPatternMap.put(fqn, p)
 			xmiModelRoot.patterns.add(p)
 		}
+		
+		val newParameters = new ArrayList
 				
 		// iterate over each body
-		for(body : p.bodies) {
-			// add local variables
-			val nameToLocalVariableParameterMap = newHashMap();
-			for(variable : body.variables) {
-				val vfqn = variable.name
-				if (nameToLocalVariableParameterMap.get(vfqn) != null) {
-					logger.error("Variable already set in the Map: " + vfqn)
-				} else {
-					nameToLocalVariableParameterMap.put(vfqn, variable)
-				}
-			}
-			// then iterate over all added FeatureCalls and change feature to proper variable
-			for(expression : body.eAllContents.toIterable.filter(typeof (XFeatureCall))){
-				val f = expression.feature
-				if(f instanceof Variable){
-					val vfqn = (f as Variable).name
-					val v = nameToLocalVariableParameterMap.get(vfqn);
-					if(v == null){								
-						logger.error("Variable not found: " + vfqn)
-					} else {
-						expression.setFeature(v as Variable)
+		val iterator = p.eAllContents
+		while(iterator.hasNext) {
+			val next = iterator.next
+			if (next instanceof XExpression) {
+				val expr = next as XExpression
+
+				for (expression : expr.eAllContents.toIterable.filter(typeof(XFeatureCall))) {
+						val f = expression.feature
+						if (f instanceof JvmFormalParameter) {
+							val target = copier.copy(f) as JvmFormalParameter
+							expression.feature = target
+							newParameters += target
+						}
 					}
-				}
+				// Avoid traversing further into the expression
+				iterator.prune
 			}
 		}
+		return newParameters
 	}
 }
