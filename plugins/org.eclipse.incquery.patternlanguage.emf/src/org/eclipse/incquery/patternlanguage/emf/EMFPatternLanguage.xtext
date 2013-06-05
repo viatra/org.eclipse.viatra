@@ -20,26 +20,26 @@ generate eMFPatternLanguage "http://www.eclipse.org/incquery/patternlanguage/emf
 EMFPatternModel returns core::PatternModel:
 	{PatternModel}
 	('package' packageName = QualifiedName ';'?)?
-	importPackages=XImportSection
+	importPackages=XImportSection?
 	patterns+=Pattern*;
 	
 XImportSection:
 	{XImportSection}
 	packageImport+=PackageImport*
-	javaImport+=XImportDeclaration*
+	javaImport+=ImportDeclaration*
 ;
 	
 PackageImport:
 	'import' ePackage = [ecore::EPackage|STRING] ';'?// ('as' alias=ID)?
 ;
 
-//XImportDeclaration:
-//	{XImportDeclaration} 
-//	'uses' (
-//		(static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.' '*') 
-//		| importedType=[types::JvmDeclaredType|QualifiedName] 
-//		| importedNamespace=QualifiedNameWithWildcard) ';'?
-//;
+ImportDeclaration:
+	{XImportDeclaration} 
+	'uses' (
+		(static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.' '*') 
+		| importedType=[types::JvmDeclaredType|QualifiedName] 
+		| importedNamespace=QualifiedNameWithWildcard) ';'?
+;
 	
 Constraint returns core::Constraint:
 	CheckConstraint	| 
