@@ -14,6 +14,7 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.viewers.runtime.model.listeners.IEdgeReadyListener;
 
 /**
  * @author Zoltan Ujhelyi

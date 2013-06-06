@@ -8,33 +8,28 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.viewers.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model.listeners;
+
+import org.eclipse.incquery.viewers.runtime.model.Containment;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.Item;
 
 /**
  * @author Zoltan Ujhelyi
  *
  */
-public class FilteredViewerDataModel {
+public interface IViewerStateListener {
 
-    ViewerDataModel model;
-    ViewerDataFilter filter;
+    void itemAppeared(Item item);
 
-    /**
-     * @param model
-     * @param filt
-     */
-    public FilteredViewerDataModel(ViewerDataModel model, ViewerDataFilter filter) {
-        super();
-        this.model = model;
-        this.filter = ViewerDataFilter.cloneFilter(filter);
-    }
+    void itemDisappeared(Item item);
 
-    public ViewerDataModel getModel() {
-        return model;
-    }
+    void containmentAppeared(Containment containment);
 
-    public ViewerDataFilter getFilter() {
-        return filter;
-    }
+    void containmentDisappeared(Containment containment);
+
+    void edgeAppeared(Edge edge);
+
+    void edgeDisappeared(Edge edge);
 
 }

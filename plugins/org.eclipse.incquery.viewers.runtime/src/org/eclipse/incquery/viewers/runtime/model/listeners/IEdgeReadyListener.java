@@ -8,7 +8,9 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.viewers.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model.listeners;
+
+import org.eclipse.incquery.viewers.runtime.model.Edge;
 
 /**
  * Callback interface for Edges to represent that all information inside an Edge is available.
