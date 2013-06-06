@@ -67,5 +67,13 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
         else
             return Collections.singleton(parent);
     }
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
+    		if (parent != null)
+    			parent.acceptPropagatedTraceInfo(traceInfo);
+    }
 
 }

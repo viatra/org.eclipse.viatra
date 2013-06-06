@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.network;
 
+import java.util.List;
+
 /**
  * A node of a rete network, should be uniquely identified by network and nodeId. NodeId can be requested by registering
  * at the Network on construction.
@@ -37,7 +39,40 @@ public interface Node {
      * @return the tag of the node
      */
     Object getTag();
-
+    
+    /**
+     * @return unmodifiable view of the list of traceability infos assigned to this node
+     */
+    List<TraceInfo> getTraceInfos();
+    
+    /**
+     * assigns new traceability info to this node
+     */
+    void assignTraceInfo(TraceInfo traceInfo);
+    /**
+     * accepts traceability info propagated to this node
+     */
+    void acceptPropagatedTraceInfo(TraceInfo traceInfo);
+    
+    
+    /**
+     * Traces the node back to a purpose for which the node was built.
+     * @author Bergmann Gabor
+     */
+    public static interface TraceInfo {
+    	boolean propagateToIndexerParent();
+    	boolean propagateFromIndexerToSupplierParent();
+    	boolean propagateFromStandardNodeToSupplierParent();  	
+    	boolean propagateToProductionNodeParentAlso();
+    	
+    	/**
+    	 * One kind of trace marker that merely establishes the pattern for which the node was built.
+    	 * @author Bergmann Gabor
+    	 */
+    	public static interface PatternTraceInfo extends TraceInfo {
+    		String getPatternName();		
+    	}
+    }
     // /**
     // * The semantics of the tuples contained in this node.
     // * @return a tuple of correct size representing the semantics of each position.
