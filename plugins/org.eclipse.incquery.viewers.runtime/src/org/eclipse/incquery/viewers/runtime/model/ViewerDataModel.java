@@ -164,9 +164,7 @@ public class ViewerDataModel {
                         if (element instanceof Item) {
                             Item item = (Item) element;
                             EObject paramObject = item.getParamObject();
-                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).contains(item)) {
-                                itemMap.remove(paramObject, element);
-                            }
+                            itemMap.remove(paramObject, element);
                         }
                     }
                     
@@ -174,9 +172,7 @@ public class ViewerDataModel {
                     public void handleAdd(int index, Object element) {
                         if (element instanceof Item) {
                             Item item = (Item) element;
-                            if (!itemMap.containsKey(item.getParamObject())) {
-                                itemMap.put(item.getParamObject(), item);
-                            }
+                            itemMap.put(item.getParamObject(), item);
                         }
                         
                     }
