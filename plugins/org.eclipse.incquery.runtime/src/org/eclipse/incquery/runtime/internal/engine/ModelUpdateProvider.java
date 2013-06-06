@@ -139,12 +139,18 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
 
     private void notifyListeners() {
         
+        // any change that occurs after this point should be regarded as a new event
+        // FIXME what should happen when a listener creates new notifications?
+        // -> other listeners will get events in different order
+        ChangeLevel tempLevel = currentChange;
+        currentChange = ChangeLevel.NO_CHANGE;
+        
         if(!listenerMap.isEmpty()) {
             for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
-                if(currentChange.compareTo(level) >= 0) {
+                if(tempLevel.compareTo(level) >= 0) {
                     for (IncQueryModelUpdateListener listener : new ArrayList<IncQueryModelUpdateListener>(listenerMap.get(level))) {
                         try {
-                            listener.notifyChanged(currentChange);
+                            listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {
                             this.incQueryEngine.getLogger().error(
                                     "EMF-IncQuery encountered an error in delivering model update notification to listener "
@@ -155,7 +161,6 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
             }
         }
         
-        currentChange = ChangeLevel.NO_CHANGE;
     }
     
     // model update "providers":
