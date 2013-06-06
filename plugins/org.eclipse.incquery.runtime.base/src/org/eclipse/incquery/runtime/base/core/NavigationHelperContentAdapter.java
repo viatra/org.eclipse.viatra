@@ -46,6 +46,7 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -95,10 +96,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // static maps between metamodel elements and their unique IDs
     private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
-    
-    //changed from Multimap to simple Map, becuase it is not allowed for two different EClassifiers or ETypedElements to have the same id 
-    private static Map<String,EClassifier> uniqueIDToClassifier = new HashMap<String, EClassifier>();
-    private static Map<String,ETypedElement> uniqueIDToTypedElement = new HashMap<String, ETypedElement>();
+    private static Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
+    private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
 
     // move optimization to avoid removing and re-adding entire subtrees
     EObject ignoreInsertionAndDeletion = null;
@@ -126,32 +125,32 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * Returns a String id representation for the given {@link EClassifier} instance. 
      * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
-     * and (2) throw an error message if two elements (for which equals evaluates to false) yield the same unique id. 
+     * and (2) throw an error message if two elements yield the same unique id. 
      * 
      * @param classifier the classifier instance
      * @return A unique string id generated from the classifier's name and the NsURI of its {@link EPackage}.
      */
     protected static String getUniqueIdentifier(EClassifier classifier) {
-    	String id = uniqueIDFromClassifier.get(classifier);
-    	if (id == null) {
-    		Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-    		id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
-    		uniqueIDFromClassifier.put(classifier, id);
-    		uniqueIDToClassifier.put(id, classifier);
-    	}
-    	else {
-    	   EClassifier other = uniqueIDToClassifier.get(id);
-    	   if (!other.equals(classifier)) {
-    	       System.err.println("Id collision between classifiers "+other+" and "+classifier);
-    	   }
-    	}
+        String id = uniqueIDFromClassifier.get(classifier);
+        if (id == null) {
+            Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
+            id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
+            
+            Collection<EClassifier> others = uniqueIDToClassifier.get(id);
+            if (others != null && others.size() > 0) {
+                System.err.println("Id collision between classifiers "+others.iterator().next()+" and "+classifier);
+            }
+            
+            uniqueIDFromClassifier.put(classifier, id);
+            uniqueIDToClassifier.put(id, classifier);
+        }
         return id;
     }
 
     /**
      * Returns a String id representation for the given {@link ETypedElement} instance. 
      * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
-     * and (2) throw an error message if two elements (for which equals evaluates to false) yield the same unique id. 
+     * and (2) throw an error message if two elements yield the same unique id. 
      * 
      * @param typedElement the typed element instance
      * @return A unique string id generated from the typedelement's name and it's classifier type.
@@ -161,15 +160,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     	if (id == null) {
     		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
     		id = getUniqueIdentifier((EClassifier) typedElement.eContainer()) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
+    		
+    		Collection<ETypedElement> others = uniqueIDToTypedElement.get(id);
+    		if (others != null && others.size() > 0) {
+                System.err.println("Id collision between typed elements "+others.iterator().next()+" and "+typedElement);
+            }
+    		
     		uniqueIDFromTypedElement.put(typedElement, id);
     		uniqueIDToTypedElement.put(id, typedElement);
     	}
-    	else {
-            ETypedElement other = uniqueIDToTypedElement.get(id);
-            if (!other.equals(typedElement)) {
-                System.err.println("Id collision between typed elements "+other+" and "+typedElement);
-            }
-         }
         return id;
     }
 
@@ -855,20 +854,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * <p>Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned. 
      */
     public Set<EClass> getAllCurrentClasses() {
-    	Set<EClass> result = Sets.newHashSet();
-    	Set<Object> classes = instanceMap.keySet();
-       	for (Object clazz : classes) {
-       	    if (isDynamicModel) {
-        		EClassifier classifierOfThisID = uniqueIDToClassifier.get((String) clazz);
-        		if (classifierOfThisID != null) {
-        			result.add((EClass) classifierOfThisID);
-        		}
-    		}
-       	    else {
-       	        result.add((EClass) clazz);
-       	    }
-    	}
-    	return result;
+        Set<EClass> result = Sets.newHashSet();
+        Set<Object> classifiers = instanceMap.keySet();
+        for (Object classifierElement : classifiers) {
+            if (isDynamicModel) {
+                Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get((String) classifierElement);
+                if (!classifiersOfThisID.isEmpty())
+                    result.add((EClass) classifiersOfThisID.iterator().next());
+            }
+            else {
+                result.add((EClass) classifierElement);
+            }
+        
+        }
+        return result;
     }
 
     public boolean isDynamicModel() {
