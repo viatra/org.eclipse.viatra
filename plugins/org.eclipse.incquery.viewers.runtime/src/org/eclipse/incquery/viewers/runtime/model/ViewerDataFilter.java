@@ -12,13 +12,13 @@ package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Map;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.base.Preconditions;
@@ -40,6 +40,25 @@ public class ViewerDataFilter {
     public static ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
     private Map<Pattern, IPatternMatch> filterDefinitions;
+
+    final static class MatchList<Match extends IPatternMatch> extends ObservablePatternMatchList<Match> {
+
+        public <Matcher extends IncQueryMatcher<Match>> MatchList(IQuerySpecification<Matcher> querySpecification,
+                RuleEngine engine, Match filter) {
+            super(querySpecification, engine, filter);
+        }
+
+        public <Matcher extends IncQueryMatcher<Match>> MatchList(IQuerySpecification<Matcher> querySpecification,
+                RuleEngine engine) {
+            super(querySpecification, engine);
+        }
+
+        @Override
+        public RuleSpecification<Match> getSpecification() {
+            return super.getSpecification();
+        }
+
+    }
 
     /**
      * Initializes an empty data filter.
@@ -106,13 +125,14 @@ public class ViewerDataFilter {
      * @param engine
      * @return
      */
-    public IObservableList getObservableList(Pattern pattern, IncQueryEngine engine) {
+    public MatchList<IPatternMatch> getObservableList(Pattern pattern, RuleEngine engine) {
         @SuppressWarnings("unchecked")
         IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
                 .getOrCreateQuerySpecification(pattern);
 
-        IObservableList obslist = isFiltered(pattern) ? IncQueryObservables.observeMatchesAsList(querySpecification,
-                engine, getFilter(pattern)) : IncQueryObservables.observeMatchesAsList(querySpecification, engine);
+        MatchList<IPatternMatch> obslist = isFiltered(pattern) ? new MatchList<IPatternMatch>(querySpecification,
+                engine,
+                getFilter(pattern)) : new MatchList<IPatternMatch>(querySpecification, engine);
         return obslist;
     }
 }

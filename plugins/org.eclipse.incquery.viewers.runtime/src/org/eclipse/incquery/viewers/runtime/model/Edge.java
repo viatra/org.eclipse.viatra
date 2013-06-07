@@ -14,7 +14,6 @@ import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.viewers.runtime.model.listeners.IEdgeReadyListener;
 
 /**
  * @author Zoltan Ujhelyi
@@ -27,7 +26,6 @@ public class Edge extends FormattableElement {
     private Item source, target;
     private String label;
     private IPatternMatch match;
-    private IEdgeReadyListener listener;
 
     /**
      * @param source
@@ -51,10 +49,6 @@ public class Edge extends FormattableElement {
 
     public void setSource(Item source) {
         this.source = source;
-        if (listener != null && isReady()) {
-            listener.edgeReady(this);
-            listener = null;
-        }
     }
 
     /**
@@ -66,20 +60,6 @@ public class Edge extends FormattableElement {
 
     public void setTarget(Item target) {
         this.target = target;
-        if (listener != null && isReady()) {
-            listener.edgeReady(this);
-            listener = null;
-        }
-    }
-
-    /**
-     * Adds a callback function that is executed when all data is gathered during the notification change. Only a single
-     * listener is supported, and that is only called once.
-     * 
-     * @param listener
-     */
-    public void setListener(IEdgeReadyListener listener) {
-        this.listener = listener;
     }
 
     public boolean isReady() {
