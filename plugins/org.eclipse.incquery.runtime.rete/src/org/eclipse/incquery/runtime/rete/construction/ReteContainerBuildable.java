@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.index.DualInputNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Library;
 import org.eclipse.incquery.runtime.rete.network.Network;
@@ -41,7 +42,8 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  * 
  */
 public class ReteContainerBuildable<PatternDescription> implements
-        Buildable<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> {
+        Buildable<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>>,
+        Cloneable {
 
     protected Library library;
     protected ReteContainer targetContainer;
@@ -49,6 +51,10 @@ public class ReteContainerBuildable<PatternDescription> implements
     protected ReteBoundary<PatternDescription> boundary;
     protected ReteEngine<PatternDescription> engine;
     protected boolean headAttached = false;
+    
+    // only if provided by putOnTab
+    protected PatternDescription pattern = null;
+    protected IPatternMatcherContext<PatternDescription> context = null;
 
     /**
      * Constructs the builder attached to a specified container. Prerequisite: engine has its network and boundary
@@ -86,6 +92,11 @@ public class ReteContainerBuildable<PatternDescription> implements
         this.targetContainer = headAttached ? reteNet.getHeadContainer() : reteNet.getNextContainer();
         this.library = targetContainer.getLibrary();
     }
+    
+    public void patternFinished(PatternDescription pattern, IPatternMatcherContext<PatternDescription> context, Address<? extends Receiver> collector) {
+    	final NodeToPatternTraceInfo<PatternDescription> traceInfo = new NodeToPatternTraceInfo<PatternDescription>(pattern, context);
+		collector.getContainer().resolveLocal(collector).assignTraceInfo(traceInfo);
+    };
 
     public Stub<Address<? extends Supplier>> buildTrimmer(Stub<Address<? extends Supplier>> stub, TupleMask trimMask, boolean enforceUniqueness) {
         Address<TrimmerNode> trimmer = library.accessTrimmerNode(stub.getHandle(), trimMask);
@@ -96,7 +107,7 @@ public class ReteContainerBuildable<PatternDescription> implements
         } else {
         	resultNode = trimmer;
         }
-		return new Stub<Address<? extends Supplier>>(stub, trimmedVariables, resultNode);
+		return trace(new Stub<Address<? extends Supplier>>(stub, trimmedVariables, resultNode));
     }
 
     public void buildConnection(Stub<Address<? extends Supplier>> stub, Address<? extends Receiver> collector) {
@@ -105,67 +116,67 @@ public class ReteContainerBuildable<PatternDescription> implements
     }
 
     public Stub<Address<? extends Supplier>> buildStartStub(Object[] constantValues, Object[] constantNames) {
-        return new Stub<Address<? extends Supplier>>(new FlatTuple(constantNames), library.accessConstantNode(boundary
-                .wrapTuple(new FlatTuple(constantValues))));
+        return trace(new Stub<Address<? extends Supplier>>(new FlatTuple(constantNames), library.accessConstantNode(boundary
+                .wrapTuple(new FlatTuple(constantValues)))));
     }
 
     public Stub<Address<? extends Supplier>> buildEqualityChecker(Stub<Address<? extends Supplier>> stub, int[] indices) {
         Address<EqualityFilterNode> checker = library.accessEqualityFilterNode(stub.getHandle(), indices);
-        return new Stub<Address<? extends Supplier>>(stub, checker);
+        return trace(new Stub<Address<? extends Supplier>>(stub, checker));
     }
 
     public Stub<Address<? extends Supplier>> buildInjectivityChecker(Stub<Address<? extends Supplier>> stub,
             int subject, int[] inequalIndices) {
         Address<InequalityFilterNode> checker = library.accessInequalityFilterNode(stub.getHandle(), subject,
                 new TupleMask(inequalIndices, stub.getVariablesTuple().getSize()));
-        return new Stub<Address<? extends Supplier>>(stub, checker);
+        return trace(new Stub<Address<? extends Supplier>>(stub, checker));
     }
 
     @Override
     public Stub<Address<? extends Supplier>> buildTransitiveClosure(Stub<Address<? extends Supplier>> stub) {
         Address<TransitiveClosureNode> checker = library.accessTransitiveClosureNode(stub.getHandle());
-        return new Stub<Address<? extends Supplier>>(stub, checker);
+        return trace(new Stub<Address<? extends Supplier>>(stub, checker));
     }
 
     public Stub<Address<? extends Supplier>> patternCallStub(Tuple nodes, PatternDescription supplierKey)
             throws RetePatternBuildException {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessProduction(supplierKey));
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessProduction(supplierKey)));
     }
 
     public Stub<Address<? extends Supplier>> instantiationTransitiveStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessInstantiationTransitiveRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessInstantiationTransitiveRoot()));
     }
 
     public Stub<Address<? extends Supplier>> instantiationDirectStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessInstantiationRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessInstantiationRoot()));
     }
 
     public Stub<Address<? extends Supplier>> generalizationTransitiveStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessGeneralizationTransitiveRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessGeneralizationTransitiveRoot()));
     }
 
     public Stub<Address<? extends Supplier>> generalizationDirectStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessGeneralizationRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessGeneralizationRoot()));
     }
 
     public Stub<Address<? extends Supplier>> containmentTransitiveStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessContainmentTransitiveRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessContainmentTransitiveRoot()));
     }
 
     public Stub<Address<? extends Supplier>> containmentDirectStub(Tuple nodes) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessContainmentRoot());
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessContainmentRoot()));
     }
 
     public Stub<Address<? extends Supplier>> binaryEdgeTypeStub(Tuple nodes, Object supplierKey) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessBinaryEdgeRoot(supplierKey));
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessBinaryEdgeRoot(supplierKey)));
     }
 
     public Stub<Address<? extends Supplier>> ternaryEdgeTypeStub(Tuple nodes, Object supplierKey) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessTernaryEdgeRoot(supplierKey));
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessTernaryEdgeRoot(supplierKey)));
     }
 
     public Stub<Address<? extends Supplier>> unaryTypeStub(Tuple nodes, Object supplierKey) {
-        return new Stub<Address<? extends Supplier>>(nodes, boundary.accessUnaryRoot(supplierKey));
+        return trace(new Stub<Address<? extends Supplier>>(nodes, boundary.accessUnaryRoot(supplierKey)));
     }
 
     public Stub<Address<? extends Supplier>> buildBetaNode(Stub<Address<? extends Supplier>> primaryStub,
@@ -177,12 +188,12 @@ public class ReteContainerBuildable<PatternDescription> implements
 
         if (negative) {
             Address<? extends DualInputNode> checker = library.accessExistenceNode(primarySlot, sideSlot, true);
-            return new Stub<Address<? extends Supplier>>(primaryStub, checker);
+            return trace(new Stub<Address<? extends Supplier>>(primaryStub, checker));
         } else {
             Address<? extends DualInputNode> checker = library.accessJoinNode(primarySlot, sideSlot, complementer);
             Tuple newCalibrationPattern = complementer.combine(primaryStub.getVariablesTuple(),
                     sideStub.getVariablesTuple(), Options.enableInheritance, true);
-            return new Stub<Address<? extends Supplier>>(primaryStub, sideStub, newCalibrationPattern, checker);
+            return trace(new Stub<Address<? extends Supplier>>(primaryStub, sideStub, newCalibrationPattern, checker));
         }
     }
 
@@ -202,7 +213,7 @@ public class ReteContainerBuildable<PatternDescription> implements
         Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(primaryStub,
                 newCalibrationPattern, checker);
 
-        return result;
+        return trace(result);
     }
 
     public Stub<Address<? extends Supplier>> buildCountCheckBetaNode(Stub<Address<? extends Supplier>> primaryStub,
@@ -221,7 +232,7 @@ public class ReteContainerBuildable<PatternDescription> implements
         Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(primaryStub,
                 newCalibrationPattern, checker);
 
-        return result;
+        return trace(result);
     }
 
     public Stub<Address<? extends Supplier>> buildPredicateChecker(AbstractEvaluator evaluator, Integer rhsIndex,
@@ -234,11 +245,11 @@ public class ReteContainerBuildable<PatternDescription> implements
 
         Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(stub, checker);
 
-        return result;
+        return trace(result);
     }
 
     /**
-     * @return a buildable that potentially acts on a separate container
+     * @return trace(a buildable that potentially acts on a separate container
      */
     public ReteContainerBuildable<PatternDescription> getNextContainer() {
         return new ReteContainerBuildable<PatternDescription>(engine, reteNet.getNextContainer());
@@ -263,7 +274,7 @@ public class ReteContainerBuildable<PatternDescription> implements
         // build checker
         stub = new Stub<Address<? extends Supplier>>(stub, targetContainer.getLibrary().accessExistenceNode(primary,
                 secondary, false));
-        return stub;
+        return trace(stub);
     }
 
     public Address<? extends Receiver> patternCollector(PatternDescription pattern) throws RetePatternBuildException {
@@ -273,8 +284,23 @@ public class ReteContainerBuildable<PatternDescription> implements
     /**
      * No need to distinguish
      */
-    public ReteContainerBuildable<PatternDescription> putOnTab(PatternDescription effort) {
-        return this;
+    public ReteContainerBuildable<PatternDescription> putOnTab(PatternDescription effort, IPatternMatcherContext<PatternDescription> effortContext) {
+    	final ReteContainerBuildable<PatternDescription> patternSpecific;
+    	try {
+    		patternSpecific = (ReteContainerBuildable<PatternDescription>) this.clone();
+		} catch (CloneNotSupportedException e) {
+			return this;
+		}
+    	patternSpecific.pattern = effort;
+    	patternSpecific.context = effortContext;
+        return patternSpecific;
+    }
+    
+    private Stub<Address<? extends Supplier>> trace(Stub<Address<? extends Supplier>> stub) {
+    	NodeToStubTraceInfo<PatternDescription> traceInfo = new NodeToStubTraceInfo<PatternDescription>(stub, pattern, context);
+    	final Address<? extends Supplier> address = stub.getHandle();
+    	address.getContainer().resolveLocal(address).assignTraceInfo(traceInfo);
+    	return stub;
     }
 
 }

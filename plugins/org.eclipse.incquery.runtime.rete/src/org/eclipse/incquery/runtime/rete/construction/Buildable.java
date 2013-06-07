@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction;
 
 import org.eclipse.incquery.runtime.rete.boundary.AbstractEvaluator;
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
@@ -32,7 +33,11 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 public interface Buildable<PatternDescription, StubHandle, Collector> {
 
     public Collector patternCollector(PatternDescription pattern) throws RetePatternBuildException;
-
+ 
+    public void buildConnection(Stub<StubHandle> stub, Collector collector);
+    
+    public void patternFinished(PatternDescription pattern, IPatternMatcherContext<PatternDescription> context, Collector collector);
+    
     public Stub<StubHandle> patternCallStub(Tuple nodes, PatternDescription supplierKey)
             throws RetePatternBuildException;
 
@@ -53,8 +58,6 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
     public Stub<StubHandle> ternaryEdgeTypeStub(Tuple nodes, Object supplierKey);
 
     public Stub<StubHandle> unaryTypeStub(Tuple nodes, Object supplierKey);
-
-    public void buildConnection(Stub<StubHandle> stub, Collector collector);
 
     public Stub<StubHandle> buildStartStub(Object[] constantValues, Object[] constantNames);
 
@@ -90,7 +93,7 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
     /**
      * @return a buildable that puts build actions on the tab of the given pattern
      */
-    public Buildable<PatternDescription, StubHandle, Collector> putOnTab(PatternDescription effort);
+    public Buildable<PatternDescription, StubHandle, Collector> putOnTab(PatternDescription effort, IPatternMatcherContext<PatternDescription> context);
 
     public void reinitialize();
 }
