@@ -42,6 +42,7 @@ import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -64,35 +65,38 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // since last run of after-update callbacks
     private boolean isDirty = false;
 
-    // value -> feature (attr or ref) -> holder(s)
-    private Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap = null;
+    // value -> feature (EAttribute or EReference) -> holder(s)
+    private Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
 
-    // feature (attr or ref) -> holder(s)
+    // feature (EAttribute or EReference) -> holder(s)
     // constructed on-demand
-    private Map<Object, Multiset<EObject>> featureToHolderMap = null;
+    private Map<Object, Multiset<EObject>> featureToHolderMap;
 
-    // holder -> feature (attr or ref) -> value(s)
+    // holder -> feature (EAttribute or EReference) -> value(s)
     // constructed on-demand
-    private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap = null;
+    private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap;
 
-    // eclass -> instance(s)
-    private Map<Object, Set<EObject>> instanceMap = null;
+    // key (String id or EClass instance) -> instance(s)
+    private Map<Object, Set<EObject>> instanceMap;
 
-    // edatatype -> multiset of value(s)
-    private Map<Object, Map<Object, Integer>> dataTypeMap = null;
+    // key (String id or EDataType instance) -> multiset of value(s)
+    private Map<Object, Map<Object, Integer>> dataTypeMap;
 
-    // source -> feature -> proxy target -> delayed visitors
-    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap = null;
+    // source -> feature (EReference) -> proxy target -> delayed visitors
+    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
 
     // proxy source -> delayed visitors
-    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap = null;
+    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
-    // static for all eClasses whose instances were encountered at least once
-    private Set<EClass> knownClasses = null;
+    // Field variable becuase it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
+    private Set<EClass> knownClasses;
 
-    // static for eclass -> all subtypes in knownClasses
+    // static for EClass -> all subtypes in knownClasses (shared between the IQ engines)
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
 
+    // EPacakge NsURI -> EPacakge instances
+    private Multimap<String, EPackage> ePackageMap;
+    
     // static maps between metamodel elements and their unique IDs
     private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
@@ -100,13 +104,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
 
     // move optimization to avoid removing and re-adding entire subtrees
-    EObject ignoreInsertionAndDeletion = null;
+    protected EObject ignoreInsertionAndDeletion;
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
     // Maps the generated feature id to the actual EStructuralFeature instance
-    // Multimap is used, this way we can easily track if a given feature id is currently used by base
-    private Multimap<String, EStructuralFeature> knownFeatures = null;
+    // This field is used only in case of dynamic EMF models
+    private Multimap<String, EStructuralFeature> knownFeatures;
 
     private boolean isDynamicModel;
 
@@ -119,13 +123,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.valueToFeatureToHolderMap = HashBasedTable.create();
         this.instanceMap = new HashMap<Object, Set<EObject>>();
         this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
+        this.ePackageMap = HashMultimap.create();
         this.knownClasses = new HashSet<EClass>();
     }
 
     /**
      * Returns a String id representation for the given {@link EClassifier} instance. 
-     * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
-     * and (2) throw an error message if two elements yield the same unique id. 
      * 
      * @param classifier the classifier instance
      * @return A unique string id generated from the classifier's name and the NsURI of its {@link EPackage}.
@@ -134,13 +137,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         String id = uniqueIDFromClassifier.get(classifier);
         if (id == null) {
             Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-            id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
-            
-            Collection<EClassifier> others = uniqueIDToClassifier.get(id);
-            if (others != null && others.size() > 0) {
-                System.err.println("Id collision between classifiers "+others.iterator().next()+" and "+classifier);
-            }
-            
+            id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();            
             uniqueIDFromClassifier.put(classifier, id);
             uniqueIDToClassifier.put(id, classifier);
         }
@@ -149,8 +146,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     /**
      * Returns a String id representation for the given {@link ETypedElement} instance. 
-     * Note that the calculated id is stored in an internal cache to (1) speed up consecutive query for the same element 
-     * and (2) throw an error message if two elements yield the same unique id. 
      * 
      * @param typedElement the typed element instance
      * @return A unique string id generated from the typedelement's name and it's classifier type.
@@ -160,12 +155,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     	if (id == null) {
     		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
     		id = getUniqueIdentifier((EClassifier) typedElement.eContainer()) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
-    		
-    		Collection<ETypedElement> others = uniqueIDToTypedElement.get(id);
-    		if (others != null && others.size() > 0) {
-                System.err.println("Id collision between typed elements "+others.iterator().next()+" and "+typedElement);
-            }
-    		
     		uniqueIDFromTypedElement.put(typedElement, id);
     		uniqueIDToTypedElement.put(id, typedElement);
     	}
@@ -579,12 +568,56 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             return false;
         }
     }
+    
+    /**
+     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision 
+     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the 
+     * elements in the passed {@link Collection}.
+     * 
+     * @param classifiers the collection of classifiers
+     */
+    protected <T extends EClassifier> void checkEPackage(Collection<T> classifiers) {
+        for (T classifier : classifiers) {
+            checkEPackage(classifier);
+        }
+    }
+    
+    /**
+     * Checks the {@link EClassifier}'s {@link EPackage} for NsURI collision.
+     * An error message will be logged if a model element from an other {@link EPackage} 
+     * instance with the same NsURI has been already processed. The error message will be logged 
+     * only for the first time for a given {@link EPackage} instance.
+     * 
+     * @param classifier the classifier instance
+     */
+    protected void checkEPackage(EClassifier classifier) {
+        Collection<EPackage> otherPackages = ePackageMap.get(classifier.getEPackage().getNsURI());
+        boolean alreadyPresent = false;
+        if (otherPackages != null) {
+            for (EPackage p : otherPackages) {
+                if (p.equals(classifier.getEPackage())) {
+                    alreadyPresent = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!alreadyPresent) {
+            if (otherPackages.size() >= 1) {
+                //collision detected between EPackages, only log the issue if the EPackage instance is not already present in the map
+                processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages"), 
+                        "process the EPackage of a new model element.");
+            }
+            ePackageMap.put(classifier.getEPackage().getNsURI(), classifier.getEPackage());
+        }
+    }
 
     /**
      * put subtype information into cache
      */
     protected void maintainTypeHierarchy(EClass clazz) {
         if (!knownClasses.contains(clazz)) {
+            checkEPackage(clazz);
             knownClasses.add(clazz);
 
             for (EClass superType : clazz.getEAllSuperTypes()) {

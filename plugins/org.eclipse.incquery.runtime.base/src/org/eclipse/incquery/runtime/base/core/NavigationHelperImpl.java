@@ -385,6 +385,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {
+        contentAdapter.checkEPackage(classes);
         Collection<EClass> registered = this.instanceListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EClass>();
@@ -406,6 +407,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+        for (EStructuralFeature feature : features) {
+            contentAdapter.checkEPackage(feature.getEType());
+            contentAdapter.checkEPackage(feature.getEContainingClass());
+        }
         Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EStructuralFeature>();
@@ -427,6 +432,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
+        contentAdapter.checkEPackage(types);
         Collection<EDataType> registered = this.dataTypeListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EDataType>();
@@ -595,6 +601,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 			final Set<EStructuralFeature> resolvedFeatures = resolveAll(features);
 			final Set<EClass> resolvedClasses = resolveAll(classes);
 			final Set<EDataType> resolvedDatatypes = resolveAll(dataTypes);
+			
+			contentAdapter.checkEPackage(resolvedClasses);
+			contentAdapter.checkEPackage(resolvedDatatypes);
+			for (EStructuralFeature feature : resolvedFeatures) {
+			    contentAdapter.checkEPackage(feature.getEType());
+			    contentAdapter.checkEPackage(feature.getEContainingClass());
+			}
+			
 			try {
 			     coalesceTraversals(new Callable<Void>() {
 			         @Override
@@ -630,6 +644,12 @@ public class NavigationHelperImpl implements NavigationHelper {
         ensureNotInWildcardMode();
         if (features != null) {
             final Set<EStructuralFeature> resolved = resolveAll(features);
+            
+            for (EStructuralFeature feature : resolved) {
+                contentAdapter.checkEPackage(feature.getEType());
+                contentAdapter.checkEPackage(feature.getEContainingClass());
+            }
+            
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
@@ -665,6 +685,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         ensureNotInWildcardMode();
         if (classes != null) {
             final Set<EClass> resolvedClasses = resolveAll(classes);
+            contentAdapter.checkEPackage(resolvedClasses);
+            
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
@@ -717,6 +739,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         ensureNotInWildcardMode();
         if (dataTypes != null) {
             final Set<EDataType> resolved = resolveAll(dataTypes);
+            contentAdapter.checkEPackage(resolved);
+            
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
