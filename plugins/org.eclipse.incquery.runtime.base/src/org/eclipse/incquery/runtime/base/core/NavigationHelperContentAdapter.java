@@ -592,17 +592,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      */
     protected void checkEPackage(EClassifier classifier) {
         Collection<EPackage> otherPackages = ePackageMap.get(classifier.getEPackage().getNsURI());
-        boolean alreadyPresent = false;
-        if (otherPackages != null) {
-            for (EPackage p : otherPackages) {
-                if (p.equals(classifier.getEPackage())) {
-                    alreadyPresent = true;
-                    break;
-                }
-            }
-        }
-        
-        if (!alreadyPresent) {
+        if (!otherPackages.contains(classifier.getEPackage())) {
             if (otherPackages.size() >= 1) {
                 //collision detected between EPackages, only log the issue if the EPackage instance is not already present in the map
                 processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages"), 
