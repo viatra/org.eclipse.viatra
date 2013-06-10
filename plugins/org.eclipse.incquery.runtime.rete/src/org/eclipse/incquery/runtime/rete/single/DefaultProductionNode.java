@@ -49,4 +49,10 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
     public Iterator<Tuple> iterator() {
         return memory.iterator();
     }
+    
+    @Override
+    public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
+    	if (traceInfo.propagateToProductionNodeParentAlso())
+    		super.acceptPropagatedTraceInfo(traceInfo);
+    }
 }

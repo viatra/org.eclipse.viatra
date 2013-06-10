@@ -104,6 +104,23 @@ public class UnionFindForVariables {
         }
         return false;
     }
+    
+    public void removeVariable(Variable variable) {
+        if (inputVariables.contains(variable)) {
+            int[] newUnionIdArray = new int[inputVariables.size()-1];
+            int indexOfVariable = inputVariables.indexOf(variable);
+            for (int i = 0; i < inputVariables.size(); i++) {
+                if (i<indexOfVariable) {
+                    newUnionIdArray[i] = unionIdArray[i];                    
+                } else if (i == indexOfVariable) {
+                    // Omit the element
+                } else if (i>indexOfVariable){
+                    newUnionIdArray[i-1] = unionIdArray[i];
+                }
+            }
+            inputVariables.remove(variable);
+        }
+    }
 
     private boolean isSameUnion(Variable variable1, Variable variable2) {
         // Should not be called with out of the scope variables!
@@ -160,4 +177,5 @@ public class UnionFindForVariables {
         }
         return set;
     }
+    
 }

@@ -85,7 +85,7 @@ public class PatternMatchDialogLabelProvider implements ILabelProvider {
     @Override
     public String getText(Object element) {
         if (element instanceof IPatternMatch) {
-            String message = DisplayUtil.getMessage((IPatternMatch) element, true);
+            String message = DisplayUtil.getMessage((IPatternMatch) element);//, true);
             if (message != null) {
                 return DatabindingAdapterUtil.getMessage((IPatternMatch) element, message);
             } else {

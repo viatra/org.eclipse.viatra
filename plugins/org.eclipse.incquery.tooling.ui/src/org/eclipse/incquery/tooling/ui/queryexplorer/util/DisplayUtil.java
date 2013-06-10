@@ -230,22 +230,23 @@ public class DisplayUtil {
      *            the name of the pattern
      * @return the content of the message attribute
      */
-    public static String getMessage(IPatternMatch match, boolean generatedMatcher) {
-        if (generatedMatcher) {
-            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
-        } else {
-            return getMessageForGenericMatcher(match);
-        }
+    public static String getMessage(IPatternMatch match)//, boolean generatedMatcher) 
+    {
+//        if (generatedMatcher) {
+//            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
+//        } else {
+            return getMessageForMatch(match);
+//      }
     }
 
     
 
-    private static String getMessageForGenericMatcher(IPatternMatch match) {
+    private static String getMessageForMatch(IPatternMatch match) {
         String patternName = match.patternName();
         Pattern pattern = null;
 
         // find PatternUI annotation
-        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getPatterns()) {
+        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getAllPatterns()) {
             if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
                 pattern = p;
 
@@ -298,13 +299,14 @@ public class DisplayUtil {
      * @return an instance of the DatabindingAdapter class generated for the pattern
      * TODO move into {@link DatabindingUtil} once Pattern Registry refactoring is done
      */
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName, boolean generatedMatcher) {
+    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName)//, boolean generatedMatcher)
+    {
         Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
-        if (generatedMatcher) {
-            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
-        } else {
-            return DatabindingUtil.getDatabindingAdapterForGenericMatcher(pattern);
-        }
+//        if (generatedMatcher) {
+//            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
+//        } else {
+            return DatabindingUtil.getDatabindingAdapter(pattern);
+//        }
     }
 
 

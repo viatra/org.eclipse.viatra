@@ -42,13 +42,13 @@ public class EPMBuildScaffold<StubHandle, Collector> {
     }
 
     public Collector construct(Pattern pattern) throws RetePatternBuildException {
-        Collector production = baseBuildable.putOnTab(pattern).patternCollector(pattern);
+        Collector production = baseBuildable.putOnTab(pattern, context).patternCollector(pattern);
         // TODO check annotations for reinterpret
 
         context.logDebug("EPMBuilder starts construction of: " + pattern.getName());
         for (PatternBody body : pattern.getBodies()) {
             Buildable<Pattern, StubHandle, Collector> currentBuildable = baseBuildable.getNextContainer().putOnTab(
-                    pattern);
+                    pattern, context);
             if (Options.builderMethod == BuilderMethod.LEGACY) {
                 throw new UnsupportedOperationException();
             } else {
@@ -59,8 +59,8 @@ public class EPMBuildScaffold<StubHandle, Collector> {
                 BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production,
                         converter.symbolicParameterArray());
             }
-
         }
+        baseBuildable.patternFinished(pattern, context, production);
 
         return null;
     }

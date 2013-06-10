@@ -10,15 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.util;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.incquery.databinding.runtime.IncQueryDatabindingRuntimePlugin;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.databinding.runtime.adapter.GenericDatabindingAdapter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -30,12 +21,12 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  */
 public class DatabindingUtil {
 
-    private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
+ //   private static final String DATABINDING_EXTENSION = "org.eclipse.incquery.databinding.runtime.databinding";
 
-    private static ILog logger = IncQueryDatabindingRuntimePlugin.getDefault().getLog();
+ //   private static ILog logger = IncQueryDatabindingRuntimePlugin.getDefault().getLog();
     
 
-    
+   /* removed generated databinding adapter functionality entirely
     @SuppressWarnings("unchecked")
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGeneratedMatcher(Pattern _pattern) {
         String patternName = _pattern.getName();
@@ -63,12 +54,15 @@ public class DatabindingUtil {
 
         return null;
     }
+    */
     
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapterForGenericMatcher(Pattern pattern) {
+    
+    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(Pattern pattern) {
         GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(pattern);
         return adapter;
     }
     
+    /*
     public static String getDatabindingMessageForGeneratedMatcher(IPatternMatch match) {
         String patternName = match.patternName();
         try {
@@ -91,5 +85,5 @@ public class DatabindingUtil {
 
         return null;
     }
-    
+    */
 }

@@ -79,7 +79,7 @@
 						<configuration>
 						<source>
 							<repository>
-								<url>${site_url}</url>
+								<url>${extra_site_url}</url>
 								<layout>p2</layout>
 							</repository>
 						</source>

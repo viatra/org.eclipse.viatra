@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.network;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
+
+import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo;
+
 /**
  * Base implementation for a Rete node.
  * 
@@ -21,6 +28,7 @@ public abstract class BaseNode implements Node {
     protected ReteContainer reteContainer;
     protected long nodeId;
     protected Object tag;
+    protected List<TraceInfo> traceInfos; 
 
     /**
      * @param reteContainer
@@ -30,15 +38,23 @@ public abstract class BaseNode implements Node {
         super();
         this.reteContainer = reteContainer;
         this.nodeId = reteContainer.registerNode(this);
+        this.traceInfos = new ArrayList<Node.TraceInfo>();
     }
 
     @Override
     public String toString() {
         if (tag != null)
-            return "[" + nodeId + "]" + getClass().getSimpleName() + "[[" + tag.toString() + "]]";
+            return toStringCore() + "->" + getTraceInfoPatternsEnumerated() + "{" + tag.toString() + "}";
         else
-            return "[" + nodeId + "]" + getClass().getSimpleName();
+            return toStringCore() + "->" + getTraceInfoPatternsEnumerated();
     }
+
+    /**
+     * clients should override this to append before the tag / trace indicators
+     */
+	protected String toStringCore() {
+		return "[" + nodeId + "]" + getClass().getSimpleName();
+	}
 
     @Override
     public ReteContainer getContainer() {
@@ -58,6 +74,35 @@ public abstract class BaseNode implements Node {
     @Override
     public void setTag(Object tag) {
         this.tag = tag;
+    }
+        
+    @Override
+	public List<TraceInfo> getTraceInfos() {
+		return Collections.unmodifiableList(traceInfos);
+	}
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	traceInfos.add(traceInfo);
+    }
+    
+    @Override
+    public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
+    	assignTraceInfo(traceInfo);
+    }
+    
+    /**
+     * Decendants should use this in e.g. logging
+     */
+    protected String getTraceInfoPatternsEnumerated() {
+    	TreeSet<String> patternNames = new TreeSet<String>();
+    	for (TraceInfo trInfo : traceInfos) {
+    		if (trInfo instanceof PatternTraceInfo) {
+	    		final String pName = ((PatternTraceInfo) trInfo).getPatternName();
+				patternNames.add(pName);
+    		}
+    	}
+    	return patternNames.toString();
     }
 
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.incquery.runtime.rete.network.BaseNode;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
@@ -27,19 +28,14 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * @author Bergmann Gábor
  * 
  */
-public abstract class StandardIndexer implements Indexer {
+public abstract class StandardIndexer extends BaseNode implements Indexer {
 
-    protected ReteContainer reteContainer;
-    protected long nodeId;
-    protected Object tag;
     protected Supplier parent;
     protected List<IndexerListener> listeners;
     protected TupleMask mask;
 
     public StandardIndexer(ReteContainer reteContainer, TupleMask mask) {
-        super();
-        this.reteContainer = reteContainer;
-        this.nodeId = reteContainer.registerNode(this);
+        super(reteContainer);
         this.parent = null;
         this.mask = mask;
         this.listeners = new ArrayList<IndexerListener>();
@@ -74,36 +70,23 @@ public abstract class StandardIndexer implements Indexer {
         return listeners;
     }
 
-    public ReteContainer getContainer() {
+    @Override
+	public ReteContainer getContainer() {
         return reteContainer;
     }
 
-    public long getNodeId() {
-        return nodeId;
-    }
-
-    /**
-     * @return the tag
-     */
-    public Object getTag() {
-        return tag;
-    }
-
-    /**
-     * @param tag
-     *            the tag to set
-     */
-    public void setTag(Object tag) {
-        this.tag = tag;
-    }
-
     @Override
-    public String toString() {
-        if (tag != null)
-            return "[" + nodeId + "]" + getClass().getSimpleName() + "(" + parent + "/" + mask + ")" + " [["
-                    + tag.toString() + "]]";
-        else
-            return "[" + nodeId + "]" + getClass().getSimpleName() + "(" + parent + "/" + mask + ")";
-    };
+    protected String toStringCore() {
+    	return super.toStringCore() + "(" + parent + "/" + mask + ")";
+    }
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateFromIndexerToSupplierParent())
+    		if (parent != null)
+    			parent.acceptPropagatedTraceInfo(traceInfo);
+    }
 
+    
 }

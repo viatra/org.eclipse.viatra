@@ -227,4 +227,16 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
         else
             return primarySlot;
     }
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateToIndexerParent()) {
+    		if (primarySlot != null)
+    			primarySlot.acceptPropagatedTraceInfo(traceInfo);
+    		if (secondarySlot != null)
+    			secondarySlot.acceptPropagatedTraceInfo(traceInfo);
+    	}
+    }
+
 }

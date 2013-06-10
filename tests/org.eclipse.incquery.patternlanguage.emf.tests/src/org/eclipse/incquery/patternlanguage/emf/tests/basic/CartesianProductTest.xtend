@@ -229,6 +229,23 @@ class CartesianProductTest {
 	}
 	
 	@Test
+	def testGood9() {
+		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Good9(X, Y) {
+				EClass(X);
+				EInt(Y);
+				Y == 10;
+			}
+		') as PatternModel
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	
+	@Test
 	def testSoft1() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests

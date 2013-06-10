@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Network;
+import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -631,6 +632,10 @@ public class ReteBoundary<PatternDescription> {
             network.waitForReteTermination();
     }
 
+    /**
+     * @deprecated Use {@link Node#assignTraceInfo(org.eclipse.incquery.runtime.rete.network.Node.TraceInfo)}
+     */
+    @Deprecated
     public void registerParentStubForReceiver(Address<? extends Receiver> receiver,
             Stub<Address<? extends Supplier>> parentStub) {
         Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
@@ -641,6 +646,10 @@ public class ReteBoundary<PatternDescription> {
         parents.add(parentStub);
     }
 
+    /**
+     * @deprecated Use {@link Node#getTraceInfos()}
+     */
+    @Deprecated
     public Set<Stub<Address<? extends Supplier>>> getParentStubsOfReceiver(Address<? extends Receiver> receiver) {
         Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
         if (parents == null)

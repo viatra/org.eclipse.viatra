@@ -32,8 +32,14 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternGroup;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
+import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter.MatchList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
@@ -52,11 +58,16 @@ import com.google.common.collect.Sets;
  * 
  */
 public class ViewerDataModel {
+    private static final int NODE_PRIORITY = 0;
+    private static final int EDGE_PRIORITY = 1;
+    private static final int CONTAINMENT_PRIORITY = 2;
     private IncQueryEngine engine;
     private Logger logger;
     private ResourceSet model;
     private Set<Pattern> patterns;
     private Multimap<Object, Item> itemMap;
+    private RuleEngine ruleEngine;
+    private FixedPriorityConflictResolver resolver;
 
     /**
      * Initializes a viewer model from a group of patterns over a
@@ -83,6 +94,10 @@ public class ViewerDataModel {
         this.engine = engine;
         itemMap = initializeItemMap();
         logger = engine.getLogger();
+        ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+                Schedulers.getIQEngineSchedulerFactory(engine));
+        resolver = new FixedPriorityConflictResolver();
+        ruleEngine.setConflictResolver(resolver);
     }
 
     private Multimap<Object,Item> initializeItemMap() {
@@ -141,14 +156,15 @@ public class ViewerDataModel {
         final String annotationName = Item.ANNOTATION_ID;
         for (final Pattern nodePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
-            IObservableList obspatternmatchlist = filter.getObservableList(nodePattern, engine);
+            MatchList<IPatternMatch> nodeList = filter.getObservableList(nodePattern, ruleEngine);
+            resolver.setPriority(nodeList.getSpecification(), NODE_PRIORITY);
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
                 ObservableList resultList = new WritableList();
                 nodeListsObservable.add(resultList);
 
-                ctx.bindList(resultList, obspatternmatchlist, null,
+                ctx.bindList(resultList, nodeList, null,
                         new UpdateListStrategy().setConverter(new ItemConverter(itemMap, annotation, formatAnnotation)));
             }
         }
@@ -164,9 +180,7 @@ public class ViewerDataModel {
                         if (element instanceof Item) {
                             Item item = (Item) element;
                             EObject paramObject = item.getParamObject();
-                            if (itemMap.containsKey(paramObject) && itemMap.get(paramObject).contains(item)) {
-                                itemMap.remove(paramObject, element);
-                            }
+                            itemMap.remove(paramObject, element);
                         }
                     }
                     
@@ -174,9 +188,7 @@ public class ViewerDataModel {
                     public void handleAdd(int index, Object element) {
                         if (element instanceof Item) {
                             Item item = (Item) element;
-                            if (!itemMap.containsKey(item.getParamObject())) {
-                                itemMap.put(item.getParamObject(), item);
-                            }
+                            itemMap.put(item.getParamObject(), item);
                         }
                         
                     }
@@ -214,12 +226,13 @@ public class ViewerDataModel {
         final String annotationName = Edge.ANNOTATION_ID;
         List<IObservableList> edgeListsObservable = new ArrayList<IObservableList>();
         for (final Pattern edgePattern : getPatterns(annotationName)) {
-            final IObservableList obspatternmatchlist = filter.getObservableList(edgePattern, engine);
+            MatchList<IPatternMatch> edgelist = filter.getObservableList(edgePattern, ruleEngine);
+            resolver.setPriority(edgelist.getSpecification(), EDGE_PRIORITY);
 
             Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
                     FormatSpecification.FORMAT_ANNOTATION);
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
-                IObservableList resultList = new EdgeList(annotation, formatAnnotation, itemMap, obspatternmatchlist);
+                IObservableList resultList = new EdgeList(annotation, formatAnnotation, itemMap, edgelist);
                 edgeListsObservable.add(resultList);
             }
         }
@@ -255,10 +268,11 @@ public class ViewerDataModel {
         final String annotationName = Containment.ANNOTATION_ID;
         List<IObservableList> containmentListsObservable = new ArrayList<IObservableList>();
         for (final Pattern containmentPattern : getPatterns(annotationName)) {
-            IObservableList obspatternmatchlist = filter.getObservableList(containmentPattern, engine);
+            MatchList<IPatternMatch> containmentList = filter.getObservableList(containmentPattern, ruleEngine);
+            resolver.setPriority(containmentList.getSpecification(), CONTAINMENT_PRIORITY);
 
             for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
-                IObservableList resultList = new ContainmentList(annotation, itemMap, obspatternmatchlist);
+                IObservableList resultList = new ContainmentList(annotation, itemMap, containmentList);
                 containmentListsObservable.add(resultList);
             }
         }

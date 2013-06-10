@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.MultiList;
-import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
-import org.eclipse.incquery.viewers.runtime.model.IEdgeReadyListener;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
-import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
+import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
+import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerStateListener;
 import org.eclipse.jface.viewers.Viewer;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Content provider for Zest graphs.
@@ -35,117 +28,69 @@ import org.eclipse.jface.viewers.Viewer;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestContentProvider extends ListContentProvider implements IGraphEntityRelationshipContentProvider {
+public class ZestContentProvider extends AbstractViewerStateListener implements IGraphEntityRelationshipContentProvider {
 
+    GraphViewer viewer;
+    ViewerState state;
 
-    private final class EdgeListChangeListener implements IListChangeListener, IEdgeReadyListener {
-
-        private GraphViewer viewer;
-
-        public EdgeListChangeListener(GraphViewer viewer) {
-            super();
-            this.viewer = viewer;
-        }
-
-        @Override
-        public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            try {
-                for (ListDiffEntry entry : diff.getDifferences()) {
-                    Edge edge = (Edge) entry.getElement();
-                    if (entry.isAddition()) {
-                        addRelationship(edge);
-                    } else {
-                        viewer.removeRelationship(edge);
-                    }
-                }
-            } catch (Exception e) {
-                vmodel.getLogger().error("Error refreshing the graph structure", e);
-            }
-        }
-
-        /**
-         * @param edge
-         */
-        protected void addRelationship(Edge edge) {
-            if (edge.isReady()) {
-                viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
-            } else {
-                edge.setListener(this);
-            }
-        }
-
-        @Override
-        public void edgeReady(Edge edge) {
-            addRelationship(edge);
-        }
-    }
-
-    private MultiList edgeList;
-
-    private EdgeListChangeListener edgeListener;
-
-    private GraphViewer viewer;
-    
-    public ZestContentProvider() {
-        super(false);
-    }
-
-    protected void initializeContent(Viewer viewer, ViewerDataModel vmodel, ViewerDataFilter filter) {
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        Preconditions.checkArgument(viewer instanceof GraphViewer);
         this.viewer = (GraphViewer) viewer;
-        super.initializeContent(viewer, vmodel, filter);
-
-        if (vmodel == null) {
-            edgeList = new MultiList(new IObservableList[]{ new ObservableList(new ArrayList(), new Object()){} });
-        } 
-        else {
-            if (filter == null) {
-                edgeList = vmodel.initializeObservableEdgeList();
-            } else {
-                edgeList = vmodel.initializeObservableEdgeList(filter);
-            }
+        if (oldInput instanceof ViewerState) {
+            ((ViewerState) oldInput).removeStateListener(this);
         }
-        edgeListener = new EdgeListChangeListener((GraphViewer) viewer);
-        edgeList.addListChangeListener(edgeListener);
+        if (newInput instanceof ViewerState) {
+            this.state = (ViewerState) newInput;
+            state.addStateListener(this);
+        } else if (newInput != null) {
+            throw new IllegalArgumentException("Invalid input type for List Viewer.");
+        }
     }
 
-	@Override
-    public Object[] getRelationships(Object source, Object target) {
-        List<Edge> edgeto = new ArrayList<Edge>();
-        for (Object edgeObj : edgeList) {
-            Edge edge = (Edge) edgeObj;
-            if (source.equals(edge.getSource()) && target.equals(edge.getTarget())) {
-                edgeto.add(edge);
-            }
-        }
-		return edgeto.toArray();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object[] getElements(Object inputElement) {
+        return Iterables.toArray(state.getItemList(), Item.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Object[] getRelationships(final Object source, final Object dest) {
+        return Iterables.toArray(Iterables.filter(state.getEdgeList(), new Predicate<Edge>() {
+            @Override
+            public boolean apply(Edge edge) {
+                return edge.getSource().equals(source) && edge.getTarget().equals(dest);
+    }
+        }), Edge.class);
+    }
 
     @Override
-    protected void removeListeners() {
-        if (edgeList != null && !edgeList.isDisposed() && edgeListener != null) {
-            edgeList.removeListChangeListener(edgeListener);
-        }
-        super.removeListeners();
+    public void itemAppeared(Item item) {
+        viewer.addNode(item);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.incquery.querybasedui.runtime.sources.ListContentProvider#handleListChanges(org.eclipse.core.databinding
-     * .observable.list.ListDiff)
-     */
     @Override
-    protected void handleListChanges(ListDiff diff) {
-        for (ListDiffEntry entry : diff.getDifferences()) {
-            if (entry.isAddition()) {
-                viewer.addNode(entry.getElement());
-            } else {
-                viewer.removeNode(entry.getElement());
-            }
-        }
+    public void itemDisappeared(Item item) {
+        viewer.removeNode(item);
     }
 
+    @Override
+    public void edgeAppeared(Edge edge) {
+        viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
+    }
+
+    @Override
+    public void edgeDisappeared(Edge edge) {
+        viewer.removeRelationship(edge);
+    }
+
+    @Override
+    public void dispose() {
+        if (state != null) {
+            state.removeStateListener(this);
+        }
+
+    }
 
 }

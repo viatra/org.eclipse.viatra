@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime;
 
-import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.incquery.viewers.runtime.sources.TreeContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Zoltan Ujhelyi
@@ -26,34 +29,22 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 public class IncQueryViewerSupport {
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-        if (!(viewer.getContentProvider() instanceof ListContentProvider)) { 
-            viewer.setContentProvider(new ListContentProvider(false));
-        }
-        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-            viewer.setLabelProvider(new QueryLabelProvider()); 
-        }
-        viewer.setInput(model);
-        viewer.refresh();
+        bind(viewer, model, ViewerDataFilter.UNFILTERED);
     }
 
     public static void bind(AbstractListViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
         if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
-            viewer.setContentProvider(new ListContentProvider(false));
+            viewer.setContentProvider(new ListContentProvider());
         }
         if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
             viewer.setLabelProvider(new QueryLabelProvider()); 
         }
-        viewer.setInput(new FilteredViewerDataModel(model, filter));
+        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.CONTAINMENT)));
         viewer.refresh();
     }
 
     public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
-        viewer.setContentProvider(new TreeContentProvider());
-        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-            viewer.setLabelProvider(new QueryLabelProvider()); 
-        }
-        viewer.setInput(model);
-        viewer.refresh();
+        bind(viewer, model, ViewerDataFilter.UNFILTERED);
     }
 
     public static void bind(AbstractTreeViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
@@ -63,7 +54,8 @@ public class IncQueryViewerSupport {
         if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
             viewer.setLabelProvider(new QueryLabelProvider()); 
         }
-        viewer.setInput(new FilteredViewerDataModel(model, filter));
+
+        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.CONTAINMENT)));
         viewer.refresh();
     }
 }
