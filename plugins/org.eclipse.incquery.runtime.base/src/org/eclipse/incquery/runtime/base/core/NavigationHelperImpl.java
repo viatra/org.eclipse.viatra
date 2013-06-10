@@ -176,7 +176,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (valMap != null) {
             return Collections.unmodifiableSet(valMap.keySet());
         } else {
-        	contentAdapter.checkEPackage(type);
+        	contentAdapter.maintainMetamodel(type);           	 	
             return Collections.emptySet();
         }
     }
@@ -212,7 +212,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                     retSet.add(new NavigationHelperSetting(attr, holder, value));
                 }
             } else {
-            	contentAdapter.checkEPackage(attr);
+            	contentAdapter.maintainMetamodel(attr);
             }
         }
 
@@ -224,7 +224,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(attribute) : attribute);
         if (valMap.get(feature) == null) {
-        	contentAdapter.checkEPackage(attribute);
+        	contentAdapter.maintainMetamodel(attribute);
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valMap.get(feature));
@@ -233,7 +233,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     @Override
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
-    	contentAdapter.checkEPackage(feature);
+    	contentAdapter.maintainMetamodel(feature);
        final Map<Object, Set<EObject>> instanceMap = contentAdapter.getValueToFeatureToHolderMap().column(feature);
         for (Entry<Object, Set<EObject>> entry : instanceMap.entrySet()) {
             for (EObject src : entry.getValue()) {
@@ -290,7 +290,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                     retSet.add(new NavigationHelperSetting(ref, source, target));
                 }
             } else {
-            	contentAdapter.checkEPackage(ref);           	
+            	contentAdapter.maintainMetamodel(ref);           	
             }
         }
 
@@ -302,7 +302,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(reference) : reference);
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
         if (valMap.get(feature) == null) {
-        	contentAdapter.checkEPackage(reference);           	        	
+        	contentAdapter.maintainMetamodel(reference);           	        	
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valMap.get(feature));
@@ -321,7 +321,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
         final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, feature);
         if (valSet == null) {
-        	contentAdapter.checkEPackage(_feature);           	
+        	contentAdapter.maintainMetamodel(_feature);           	
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valSet);
@@ -333,7 +333,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
     	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(feature);
         if (valMap == null) {
-        	contentAdapter.checkEPackage(_feature);           	
+        	contentAdapter.maintainMetamodel(_feature);           	
             return Collections.emptyMap();
         } else {
             return Collections.unmodifiableMap(valMap);
@@ -344,7 +344,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Collection<EObject> getDirectInstances(EClass type) {
         Set<EObject> valSet = contentAdapter.getInstanceSet(type);
         if (valSet == null) {
-        	contentAdapter.checkEPackage(type);           	
+        	contentAdapter.maintainMetamodel(type);           	 	
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(valSet);
@@ -364,7 +364,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                 }
             }
         } else {
-        	contentAdapter.checkEPackage(type);           	 	
+        	contentAdapter.maintainMetamodel(type);           	 	
         }
         final Set<EObject> instances = contentAdapter.getInstanceSet(type);
         if (instances != null) {
@@ -382,7 +382,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (valMap.get(feature) != null) {
             retSet.addAll(valMap.get(feature));
         } else {
-        	contentAdapter.checkEPackage(_feature);           	
+        	contentAdapter.maintainMetamodel(_feature);           	
         }
         return retSet;
     }
@@ -392,7 +392,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
         Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
         if (holders == null) {
-        	contentAdapter.checkEPackage(_feature);           	
+        	contentAdapter.maintainMetamodel(_feature);           	
            return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(holders.elementSet());
@@ -401,7 +401,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addInstanceListener(Collection<EClass> classes, InstanceListener listener) {
-        contentAdapter.checkEPackage(classes);
+        contentAdapter.maintainMetamodel(classes);
         Collection<EClass> registered = this.instanceListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EClass>();
@@ -424,7 +424,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
         for (EStructuralFeature feature : features) {
-            contentAdapter.checkEPackage(feature);
+            contentAdapter.maintainMetamodel(feature);
         }
         Collection<EStructuralFeature> registered = this.featureListeners.get(listener);
         if (registered == null) {
@@ -447,7 +447,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
-        contentAdapter.checkEPackage(types);
+        contentAdapter.maintainMetamodel(types);
         Collection<EDataType> registered = this.dataTypeListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EDataType>();
@@ -617,11 +617,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 			final Set<EClass> resolvedClasses = resolveAll(classes);
 			final Set<EDataType> resolvedDatatypes = resolveAll(dataTypes);
 			
-			contentAdapter.checkEPackage(resolvedClasses);
-			contentAdapter.checkEPackage(resolvedDatatypes);
+			contentAdapter.maintainMetamodel(resolvedClasses);
+			contentAdapter.maintainMetamodel(resolvedDatatypes);
 			for (EStructuralFeature feature : resolvedFeatures) {
-			    contentAdapter.checkEPackage(feature.getEType());
-			    contentAdapter.checkEPackage(feature.getEContainingClass());
+	        	contentAdapter.maintainMetamodel(feature.getEType());           	 	
+	        	contentAdapter.maintainMetamodel(feature.getEContainingClass());           	 	
 			}
 			
 			try {
@@ -661,7 +661,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             final Set<EStructuralFeature> resolved = resolveAll(features);
             
             for (EStructuralFeature feature : resolved) {
-                contentAdapter.checkEPackage(feature);
+                contentAdapter.maintainMetamodel(feature);
             }
             
             try {
@@ -699,7 +699,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         ensureNotInWildcardMode();
         if (classes != null) {
             final Set<EClass> resolvedClasses = resolveAll(classes);
-            contentAdapter.checkEPackage(resolvedClasses);
+            contentAdapter.maintainMetamodel(resolvedClasses);
             
             try {
                 coalesceTraversals(new Callable<Void>() {
@@ -753,7 +753,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         ensureNotInWildcardMode();
         if (dataTypes != null) {
             final Set<EDataType> resolved = resolveAll(dataTypes);
-            contentAdapter.checkEPackage(resolved);
+            contentAdapter.maintainMetamodel(resolved);
             
             try {
                 coalesceTraversals(new Callable<Void>() {
@@ -911,7 +911,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {
-    	contentAdapter.checkEPackage(containmentFeature);           	
+    	contentAdapter.maintainMetamodel(containmentFeature);           	
     	if (containmentFeature.isMany())
     		cheapMoveTo(element, (EList)parent.eGet(containmentFeature));
     	else if (element.eAdapters().contains(contentAdapter) &&

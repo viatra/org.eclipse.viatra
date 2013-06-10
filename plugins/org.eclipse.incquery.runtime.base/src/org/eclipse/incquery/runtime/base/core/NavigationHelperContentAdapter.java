@@ -89,7 +89,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
     // Field variable becuase it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
-    private Set<EClass> knownClasses;
+    private Set<EClassifier> knownClassifiers;
 
     // static for EClass -> all subtypes in knownClasses (shared between the IQ engines)
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
@@ -124,7 +124,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.instanceMap = new HashMap<Object, Set<EObject>>();
         this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
         this.ePackageMap = HashMultimap.create();
-        this.knownClasses = new HashSet<EClass>();
+        this.knownClassifiers = new HashSet<EClassifier>();
     }
 
     /**
@@ -582,9 +582,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * 
      * @param classifiers the collection of classifiers
      */
-    protected <T extends EClassifier> void checkEPackage(Collection<T> classifiers) {
+    protected <T extends EClassifier> void maintainMetamodel(Collection<T> classifiers) {
         for (T classifier : classifiers) {
-            checkEPackage(classifier);
+            maintainMetamodel(classifier);
         }
     }
     
@@ -596,9 +596,28 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * 
      * @param classifier the classifier instance
      */
-    protected void checkEPackage(EStructuralFeature feature) {
-    	checkEPackage(feature.getEContainingClass());
-    	checkEPackage(feature.getEType());
+    protected void maintainMetamodel(EStructuralFeature feature) {
+    	maintainMetamodel(feature.getEContainingClass());
+    	maintainMetamodel(feature.getEType());
+    }
+
+
+    /**
+     * put subtype information into cache
+     */
+    protected void maintainMetamodel(EClassifier classifier) {
+        if (!knownClassifiers.contains(classifier)) {
+            checkEPackage(classifier);
+            knownClassifiers.add(classifier);
+
+            if (classifier instanceof EClass) {
+            	EClass clazz = (EClass) classifier;
+	            for (EClass superType : clazz.getEAllSuperTypes()) {
+	                maintainTypeHierarhyInternal(clazz, superType);
+	            }
+	            maintainTypeHierarhyInternal(clazz, EOBJECT_CLASS);
+            }
+        }
     }
    
     /**
@@ -609,7 +628,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * 
      * @param classifier the classifier instance
      */
-    protected void checkEPackage(EClassifier classifier) {
+    private void checkEPackage(EClassifier classifier) {
         Collection<EPackage> otherPackages = ePackageMap.get(classifier.getEPackage().getNsURI());
         if (!otherPackages.contains(classifier.getEPackage())) {
             ePackageMap.put(classifier.getEPackage().getNsURI(), classifier.getEPackage());
@@ -620,22 +639,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             }
         }
     }
-
-    /**
-     * put subtype information into cache
-     */
-    protected void maintainTypeHierarchy(EClass clazz) {
-        if (!knownClasses.contains(clazz)) {
-            checkEPackage(clazz);
-            knownClasses.add(clazz);
-
-            for (EClass superType : clazz.getEAllSuperTypes()) {
-                maintainTypeHierarhyInternal(clazz, superType);
-            }
-            maintainTypeHierarhyInternal(clazz, EOBJECT_CLASS);
-        }
-    }
-
+    
     private void maintainTypeHierarhyInternal(EClass clazz, EClass superType) {
         if (navigationHelper.directlyObservedClasses.contains(superType)) {
             navigationHelper.getAllObservedClasses().add(clazz);
