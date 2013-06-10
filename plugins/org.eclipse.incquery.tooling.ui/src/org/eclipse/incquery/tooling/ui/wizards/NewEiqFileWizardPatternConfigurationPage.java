@@ -142,9 +142,9 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
             String patternName = patternText.getText();
             if (patternName == null || patternName.length() == 0) {
                 if (parameterSet) {
-                    si.setError(PATTERN_NAME_MUST_BE_SPECIFIED);
+                    si.setWarning(PATTERN_NAME_MUST_BE_SPECIFIED);
                 } else {
-                    si.setError(PATTERN_NAME_SHOULD_BE_SPECIFIED);
+                    si.setWarning(PATTERN_NAME_SHOULD_BE_SPECIFIED);
                 }
             }
         }
