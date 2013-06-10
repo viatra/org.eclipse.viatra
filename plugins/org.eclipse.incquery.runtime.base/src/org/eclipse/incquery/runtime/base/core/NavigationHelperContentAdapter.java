@@ -216,7 +216,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             }
         } catch (Exception ex) {
-            processingError(ex, "handle the following update notification: " + notification);
+            processingFatal(ex, "handle the following update notification: " + notification);
         }
 
         notifyBaseIndexChangeListeners();
@@ -267,9 +267,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             });
         } catch (InvocationTargetException ex) {
-            processingError(ex.getCause(), "add the object: " + notifier);
+            processingFatal(ex.getCause(), "add the object: " + notifier);
         } catch (Exception ex) {
-            processingError(ex, "add the object: " + notifier);
+            processingFatal(ex, "add the object: " + notifier);
         }
     }
 
@@ -289,17 +289,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             });
         } catch (InvocationTargetException ex) {
-            processingError(ex.getCause(), "remove the object: " + notifier);
+            processingFatal(ex.getCause(), "remove the object: " + notifier);
         } catch (Exception ex) {
-            processingError(ex, "remove the object: " + notifier);
+            processingFatal(ex, "remove the object: " + notifier);
         }
     }
 
-    protected void processingError(Throwable ex, String task) {
-        navigationHelper.getLogger().fatal(
-                "EMF-IncQuery encountered an error in processing the EMF model. " + "This happened while trying to "
-                        + task, ex);
+    protected void processingFatal(Throwable ex, String task) {
+        navigationHelper.getLogger().fatal(logTaskFormat(task), ex);
     }
+    protected void processingError(Throwable ex, String task) {
+        navigationHelper.getLogger().error(logTaskFormat(task), ex);
+    }
+
+	private String logTaskFormat(String task) {
+		return "EMF-IncQuery encountered an error in processing the EMF model. " 
+				+ "This happened while trying to " + task;
+	}
 
     protected EMFVisitor visitor(final boolean isInsertion) {
         return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
@@ -583,6 +589,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
     
     /**
+     * Checks the {@link EStructuralFeature}'s source and target {@link EPackage} for NsURI collision.
+     * An error message will be logged if a model element from an other {@link EPackage} 
+     * instance with the same NsURI has been already processed. The error message will be logged 
+     * only for the first time for a given {@link EPackage} instance.
+     * 
+     * @param classifier the classifier instance
+     */
+    protected void checkEPackage(EStructuralFeature feature) {
+    	checkEPackage(feature.getEContainingClass());
+    	checkEPackage(feature.getEType());
+    }
+   
+    /**
      * Checks the {@link EClassifier}'s {@link EPackage} for NsURI collision.
      * An error message will be logged if a model element from an other {@link EPackage} 
      * instance with the same NsURI has been already processed. The error message will be logged 
@@ -593,12 +612,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     protected void checkEPackage(EClassifier classifier) {
         Collection<EPackage> otherPackages = ePackageMap.get(classifier.getEPackage().getNsURI());
         if (!otherPackages.contains(classifier.getEPackage())) {
-            if (otherPackages.size() >= 1) {
-                //collision detected between EPackages, only log the issue if the EPackage instance is not already present in the map
-                processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages"), 
-                        "process the EPackage of a new model element.");
-            }
             ePackageMap.put(classifier.getEPackage().getNsURI(), classifier.getEPackage());
+            //collision detection between EPackages (disabled in dynamic model mode)
+            if (!isDynamicModel && otherPackages.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI            
+                processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages"), 
+                        "process new metamodel elements.");
+            }
         }
     }
 
