@@ -71,15 +71,15 @@ public class Item extends FormattableElement {
     private final HierarchyPolicy policy;
     private String labelDefinition;
 
-    private EObject paramObject;
+    private Object paramObject;
 
     public Item(IPatternMatch match, EObject paramObject, String labelDefinition) {
         this(match, paramObject, labelDefinition, HierarchyPolicy.ALWAYS);
     }
 
-    public Item(IPatternMatch match, EObject paramObject, String labelDefinition, HierarchyPolicy policy) {
+    public Item(IPatternMatch match, Object param, String labelDefinition, HierarchyPolicy policy) {
         sourceMatch = match;
-        this.paramObject = paramObject;
+        this.paramObject = param;
         this.labelDefinition = labelDefinition;
         this.policy = policy;
     }
@@ -95,7 +95,7 @@ public class Item extends FormattableElement {
         }
     }
 
-    public EObject getParamObject() {
+    public Object getParamObject() {
         return paramObject;
     }
 

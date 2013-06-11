@@ -11,7 +11,6 @@
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
@@ -75,7 +74,7 @@ public class ItemConverter implements IConverter {
     public Object convert(Object fromObject) {
         IPatternMatch match = (IPatternMatch) fromObject;
 
-        EObject param = (EObject) match.get(parameterName);
+        Object param = match.get(parameterName);
         Item item = new Item(match, param, labelParameterName, policy);
         item.setSpecification(format);
         itemMap.put(param, item);

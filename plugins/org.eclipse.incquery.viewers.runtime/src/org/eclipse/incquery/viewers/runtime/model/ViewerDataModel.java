@@ -26,7 +26,6 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -179,7 +178,7 @@ public class ViewerDataModel {
                     public void handleRemove(int index, Object element) {
                         if (element instanceof Item) {
                             Item item = (Item) element;
-                            EObject paramObject = item.getParamObject();
+                            Object paramObject = item.getParamObject();
                             itemMap.remove(paramObject, element);
                         }
                     }
