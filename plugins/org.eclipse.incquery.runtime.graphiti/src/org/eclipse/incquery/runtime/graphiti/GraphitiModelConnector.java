@@ -75,7 +75,7 @@ public class GraphitiModelConnector extends EMFModelConnector {
             if (!pictogramElements.isEmpty()) {
                 List<EditPart> parts = new ArrayList<EditPart>();
                 for (PictogramElement element : pictogramElements) {
-                    EditPart part = ((DiagramEditor) editor).getEditPartForPictogramElement(element);
+                    EditPart part = ((DiagramEditor) editor).getDiagramBehavior().getEditPartForPictogramElement(element);
                     if (part != null) {
                         parts.add(part);
                     }
