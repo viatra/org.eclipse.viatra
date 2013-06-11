@@ -159,6 +159,8 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
                     }
                 }
             }
+        } else {
+            throw new IllegalStateException("Notify listeners must not be called without listeners! Maybe an update callback was not removed correctly.");
         }
         
     }
