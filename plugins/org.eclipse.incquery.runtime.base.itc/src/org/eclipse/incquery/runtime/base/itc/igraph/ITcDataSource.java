@@ -70,12 +70,11 @@ public interface ITcDataSource<V> {
     public boolean isReachable(V source, V target);
     
     /**
-     * Returns a reachability path between the given tuple, or null if no such transitive reachability is present in the graph.  
+     * Returns a reachability path between the given source and target elements, or null if no such transitive reachability is present in the graph.  
      * The returned {@link List} contains the nodes along the path 
-     * (this means that there is an edge in the graph between two consecutive nodes).
+     * (this means that there is an edge in the graph between two consecutive nodes), including the source and target nodes.
      * A self loop (one edge) is indicated with the source node being present two times in the returned {@link List}.
-     * <br/>
-     * <br/>
+     * <p/>
      * Note that the paths are not maintained incrementally and in worst case the complexity of the path construction is O(|V|+|E|) 
      * (one depth-first graph traversal). There is no guarantee that the given path is the shortest one between the given two nodes. 
      * 
