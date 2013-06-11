@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ASCII"?>
+<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage">
+  <patterns name="org.eclipse.incquery.examples.bpm.queries.processTasks" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.tests/src/org/eclipse/incquery/examples/bpm/queries/bpmTestQueries.eiq">
+    <parameters name="Proc"/>
+    <parameters name="Task"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://process/1.0#//Process/contents"/>
+            </type>
+          </tail>
+          <src var="Proc"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Task"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.incquery.examples.bpm.queries.nextActivity" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.tests/src/org/eclipse/incquery/examples/bpm/queries/bpmTestQueries.eiq">
+    <parameters name="Act"/>
+    <parameters name="Next"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Activity"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://process/1.0#//Activity/next"/>
+            </type>
+          </tail>
+          <src var="Act"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Next"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <patterns name="org.eclipse.incquery.examples.bpm.queries.jobTasks" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.tests/src/org/eclipse/incquery/examples/bpm/queries/bpmTestQueries.eiq">
+    <parameters name="Job"/>
+    <parameters name="Task"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://system/1.0#//Job/tasks"/>
+            </type>
+          </tail>
+          <src var="Job"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Task"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
+  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
+    <ePackage href="http://system/1.0#/"/>
+  </importPackages>
+  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
+    <ePackage href="http://process/1.0#/"/>
+  </importPackages>
+  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
+    <ePackage href="http://operation/1.0#/"/>
+  </importPackages>
+</eMFPatternLanguage:PatternModel>
