@@ -1,0 +1,11 @@
+plugin.xml_gen
+bin
+target
+plugin.xml_gen
+MANIFEST.MF_gen
+.DS_Store*
+xtend-gen
++keep.txt
++.keep.txt
+!src-gen
+!globalEiqModel.xmi
