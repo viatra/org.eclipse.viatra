@@ -45,7 +45,8 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
             this.state = (ViewerState) newInput;
             state.addStateListener(this);
         } else if (newInput != null) {
-            throw new IllegalArgumentException("Invalid input type for List Viewer.");
+            throw new IllegalArgumentException(String.format("Invalid input type %s for Tree Viewer.", newInput
+                    .getClass().getName()));
         }
     }
 

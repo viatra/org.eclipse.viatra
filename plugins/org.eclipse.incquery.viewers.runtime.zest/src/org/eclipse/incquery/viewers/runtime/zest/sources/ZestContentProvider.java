@@ -44,7 +44,8 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
             this.state = (ViewerState) newInput;
             state.addStateListener(this);
         } else if (newInput != null) {
-            throw new IllegalArgumentException("Invalid input type for List Viewer.");
+            throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
+                    .getClass().getName()));
         }
     }
 
