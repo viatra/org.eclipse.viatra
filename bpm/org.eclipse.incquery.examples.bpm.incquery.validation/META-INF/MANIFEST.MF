@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.incquery.examples.bpm.incquery.validation
+Bundle-SymbolicName: org.eclipse.incquery.examples.bpm.incquery.validation;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Require-Bundle: org.eclipse.incquery.examples.bpm.incquery,
+ org.eclipse.emf.ecore,
+ org.eclipse.incquery.runtime,
+ org.eclipse.incquery.validation.runtime,
+ org.eclipse.incquery.examples.bpm
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
