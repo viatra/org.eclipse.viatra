@@ -5,6 +5,5 @@ Bundle-SymbolicName: org.eclipse.incquery.runtime.tests
 Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
-Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.7.0"
-Import-Package: junit.framework;version="4.8.0",
- org.junit;version="4.8.0"
+Require-Bundle: org.junit;bundle-version="4.8.0",
+ org.eclipse.incquery.runtime;bundle-version="0.7.0"
