@@ -33,7 +33,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-<!--		<module>../../plugins/org.eclipse.incquery.databinding.tooling</module> -->
+		<!-- <module>../../plugins/org.eclipse.incquery.databinding.tooling</module> -->
 		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
@@ -54,7 +54,7 @@
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
-<!--		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module> -->
+		<!-- <module>../../features/org.eclipse.incquery.databinding.tooling.feature</module> -->
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
@@ -82,7 +82,7 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.6.2.201302030002</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.4.1</xtend.compiler.version>
+		<xtend.compiler.version>2.4.2-SNAPSHOT</xtend.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>2.14</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -237,7 +237,11 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>xtend</id>
-			<url>http://build.eclipse.org/common/xtend/maven/</url>
+			<!-- <url>http://build.eclipse.org/common/xtend/maven/</url> -->
+			<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
 			<id>fornax.plugin.repository</id>
