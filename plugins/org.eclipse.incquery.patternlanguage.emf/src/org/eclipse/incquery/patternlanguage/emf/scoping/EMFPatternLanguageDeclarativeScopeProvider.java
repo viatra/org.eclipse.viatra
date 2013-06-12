@@ -12,7 +12,6 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 
 import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,10 +44,8 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
-import org.eclipse.xtext.util.PolymorphicDispatcher;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -72,26 +69,6 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageD
     private IQualifiedNameConverter qualifiedNameConverter;
     @Inject
     private IMetamodelProvider metamodelProvider;
-
-    /**
-     * {@inheritDoc} Overridden for debugging purposes.
-     */
-    @Override
-    protected Predicate<Method> getPredicate(EObject context, EClass type) {
-        String methodName = "scope_" + type.getName();
-        // System.out.println(methodName + " ctx " + context.eClass().getName());
-        return PolymorphicDispatcher.Predicates.forName(methodName, 2);
-    }
-
-    /**
-     * {@inheritDoc} Overridden for debugging purposes.
-     */
-    @Override
-    protected Predicate<Method> getPredicate(EObject context, EReference reference) {
-        String methodName = "scope_" + reference.getEContainingClass().getName() + "_" + reference.getName();
-        // System.out.println(methodName + " ctx " + context.eClass().getName());
-        return PolymorphicDispatcher.Predicates.forName(methodName, 2);
-    }
 
     public IScope scope_EPackage(PackageImport ctx, EReference ref) {
         return metamodelProvider.getAllMetamodelObjects(ctx);
