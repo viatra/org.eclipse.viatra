@@ -272,5 +272,16 @@
 				<module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>examples-eclipse.org</id>
+			<activation>
+				<file>
+					<exists>../../../examples-eclipse.org/README.markdown</exists>
+				</file>
+			</activation>
+			<modules>
+				<module>../../../examples-eclipse.org/bpm/org.eclipse.incquery.examples.bpm.test.parent</module>
+			</modules>
+		</profile>
 	</profiles>
 </project>
