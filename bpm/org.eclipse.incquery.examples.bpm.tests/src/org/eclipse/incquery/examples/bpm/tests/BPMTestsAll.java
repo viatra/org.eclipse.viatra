@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(value = Suite.class)
 @SuiteClasses({
-    RuntimeListenerTests.class
+    RuntimeListenerTest.class
 })
 public class BPMTestsAll {
 

@@ -26,7 +26,7 @@ import org.eclipse.incquery.examples.bpm.queries.NextActivityMatcher
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class RuntimeListenerTests {
+class RuntimeListenerTest {
   @Inject extension TestExecutor
   @Inject extension ModelLoadHelper
   @Inject extension SnapshotHelper
