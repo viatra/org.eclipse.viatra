@@ -73,8 +73,8 @@
 		<module>../../releng/org.eclipse.incquery.update.extras</module>
 	</modules>
 	<properties>
-		<tycho.version>0.17.0</tycho.version>
-		<tycho.extras.version>0.17.0</tycho.extras.version>
+		<tycho.version>0.18.0</tycho.version>
+		<tycho.extras.version>0.18.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
