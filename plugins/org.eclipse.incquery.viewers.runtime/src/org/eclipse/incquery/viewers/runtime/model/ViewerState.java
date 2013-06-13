@@ -37,8 +37,14 @@ public final class ViewerState {
     private IObservableList containmentList;
     private Multimap<Item, Item> childrenMap;
     private Map<Item, Item> parentMap;
+    
+    private ViewerDataModel model;
 
-    private ListenerList stateListeners = new ListenerList();
+    public ViewerDataModel getModel() {
+		return model;
+	}
+
+	private ListenerList stateListeners = new ListenerList();
 
 
     public enum ViewerStateFeature {
@@ -103,6 +109,7 @@ public final class ViewerState {
     };
 
     public ViewerState(ViewerDataModel model, ViewerDataFilter filter, Collection<ViewerStateFeature> features) {
+    	this.model = model;
         initializeItemList(model.initializeObservableItemList(filter));
         for (ViewerStateFeature feature : features) {
             switch (feature) {

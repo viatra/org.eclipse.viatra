@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -277,6 +278,15 @@ public class ViewerDataModel {
         }
         MultiList list = new MultiList(containmentListsObservable.toArray(new IObservableList[containmentListsObservable.size()]));
         return list;
+    }
+    
+    /**
+     * Exposes EObject -> Item* traceability information.
+     * 
+     * Access the list of Items mapped to an EObject.
+     */
+    public Collection<Item> getItemsFor(EObject target) {
+        return itemMap.get(target);
     }
 
 }
