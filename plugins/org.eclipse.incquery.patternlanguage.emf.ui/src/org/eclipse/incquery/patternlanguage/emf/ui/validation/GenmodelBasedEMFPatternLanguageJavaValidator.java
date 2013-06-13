@@ -28,6 +28,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.jdt.core.IJavaProject;
@@ -63,7 +64,8 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
 					"The package declaration '%s' does not match the container '%s'",
 					Strings.emptyIfNull(declaredPackage),
 					Strings.emptyIfNull(actualPackage)),
-					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME);
+					PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+					IssueCodes.PACKAGE_NAME_MISMATCH);
 		}
     }
     
@@ -105,7 +107,11 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
         if (projectProvider == null || res == null) {
             return;
         }
-        IProject project = projectProvider.getJavaProject(res.getResourceSet()).getProject();
+        IJavaProject javaProject = projectProvider.getJavaProject(res.getResourceSet());
+        if (javaProject == null) {
+        	return;
+        }
+		IProject project = javaProject.getProject();
         GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, importDecl.getEPackage());
         if (genPackage != null) {
             final GenModel genmodel = genPackage.getGenModel();

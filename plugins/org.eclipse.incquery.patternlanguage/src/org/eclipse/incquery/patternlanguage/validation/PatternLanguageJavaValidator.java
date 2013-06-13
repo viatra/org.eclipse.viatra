@@ -59,6 +59,7 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
@@ -454,11 +455,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private void checkParameterUsageCounter(ParameterRef var, Map<Variable, VariableReferenceCount> refCounters,
             UnionFindForVariables variableUnions, PatternBody body) {
         Variable parameter = var.getReferredParam();
-        if (refCounters.get(var).getReferenceCount() == 0) {
+        VariableReferenceCount counter = refCounters.get(var);
+		if (counter.getReferenceCount() == 0) {
             error(String.format("Parameter '%s' is never referenced in body '%s'.", parameter.getName(),
                     getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
                     IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
-        } else if (refCounters.get(var).getReferenceCount(ReferenceType.POSITIVE) == 0
+        } else if (counter.getReferenceCount(ReferenceType.POSITIVE) == 0
                 && getReferenceCount(var, ReferenceType.POSITIVE, refCounters, variableUnions) == 0) {
             error(String.format("Parameter '%s' has no positive reference in body '%s'.", var.getName(),
                     getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
@@ -468,35 +470,36 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     private void checkLocalVariableUsageCounter(Variable var, Map<Variable, VariableReferenceCount> refCounters,
             UnionFindForVariables variableUnions) {
-        if (refCounters.get(var).getReferenceCount(ReferenceType.POSITIVE) == 1
-                && refCounters.get(var).getReferenceCount() == 1 && !isNamedSingleUse(var)
+        VariableReferenceCount counter = refCounters.get(var);
+		if (counter.getReferenceCount(ReferenceType.POSITIVE) == 1
+                && counter.getReferenceCount() == 1 && !isNamedSingleUse(var)
                 && !isUnnamedSingleUseVariable(var)) {
             warning(String.format(
                     "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
                     var.getName()), var.getReferences().get(0),
                     PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
-        } else if (refCounters.get(var).getReferenceCount() > 1 && isNamedSingleUse(var)) {
+        } else if (counter.getReferenceCount() > 1 && isNamedSingleUse(var)) {
             for (VariableReference ref : var.getReferences()) {
                 error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
                         PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
 
             }
-        } else if (refCounters.get(var).getReferenceCount(ReferenceType.POSITIVE) == 0) {
-            if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 0) {
+        } else if (counter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
+            if (counter.getReferenceCount(ReferenceType.NEGATIVE) == 0) {
                 error(String.format(
                         "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
                         var.getName()), var, PatternLanguagePackage.Literals.VARIABLE__NAME,
                         IssueCodes.LOCAL_VARIABLE_READONLY);
-            } else if (refCounters.get(var).getReferenceCount(ReferenceType.NEGATIVE) == 1
-                    && refCounters.get(var).getReferenceCount() == 1 && !isNamedSingleUse(var)
+            } else if (counter.getReferenceCount(ReferenceType.NEGATIVE) == 1
+                    && counter.getReferenceCount() == 1 && !isNamedSingleUse(var)
                     && !isUnnamedSingleUseVariable(var)) {
                 warning(String.format(
                         "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
                         var.getName()), var.getReferences().get(0),
                         PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
-            } else if (refCounters.get(var).getReferenceCount() > 1) {
+            } else if (counter.getReferenceCount() > 1) {
                 error(String.format(
                         "Local variable '%s' has no positive reference, thus its value cannot be determined.",
                         var.getName()), var.getReferences().get(0),
@@ -630,8 +633,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
             while (eAllContents.hasNext()) {
                 EObject nextEObject = eAllContents.next();
-                if (nextEObject instanceof XFeatureCall) {
-                    XFeatureCall xFeatureCall = (XFeatureCall) nextEObject;
+                if (nextEObject instanceof XMemberFeatureCall) {
+                    XMemberFeatureCall xFeatureCall = (XMemberFeatureCall) nextEObject;
                     JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
                     if (jvmIdentifiableElement instanceof JvmOperation) {
                         JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
@@ -645,13 +648,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         if (!elementsWithWarnings.isEmpty()) {
             if (elementsWithWarnings.size() > 1) {
                 warning("There are potentially problematic java calls in the check expression. Custom java calls without @Pure annotations "
-                        + "considered unsafe in IncQuery, for more information see. The possible errorneous calls are the following: "
+                        + "considered unsafe in IncQuery. The possible erroneous calls are the following: "
                         + elementsWithWarnings + ".", checkConstraint,
                         PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
                         IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
             } else {
                 warning("There is a potentially problematic java call in the check expression. Custom java calls without @Pure annotations "
-                        + "considered unsafe in IncQuery, for more information see. The possible errorneous call is the following: "
+                        + "considered unsafe in IncQuery. The possible erroneous call is the following: "
                         + elementsWithWarnings + ".", checkConstraint,
                         PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
                         IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
