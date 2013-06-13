@@ -12,7 +12,6 @@
 package org.eclipse.incquery.patternlanguage.emf.tests.imports
 
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -27,13 +26,15 @@ import com.google.inject.Injector
 import org.junit.Before
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
 class ImportValidationTest extends AbstractValidatorTest {
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject
@@ -58,8 +59,8 @@ class ImportValidationTest extends AbstractValidatorTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
 	}
 	
@@ -73,8 +74,8 @@ class ImportValidationTest extends AbstractValidatorTest {
 				EDouble(D);
 				check(Math::abs(D) > 10.5);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -89,7 +90,8 @@ class ImportValidationTest extends AbstractValidatorTest {
 				ELong(L);
 				check(Calendar::getInstance().getTime().getTime() > L);
 			}
-		') as PatternModel
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 	
@@ -104,7 +106,10 @@ class ImportValidationTest extends AbstractValidatorTest {
 				ELong(L);
 				check(Calendar::getInstance().getTime().getTime() > L);
 			}
-		') as PatternModel
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		')
+		tester.validate(model).assertAll(
+			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), 
+			getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED)
+		)
 	}
 }

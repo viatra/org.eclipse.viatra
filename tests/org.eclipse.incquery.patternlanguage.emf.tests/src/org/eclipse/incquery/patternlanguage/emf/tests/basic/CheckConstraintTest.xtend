@@ -13,9 +13,9 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -24,13 +24,14 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
 class CheckConstraintTest {
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject
 	EMFPatternLanguageJavaValidator validator
@@ -57,8 +58,8 @@ class CheckConstraintTest {
 				EDouble(D);
 				check(java::lang::Math::abs(D) > 10.5);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -72,7 +73,8 @@ class CheckConstraintTest {
 				ELong(L);
 				check(java::util::Calendar::getInstance().getTime().getTime() > L);
 			}
-		') as PatternModel
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 	

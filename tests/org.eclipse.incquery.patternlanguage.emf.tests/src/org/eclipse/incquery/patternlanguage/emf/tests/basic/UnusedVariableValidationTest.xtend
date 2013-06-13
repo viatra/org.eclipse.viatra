@@ -13,7 +13,6 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
@@ -25,8 +24,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
+
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
 	
 	@Inject

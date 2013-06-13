@@ -13,32 +13,32 @@ package org.eclipse.incquery.patternlanguage.emf.tests.types
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
+import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.xtext.xbase.typing.ITypeProvider
+
 import static org.junit.Assert.*
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EAttribute
-import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EClassifier
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.emf.ecore.EStructuralFeature
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class TypeInferenceTest {
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject
 	EMFPatternLanguageJavaValidator validator
@@ -67,7 +67,7 @@ class TypeInferenceTest {
 			pattern first(class1) = {
 				EClass(class1);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -89,7 +89,7 @@ class TypeInferenceTest {
 			pattern second(class2) = {
 				find first(class2);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -118,7 +118,7 @@ class TypeInferenceTest {
 			pattern third(class3) = {
 				find second(class3);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -142,7 +142,7 @@ class TypeInferenceTest {
 			pattern firstPath(class1, attribute1) = {
 				EClass.eStructuralFeatures(class1, attribute1);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -167,7 +167,7 @@ class TypeInferenceTest {
 			pattern secondPath(class2, attribute2) = {
 				find firstPath(class2, attribute2);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -195,7 +195,7 @@ class TypeInferenceTest {
 				EClass(class1);
 				class1 == class2;
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -218,7 +218,7 @@ class TypeInferenceTest {
 			} or { 
 				EClass(parameter);
 			} 
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -244,7 +244,7 @@ class TypeInferenceTest {
 			} or { 
 				EClass(parameter);
 			} 
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -266,7 +266,7 @@ class TypeInferenceTest {
 			pattern literalValue(literalType) = {
 				literalType == 10;
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -282,7 +282,7 @@ class TypeInferenceTest {
 			pattern literalValue(literalType) = {
 				literalType == "helloworld";
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -298,7 +298,7 @@ class TypeInferenceTest {
 			pattern literalValue(literalType) = {
 				literalType == true;
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -314,7 +314,7 @@ class TypeInferenceTest {
 			pattern literalValue(literalType) = {
 				literalType == 3.14;
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -336,7 +336,7 @@ class TypeInferenceTest {
 				uselessParameter == 10;
 				check(true);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 		
@@ -356,7 +356,7 @@ class TypeInferenceTest {
 				EClass(parameter);
 				EDataType(parameter);
 			} 
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 	}
 	
@@ -369,7 +369,7 @@ class TypeInferenceTest {
 			pattern warningTypeTest1(parameter : EClass) = {
 				EDataType(parameter);
 			} 
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
@@ -387,7 +387,7 @@ class TypeInferenceTest {
 			pattern warningTypeTest2(parameter : EDataType) = {
 				EClass(parameter);
 			} 
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
@@ -405,7 +405,7 @@ class TypeInferenceTest {
 			pattern warningTypeTest3(parameter : EClassifier) = {
 				EClass(parameter);
 			} 
-		') as PatternModel
+		')
 		tester.validate(model).assertWarning(EMFIssueCodes::PARAMETER_TYPE_INVALID)
 		
 		val param = model.patterns.get(0).parameters.get(0)
