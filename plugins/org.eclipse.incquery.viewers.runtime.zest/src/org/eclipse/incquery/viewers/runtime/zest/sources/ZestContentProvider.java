@@ -40,6 +40,9 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
         if (oldInput instanceof ViewerState) {
             ((ViewerState) oldInput).removeStateListener(this);
         }
+        if (newInput == null) {
+            this.state = null;
+        }
         if (newInput instanceof ViewerState) {
             this.state = (ViewerState) newInput;
             state.addStateListener(this);
@@ -52,18 +55,24 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
-        return Iterables.toArray(state.getItemList(), Item.class);
+        if (state!=null) {
+            return Iterables.toArray(state.getItemList(), Item.class);
+        }
+        else return new Object[]{};
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getRelationships(final Object source, final Object dest) {
-        return Iterables.toArray(Iterables.filter(state.getEdgeList(), new Predicate<Edge>() {
-            @Override
-            public boolean apply(Edge edge) {
-                return edge.getSource().equals(source) && edge.getTarget().equals(dest);
-    }
-        }), Edge.class);
+        if (state!=null) {
+            return Iterables.toArray(Iterables.filter(state.getEdgeList(), new Predicate<Edge>() {
+                @Override
+                public boolean apply(Edge edge) {
+                    return edge.getSource().equals(source) && edge.getTarget().equals(dest);
+        }
+            }), Edge.class);
+        }
+        else return new Object[]{};
     }
 
     @Override
