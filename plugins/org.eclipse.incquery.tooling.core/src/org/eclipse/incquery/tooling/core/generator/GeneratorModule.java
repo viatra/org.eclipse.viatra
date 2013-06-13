@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageRuntimeModule;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback;
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback.EmptyErrorFeedback;
 import org.eclipse.incquery.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
@@ -45,10 +47,10 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
     }
 
     // contributed by org.eclipse.xtext.generator.types.TypesGeneratorFragment
-    @Override
-    public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-        return JdtTypeProviderFactory.class;
-    }
+//    @Override
+//    public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+//        return JdtTypeProviderFactory.class;
+//    }
 
     @Override
     public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
@@ -66,5 +68,9 @@ public class GeneratorModule extends EMFPatternLanguageRuntimeModule {
     
     public Class<? extends ITargetPlatformMetamodelLoader> bindTargetPlatformMetamodelLoader(){
     	return TargetPlatformMetamodelsIndex.class;
+    }
+    
+    public Class<? extends IErrorFeedback> bindIErrorFeedback() {
+        return EmptyErrorFeedback.class;
     }
 }

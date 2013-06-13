@@ -29,6 +29,8 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.xtext.xbase.XFeatureCall
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.emf.ecore.EObject
 
 /**
  * {@link IMatchChecker} implementation inferer.
@@ -85,9 +87,14 @@ class PatternMatchEvaluatorClassInferrer {
    	 * Infers methods for checker class based on the input 'pattern'.
    	 */  	
   	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, PatternBody body, XExpression xExpression, JvmTypeReference type) {
-		val valNames = xExpression.eAllContents.filter(typeof(XFeatureCall)).map[concreteSyntaxFeatureName].toList
-		val variables = body.variables.filter[valNames.contains(it.name)].sortBy[name]
-		
+  		val List<Variable> variables = if (xExpression == null) {
+				emptyList
+			} else {
+				val valNames = (xExpression.eAllContents + newImmutableList(xExpression).iterator).
+				    filter(typeof(XFeatureCall)).map[concreteSyntaxFeatureName].
+					toList
+				body.variables.filter[valNames.contains(it.name)].sortBy[name]
+			}
   		checkerClass.members += xExpression.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
   			it.visibility = JvmVisibility::PRIVATE
 			for (variable : variables){
