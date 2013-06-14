@@ -33,7 +33,6 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-<!--		<module>../../plugins/org.eclipse.incquery.databinding.tooling</module> -->
 		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
@@ -54,7 +53,6 @@
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
-<!--		<module>../../features/org.eclipse.incquery.databinding.tooling.feature</module> -->
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
@@ -73,8 +71,8 @@
 		<module>../../releng/org.eclipse.incquery.update.extras</module>
 	</modules>
 	<properties>
-		<tycho.version>0.17.0</tycho.version>
-		<tycho.extras.version>0.17.0</tycho.extras.version>
+		<tycho.version>0.18.0</tycho.version>
+		<tycho.extras.version>0.18.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
