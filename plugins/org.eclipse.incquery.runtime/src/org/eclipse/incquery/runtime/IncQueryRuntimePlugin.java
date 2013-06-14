@@ -14,9 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.runtime.extensibility.IInjectorProvider;
 import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
+import org.eclipse.xtext.resource.impl.BinaryGrammarResourceFactoryImpl;
 import org.osgi.framework.BundleContext;
 
 import com.google.inject.Injector;
@@ -68,6 +70,9 @@ public class IncQueryRuntimePlugin extends Plugin {
     }
 
     private Injector createInjector() throws CoreException {
+		//Required in Xtext 2.4 for accessing the binary representation in GrammarAccess
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xtextbin", new BinaryGrammarResourceFactoryImpl());
+		
         IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(
                 IExtensions.INJECTOREXTENSIONID);
         if (providers.length > 0) {
