@@ -73,7 +73,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
             } else {
                 // must handle later (either in lost matches or after that)
                 updateMemory.put(source, target);
-                }
+            }
         }
     }
     
