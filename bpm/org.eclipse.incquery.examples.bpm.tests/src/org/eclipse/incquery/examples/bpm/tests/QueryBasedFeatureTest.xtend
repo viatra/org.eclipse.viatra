@@ -47,21 +47,21 @@ class QueryBasedFeatureTest {
   @Before
   def prepareQueries(){
     
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobTaskCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskReadCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskWriteCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobInfoCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryJobCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
-//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobTaskCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskReadCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskWriteCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobInfoCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryJobCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
     
-    QuerySpecificationRegistry::registerQuerySpecification(JobTaskCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(DataTaskReadCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(DataTaskWriteCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(JobInfoCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryJobCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryTaskCorrespondenceMatcher::querySpecification)
-    QuerySpecificationRegistry::registerQuerySpecification(ChecklistProcessCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(JobTaskCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(DataTaskReadCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(DataTaskWriteCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(JobInfoCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryJobCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryTaskCorrespondenceMatcher::querySpecification)
+//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistProcessCorrespondenceMatcher::querySpecification)
   }
 
   @Test
