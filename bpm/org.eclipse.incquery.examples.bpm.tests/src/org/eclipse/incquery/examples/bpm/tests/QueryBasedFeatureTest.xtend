@@ -27,6 +27,14 @@ import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureHelper
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
 import org.junit.Before
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
+import system.queries.util.JobTaskCorrespondenceQuerySpecification
+import system.queries.JobTaskCorrespondenceMatcher
+import system.queries.DataTaskReadCorrespondenceMatcher
+import system.queries.DataTaskWriteCorrespondenceMatcher
+import system.queries.JobInfoCorrespondenceMatcher
+import operation.queries.ChecklistEntryJobCorrespondenceMatcher
+import operation.queries.ChecklistEntryTaskCorrespondenceMatcher
+import operation.queries.ChecklistProcessCorrespondenceMatcher
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -39,14 +47,21 @@ class QueryBasedFeatureTest {
   @Before
   def prepareQueries(){
     
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobTaskCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskReadCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskWriteCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobInfoCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryJobCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
-    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobTaskCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskReadCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskWriteCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobInfoCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryJobCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
+//    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
     
+    QuerySpecificationRegistry::registerQuerySpecification(JobTaskCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(DataTaskReadCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(DataTaskWriteCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(JobInfoCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryJobCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryTaskCorrespondenceMatcher::querySpecification)
+    QuerySpecificationRegistry::registerQuerySpecification(ChecklistProcessCorrespondenceMatcher::querySpecification)
   }
 
   @Test
