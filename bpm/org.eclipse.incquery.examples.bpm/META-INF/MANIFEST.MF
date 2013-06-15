@@ -21,3 +21,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.incquery.querybasedfeatures.runtime
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
