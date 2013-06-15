@@ -15,5 +15,6 @@ Require-Bundle: org.eclipse.incquery.querybasedfeatures.runtime;bundle-version="
  org.eclipse.xtext.xbase.lib,
  org.eclipse.incquery.examples.bpm,
  org.junit,
- org.eclipse.xtext.junit4
+ org.eclipse.xtext.junit4,
+ org.eclipse.incquery.examples.bpm.incquery;bundle-version="0.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
