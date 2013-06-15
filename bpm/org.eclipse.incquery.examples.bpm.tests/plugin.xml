@@ -25,5 +25,13 @@
             id="org.eclipse.incquery.examples.bpm.queries.jobTasks">
       </matcher>
    </extension>
+   <extension
+         id="org.eclipse.incquery.examples.bpm.queries.entryTask"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.EntryTaskQuerySpecification$Provider"
+            id="org.eclipse.incquery.examples.bpm.queries.entryTask">
+      </matcher>
+   </extension>
 
 </plugin>

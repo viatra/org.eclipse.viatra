@@ -15,3 +15,7 @@ pattern nextActivity(Act,Next){
 pattern jobTasks(Job,Task) {
 	Job.tasks(Job, Task);
 }
+
+pattern entryTask(Entry, Task) {
+	ChecklistEntry.task(Entry, Task);
+}

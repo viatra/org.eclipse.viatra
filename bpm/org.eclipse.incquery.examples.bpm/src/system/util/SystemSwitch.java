@@ -1,15 +1,11 @@
 /**
- * <copyright>
- * </copyright>
- *
- * $Id$
  */
 package system.util;
 
-import java.util.List;
-
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+
+import org.eclipse.emf.ecore.util.Switch;
 
 import system.Data;
 import system.Interface;
@@ -30,193 +26,177 @@ import system.SystemPackage;
  * @see system.SystemPackage
  * @generated
  */
-public class SystemSwitch {
-	/**
-	 * The cached model package
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected static SystemPackage modelPackage;
+public class SystemSwitch<T> extends Switch<T> {
+    /**
+     * The cached model package
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected static SystemPackage modelPackage;
 
-	/**
-	 * Creates an instance of the switch.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SystemSwitch() {
-		if (modelPackage == null) {
-			modelPackage = SystemPackage.eINSTANCE;
-		}
-	}
+    /**
+     * Creates an instance of the switch.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SystemSwitch() {
+        if (modelPackage == null) {
+            modelPackage = SystemPackage.eINSTANCE;
+        }
+    }
 
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
-	public Object doSwitch(EObject theEObject) {
-		return doSwitch(theEObject.eClass(), theEObject);
-	}
+    /**
+     * Checks whether this is a switch for the given package.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @parameter ePackage the package in question.
+     * @return whether this is a switch for the given package.
+     * @generated
+     */
+    @Override
+    protected boolean isSwitchFor(EPackage ePackage) {
+        return ePackage == modelPackage;
+    }
 
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
-	protected Object doSwitch(EClass theEClass, EObject theEObject) {
-		if (theEClass.eContainer() == modelPackage) {
-			return doSwitch(theEClass.getClassifierID(), theEObject);
-		}
-		else {
-			List eSuperTypes = theEClass.getESuperTypes();
-			return
-				eSuperTypes.isEmpty() ?
-					defaultCase(theEObject) :
-					doSwitch((EClass)eSuperTypes.get(0), theEObject);
-		}
-	}
+    /**
+     * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the first non-null result returned by a <code>caseXXX</code> call.
+     * @generated
+     */
+    @Override
+    protected T doSwitch(int classifierID, EObject theEObject) {
+        switch (classifierID) {
+            case SystemPackage.SYSTEM: {
+                system.System system = (system.System)theEObject;
+                T result = caseSystem(system);
+                if (result == null) result = caseResourceElement(system);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case SystemPackage.INTERFACE: {
+                Interface interface_ = (Interface)theEObject;
+                T result = caseInterface(interface_);
+                if (result == null) result = caseResourceElement(interface_);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case SystemPackage.JOB: {
+                Job job = (Job)theEObject;
+                T result = caseJob(job);
+                if (result == null) result = caseResourceElement(job);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case SystemPackage.DATA: {
+                Data data = (Data)theEObject;
+                T result = caseData(data);
+                if (result == null) result = caseResourceElement(data);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case SystemPackage.RESOURCE_ELEMENT: {
+                ResourceElement resourceElement = (ResourceElement)theEObject;
+                T result = caseResourceElement(resourceElement);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            default: return defaultCase(theEObject);
+        }
+    }
 
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
-	protected Object doSwitch(int classifierID, EObject theEObject) {
-		switch (classifierID) {
-			case SystemPackage.SYSTEM: {
-				system.System system = (system.System)theEObject;
-				Object result = caseSystem(system);
-				if (result == null) result = caseResourceElement(system);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SystemPackage.INTERFACE: {
-				Interface interface_ = (Interface)theEObject;
-				Object result = caseInterface(interface_);
-				if (result == null) result = caseResourceElement(interface_);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SystemPackage.JOB: {
-				Job job = (Job)theEObject;
-				Object result = caseJob(job);
-				if (result == null) result = caseResourceElement(job);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SystemPackage.DATA: {
-				Data data = (Data)theEObject;
-				Object result = caseData(data);
-				if (result == null) result = caseResourceElement(data);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SystemPackage.RESOURCE_ELEMENT: {
-				ResourceElement resourceElement = (ResourceElement)theEObject;
-				Object result = caseResourceElement(resourceElement);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			default: return defaultCase(theEObject);
-		}
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>System</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>System</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseSystem(system.System object) {
+        return null;
+    }
 
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>System</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>System</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public Object caseSystem(system.System object) {
-		return null;
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Interface</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Interface</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseInterface(Interface object) {
+        return null;
+    }
 
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Interface</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Interface</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public Object caseInterface(Interface object) {
-		return null;
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Job</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Job</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseJob(Job object) {
+        return null;
+    }
 
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Job</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Job</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public Object caseJob(Job object) {
-		return null;
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Data</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Data</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseData(Data object) {
+        return null;
+    }
 
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Data</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Data</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public Object caseData(Data object) {
-		return null;
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Resource Element</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Resource Element</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseResourceElement(ResourceElement object) {
+        return null;
+    }
 
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Resource Element</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Resource Element</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public Object caseResourceElement(ResourceElement object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch, but this is the last case anyway.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>EObject</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
-	 * @generated
-	 */
-	public Object defaultCase(EObject object) {
-		return null;
-	}
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch, but this is the last case anyway.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>EObject</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject)
+     * @generated
+     */
+    @Override
+    public T defaultCase(EObject object) {
+        return null;
+    }
 
 } //SystemSwitch

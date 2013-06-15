@@ -66,13 +66,35 @@
       </constraints>
     </bodies>
   </patterns>
+  <patterns name="org.eclipse.incquery.examples.bpm.queries.entryTask" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.tests/src/org/eclipse/incquery/examples/bpm/queries/bpmTestQueries.eiq">
+    <parameters name="Entry"/>
+    <parameters name="Task"/>
+    <bodies>
+      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+        <head>
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+          </type>
+          <tail>
+            <type xsi:type="eMFPatternLanguage:ReferenceType">
+              <refname xsi:type="ecore:EReference" href="http://operation/1.0#//ChecklistEntry/task"/>
+            </type>
+          </tail>
+          <src var="Entry"/>
+          <dst xsi:type="patternLanguage:VariableValue">
+            <value var="Task"/>
+          </dst>
+        </head>
+      </constraints>
+    </bodies>
+  </patterns>
   <importPackages xsi:type="eMFPatternLanguage:PackageImport">
     <ePackage href="http://system/1.0#/"/>
   </importPackages>
   <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://process/1.0#/"/>
+    <ePackage href="http://operation/1.0#/"/>
   </importPackages>
   <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://operation/1.0#/"/>
+    <ePackage href="http://process/1.0#/"/>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

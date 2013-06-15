@@ -49,11 +49,11 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   private static DerivedFeatures INSTANCE;
   
   private DerivedFeatures() throws IncQueryException {
-    querySpecifications.add(TaskChecklistEntryJobCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(DataReadByChecklistEntryMatcher.querySpecification());
     querySpecifications.add(ChecklistProcessCorrespondenceMatcher.querySpecification());
     querySpecifications.add(IncorrectEntryInChecklistMatcher.querySpecification());
     querySpecifications.add(ChecklistEntryJobCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(DataReadByChecklistEntryMatcher.querySpecification());
+    querySpecifications.add(TaskChecklistEntryJobCorrespondenceMatcher.querySpecification());
     querySpecifications.add(ChecklistEntryTaskCorrespondenceMatcher.querySpecification());
     
   }

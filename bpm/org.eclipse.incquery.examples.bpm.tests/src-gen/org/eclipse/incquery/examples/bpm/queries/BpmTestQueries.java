@@ -1,5 +1,6 @@
 package org.eclipse.incquery.examples.bpm.queries;
 
+import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatcher;
 import org.eclipse.incquery.examples.bpm.queries.JobTasksMatcher;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatcher;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher;
@@ -17,6 +18,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * <li>processTasks</li>
  * <li>nextActivity</li>
  * <li>jobTasks</li>
+ * <li>entryTask</li>
  * </ul>
  * 
  * @see IPatternGroup
@@ -42,8 +44,9 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   
   private BpmTestQueries() throws IncQueryException {
     querySpecifications.add(JobTasksMatcher.querySpecification());
-    querySpecifications.add(NextActivityMatcher.querySpecification());
     querySpecifications.add(ProcessTasksMatcher.querySpecification());
+    querySpecifications.add(EntryTaskMatcher.querySpecification());
+    querySpecifications.add(NextActivityMatcher.querySpecification());
     
   }
 }

@@ -11,7 +11,7 @@ public class ChecklistEntryJobCorrespondenceEvaluator1_1 implements IMatchChecke
   /**
    * The raw java code generated from the xbase xexpression by xtext.
    */
-  private Boolean evaluateXExpressionGenerated(final String JobPath, final String JobName, final String SysName) {
+  private Boolean evaluateXExpressionGenerated(final String SysName, final String JobName, final String JobPath) {
     String _JobPath = JobPath;
     String _SysName = SysName;
     String _concat = ((String) _SysName).concat("/");
@@ -26,12 +26,12 @@ public class ChecklistEntryJobCorrespondenceEvaluator1_1 implements IMatchChecke
    */
   @Override
   public Boolean evaluateXExpression(final Tuple tuple, final Map<String,Integer> tupleNameMap) {
-    int JobPathPosition = tupleNameMap.get("JobPath");
-    java.lang.String JobPath = (java.lang.String) tuple.get(JobPathPosition);
-    int JobNamePosition = tupleNameMap.get("JobName");
-    java.lang.String JobName = (java.lang.String) tuple.get(JobNamePosition);
     int SysNamePosition = tupleNameMap.get("SysName");
     java.lang.String SysName = (java.lang.String) tuple.get(SysNamePosition);
-    return evaluateXExpressionGenerated(JobPath, JobName, SysName);
+    int JobNamePosition = tupleNameMap.get("JobName");
+    java.lang.String JobName = (java.lang.String) tuple.get(JobNamePosition);
+    int JobPathPosition = tupleNameMap.get("JobPath");
+    java.lang.String JobPath = (java.lang.String) tuple.get(JobPathPosition);
+    return evaluateXExpressionGenerated(SysName, JobName, JobPath);
   }
 }

@@ -1,8 +1,4 @@
 /**
- * <copyright>
- * </copyright>
- *
- * $Id$
  */
 package system;
 
@@ -28,72 +24,72 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface System extends ResourceElement {
-	/**
-	 * Returns the value of the '<em><b>Provides</b></em>' containment reference list.
-	 * The list contents are of type {@link system.Interface}.
-	 * It is bidirectional and its opposite is '{@link system.Interface#getProvider <em>Provider</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Provides</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Provides</em>' containment reference list.
-	 * @see system.SystemPackage#getSystem_Provides()
-	 * @see system.Interface#getProvider
-	 * @model type="system.Interface" opposite="provider" containment="true"
-	 * @generated
-	 */
-	EList getProvides();
+    /**
+     * Returns the value of the '<em><b>Provides</b></em>' containment reference list.
+     * The list contents are of type {@link system.Interface}.
+     * It is bidirectional and its opposite is '{@link system.Interface#getProvider <em>Provider</em>}'.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Provides</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Provides</em>' containment reference list.
+     * @see system.SystemPackage#getSystem_Provides()
+     * @see system.Interface#getProvider
+     * @model opposite="provider" containment="true"
+     * @generated
+     */
+    EList<Interface> getProvides();
 
-	/**
-	 * Returns the value of the '<em><b>Uses</b></em>' reference list.
-	 * The list contents are of type {@link system.Interface}.
-	 * It is bidirectional and its opposite is '{@link system.Interface#getUser <em>User</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Uses</em>' reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Uses</em>' reference list.
-	 * @see system.SystemPackage#getSystem_Uses()
-	 * @see system.Interface#getUser
-	 * @model type="system.Interface" opposite="user"
-	 * @generated
-	 */
-	EList getUses();
+    /**
+     * Returns the value of the '<em><b>Uses</b></em>' reference list.
+     * The list contents are of type {@link system.Interface}.
+     * It is bidirectional and its opposite is '{@link system.Interface#getUser <em>User</em>}'.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Uses</em>' reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Uses</em>' reference list.
+     * @see system.SystemPackage#getSystem_Uses()
+     * @see system.Interface#getUser
+     * @model opposite="user"
+     * @generated
+     */
+    EList<Interface> getUses();
 
-	/**
-	 * Returns the value of the '<em><b>Contains</b></em>' containment reference list.
-	 * The list contents are of type {@link system.Job}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Contains</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Contains</em>' containment reference list.
-	 * @see system.SystemPackage#getSystem_Contains()
-	 * @model type="system.Job" containment="true"
-	 * @generated
-	 */
-	EList getContains();
+    /**
+     * Returns the value of the '<em><b>Contains</b></em>' containment reference list.
+     * The list contents are of type {@link system.Job}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Contains</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Contains</em>' containment reference list.
+     * @see system.SystemPackage#getSystem_Contains()
+     * @model containment="true"
+     * @generated
+     */
+    EList<Job> getContains();
 
-	/**
-	 * Returns the value of the '<em><b>Data</b></em>' containment reference list.
-	 * The list contents are of type {@link system.Data}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Data</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Data</em>' containment reference list.
-	 * @see system.SystemPackage#getSystem_Data()
-	 * @model type="system.Data" containment="true"
-	 * @generated
-	 */
-	EList getData();
+    /**
+     * Returns the value of the '<em><b>Data</b></em>' containment reference list.
+     * The list contents are of type {@link system.Data}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Data</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Data</em>' containment reference list.
+     * @see system.SystemPackage#getSystem_Data()
+     * @model containment="true"
+     * @generated
+     */
+    EList<Data> getData();
 
 } // System
