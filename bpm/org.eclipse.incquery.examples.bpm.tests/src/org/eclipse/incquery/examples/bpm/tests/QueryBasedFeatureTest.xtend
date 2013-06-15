@@ -25,6 +25,8 @@ import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeature
 import operation.OperationPackage
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureHelper
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
+import org.junit.Before
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -33,6 +35,19 @@ class QueryBasedFeatureTest {
   @Inject extension TestExecutor
   @Inject extension ModelLoadHelper
   @Inject extension SnapshotHelper
+
+  @Before
+  def prepareQueries(){
+    
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobTaskCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskReadCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.DataTaskWriteCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("system.queries.JobInfoCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryJobCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
+    assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
+    
+  }
 
   @Test
   def simpleGetterTest(){

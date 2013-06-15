@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.pde.core,
  org.eclipse.incquery.runtime,
  org.eclipse.incquery.examples.bpm
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
