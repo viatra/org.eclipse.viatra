@@ -22,7 +22,7 @@
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="Describes whether an item should display only as &apos;root&apos; (top-level) element, only as &apos;child&apos; (not root but as a child) or &apos;always&apos;."
+               description="Describes whether an item should display only as &apos;root&apos; (top-level) element, only as &apos;child&apos; (not root but as a child) or only  as &apos;port&apos; (hierarchic graph viewers) or &apos;always&apos;."
                mandatory="false"
                multiple="false"
                name="hierarchy"
@@ -103,6 +103,27 @@
                multiple="false"
                name="lineWidth"
                type="int">
+         </annotationparameter>
+         <annotationparameter
+               description="The style of the line (solid, dashed, dotted, dashdot)."
+               mandatory="false"
+               multiple="false"
+               name="lineStyle"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The style of the line&apos;s arrow at the source end (none, standard, diamond, triangle). Only available for Edges."
+               mandatory="false"
+               multiple="false"
+               name="arrowSourceEnd"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="The style of the line&apos;s arrow at the target end (none, standard, diamond, triangle). Only available for Edges."
+               mandatory="false"
+               multiple="false"
+               name="arrowTargetEnd"
+               type="string">
          </annotationparameter>
       </annotation>
    </extension>

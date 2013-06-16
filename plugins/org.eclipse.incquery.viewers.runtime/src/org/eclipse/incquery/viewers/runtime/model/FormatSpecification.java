@@ -26,6 +26,10 @@ public class FormatSpecification {
     public final static String LINE_COLOR = PREFIX + "linecolor";
     public final static String TEXT_COLOR = PREFIX + "textcolor";
     public final static String LINE_WIDTH = PREFIX + "linewidth";
+    public final static String LINE_STYLE = PREFIX + "linestyle";
+    public final static String ARROW_SOURCE_END = PREFIX + "arrowsourceend";
+    public final static String ARROW_TARGET_END = PREFIX + "arrowtargetend";
+        
 
     private Map<String, String> formatProperties = new HashMap<String, String>();
 

@@ -32,6 +32,9 @@ public class FormatParser {
             .put("lineColor", FormatSpecification.LINE_COLOR) 
             .put("textColor", FormatSpecification.TEXT_COLOR) 
             .put("lineWidth", FormatSpecification.LINE_WIDTH)
+            .put("lineStyle", FormatSpecification.LINE_STYLE)
+            .put("arrowSourceEnd", FormatSpecification.ARROW_SOURCE_END)
+            .put("arrowTargetEnd", FormatSpecification.ARROW_TARGET_END)
             .build();
     
     public static FormatSpecification parseFormatAnnotation(Annotation format) {

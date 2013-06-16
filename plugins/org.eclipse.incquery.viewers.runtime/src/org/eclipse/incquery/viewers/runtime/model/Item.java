@@ -30,6 +30,10 @@ public class Item extends FormattableElement {
      */
     public enum HierarchyPolicy {
         /**
+         * Represents a "port" (equivalent to child in normal viewers, but a special child in hierarchic graph viewers)
+         */
+        PORT,
+        /**
          * Represented both as root and child elements (default)
          */
         ALWAYS,
@@ -61,7 +65,7 @@ public class Item extends FormattableElement {
             if (item == null) {
                 return false;
             }
-            return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS;
+            return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS || item.getPolicy() == HierarchyPolicy.PORT;
         }
     }
 

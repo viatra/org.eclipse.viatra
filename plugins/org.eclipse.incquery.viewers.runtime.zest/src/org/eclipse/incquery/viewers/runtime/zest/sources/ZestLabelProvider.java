@@ -63,7 +63,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 
     private int getIntProperty(FormattableElement element, String property) {
         if (element.isFormatted()) {
-            return element.getNumberPropery(property);
+            return element.getNumberProperty(property);
         }
         return -1;
     }
