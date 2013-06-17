@@ -170,42 +170,19 @@ public class ReteEngine<PatternDescription> {
         // String fqn = namespace + "." + name;
         matcher = matchers.get(gtPattern);
         if (matcher == null) {
-            context.modelReadLock();
-            try {
-                if (parallelExecutionEnabled)
-                    reteNet.getStructuralChangeLock().lock();
-                try {
-                    try {
-                        context.coalesceTraversals(new Callable<Void>() {
-                            @Override
-                            public Void call() throws RetePatternBuildException {
-                                Address<? extends Production> prodNode;
-                                prodNode = boundary.accessProduction(gtPattern);
-
-                                RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
-                                        prodNode);
-                                retePatternMatcher.setTag(gtPattern);
-                                matchers.put(gtPattern, retePatternMatcher);
-                                return null;
-                            }
-                        });
-                    } catch (InvocationTargetException ex) {
-                        final Throwable cause = ex.getCause();
-                        if (cause instanceof RetePatternBuildException)
-                            throw (RetePatternBuildException) cause;
-                        if (cause instanceof RuntimeException)
-                            throw (RuntimeException) cause;
-                        assert (false);
-                    }
-                } finally {
-                    if (parallelExecutionEnabled)
-                        reteNet.getStructuralChangeLock().unlock();
-                    settle();
-                }
-            } finally {
-                context.modelReadUnLock();
-            }
-            // reteNet.flushUpdates();
+            constructionWrapper(new Callable<Void>() {
+        		@Override
+        		public Void call() throws RetePatternBuildException {
+        			Address<? extends Production> prodNode;
+        			prodNode = boundary.accessProduction(gtPattern);
+        			
+        			RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
+        					prodNode);
+        			retePatternMatcher.setTag(gtPattern);
+        			matchers.put(gtPattern, retePatternMatcher);
+        			return null;
+        		}
+        	});
             matcher = matchers.get(gtPattern);
         }
 
@@ -226,38 +203,43 @@ public class ReteEngine<PatternDescription> {
     public synchronized void buildMatchersCoalesced(final Collection<PatternDescription> patterns)
             throws RetePatternBuildException {
     	ensureInitialized();
-       context.modelReadLock();
-        try {
-            if (parallelExecutionEnabled)
-                reteNet.getStructuralChangeLock().lock();
-            try {
-                try {
-                    context.coalesceTraversals(new Callable<Void>() {
-                        @Override
-                        public Void call() throws RetePatternBuildException {
-                            for (PatternDescription gtPattern : patterns) {
-                                boundary.accessProduction(gtPattern);
-                            }
-                            return null;
-                        }
-                    });
-                } catch (InvocationTargetException ex) {
-                    final Throwable cause = ex.getCause();
-                    if (cause instanceof RetePatternBuildException)
-                        throw (RetePatternBuildException) cause;
-                    if (cause instanceof RuntimeException)
-                        throw (RuntimeException) cause;
-                    assert (false);
-                }
-            } finally {
-                if (parallelExecutionEnabled)
-                    reteNet.getStructuralChangeLock().unlock();
-            }
-            settle();
-        } finally {
-            context.modelReadUnLock();
-        }
+    	constructionWrapper(new Callable<Void>() {
+    		@Override
+    		public Void call() throws RetePatternBuildException {
+    			for (PatternDescription gtPattern : patterns) {
+    				boundary.accessProduction(gtPattern);
+    			}
+    			return null;
+    		}
+    	});
     }
+
+	private void constructionWrapper(final Callable<Void> payload)
+			throws RetePatternBuildException {
+		context.modelReadLock();
+		    try {
+		        if (parallelExecutionEnabled)
+		            reteNet.getStructuralChangeLock().lock();
+		        try {
+		            try {
+						context.coalesceTraversals(payload);
+		            } catch (InvocationTargetException ex) {
+		                final Throwable cause = ex.getCause();
+		                if (cause instanceof RetePatternBuildException)
+		                    throw (RetePatternBuildException) cause;
+		                if (cause instanceof RuntimeException)
+		                    throw (RuntimeException) cause;
+		                assert (false);
+		            }
+		        } finally {
+		           if (parallelExecutionEnabled)
+		                reteNet.getStructuralChangeLock().unlock();
+		           reteNet.waitForReteTermination();
+		        }
+		    } finally {
+		        context.modelReadUnLock();
+		    }
+	}
 
     // /**
     // * Accesses the patternmatcher for a given pattern with additional scoping, constructs one if

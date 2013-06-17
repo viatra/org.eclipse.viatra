@@ -44,7 +44,7 @@ public class FormattableElement {
      * @param index
      * @return
      */
-    public int getNumberPropery(String index) {
+    public int getNumberProperty(String index) {
         try {
             return Integer.parseInt(specification.getProperty(index));
         } catch (NumberFormatException e) {

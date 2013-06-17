@@ -30,6 +30,10 @@ public class Item extends FormattableElement {
      */
     public enum HierarchyPolicy {
         /**
+         * Represents a "port" (equivalent to child in normal viewers, but a special child in hierarchic graph viewers)
+         */
+        PORT,
+        /**
          * Represented both as root and child elements (default)
          */
         ALWAYS,
@@ -61,7 +65,7 @@ public class Item extends FormattableElement {
             if (item == null) {
                 return false;
             }
-            return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS;
+            return item.getPolicy() == HierarchyPolicy.CHILD || item.getPolicy() == HierarchyPolicy.ALWAYS || item.getPolicy() == HierarchyPolicy.PORT;
         }
     }
 
@@ -71,15 +75,15 @@ public class Item extends FormattableElement {
     private final HierarchyPolicy policy;
     private String labelDefinition;
 
-    private EObject paramObject;
+    private Object paramObject;
 
     public Item(IPatternMatch match, EObject paramObject, String labelDefinition) {
         this(match, paramObject, labelDefinition, HierarchyPolicy.ALWAYS);
     }
 
-    public Item(IPatternMatch match, EObject paramObject, String labelDefinition, HierarchyPolicy policy) {
+    public Item(IPatternMatch match, Object param, String labelDefinition, HierarchyPolicy policy) {
         sourceMatch = match;
-        this.paramObject = paramObject;
+        this.paramObject = param;
         this.labelDefinition = labelDefinition;
         this.policy = policy;
     }
@@ -95,7 +99,7 @@ public class Item extends FormattableElement {
         }
     }
 
-    public EObject getParamObject() {
+    public Object getParamObject() {
         return paramObject;
     }
 

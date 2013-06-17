@@ -11,11 +11,14 @@
 package org.eclipse.incquery.viewers.runtime.zest;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.incquery.viewers.runtime.model.FilteredViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * API to bind the result of model queries to Zest {@link GraphViewer} widgets.
@@ -29,15 +32,13 @@ public class IncQueryGraphViewers {
     }
 
     public static void bind(GraphViewer viewer, ViewerDataModel model) {
-        viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
-        viewer.setInput(model);
+        bind(viewer, model, ViewerDataFilter.UNFILTERED);
     }
 
     public static void bind(GraphViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
         viewer.setContentProvider(new ZestContentProvider());
         viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
-        viewer.setInput(new FilteredViewerDataModel(model, filter));
+        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE)));
     }
 
 }

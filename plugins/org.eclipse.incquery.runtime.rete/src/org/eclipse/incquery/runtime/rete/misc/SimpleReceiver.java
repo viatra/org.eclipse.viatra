@@ -69,5 +69,13 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
         if (parent != null)
             reteContainer.disconnect(parent, this);
     }
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
+    		if (parent != null)
+    			parent.acceptPropagatedTraceInfo(traceInfo);
+    }
 
 }

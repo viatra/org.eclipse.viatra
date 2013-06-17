@@ -227,10 +227,10 @@ class TestExecutor {
 		while (appers.hasMoreElements) {
 			val apper = appers.nextElement
 			if(apper instanceof TestingLogAppender){
-				(apper as TestingLogAppender).getOutput.toString
+				return (apper as TestingLogAppender).getOutput.toString
 			} 
 		}
-		"Logger output not recorded"
+		return "Logger output not recorded"
 	}
 	
 	def logDifference(Set<? extends Object> diff){

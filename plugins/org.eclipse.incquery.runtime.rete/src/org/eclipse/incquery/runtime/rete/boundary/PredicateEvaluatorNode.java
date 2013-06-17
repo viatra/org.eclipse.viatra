@@ -208,8 +208,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             engine.getContext()
                     .logWarning(
                             String.format(
-                                    "The incremental pattern matcher encountered a type compatibility problem during check() evaluation over variables %s: expression evaluated to type %s instead of java.lang.Boolean. (Developer note: result was %s in %s)",
-                                    prettyPrintTuple(ps), termResult == null ? null : termResult.getClass().getName(),
+                                    "The incremental pattern matcher encountered a type compatibility problem during check() evaluation for pattern(s) %s over variables %s: expression evaluated to type %s instead of java.lang.Boolean. (Developer note: result was %s in %s)",
+                                    getTraceInfoPatternsEnumerated(), prettyPrintTuple(ps), termResult == null ? null : termResult.getClass().getName(),
                                     termResult, this));
             return false;
         }
@@ -229,8 +229,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             engine.getContext()
                     .logWarning(
                             String.format(
-                                    "The incremental pattern matcher encountered an error during %s evaluation over variables %s. Error message: %s. (Developer note: %s in %s)",
-                                    rhsIndex == null ? "check()" : "eval()", prettyPrintTuple(ps), e.getMessage(), e
+                                    "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
+                                    rhsIndex == null ? "check()" : "eval()", getTraceInfoPatternsEnumerated(), prettyPrintTuple(ps), e.getMessage(), e
                                             .getClass().getSimpleName(), this), e);
             // engine.logEvaluatorException(e);
 

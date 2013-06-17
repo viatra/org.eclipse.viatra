@@ -44,8 +44,10 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
         IPatternMatcherContext<PatternDescription> context = pSystem.getContext();
         Buildable<PatternDescription, StubHandle, Collector> buildable = pSystem.getBuildable();
         try {
-
-            context.logDebug(getClass().getSimpleName() + ": patternbody build started");
+            context.logDebug(String.format(
+            		"%s: patternbody build started for %s",
+            		getClass().getSimpleName(), 
+            		context.printPattern(pattern)));
 
             // UNIFICATION AND WEAK INEQUALITY ELMINATION
             LayoutHelper.unifyVariablesAlongEqualities(pSystem);
@@ -114,7 +116,10 @@ public class BasicLinearLayout<PatternDescription, StubHandle, Collector> implem
             // Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim);
             // buildable.buildConnection(trimmer, collector);
 
-            context.logDebug(getClass().getSimpleName() + ": patternbody build concluded");
+            context.logDebug(String.format(
+            		"%s: patternbody build concluded for %s",
+            		getClass().getSimpleName(), 
+            		context.printPattern(pattern)));
 
             return stub;
 

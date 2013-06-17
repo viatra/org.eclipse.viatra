@@ -8,15 +8,28 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.viewers.runtime.model;
+package org.eclipse.incquery.viewers.runtime.model.listeners;
+
+import org.eclipse.incquery.viewers.runtime.model.Containment;
+import org.eclipse.incquery.viewers.runtime.model.Edge;
+import org.eclipse.incquery.viewers.runtime.model.Item;
 
 /**
- * Callback interface for Edges to represent that all information inside an Edge is available.
- * 
  * @author Zoltan Ujhelyi
- * 
+ *
  */
-public interface IEdgeReadyListener {
+public interface IViewerStateListener {
 
-    void edgeReady(Edge edge);
+    void itemAppeared(Item item);
+
+    void itemDisappeared(Item item);
+
+    void containmentAppeared(Containment containment);
+
+    void containmentDisappeared(Containment containment);
+
+    void edgeAppeared(Edge edge);
+
+    void edgeDisappeared(Edge edge);
+
 }

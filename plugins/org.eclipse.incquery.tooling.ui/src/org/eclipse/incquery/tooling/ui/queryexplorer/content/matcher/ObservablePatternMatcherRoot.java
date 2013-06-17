@@ -71,7 +71,8 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.WILDCARD_MODE);
         try {
-        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(), wildcardMode);
+        	// TODO add option switch for dynamic EMF mode
+        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(), wildcardMode /*, dynamicEMFmode*/);
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "

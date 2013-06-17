@@ -33,7 +33,6 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-		<!-- <module>../../plugins/org.eclipse.incquery.databinding.tooling</module> -->
 		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
@@ -54,7 +53,6 @@
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
-		<!-- <module>../../features/org.eclipse.incquery.databinding.tooling.feature</module> -->
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
@@ -274,6 +272,17 @@
 			<modules>
 				<module>../../../examples/school/org.eclipse.incquery.tests.school.parent</module>
 				<module>../../../examples/ecorequery/hu.bme.mit.ecorequery.test.parent</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>examples-eclipse.org</id>
+			<activation>
+				<file>
+					<exists>../../../examples-eclipse.org/README.markdown</exists>
+				</file>
+			</activation>
+			<modules>
+				<module>../../../examples-eclipse.org/bpm/org.eclipse.incquery.examples.bpm.test.parent</module>
 			</modules>
 		</profile>
 	</profiles>

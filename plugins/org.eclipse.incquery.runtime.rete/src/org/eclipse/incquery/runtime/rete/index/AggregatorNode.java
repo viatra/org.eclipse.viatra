@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.rete.index;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -153,6 +152,15 @@ public abstract class AggregatorNode extends StandardNode {
     private Object getAggregate(Tuple signature) {
         Object aggregate = mainAggregates.get(signature);
         return aggregate == null ? aggregateGroup(signature, null) : aggregate;
+    }
+    
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateToIndexerParent()) {
+    		if (projection != null)
+    			projection.acceptPropagatedTraceInfo(traceInfo);
+    	}
     }
 
     /**

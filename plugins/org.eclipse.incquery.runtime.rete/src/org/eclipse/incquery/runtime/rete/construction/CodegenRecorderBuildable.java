@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.rete.tuple.LeftInheritanceTuple;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
@@ -372,6 +373,11 @@ public abstract class CodegenRecorderBuildable<PatternDescription> implements
         return emitFunctionCall(coordinator.collectorType, "patternCollector", arguments);
         // return coordinator.allocateNewCollector(pattern);
     }
+    
+    @Override
+    public void patternFinished(PatternDescription pattern, IPatternMatcherContext<PatternDescription> context, String collector) {
+    	// NO-OP
+    };
 
     // /**
     // * @pre coordinator.isComplete()

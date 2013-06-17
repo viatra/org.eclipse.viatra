@@ -81,7 +81,8 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
                         .getContext()
                         .logError(
                                 "[INTERNAL ERROR] Duplicate deletion of " + updateElement
-                                        + " was detected in UniquenessEnforcer " + this, ex);
+                                        + " was detected in UniquenessEnforcer " + this 
+                                        + " for pattern(s) " + getTraceInfoPatternsEnumerated(), ex);
             }
         }
         if (change) {
@@ -139,6 +140,15 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
         return parents;
     }
 
+    @Override
+    public void assignTraceInfo(TraceInfo traceInfo) {
+    	super.assignTraceInfo(traceInfo);
+    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
+    		for (Supplier parent : parents)
+    			parent.acceptPropagatedTraceInfo(traceInfo);
+    }
+
+    
     //
     // public void tearOff() {
     // for (Supplier parent : new LinkedList<Supplier>(parents) )

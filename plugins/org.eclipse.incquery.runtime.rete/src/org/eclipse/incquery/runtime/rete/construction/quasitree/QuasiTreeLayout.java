@@ -66,7 +66,10 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
          */
         public Stub<StubHandle> run() throws RetePatternBuildException {
             try {
-                context.logDebug(getClass().getSimpleName() + ": patternbody build started");
+                context.logDebug(String.format(
+                		"%s: patternbody build started for %s",
+                		getClass().getSimpleName(), 
+                		context.printPattern(pattern)));
 
                 // UNIFICATION AND WEAK INEQUALITY ELMINATION
                 LayoutHelper.unifyVariablesAlongEqualities(pSystem);
@@ -107,8 +110,11 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
                 Stub<StubHandle> finalStub = forefront.iterator().next();
                 LayoutHelper.finalCheck(pSystem, finalStub);
 
-                context.logDebug(getClass().getSimpleName() + ": patternbody build concluded");
-                return finalStub;
+                context.logDebug(String.format(
+                		"%s: patternbody build concluded for %s",
+                		getClass().getSimpleName(), 
+                		context.printPattern(pattern)));
+               return finalStub;
             } catch (RetePatternBuildException ex) {
                 ex.setPatternDescription(pattern);
                 throw ex;
