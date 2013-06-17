@@ -8,18 +8,6 @@
       </description>
    </intro>
    
-   <item skip="true" title="(Optional, if you wish to use additional domains alongside school.ecore:) Adding an EMF-IncQuery Generator Model">
-   		<description>
-   			Before specifying query definition patterns for domains defined in a <b>workspace project</b>, an EMF-IncQuery Generator Model (a <b>generator.eiqgen</b> file) needs to be created for your project. This file contains references to <b>.genmodel</b> files that are located in an EMF project in your workspace. <br/>
-   			Note: if you wish to specify queries for a domain defined in a project that is already installed as a plug-in (in EMF terms, registered in the Global EPackage Registry), the .eiqgen file is not necessary.
-   		</description>
-   		<subitem label="Issue: File | New | Other | EMF-IncQuery | EMF-IncQuery Generator Model">
-         <command required="false" serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.incquery.tooling.ui.neweiqgenmodel)"/>
-      	</subitem>
-      	<subitem skip="false" label="Select the target EMF-IncQuery project to which a new Generator Model will be added."></subitem>
-      	<subitem skip="false" label="Specify EMF .genmodels from your workspace using the Add button."></subitem>
-      	<subitem skip="true" label="Manually edit the resulting generator.eiqgen file and add other .genmodel references if necessary."></subitem>
-   </item>
    
     <item title="Creating a new query definition">
       <description>
