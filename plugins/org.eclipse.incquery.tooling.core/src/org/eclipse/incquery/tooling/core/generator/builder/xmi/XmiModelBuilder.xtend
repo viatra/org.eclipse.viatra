@@ -33,6 +33,8 @@ import org.eclipse.incquery.tooling.core.generator.util.EMFPatternURIHandler
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
+import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * @author Mark Czotter
@@ -41,6 +43,7 @@ class XmiModelBuilder {
 	
 	@Inject Logger logger
 	@Inject PatternSetValidator validator
+	@Inject IErrorFeedback feedback
 	
 	/**
 	 * Builds one model file (XMI) from the input into the folder.
@@ -90,7 +93,7 @@ class XmiModelBuilder {
 			// first add all error-free patterns
 			val newParameters = new ArrayList
 			val Map<String, Pattern> fqnToPatternMap = newHashMap();
-			for (pattern : resources.map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
+			for (pattern : resources.filter[it != xmiResource].map(r | r.allContents.toIterable.filter(typeof (Pattern))).flatten) {
 				if (validator.validateTransitively(pattern).status != PatternValidationStatus::ERROR){
 					newParameters += pattern.copyPattern(fqnToPatternMap, xmiModelRoot)
 				}
@@ -124,7 +127,7 @@ class XmiModelBuilder {
 		p.name = fqn
 		p.fileName = pattern.eResource.URI.toString
 		if (fqnToPatternMap.get(fqn) != null) {
-			logger.error("Pattern already set in the Map: " + fqn)
+			feedback.reportError(pattern, "Pattern with qualified name " + fqn + "is encountered multiple times - check project.", "org.eclipse.incquery.tooling.core.generator", Severity::WARNING, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
 		} else {
 			fqnToPatternMap.put(fqn, p)
 			xmiModelRoot.patterns.add(p)
