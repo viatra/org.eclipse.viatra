@@ -14,5 +14,6 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.preference;
 public class PreferenceConstants {
 
     public static final String WILDCARD_MODE = "org.eclipse.incquery.tooling.gui.queryexplorer.WildcardMode";
+    public static final String DYNAMIC_EMF_MODE = "org.eclipse.incquery.tooling.gui.queryexplorer.DynamicEMFMode";
 
 }

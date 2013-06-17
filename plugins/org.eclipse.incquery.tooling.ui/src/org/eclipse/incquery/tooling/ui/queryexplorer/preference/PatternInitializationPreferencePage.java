@@ -34,6 +34,14 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
             + "during query development. Turn off wildcard mode to decrease the memory "
             + "usage while working with very large models.";
 
+    private static final String DYNAMIC_EMF_MODE_DESCRIPTION = "In Dynamic EMF mode types are identified by the "
+            + "String IDs that are ultimately derived from the nsURI of the EPackage. "
+            + "Multiple types with the same ID are treated as the same. "
+            + "This is useful if Dynamic EMF is used, where there can be multiple copies (instantiations) of the same EPackage, "
+            + "representing essentially the same metamodel. If one disables Dynamic EMF mode, an error is logged "
+            + "if duplicate EPackages with the same nsURI are encountered. This flag indicates whether indexing should be performed "
+            + "in Dynamic EMF mode, i.e. EPackage nsURI collisions are tolerated and EPackages with the same URI are automatically considered as equal.";
+
     @Override
     public void init(IWorkbench workbench) {
 
@@ -43,9 +51,10 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
     protected Control createContents(Composite parent) {
         final IPreferenceStore store = IncQueryGUIPlugin.getDefault().getPreferenceStore();
         Composite control = new Composite(parent, SWT.NONE);
+        
         Label wildcardDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
         wildcardDescriptionLabel.setText(WILDCARD_MODE_DESCRIPTION);
-        final GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
+        GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
         layoutData.grabExcessHorizontalSpace = true;
         layoutData.horizontalAlignment = SWT.FILL;
         layoutData.widthHint = 200;
@@ -64,6 +73,28 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
                 IncQueryGUIPlugin.getDefault().savePluginPreferences();
             }
         });
+        
+        Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(layoutData);
+        
+        Label dynamicEMFDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
+        dynamicEMFDescriptionLabel.setText(DYNAMIC_EMF_MODE_DESCRIPTION);
+        dynamicEMFDescriptionLabel.setLayoutData(layoutData);
+        final BooleanFieldEditor dynamicEMFModeEditor = new BooleanFieldEditor(PreferenceConstants.DYNAMIC_EMF_MODE,
+                "&Dynamic EMF mode", control);
+        dynamicEMFModeEditor.setPreferenceStore(IncQueryGUIPlugin.getDefault().getPreferenceStore());
+        dynamicEMFModeEditor.load();
+        dynamicEMFModeEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void propertyChange(PropertyChangeEvent event) {
+                store.setValue(PreferenceConstants.DYNAMIC_EMF_MODE, dynamicEMFModeEditor.getBooleanValue());
+                // the mentioned replace method did not work for me
+                IncQueryGUIPlugin.getDefault().savePluginPreferences();
+            }
+        });
+        
         return control;
     }
 }
