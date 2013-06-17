@@ -114,7 +114,7 @@ public interface NavigationHelper {
      *            the value of the attribute
      * @return the collection of settings
      */
-    public Collection<Setting> findByAttributeValue(Object value);
+    public Set<Setting> findByAttributeValue(Object value);
 
     /**
      * Find all the EAttributes and their owners for a given <code>value</code> of the attribute. The method will return
@@ -133,7 +133,7 @@ public interface NavigationHelper {
      *            the collection of attributes
      * @return the collection of settings
      */
-    public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes);
+    public Set<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes);
 
     /**
      * Find all {@link EObject}s that have an <code>attribute</code> {@link EAttribute} and its value equals to the
@@ -150,7 +150,7 @@ public interface NavigationHelper {
      *            the EAttribute instance
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute);
+    public Set<EObject> findByAttributeValue(Object value, EAttribute attribute);
 
     /**
      * Returns the collection of data type instances for the given {@link EDataType}.
@@ -164,7 +164,7 @@ public interface NavigationHelper {
      *            the data type
      * @return the collection of data type instances
      */
-    public Collection<Object> getDataTypeInstances(EDataType type);
+    public Set<Object> getDataTypeInstances(EDataType type);
 
     // /**
     // * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
@@ -232,7 +232,7 @@ public interface NavigationHelper {
      *            the endpoint of a reference
      * @return the collection of settings
      */
-    public Collection<Setting> getInverseReferences(EObject target);
+    public Set<Setting> getInverseReferences(EObject target);
 
     /**
      * Find all the {@link EObject} instances that have an EReference instance with the given <code>target</code>. The
@@ -249,7 +249,7 @@ public interface NavigationHelper {
      * @param references
      * @return
      */
-    public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references);
+    public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references);
 
     /**
      * Find all {@link EObject}s that have a <code>reference</code> EReference instance with the given
@@ -266,7 +266,7 @@ public interface NavigationHelper {
      *            the EReference instance
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> getInverseReferences(EObject target, EReference reference);
+    public Set<EObject> getInverseReferences(EObject target, EReference reference);
 
     /**
      * Get the direct {@link EObject} instances of the given EClass instance.
@@ -280,7 +280,7 @@ public interface NavigationHelper {
      *            the EClass instance
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> getDirectInstances(EClass clazz);
+    public Set<EObject> getDirectInstances(EClass clazz);
 
     /**
      * Get the exact and descendant {@link EObject} instances of the given EClass.
@@ -294,7 +294,7 @@ public interface NavigationHelper {
      *            the EClass
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> getAllInstances(EClass clazz);
+    public Set<EObject> getAllInstances(EClass clazz);
 
     /**
      * Returns the collection of {@link EObject} instances which have a feature with the given value.
@@ -310,7 +310,7 @@ public interface NavigationHelper {
      *            the feature instance
      * @return the collection of {@link EObject} instances
      */
-    public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature feature);
+    public Set<EObject> findByFeatureValue(Object value, EStructuralFeature feature);
 
     /**
      * Returns the holder(s) of the given feature.

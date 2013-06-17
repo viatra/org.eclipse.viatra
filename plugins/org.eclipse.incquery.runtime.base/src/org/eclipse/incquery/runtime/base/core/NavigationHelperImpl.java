@@ -172,7 +172,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<Object> getDataTypeInstances(EDataType type) {
+    public Set<Object> getDataTypeInstances(EDataType type) {
         Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(type);
         if (valMap != null) {
             return Collections.unmodifiableSet(valMap.keySet());
@@ -183,7 +183,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<Setting> findByAttributeValue(Object value) {
+    public Set<Setting> findByAttributeValue(Object value) {
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
@@ -202,7 +202,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
+    public Set<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
@@ -221,7 +221,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> findByAttributeValue(Object value, EAttribute attribute) {
+    public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(attribute) : attribute);
         if (valMap.get(feature) == null) {
@@ -231,7 +231,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             return Collections.unmodifiableSet(valMap.get(feature));
         }
     }
-    
+        
     @Override
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
     	contentAdapter.maintainMetamodel(feature);
@@ -261,7 +261,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     // }
 
     @Override
-    public Collection<Setting> getInverseReferences(EObject target) {
+    public Set<Setting> getInverseReferences(EObject target) {
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
@@ -280,7 +280,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
+    public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
@@ -299,7 +299,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> getInverseReferences(EObject target, EReference reference) {
+    public Set<EObject> getInverseReferences(EObject target, EReference reference) {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(reference) : reference);
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
         if (valMap.get(feature) == null) {
@@ -342,7 +342,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> getDirectInstances(EClass type) {
+    public Set<EObject> getDirectInstances(EClass type) {
         Set<EObject> valSet = contentAdapter.getInstanceSet(type);
         if (valSet == null) {
         	contentAdapter.maintainMetamodel(type);           	 	
@@ -353,7 +353,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> getAllInstances(EClass type) {
+    public Set<EObject> getAllInstances(EClass type) {
         Set<EObject> retSet = new HashSet<EObject>();
 
         Set<EClass> valSet = NavigationHelperContentAdapter.getSubTypeMap().get(type);
@@ -376,7 +376,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Collection<EObject> findByFeatureValue(Object value, EStructuralFeature _feature) {
+    public Set<EObject> findByFeatureValue(Object value, EStructuralFeature _feature) {
         Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
         Set<EObject> retSet = new HashSet<EObject>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
