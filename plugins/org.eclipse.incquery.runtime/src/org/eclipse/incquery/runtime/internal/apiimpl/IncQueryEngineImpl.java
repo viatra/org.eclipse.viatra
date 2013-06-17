@@ -86,6 +86,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      */
 	private boolean wildcardMode;
     /**
+     * Whether to initialize the base index in dynamic EMF mode.
+     */
+	private boolean dynamicEMFmode;
+	/**
      * The RETE pattern matcher component of the EMF-IncQuery engine.
      */
     private ReteEngine<Pattern> reteEngine = null;
@@ -111,9 +115,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean wildcardMode) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean wildcardMode, boolean dynamicEMFmode) throws IncQueryException {
         super();
         this.wildcardMode = wildcardMode;
+        this.dynamicEMFmode = dynamicEMFmode;
         this.manager = manager;
         this.emfRoot = emfRoot;
         this.matchers = Maps.newHashMap();
@@ -199,7 +204,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
                 // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this
                 // reentrantly
                 synchronized (this) {
-                    baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode,
+                    baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, dynamicEMFmode,
                             getLogger());
                 }
             } catch (IncQueryBaseException e) {

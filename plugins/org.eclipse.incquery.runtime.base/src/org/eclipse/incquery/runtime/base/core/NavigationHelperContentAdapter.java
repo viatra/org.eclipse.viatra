@@ -634,7 +634,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             ePackageMap.put(classifier.getEPackage().getNsURI(), classifier.getEPackage());
             //collision detection between EPackages (disabled in dynamic model mode)
             if (!isDynamicModel && otherPackages.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI            
-                processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages"), 
+                processingError(new IncQueryBaseException("NsURI ("+classifier.getEPackage().getNsURI()+ ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."), 
                         "process new metamodel elements.");
             }
         }

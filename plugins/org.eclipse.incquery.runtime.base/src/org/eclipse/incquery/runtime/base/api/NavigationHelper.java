@@ -57,6 +57,14 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
  * </p>
  * 
  * <p>
+ * Another options is to build indices in <em>dynamic EMF mode</em>, meaning that types are identified by the String IDs 
+ * that are ultimately derived from the nsURI of the EPackage. Multiple types with the same ID are treated as the same.
+ * This is useful if dynamic EMF is used, where there can be multiple copies (instantiations) of the same EPackage, 
+ * representing essentially the same metamodel. If one disables <em>dynamic EMF mode</em>, an error is logged if 
+ * duplicate EPackages with the same nsURI are encountered.
+ * </p>
+ *  
+ * <p>
  * Note that none of the defined methods return null upon empty result sets. All query methods return either a copy of
  * the result sets (where {@link Setting} is instantiated) or an unmodifiable collection of the result view.
  * 
@@ -76,6 +84,15 @@ public interface NavigationHelper {
      *         EStructuralFeatures is required.
      */
     public boolean isInWildcardMode();
+    
+    /**
+     * Indicates whether indexing is performed in <em>dynamic EMF mode</em>, i.e. EPackage nsURI collisions are 
+     *   tolerated and EPackages with the same URI are automatically considered as equal.
+     * 
+     * @return true if multiple EPackages with the same nsURI are treated as the same, false if an error is logged instead in this case.
+     */
+    public boolean isInDynamicEMFMode();
+    
 
     // /** // COMING SOON
     // * Sets the <em>wildcard mode</em>.

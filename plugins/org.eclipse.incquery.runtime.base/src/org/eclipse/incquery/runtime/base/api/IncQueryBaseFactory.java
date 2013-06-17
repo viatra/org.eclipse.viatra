@@ -55,6 +55,9 @@ public class IncQueryBaseFactory {
      * <p>
      * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. If
      * wildcard mode is off, the client will have to manually register the interesting aspects of the model.
+     * <p>
+     * The NavigationHelper will be created without dynamic EMF support by default. 
+     * See {@link #createNavigationHelper(Notifier, boolean, boolean, Logger)} for more options.
      * 
      * @see NavigationHelper
      * 
@@ -74,7 +77,7 @@ public class IncQueryBaseFactory {
             throws IncQueryBaseException {
         if (logger == null)
             logger = Logger.getLogger(NavigationHelper.class);
-        return new NavigationHelperImpl(emfRoot, wildcardMode, logger);
+        return new NavigationHelperImpl(emfRoot, wildcardMode, false, logger);
     }
     
     /**
@@ -96,8 +99,8 @@ public class IncQueryBaseFactory {
      *            true if all aspects of the EMF model should be indexed automatically, false if manual registration of
      *            interesting aspects is desirable
      * @param dynamicModel
-     *            true if the index should use String ids for the various EMF types and features, false if dynamic 
-     *            model support is not required
+     *            true if the index should use String ids (nsURIs) for the various EMF types and features, and treat  
+     *            multiple EPackages sharing an nsURI as the same. false if dynamic model support is not required
      * @param logger
      *            the log output where errors will be logged if encountered during the operation of the
      *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.

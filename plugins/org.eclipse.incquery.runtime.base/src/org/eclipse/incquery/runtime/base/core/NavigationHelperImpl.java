@@ -117,8 +117,9 @@ public class NavigationHelperImpl implements NavigationHelper {
     public boolean isInWildcardMode() {
         return inWildcardMode;
     }
-    public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, Logger logger) throws IncQueryBaseException {
-        this(emfRoot, wildcardMode, false, logger);
+    @Override
+    public boolean isInDynamicEMFMode() {
+    	return contentAdapter.isDynamicModel();
     }
     
     public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger) throws IncQueryBaseException {
@@ -141,7 +142,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
         this.inWildcardMode = wildcardMode;
-
+        
         // if (this.navigationHelperType == NavigationHelperType.ALL) {
         // visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
         // }
