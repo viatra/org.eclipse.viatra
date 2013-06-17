@@ -14,6 +14,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
@@ -106,6 +107,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     public Class<? extends ITypeProvider> bindITypeProvider() {
         return GenModelBasedTypeProvider.class;
+    }
+    
+    public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
+    	return GenModelBasedTypeProvider.class;
     }
 
     @Override

@@ -12,26 +12,28 @@
 package org.eclipse.incquery.tooling.core.generator.util
 
 import com.google.inject.Inject
+import java.util.regex.Matcher
 import org.apache.log4j.Logger
 import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
+import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
+import org.eclipse.jdt.core.JavaConventions
+import org.eclipse.jdt.core.JavaCore
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
-import org.eclipse.jdt.core.JavaConventions
-import org.eclipse.jdt.core.JavaCore
-import org.eclipse.core.runtime.IStatus
-import java.util.regex.Matcher
-import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
-import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
-import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -44,7 +46,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	Logger logger = Logger::getLogger(getClass())
 	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 	@Inject	IWorkspaceRoot workspaceRoot
-	@Inject ITypeProvider typeProvider
+//	@Inject ITypeProvider typeProvider
+	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
 	@Inject IErrorFeedback errorFeedback
 	
@@ -198,7 +201,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * @see EMFPatternTypeProvider
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
-   		typeProvider.getTypeForIdentifiable(variable)
+   		emfTypeProvider.getVariableType(variable)
+//   		typeProvider.getTypeForIdentifiable(variable)
    	}
    	
    	/**
@@ -230,7 +234,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		if (javadocString.nullOrEmpty) {
   			return "Serialization error, check Log"
   		}
-  		javadocString = javadocString.replaceAll(java::util::regex::Pattern::quote("\\\""),Matcher::quoteReplacement("\""))
+  		javadocString = javadocString.replaceAll(java.util.regex.Pattern::quote("\\\""),Matcher::quoteReplacement("\""))
   		javadocString = javadocString.replaceAll("@","{@literal @}")
   		javadocString = javadocString.replaceAll("<","{@literal <}")
   		javadocString = javadocString.replaceAll(">","{@literal >}")
