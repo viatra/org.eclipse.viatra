@@ -74,8 +74,8 @@ public class PatternInitializationPreferencePage extends PreferencePage implemen
             }
         });
         
-        Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
-        separator.setLayoutData(layoutData);
+        // Label separator= new Label(control, SWT.HORIZONTAL | SWT.SEPARATOR);
+        // separator.setLayoutData(layoutData);
         
         Label dynamicEMFDescriptionLabel = new Label(control, SWT.NONE | SWT.WRAP);
         dynamicEMFDescriptionLabel.setText(DYNAMIC_EMF_MODE_DESCRIPTION);
