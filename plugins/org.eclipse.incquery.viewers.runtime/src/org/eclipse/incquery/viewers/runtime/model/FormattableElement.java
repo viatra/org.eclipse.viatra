@@ -51,4 +51,14 @@ public class FormattableElement {
             return -1;
         }
     }
+    
+    /**
+     * Returns a string format property. If the input is erroneous (e.g. non-existent properties),
+     * null is returned.
+     * @param index
+     * @return
+     */
+    public String getStringProperty(String index) {
+    	return specification.getProperty(index);
+    }
 }
