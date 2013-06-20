@@ -202,7 +202,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
    		emfTypeProvider.getVariableType(variable)
-//   		typeProvider.getTypeForIdentifiable(variable)
    	}
    	
    	/**

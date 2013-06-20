@@ -41,29 +41,6 @@ class PatternMatchClassInferrer {
 	@Inject extension JavadocInferrer
 	@Inject TypeReferences typeReference
 	@Inject extension IJvmModelAssociator associator
-	
-	/**
-	 * Infers the {@link IPatternMatch} implementation class from {@link Pattern} parameters.
-	 */
-	def JvmDeclaredType inferMatchClass(Pattern pattern, boolean isPrelinkingPhase, String matchPackageName) {
-		val matchClass = pattern.toClass(pattern.matchClassName) [
-   			it.packageName = matchPackageName
-   			it.documentation = pattern.javadocMatchClass.toString
-   			//it.final = true
-   			it.setAbstract(true)
-   			it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
-   			//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
-   		]
-   		matchClass.inferMatchClassFields(pattern)
-   		matchClass.inferMatchClassConstructors(pattern)
-   		matchClass.inferMatchClassGetters(pattern)
-   		matchClass.inferMatchClassSetters(pattern)
-   		matchClass.inferMatchClassMethods(pattern)
-   		matchClass.inferCheckBodies(pattern)
-  		matchClass.inferMatchInnerClasses(pattern)
-   		
-   		return matchClass
-   	}
    	
    	/**
    	 * Infers fields for Match class based on the input 'pattern'.
