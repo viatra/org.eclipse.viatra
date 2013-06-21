@@ -199,10 +199,42 @@ class InitListener implements IncQueryEngineInitializationListener{
 
 class LifycycleListener implements IncQueryEngineLifecycleListener{
   
-  @Property var tainted = false 
-  @Property var disposed = false 
-  @Property var wiped = false
-  @Property var matchers = newArrayList
+//  @Property
+	var tainted = false 
+//  @Property 
+  	var disposed = false 
+//  @Property
+	var wiped = false
+//  @Property
+	var matchers = newArrayList
+  
+  def getTainted() {
+  	tainted
+  }
+  
+  def setTainted(boolean tainted) {
+  	this.tainted = tainted
+  }
+  
+  def getDisposed() {
+  	disposed
+  }
+  
+  def setDisposed(boolean disposed) {
+  	this.disposed = disposed
+  }
+  
+  def getWiped() {
+  	wiped
+  }
+  
+  def setWiped(boolean wiped) {
+  	this.wiped = wiped
+  }
+  
+  def getMatchers() {
+  	matchers
+  }
   
   override engineBecameTainted() {
     tainted = true
