@@ -114,12 +114,17 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
                 }
             }
         };
-        try {
-            getContainer().run(true, false, op);
-            IFile file = (IFile) root.findMember(filePath);
-            BasicNewResourceWizard.selectAndReveal(file, workbench.getActiveWorkbenchWindow());
-            IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
-        } catch (InterruptedException e) {
+		try {
+			getContainer().run(true, false, op);
+			IFile file = null;
+			BasicNewResourceWizard.selectAndReveal(file,
+					workbench.getActiveWorkbenchWindow());
+			do {
+				file = (IFile) root.findMember(filePath);
+				if (file == null) Thread.sleep(500);
+			} while (file == null);
+			IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
+		} catch (InterruptedException e) {
             // This is never thrown as of false cancellable parameter of getContainer().run
             return false;
         } catch (InvocationTargetException e) {
@@ -166,11 +171,12 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
             pm.setPackageName(packageName.replace("/", "."));
         }
 
+        pm.setImportPackages(EMFPatternLanguageFactory.eINSTANCE.createXImportSection());
         // Setting imports
         for (EPackage importedPackage : imports) {
             PackageImport importDecl = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
             importDecl.setEPackage(importedPackage);
-            pm.getImportPackages().add(importDecl);
+            pm.getImportPackages().getPackageImport().add(importDecl);
         }
 
         // Creating pattern

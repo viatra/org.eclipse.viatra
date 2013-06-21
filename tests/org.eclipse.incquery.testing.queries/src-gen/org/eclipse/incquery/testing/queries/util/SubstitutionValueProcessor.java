@@ -10,6 +10,7 @@ import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class SubstitutionValueProcessor implements IMatchProcessor<SubstitutionValueMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -21,7 +22,7 @@ public abstract class SubstitutionValueProcessor implements IMatchProcessor<Subs
   
   @Override
   public void process(final SubstitutionValueMatch match) {
-    process(match.getSubstitution(), match.getValue());  				
+    process(match.getSubstitution(), match.getValue());
     
   }
 }

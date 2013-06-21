@@ -46,6 +46,7 @@ import org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpeci
  * @see UnexpectedMatchRecordQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRecordMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
@@ -189,8 +190,10 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
    * @param pExpectedSet the fixed value of pattern parameter ExpectedSet, or null if not bound.
    * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
    * @return the delta monitor.
+   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
    * 
    */
+  @Deprecated
   public DeltaMonitor<UnexpectedMatchRecordMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pActualSet, pExpectedSet, pRecord});
   }

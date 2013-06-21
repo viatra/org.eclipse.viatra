@@ -13,7 +13,6 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
@@ -25,13 +24,16 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
 class CartesianProductTest {
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject
 	EMFPatternLanguageJavaValidator validator
@@ -59,8 +61,8 @@ class CartesianProductTest {
 				EClass(Y);
 				X == Y;
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -81,8 +83,8 @@ class CartesianProductTest {
 				EClass(Y);
 				find Good1(X,Y);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -105,8 +107,8 @@ class CartesianProductTest {
 				Z == count find Good1(X,Y);
 				check(Z > 10); 
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -135,8 +137,8 @@ class CartesianProductTest {
 				EClass(Z);
 				find IntAndClassPattern(count find Good1(X,Y), Z);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -159,8 +161,8 @@ class CartesianProductTest {
 				EClass(Z);
 				EClass.eStructuralFeatures.upperBound(Z,count find Good1(X,Y));
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -180,8 +182,8 @@ class CartesianProductTest {
 				EClass(X);
 				neg find Good1(X,_A);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -201,8 +203,8 @@ class CartesianProductTest {
 				EClass(X);
 				neg find Good1(_A,_B);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -223,8 +225,8 @@ class CartesianProductTest {
 				M == count find Good1(X,_A);
 				check(M>10);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -239,8 +241,8 @@ class CartesianProductTest {
 				EInt(Y);
 				Y == 10;
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	

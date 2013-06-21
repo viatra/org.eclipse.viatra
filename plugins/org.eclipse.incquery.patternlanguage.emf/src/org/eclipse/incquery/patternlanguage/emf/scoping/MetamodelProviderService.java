@@ -78,7 +78,11 @@ public class MetamodelProviderService implements IMetamodelProvider {
         Map<String, EPackage> packageMap = Maps.newHashMap();
         Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
         for (String key : nsURISet) {
-            packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
+        	try {
+        		packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
+        	} catch (Exception e) {
+        		logger.error(String.format("Error loading EPackage %s: %s", key, e.getMessage()));
+        	}
         }
         return packageMap;
 

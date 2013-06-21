@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.graphiti;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -75,7 +78,7 @@ public class GraphitiModelConnector extends EMFModelConnector {
             if (!pictogramElements.isEmpty()) {
                 List<EditPart> parts = new ArrayList<EditPart>();
                 for (PictogramElement element : pictogramElements) {
-                    EditPart part = ((DiagramEditor) editor).getEditPartForPictogramElement(element);
+                    EditPart part = findEditPart((DiagramEditor) editor, element);
                     if (part != null) {
                         parts.add(part);
                     }
@@ -84,6 +87,27 @@ public class GraphitiModelConnector extends EMFModelConnector {
             }
         }
         return null;
+    }
+    
+    private EditPart findEditPart(DiagramEditor editor, PictogramElement element) {
+    	 try {
+    		 //pre-0.10: return editor.getEditPartForPictogramElement(element);
+    		 //since 0.10: return editor.getDiagramBehavior().getEditPartForPictogramElement(element);
+             Method m = editor.getClass().getMethod("getEditPartForPictogramElement");
+             if (m==null) { 
+            	 m = editor.getClass().getMethod("getDiagramBehavior");
+            	 Class<?> behaviourClass = m.invoke(element).getClass();
+            	 m = behaviourClass.getMethod("getEditPartForPictogramElement");
+             }
+             if (m != null) {
+            	 return (EditPart) m.invoke(editorPart, element);
+             }
+         } catch (Exception e) {
+			logger.log(new Status(IStatus.ERROR,
+					"org.eclipse.incquery.runtime.graphiti",
+					"Error while connecting to Graphiti based editor", e));
+         }
+    	 return null;
     }
 
     @Override

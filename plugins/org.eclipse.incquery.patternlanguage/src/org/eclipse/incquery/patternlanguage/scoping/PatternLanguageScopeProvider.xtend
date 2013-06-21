@@ -18,9 +18,22 @@ import org.eclipse.xtext.resource.EObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.impl.MapBasedScope
 import org.eclipse.xtext.xbase.scoping.LocalVariableScopeContext
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.scoping.XbaseScopeProvider
 
 class PatternLanguageScopeProvider extends XbaseScopeProvider {
+	
+	def PatternBody getContainerBody(EObject obj) {
+		var EObject current = obj
+		while (current != null && !(current instanceof PatternBody)) {
+			current = current.eContainer()
+		}
+		if (current != null) 
+			return current as PatternBody
+		else
+			return null
+	}
 	
 	override IScope createLocalVarScope(IScope parent, LocalVariableScopeContext scopeContext) {
 		val parentScope = super.createLocalVarScope(parent, scopeContext)
@@ -34,6 +47,11 @@ class PatternLanguageScopeProvider extends XbaseScopeProvider {
 				val descriptions = context.parameters.map(e | e.createIEObjectDescription())
 				return MapBasedScope::createScope(parentScope, descriptions);
 					
+			}
+			case context.containerBody != null: {
+				val descriptions = context.containerBody.variables.map(e | e.createIEObjectDescription())
+				return MapBasedScope::createScope(
+						super.createLocalVarScope(parentScope, scopeContext), descriptions);
 			}
 		}
 		return parentScope

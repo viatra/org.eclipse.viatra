@@ -13,8 +13,6 @@ package org.eclipse.incquery.tooling.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -23,10 +21,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
-import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
-import org.eclipse.incquery.tooling.ui.wizards.internal.operations.CompositeWorkspaceModifyOperation;
-import org.eclipse.incquery.tooling.ui.wizards.internal.operations.CreateGenmodelOperation;
 import org.eclipse.incquery.tooling.ui.wizards.internal.operations.CreateProjectOperation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,7 +30,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -50,15 +43,10 @@ import com.google.inject.Inject;
 public class NewProjectWizard extends Wizard implements INewWizard {
 
     private WizardNewProjectCreationPage projectCreationPage;
-    private NewEiqGenmodelPage genmodelPage;
     private IProject project;
     private IWorkbench workbench;
     private IWorkspace workspace;
 
-    @Inject
-    private IEiqGenmodelProvider genmodelProvider;
-    @Inject
-    private IResourceSetProvider resourceSetProvider;
     @Inject
     private Logger logger;
 
@@ -73,8 +61,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
         projectCreationPage.setTitle("New EMF IncQuery Project");
         projectCreationPage.setDescription("Create a new EMF IncQuery project.");
         addPage(projectCreationPage);
-        genmodelPage = new NewEiqGenmodelPage(true);
-        addPage(genmodelPage);
     }
 
     public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -95,24 +81,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
         final IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
         description.setLocationURI(projectURI);
 
-        WorkspaceModifyOperation op = null;
-        if (genmodelPage.isCreateGenmodelChecked()) {
-            List<String> genmodelDependencies = new ArrayList<String>();
-            for (GenModel model : genmodelPage.getSelectedGenmodels()) {
-                String modelPluginID = model.getModelPluginID();
-                if (!genmodelDependencies.contains(modelPluginID)) {
-                    genmodelDependencies.add(modelPluginID);
-                }
-            }
-            WorkspaceModifyOperation projectOp = new CreateProjectOperation(projectHandle, description,
-                    genmodelDependencies);
-            WorkspaceModifyOperation genmodelOp = new CreateGenmodelOperation(projectHandle,
-                    genmodelPage.getSelectedGenmodels(), genmodelProvider, resourceSetProvider);
-            op = new CompositeWorkspaceModifyOperation(new WorkspaceModifyOperation[] { projectOp, genmodelOp },
-                    "Creating project");
-        } else {
-            op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String> of());
-        }
+        WorkspaceModifyOperation op = new CreateProjectOperation(projectHandle, description, ImmutableList.<String> of());
 
         try {
             getContainer().run(true, true, op);

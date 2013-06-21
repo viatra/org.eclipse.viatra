@@ -16,6 +16,7 @@ import org.eclipse.incquery.patternlanguage.naming.PatternNameProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -46,22 +47,22 @@ public class EMFPatternLanguageQualifiedNameProvider extends PatternNameProvider
             AnnotationParameter parameter = (AnnotationParameter) obj;
             Annotation annotation = (Annotation) parameter.eContainer();
             return getFullyQualifiedName(annotation).append(parameter.getName());
-        } else if (obj instanceof VariableReference) {
-            VariableReference variableRef = (VariableReference) obj;
-            QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
-            String name = variableRef.getVar();
-            if (name == null) {
-                return nameConverter.toQualifiedName("<none>");
-            } else if (containerName == null) {
-                return nameConverter.toQualifiedName(name);
-            } else {
-                return containerName.append(name);
-            }
-        } else if (obj instanceof Variable && obj.eContainer() instanceof Pattern) {
-            Variable variable = (Variable) obj;
-            Pattern pattern = (Pattern) obj.eContainer();
-            String name = variable.getName() != null ? variable.getName() : "<none>";
-            return getFullyQualifiedName(pattern).append(name);
+//        } else if (obj instanceof VariableReference) {
+//            VariableReference variableRef = (VariableReference) obj;
+//            QualifiedName containerName = getFullyQualifiedName(variableRef.eContainer());
+//            String name = variableRef.getVar();
+//            if (name == null) {
+//                return nameConverter.toQualifiedName("<none>");
+//            } else if (containerName == null) {
+//                return nameConverter.toQualifiedName(name);
+//            } else {
+//                return containerName.append(name);
+//            }
+//        } else if (obj instanceof Variable && obj.eContainer() instanceof Pattern) {
+//            Variable variable = (Variable) obj;
+//            Pattern pattern = (Pattern) obj.eContainer();
+//            String name = variable.getName() != null ? variable.getName() : "<none>";
+//            return getFullyQualifiedName(pattern).append(name);
         }
         return super.getFullyQualifiedName(obj);
     }

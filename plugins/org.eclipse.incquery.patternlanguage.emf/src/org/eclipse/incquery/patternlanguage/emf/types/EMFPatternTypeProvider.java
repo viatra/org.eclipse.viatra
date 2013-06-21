@@ -77,18 +77,24 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     protected JvmTypeReference typeForIdentifiable(JvmIdentifiableElement identifiable, boolean rawType) {
         if (identifiable instanceof Variable) {
             Variable variable = (Variable) identifiable;
-            EClassifier classifier = getClassifierForVariable(variable);
-            JvmTypeReference typeReference = null;
-            if (classifier != null) {
-                typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
-            }
-            if (typeReference == null) {
-                typeReference = typeReferences.getTypeForName(Object.class, variable);
-            }
-            return typeReference;
+            return getVariableType(variable);
         }
         return super.typeForIdentifiable(identifiable, rawType);
     }
+
+	
+	@Override
+	public JvmTypeReference getVariableType(Variable variable) {
+		EClassifier classifier = getClassifierForVariable(variable);
+		JvmTypeReference typeReference = null;
+		if (classifier != null) {
+		    typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
+		}
+		if (typeReference == null) {
+		    typeReference = typeReferences.getTypeForName(Object.class, variable);
+		}
+		return typeReference;
+	}
 
     /**
      * Returns the {@link JvmTypeReference} for a given {@link EClassifier} and {@link Variable} combination.

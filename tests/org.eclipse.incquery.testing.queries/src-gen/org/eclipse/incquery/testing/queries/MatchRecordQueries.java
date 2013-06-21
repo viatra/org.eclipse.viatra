@@ -25,6 +25,7 @@ import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
  * @see IPatternGroup
  * 
  */
+@SuppressWarnings("all")
 public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   /**
    * Access the pattern group.

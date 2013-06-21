@@ -68,6 +68,9 @@ public class XmiModelSupport {
     public void build(Delta baseDelta, IBuildContext context, IProgressMonitor monitor) {
         // Normal CleanUp and codegen done on every delta, do XMI Model build
         try {
+        	if (baseDelta.getNew() == null) {
+        		return;
+        	}
             monitor.beginTask("Building XMI model", 1);
             internalBuild(baseDelta, context, monitor);
         } catch (Exception e) {

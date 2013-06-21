@@ -246,8 +246,8 @@ public class CleanSupport {
             Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE,
                     modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));
             for (Delta delta : relevantDeltas) {
-                Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
                 if (delta.getNew() != null /* && shouldGenerate(deltaResource, context) */) {
+                	Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
                     cleanUpDelta(modelProject, deltaResource, globalXmiModel);
                 }
             }

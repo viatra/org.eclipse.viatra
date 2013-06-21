@@ -44,7 +44,13 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XFeatureCall;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -52,6 +58,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 
 @SuppressWarnings("restriction")
@@ -134,8 +141,13 @@ public final class CorePatternLanguageHelper {
         return posMapping;
     }
 
-    /** Finds all pattern variables referenced from the given XExpression. */
-    public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression) {
+    /**
+	 * Finds all pattern variables referenced from the given XExpression. </p>
+	 * <p>
+	 * <strong>Warning</strong> This method cannot be used in JvmModelInferrer,
+	 * as that is used to set up the list of available local variables.
+	 */
+    public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression, IJvmModelAssociations associations) {
         Set<Variable> result = new HashSet<Variable>();
         if (xExpression != null) {
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
@@ -143,13 +155,46 @@ public final class CorePatternLanguageHelper {
                 EObject expression = eAllContents.next();
                 EList<EObject> eCrossReferences = expression.eCrossReferences();
                 for (EObject eObject : eCrossReferences) {
-                    if (eObject instanceof Variable && !EcoreUtil.isAncestor(xExpression, eObject)) {
-                        result.add((Variable) eObject);
+                    if (eObject instanceof JvmFormalParameter && !EcoreUtil.isAncestor(xExpression, eObject)) {
+                    	for (EObject obj : associations.getSourceElements(eObject)) {
+                    		if (obj instanceof Variable) {
+                    		result.add((Variable) obj);
+                    		}
+                    	}
                     }
                 }
             }
         }
         return result;
+    }
+    
+    public static List<Variable> getUsedVariables(XExpression xExpression, Iterable<Variable> allVariables){
+    	TreeIterator<EObject> _eAllContents = xExpression.eAllContents();
+        Iterator<XFeatureCall> _filter = Iterators.<XFeatureCall>filter(_eAllContents, XFeatureCall.class);
+//        XFeatureCall[] _filter2 = Iterators.toArray(_filter, XFeatureCall.class);
+        final Function1<XFeatureCall,String> _function = new Function1<XFeatureCall,String>() {
+            public String apply(final XFeatureCall it) {
+              String _concreteSyntaxFeatureName = it.getFeature().getSimpleName();
+              return _concreteSyntaxFeatureName;
+            }
+          };
+        Iterator<String> _map = IteratorExtensions.<XFeatureCall, String>map(_filter, _function);
+        final List<String> valNames = IteratorExtensions.<String>toList(_map);
+        final Function1<Variable,Boolean> _function_1 = new Function1<Variable,Boolean>() {
+            public Boolean apply(final Variable it) {
+              String _name = it.getName();
+              boolean _contains = valNames.contains(_name);
+              return Boolean.valueOf(_contains);
+            }
+          };
+        Iterable<Variable> _filter_1 = IterableExtensions.<Variable>filter(allVariables, _function_1);
+        final Function1<Variable,String> _function_2 = new Function1<Variable,String>() {
+            public String apply(final Variable it) {
+              String _name = it.getName();
+              return _name;
+            }
+          };
+        return IterableExtensions.<Variable, String>sortBy(_filter_1, _function_2);
     }
 
     public static EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {

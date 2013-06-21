@@ -46,6 +46,7 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
  * @see RecordRoleValueQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
@@ -180,8 +181,10 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
    * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
    * @param pRole the fixed value of pattern parameter Role, or null if not bound.
    * @return the delta monitor.
+   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
    * 
    */
+  @Deprecated
   public DeltaMonitor<RecordRoleValueMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final MatchRecord pRecord, final RecordRole pRole) {
     return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pRecord, pRole});
   }

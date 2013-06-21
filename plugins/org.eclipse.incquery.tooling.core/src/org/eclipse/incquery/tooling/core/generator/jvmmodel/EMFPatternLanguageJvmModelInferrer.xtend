@@ -30,6 +30,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import java.util.List
 import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -77,7 +78,23 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   			val utilPackageName = pattern.utilPackageName
 
 			   	if (isPublic) {
-			   		val matchClass = pattern.inferMatchClass(isPrelinkingPhase, packageName)
+			   		val matchClass = pattern.toClass(pattern.matchClassName) 
+			   		acceptor.accept(matchClass).initializeLater[
+			   			it.packageName = packageName
+   						it.documentation = pattern.javadocMatchClass.toString
+   						it.abstract = true
+   						it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
+   						//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
+   						
+   						it.inferMatchClassFields(pattern)
+   						it.inferMatchClassConstructors(pattern)
+   						it.inferMatchClassGetters(pattern)
+   						it.inferMatchClassSetters(pattern)
+   						it.inferMatchClassMethods(pattern)
+   						it.inferCheckBodies(pattern)
+  						it.inferMatchInnerClasses(pattern)
+			   		]
+			   		//pattern.inferMatchClass(isPrelinkingPhase, packageName)
 			   		val matchClassRef = types.createTypeRef(matchClass)
 			   		val matcherClass = pattern.inferMatcherClass(isPrelinkingPhase, packageName, matchClassRef)
 			   		val matcherClassRef = types.createTypeRef(matcherClass)
@@ -97,7 +114,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 					]
 				
 			   		associator.associatePrimary(pattern, matcherClass)
-			   		acceptor.accept(matchClass)
 			   		acceptor.accept(matcherClass)
 			   		acceptor.accept(querySpecificationClass)
 			   		acceptor.accept(processorClass)

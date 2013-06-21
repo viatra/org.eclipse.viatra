@@ -74,9 +74,6 @@
                relative="org.eclipse.ui.views.TaskList">
          </view>
          <newWizardShortcut
-               id="org.eclipse.incquery.tooling.ui.neweiqgenmodel">
-         </newWizardShortcut>
-         <newWizardShortcut
                id="org.eclipse.incquery.tooling.ui.neweiqfile">
          </newWizardShortcut>
       </perspectiveExtension>
@@ -88,9 +85,6 @@
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
          </view>
-         <newWizardShortcut
-               id="org.eclipse.incquery.tooling.ui.neweiqgenmodel">
-         </newWizardShortcut>
          <newWizardShortcut
                id="org.eclipse.incquery.tooling.ui.neweiqfile">
          </newWizardShortcut>

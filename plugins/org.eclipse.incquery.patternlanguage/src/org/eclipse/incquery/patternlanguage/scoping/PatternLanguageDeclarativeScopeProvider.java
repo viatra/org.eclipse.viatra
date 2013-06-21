@@ -13,19 +13,24 @@ package org.eclipse.incquery.patternlanguage.scoping;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
+import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.FilteringScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 /**
  * <p>
@@ -76,13 +81,23 @@ public class PatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarati
      * Custom scoping for patternRef in {@link PatternCall}. Currently returns all Pattern that is visible from the
      * current context.
      * 
+     * TODO redo
+     * 
      * @param ctx
      * @param ref
      * @return
+     * 
      */
     public IScope scope_PatternCall_patternRef(PatternCall ctx, EReference ref) {
-        IScope scope = delegateGetScope(ctx, ref);
-        return new FilteringScope(scope, new PrivateDescFilter());
+    	IScope delegateScope = delegateGetScope(ctx, ref);
+    	EObject container = EcoreUtil.getRootContainer(ctx);
+    	Iterable<Pattern> patterns;
+    	if (container instanceof PatternModel) {
+    		patterns = ((PatternModel)container).getPatterns(); 
+    	} else {
+    		patterns = ImmutableList.of();
+    	}
+    	return new FilteringScope(Scopes.scopeFor(patterns, delegateScope), new PrivateDescFilter());
     }
 
     public IScope scope_VariableReference_variable(EObject ctx, EReference ref) {

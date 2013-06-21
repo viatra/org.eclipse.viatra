@@ -19,7 +19,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -27,13 +26,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.incquery.patternlanguage.emf.ResolutionException;
 import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -68,7 +66,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-//import org.eclipse.pde.core.plugin.IPluginModel;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -78,7 +75,7 @@ import com.google.common.collect.Multimap;
 @SuppressWarnings("restriction")
 public abstract class ProjectGenerationHelper {
 
-    private static final String INVALID_PROJECT_MESSAGE = "Only existing, open plug-in projects are supported by the generator.";
+    private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
 
     private static final class IDToRequireBundleTransformer implements Function<String, IRequiredBundleDescription> {
         private final IBundleProjectService service;
@@ -268,7 +265,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static boolean checkBundleDependency(IProject project, String dependency) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
@@ -336,7 +333,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureBundleDependencies(IProject project, final List<String> dependencies,
             IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (dependencies.isEmpty()) {
             return;
         }
@@ -367,16 +364,31 @@ public abstract class ProjectGenerationHelper {
     static void ensureBundleDependencies(IBundleProjectService service, IBundleProjectDescription bundleDesc,
             final List<String> dependencies) {
         IRequiredBundleDescription[] requiredBundles = bundleDesc.getRequiredBundles();
-        List<String> missingDependencies = new ArrayList<String>(dependencies);
-        if (requiredBundles != null) {
+        if (requiredBundles == null) {
+            return;
+        }
+        List<String> updatedDependencies = new ArrayList<String>(dependencies);
+
+        // XXX for compatibility two different versions are needed
+        final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
+        if (pdeVersion.compareTo(new Version(3, 9, 0)) < 0) {
+            // Before Kepler setRequiredBundles only adds dependencies, does not remove
+            List<String> missingDependencies = new ArrayList<String>(dependencies);
             for (IRequiredBundleDescription bundle : requiredBundles) {
                 if (missingDependencies.contains(bundle.getName())) {
                     missingDependencies.remove(bundle.getName());
                 }
             }
+        } else {
+            // Since Kepler setRequiredBundles overwrites existing dependencies
+            for (IRequiredBundleDescription bundle : requiredBundles) {
+                if (!updatedDependencies.contains(bundle.getName())) {
+                    updatedDependencies.add(bundle.getName());
+                }
+            }
         }
-        bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service))
-                .toArray(new IRequiredBundleDescription[missingDependencies.size()]));
+        bundleDesc.setRequiredBundles(Lists.transform(updatedDependencies, new IDToRequireBundleTransformer(service))
+                .toArray(new IRequiredBundleDescription[updatedDependencies.size()]));
     }
 
     /**
@@ -404,7 +416,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensurePackageExports(IProject project, final Collection<String> exports, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (exports.isEmpty()) {
             return;
         }
@@ -437,7 +449,7 @@ public abstract class ProjectGenerationHelper {
     public static void removePackageExports(IProject project, final List<String> dependencies, IProgressMonitor monitor)
             throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         if (dependencies.isEmpty()) {
             return;
         }
@@ -538,7 +550,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
 
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
@@ -738,7 +750,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                INVALID_PROJECT_MESSAGE);
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {

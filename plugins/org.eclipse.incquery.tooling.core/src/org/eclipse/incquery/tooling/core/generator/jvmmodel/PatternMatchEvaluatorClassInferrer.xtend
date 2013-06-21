@@ -27,6 +27,10 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
+import org.eclipse.xtext.xbase.XFeatureCall
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.emf.ecore.EObject
 
 /**
  * {@link IMatchChecker} implementation inferer.
@@ -61,7 +65,7 @@ class PatternMatchEvaluatorClassInferrer {
   					//Forcing a boolean return type for check expression
   					//Results in less misleading error messages
   					//checkerClass.inferEvaluatorClassMethods(pattern, xExpression)
-  					checkerClass.inferEvaluatorClassMethods(pattern, xExpression, pattern.newTypeRef(typeof(Boolean)))
+  					checkerClass.inferEvaluatorClassMethods(pattern, patternBody, xExpression, pattern.newTypeRef(typeof(Boolean)))
   					result.add(checkerClass)
   				}
   			}
@@ -72,36 +76,45 @@ class PatternMatchEvaluatorClassInferrer {
 	/**
    	 * Infers methods for checker class based on the input 'pattern'.
    	 */  	
-  	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression) {
+  	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, PatternBody body, XExpression xExpression) {
   		val type = getType(xExpression)
   		if (xExpression != null) {
-  			inferEvaluatorClassMethods(checkerClass, pattern, xExpression, type)
+  			inferEvaluatorClassMethods(checkerClass, pattern, body, xExpression, type)
   		}
   	}
   	
 	/**
    	 * Infers methods for checker class based on the input 'pattern'.
    	 */  	
-  	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, XExpression xExpression, JvmTypeReference type) {
-  		checkerClass.members += pattern.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
+  	def inferEvaluatorClassMethods(JvmDeclaredType checkerClass, Pattern pattern, PatternBody body, XExpression xExpression, JvmTypeReference type) {
+  		val List<Variable> variables = if (xExpression == null) {
+				emptyList
+			} else {
+				val valNames = (xExpression.eAllContents + newImmutableList(xExpression).iterator).
+				    filter(typeof(XFeatureCall)).map[concreteSyntaxFeatureName].
+					toList
+				body.variables.filter[valNames.contains(it.name)].sortBy[name]
+			}
+  		checkerClass.members += xExpression.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
   			it.visibility = JvmVisibility::PRIVATE
-			for (variable : CorePatternLanguageHelper::getReferencedPatternVariablesOfXExpression(xExpression)){
-				it.parameters += variable.toParameter(variable.name, variable.calculateType)
+			for (variable : variables){
+				val parameter = variable.toParameter(variable.name, variable.calculateType)
+				it.parameters += parameter
 			}
 			it.documentation = pattern.javadocEvaluatorClassGeneratedMethod.toString
 			it.setBody(xExpression)
 		]
 
-		checkerClass.members += pattern.toMethod("evaluateXExpression", asWrapperTypeIfPrimitive(type)) [
+		checkerClass.members += xExpression.toMethod("evaluateXExpression", asWrapperTypeIfPrimitive(type)) [
 			it.annotations += pattern.toAnnotation(typeof(Override))
 			it.parameters += pattern.toParameter("tuple", pattern.newTypeRef(typeof (Tuple)))
 			it.parameters += pattern.toParameter("tupleNameMap", pattern.newTypeRef(typeof (Map), pattern.newTypeRef(typeof (String)), pattern.newTypeRef(typeof (Integer))))
 			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
 			it.setBody([append('''
-				«FOR variable : CorePatternLanguageHelper::getReferencedPatternVariablesOfXExpression(xExpression)»int «variable.name»Position = tupleNameMap.get("«variable.name»");
+				«FOR variable : variables»int «variable.name»Position = tupleNameMap.get("«variable.name»");
 				«variable.calculateType.qualifiedName» «variable.name» = («variable.calculateType.qualifiedName») tuple.get(«variable.name»Position);
 				«ENDFOR»
-				return evaluateXExpressionGenerated(«FOR variable : CorePatternLanguageHelper::getReferencedPatternVariablesOfXExpression(xExpression) SEPARATOR ', '»«variable.name»«ENDFOR»);''')
+				return evaluateXExpressionGenerated(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
 	   		])
 		]
   	}

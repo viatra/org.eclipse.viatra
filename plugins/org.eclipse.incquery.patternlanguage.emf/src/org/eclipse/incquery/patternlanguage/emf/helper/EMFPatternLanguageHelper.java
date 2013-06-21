@@ -14,8 +14,10 @@ import java.util.List;
 
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -45,7 +47,11 @@ public class EMFPatternLanguageHelper {
      * @return
      */
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
-        return Iterables.filter(Iterables.filter(model.getImportPackages(), PackageImport.class),
+        XImportSection imports = model.getImportPackages();
+        if (imports == null) {
+        	return ImmutableList.of();
+        }
+		return Iterables.filter(imports.getPackageImport(),
                 new Predicate<PackageImport>() {
 
                     @Override

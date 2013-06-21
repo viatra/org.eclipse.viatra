@@ -12,7 +12,6 @@ import static org.junit.Assert.*
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.LocatorEx$Snapshot
 
 abstract class CommonStaticQueryTester {
 	@Inject extension ModelLoadHelper

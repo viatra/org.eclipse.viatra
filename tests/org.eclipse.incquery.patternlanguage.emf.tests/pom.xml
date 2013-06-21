@@ -11,6 +11,9 @@
 	</parent>
 	<artifactId>org.eclipse.incquery.patternlanguage.emf.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
+	<properties>
+		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -40,6 +43,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>${vmargs}</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>mac-customization</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<vmargs>-Xmx1024m -XX:MaxPermSize=512m -XstartOnFirstThread</vmargs>
+			</properties>
+		</profile>
+	</profiles>
 </project>

@@ -55,6 +55,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.inject.Inject;
 
@@ -77,6 +79,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Inject
     private IEMFTypeProvider emfTypeProvider;
+    
+    @Inject
+    private IJvmModelAssociations associations;
 
     @Override
     protected List<EPackage> getEPackages() {
@@ -162,7 +167,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param pattern
      */
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkPatternParametersType(Pattern pattern) {
         for (Variable variable : pattern.getParameters()) {
             EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
@@ -196,7 +201,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param pattern
      */
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkPatternVariablesType(Pattern pattern) {
         for (PatternBody patternBody : pattern.getBodies()) {
             for (Variable variable : patternBody.getVariables()) {
@@ -296,7 +301,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param patternBody
      */
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkForCartesianProduct(PatternBody patternBody) {
         List<Variable> variables = patternBody.getVariables();
         variables.removeAll(CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody));
@@ -383,7 +388,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 // Variables used together in check expression, always negative
                 CheckConstraint checkConstraint = (CheckConstraint) constraint;
                 generalVariables.addAll(CorePatternLanguageHelper
-                        .getReferencedPatternVariablesOfXExpression(checkConstraint.getExpression()));
+                        .getReferencedPatternVariablesOfXExpression(checkConstraint.getExpression(), associations));
             }
             justPositiveUnionFindForVariables.unite(positiveVariables);
             generalUnionFindForVariables.unite(generalVariables);
@@ -622,7 +627,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
         for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint
-                .getExpression())) {
+                .getExpression(), associations)) {
             EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
             if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
                                                                            // NPE for classifier.getName()

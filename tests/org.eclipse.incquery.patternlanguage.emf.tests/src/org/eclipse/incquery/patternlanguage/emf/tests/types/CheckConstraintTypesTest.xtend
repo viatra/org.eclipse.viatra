@@ -12,7 +12,6 @@ package org.eclipse.incquery.patternlanguage.emf.tests.types
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
@@ -25,13 +24,16 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CheckConstraintTypesTest {
+@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+class CheckConstraintTypesTest extends AbstractValidatorTest{
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject
 	EMFPatternLanguageJavaValidator validator
@@ -58,8 +60,8 @@ class CheckConstraintTypesTest {
 				EBoolean(C);
 				check(C);
 			}
-		') as PatternModel
-		model.assertNoErrors
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		tester.validate(model).assertOK
 	}
 	
@@ -73,8 +75,11 @@ class CheckConstraintTypesTest {
 				EClass(C);
 				check(C.name.empty);
 			}
-		') as PatternModel
-		tester.validate(model).assertError(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR)
+		')
+		tester.validate(model).assertAll(
+			getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		)
 	}
 	
 	@Test
@@ -91,9 +96,9 @@ class CheckConstraintTypesTest {
 					name.empty;
 				});
 			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 	
 	@Test
@@ -110,9 +115,9 @@ class CheckConstraintTypesTest {
 					return name.empty
 				});
 			}
-		') as PatternModel
-		model.assertNoErrors
-		tester.validate(model).assertOK
+		')
+		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
 	
 	@Test
@@ -125,7 +130,7 @@ class CheckConstraintTypesTest {
 				EString(S);
 				check(S.length);
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
 	}
 

@@ -82,5 +82,24 @@ public interface IErrorFeedback {
      *            {@link #JVMINFERENCE_ERROR_TYPE} and {@link #FRAGMENT_ERROR_TYPE} are supported
      */
     void reportError(IFile file, String message, String errorCode, Severity severity, String markerType);
+    
+    public static final class EmptyErrorFeedback implements IErrorFeedback {
+
+		@Override
+		public void clearMarkers(IResource resource, String markerType) {}
+
+		@Override
+		public void reportError(EObject ctx, String message, String errorCode,
+				Severity severity, String markerType) {}
+
+		@Override
+		public void reportErrorNoLocation(EObject ctx, String message,
+				String errorCode, Severity severity, String markerType) {}
+
+		@Override
+		public void reportError(IFile file, String message, String errorCode,
+				Severity severity, String markerType) {}
+    	
+    }
 
 }

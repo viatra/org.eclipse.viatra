@@ -20,6 +20,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierCo
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
@@ -30,6 +31,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.xtext.xbase.XbasePackage;
 import org.junit.Test;
 
 import com.google.inject.Inject;
@@ -89,7 +91,9 @@ public class EverythingDynamicTest {
         patternModel.setPackageName("TestPatternPackage");
         PackageImport packageImport = EMFPatternLanguageFactory.eINSTANCE.createPackageImport();
         packageImport.setEPackage(bookStoreEPackage);
-        patternModel.getImportPackages().add(packageImport);
+        XImportSection importSection = EMFPatternLanguageFactory.eINSTANCE.createXImportSection();
+        patternModel.setImportPackages(importSection);
+        importSection.getPackageImport().add(packageImport);
 
         Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
         PatternBody patternBody = PatternLanguageFactory.eINSTANCE.createPatternBody();

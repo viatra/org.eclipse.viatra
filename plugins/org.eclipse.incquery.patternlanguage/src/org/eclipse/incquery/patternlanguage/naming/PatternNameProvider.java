@@ -38,13 +38,14 @@ public class PatternNameProvider extends XbaseQualifiedNameProvider {
             return getFullyQualifiedName(pattern).append(Integer.toString(pattern.getBodies().indexOf(patternBody)));
         } else if (obj instanceof Variable) {
             Variable variable = (Variable) obj;
-            QualifiedName parentName = getFullyQualifiedName(variable.eContainer());
+            //QualifiedName parentName = getFullyQualifiedName(variable.eContainer());
             if(variable.getName() != null){
-                if (parentName == null || parentName.isEmpty()) {
-                    return nameConverter.toQualifiedName(variable.getName());
-                } else {
-                    return parentName.append(variable.getName());
-                }
+//                if (parentName == null || parentName.isEmpty()) {
+//                    return nameConverter.toQualifiedName(variable.getName());
+//                } else {
+//                    return parentName.append(variable.getName());
+//                }
+            	return nameConverter.toQualifiedName(variable.getName());
             }
         }
         return super.getFullyQualifiedName(obj);

@@ -13,6 +13,7 @@ import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
  * @see RecordRoleValueMatch
  * 
  */
+@SuppressWarnings("all")
 public final class RecordRoleValueQuerySpecification extends BaseGeneratedQuerySpecification<RecordRoleValueMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   private RecordRoleValueQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<RecordRoleValueQuerySpecification> {
     @Override
     public RecordRoleValueQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static RecordRoleValueQuerySpecification INSTANCE = make();
     

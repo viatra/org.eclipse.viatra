@@ -13,7 +13,6 @@ package org.eclipse.incquery.patternlanguage.emf;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
-import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
@@ -34,6 +33,7 @@ import org.eclipse.xtext.resource.IGlobalServiceProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
+import org.eclipse.xtext.xbase.scoping.XImportSectionNamespaceScopeProvider;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
@@ -55,13 +55,12 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return EMFPatternLanguageLinkingService.class;
     }
 
-    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
     @Override
     public void configureIScopeProviderDelegate(Binder binder) {
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
                 .to(EMFPatternLanguageDeclarativeScopeProvider.class);
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
-                .to(EMFPatternLanguageImportedNamespaceAwareLocalScopeProvider.class);
+                .to(XImportSectionNamespaceScopeProvider.class);
     }
 
     @Override
@@ -112,4 +111,5 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends IIssueCallback> bindIIssueCallback() {
         return EMFPatternLanguageJavaValidator.class;
     }
+
 }

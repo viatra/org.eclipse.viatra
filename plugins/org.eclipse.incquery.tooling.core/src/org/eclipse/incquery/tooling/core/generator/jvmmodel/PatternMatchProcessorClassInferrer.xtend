@@ -49,6 +49,7 @@ class PatternMatchProcessorClassInferrer {
    	 */  	
   	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmTypeReference matchClassRef) {
   		processorClass.members += pattern.toMethod("process", null) [
+  			it.returnType = pattern.newTypeRef(Void::TYPE)
 			it.documentation = pattern.javadocProcessMethod.toString
 			it.setAbstract (true)
 			for (parameter : pattern.parameters){
@@ -56,10 +57,11 @@ class PatternMatchProcessorClassInferrer {
 			}
 		]
 		processorClass.members += pattern.toMethod("process", null) [
+			it.returnType = pattern.newTypeRef(Void::TYPE)
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.parameters += pattern.toParameter("match", cloneWithProxies(matchClassRef))
 			it.setBody([it.append('''
-				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);  				
+				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
 			''')])
 		]
   	}

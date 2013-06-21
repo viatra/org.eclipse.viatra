@@ -76,6 +76,7 @@ class PatternMatcherClassMethodInferrer {
    				])
    			]
    			type.members += pattern.toMethod("forEachMatch", null) [
+   				it.returnType = pattern.newTypeRef(Void::TYPE)
    				it.documentation = pattern.javadocForEachMatchMethod.toString
    				for (parameter : pattern.parameters){
 					it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)				
