@@ -208,7 +208,7 @@ class LifycycleListener implements IncQueryEngineLifecycleListener{
 //  @Property
 	var matchers = newArrayList
   
-  def getTainted() {
+  def isTainted() {
   	tainted
   }
   
@@ -216,7 +216,7 @@ class LifycycleListener implements IncQueryEngineLifecycleListener{
   	this.tainted = tainted
   }
   
-  def getDisposed() {
+  def isDisposed() {
   	disposed
   }
   
@@ -224,7 +224,7 @@ class LifycycleListener implements IncQueryEngineLifecycleListener{
   	this.disposed = disposed
   }
   
-  def getWiped() {
+  def isWiped() {
   	wiped
   }
   
