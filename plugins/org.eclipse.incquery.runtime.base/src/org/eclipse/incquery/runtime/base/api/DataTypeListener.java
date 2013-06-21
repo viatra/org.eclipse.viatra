@@ -21,22 +21,26 @@ import org.eclipse.emf.ecore.EDataType;
 public interface DataTypeListener {
 
     /**
-     * Called when the given instance of the given type is inserted.
+     * Called when an instance of the given type is inserted.
      * 
      * @param type
-     *            the {@link EDataType} instance
+     *            the {@link EDataType}
      * @param instance
      *            the instance of the data type
+     * @param firstOccurrence
+     * 			  true if this value was not previously present in the model
      */
-    public void dataTypeInstanceInserted(EDataType type, Object instance);
+    public void dataTypeInstanceInserted(EDataType type, Object instance, boolean firstOccurrence);
 
     /**
-     * Called when the given instance of the given type is deleted.
+     * Called when an instance of the given type is deleted.
      * 
      * @param type
-     *            the {@link EDataType} instance
+     *            the {@link EDataType}
      * @param instance
      *            the instance of the data type
+     * @param lastOccurrence
+     * 			  true if this value is no longer present in the model
      */
-    public void dataTypeInstanceDeleted(EDataType type, Object instance);
+    public void dataTypeInstanceDeleted(EDataType type, Object instance, boolean lastOccurrence);
 }

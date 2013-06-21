@@ -521,40 +521,41 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 dataTypeMap.put(keyType, valMap);
             }
         }
-        if (valMap.get(value) == null) {
-            valMap.put(value, Integer.valueOf(1));
+        final boolean firstOccurrence = (valMap.get(value) == null);
+		if (firstOccurrence) {
+            valMap.put(value, 1);
         } else {
             Integer count = valMap.get(value);
             valMap.put(value, ++count);
         }
 
         isDirty = true;
-        notifyDataTypeListeners(keyType, value, true);
+        notifyDataTypeListeners(keyType, value, true, firstOccurrence);
     }
 
     public void removeFromDataTypeMap(EDataType keyType, Object value) {
         Map<Object, Integer> valMap = (isDynamicModel ? dataTypeMap.get(getUniqueIdentifier(keyType)) : dataTypeMap
                 .get(keyType));
-        if (valMap != null) {
-            if (valMap.get(value) != null) {
-                Integer count = valMap.get(value);
-                if (--count == 0) {
-                    valMap.remove(value);
-                } else {
-                    valMap.put(value, count);
+        if (valMap != null && valMap.get(value) != null) {
+            Integer count = valMap.get(value);
+            final boolean lastOccurrence = (--count == 0);
+			if (lastOccurrence) {
+                valMap.remove(value);
+                if (valMap.size() == 0) {
+                	if (isDynamicModel) {
+                		dataTypeMap.remove(getUniqueIdentifier(keyType));
+                	} else {
+                		dataTypeMap.remove(keyType);
+                	}
                 }
+            } else {
+                valMap.put(value, count);
             }
-            if (valMap.size() == 0) {
-                if (isDynamicModel) {
-                    dataTypeMap.remove(getUniqueIdentifier(keyType));
-                } else {
-                    dataTypeMap.remove(keyType);
-                }
-            }
-        }
 
-        isDirty = true;
-        notifyDataTypeListeners(keyType, value, false);
+	        isDirty = true;
+	        notifyDataTypeListeners(keyType, value, false, lastOccurrence);
+        }
+        // else: inconsstent deletion? log error?
     }
 
     // END ********* DataTypeMap *********
@@ -653,13 +654,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         set.add(clazz);
     }
 
-    private void notifyDataTypeListeners(EDataType type, Object value, boolean isInsertion) {
+    private void notifyDataTypeListeners(EDataType type, Object value, boolean isInsertion, boolean firstOrLastOccurrence) {
         for (Entry<DataTypeListener, Collection<EDataType>> entry : navigationHelper.getDataTypeListeners().entrySet()) {
             if (entry.getValue().contains(type)) {
                 if (isInsertion) {
-                    entry.getKey().dataTypeInstanceInserted(type, value);
+                    entry.getKey().dataTypeInstanceInserted(type, value, firstOrLastOccurrence);
                 } else {
-                    entry.getKey().dataTypeInstanceDeleted(type, value);
+                    entry.getKey().dataTypeInstanceDeleted(type, value, firstOrLastOccurrence);
                 }
             }
         }

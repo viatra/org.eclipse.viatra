@@ -103,15 +103,19 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
     }
 
     @Override
-    public void dataTypeInstanceInserted(EDataType type, Object instance) {
-        boundary.updateUnary(Direction.INSERT, instance, type);
-        boundary.updateInstantiation(Direction.INSERT, type, instance);
+    public void dataTypeInstanceInserted(EDataType type, Object instance, boolean first) {
+    	if (first) {
+	        boundary.updateUnary(Direction.INSERT, instance, type);
+	        boundary.updateInstantiation(Direction.INSERT, type, instance);
+    	}
     }
 
     @Override
-    public void dataTypeInstanceDeleted(EDataType type, Object instance) {
-        boundary.updateUnary(Direction.REVOKE, instance, type);
-        boundary.updateInstantiation(Direction.REVOKE, type, instance);
+    public void dataTypeInstanceDeleted(EDataType type, Object instance, boolean last) {
+    	if (last) {
+	        boundary.updateUnary(Direction.REVOKE, instance, type);
+	        boundary.updateInstantiation(Direction.REVOKE, type, instance);
+    	}
     }
 
     @Override
