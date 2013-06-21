@@ -22,6 +22,7 @@ import system.Job;
  * @see ChecklistEntryJobCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMatch {
   private ChecklistEntry fCLE;
   
@@ -149,6 +150,8 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends ChecklistEntryJobCorrespondenceMatch {
     Mutable(final ChecklistEntry pCLE, final Job pJob) {
       super(pCLE, pJob);
@@ -161,6 +164,8 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends ChecklistEntryJobCorrespondenceMatch {
     Immutable(final ChecklistEntry pCLE, final Job pJob) {
       super(pCLE, pJob);

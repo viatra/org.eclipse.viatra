@@ -10,6 +10,7 @@ import system.queries.UndefinedServiceTasksMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class UndefinedServiceTasksProcessor implements IMatchProcessor<UndefinedServiceTasksMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -20,7 +21,7 @@ public abstract class UndefinedServiceTasksProcessor implements IMatchProcessor<
   
   @Override
   public void process(final UndefinedServiceTasksMatch match) {
-    process(match.getTask());  				
+    process(match.getTask());
     
   }
 }

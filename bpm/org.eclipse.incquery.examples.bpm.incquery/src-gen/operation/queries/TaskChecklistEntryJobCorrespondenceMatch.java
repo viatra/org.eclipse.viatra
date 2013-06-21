@@ -23,6 +23,7 @@ import system.Job;
  * @see TaskChecklistEntryJobCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatternMatch {
   private Task fTask;
   
@@ -173,6 +174,8 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends TaskChecklistEntryJobCorrespondenceMatch {
     Mutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);
@@ -185,6 +188,8 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends TaskChecklistEntryJobCorrespondenceMatch {
     Immutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);

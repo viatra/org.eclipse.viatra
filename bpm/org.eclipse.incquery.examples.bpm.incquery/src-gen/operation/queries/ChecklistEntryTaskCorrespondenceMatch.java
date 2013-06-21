@@ -22,6 +22,7 @@ import process.Task;
  * @see ChecklistEntryTaskCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternMatch {
   private ChecklistEntry fCLE;
   
@@ -149,6 +150,8 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends ChecklistEntryTaskCorrespondenceMatch {
     Mutable(final ChecklistEntry pCLE, final Task pTask) {
       super(pCLE, pTask);
@@ -161,6 +164,8 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends ChecklistEntryTaskCorrespondenceMatch {
     Immutable(final ChecklistEntry pCLE, final Task pTask) {
       super(pCLE, pTask);

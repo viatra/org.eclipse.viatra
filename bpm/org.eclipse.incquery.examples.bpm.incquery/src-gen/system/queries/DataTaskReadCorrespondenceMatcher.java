@@ -39,6 +39,7 @@ import system.queries.util.DataTaskReadCorrespondenceQuerySpecification;
  * @see DataTaskReadCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class DataTaskReadCorrespondenceMatcher extends BaseMatcher<DataTaskReadCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

@@ -22,6 +22,7 @@ import system.Job;
  * @see JobTasksProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class JobTasksMatch extends BasePatternMatch {
   private Job fJob;
   
@@ -149,6 +150,8 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends JobTasksMatch {
     Mutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);
@@ -161,6 +164,8 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends JobTasksMatch {
     Immutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);

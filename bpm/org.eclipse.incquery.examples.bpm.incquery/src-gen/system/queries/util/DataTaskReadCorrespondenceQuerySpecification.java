@@ -13,6 +13,7 @@ import system.queries.DataTaskReadCorrespondenceMatcher;
  * @see DataTaskReadCorrespondenceMatch
  * 
  */
+@SuppressWarnings("all")
 public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGeneratedQuerySpecification<DataTaskReadCorrespondenceMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
   private DataTaskReadCorrespondenceQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<DataTaskReadCorrespondenceQuerySpecification> {
     @Override
     public DataTaskReadCorrespondenceQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static DataTaskReadCorrespondenceQuerySpecification INSTANCE = make();
     

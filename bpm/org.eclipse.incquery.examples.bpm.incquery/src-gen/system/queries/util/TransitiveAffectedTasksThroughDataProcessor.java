@@ -10,6 +10,7 @@ import system.queries.TransitiveAffectedTasksThroughDataMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class TransitiveAffectedTasksThroughDataProcessor implements IMatchProcessor<TransitiveAffectedTasksThroughDataMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -21,7 +22,7 @@ public abstract class TransitiveAffectedTasksThroughDataProcessor implements IMa
   
   @Override
   public void process(final TransitiveAffectedTasksThroughDataMatch match) {
-    process(match.getSourceTask(), match.getAffectedTask());  				
+    process(match.getSourceTask(), match.getAffectedTask());
     
   }
 }

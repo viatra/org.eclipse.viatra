@@ -10,6 +10,7 @@ import process.Activity;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class ProcessTasksProcessor implements IMatchProcessor<ProcessTasksMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -21,7 +22,7 @@ public abstract class ProcessTasksProcessor implements IMatchProcessor<ProcessTa
   
   @Override
   public void process(final ProcessTasksMatch match) {
-    process(match.getProc(), match.getTask());  				
+    process(match.getProc(), match.getTask());
     
   }
 }

@@ -37,6 +37,7 @@ import system.Job;
  * @see JobTasksQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

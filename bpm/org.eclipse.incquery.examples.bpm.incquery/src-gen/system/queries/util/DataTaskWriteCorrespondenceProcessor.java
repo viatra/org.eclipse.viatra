@@ -11,6 +11,7 @@ import system.queries.DataTaskWriteCorrespondenceMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class DataTaskWriteCorrespondenceProcessor implements IMatchProcessor<DataTaskWriteCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -22,7 +23,7 @@ public abstract class DataTaskWriteCorrespondenceProcessor implements IMatchProc
   
   @Override
   public void process(final DataTaskWriteCorrespondenceMatch match) {
-    process(match.getData(), match.getTask());  				
+    process(match.getData(), match.getTask());
     
   }
 }

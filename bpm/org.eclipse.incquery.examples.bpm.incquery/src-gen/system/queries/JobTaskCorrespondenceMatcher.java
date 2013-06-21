@@ -41,6 +41,7 @@ import system.queries.util.JobTaskCorrespondenceQuerySpecification;
  * @see JobTaskCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

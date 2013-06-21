@@ -41,6 +41,7 @@ import system.queries.util.TasksAffectedThroughDataQuerySpecification;
  * @see TasksAffectedThroughDataQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class TasksAffectedThroughDataMatcher extends BaseMatcher<TasksAffectedThroughDataMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

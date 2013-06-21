@@ -13,6 +13,7 @@ import system.queries.UndefinedServiceTasksMatcher;
  * @see UndefinedServiceTasksMatch
  * 
  */
+@SuppressWarnings("all")
 public final class UndefinedServiceTasksQuerySpecification extends BaseGeneratedQuerySpecification<UndefinedServiceTasksMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   private UndefinedServiceTasksQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<UndefinedServiceTasksQuerySpecification> {
     @Override
     public UndefinedServiceTasksQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static UndefinedServiceTasksQuerySpecification INSTANCE = make();
     

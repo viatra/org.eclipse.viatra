@@ -36,6 +36,7 @@ import process.Activity;
  * @see ProcessTasksQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

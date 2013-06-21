@@ -23,6 +23,7 @@ import system.Data;
  * @see DataReadByChecklistEntryProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   private ChecklistEntry fCLE;
   
@@ -173,6 +174,8 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends DataReadByChecklistEntryMatch {
     Mutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
       super(pCLE, pTask, pData);
@@ -185,6 +188,8 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends DataReadByChecklistEntryMatch {
     Immutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
       super(pCLE, pTask, pData);

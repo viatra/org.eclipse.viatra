@@ -21,6 +21,7 @@ import process.Activity;
  * @see NextActivityProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class NextActivityMatch extends BasePatternMatch {
   private Activity fAct;
   
@@ -148,6 +149,8 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends NextActivityMatch {
     Mutable(final Activity pAct, final Activity pNext) {
       super(pAct, pNext);
@@ -160,6 +163,8 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends NextActivityMatch {
     Immutable(final Activity pAct, final Activity pNext) {
       super(pAct, pNext);

@@ -13,6 +13,7 @@ import system.queries.TasksAffectedThroughDataMatcher;
  * @see TasksAffectedThroughDataMatch
  * 
  */
+@SuppressWarnings("all")
 public final class TasksAffectedThroughDataQuerySpecification extends BaseGeneratedQuerySpecification<TasksAffectedThroughDataMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
   private TasksAffectedThroughDataQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<TasksAffectedThroughDataQuerySpecification> {
     @Override
     public TasksAffectedThroughDataQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static TasksAffectedThroughDataQuerySpecification INSTANCE = make();
     

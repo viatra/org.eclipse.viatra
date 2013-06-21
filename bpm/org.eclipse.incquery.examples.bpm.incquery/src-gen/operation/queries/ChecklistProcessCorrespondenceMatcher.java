@@ -38,6 +38,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * @see ChecklistProcessCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<ChecklistProcessCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

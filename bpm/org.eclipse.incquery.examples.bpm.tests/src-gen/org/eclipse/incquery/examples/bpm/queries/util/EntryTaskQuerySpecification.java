@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
  * @see EntryTaskMatch
  * 
  */
+@SuppressWarnings("all")
 public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecification<EntryTaskMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
   private EntryTaskQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<EntryTaskQuerySpecification> {
     @Override
     public EntryTaskQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static EntryTaskQuerySpecification INSTANCE = make();
     

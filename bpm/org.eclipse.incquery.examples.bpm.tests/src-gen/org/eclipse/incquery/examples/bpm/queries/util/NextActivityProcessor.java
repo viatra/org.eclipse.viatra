@@ -10,6 +10,7 @@ import process.Activity;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class NextActivityProcessor implements IMatchProcessor<NextActivityMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -21,7 +22,7 @@ public abstract class NextActivityProcessor implements IMatchProcessor<NextActiv
   
   @Override
   public void process(final NextActivityMatch match) {
-    process(match.getAct(), match.getNext());  				
+    process(match.getAct(), match.getNext());
     
   }
 }

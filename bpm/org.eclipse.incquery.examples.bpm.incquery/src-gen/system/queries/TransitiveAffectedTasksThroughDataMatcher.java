@@ -42,6 +42,7 @@ import system.queries.util.TransitiveAffectedTasksThroughDataQuerySpecification;
  * @see TransitiveAffectedTasksThroughDataQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<TransitiveAffectedTasksThroughDataMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

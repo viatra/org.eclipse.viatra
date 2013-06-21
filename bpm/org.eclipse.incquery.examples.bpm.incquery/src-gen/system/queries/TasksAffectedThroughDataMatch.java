@@ -21,6 +21,7 @@ import process.Task;
  * @see TasksAffectedThroughDataProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
   private Task fSourceTask;
   
@@ -148,6 +149,8 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends TasksAffectedThroughDataMatch {
     Mutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
@@ -160,6 +163,8 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends TasksAffectedThroughDataMatch {
     Immutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);

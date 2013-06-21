@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
  * @see IncorrectEntryInChecklistMatch
  * 
  */
+@SuppressWarnings("all")
 public final class IncorrectEntryInChecklistQuerySpecification extends BaseGeneratedQuerySpecification<IncorrectEntryInChecklistMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   private IncorrectEntryInChecklistQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<IncorrectEntryInChecklistQuerySpecification> {
     @Override
     public IncorrectEntryInChecklistQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static IncorrectEntryInChecklistQuerySpecification INSTANCE = make();
     

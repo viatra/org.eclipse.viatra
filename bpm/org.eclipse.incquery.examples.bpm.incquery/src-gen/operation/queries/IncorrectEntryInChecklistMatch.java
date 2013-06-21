@@ -22,6 +22,7 @@ import process.Task;
  * @see IncorrectEntryInChecklistProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
   private ChecklistEntry fChecklistEntry;
   
@@ -172,6 +173,8 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends IncorrectEntryInChecklistMatch {
     Mutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);
@@ -184,6 +187,8 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends IncorrectEntryInChecklistMatch {
     Immutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);

@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @see IPatternGroup
  * 
  */
+@SuppressWarnings("all")
 public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   /**
    * Access the pattern group.
@@ -43,10 +44,10 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   private static BpmTestQueries INSTANCE;
   
   private BpmTestQueries() throws IncQueryException {
-    querySpecifications.add(JobTasksMatcher.querySpecification());
-    querySpecifications.add(ProcessTasksMatcher.querySpecification());
     querySpecifications.add(EntryTaskMatcher.querySpecification());
+    querySpecifications.add(ProcessTasksMatcher.querySpecification());
     querySpecifications.add(NextActivityMatcher.querySpecification());
+    querySpecifications.add(JobTasksMatcher.querySpecification());
     
   }
 }

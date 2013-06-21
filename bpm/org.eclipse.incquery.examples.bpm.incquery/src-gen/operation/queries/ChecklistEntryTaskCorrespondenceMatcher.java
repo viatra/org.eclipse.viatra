@@ -39,6 +39,7 @@ import process.Task;
  * @see ChecklistEntryTaskCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<ChecklistEntryTaskCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

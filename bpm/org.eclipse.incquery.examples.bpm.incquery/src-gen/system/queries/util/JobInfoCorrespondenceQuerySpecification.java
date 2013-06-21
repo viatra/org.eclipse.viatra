@@ -13,6 +13,7 @@ import system.queries.JobInfoCorrespondenceMatcher;
  * @see JobInfoCorrespondenceMatch
  * 
  */
+@SuppressWarnings("all")
 public final class JobInfoCorrespondenceQuerySpecification extends BaseGeneratedQuerySpecification<JobInfoCorrespondenceMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   private JobInfoCorrespondenceQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<JobInfoCorrespondenceQuerySpecification> {
     @Override
     public JobInfoCorrespondenceQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static JobInfoCorrespondenceQuerySpecification INSTANCE = make();
     

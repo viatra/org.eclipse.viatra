@@ -42,6 +42,7 @@ import system.Data;
  * @see DataReadByChecklistEntryQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByChecklistEntryMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

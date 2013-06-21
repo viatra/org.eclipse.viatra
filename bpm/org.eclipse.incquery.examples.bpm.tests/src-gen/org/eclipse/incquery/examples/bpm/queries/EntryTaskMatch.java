@@ -22,6 +22,7 @@ import process.Task;
  * @see EntryTaskProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class EntryTaskMatch extends BasePatternMatch {
   private ChecklistEntry fEntry;
   
@@ -149,6 +150,8 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends EntryTaskMatch {
     Mutable(final ChecklistEntry pEntry, final Task pTask) {
       super(pEntry, pTask);
@@ -161,6 +164,8 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends EntryTaskMatch {
     Immutable(final ChecklistEntry pEntry, final Task pTask) {
       super(pEntry, pTask);

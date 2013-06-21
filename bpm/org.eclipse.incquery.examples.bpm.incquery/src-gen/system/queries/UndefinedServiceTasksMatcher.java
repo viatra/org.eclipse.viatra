@@ -40,6 +40,7 @@ import system.queries.util.UndefinedServiceTasksQuerySpecification;
  * @see UndefinedServiceTasksQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTasksMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

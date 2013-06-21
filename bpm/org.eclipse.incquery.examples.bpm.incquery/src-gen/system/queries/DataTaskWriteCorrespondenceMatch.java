@@ -22,6 +22,7 @@ import system.Data;
  * @see DataTaskWriteCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch {
   private Data fData;
   
@@ -149,6 +150,8 @@ public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch 
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends DataTaskWriteCorrespondenceMatch {
     Mutable(final Data pData, final Task pTask) {
       super(pData, pTask);
@@ -161,6 +164,8 @@ public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch 
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends DataTaskWriteCorrespondenceMatch {
     Immutable(final Data pData, final Task pTask) {
       super(pData, pTask);

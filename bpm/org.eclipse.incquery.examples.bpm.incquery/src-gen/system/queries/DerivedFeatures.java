@@ -32,6 +32,7 @@ import system.queries.UndefinedServiceTasksMatcher;
  * @see IPatternGroup
  * 
  */
+@SuppressWarnings("all")
 public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   /**
    * Access the pattern group.
@@ -51,13 +52,13 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   private static DerivedFeatures INSTANCE;
   
   private DerivedFeatures() throws IncQueryException {
-    querySpecifications.add(DataTaskReadCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(JobInfoCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(DataTaskWriteCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(TasksAffectedThroughDataMatcher.querySpecification());
-    querySpecifications.add(JobTaskCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(UndefinedServiceTasksMatcher.querySpecification());
     querySpecifications.add(TransitiveAffectedTasksThroughDataMatcher.querySpecification());
+    querySpecifications.add(TasksAffectedThroughDataMatcher.querySpecification());
+    querySpecifications.add(DataTaskWriteCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(JobTaskCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(JobInfoCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(UndefinedServiceTasksMatcher.querySpecification());
+    querySpecifications.add(DataTaskReadCorrespondenceMatcher.querySpecification());
     
   }
 }

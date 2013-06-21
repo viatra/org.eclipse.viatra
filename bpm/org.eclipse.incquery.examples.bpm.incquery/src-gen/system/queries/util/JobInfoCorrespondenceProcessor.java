@@ -11,6 +11,7 @@ import system.queries.JobInfoCorrespondenceMatch;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class JobInfoCorrespondenceProcessor implements IMatchProcessor<JobInfoCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -22,7 +23,7 @@ public abstract class JobInfoCorrespondenceProcessor implements IMatchProcessor<
   
   @Override
   public void process(final JobInfoCorrespondenceMatch match) {
-    process(match.getJob(), match.getInfo());  				
+    process(match.getJob(), match.getInfo());
     
   }
 }

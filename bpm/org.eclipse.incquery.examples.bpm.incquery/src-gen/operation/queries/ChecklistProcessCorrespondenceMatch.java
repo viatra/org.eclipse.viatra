@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @see ChecklistProcessCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMatch {
   private Checklist fChecklist;
   
@@ -148,6 +149,8 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends ChecklistProcessCorrespondenceMatch {
     Mutable(final Checklist pChecklist, final process.Process pProcess) {
       super(pChecklist, pProcess);
@@ -160,6 +163,8 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends ChecklistProcessCorrespondenceMatch {
     Immutable(final Checklist pChecklist, final process.Process pProcess) {
       super(pChecklist, pProcess);

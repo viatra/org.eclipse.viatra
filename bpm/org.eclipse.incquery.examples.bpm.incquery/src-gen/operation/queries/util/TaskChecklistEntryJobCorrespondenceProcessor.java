@@ -12,6 +12,7 @@ import system.Job;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class TaskChecklistEntryJobCorrespondenceProcessor implements IMatchProcessor<TaskChecklistEntryJobCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -24,7 +25,7 @@ public abstract class TaskChecklistEntryJobCorrespondenceProcessor implements IM
   
   @Override
   public void process(final TaskChecklistEntryJobCorrespondenceMatch match) {
-    process(match.getTask(), match.getCLE(), match.getJob());  				
+    process(match.getTask(), match.getCLE(), match.getJob());
     
   }
 }

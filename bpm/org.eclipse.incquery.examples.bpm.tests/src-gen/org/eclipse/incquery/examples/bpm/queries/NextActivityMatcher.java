@@ -36,6 +36,7 @@ import process.Activity;
  * @see NextActivityQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

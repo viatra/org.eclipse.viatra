@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
  * @see ChecklistEntryJobCorrespondenceMatch
  * 
  */
+@SuppressWarnings("all")
 public final class ChecklistEntryJobCorrespondenceQuerySpecification extends BaseGeneratedQuerySpecification<ChecklistEntryJobCorrespondenceMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
   private ChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<ChecklistEntryJobCorrespondenceQuerySpecification> {
     @Override
     public ChecklistEntryJobCorrespondenceQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static ChecklistEntryJobCorrespondenceQuerySpecification INSTANCE = make();
     

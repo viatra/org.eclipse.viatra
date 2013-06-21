@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
  * @see DataReadByChecklistEntryMatch
  * 
  */
+@SuppressWarnings("all")
 public final class DataReadByChecklistEntryQuerySpecification extends BaseGeneratedQuerySpecification<DataReadByChecklistEntryMatcher> {
   /**
    * @return the singleton instance of the query specification
@@ -50,6 +51,8 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
   private DataReadByChecklistEntryQuerySpecification() throws IncQueryException {
     super();
   }
+  
+  @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<DataReadByChecklistEntryQuerySpecification> {
     @Override
     public DataReadByChecklistEntryQuerySpecification get() throws IncQueryException {
@@ -57,6 +60,8 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
     }
   }
   
+  
+  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static DataReadByChecklistEntryQuerySpecification INSTANCE = make();
     

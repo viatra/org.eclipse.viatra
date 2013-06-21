@@ -1,844 +1,857 @@
 <?xml version="1.0" encoding="ASCII"?>
-<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
-  <patterns name="system.queries.TaskKind" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <modifiers private="true"/>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <parameters name="Kind">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EEnum" href="http://process/1.0#//TaskKind"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//Task/kind"/>
-            </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Kind"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.JobTaskCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="tasks"/>
-      </parameters>
-    </annotations>
-    <parameters name="Job">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-      </type>
-    </parameters>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Job/taskIds"/>
-            </type>
-          </tail>
-          <src var="Job"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
-            </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.TaskHasJob" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <modifiers private="true"/>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.1">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="_Job"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.DataTaskReadCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="readingTask"/>
-      </parameters>
-    </annotations>
-    <parameters name="Data">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
-      </type>
-    </parameters>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Data/readingTaskIds"/>
-            </type>
-          </tail>
-          <src var="Data"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
-            </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.DataTaskWriteCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="writingTask"/>
-      </parameters>
-    </annotations>
-    <parameters name="Data">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
-      </type>
-    </parameters>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Data/writingTaskIds"/>
-            </type>
-          </tail>
-          <src var="Data"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
-            </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.JobInfoCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="info"/>
-      </parameters>
-    </annotations>
-    <parameters name="Job">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-      </type>
-    </parameters>
-    <parameters name="Info">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://operation/1.0#//RuntimeInformation"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://operation/1.0#//ChecklistEntry/info"/>
-            </type>
-          </tail>
-          <src var="CLE"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Info"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://operation/1.0#//ChecklistEntry/jobs"/>
-            </type>
-          </tail>
-          <src var="CLE"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Job"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.UndefinedServiceTasks" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <annotations name="Constraint">
-      <parameters name="location">
-        <value xsi:type="patternLanguage:VariableValue">
-          <value var="Task"/>
-        </value>
-      </parameters>
-      <parameters name="message">
-        <value xsi:type="patternLanguage:StringValue" value="Service Task $Task.name$ has no job"/>
-      </parameters>
-      <parameters name="severity">
-        <value xsi:type="patternLanguage:StringValue" value="warning"/>
-      </parameters>
-    </annotations>
-    <parameters name="Task"/>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
+  <eMFPatternLanguage:PatternModel>
+    <patterns name="system.queries.TaskKind" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <modifiers private="true"/>
+      <parameters name="Task">
         <type xsi:type="eMFPatternLanguage:ClassType">
           <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
         </type>
-        <var var="Task"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//Task/kind"/>
+      </parameters>
+      <parameters name="Kind">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EEnum" href="http://process/1.0#//TaskKind"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
             </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="eMFPatternLanguage:EnumValue">
-            <literal href="http://process/1.0#//TaskKind/service"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.2">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.TasksAffectedThroughData" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <parameters name="SourceTask"/>
-    <parameters name="AffectedTask"/>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//Task/kind"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="Kind"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.JobTaskCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="tasks"/>
+        </parameters>
+      </annotations>
+      <parameters name="Job">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+        </type>
+      </parameters>
+      <parameters name="Task">
         <type xsi:type="eMFPatternLanguage:ClassType">
           <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
         </type>
-        <var var="SourceTask"/>
-      </constraints>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Job/taskIds"/>
+              </type>
+            </tail>
+            <src var="Job"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.TaskHasJob" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <modifiers private="true"/>
+      <parameters name="Task">
         <type xsi:type="eMFPatternLanguage:ClassType">
           <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
         </type>
-        <var var="AffectedTask"/>
-      </constraints>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.1">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="_Job"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.DataTaskReadCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="readingTask"/>
+        </parameters>
+      </annotations>
+      <parameters name="Data">
         <type xsi:type="eMFPatternLanguage:ClassType">
           <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
         </type>
-        <var var="Data"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.4">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Data"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="SourceTask"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Data"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="AffectedTask"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="system.queries.TransitiveAffectedTasksThroughData" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
-    <parameters name="SourceTask"/>
-    <parameters name="AffectedTask"/>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-        </type>
-        <var var="SourceTask"/>
-      </constraints>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-        <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-        </type>
-        <var var="AffectedTask"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.7" transitive="true">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="SourceTask"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="AffectedTask"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.ChecklistEntryJobCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="jobs"/>
       </parameters>
-    </annotations>
-    <parameters name="CLE">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
-      </type>
-    </parameters>
-    <parameters name="Job">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//ResourceElement/name"/>
+      <parameters name="Task">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
             </type>
-          </tail>
-          <src var="Job"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="JobName"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//System"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//ResourceElement/name"/>
-            </type>
-          </tail>
-          <src var="System"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="SysName"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://system/1.0#//Job/runsOn"/>
-            </type>
-          </tail>
-          <src var="Job"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="System"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
-          </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//ChecklistEntry/jobPaths"/>
-            </type>
-          </tail>
-          <src var="CLE"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="JobPath"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:CheckConstraint">
-        <expression xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
-          <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.equals(java.lang.Object)"/>
-          <memberCallTarget xsi:type="xbase:XCastedExpression">
-            <type xsi:type="types:JvmParameterizedTypeReference">
-              <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
-            </type>
-            <target xsi:type="xbase:XFeatureCall" feature="//@patterns.9/@bodies.0/@variables.5"/>
-          </memberCallTarget>
-          <memberCallArguments xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
-            <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.concat(java.lang.String)"/>
-            <memberCallTarget xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
-              <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.concat(java.lang.String)"/>
-              <memberCallTarget xsi:type="xbase:XCastedExpression">
-                <type xsi:type="types:JvmParameterizedTypeReference">
-                  <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
-                </type>
-                <target xsi:type="xbase:XFeatureCall" feature="//@patterns.9/@bodies.0/@variables.4"/>
-              </memberCallTarget>
-              <memberCallArguments xsi:type="xbase:XStringLiteral" value="/"/>
-            </memberCallTarget>
-            <memberCallArguments xsi:type="xbase:XCastedExpression">
-              <type xsi:type="types:JvmParameterizedTypeReference">
-                <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Data/readingTaskIds"/>
               </type>
-              <target xsi:type="xbase:XFeatureCall" feature="//@patterns.9/@bodies.0/@variables.2"/>
-            </memberCallArguments>
-          </memberCallArguments>
-        </expression>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.ChecklistEntryTaskCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="task"/>
+            </tail>
+            <src var="Data"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.DataTaskWriteCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="writingTask"/>
+        </parameters>
+      </annotations>
+      <parameters name="Data">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
+        </type>
       </parameters>
-    </annotations>
-    <parameters name="CLE">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
-      </type>
-    </parameters>
-    <parameters name="Task">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+      <parameters name="Task">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//Data/writingTaskIds"/>
+              </type>
+            </tail>
+            <src var="Data"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.JobInfoCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="info"/>
+        </parameters>
+      </annotations>
+      <parameters name="Job">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+        </type>
+      </parameters>
+      <parameters name="Info">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://operation/1.0#//RuntimeInformation"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://operation/1.0#//ChecklistEntry/info"/>
+              </type>
+            </tail>
+            <src var="CLE"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="Info"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://operation/1.0#//ChecklistEntry/jobs"/>
+              </type>
+            </tail>
+            <src var="CLE"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="Job"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.UndefinedServiceTasks" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <annotations name="Constraint">
+        <parameters name="location">
+          <value xsi:type="patternLanguage:VariableValue">
+            <value var="Task"/>
+          </value>
+        </parameters>
+        <parameters name="message">
+          <value xsi:type="patternLanguage:StringValue" value="Service Task $Task.name$ has no job"/>
+        </parameters>
+        <parameters name="severity">
+          <value xsi:type="patternLanguage:StringValue" value="warning"/>
+        </parameters>
+      </annotations>
+      <parameters name="Task"/>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
             <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+          <var var="Task"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
             </type>
-          </tail>
-          <src var="Task"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//Task/kind"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="eMFPatternLanguage:EnumValue">
+              <literal href="http://process/1.0#//TaskKind/service"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+          <call patternRef="/0/@patterns.2">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.TasksAffectedThroughData" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <parameters name="SourceTask"/>
+      <parameters name="AffectedTask"/>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//ChecklistEntry/taskId"/>
-            </type>
-          </tail>
-          <src var="CLE"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="TaskId"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.ChecklistProcessCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="QueryBasedFeature">
-      <parameters name="feature">
-        <value xsi:type="patternLanguage:StringValue" value="process"/>
-      </parameters>
-    </annotations>
-    <parameters name="Checklist">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
-      </type>
-    </parameters>
-    <parameters name="Process">
-      <type xsi:type="eMFPatternLanguage:ClassType">
-        <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
-      </type>
-    </parameters>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+          <var var="SourceTask"/>
+        </constraints>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
-            </type>
-          </tail>
-          <src var="Process"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="ProcessId"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+          <var var="AffectedTask"/>
+        </constraints>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            <classname xsi:type="ecore:EClass" href="http://system/1.0#//Data"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//Checklist/processId"/>
-            </type>
-          </tail>
-          <src var="Checklist"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="ProcessId"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.ChecklistEntryTaskInCheckListProcess" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <modifiers private="true"/>
-    <parameters name="CLE"/>
-    <parameters name="Task"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.10">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="CLE"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.11">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Checklist"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Process"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+          <var var="Data"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.4">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Data"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="SourceTask"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.3">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Data"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="AffectedTask"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="system.queries.TransitiveAffectedTasksThroughData" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/system/queries/derivedFeatures.eiq">
+      <parameters name="SourceTask"/>
+      <parameters name="AffectedTask"/>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://process/1.0#//Process/contents"/>
-            </type>
-          </tail>
-          <src var="Process"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+          <var var="SourceTask"/>
+        </constraints>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://operation/1.0#//Checklist/entries"/>
-            </type>
-          </tail>
-          <src var="Checklist"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="CLE"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.TaskInProcess" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <modifiers private="true"/>
-    <parameters name="Task"/>
-    <parameters name="Process"/>
-    <bodies>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+          <var var="AffectedTask"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.7" transitive="true">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="SourceTask"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="AffectedTask"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.ChecklistEntryJobCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="jobs"/>
+        </parameters>
+      </annotations>
+      <parameters name="CLE">
         <type xsi:type="eMFPatternLanguage:ClassType">
-          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+          <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
         </type>
-        <var var="Process"/>
-      </constraints>
-      <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+      </parameters>
+      <parameters name="Job">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//ResourceElement/name"/>
+              </type>
+            </tail>
+            <src var="Job"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="JobName"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//System"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://system/1.0#//ResourceElement/name"/>
+              </type>
+            </tail>
+            <src var="System"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="SysName"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://system/1.0#//Job"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://system/1.0#//Job/runsOn"/>
+              </type>
+            </tail>
+            <src var="Job"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="System"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//ChecklistEntry/jobPaths"/>
+              </type>
+            </tail>
+            <src var="CLE"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="JobPath"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CheckConstraint">
+          <expression xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.equals(java.lang.Object)"/>
+            <memberCallTarget xsi:type="xbase:XCastedExpression">
+              <type xsi:type="types:JvmParameterizedTypeReference">
+                <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
+              </type>
+              <target xsi:type="xbase:XFeatureCall" feature="/1"/>
+            </memberCallTarget>
+            <memberCallArguments xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.concat(java.lang.String)"/>
+              <memberCallTarget xsi:type="xbase:XMemberFeatureCall" explicitOperationCall="true">
+                <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.String#java.lang.String.concat(java.lang.String)"/>
+                <memberCallTarget xsi:type="xbase:XCastedExpression">
+                  <type xsi:type="types:JvmParameterizedTypeReference">
+                    <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
+                  </type>
+                  <target xsi:type="xbase:XFeatureCall" feature="/2"/>
+                </memberCallTarget>
+                <memberCallArguments xsi:type="xbase:XStringLiteral" value="/"/>
+              </memberCallTarget>
+              <memberCallArguments xsi:type="xbase:XCastedExpression">
+                <type xsi:type="types:JvmParameterizedTypeReference">
+                  <type xsi:type="types:JvmGenericType" href="java:/Objects/java.lang.String#java.lang.String"/>
+                </type>
+                <target xsi:type="xbase:XFeatureCall" feature="/3"/>
+              </memberCallArguments>
+            </memberCallArguments>
+          </expression>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.ChecklistEntryTaskCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="task"/>
+        </parameters>
+      </annotations>
+      <parameters name="CLE">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+        </type>
+      </parameters>
+      <parameters name="Task">
         <type xsi:type="eMFPatternLanguage:ClassType">
           <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
         </type>
-        <var var="Task"/>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+              </type>
+            </tail>
+            <src var="Task"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//ChecklistEntry"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//ChecklistEntry/taskId"/>
+              </type>
+            </tail>
+            <src var="CLE"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="TaskId"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.ChecklistProcessCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="QueryBasedFeature">
+        <parameters name="feature">
+          <value xsi:type="patternLanguage:StringValue" value="process"/>
+        </parameters>
+      </annotations>
+      <parameters name="Checklist">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+        </type>
+      </parameters>
+      <parameters name="Process">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://process/1.0#//ProcessElement/id"/>
+              </type>
+            </tail>
+            <src var="Process"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="ProcessId"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http://operation/1.0#//Checklist/processId"/>
+              </type>
+            </tail>
+            <src var="Checklist"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="ProcessId"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.ChecklistEntryTaskInCheckListProcess" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <modifiers private="true"/>
+      <parameters name="CLE"/>
+      <parameters name="Task"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.10">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="CLE"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.11">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Checklist"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Process"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://process/1.0#//Process/contents"/>
+              </type>
+            </tail>
+            <src var="Process"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://operation/1.0#//Checklist/entries"/>
+              </type>
+            </tail>
+            <src var="Checklist"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="CLE"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.TaskInProcess" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <modifiers private="true"/>
+      <parameters name="Task"/>
+      <parameters name="Process"/>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
             <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://process/1.0#//Process/contents"/>
-            </type>
-          </tail>
-          <src var="Process"/>
-          <dst xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </dst>
-        </head>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.IncorrectEntryInChecklist" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="Constraint">
-      <parameters name="location">
-        <value xsi:type="patternLanguage:VariableValue">
-          <value var="ChecklistEntry"/>
-        </value>
-      </parameters>
-      <parameters name="message">
-        <value xsi:type="patternLanguage:StringValue" value="Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!"/>
-      </parameters>
-      <parameters name="severity">
-        <value xsi:type="patternLanguage:StringValue" value="error"/>
-      </parameters>
-    </annotations>
-    <parameters name="ChecklistEntry"/>
-    <parameters name="Task"/>
-    <parameters name="Process"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PathExpressionConstraint">
-        <head>
+          <var var="Process"/>
+        </constraints>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
           <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            <classname xsi:type="ecore:EClass" href="http://process/1.0#//Task"/>
           </type>
-          <tail>
-            <type xsi:type="eMFPatternLanguage:ReferenceType">
-              <refname xsi:type="ecore:EReference" href="http://operation/1.0#//Checklist/entries"/>
+          <var var="Task"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://process/1.0#//Process"/>
             </type>
-          </tail>
-          <src var="Checklist"/>
-          <dst xsi:type="patternLanguage:VariableValue">
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://process/1.0#//Process/contents"/>
+              </type>
+            </tail>
+            <src var="Process"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.IncorrectEntryInChecklist" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="Constraint">
+        <parameters name="location">
+          <value xsi:type="patternLanguage:VariableValue">
             <value var="ChecklistEntry"/>
-          </dst>
-        </head>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.11">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Checklist"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Process"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.10">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="ChecklistEntry"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
-        <call patternRef="//@patterns.13">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Process"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.TaskChecklistEntryJobCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="Constraint">
-      <parameters name="location">
-        <value xsi:type="patternLanguage:VariableValue">
-          <value var="CLE"/>
-        </value>
-      </parameters>
-      <parameters name="message">
-        <value xsi:type="patternLanguage:StringValue" value="Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$"/>
-      </parameters>
-      <parameters name="severity">
-        <value xsi:type="patternLanguage:StringValue" value="warning"/>
-      </parameters>
-    </annotations>
-    <parameters name="Task"/>
-    <parameters name="CLE"/>
-    <parameters name="Job"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.10">
-          <parameters xsi:type="patternLanguage:VariableValue">
+          </value>
+        </parameters>
+        <parameters name="message">
+          <value xsi:type="patternLanguage:StringValue" value="Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!"/>
+        </parameters>
+        <parameters name="severity">
+          <value xsi:type="patternLanguage:StringValue" value="error"/>
+        </parameters>
+      </annotations>
+      <parameters name="ChecklistEntry"/>
+      <parameters name="Task"/>
+      <parameters name="Process"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http://operation/1.0#//Checklist"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http://operation/1.0#//Checklist/entries"/>
+              </type>
+            </tail>
+            <src var="Checklist"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="ChecklistEntry"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.11">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Checklist"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Process"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.10">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="ChecklistEntry"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+          <call patternRef="/0/@patterns.13">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Process"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.TaskChecklistEntryJobCorrespondence" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="Constraint">
+        <parameters name="location">
+          <value xsi:type="patternLanguage:VariableValue">
             <value var="CLE"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.9">
-          <parameters xsi:type="patternLanguage:VariableValue">
+          </value>
+        </parameters>
+        <parameters name="message">
+          <value xsi:type="patternLanguage:StringValue" value="Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$"/>
+        </parameters>
+        <parameters name="severity">
+          <value xsi:type="patternLanguage:StringValue" value="warning"/>
+        </parameters>
+      </annotations>
+      <parameters name="Task"/>
+      <parameters name="CLE"/>
+      <parameters name="Job"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.10">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="CLE"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.9">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="CLE"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Job"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="operation.queries.DataReadByChecklistEntry" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
+      <annotations name="Constraint">
+        <parameters name="location">
+          <value xsi:type="patternLanguage:VariableValue">
             <value var="CLE"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Job"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <patterns name="operation.queries.DataReadByChecklistEntry" fileName="platform:/resource/org.eclipse.incquery.examples.bpm.incquery/src/operation/queries/derivedFeatures.eiq">
-    <annotations name="Constraint">
-      <parameters name="location">
-        <value xsi:type="patternLanguage:VariableValue">
-          <value var="CLE"/>
-        </value>
-      </parameters>
-      <parameters name="message">
-        <value xsi:type="patternLanguage:StringValue" value="Entry $CLE.name$ connected to $Data.name$ through $Task.name$"/>
-      </parameters>
-      <parameters name="severity">
-        <value xsi:type="patternLanguage:StringValue" value="warning"/>
-      </parameters>
-    </annotations>
-    <parameters name="CLE"/>
-    <parameters name="Task"/>
-    <parameters name="Data"/>
-    <bodies>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.10">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="CLE"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-      <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-        <call patternRef="//@patterns.3">
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Data"/>
-          </parameters>
-          <parameters xsi:type="patternLanguage:VariableValue">
-            <value var="Task"/>
-          </parameters>
-        </call>
-      </constraints>
-    </bodies>
-  </patterns>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
-  </importPackages>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://system/1.0#/"/>
-  </importPackages>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://process/1.0#/"/>
-  </importPackages>
-  <importPackages xsi:type="eMFPatternLanguage:PackageImport">
-    <ePackage href="http://operation/1.0#/"/>
-  </importPackages>
-</eMFPatternLanguage:PatternModel>
+          </value>
+        </parameters>
+        <parameters name="message">
+          <value xsi:type="patternLanguage:StringValue" value="Entry $CLE.name$ connected to $Data.name$ through $Task.name$"/>
+        </parameters>
+        <parameters name="severity">
+          <value xsi:type="patternLanguage:StringValue" value="warning"/>
+        </parameters>
+      </annotations>
+      <parameters name="CLE"/>
+      <parameters name="Task"/>
+      <parameters name="Data"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.10">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="CLE"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.3">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Data"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="Task"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <importPackages>
+      <packageImport>
+        <ePackage href="http://system/1.0#/"/>
+      </packageImport>
+      <packageImport>
+        <ePackage href="http://operation/1.0#/"/>
+      </packageImport>
+      <packageImport>
+        <ePackage href="http://process/1.0#/"/>
+      </packageImport>
+      <packageImport>
+        <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+      </packageImport>
+    </importPackages>
+  </eMFPatternLanguage:PatternModel>
+  <types:JvmFormalParameter name="JobPath">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="SysName">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="JobName">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+</xmi:XMI>

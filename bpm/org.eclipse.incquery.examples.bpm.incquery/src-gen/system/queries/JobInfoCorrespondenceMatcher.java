@@ -39,6 +39,7 @@ import system.queries.util.JobInfoCorrespondenceQuerySpecification;
  * @see JobInfoCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

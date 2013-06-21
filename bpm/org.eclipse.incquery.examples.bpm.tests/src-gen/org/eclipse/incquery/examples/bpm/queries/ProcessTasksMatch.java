@@ -21,6 +21,7 @@ import process.Activity;
  * @see ProcessTasksProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class ProcessTasksMatch extends BasePatternMatch {
   private process.Process fProc;
   
@@ -148,6 +149,8 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends ProcessTasksMatch {
     Mutable(final process.Process pProc, final Activity pTask) {
       super(pProc, pTask);
@@ -160,6 +163,8 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends ProcessTasksMatch {
     Immutable(final process.Process pProc, final Activity pTask) {
       super(pProc, pTask);

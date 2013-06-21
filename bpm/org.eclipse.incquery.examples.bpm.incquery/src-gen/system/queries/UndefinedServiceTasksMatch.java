@@ -21,6 +21,7 @@ import process.Task;
  * @see UndefinedServiceTasksProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
   private Task fTask;
   
@@ -125,6 +126,8 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends UndefinedServiceTasksMatch {
     Mutable(final Task pTask) {
       super(pTask);
@@ -137,6 +140,8 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends UndefinedServiceTasksMatch {
     Immutable(final Task pTask) {
       super(pTask);

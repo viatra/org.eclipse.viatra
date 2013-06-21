@@ -42,6 +42,7 @@ import system.Job;
  * @see ChecklistEntryJobCorrespondenceQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class ChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<ChecklistEntryJobCorrespondenceMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

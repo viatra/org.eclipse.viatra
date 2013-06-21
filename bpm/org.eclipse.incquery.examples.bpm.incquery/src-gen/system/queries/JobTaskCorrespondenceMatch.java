@@ -22,6 +22,7 @@ import system.Job;
  * @see JobTaskCorrespondenceProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class JobTaskCorrespondenceMatch extends BasePatternMatch {
   private Job fJob;
   
@@ -149,6 +150,8 @@ public abstract class JobTaskCorrespondenceMatch extends BasePatternMatch {
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends JobTaskCorrespondenceMatch {
     Mutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);
@@ -161,6 +164,8 @@ public abstract class JobTaskCorrespondenceMatch extends BasePatternMatch {
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends JobTaskCorrespondenceMatch {
     Immutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);

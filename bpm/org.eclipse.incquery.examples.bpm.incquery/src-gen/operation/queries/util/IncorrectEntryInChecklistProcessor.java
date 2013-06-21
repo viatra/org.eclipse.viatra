@@ -11,6 +11,7 @@ import process.Task;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class IncorrectEntryInChecklistProcessor implements IMatchProcessor<IncorrectEntryInChecklistMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -23,7 +24,7 @@ public abstract class IncorrectEntryInChecklistProcessor implements IMatchProces
   
   @Override
   public void process(final IncorrectEntryInChecklistMatch match) {
-    process(match.getChecklistEntry(), match.getTask(), match.getProcess());  				
+    process(match.getChecklistEntry(), match.getTask(), match.getProcess());
     
   }
 }

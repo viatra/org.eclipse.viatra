@@ -10,6 +10,7 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor;
  * Clients should derive an (anonymous) class that implements the abstract process().
  * 
  */
+@SuppressWarnings("all")
 public abstract class ChecklistProcessCorrespondenceProcessor implements IMatchProcessor<ChecklistProcessCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
@@ -21,7 +22,7 @@ public abstract class ChecklistProcessCorrespondenceProcessor implements IMatchP
   
   @Override
   public void process(final ChecklistProcessCorrespondenceMatch match) {
-    process(match.getChecklist(), match.getProcess());  				
+    process(match.getChecklist(), match.getProcess());
     
   }
 }

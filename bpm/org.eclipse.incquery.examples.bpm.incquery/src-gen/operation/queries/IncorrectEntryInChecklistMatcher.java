@@ -44,6 +44,7 @@ import process.Task;
  * @see IncorrectEntryInChecklistQuerySpecification
  * 
  */
+@SuppressWarnings("all")
 public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntryInChecklistMatch> {
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 

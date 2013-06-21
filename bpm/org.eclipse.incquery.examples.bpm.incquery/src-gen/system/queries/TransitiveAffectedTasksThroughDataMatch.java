@@ -21,6 +21,7 @@ import process.Task;
  * @see TransitiveAffectedTasksThroughDataProcessor
  * 
  */
+@SuppressWarnings("all")
 public abstract class TransitiveAffectedTasksThroughDataMatch extends BasePatternMatch {
   private Task fSourceTask;
   
@@ -148,6 +149,8 @@ public abstract class TransitiveAffectedTasksThroughDataMatch extends BasePatter
     }
     
   }
+  
+  @SuppressWarnings("all")
   static final class Mutable extends TransitiveAffectedTasksThroughDataMatch {
     Mutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
@@ -160,6 +163,8 @@ public abstract class TransitiveAffectedTasksThroughDataMatch extends BasePatter
     }
   }
   
+  
+  @SuppressWarnings("all")
   static final class Immutable extends TransitiveAffectedTasksThroughDataMatch {
     Immutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
