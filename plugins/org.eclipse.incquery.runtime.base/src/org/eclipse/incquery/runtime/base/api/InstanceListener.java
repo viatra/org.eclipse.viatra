@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * Interface for observing insertion / deletion of EClass instances. Note that: EClass may be omitted
+ * Interface for observing insertion / deletion of instances of EClass.
  * 
  * @author Tamas Szabo
  * 
@@ -22,22 +22,22 @@ import org.eclipse.emf.ecore.EObject;
 public interface InstanceListener {
 
     /**
-     * Called when the given instance appeared under the given Notifier instance.
+     * Called when the given instance was added to the model.
      * 
      * @param clazz
-     *            the EClass of the instance
+     *            an EClass registered for this listener, for which a new instance (possibly an instance of a subclass) was inserted into the model
      * @param instance
-     *            the EObject instance
+     *            an EObject instance that was inserted into the model
      */
     public void instanceInserted(EClass clazz, EObject instance);
 
     /**
-     * Called when the given instance disappeared under the given Notifier instance.
+     * Called when the given instance was removed from the model.
      * 
      * @param clazz
-     *            the EClass of the instance
+     *            an EClass registered for this listener, for which an instance (possibly an instance of a subclass) was removed from the model
      * @param instance
-     *            the EObject instance
+     *            an EObject instance that was removed from the model
      */
     public void instanceDeleted(EClass clazz, EObject instance);
 }

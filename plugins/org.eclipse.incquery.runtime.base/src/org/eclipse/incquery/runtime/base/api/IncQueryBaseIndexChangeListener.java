@@ -11,7 +11,7 @@
 package org.eclipse.incquery.runtime.base.api;
 
 /**
- * Listener inteface for change notifications from the IncQuery Base index.
+ * Listener interface for change notifications from the IncQuery Base index.
  * 
  * @author Abel Hegedus
  *
@@ -19,7 +19,7 @@ package org.eclipse.incquery.runtime.base.api;
 public interface IncQueryBaseIndexChangeListener {
 
     /**
-     * NOTE: it is possible that this method is called only ONCE! Consider returning a constant value set in the constructor.
+     * NOTE: it is possible that this method is called only ONCE! Consider returning a constant value that is set in the constructor.
      * 
      * @return true, if the listener should be notified only after index changes, false if notification is needed after each model change 
      */

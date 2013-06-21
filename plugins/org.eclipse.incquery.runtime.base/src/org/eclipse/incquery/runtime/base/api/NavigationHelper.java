@@ -31,21 +31,23 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 /**
  * 
- * Using an index of the EMF model, this interface exposes useful query functionalities, such as:
+ * Using an index of the EMF model, this interface exposes useful query functionality, such as:
  * <ul>
+ * <li>
+ * Getting all the (direct or descendant) instances of a given {@link EClass}
  * <li>
  * Inverse navigation along arbitrary {@link EReference} instances (heterogenous paths too)
  * <li>
  * Finding model elements by attribute value (i.e. inverse navigation along {@link EAttribute})
  * <li>
- * Getting all the (direct) instances of a given {@link EClass}
- * <li>
- * Querying instances of given data types
+ * Querying instances of given data types, or structural features.
  * </ul>
+ * As queries are served from an index, results are always instantaneous.
  * 
  * <p>
- * These indices will be built on an EMF model rooted at an {@link EObject}, {@link Resource} or {@link ResourceSet}.
- * The indices will be <strong>maintained incrementally</strong> on changes to the model; these changes can also be
+ * Such indices will be built on an EMF model rooted at an {@link EObject}, {@link Resource} or {@link ResourceSet}. 
+ * The boundaries of the model are defined by the containment (sub)tree.
+ * The indices will be <strong>maintained incrementally</strong> on changes to the model; these updates can also be
  * observed by registering listeners.
  * </p>
  * 
@@ -57,7 +59,7 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
  * </p>
  * 
  * <p>
- * Another options is to build indices in <em>dynamic EMF mode</em>, meaning that types are identified by the String IDs 
+ * Another choice is whether to build indices in <em>dynamic EMF mode</em>, meaning that types are identified by the String IDs 
  * that are ultimately derived from the nsURI of the EPackage. Multiple types with the same ID are treated as the same.
  * This is useful if dynamic EMF is used, where there can be multiple copies (instantiations) of the same EPackage, 
  * representing essentially the same metamodel. If one disables <em>dynamic EMF mode</em>, an error is logged if 
@@ -65,7 +67,7 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
  * </p>
  *  
  * <p>
- * Note that none of the defined methods return null upon empty result sets. All query methods return either a copy of
+ * Note that none of the defined query methods return null upon empty result sets. All query methods return either a copy of
  * the result sets (where {@link Setting} is instantiated) or an unmodifiable collection of the result view.
  * 
  * <p>
@@ -89,21 +91,18 @@ public interface NavigationHelper {
      * Indicates whether indexing is performed in <em>dynamic EMF mode</em>, i.e. EPackage nsURI collisions are 
      *   tolerated and EPackages with the same URI are automatically considered as equal.
      * 
-     * @return true if multiple EPackages with the same nsURI are treated as the same, false if an error is logged instead in this case.
+     * @return true if multiple EPackages with the same nsURI are treated as the same, 
+     *         false if an error is logged instead in this case.
      */
     public boolean isInDynamicEMFMode();
     
-
-    // /** // COMING SOON
-    // * Sets the <em>wildcard mode</em>.
-    // * <p>If turned on from off, all registrations are erased and the model is re-parsed in a single pass.
-    // * Turning off from on is not supported yet.
-    // */
-    // public void setInWildcardMode(boolean newWildcardMode);
-
     /**
-     * Find all {@link EAttribute} and their owners for a given <code>value</code> of the attribute. The method will
-     * return these information as a collection of {@link EStructuralFeature.Setting}.
+     * For a given attribute value <code>value</code>, find each {@link EAttribute} and host {@link EObject} 
+     * such that this attribute of the the host object takes the given value. The method will
+     * return a set of {@link EStructuralFeature.Setting}s, one for each such host object - EAttribute - value triplet.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Will only find those EAttributes that have already been registered using
@@ -112,16 +111,19 @@ public interface NavigationHelper {
      * 
      * @param value
      *            the value of the attribute
-     * @return the collection of settings
+     * @return a set of {@link EStructuralFeature.Setting}s, one for each EObject and EAttribute that have the given value
+     * @see #findByAttributeValue(Object)
      */
     public Set<Setting> findByAttributeValue(Object value);
 
     /**
-     * Find all the EAttributes and their owners for a given <code>value</code> of the attribute. The method will return
-     * these information as a collection of {@link EStructuralFeature.Setting}. Note that a setting will be present in
-     * the returned collection only if its attribute instance can be found in the given collection of
-     * <code>attributes</code>.
+     * For given <code>attributes</code> and an attribute value <code>value</code>, find each host {@link EObject} 
+     * such that any of these attributes of the the host object takes the given value. The method will
+     * return a set of {@link EStructuralFeature.Setting}s, one for each such host object - EAttribute - value triplet.
      * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
+	 *
      * <p>
      * <strong>Precondition:</strong> Will only find those EAttributes that have already been registered using
      * {@link #registerEStructuralFeatures(Set)}, unless running in <em>wildcard mode</em> (see
@@ -130,14 +132,16 @@ public interface NavigationHelper {
      * @param value
      *            the value of the attribute
      * @param attributes
-     *            the collection of attributes
-     * @return the collection of settings
+     *            the collection of attributes that should take the given value
+     * @return a set of {@link EStructuralFeature.Setting}s, one for each EObject and attribute that have the given value
      */
     public Set<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes);
 
     /**
-     * Find all {@link EObject}s that have an <code>attribute</code> {@link EAttribute} and its value equals to the
-     * given <code>value</code>.
+     * Find all {@link EObject}s for which the given <code>attribute</code> takes the given <code>value</code>.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the EAttribute has already been
@@ -147,13 +151,13 @@ public interface NavigationHelper {
      * @param value
      *            the value of the attribute
      * @param attribute
-     *            the EAttribute instance
-     * @return the collection of {@link EObject} instances
+     *            the EAttribute that should take the given value
+     * @return the set of {@link EObject}s for which the given attribute has the given value
      */
     public Set<EObject> findByAttributeValue(Object value, EAttribute attribute);
 
     /**
-     * Returns the collection of data type instances for the given {@link EDataType}.
+     * Returns the set of instances for the given {@link EDataType} that can be found in the model.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the EDataType has already been
@@ -162,51 +166,54 @@ public interface NavigationHelper {
      * 
      * @param type
      *            the data type
-     * @return the collection of data type instances
+     * @return the set of all attribute values found in the model that are of the given data type
      */
     public Set<Object> getDataTypeInstances(EDataType type);
-
-    // /**
-    // * Find all the EAttributes and their owners which have a value of a class that equals to the given one.
-    // * The method will return these information as a collection of {@link EStructuralFeature.Setting}.
-    // *
-    // * @param clazz the class of the value
-    // * @return the collection of settings
-    // */
-    // public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz);
     
     /**
-     * Find all {@link EObject}s that are the target of the <code>reference</code> EReference instance from the given
-     * <code>source</code>.
+     * Find all {@link EObject}s that are the target of the EReference <code>reference</code> from the given
+     * <code>source</code> {@link EObject}.
+     * 
+     * <p>
+     * Unset / null-valued references are not indexed, and will not be included in the results.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the reference has already been
      * registered using {@link #registerEStructuralFeatures(Set)}, or (b) running in <em>wildcard mode</em> (see
      * {@link #isInWildcardMode()}).
      * 
-     * @param source the startpoint of a reference
-     * @param reference the EReference instance
-     * @return the set of {@link EObject} instances
+     * @param source the host object
+     * @param reference an EReference of the host object
+     * @return the set of {@link EObject}s that the given reference points to, from the given source object
      */
     public Set<EObject> getReferenceValues(EObject source, EReference reference);
    
     /**
-     * Find all {@link Object}s that are the target of the <code>feature</code> EStructuralFeature instance from the given
-     * <code>source</code>.
+     * Find all {@link Object}s that are the target of the EStructuralFeature <code>feature</code> from the given
+     * <code>source</code> {@link EObject}.
+     * 
+     * <p>
+     * Unset / null-valued features are not indexed, and will not be included in the results.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
      * registered, or (b) running in <em>wildcard mode</em> (see
      * {@link #isInWildcardMode()}).
      * 
-     * @param source the startpoint of a feature
-     * @param feature the EStructuralFeature instance
-     * @return the set of {@link Object} instances
+     * @param source the host object
+     * @param feature an EStructuralFeature of the host object
+     * @return the set of values that the given feature takes at the given source object
+     * 
+     * @see #getReferenceValues(EObject, EReference)
      */
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature feature);
    
     /**
-     * Find all instances of the given EStructuralFeature in the form of a holder -> value(s) multimap. 
+     * Find all value assignment instances of the given {@link EStructuralFeature} in the form
+     *  of a host {@link EObject} -> value(s) multimap. 
+     * 
+     * <p>
+     * Unset / null-valued features are not indexed, and will not be included in the results.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
@@ -214,14 +221,17 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param feature the EStructuralFeature
-     * @return the map from {@link EObject} holders to the set of {@link Object} values the feature takes at them
+     * @return the map from source {@link EObject}s to the value(s) of the given feature
      */
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature feature);
     
     /**
-     * Find all the {@link EObject} instances that have an {@link EReference} instance with the given
-     * <code>target</code>. The method will return these information as a collection of
-     * {@link EStructuralFeature.Setting}.
+     * For a given {@link EObject} <code>target</code>, find each {@link EReference} and source {@link EObject} 
+     * such that this reference (list) of the the host object points to the given target object. The method will
+     * return a set of {@link EStructuralFeature.Setting}s, one for each such source object - EReference - target triplet.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null reference values are not indexed, so <code>target!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only for those references that have already been
@@ -229,16 +239,18 @@ public interface NavigationHelper {
      * <em>wildcard mode</em> (see {@link #isInWildcardMode()}).
      * 
      * @param target
-     *            the endpoint of a reference
-     * @return the collection of settings
+     *            the EObject pointed to by the references
+     * @return a set of {@link EStructuralFeature.Setting}s, one for each source EObject and reference that point to the given target
      */
     public Set<Setting> getInverseReferences(EObject target);
 
     /**
-     * Find all the {@link EObject} instances that have an EReference instance with the given <code>target</code>. The
-     * method will return these information as a collection of {@link EStructuralFeature.Setting}. Note that a setting
-     * will be present in the returned collection only if its reference instance can be found in the given collection of
-     * <code>references</code>.
+     * For given <code>references</code> and an {@link EObject} <code>target</code>, find each source {@link EObject} 
+     * such that any of these references of the the source object points to the given target object. The method will
+     * return a set of {@link EStructuralFeature.Setting}s, one for each such source object - EReference - target triplet.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null reference values are not indexed, so <code>target!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Will only find those EReferences that have already been registered using
@@ -246,14 +258,17 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param target
-     * @param references
-     * @return
+     *            the EObject pointed to by the references
+     * @param references a set of EReferences pointing to the target 
+     * @return a set of {@link EStructuralFeature.Setting}s, one for each source EObject and reference that point to the given target
      */
     public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references);
 
     /**
-     * Find all {@link EObject}s that have a <code>reference</code> EReference instance with the given
-     * <code>target</code>.
+     * Find all source {@link EObject}s for which the given <code>reference</code> points to the given <code>target</code> object.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null reference values are not indexed, so <code>target!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the reference has already been
@@ -261,15 +276,15 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param target
-     *            the endpoint of a reference
+     *            the EObject pointed to by the references
      * @param reference
-     *            the EReference instance
-     * @return the collection of {@link EObject} instances
+     *            an EReference pointing to the target
+     * @return the collection of {@link EObject}s for which the given reference points to the given target object
      */
     public Set<EObject> getInverseReferences(EObject target, EReference reference);
 
     /**
-     * Get the direct {@link EObject} instances of the given EClass instance.
+     * Get the direct {@link EObject} instances of the given {@link EClass}. Instances of subclasses will be excluded.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the EClass (or any superclass) has
@@ -277,13 +292,16 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param clazz
-     *            the EClass instance
-     * @return the collection of {@link EObject} instances
+     *            an EClass
+     * @return the collection of {@link EObject} direct instances of the given EClass (not of subclasses)
+     * 
+     * @see #getAllInstances(EClass)
      */
     public Set<EObject> getDirectInstances(EClass clazz);
 
     /**
-     * Get the exact and descendant {@link EObject} instances of the given EClass.
+     * Get the all {@link EObject} instances of the given {@link EClass}. 
+     * This includes instances of subclasses.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the EClass (or any superclass) has
@@ -291,13 +309,18 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param clazz
-     *            the EClass
-     * @return the collection of {@link EObject} instances
+     *            an EClass
+     * @return the collection of {@link EObject} instances of the given EClass and any of its subclasses
+     * 
+     * @see #getDirectInstances(EClass)
      */
     public Set<EObject> getAllInstances(EClass clazz);
 
     /**
-     * Returns the collection of {@link EObject} instances which have a feature with the given value.
+     * Find all source {@link EObject}s for which the given <code>feature</code> points to / takes the given <code>value</code>.
+     * 
+     * <p>
+     * <strong>Precondition:</strong> Unset / null-valued features are not indexed, so <code>value!=null</code>
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
@@ -313,7 +336,11 @@ public interface NavigationHelper {
     public Set<EObject> findByFeatureValue(Object value, EStructuralFeature feature);
 
     /**
-     * Returns the holder(s) of the given feature.
+     * Returns those host {@link EObject}s that have a non-null value for the given feature 
+     * (at least one, in case of multi-valued references).
+     * 
+     * <p>
+     * Unset / null-valued features are not indexed, and will not be included in the results.
      * 
      * <p>
      * <strong>Precondition:</strong> Results will be returned only if either (a) the feature has already been
@@ -321,14 +348,16 @@ public interface NavigationHelper {
      * {@link #isInWildcardMode()}).
      * 
      * @param feature
-     *            the feature instance
-     * @return the collection of {@link EObject} instances
+     *            a structural feature 
+     * @return the collection of {@link EObject}s that have some value for the given structural feature
      */
     public Set<EObject> getHoldersOfFeature(EStructuralFeature feature);
 
     /**
-     * Call this method to dispose the NavigationHelper instance. The NavigationHelper instance will unregister itself
-     * from the list of EContentAdapters of the given Notifier instance.
+     * Call this method to dispose the NavigationHelper. 
+     * 
+     * <p>After its disposal, the NavigationHelper will no longer listen to EMF change notifications, 
+     *   and it will be possible to GC it even if the model is retained in memory.
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered at all.
      * @throws IllegalStateException if there are any active listeners
@@ -337,11 +366,11 @@ public interface NavigationHelper {
     public void dispose();
 
     /**
-     * Registers an instance listener for the navigation helper. The listener will be notified about only the instances
-     * of the given classes.
-     * 
+     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EClass}es 
+     * (and any of their subtypes) are added to or removed from the model.  
+     *  
      * @param classes
-     *            the collection of classes associated to the listener
+     *            the collection of classes whose instances the listener should be notified of
      * @param listener
      *            the listener instance
      */
@@ -358,13 +387,13 @@ public interface NavigationHelper {
     public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener);
 
     /**
-     * Registers a data type listener for the navigation helper. The listener will be notified about only the data type
-     * instances of the given types.
+     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EDataType}s 
+     * are added to or removed from the model.  
      * 
      * @param types
      *            the collection of types associated to the listener
      * @param listener
-     *            the data type instance
+     *            the listener instance
      */
     public void addDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
 
@@ -379,8 +408,8 @@ public interface NavigationHelper {
     public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener);
 
     /**
-     * Registers a feature listener for the navigation helper. The listener will be notified about only the settings
-     * associated to the given features.
+     * The given <code>listener</code> will be notified from now on whenever instances the given {@link EStructuralFeature}s 
+     * are added to or removed from the model.  
      * 
      * @param features
      *            the collection of features associated to the listener
@@ -521,7 +550,7 @@ public interface NavigationHelper {
 
     /**
      * The given callback will be executed, and all model traversals and index registrations will be delayed until the
-     * execution is done. If there are any outstanding feature or class registrations, a single coalesced model
+     * execution is done. If there are any outstanding feature, class or datatype registrations, a single coalesced model
      * traversal will initialize the caches and deliver the notifications.
      * 
      * @param runnable
