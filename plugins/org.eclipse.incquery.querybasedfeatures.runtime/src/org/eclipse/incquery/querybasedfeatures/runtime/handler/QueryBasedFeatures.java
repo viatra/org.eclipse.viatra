@@ -19,6 +19,9 @@ import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
  */
 public class QueryBasedFeatures {
 
+    public static String ANNOTATION_SOURCE = "org.eclipse.incquery.querybasedfeature";
+    public static String PATTERN_FQN_KEY = "patternFQN";
+    
     public static SingleValueQueryBasedFeature newSingleValueFeature(EStructuralFeature feature, boolean keepCache) {
         return new SingleValueQueryBasedFeature(feature, keepCache);
     }

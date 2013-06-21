@@ -72,7 +72,7 @@ public final class QueryBasedFeatureHelper {
      *            the source object that initializes the handler
      * @return the topmost reachable Notifier from the source
      */
-    private static Notifier prepareNotifierForSource(EObject source) {
+    public static Notifier prepareNotifierForSource(EObject source) {
         if (source != null) {
             Resource eResource = source.eResource();
             if (eResource != null) {

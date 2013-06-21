@@ -62,6 +62,7 @@ import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import java.io.IOException
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
 
 class DerivedFeatureGenerator implements IGenerationFragment {
 	
@@ -82,7 +83,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 */
 	private static String annotationLiteral 		= "QueryBasedFeature"
 	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.incquery.runtime.base.wellbehaving.derived.features"
-	private static String ANNOTATION_NAME 			= "org.eclipse.incquery.querybasedfeature" //TODO fix models!
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.incquery.querybasedfeatures.runtime"
 	private static String FEATUREKIND_IMPORT		= "QueryBasedFeatureKind"
 	private static String HELPER_IMPORT 			= "QueryBasedFeatureHelper"
@@ -187,17 +187,17 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					try{
   					val annotations = new ArrayList(feat.EAnnotations)
             annotations.forEach[
-              if(it.source == ANNOTATION_NAME){
+              if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE){
                 feat.EAnnotations.remove(it)
               }
             ]
   					val annotation = EcoreFactory::eINSTANCE.createEAnnotation
-  					annotation.source = ANNOTATION_NAME
+  					annotation.source = QueryBasedFeatures::ANNOTATION_SOURCE
             feat.EAnnotations.add(annotation)
   					
   				  // add entry ("patternFQN", pattern.fullyQualifiedName)
   			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
-  			    entry.key = "patternFQN"
+  			    entry.key = QueryBasedFeatures::PATTERN_FQN_KEY
   			    entry.value = pattern.fullyQualifiedName
   			    annotation.details.add(entry)
 					} catch(Exception e){
@@ -210,7 +210,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 					try{
 					  val annotations = new ArrayList(feat.EAnnotations)
   					annotations.forEach[
-              if(it.source == ANNOTATION_NAME){
+              if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE){
                 feat.EAnnotations.remove(it)
               }
             ]
