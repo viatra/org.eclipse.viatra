@@ -21,12 +21,13 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
 import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
+import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -38,27 +39,37 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     /**
      * Weak hash map for keeping the created objects for each notifier
      */
-    private final Map<Notifier,WeakReference<QueryBasedFeature>> queryBasedFeatures = new WeakHashMap<Notifier, WeakReference<QueryBasedFeature>>();
+    private final Map<AdvancedIncQueryEngine,WeakReference<QueryBasedFeature>> queryBasedFeatures = new WeakHashMap<AdvancedIncQueryEngine, WeakReference<QueryBasedFeature>>();
 
     private final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification;
-    
+
+    private final QueryBasedFeatureSettingDelegateFactory delegateFactory;
     
     /**
      * @param eStructuralFeature
      */
-    public QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature) throws IncQueryException {
+    public QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature, QueryBasedFeatureSettingDelegateFactory factory) throws IncQueryException {
         super(eStructuralFeature);
-
+        this.delegateFactory = factory;
+        
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = null;
         EAnnotation annotation = eStructuralFeature.getEAnnotation(QueryBasedFeatures.ANNOTATION_SOURCE);
         if(annotation != null) {
             String patternFQN = annotation.getDetails().get(QueryBasedFeatures.PATTERN_FQN_KEY);
-            querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+            //querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+            // let's use Pattern Registry instead
+            List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
+            if(patternInfosByFQN.size() > 0) {
+                querySpec = patternInfosByFQN.get(0).getQuerySpecification();
+                if(patternInfosByFQN.size() > 1) {
+                    IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
+                }
+            }
         }
         querySpecification = querySpec;
          
         if(querySpecification == null) {
-            throw new IncQueryException("Could not find query specification for feature","Query specification not found!");
+            throw new IncQueryException("Could not find query specification for feature " + eStructuralFeature,"Query specification not found!");
         }
         
     }
@@ -68,8 +79,15 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         
         // TODO this can be expensive to do
         Notifier notifierForSource = QueryBasedFeatureHelper.prepareNotifierForSource(owner);
+        AdvancedIncQueryEngine engine = null;
+        try {
+            engine = delegateFactory.getEngineForNotifier(notifierForSource);
+        } catch (IncQueryException e) {
+            IncQueryLoggingUtil.getDefaultLogger().error("Engine preparation failed", e);
+            throw new IllegalStateException("Engine preparation failed", e);
+        }
         
-        QueryBasedFeature queryBasedFeature = queryBasedFeatures.get(notifierForSource).get();
+        QueryBasedFeature queryBasedFeature = queryBasedFeatures.get(engine).get();
         if(queryBasedFeature == null) {
             if(eStructuralFeature.isMany()) {
                 queryBasedFeature  = QueryBasedFeatures.newMultiValueFeatue(eStructuralFeature, true);
@@ -77,16 +95,15 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
                 queryBasedFeature = QueryBasedFeatures.newSingleValueFeature(eStructuralFeature, true);
             }
             if(queryBasedFeature != null) {
-                queryBasedFeatures.put(notifierForSource, new WeakReference<QueryBasedFeature>(queryBasedFeature));
+                queryBasedFeatures.put(engine, new WeakReference<QueryBasedFeature>(queryBasedFeature));
             }
         }
         
         if (!queryBasedFeature.isInitialized()) {
 
             try {
-                IncQueryEngine incQueryEngine = IncQueryEngine.on(notifierForSource);
                 IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification
-                        .getMatcher(incQueryEngine);
+                        .getMatcher(engine);
                 List<String> parameterNames = matcher.getParameterNames();
                 queryBasedFeature.initialize(matcher, parameterNames.get(0), parameterNames.get(1));
                 queryBasedFeature.startMonitoring();

@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.incquery.querybasedfeatures.runtime;singleton:=
 Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.6.5",
- org.eclipse.incquery.runtime.evm;bundle-version="0.7.0"
+ org.eclipse.incquery.runtime.evm;bundle-version="0.7.0",
+ org.eclipse.incquery.runtime.patternregistry;bundle-version="0.7.0"
 Export-Package: org.eclipse.incquery.querybasedfeatures.runtime,
  org.eclipse.incquery.querybasedfeatures.runtime.handler,
  org.eclipse.incquery.querybasedfeatures.runtime.util.validation

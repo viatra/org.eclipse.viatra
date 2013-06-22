@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime;
 
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -24,12 +31,50 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 
+
+    private final boolean useManagedEngines;
+    private final Map<Notifier, WeakReference<AdvancedIncQueryEngine>> engineMap;
+    
+    /**
+     * 
+     */
+    public QueryBasedFeatureSettingDelegateFactory() {
+        useManagedEngines = true;
+        engineMap = null;
+    }
+    
+    /**
+     * 
+     */
+    public QueryBasedFeatureSettingDelegateFactory(boolean useManagedEngines) {
+        this.useManagedEngines = useManagedEngines;
+        engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedIncQueryEngine>>();
+    }
+    
+    
+    
+    protected AdvancedIncQueryEngine getEngineForNotifier(Notifier notifier) throws IncQueryException {
+        if(useManagedEngines) {
+            return AdvancedIncQueryEngine.from(IncQueryEngine.on(notifier));
+        } else {
+            
+            WeakReference<AdvancedIncQueryEngine> reference = engineMap.get(notifier);
+            if(reference != null && reference.get() != null) {
+                return reference.get();
+            } else {
+                AdvancedIncQueryEngine unmanagedEngine = AdvancedIncQueryEngine.createUnmanagedEngine(notifier);
+                engineMap.put(notifier, new WeakReference<AdvancedIncQueryEngine>(unmanagedEngine));
+                return unmanagedEngine;
+            }
+        }
+    }
+    
     @Override
     public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature) {
         SettingDelegate result = null;
         
         try {
-            result = new QueryBasedFeatureSettingDelegate(eStructuralFeature);
+            result = new QueryBasedFeatureSettingDelegate(eStructuralFeature, this);
         } catch (IncQueryException e) {
             return new BasicSettingDelegate.Stateless(eStructuralFeature) {
                 
