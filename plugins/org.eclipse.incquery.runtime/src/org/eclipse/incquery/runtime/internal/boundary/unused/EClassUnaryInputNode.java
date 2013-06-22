@@ -16,7 +16,6 @@ package org.eclipse.incquery.runtime.internal.boundary.unused;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;

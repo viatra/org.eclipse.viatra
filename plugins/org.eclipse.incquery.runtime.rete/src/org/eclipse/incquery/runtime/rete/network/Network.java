@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;

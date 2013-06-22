@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.rete.matcher;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;

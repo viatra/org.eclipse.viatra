@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;

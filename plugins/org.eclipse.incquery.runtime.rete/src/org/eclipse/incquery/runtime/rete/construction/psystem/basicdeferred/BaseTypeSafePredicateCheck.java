@@ -12,7 +12,6 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

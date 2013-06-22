@@ -12,20 +12,13 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
-import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
-import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractScope;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
-import org.eclipse.xtext.xbase.scoping.DelegatingScope;
 import org.eclipse.xtext.xbase.scoping.batch.XbaseBatchScopeProvider;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 
-import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**

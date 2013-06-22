@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
 public interface IMetamodelProvider {

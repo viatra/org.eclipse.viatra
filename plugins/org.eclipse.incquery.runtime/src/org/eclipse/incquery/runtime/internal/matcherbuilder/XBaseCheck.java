@@ -27,7 +27,6 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 import org.eclipse.xtext.xbase.XExpression;
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.inject.Injector;
 

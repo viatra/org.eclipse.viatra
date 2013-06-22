@@ -25,8 +25,6 @@ import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternLanguageJv
 import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
 import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
-import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
-import org.eclipse.xtext.common.types.access.jdt.JdtTypeProviderFactory;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 

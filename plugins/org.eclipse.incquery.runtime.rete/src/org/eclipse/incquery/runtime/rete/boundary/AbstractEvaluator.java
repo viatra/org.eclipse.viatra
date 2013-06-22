@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
