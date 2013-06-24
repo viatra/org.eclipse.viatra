@@ -26,8 +26,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
-import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -56,15 +55,15 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         EAnnotation annotation = eStructuralFeature.getEAnnotation(QueryBasedFeatures.ANNOTATION_SOURCE);
         if(annotation != null) {
             String patternFQN = annotation.getDetails().get(QueryBasedFeatures.PATTERN_FQN_KEY);
-            //querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
-            // let's use Pattern Registry instead
-            List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
-            if(patternInfosByFQN.size() > 0) {
-                querySpec = patternInfosByFQN.get(0).getQuerySpecification();
-                if(patternInfosByFQN.size() > 1) {
-                    IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
-                }
-            }
+            querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+            // TODO let's use Pattern Registry instead (requires added dependency!)
+//            List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
+//            if(patternInfosByFQN.size() > 0) {
+//                querySpec = patternInfosByFQN.get(0).getQuerySpecification();
+//                if(patternInfosByFQN.size() > 1) {
+//                    IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
+//                }
+//            }
         }
         querySpecification = querySpec;
          
