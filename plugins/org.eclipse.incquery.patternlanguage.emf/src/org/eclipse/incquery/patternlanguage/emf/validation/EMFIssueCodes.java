@@ -18,6 +18,7 @@ public final class EMFIssueCodes {
     protected static final String ISSUE_CODE_PREFIX = "org.eclipse.incquery.patternlanguage.emf.validation.IssueCodes.";
 
     public static final String DUPLICATE_IMPORT = ISSUE_CODE_PREFIX + "duplicate_import";
+    public static final String MISSING_PACKAGE_IMPORT = ISSUE_CODE_PREFIX + "missing_import";
     public static final String IMPORT_WITH_GENERATEDCODE = ISSUE_CODE_PREFIX + "missing_imported_code";
     public static final String IMPORT_DEPENDENCY_MISSING = ISSUE_CODE_PREFIX + "missing_import_dependency";
     public static final String INVALID_ENUM_LITERAL = ISSUE_CODE_PREFIX + "invalid_enum";

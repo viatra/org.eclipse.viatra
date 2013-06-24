@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageScopeHelper;
@@ -29,6 +30,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLan
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeUtil;
@@ -54,10 +56,14 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
@@ -73,6 +79,19 @@ import com.google.inject.Inject;
  * </ul>
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
+
+    private final class SamePackageUri implements Predicate<PackageImport> {
+        private final String nsUri;
+
+        private SamePackageUri(String nsUri) {
+            this.nsUri = nsUri;
+        }
+
+        @Override
+        public boolean apply(PackageImport importDecl) {
+            return nsUri.equals(importDecl.getEPackage().getNsURI());
+        }
+    }
 
     @Inject
     private IMetamodelProvider metamodelProvider;
@@ -662,4 +681,22 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    @Check
+    public void checkReferredPackages(ReferenceType type) {
+        final EClass referredType = type.getRefname().getEContainingClass();
+        final EPackage referredPackage = referredType.getEPackage();
+        final String nsUri = Strings.emptyIfNull(referredPackage.getNsURI());
+        final EObject rootContainer = EcoreUtil2.getRootContainer(type);
+        if (rootContainer instanceof PatternModel) {
+            PatternModel model = (PatternModel) rootContainer;
+            if (model.getImportPackages() != null
+                    && !Iterables.any(model.getImportPackages().getPackageImport(), new SamePackageUri(nsUri))) {
+                error(String.format("Reference to an EClass %s that is not imported from EPackage %s.",
+                        referredType.getName(), nsUri), type,
+                        EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME,
+                        EMFIssueCodes.MISSING_PACKAGE_IMPORT, nsUri);
+            }
+
+        }
+    }
 }
