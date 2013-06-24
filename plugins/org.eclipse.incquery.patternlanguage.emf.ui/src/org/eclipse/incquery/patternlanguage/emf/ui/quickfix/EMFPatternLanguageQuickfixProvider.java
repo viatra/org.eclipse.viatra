@@ -18,16 +18,24 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.IModification;
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.Issue;
 import org.eclipse.xtext.xbase.ui.quickfix.XbaseQuickfixProvider;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterators;
 
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
 
@@ -39,6 +47,37 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
             public void apply(IModificationContext context) throws Exception {
                 IXtextDocument document = context.getXtextDocument();
                 document.replace(issue.getOffset(), 0, "^");
+            }
+        });
+    }
+
+    @Fix(EMFIssueCodes.MISSING_PACKAGE_IMPORT)
+    public void addMissingPackageImport(final Issue issue, IssueResolutionAcceptor acceptor) {
+        
+        acceptor.accept(issue, "Add missing import", "Add missing import", null, new IModification() {
+            
+            @Override
+            public void apply(IModificationContext context) throws Exception {
+                final IXtextDocument document = context.getXtextDocument();
+                Integer offset = document.readOnly(new IUnitOfWork<Integer, XtextResource>() {
+
+                    @Override
+                    public Integer exec(XtextResource state) throws Exception {
+                        final XImportSection importSection = (XImportSection) 
+                                Iterators.find(state.getAllContents(), Predicates.instanceOf(XImportSection.class), null);
+                        final ICompositeNode node = NodeModelUtils.getNode(importSection);
+                        
+                        return new Integer(node.getTotalEndOffset());
+                    }
+                });
+                if (offset != null) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n");
+                    sb.append("import \"");
+                    sb.append(issue.getData()[0]);
+                    sb.append("\"");
+                    document.replace(offset, 0, sb.toString());
+                }
             }
         });
     }
