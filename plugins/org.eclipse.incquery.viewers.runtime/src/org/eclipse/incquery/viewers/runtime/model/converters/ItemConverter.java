@@ -21,7 +21,6 @@ import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.Item.HierarchyPolicy;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimap;
 
 /**
  * A converter from {@link IPatternMatch} matches to displayable {@link Item} objects.
@@ -34,7 +33,6 @@ public class ItemConverter implements IConverter {
     private String parameterName;
     private String labelParameterName;
     private HierarchyPolicy policy;
-    private Multimap<Object, Item> itemMap;
     private FormatSpecification format;
 
     /**
@@ -42,10 +40,9 @@ public class ItemConverter implements IConverter {
      * @param itemAnnotation
      *            an Item annotation to initialize the converter with.
      */
-    public ItemConverter(Multimap<Object, Item> itemMap2, Annotation itemAnnotation, Annotation formatAnnotation) {
+    public ItemConverter(Annotation itemAnnotation, Annotation formatAnnotation) {
         Preconditions.checkArgument(Item.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Item.ANNOTATION_ID + " annotation.");
-        this.itemMap = itemMap2;
         parameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation, "item"))
                 .getValue().getVar();
         StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
@@ -77,7 +74,6 @@ public class ItemConverter implements IConverter {
         Object param = match.get(parameterName);
         Item item = new Item(match, param, labelParameterName, policy);
         item.setSpecification(format);
-        itemMap.put(param, item);
         return item;
     }
 }

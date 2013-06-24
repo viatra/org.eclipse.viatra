@@ -165,10 +165,14 @@ public class ViewerDataModel {
                 nodeListsObservable.add(resultList);
 
                 ctx.bindList(resultList, nodeList, null,
-                        new UpdateListStrategy().setConverter(new ItemConverter(itemMap, annotation, formatAnnotation)));
+                        new UpdateListStrategy().setConverter(new ItemConverter(annotation, formatAnnotation)));
             }
         }
         MultiList list = new MultiList(nodeListsObservable.toArray(new ObservableList[nodeListsObservable.size()]));
+        for (Object _item : list) {
+            Item item = (Item) _item;
+            itemMap.put(item.getParamObject(), item);
+        }
         list.addListChangeListener(new IListChangeListener() {
             
             @Override
