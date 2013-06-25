@@ -68,11 +68,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // value -> feature (EAttribute or EReference) -> holder(s)
     private Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
 
-    // feature (EAttribute or EReference) -> holder(s)
+    // feature ((String id or EStructuralFeature) -> holder(s)
     // constructed on-demand
     private Map<Object, Multiset<EObject>> featureToHolderMap;
 
-    // holder -> feature (EAttribute or EReference) -> value(s)
+    // holder -> feature (String id or EStructuralFeature) -> value(s)
     // constructed on-demand
     private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap;
 
@@ -88,13 +88,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // proxy source -> delayed visitors
     private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
-    // Field variable becuase it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
+    // Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
     private Set<EClassifier> knownClassifiers;
 
+    // TODO
     // static for EClass -> all subtypes in knownClasses (shared between the IQ engines)
     private static Map<EClass, Set<EClass>> subTypeMap = new HashMap<EClass, Set<EClass>>();
 
-    // EPacakge NsURI -> EPacakge instances
+    // EPacakge NsURI -> EPackage instances
     private Multimap<String, EPackage> ePackageMap;
     
     // static maps between metamodel elements and their unique IDs
@@ -108,10 +109,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
-    // Maps the generated feature id to the actual EStructuralFeature instance
-    // This field is used only in case of dynamic EMF models
-    private Multimap<String, EStructuralFeature> knownFeatures;
-
     private boolean isDynamicModel;
 
     public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper, boolean isDynamicModel) {
@@ -119,12 +116,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.isDynamicModel = isDynamicModel;
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
-        this.knownFeatures = ArrayListMultimap.create();
         this.valueToFeatureToHolderMap = HashBasedTable.create();
         this.instanceMap = new HashMap<Object, Set<EObject>>();
         this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
         this.ePackageMap = HashMultimap.create();
         this.knownClassifiers = new HashSet<EClassifier>();
+    }
+    
+    protected Object toKey(EClassifier classifier) {
+    	return isDynamicModel ? getUniqueStringIdentifier(classifier) : classifier;
+    }
+    protected Object toKey(EStructuralFeature feature) {
+    	return isDynamicModel ? getUniqueStringIdentifier(feature) : feature;
     }
 
     /**
@@ -133,7 +136,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @param classifier the classifier instance
      * @return A unique string id generated from the classifier's name and the NsURI of its {@link EPackage}.
      */
-    protected static String getUniqueIdentifier(EClassifier classifier) {
+    private static String getUniqueStringIdentifier(EClassifier classifier) {
         String id = uniqueIDFromClassifier.get(classifier);
         if (id == null) {
             Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
@@ -150,11 +153,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @param typedElement the typed element instance
      * @return A unique string id generated from the typedelement's name and it's classifier type.
      */
-    protected static String getUniqueIdentifier(ETypedElement typedElement) {
+    private static String getUniqueStringIdentifier(ETypedElement typedElement) {
     	String id = uniqueIDFromTypedElement.get(typedElement);
     	if (id == null) {
     		Preconditions.checkArgument(!typedElement.eIsProxy(), String.format("Element %s is an unresolved proxy", typedElement));
-    		id = getUniqueIdentifier((EClassifier) typedElement.eContainer()) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
+    		id = getUniqueStringIdentifier((EClassifier) typedElement.eContainer()) + "##" + typedElement.getEType().getName() + "##" + typedElement.getName();
     		uniqueIDFromTypedElement.put(typedElement, id);
     		uniqueIDToTypedElement.put(id, typedElement);
     	}
@@ -312,19 +315,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the original {@link EStructuralFeature} instance. 
+     * This method uses the original {@link EStructuralFeature} instance or the String id.  
      */
-    private void addToFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
-        Set<EObject> setVal = (isDynamicModel ? valueToFeatureToHolderMap.get(value, getUniqueIdentifier(feature))
-                : valueToFeatureToHolderMap.get(value, feature));
+    private void addToFeatureMap(Object featureKey, Object value, EObject holder) {
+        Set<EObject> setVal = valueToFeatureToHolderMap.get(value, featureKey);
 
         if (setVal == null) {
             setVal = new HashSet<EObject>();
-            if (isDynamicModel) {
-                valueToFeatureToHolderMap.put(value, getUniqueIdentifier(feature), setVal);
-            } else {
-                valueToFeatureToHolderMap.put(value, feature, setVal);
-            }
+            valueToFeatureToHolderMap.put(value, featureKey, setVal);
+           
         }
         setVal.add(holder);
     }
@@ -372,18 +371,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * This method uses the original {@link EStructuralFeature} instance. 
      */
-    private void removeFromFeatureMap(EStructuralFeature feature, Object value, EObject holder) {
-        final Set<EObject> setHolder = (isDynamicModel ? valueToFeatureToHolderMap.get(value,
-                getUniqueIdentifier(feature)) : valueToFeatureToHolderMap.get(value, feature));
+    private void removeFromFeatureMap(Object featureKey, Object value, EObject holder) {
+        final Set<EObject> setHolder = 
+        		valueToFeatureToHolderMap.get(value, featureKey);
         if (setHolder != null) {
             setHolder.remove(holder);
 
             if (setHolder.isEmpty()) {
-                if (isDynamicModel) {
-                    valueToFeatureToHolderMap.remove(value, getUniqueIdentifier(feature));
-                } else {
-                    valueToFeatureToHolderMap.remove(value, feature);
-                }
+                valueToFeatureToHolderMap.remove(value, featureKey);
             }
         }
     }
@@ -403,18 +398,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     public void insertFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-        addToFeatureMap(feature, value, holder);
-
-        Object dynamicFeature = (isDynamicModel ? getUniqueIdentifier(feature) : feature);
+        Object featureKey = toKey(feature);
+        
+        addToFeatureMap(featureKey, value, holder);    
         if (featureToHolderMap != null) {
-            addToReversedFeatureMap(dynamicFeature, holder);
+            addToReversedFeatureMap(featureKey, holder);
         }
         if (holderToFeatureToValueMap != null) {
-            addToDirectFeatureMap(holder, dynamicFeature, value);
-        }
-
-        if (isDynamicModel) {
-            knownFeatures.put(getUniqueIdentifier(feature), feature);
+            addToDirectFeatureMap(holder, featureKey, value);
         }
 
         isDirty = true;
@@ -422,18 +413,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     public void removeFeatureTuple(EStructuralFeature feature, Object value, EObject holder) {
-        removeFromFeatureMap(feature, value, holder);
-
-        Object dynamicFeature = (isDynamicModel ? getUniqueIdentifier(feature) : feature);
+        Object featureKey = toKey(feature);
+        
+        removeFromFeatureMap(featureKey, value, holder);
         if (featureToHolderMap != null) {
-            removeFromReversedFeatureMap(dynamicFeature, holder);
+            removeFromReversedFeatureMap(featureKey, holder);
         }
         if (holderToFeatureToValueMap != null) {
-            removeFromDirectFeatureMap(holder, dynamicFeature, value);
-        }
-
-        if (isDynamicModel) {
-            knownFeatures.remove(getUniqueIdentifier(feature), feature);
+            removeFromDirectFeatureMap(holder, featureKey, value);
         }
 
         isDirty = true;
@@ -442,30 +429,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // START ********* InstanceSet *********
     public Set<EObject> getInstanceSet(EClass keyClass) {
-        if (isDynamicModel) {
-            return instanceMap.get(getUniqueIdentifier(keyClass));
-        } else {
-            return instanceMap.get(keyClass);
-        }
+        return instanceMap.get(toKey(keyClass));
     }
 
     public void removeInstanceSet(EClass keyClass) {
-        if (isDynamicModel) {
-            instanceMap.remove(getUniqueIdentifier(keyClass));
-        } else {
-            instanceMap.remove(keyClass);
-        }
+        instanceMap.remove(toKey(keyClass));
     }
 
     public void insertIntoInstanceSet(EClass keyClass, EObject value) {
-        Set<EObject> set = (isDynamicModel ? instanceMap.get(getUniqueIdentifier(keyClass)) : instanceMap.get(keyClass));
+        Set<EObject> set = instanceMap.get(toKey(keyClass));
         if (set == null) {
             set = new HashSet<EObject>();
-            if (isDynamicModel) {
-                instanceMap.put(getUniqueIdentifier(keyClass), set);
-            } else {
-                instanceMap.put(keyClass, set);
-            }
+            instanceMap.put(toKey(keyClass), set);
         }
         set.add(value);
 
@@ -474,16 +449,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     public void removeFromInstanceSet(EClass keyClass, EObject value) {
-        Set<EObject> set = (isDynamicModel ? instanceMap.get(getUniqueIdentifier(keyClass)) : instanceMap.get(keyClass));
+        Set<EObject> set = instanceMap.get(toKey(keyClass));
         if (set != null) {
             set.remove(value);
 
             if (set.isEmpty()) {
-                if (isDynamicModel) {
-                    instanceMap.remove(getUniqueIdentifier(keyClass));
-                } else {
-                    instanceMap.remove(keyClass);
-                }
+                instanceMap.remove(toKey(keyClass));
             }
         }
 
@@ -495,31 +466,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // START ********* DataTypeMap *********
     public Map<Object, Integer> getDataTypeMap(EDataType keyType) {
-        if (isDynamicModel) {
-            return dataTypeMap.get(getUniqueIdentifier(keyType));
-        } else {
-            return dataTypeMap.get(keyType);
-        }
+        return dataTypeMap.get(toKey(keyType));
     }
 
     public void removeDataTypeMap(EDataType keyType) {
-        if (isDynamicModel) {
-            dataTypeMap.remove(getUniqueIdentifier(keyType));
-        } else {
-            dataTypeMap.remove(keyType);
-        }
+       dataTypeMap.remove(toKey(keyType));
     }
 
     public void insertIntoDataTypeMap(EDataType keyType, Object value) {
-        Map<Object, Integer> valMap = (isDynamicModel ? dataTypeMap.get(getUniqueIdentifier(keyType)) : dataTypeMap
-                .get(keyType));
+        Map<Object, Integer> valMap = 
+        		dataTypeMap.get(toKey(keyType));
         if (valMap == null) {
             valMap = new HashMap<Object, Integer>();
-            if (isDynamicModel) {
-                dataTypeMap.put(getUniqueIdentifier(keyType), valMap);
-            } else {
-                dataTypeMap.put(keyType, valMap);
-            }
+           dataTypeMap.put(toKey(keyType), valMap);
         }
         final boolean firstOccurrence = (valMap.get(value) == null);
 		if (firstOccurrence) {
@@ -534,19 +493,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     public void removeFromDataTypeMap(EDataType keyType, Object value) {
-        Map<Object, Integer> valMap = (isDynamicModel ? dataTypeMap.get(getUniqueIdentifier(keyType)) : dataTypeMap
-                .get(keyType));
+        Map<Object, Integer> valMap = 
+        		dataTypeMap.get(toKey(keyType));
         if (valMap != null && valMap.get(value) != null) {
             Integer count = valMap.get(value);
             final boolean lastOccurrence = (--count == 0);
 			if (lastOccurrence) {
                 valMap.remove(value);
                 if (valMap.size() == 0) {
-                	if (isDynamicModel) {
-                		dataTypeMap.remove(getUniqueIdentifier(keyType));
-                	} else {
-                		dataTypeMap.remove(keyType);
-                	}
+                	dataTypeMap.remove(toKey(keyType));
                 }
             } else {
                 valMap.put(value, count);
@@ -887,12 +842,24 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      * @return the {@link EStructuralFeature} instance
      */
     public EStructuralFeature getKnownFeature(String featureId) {
-        Collection<EStructuralFeature> features = knownFeatures.get(featureId);
-        if (features.size() == 0) {
-            return null;
-        } else {
-            return features.iterator().next();
+        Collection<ETypedElement> features = uniqueIDToTypedElement.get(featureId);
+        if (features != null && !features.isEmpty()) {
+            final ETypedElement next = features.iterator().next();
+            if (next instanceof EStructuralFeature)
+            	return (EStructuralFeature) next;
         }
+        return null;
+
+    }
+
+    /**
+     * Returns the corresponding {@link EClassifier} instance for the id.
+     */
+    public EClassifier getKnownClassifier(String key) {
+		Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(key);
+        if (classifiersOfThisID!=null && !classifiersOfThisID.isEmpty()) {
+        	return classifiersOfThisID.iterator().next();
+        } else return null;
     }
 
     /**
@@ -905,9 +872,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         Set<Object> classifiers = instanceMap.keySet();
         for (Object classifierElement : classifiers) {
             if (isDynamicModel) {
-                Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get((String) classifierElement);
-                if (!classifiersOfThisID.isEmpty())
-                    result.add((EClass) classifiersOfThisID.iterator().next());
+                final EClassifier knownClassifier = getKnownClassifier((String) classifierElement);
+                if (knownClassifier!=null && knownClassifier instanceof EClass)
+                    result.add((EClass) knownClassifier);
             }
             else {
                 result.add((EClass) classifierElement);

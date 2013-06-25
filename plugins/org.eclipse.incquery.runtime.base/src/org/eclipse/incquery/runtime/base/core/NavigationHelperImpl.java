@@ -207,7 +207,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
         for (EAttribute attr : attributes) {
-            Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(attr) : attr);
+            Object feature = contentAdapter.toKey(attr);
             if (valMap.get(feature) != null) {
                 for (EObject holder : valMap.get(feature)) {
                     retSet.add(new NavigationHelperSetting(attr, holder, value));
@@ -223,7 +223,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(attribute) : attribute);
+        Object feature = contentAdapter.toKey(attribute);
         if (valMap.get(feature) == null) {
         	contentAdapter.maintainMetamodel(attribute);
             return Collections.emptySet();
@@ -285,7 +285,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
 
         for (EReference ref : references) {
-            Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(ref) : ref);
+            Object feature = contentAdapter.toKey(ref);
             if (valMap.get(feature) != null) {
                 for (EObject source : valMap.get(feature)) {
                     retSet.add(new NavigationHelperSetting(ref, source, target));
@@ -300,7 +300,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> getInverseReferences(EObject target, EReference reference) {
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(reference) : reference);
+        Object feature = contentAdapter.toKey(reference);
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
         if (valMap.get(feature) == null) {
         	contentAdapter.maintainMetamodel(reference);           	        	
@@ -319,7 +319,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature _feature) {
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
+        Object feature = contentAdapter.toKey(_feature);
         final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, feature);
         if (valSet == null) {
         	contentAdapter.maintainMetamodel(_feature);           	
@@ -331,7 +331,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     @Override
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature _feature) {
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
+        Object feature = contentAdapter.toKey(_feature);
     	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(feature);
         if (valMap == null) {
         	contentAdapter.maintainMetamodel(_feature);           	
@@ -377,7 +377,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> findByFeatureValue(Object value, EStructuralFeature _feature) {
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
+        Object feature = contentAdapter.toKey(_feature);
         Set<EObject> retSet = new HashSet<EObject>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
         if (valMap.get(feature) != null) {
@@ -390,7 +390,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> getHoldersOfFeature(EStructuralFeature _feature) {
-        Object feature = (contentAdapter.isDynamicModel() ? NavigationHelperContentAdapter.getUniqueIdentifier(_feature) : _feature);
+        Object feature = contentAdapter.toKey(_feature);
         Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
         if (holders == null) {
         	contentAdapter.maintainMetamodel(_feature);           	
@@ -690,7 +690,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedFeatures.removeAll(features);
             delayedFeatures.removeAll(features);
             for (EStructuralFeature f : features) {
-                contentAdapter.getValueToFeatureToHolderMap().column(NavigationHelperContentAdapter.getUniqueIdentifier(f)).clear();
+                contentAdapter.getValueToFeatureToHolderMap().column(contentAdapter.toKey(f)).clear();
             }
         }
     }
