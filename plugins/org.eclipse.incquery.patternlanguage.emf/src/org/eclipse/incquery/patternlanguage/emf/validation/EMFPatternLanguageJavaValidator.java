@@ -80,7 +80,7 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
-    private final class SamePackageUri implements Predicate<PackageImport> {
+    private final static class SamePackageUri implements Predicate<PackageImport> {
         private final String nsUri;
 
         private SamePackageUri(String nsUri) {

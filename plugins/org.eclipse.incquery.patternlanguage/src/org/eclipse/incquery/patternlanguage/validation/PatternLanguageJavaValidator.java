@@ -393,11 +393,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    private void reportInvalidPackage(String packageDecl) {
-        error(String.format("The declared package '%s' does not match the container package", packageDecl),
-                PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
-    }
-
     @Check
     public void checkReturnTypeOfCheckConstraints(CheckConstraint checkConstraint) {
         XExpression xExpression = checkConstraint.getExpression();
