@@ -24,10 +24,10 @@ public final class Lifecycles {
             if(!useDisappear) {
                 return DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
             } else {
-                return DefaultActivationLifeCycle.DEFAULT_NO_DISAPPEAR;
+                return DefaultActivationLifeCycle.DEFAULT_NO_UPDATE;
             }
-        } else if(useDisappear) {
-            return DefaultActivationLifeCycle.DEFAULT_NO_UPDATE;
+        } else if(!useDisappear) {
+            return DefaultActivationLifeCycle.DEFAULT_NO_DISAPPEAR;
         }
         return DefaultActivationLifeCycle.DEFAULT;
     }
