@@ -176,7 +176,6 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             eClass = (EClass) EcoreUtil.resolve(eClass, source);
         }
 
-        store.maintainMetamodel(eClass); // TODO necessary?
         final Object classKey = toKey(eClass);
 		if (observesClass(classKey)) {
             if (isInsertion) {

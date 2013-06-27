@@ -93,7 +93,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // Field variable because it is needed for collision detection. Used for all EStructuralFeatures whose instances were encountered at least once.
     private Set<EStructuralFeature> knownFeatures = new HashSet<EStructuralFeature>();
 
-    // TODO
     // (EClass or String ID) -> all subtypes in knownClasses
     private Map<Object, Set<Object>> subTypeMap = new HashMap<Object, Set<Object>>();
     // (EClass or String ID) -> all supertypes in knownClasses
@@ -526,18 +525,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // END ********* DataTypeMap *********
     
-    /**
-     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision 
-     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the 
-     * elements in the passed {@link Collection}.
-     * 
-     * @param classifiers the collection of classifiers
-     */
-    protected <T extends EClassifier> void maintainMetamodel(Collection<T> classifiers) {
-        for (T classifier : classifiers) {
-            maintainMetamodel(classifier);
-        }
-    }
+//    /**
+//     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision 
+//     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the 
+//     * elements in the passed {@link Collection}.
+//     * 
+//     * @param classifiers the collection of classifiers
+//     */
+//    protected <T extends EClassifier> void maintainMetamodel(Collection<T> classifiers) {
+//        for (T classifier : classifiers) {
+//            maintainMetamodel(classifier);
+//        }
+//    }
     
     /**
      * Checks the {@link EStructuralFeature}'s source and target {@link EPackage} for NsURI collision.
@@ -907,15 +906,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      */
     public Set<EClass> getAllCurrentClasses() {
         Set<EClass> result = Sets.newHashSet();
-        Set<Object> classifiers = instanceMap.keySet();
-        for (Object classifierElement : classifiers) {
+        Set<Object> classifierKeys = instanceMap.keySet();
+        for (Object classifierKey : classifierKeys) {
             if (isDynamicModel) {
-                final EClassifier knownClassifier = getKnownClassifier((String) classifierElement);
+                final EClassifier knownClassifier = getKnownClassifier((String) classifierKey);
                 if (knownClassifier!=null && knownClassifier instanceof EClass)
                     result.add((EClass) knownClassifier);
             }
             else {
-                result.add((EClass) classifierElement);
+                result.add((EClass) classifierKey);
             }
         
         }
