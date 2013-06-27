@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -34,30 +33,30 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public static class ChangeVisitor extends NavigationHelperVisitor {
         // local copies to save actual state, in case visitor has to be saved for later due unresolvable proxies
         private final boolean wildcardMode;
-        private final Set<EClass> allObservedClasses;
-        private final Set<EDataType> observedDataTypes;
-        private final Set<EStructuralFeature> observedFeatures;
+        private final Set<Object> allObservedClasses;
+        private final Set<Object> observedDataTypes;
+        private final Set<Object> observedFeatures;
 
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
             super(navigationHelper, isInsertion, false);
             wildcardMode = navigationHelper.isInWildcardMode();
-            allObservedClasses = navigationHelper.getAllObservedClasses(); //new HashSet<EClass>();
-            observedDataTypes = navigationHelper.getObservedDataTypes(); //new HashSet<EDataType>();
-            observedFeatures = navigationHelper.getObservedFeatures(); //new HashSet<EStructuralFeature>();
+            allObservedClasses = navigationHelper.getAllObservedClassesInternal(); //new HashSet<EClass>();
+            observedDataTypes = navigationHelper.getObservedDataTypesInternal(); //new HashSet<EDataType>();
+            observedFeatures = navigationHelper.getObservedFeaturesInternal(); //new HashSet<EStructuralFeature>();
         }
 
         @Override
-        protected boolean observesClass(EClass eClass) {
+        protected boolean observesClass(Object eClass) {
             return wildcardMode || allObservedClasses.contains(eClass);
         }
 
         @Override
-        protected boolean observesDataType(EDataType type) {
+        protected boolean observesDataType(Object type) {
             return wildcardMode || observedDataTypes.contains(type);
         }
 
         @Override
-        protected boolean observesFeature(EStructuralFeature feature) {
+        protected boolean observesFeature(Object feature) {
             return wildcardMode || observedFeatures.contains(feature);
         }
     }
@@ -67,49 +66,50 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
      */
     public static class TraversingVisitor extends NavigationHelperVisitor {
         private final boolean wildcardMode;
-        Set<EStructuralFeature> features;
-        Set<EClass> newClasses;
-        Set<EClass> oldClasses; // if decends from an old class, no need to add!
-        Map<EClass, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
-        Set<EDataType> dataTypes;
+        Set<Object> features;
+        Set<Object> newClasses;
+        Set<Object> oldClasses; // if decends from an old class, no need to add!
+        Map<Object, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
+        Set<Object> dataTypes;
 
-        public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<EStructuralFeature> features,
-                Set<EClass> newClasses, Set<EClass> oldClasses, Set<EDataType> dataTypes) {
+        public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<Object> features,
+                Set<Object> newClasses, Set<Object> oldClasses, Set<Object> dataTypes) {
             super(navigationHelper, true, true);
             wildcardMode = navigationHelper.isInWildcardMode();
             this.features = features;
             this.newClasses = newClasses;
             this.oldClasses = oldClasses;
-            this.classObservationMap = new HashMap<EClass, Boolean>();
+            this.classObservationMap = new HashMap<Object, Boolean>();
             this.dataTypes = dataTypes;
         }
 
         @Override
-        protected boolean observesClass(EClass eClass) {
+        protected boolean observesClass(Object eClass) {
             if (navigationHelper.isInWildcardMode()) {
                 return true;
             }
             Boolean observed = classObservationMap.get(eClass);
             if (observed == null) {
-                final EList<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
+                final Set<Object> superTypes = super.store.getSuperTypeMap().get(eClass);
+				final Set<Object> theSuperTypes = superTypes == null ? Collections.emptySet() : superTypes;
                 final boolean overApprox = newClasses.contains(eClass)
-                        || newClasses.contains(NavigationHelperContentAdapter.EOBJECT_CLASS)
-                        || !Collections.disjoint(eAllSuperTypes, newClasses);
+                        || newClasses.contains(super.store.getEObjectClassKey())
+                        || !Collections.disjoint(theSuperTypes, newClasses);
                 observed = overApprox && !oldClasses.contains(eClass)
-                        && !oldClasses.contains(NavigationHelperContentAdapter.EOBJECT_CLASS)
-                        && Collections.disjoint(eAllSuperTypes, oldClasses);
+                        && !oldClasses.contains(super.store.getEObjectClassKey())
+                        && Collections.disjoint(theSuperTypes, oldClasses);
                 classObservationMap.put(eClass, observed);
             }
             return observed;
         }
 
         @Override
-        protected boolean observesDataType(EDataType type) {
+        protected boolean observesDataType(Object type) {
             return wildcardMode || dataTypes.contains(type);
         }
 
         @Override
-        protected boolean observesFeature(EStructuralFeature feature) {
+        protected boolean observesFeature(Object feature) {
             return wildcardMode || features.contains(feature);
         }
 
@@ -140,10 +140,10 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
     @Override
     public boolean pruneFeature(EStructuralFeature feature) {
-        if (observesFeature(feature)) {
+        if (observesFeature(toKey(feature))) {
             return false;
         }
-        if (feature instanceof EAttribute && observesDataType(((EAttribute) feature).getEAttributeType())) {
+        if (feature instanceof EAttribute && observesDataType(toKey(((EAttribute) feature).getEAttributeType()))) {
             return false;
         }
         if (isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference
@@ -153,11 +153,21 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         return true;
     }
 
-    protected abstract boolean observesFeature(EStructuralFeature feature);
 
-    protected abstract boolean observesDataType(EDataType type);
+    /**
+     * @param feature key of feature (EStructuralFeature or String id)
+     */
+    protected abstract boolean observesFeature(Object feature);
 
-    protected abstract boolean observesClass(EClass eClass);
+    /**
+     * @param feature key of data type (EDatatype or String id)
+     */
+    protected abstract boolean observesDataType(Object type);
+
+    /**
+     * @param feature key of class (EClass or String id)
+     */
+    protected abstract boolean observesClass(Object eClass);
 
     @Override
     public void visitElement(EObject source) {
@@ -166,24 +176,27 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             eClass = (EClass) EcoreUtil.resolve(eClass, source);
         }
 
-        store.maintainMetamodel(eClass);
-        if (observesClass(eClass)) {
+        store.maintainMetamodel(eClass); // TODO necessary?
+        final Object classKey = toKey(eClass);
+		if (observesClass(classKey)) {
             if (isInsertion) {
-                store.insertIntoInstanceSet(eClass, source);
+                store.insertIntoInstanceSet(classKey, source);
             } else {
-                store.removeFromInstanceSet(eClass, source);
+                store.removeFromInstanceSet(classKey, source);
             }
         }
     }
 
+
     @Override
     public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        final EDataType eAttributeType = feature.getEAttributeType();
-        if (observesFeature(feature)) {
+    	Object featureKey = toKey(feature);
+        final Object eAttributeType = toKey(feature.getEAttributeType());
+        if (observesFeature(featureKey)) {
             if (isInsertion) {
-                store.insertFeatureTuple(feature, target, source);
+                store.insertFeatureTuple(featureKey, target, source);
             } else {
-                store.removeFeatureTuple(feature, target, source);
+                store.removeFeatureTuple(featureKey, target, source);
             }
         }
         if (observesDataType(eAttributeType)) {
@@ -209,11 +222,12 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     };
 
     private void visitReference(EObject source, EReference feature, EObject target) {
-        if (observesFeature(feature)) {
+       Object featureKey = toKey(feature);
+       if (observesFeature(featureKey)) {
             if (isInsertion) {
-                store.insertFeatureTuple(feature, target, source);
+                store.insertFeatureTuple(featureKey, target, source);
             } else {
-                store.removeFeatureTuple(feature, target, source);
+                store.removeFeatureTuple(featureKey, target, source);
             }
         }
     }
@@ -232,4 +246,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public boolean forceProxyResolution() {
         return isInsertion;
     }
+    
+	protected Object toKey(EStructuralFeature feature) {
+		return store.toKey(feature);
+	}
+	protected Object toKey(EClassifier eClassifier) {
+		return store.toKey(eClassifier);
+	}
 }
