@@ -41,6 +41,9 @@ class PatternGroupClassInferrer {
 	@Inject extension JavadocInferrer
 	
 	def inferPatternGroup(PatternModel model) {
+		if (model.patterns.size == 0) {
+			return null
+		}
 		val groupClass = model.toClass(model.groupClassName) [
 			it.packageName = model.packageName
 			it.final = true
