@@ -223,10 +223,6 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>xtend</id>
-			<url>http://build.eclipse.org/common/xtend/maven/</url>
-		</repository>
-		<repository>
 			<id>fornax.repository</id>
 			<name>Fornax Repository</name>
 			<url>http://www.fornax-platform.org/m2/repository</url>
@@ -236,9 +232,7 @@
 		<pluginRepository>
 			<id>fornax.plugin.repository</id>
 			<name>Fornax Plugin Repository</name>
-			<url>
-			http://www.fornax-platform.org/m2/repository
-		</url>
+			<url>http://www.fornax-platform.org/m2/repository</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
