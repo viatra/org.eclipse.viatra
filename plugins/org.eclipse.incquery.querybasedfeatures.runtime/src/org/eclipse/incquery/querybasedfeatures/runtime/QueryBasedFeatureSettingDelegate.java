@@ -86,7 +86,8 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             throw new IllegalStateException("Engine preparation failed", e);
         }
         
-        QueryBasedFeature queryBasedFeature = queryBasedFeatures.get(engine).get();
+        WeakReference<QueryBasedFeature> weakReference = queryBasedFeatures.get(engine);
+        QueryBasedFeature queryBasedFeature = weakReference == null ? null : weakReference.get();
         if(queryBasedFeature == null) {
             if(eStructuralFeature.isMany()) {
                 queryBasedFeature  = QueryBasedFeatures.newMultiValueFeatue(eStructuralFeature, true);
@@ -104,8 +105,10 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
                 IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification
                         .getMatcher(engine);
                 List<String> parameterNames = matcher.getParameterNames();
-                queryBasedFeature.initialize(matcher, parameterNames.get(0), parameterNames.get(1));
-                queryBasedFeature.startMonitoring();
+                if (!queryBasedFeature.isInitialized()) {
+                    queryBasedFeature.initialize(matcher, parameterNames.get(0), parameterNames.get(1));
+                    queryBasedFeature.startMonitoring();
+                }
             } catch (IncQueryException e) {
                 IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
             }
