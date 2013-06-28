@@ -12,6 +12,7 @@
 package org.eclipse.incquery.validation.tooling
 
 import com.google.inject.Inject
+import org.eclipse.core.runtime.Path
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
@@ -29,10 +30,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.xbase.lib.Pair
 
-import static org.eclipse.incquery.validation.tooling.ValidationGenerator.*
-
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import org.eclipse.core.runtime.Path
 
 class ValidationGenerator //extends DatabindingGenerator 
 implements IGenerationFragment {

@@ -910,7 +910,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         for (Object classifierKey : classifierKeys) {
             if (isDynamicModel) {
                 final EClassifier knownClassifier = getKnownClassifier((String) classifierKey);
-                if (knownClassifier!=null && knownClassifier instanceof EClass)
+                if (knownClassifier instanceof EClass)
                     result.add((EClass) knownClassifier);
             }
             else {

@@ -96,6 +96,7 @@ public class PatternSanitizer {
             if (current == null) {
                 inadmissible.add(current);
                 logger.error("Null pattern value");
+                continue;
             }
 
             final String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(current);
@@ -104,15 +105,10 @@ public class PatternSanitizer {
             if (duplicate) {
                 inadmissible.add(current);
                 logger.error("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
+                continue;
             } else {
                 newPatternsByName.put(fullyQualifiedName, current);
             }
-
-            final boolean validationPassed = true; // validator == null || validator.validate(current, errorOnlyLogger);
-            if (!validationPassed) {
-                inadmissible.add(current);
-            }
-
         }
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
