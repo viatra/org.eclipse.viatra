@@ -32,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Inject;
@@ -121,7 +122,9 @@ public class TableViewerUtil {
                 Variable var = pattern.getParameters().get(i);
                 String name = var.getName();
                 JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-                String clazz = (ref == null) ? "" : ref.getType().getQualifiedName();
+                // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+                String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
+                        .getQualifiedName();
                 input[i] = new MatcherConfiguration(name, clazz, filter[i]);
             }
             viewer.setInput(input);
