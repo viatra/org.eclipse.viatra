@@ -108,7 +108,12 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    doFinish(containerName, fileName, packageName, patternName, imports, parameters, monitor);
+                	monitor.beginTask("Creating " + fileName, 1);
+                    IFile file = createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
+                    BasicNewResourceWizard.selectAndReveal(file,
+        					workbench.getActiveWorkbenchWindow());
+                    IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
+                    monitor.worked(1);
                 } catch (Exception e) {
                     throw new InvocationTargetException(e);
                 } finally {
@@ -117,17 +122,9 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
             }
         };
 		try {
-			getContainer().run(true, false, op);
-			IFile file = null;
-			BasicNewResourceWizard.selectAndReveal(file,
-					workbench.getActiveWorkbenchWindow());
-			do {
-				file = (IFile) root.findMember(filePath);
-				if (file == null) Thread.sleep(50);
-			} while (file == null);
-			IDE.openEditor(workbench.getActiveWorkbenchWindow().getActivePage(), file, true);
+			getContainer().run(false, false, op);
 		} catch (InterruptedException e) {
-            // This is never thrown as of false cancellable parameter of getContainer().run
+            // This is never thrown as of false cancelable parameter of getContainer().run
             return false;
         } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();
@@ -135,18 +132,8 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
                     "Cannot create Query Definition file: " + realException.getMessage(), realException);
             MessageDialog.openError(getShell(), "Error", realException.getMessage());
             return false;
-        } catch (PartInitException e) {
-            IncQueryGUIPlugin.getDefault().logException("Cannot open editor: " + e.getMessage(), e);
-            MessageDialog.openError(getShell(), "Error", e.getMessage());
         }
         return true;
-    }
-
-    private void doFinish(String containerName, String fileName, String packageName, String patternName,
-            List<EPackage> imports, List<ObjectParameter> parameters, IProgressMonitor monitor) {
-        monitor.beginTask("Creating " + fileName, 1);
-        createEiqFile(containerName, fileName, packageName, patternName, imports, parameters);
-        monitor.worked(1);
     }
 
     @Override
@@ -155,12 +142,13 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
         this.workbench = workbench;
     }
 
-    private void createEiqFile(String containerName, String fileName, String packageName, String patternName,
-            List<EPackage> imports, List<ObjectParameter> parameters) {
+    private IFile createEiqFile(String containerName, String fileName, String packageName, String patternName,
+            List<EPackage> imports, List<ObjectParameter> parameters) throws IOException, CoreException {
         IResource containerResource = root.findMember(new Path(containerName));
         ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
 
         filePath = containerResource.getFullPath().append(packageName + "/" + fileName);
+        IFile file = root.getFile(filePath);
         String fullPath = filePath.toString();
 
         URI fileURI = URI.createPlatformResourceURI(fullPath, false);
@@ -204,13 +192,8 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
         }
         resource.getContents().add(pm);
 
-        try {
-            resource.save(Collections.EMPTY_MAP);
-            containerResource.refreshLocal(0, new NullProgressMonitor());
-        } catch (IOException e) {
-            IncQueryGUIPlugin.getDefault().logException("Resource could not be saved", e);
-        } catch (CoreException e) {
-        	IncQueryGUIPlugin.getDefault().logException("Resource could not be saved", e);
-		}
+        resource.save(Collections.EMPTY_MAP);
+        containerResource.refreshLocal(0, new NullProgressMonitor());
+        return file;
     }
 }
