@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.7.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.sdk.feature.source_0.7.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.7.0.qualifier">
+   <feature url="features/org.eclipse.incquery.sdk.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.7.1.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
