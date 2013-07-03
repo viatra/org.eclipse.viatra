@@ -163,7 +163,9 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
             for (IContributionItem item : getDropdownMenuContributions(tab)) {
                 mmgr.add(item);
             }
-            mmgr.update(true);
+            mmgr.updateAll(true);
+            
+            getViewSite().getActionBars().updateActionBars();
         }
     }
     
