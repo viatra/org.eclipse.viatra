@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
 	<name>EMF-IncQuery BPM Example</name>
-	<version>0.7.0-SNAPSHOT</version>
+	<version>0.7.1-SNAPSHOT</version>
 	<url>http://incquery.net</url>
 	<parent>
 		<artifactId>org.eclipse.incquery.parent</artifactId>
-		<version>0.7.0-SNAPSHOT</version>
+		<version>0.7.1-SNAPSHOT</version>
 		<groupId>org.eclipse.incquery</groupId>
 	</parent>
 	<packaging>pom</packaging>
@@ -34,7 +34,7 @@
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
 							<artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
-							<version>0.7.0-SNAPSHOT</version>
+							<version>${project.version}</version>
 							<classifier>bpmtest</classifier>
 						</artifact>
 					</target>
