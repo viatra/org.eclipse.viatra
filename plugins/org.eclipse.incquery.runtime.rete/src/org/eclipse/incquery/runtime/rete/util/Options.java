@@ -66,5 +66,20 @@ public class Options {
     public final static BuilderMethod builderMethod =
     // BuilderMethod.PSYSTEM_BASIC_LINEAR;
     BuilderMethod.PSYSTEM_QUASITREE;
+    
+    public enum FunctionalDependencyOption {
+    	OFF,
+    	OPPORTUNISTIC
+    }
+    public final static FunctionalDependencyOption functionalDependencyOption = 
+    		FunctionalDependencyOption.OPPORTUNISTIC;
+    
+    public enum StubTrimOption {
+    	OFF,
+    	OPPORTUNISTIC
+    }
+    public final static StubTrimOption stubTrimOption = 
+    		StubTrimOption.OPPORTUNISTIC;
+
 
 }

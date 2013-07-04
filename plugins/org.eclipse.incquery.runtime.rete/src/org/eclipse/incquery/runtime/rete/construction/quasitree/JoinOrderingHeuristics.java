@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.rete.construction.quasitree;
 
 import java.util.Comparator;
 
+import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
 
 /**
@@ -34,7 +35,11 @@ public class JoinOrderingHeuristics<PatternDescription, StubHandle, Collector> i
             protected void doCompare() {
                 swallowBoolean(true && consider(preferTrue(a.isTrivial(), b.isTrivial()))
                         && consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
-                        && consider(preferTrue(a.isHeath(), b.isHeath()))
+                        && consider( 
+                        		Options.functionalDependencyOption == Options.FunctionalDependencyOption.OFF ?
+                        		dontCare() :
+                        		preferTrue(a.isHeath(), b.isHeath())
+                        	)
                         && consider(preferFalse(a.isDescartes(), b.isDescartes()))
 
                         // TODO main heuristic decisions

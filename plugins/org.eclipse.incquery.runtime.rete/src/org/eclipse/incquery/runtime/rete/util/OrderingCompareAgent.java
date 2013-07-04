@@ -44,7 +44,7 @@ public abstract class OrderingCompareAgent<T> {
     }
 
     // COMPARISON HELPERS
-    protected boolean unknown() {
+    protected boolean isUnknown() {
         return result == 0;
     }
 
@@ -52,9 +52,9 @@ public abstract class OrderingCompareAgent<T> {
      * @pre result == 0
      */
     protected boolean consider(int partial) {
-        if (unknown())
+        if (isUnknown())
             result = partial;
-        return unknown();
+        return isUnknown();
     }
 
     protected boolean swallowBoolean(boolean x) {
@@ -62,6 +62,10 @@ public abstract class OrderingCompareAgent<T> {
     }
 
     // PREFERENCE FUNCTIONS
+    protected static int dontCare() {
+        return 0;
+    }
+
     protected static int preferTrue(boolean b1, boolean b2) {
         return (b1 ^ b2) ? (b1 ? -1 : +1) : 0;
     }

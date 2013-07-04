@@ -139,7 +139,8 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
         private void admitStub(Stub<StubHandle> stub) throws RetePatternBuildException {
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
-        	if (!stub.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+        	if (Options.stubTrimOption != Options.StubTrimOption.OFF &&
+        			!stub.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
         		final Stub<StubHandle> trimmed = BuildHelper.trimUnneccessaryVariables(buildable, stub, true);
 				stub = trimmed;
         	}        	
