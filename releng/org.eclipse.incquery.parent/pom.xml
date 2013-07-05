@@ -82,7 +82,7 @@
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.4.2</xtend.compiler.version>
 		<!-- Sonar -->
-		<sonar.version>2.14</sonar.version>
+		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
@@ -107,7 +107,7 @@
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
 							<artifactId>org.eclipse.incquery.update</artifactId>
-							<version>0.7.0-SNAPSHOT</version>
+							<version>${project.version}</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
 					</target>
@@ -233,10 +233,6 @@
 			<id>fornax.plugin.repository</id>
 			<name>Fornax Plugin Repository</name>
 			<url>http://www.fornax-platform.org/m2/repository</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<scm>
