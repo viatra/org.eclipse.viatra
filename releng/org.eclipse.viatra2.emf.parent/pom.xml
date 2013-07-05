@@ -4,9 +4,9 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.viatra2</groupId>
-	<artifactId>org.eclipse.viatra2.parent</artifactId>
-	<name>EMF-IncQuery</name>
-	<url>http://eclipse.org/incquery</url>
+	<artifactId>org.eclipse.viatra2.emf.parent</artifactId>
+	<name>VIATRA2 EMF Support</name>
+	<url>http://eclipse.org/viatra2</url>
 	<version>0.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
