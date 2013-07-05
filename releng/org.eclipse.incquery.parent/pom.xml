@@ -107,7 +107,8 @@
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
 							<artifactId>org.eclipse.incquery.update</artifactId>
-							<version>${project.version}</version>
+							<!-- <version>${project.version}</version> Does not work because of the licence-->
+							<version>0.7.0-SNAPSHOT</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
 					</target>
