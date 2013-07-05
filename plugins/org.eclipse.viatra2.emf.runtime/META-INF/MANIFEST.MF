@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA2 EMF Runtime
-Bundle-SymbolicName: org.ecipse.viatra2.emf.runtime
+Bundle-SymbolicName: org.eclipse.viatra2.emf.runtime
 Bundle-Version: 0.7.0.qualifier
 Bundle-Vendor: Eclipse VIATRA2 Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
