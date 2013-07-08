@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
@@ -43,6 +44,7 @@ import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter.MatchList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
+import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
@@ -96,7 +98,8 @@ public class ViewerDataModel {
         logger = engine.getLogger();
         ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
-        resolver = new FixedPriorityConflictResolver();
+        ruleEngine.getLogger().setLevel(Level.DEBUG);
+        resolver = new ViewersConflictResolver();
         ruleEngine.setConflictResolver(resolver);
     }
 
