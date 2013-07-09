@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -18,241 +20,303 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
+ * <p>
+ * A Viewer state represents a stateful data model for an IncQuery Viewer. The
+ * state is capable of either returning observable lists of its content, and is
+ * also capable of sending of sending state change notifications based to
+ * {@link IViewerStateListener} implementations.
+ * </p>
+ * 
+ * <p>
+ * A Viewer can be initialized directly with a set of patterns and model, or a
+ * {@link ViewerDataModel} can be used to prepare and share such data between
+ * instances.
+ * </p>
+ * 
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public final class ViewerState {
 
-    private IObservableList itemList;
-    private IObservableList edgeList;
+	private IObservableList itemList;
+	private IObservableList edgeList;
 
-    private IObservableList containmentList;
-    private Multimap<Item, Item> childrenMap;
-    private Map<Item, Item> parentMap;
-    
-    private ViewerDataModel model;
+	private IObservableList containmentList;
 
-    public ViewerDataModel getModel() {
+	private Multimap<Object, Item> itemMap;
+	private Multimap<Item, Item> childrenMap;
+	private Map<Item, Item> parentMap;
+
+	private ViewerDataModel model;
+
+	public ViewerDataModel getModel() {
 		return model;
 	}
 
 	private ListenerList stateListeners = new ListenerList();
 
+	public enum ViewerStateFeature {
+		EDGE, CONTAINMENT
+	}
 
-    public enum ViewerStateFeature {
-        EDGE, CONTAINMENT
-    }
+	private Multimap<Object, Item> initializeItemMap() {
+		Map<Object, Collection<Item>> map = Maps.newHashMap();
+		return Multimaps.newListMultimap(map, new Supplier<List<Item>>() {
 
-    private IListChangeListener itemListener = new IListChangeListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<Item> get() {
+				ArrayList<Item> list = Lists.newArrayList();
+				return new WritableList(list, Item.class);
+			}
 
-        @Override
-        public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                Item item = (Item) entry.getElement();
-                if (entry.isAddition()) {
-                    for (Object listener : stateListeners.getListeners()) {
-                        ((IViewerStateListener) listener).itemAppeared(item);
-                    }
-                } else {
-                    for (Object listener : stateListeners.getListeners()) {
-                        ((IViewerStateListener) listener).itemDisappeared(item);
-                    }
-                }
-            }
-        }
-    };
+		});
+	}
 
-    private IListChangeListener edgeListener = new IListChangeListener() {
+	private IListChangeListener itemListener = new IListChangeListener() {
 
-        @Override
-        public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                Edge edge = (Edge) entry.getElement();
-                if (entry.isAddition()) {
-                    for (Object listener : stateListeners.getListeners()) {
-                        ((IViewerStateListener) listener).edgeAppeared(edge);
-                    }
-                } else {
-                    for (Object listener : stateListeners.getListeners()) {
-                        ((IViewerStateListener) listener).edgeDisappeared(edge);
-                    }
-                }
-            }
-        }
-    };
+		@Override
+		public void handleListChange(ListChangeEvent event) {
+			ListDiff diff = event.diff;
+			for (ListDiffEntry entry : diff.getDifferences()) {
+				Item item = (Item) entry.getElement();
+				if (entry.isAddition()) {
+					for (Object listener : stateListeners.getListeners()) {
+						((IViewerStateListener) listener).itemAppeared(item);
+					}
+				} else {
+					for (Object listener : stateListeners.getListeners()) {
+						((IViewerStateListener) listener).itemDisappeared(item);
+					}
+				}
+			}
+		}
+	};
 
-    private IListChangeListener containmentListener = new IListChangeListener() {
+	private IListChangeListener edgeListener = new IListChangeListener() {
 
-        @Override
-        public void handleListChange(ListChangeEvent event) {
-            ListDiff diff = event.diff;
-            for (ListDiffEntry entry : diff.getDifferences()) {
-                Containment edge = (Containment) entry.getElement();
-                if (entry.isAddition()) {
-                    containmentAppeared(edge);
-                } else {
-                    containmentDisappeared(edge);
-                }
-            }
+		@Override
+		public void handleListChange(ListChangeEvent event) {
+			ListDiff diff = event.diff;
+			for (ListDiffEntry entry : diff.getDifferences()) {
+				Edge edge = (Edge) entry.getElement();
+				if (entry.isAddition()) {
+					for (Object listener : stateListeners.getListeners()) {
+						((IViewerStateListener) listener).edgeAppeared(edge);
+					}
+				} else {
+					for (Object listener : stateListeners.getListeners()) {
+						((IViewerStateListener) listener).edgeDisappeared(edge);
+					}
+				}
+			}
+		}
+	};
 
-        }
-    };
+	private IListChangeListener containmentListener = new IListChangeListener() {
 
-    public ViewerState(ViewerDataModel model, ViewerDataFilter filter, Collection<ViewerStateFeature> features) {
-    	this.model = model;
-        initializeItemList(model.initializeObservableItemList(filter));
-        for (ViewerStateFeature feature : features) {
-            switch (feature) {
-            case EDGE:
-                initializeEdgeList(model.initializeObservableEdgeList(filter));
-                break;
-            case CONTAINMENT:
-                initializeContainmentList(model.initializeObservableContainmentList(filter));
-            }
-        }
-    }
+		@Override
+		public void handleListChange(ListChangeEvent event) {
+			ListDiff diff = event.diff;
+			for (ListDiffEntry entry : diff.getDifferences()) {
+				Containment edge = (Containment) entry.getElement();
+				if (entry.isAddition()) {
+					containmentAppeared(edge);
+				} else {
+					containmentDisappeared(edge);
+				}
+			}
 
-    /*
-     * Item management
-     */
-    /**
-     * Returns the item stored in this Viewer State
-     * 
-     * @return
-     */
-    public IObservableList getItemList() {
-        return itemList;
-    }
+		}
+	};
 
-    private void initializeItemList(IObservableList itemList) {
-        if (this.itemList != null) {
-            removeItemListener(itemList);
-        }
-        this.itemList = itemList;
-        addItemListener(itemList);
-    }
+	public ViewerState(ResourceSet set, IncQueryEngine engine,
+			Collection<Pattern> patterns, ViewerDataFilter filter,
+			Collection<ViewerStateFeature> features) {
+		this.model = new ViewerDataModel(set, patterns, engine);
+		initializeViewerState(model, filter, features);
+	}
 
-    private void addItemListener(IObservableList containmentList) {
-        containmentList.addListChangeListener(itemListener);
-    }
+	public ViewerState(ViewerDataModel model, ViewerDataFilter filter,
+			Collection<ViewerStateFeature> features) {
+		this.model = model;
+		initializeViewerState(model, filter, features);
+	}
 
-    private void removeItemListener(IObservableList oldContainmentList) {
-        oldContainmentList.removeListChangeListener(itemListener);
-    }
+	private void initializeViewerState(ViewerDataModel model,
+			ViewerDataFilter filter, Collection<ViewerStateFeature> features) {
+		itemMap = initializeItemMap();
+		initializeItemList(model.initializeObservableItemList(filter, itemMap));
+		for (ViewerStateFeature feature : features) {
+			switch (feature) {
+			case EDGE:
+				initializeEdgeList(model.initializeObservableEdgeList(filter,
+						itemMap));
+				break;
+			case CONTAINMENT:
+				initializeContainmentList(model
+						.initializeObservableContainmentList(filter, itemMap));
+			}
+		}
+	}
 
-    /*
-     * Edge management
-     */
+	/*
+	 * Item management
+	 */
+	/**
+	 * Returns the item stored in this Viewer State
+	 * 
+	 * @return
+	 */
+	public IObservableList getItemList() {
+		return itemList;
+	}
 
-    /**
-     * Returns the edges stored in this Viewer State
-     * 
-     * @return
-     */
-    public IObservableList getEdgeList() {
-        return edgeList;
-    }
+	private void initializeItemList(IObservableList itemList) {
+		if (this.itemList != null) {
+			removeItemListener(itemList);
+		}
+		this.itemList = itemList;
+		addItemListener(itemList);
+	}
 
-    private void initializeEdgeList(IObservableList edgeList) {
-        if (this.edgeList != null) {
-            removeEdgeListener(this.edgeList);
-        }
-        this.edgeList = edgeList;
-        addEdgeListener(edgeList);
-    }
+	private void addItemListener(IObservableList containmentList) {
+		containmentList.addListChangeListener(itemListener);
+	}
 
-    private void addEdgeListener(IObservableList edgeList) {
-        edgeList.addListChangeListener(edgeListener);
-    }
+	private void removeItemListener(IObservableList oldContainmentList) {
+		oldContainmentList.removeListChangeListener(itemListener);
+	}
 
-    private void removeEdgeListener(IObservableList oldEdgeList) {
-        oldEdgeList.removeListChangeListener(edgeListener);
-    }
+	/*
+	 * Edge management
+	 */
 
-    /*
-     * Containment management
-     */
+	/**
+	 * Returns the edges stored in this Viewer State
+	 * 
+	 * @return
+	 */
+	public IObservableList getEdgeList() {
+		return edgeList;
+	}
 
-    /**
-     * Returns the containments stored in this Viewer State
-     * 
-     * @return
-     */
-    public IObservableList getContainmentList() {
-        return containmentList;
-    }
+	private void initializeEdgeList(IObservableList edgeList) {
+		if (this.edgeList != null) {
+			removeEdgeListener(this.edgeList);
+		}
+		this.edgeList = edgeList;
+		addEdgeListener(edgeList);
+	}
 
-    public Collection<Item> getChildren(Item parent) {
-        return childrenMap.get(parent);
-    }
+	private void addEdgeListener(IObservableList edgeList) {
+		edgeList.addListChangeListener(edgeListener);
+	}
 
-    public Item getParent(Item child) {
-        return parentMap.get(child);
-    }
+	private void removeEdgeListener(IObservableList oldEdgeList) {
+		oldEdgeList.removeListChangeListener(edgeListener);
+	}
 
-    private void initializeContainmentList(IObservableList containmentList) {
-        if (this.containmentList != null) {
-            removeContainmentListener(this.containmentList);
-        }
-        this.containmentList = containmentList;
-        childrenMap = HashMultimap.create();
-        parentMap = Maps.newHashMap();
-        for (Object obj : containmentList) {
-            Containment containment = (Containment) obj;
-            containmentAppeared(containment);
-        }
-        addContainmentListener(containmentList);
-    }
+	/*
+	 * Containment management
+	 */
 
-    private void containmentAppeared(Containment containment) {
-        childrenMap.put(containment.getSource(), containment.getTarget());
-        parentMap.put(containment.getTarget(), containment.getSource());
-        for (Object listener : stateListeners.getListeners()) {
-            ((IViewerStateListener) listener).containmentAppeared(containment);
-        }
-    }
+	/**
+	 * Returns the containments stored in this Viewer State
+	 * 
+	 * @return
+	 */
+	public IObservableList getContainmentList() {
+		return containmentList;
+	}
 
-    private void containmentDisappeared(Containment containment) {
-        childrenMap.remove(containment.getSource(), containment.getTarget());
-        parentMap.remove(containment.getTarget());
-        for (Object listener : stateListeners.getListeners()) {
-            ((IViewerStateListener) listener).containmentDisappeared(containment);
-        }
-    }
+	public Collection<Item> getChildren(Item parent) {
+		return childrenMap.get(parent);
+	}
 
-    private void addContainmentListener(IObservableList oldContainmentList) {
-        oldContainmentList.addListChangeListener(containmentListener);
-    }
+	public Item getParent(Item child) {
+		return parentMap.get(child);
+	}
 
-    private void removeContainmentListener(IObservableList oldContainmentList) {
-        oldContainmentList.removeListChangeListener(containmentListener);
-    }
+	private void initializeContainmentList(IObservableList containmentList) {
+		if (this.containmentList != null) {
+			removeContainmentListener(this.containmentList);
+		}
+		this.containmentList = containmentList;
+		childrenMap = HashMultimap.create();
+		parentMap = Maps.newHashMap();
+		for (Object obj : containmentList) {
+			Containment containment = (Containment) obj;
+			containmentAppeared(containment);
+		}
+		addContainmentListener(containmentList);
+	}
 
-    /*
-     * Listener management
-     */
+	private void containmentAppeared(Containment containment) {
+		childrenMap.put(containment.getSource(), containment.getTarget());
+		parentMap.put(containment.getTarget(), containment.getSource());
+		for (Object listener : stateListeners.getListeners()) {
+			((IViewerStateListener) listener).containmentAppeared(containment);
+		}
+	}
 
-    /**
-     * Adds a new state listener to the Viewer State
-     */
-    public void addStateListener(IViewerStateListener listener) {
-        stateListeners.add(listener);
-    }
+	private void containmentDisappeared(Containment containment) {
+		childrenMap.remove(containment.getSource(), containment.getTarget());
+		parentMap.remove(containment.getTarget());
+		for (Object listener : stateListeners.getListeners()) {
+			((IViewerStateListener) listener)
+					.containmentDisappeared(containment);
+		}
+	}
 
-    /**
-     * Removes a state listener from the Viewer State
-     */
-    public void removeStateListener(IViewerStateListener listener) {
-        stateListeners.remove(listener);
-    }
+	private void addContainmentListener(IObservableList oldContainmentList) {
+		oldContainmentList.addListChangeListener(containmentListener);
+	}
+
+	private void removeContainmentListener(IObservableList oldContainmentList) {
+		oldContainmentList.removeListChangeListener(containmentListener);
+	}
+
+	/*
+	 * Listener management
+	 */
+
+	/**
+	 * Adds a new state listener to the Viewer State
+	 */
+	public void addStateListener(IViewerStateListener listener) {
+		stateListeners.add(listener);
+	}
+
+	/**
+	 * Removes a state listener from the Viewer State
+	 */
+	public void removeStateListener(IViewerStateListener listener) {
+		stateListeners.remove(listener);
+	}
+
+	/**
+	 * Exposes EObject -> Item* traceability information.
+	 * 
+	 * Access the list of Items mapped to an EObject.
+	 */
+	public Collection<Item> getItemsFor(EObject target) {
+		return itemMap.get(target);
+	}
 }

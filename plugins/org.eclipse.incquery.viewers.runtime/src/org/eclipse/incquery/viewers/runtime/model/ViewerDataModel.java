@@ -13,10 +13,8 @@ package org.eclipse.incquery.viewers.runtime.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
@@ -27,7 +25,6 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -46,11 +43,7 @@ import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 /**
@@ -60,14 +53,14 @@ import com.google.common.collect.Sets;
  * 
  */
 public class ViewerDataModel {
-    private static final int NODE_PRIORITY = 0;
-    private static final int EDGE_PRIORITY = 1;
+    private static final int NODE_PRIORITY = 1;
     private static final int CONTAINMENT_PRIORITY = 2;
+    private static final int EDGE_PRIORITY = 3;
     private IncQueryEngine engine;
     private Logger logger;
     private ResourceSet model;
     private Set<Pattern> patterns;
-    private Multimap<Object, Item> itemMap;
+    
     private RuleEngine ruleEngine;
     private FixedPriorityConflictResolver resolver;
 
@@ -94,28 +87,14 @@ public class ViewerDataModel {
         this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
-        itemMap = initializeItemMap();
         logger = engine.getLogger();
         ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
-        ruleEngine.getLogger().setLevel(Level.DEBUG);
         resolver = new ViewersConflictResolver();
         ruleEngine.setConflictResolver(resolver);
     }
 
-    private Multimap<Object,Item> initializeItemMap() {
-        Map<Object, Collection<Item>> map = Maps.newHashMap();
-        return Multimaps.newListMultimap(map, new Supplier<List<Item>>() {
 
-            @SuppressWarnings("unchecked")
-            @Override
-            public List<Item> get() {
-                ArrayList<Item> list = Lists.newArrayList();
-                return new WritableList(list, Item.class);
-            }
-            
-        });
-    }
 
     public IncQueryEngine getEngine() {
         return engine;
@@ -140,8 +119,8 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Item} elements representing the match results in the model.
      */
-    public IObservableList initializeObservableItemList() {
-        return initializeObservableItemList(ViewerDataFilter.UNFILTERED);
+    public IObservableList initializeObservableItemList(final Multimap<Object, Item> itemMap) {
+        return initializeObservableItemList(ViewerDataFilter.UNFILTERED, itemMap);
     }
 
     /**
@@ -153,8 +132,7 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Item} elements representing the match results in the model.
      */
-    public IObservableList initializeObservableItemList(ViewerDataFilter filter) {
-        itemMap = initializeItemMap();
+    public IObservableList initializeObservableItemList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
         List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
         final String annotationName = Item.ANNOTATION_ID;
         for (final Pattern nodePattern : getPatterns(annotationName)) {
@@ -214,8 +192,8 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
-    public MultiList initializeObservableEdgeList() {
-        return initializeObservableEdgeList(ViewerDataFilter.UNFILTERED);
+    public MultiList initializeObservableEdgeList(final Multimap<Object, Item> itemMap) {
+        return initializeObservableEdgeList(ViewerDataFilter.UNFILTERED, itemMap);
     }
 
     /**
@@ -229,7 +207,7 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
-    public MultiList initializeObservableEdgeList(ViewerDataFilter filter) {
+    public MultiList initializeObservableEdgeList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
         final String annotationName = Edge.ANNOTATION_ID;
         List<IObservableList> edgeListsObservable = new ArrayList<IObservableList>();
         for (final Pattern edgePattern : getPatterns(annotationName)) {
@@ -256,8 +234,8 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
-    public MultiList initializeObservableContainmentList() {
-        return initializeObservableContainmentList(ViewerDataFilter.UNFILTERED);
+    public MultiList initializeObservableContainmentList(final Multimap<Object, Item> itemMap) {
+        return initializeObservableContainmentList(ViewerDataFilter.UNFILTERED, itemMap);
     }
 
     /**
@@ -271,7 +249,7 @@ public class ViewerDataModel {
      * 
      * @return an observable list of {@link Edge} elements representing the match results in the model.
      */
-    public MultiList initializeObservableContainmentList(ViewerDataFilter filter) {
+    public MultiList initializeObservableContainmentList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
         final String annotationName = Containment.ANNOTATION_ID;
         List<IObservableList> containmentListsObservable = new ArrayList<IObservableList>();
         for (final Pattern containmentPattern : getPatterns(annotationName)) {
@@ -285,15 +263,6 @@ public class ViewerDataModel {
         }
         MultiList list = new MultiList(containmentListsObservable.toArray(new IObservableList[containmentListsObservable.size()]));
         return list;
-    }
-    
-    /**
-     * Exposes EObject -> Item* traceability information.
-     * 
-     * Access the list of Items mapped to an EObject.
-     */
-    public Collection<Item> getItemsFor(EObject target) {
-        return itemMap.get(target);
     }
 
 }

@@ -17,6 +17,7 @@ import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
+import org.eclipse.jface.viewers.AbstractListViewer;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -31,14 +32,31 @@ public class IncQueryGraphViewers {
     private IncQueryGraphViewers() {
     }
 
+    /**
+     * 
+     * @deprecated Use {@link #bind(GraphViewer, ViewerState)} where
+     *             {@link ViewerState} consists of the shared data between
+     *             various viewers.
+     */
     public static void bind(GraphViewer viewer, ViewerDataModel model) {
         bind(viewer, model, ViewerDataFilter.UNFILTERED);
     }
 
+    /**
+     * 
+	 * @deprecated Use {@link #bind(GraphViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
+	 *             various viewers.
+     */
     public static void bind(GraphViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-        viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
-        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE)));
+    	ViewerState state = new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE));
+        bind(viewer, state);
     }
+
+	public static void bind(GraphViewer viewer, ViewerState state) {
+		viewer.setContentProvider(new ZestContentProvider());
+        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
+		viewer.setInput(state);
+	}
 
 }

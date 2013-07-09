@@ -24,38 +24,76 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * 
  */
 public class IncQueryViewerSupport {
 
-    public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-        bind(viewer, model, ViewerDataFilter.UNFILTERED);
-    }
+	/**
+	 * 
+	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
+	 *             various viewers.
+	 */
+	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
+		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+	}
 
-    public static void bind(AbstractListViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-        if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
-            viewer.setContentProvider(new ListContentProvider());
-        }
-        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-            viewer.setLabelProvider(new QueryLabelProvider()); 
-        }
-        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.CONTAINMENT)));
-        viewer.refresh();
-    }
+	/**
+	 * 
+	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
+	 *             various viewers.
+	 */
+	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
+			ViewerDataFilter filter) {
+		bind(viewer,
+				new ViewerState(model, filter, ImmutableSet
+						.of(ViewerStateFeature.CONTAINMENT)));
+	}
 
-    public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
-        bind(viewer, model, ViewerDataFilter.UNFILTERED);
-    }
+	public static void bind(AbstractListViewer viewer, ViewerState state) {
+		if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
+			viewer.setContentProvider(new ListContentProvider());
+		}
+		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+			viewer.setLabelProvider(new QueryLabelProvider());
+		}
+		viewer.setInput(state);
+		viewer.refresh();
+	}
 
-    public static void bind(AbstractTreeViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-        if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
-            viewer.setContentProvider(new TreeContentProvider());
-        }
-        if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-            viewer.setLabelProvider(new QueryLabelProvider()); 
-        }
+	/**
+	 * 
+	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
+	 *             various viewers.
+	 */
+	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
+		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+	}
 
-        viewer.setInput(new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.CONTAINMENT)));
-        viewer.refresh();
-    }
+	/**
+	 * 
+	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
+	 *             various viewers.
+	 */
+	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
+			ViewerDataFilter filter) {
+		ViewerState state = new ViewerState(model, filter, ImmutableSet
+				.of(ViewerStateFeature.CONTAINMENT));
+		bind(viewer, state);
+	}
+
+	public static void bind(AbstractTreeViewer viewer, ViewerState state) {
+		if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
+			viewer.setContentProvider(new TreeContentProvider());
+		}
+		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
+			viewer.setLabelProvider(new QueryLabelProvider());
+		}
+
+		viewer.setInput(state);
+		viewer.refresh();
+	}
 }
