@@ -17,7 +17,6 @@ import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
-import org.eclipse.jface.viewers.AbstractListViewer;
 
 import com.google.common.collect.ImmutableSet;
 
