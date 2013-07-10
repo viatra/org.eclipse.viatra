@@ -57,8 +57,8 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
     private static final String FILE_NAME_ERROR = "File name must be specified!";
     private static final String FILE_NAME_NOT_VALID = "File name must be valid!";
     private static final String FILE_EXTENSION_ERROR = "File extension must be \"eiq\"!";
-    private static final String DEFAULT_PACKAGE_WARNING = "The use of default package is discouraged.";
-    private static final String PACKAGE_NAME_WARNING = "Only lower case package names supported.";
+    private static final String DEFAULT_PACKAGE_ERROR = "A non-empty Java package must be specified!";
+    private static final String PACKAGE_NAME_WARNING = "Only lower case Java package names supported.";
 
     public NewEiqFileWizardContainerConfigurationPage() {
         super(false, "eiq");
@@ -192,7 +192,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
 
     private IStatus validatePackageName(String text) {
         if (text == null || text.isEmpty()) {
-            return new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, DEFAULT_PACKAGE_WARNING);
+            return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, DEFAULT_PACKAGE_ERROR);
         }
         IJavaProject project = getJavaProject();
         if (project == null || !project.exists()) {
