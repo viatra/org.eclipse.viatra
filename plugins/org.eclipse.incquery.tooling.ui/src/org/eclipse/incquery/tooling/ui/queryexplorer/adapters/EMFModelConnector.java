@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
@@ -35,6 +36,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -86,7 +88,11 @@ public class EMFModelConnector implements IModelConnector {
         IStructuredSelection preparedSelection = prepareSelection(locationObjects);
         navigateToElements(key.getEditorPart(), preparedSelection);
         workbenchPage.bringToTop(key.getEditorPart());
-        //workbenchPage.activate(key.getEditorPart());
+        if (key.getEditorPart() instanceof ISelectionProvider) {
+			ISelectionProvider selectionProvider = (ISelectionProvider) key.getEditorPart();
+			selectionProvider.setSelection(preparedSelection);
+        	
+        }
         reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
 
@@ -103,19 +109,17 @@ public class EMFModelConnector implements IModelConnector {
                 IEditingDomainProvider editingDomainProvider = (IEditingDomainProvider) editorPart;
                 result = editingDomainProvider.getEditingDomain().getResourceSet();
             }
-        } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
-            if (editorPart instanceof ISelectionProvider) {
-                ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
-                if (selectionProvider.getSelection() instanceof TreeSelection) {
-                    Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
-                    if (object instanceof Resource) {
-                        result = (Resource) object;
-                    } else if (object instanceof EObject) {
-                        result = ((EObject) object).eResource();
-                    }
-                }
-            }
-        }
+        } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum) && editorPart instanceof ISelectionProvider) {
+		    ISelectionProvider selectionProvider = (ISelectionProvider) editorPart;
+		    if (selectionProvider.getSelection() instanceof TreeSelection) {
+		        Object object = ((TreeSelection) selectionProvider.getSelection()).getFirstElement();
+		        if (object instanceof Resource) {
+		            result = (Resource) object;
+		        } else if (object instanceof EObject) {
+		            result = ((EObject) object).eResource();
+		        }
+		    }
+		}
         return result;
     }
 
@@ -126,17 +130,17 @@ public class EMFModelConnector implements IModelConnector {
      * 
      */
     private void reflectiveSetSelection(IEditorPart editorPart, IStructuredSelection preparedSelection) {
-        try {
-            Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
-            if (m!=null) {
-                m.invoke(editorPart, preparedSelection.toList());
-            }
-        } catch (NoSuchMethodException e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer method not found",
-                    e));
-        } catch (Exception e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "setSelectionToViewer call failed", e));
-        }
+    	if (editorPart instanceof IViewerProvider 
+    			&& (((IViewerProvider) editorPart).getViewer() instanceof TreeViewer)) {
+	        try {
+	            Method m = editorPart.getClass().getMethod("setSelectionToViewer", Collection.class);
+	            if (m!=null) {
+	                m.invoke(editorPart, preparedSelection.toList());
+	            }
+	        } catch (Exception e) {
+	            logger.log(new Status(IStatus.INFO, IncQueryGUIPlugin.PLUGIN_ID, "Error while setting selection. If this is not an EMF Tree editor, consider providing a specialized ModelConnector implementation.", e));
+	        }
+    	}
     }
 
     protected TreeSelection prepareSelection(Object[] locationObjects) {

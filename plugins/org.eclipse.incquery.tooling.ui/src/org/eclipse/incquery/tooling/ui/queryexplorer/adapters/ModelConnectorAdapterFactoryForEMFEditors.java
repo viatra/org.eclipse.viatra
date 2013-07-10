@@ -11,6 +11,7 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.adapters;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -32,7 +33,7 @@ public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactor
             IEditorPart editorPart = (IEditorPart) adaptableObject;
             if ("org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage".equals(editorPart.getSite().getId())) {
                 return new EIQEditorModelConnector(editorPart, resourceSetProvider);
-            } else {
+            } else if (adaptableObject instanceof IEditingDomainProvider) {
                 return new EMFModelConnector(editorPart);
             }
         }

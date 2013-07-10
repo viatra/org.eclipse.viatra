@@ -175,6 +175,9 @@
             <instanceof
                   value="org.eclipse.ui.IEditorPart">
             </instanceof>
+            <adapt
+                  type="org.eclipse.incquery.runtime.api.IModelConnector">
+            </adapt>
          </with>
       </definition>
       <definition
