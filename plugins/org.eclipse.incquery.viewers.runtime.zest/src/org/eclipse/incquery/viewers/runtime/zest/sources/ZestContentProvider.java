@@ -11,6 +11,7 @@
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
@@ -28,7 +29,7 @@ import com.google.common.collect.Iterables;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestContentProvider extends AbstractViewerStateListener implements IGraphEntityRelationshipContentProvider {
+public class ZestContentProvider extends AbstractViewerStateListener implements IGraphContentProvider {
 
     GraphViewer viewer;
     ViewerState state;
@@ -56,21 +57,7 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     @Override
     public Object[] getElements(Object inputElement) {
         if (state!=null) {
-            return Iterables.toArray(state.getItemList(), Item.class);
-        }
-        else return new Object[]{};
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Object[] getRelationships(final Object source, final Object dest) {
-        if (state!=null) {
-            return Iterables.toArray(Iterables.filter(state.getEdgeList(), new Predicate<Edge>() {
-                @Override
-                public boolean apply(Edge edge) {
-                    return edge.getSource().equals(source) && edge.getTarget().equals(dest);
-        }
-            }), Edge.class);
+            return Iterables.toArray(state.getEdgeList(), Edge.class);
         }
         else return new Object[]{};
     }
@@ -102,5 +89,15 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
         }
 
     }
+
+	@Override
+	public Object getSource(Object rel) {
+		return ((Edge)rel).getSource();
+	}
+
+	@Override
+	public Object getDestination(Object rel) {
+		return ((Edge)rel).getTarget();
+	}
 
 }
