@@ -12,7 +12,6 @@ package org.eclipse.incquery.viewers.runtime.zest.sources;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
-import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
@@ -20,7 +19,6 @@ import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerStateL
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
