@@ -16,14 +16,22 @@ import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+
+import com.google.common.base.Preconditions;
 
 /**
  * @author Abel Hegedus
@@ -32,40 +40,27 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 
 
-    private final boolean useManagedEngines;
     private final Map<Notifier, WeakReference<AdvancedIncQueryEngine>> engineMap;
     
     /**
      * 
      */
     public QueryBasedFeatureSettingDelegateFactory() {
-        useManagedEngines = true;
-        engineMap = null;
-    }
-    
-    /**
-     * 
-     */
-    public QueryBasedFeatureSettingDelegateFactory(boolean useManagedEngines) {
-        this.useManagedEngines = useManagedEngines;
         engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedIncQueryEngine>>();
     }
     
-    
-    
-    protected AdvancedIncQueryEngine getEngineForNotifier(Notifier notifier) throws IncQueryException {
-        if(useManagedEngines) {
-            return AdvancedIncQueryEngine.from(IncQueryEngine.on(notifier));
-        } else {
-            
+    protected AdvancedIncQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws IncQueryException {
+        if(dynamicEMFMode) {
             WeakReference<AdvancedIncQueryEngine> reference = engineMap.get(notifier);
             if(reference != null && reference.get() != null) {
                 return reference.get();
             } else {
-                AdvancedIncQueryEngine unmanagedEngine = AdvancedIncQueryEngine.createUnmanagedEngine(notifier);
+                AdvancedIncQueryEngine unmanagedEngine = AdvancedIncQueryEngine.createUnmanagedEngine(notifier, false, dynamicEMFMode);
                 engineMap.put(notifier, new WeakReference<AdvancedIncQueryEngine>(unmanagedEngine));
                 return unmanagedEngine;
             }
+        } else {
+            return AdvancedIncQueryEngine.from(IncQueryEngine.on(notifier));
         }
     }
     
@@ -73,9 +68,10 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature) {
         SettingDelegate result = null;
         
-        try {
-            result = new QueryBasedFeatureSettingDelegate(eStructuralFeature, this);
-        } catch (IncQueryException e) {
+        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
+        if(querySpec != null) {
+            result = createSettingDelegate(eStructuralFeature, querySpec, false);
+        } else {
             return new BasicSettingDelegate.Stateless(eStructuralFeature) {
                 
                 @Override
@@ -97,4 +93,35 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         return result;
     }
 
+    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> findQuerySpecification(
+            EStructuralFeature eStructuralFeature) {
+        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = null;
+        EAnnotation annotation = eStructuralFeature.getEAnnotation(QueryBasedFeatures.ANNOTATION_SOURCE);
+        if(annotation != null) {
+            String patternFQN = annotation.getDetails().get(QueryBasedFeatures.PATTERN_FQN_KEY);
+            querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+            // TODO let's use Pattern Registry instead (requires added dependency!)
+//                List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
+//                if(patternInfosByFQN.size() > 0) {
+//                    querySpec = patternInfosByFQN.get(0).getQuerySpecification();
+//                    if(patternInfosByFQN.size() > 1) {
+//                        IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
+//                    }
+//                }
+        }
+        return querySpec;
+    }
+    
+    public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature,
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification, boolean dynamicEMFMode) {
+        Preconditions.checkArgument(querySpecification != null, "Query specification cannot be null!");
+        SettingDelegate result = null;
+        
+        result = new QueryBasedFeatureSettingDelegate(eStructuralFeature, this, querySpecification, dynamicEMFMode);
+        
+        return result;
+    }
+
+    
+    
 }
