@@ -70,7 +70,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
         if(querySpec != null) {
-            result = createSettingDelegate(eStructuralFeature, querySpec, false);
+            result = createSettingDelegate(eStructuralFeature, querySpec, false, false);
         } else {
             return new BasicSettingDelegate.Stateless(eStructuralFeature) {
                 
@@ -113,15 +113,9 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     }
     
     public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification, boolean dynamicEMFMode) {
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification, boolean isResourceScope, boolean dynamicEMFMode) {
         Preconditions.checkArgument(querySpecification != null, "Query specification cannot be null!");
-        SettingDelegate result = null;
-        
-        result = new QueryBasedFeatureSettingDelegate(eStructuralFeature, this, querySpecification, dynamicEMFMode);
-        
-        return result;
+        return new QueryBasedFeatureSettingDelegate(eStructuralFeature, this, querySpecification, isResourceScope, dynamicEMFMode);
     }
 
-    
-    
 }
