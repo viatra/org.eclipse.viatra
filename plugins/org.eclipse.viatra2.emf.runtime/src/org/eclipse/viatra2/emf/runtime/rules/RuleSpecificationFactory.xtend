@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.ecipse.viatra2.emf.runtime
+package org.eclipse.viatra2.emf.runtime.rules
 
 import java.util.Set
 import org.eclipse.incquery.runtime.api.IPatternMatch
