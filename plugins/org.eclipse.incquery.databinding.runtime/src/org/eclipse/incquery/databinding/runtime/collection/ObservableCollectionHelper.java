@@ -25,7 +25,6 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 import com.google.common.collect.ImmutableSet;
@@ -88,7 +87,7 @@ public final class ObservableCollectionHelper {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
         if(filter != null) {
-            ruleEngine.addRule(specification, true, IncQueryEventRealm.createFilter(filter));
+            ruleEngine.addRule(specification, true, specification.createFilter(filter));
         } else {
             ruleEngine.addRule(specification, true);
         }

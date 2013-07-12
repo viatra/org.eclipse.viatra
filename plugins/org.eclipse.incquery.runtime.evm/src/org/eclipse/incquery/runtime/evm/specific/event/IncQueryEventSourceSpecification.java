@@ -41,6 +41,7 @@ public class IncQueryEventSourceSpecification<Match extends IPatternMatch> imple
         this.querySpecification = factory;
     }
 
+    @Override
     public EventFilter<Match> createFilter(Match eventAtom) {
         checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
         checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");

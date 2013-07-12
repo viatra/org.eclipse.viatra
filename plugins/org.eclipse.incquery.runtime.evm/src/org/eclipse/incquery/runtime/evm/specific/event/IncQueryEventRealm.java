@@ -89,10 +89,6 @@ public class IncQueryEventRealm implements EventRealm {
         return new IncQueryEventRealm(engine);
     }
 
-    public static <Match extends IPatternMatch> IncQueryEventFilter<Match> createFilter(Match filterMatch){
-        return new IncQueryEventFilter<Match>(filterMatch);
-    }
-    
     public static <Match extends IPatternMatch> IncQueryEventSourceSpecification<Match> createSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory){
         return new IncQueryEventSourceSpecification<Match>(factory);
     }
