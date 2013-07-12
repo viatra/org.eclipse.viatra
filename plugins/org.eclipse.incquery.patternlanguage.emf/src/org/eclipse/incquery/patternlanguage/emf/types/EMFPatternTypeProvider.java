@@ -82,19 +82,18 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return super.typeForIdentifiable(identifiable, rawType);
     }
 
-	
-	@Override
-	public JvmTypeReference getVariableType(Variable variable) {
-		EClassifier classifier = getClassifierForVariable(variable);
-		JvmTypeReference typeReference = null;
-		if (classifier != null) {
-		    typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
-		}
-		if (typeReference == null) {
-		    typeReference = typeReferences.getTypeForName(Object.class, variable);
-		}
-		return typeReference;
-	}
+    @Override
+    public JvmTypeReference getVariableType(Variable variable) {
+        EClassifier classifier = getClassifierForVariable(variable);
+        JvmTypeReference typeReference = null;
+        if (classifier != null) {
+            typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
+        }
+        if (typeReference == null) {
+            typeReference = typeReferences.getTypeForName(Object.class, variable);
+        }
+        return typeReference;
+    }
 
     /**
      * Returns the {@link JvmTypeReference} for a given {@link EClassifier} and {@link Variable} combination.
@@ -125,11 +124,15 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     private Set<EClassifier> minimizeClassifiersList(Set<EClassifier> classifierList) {
         Set<EClassifier> resultList = new HashSet<EClassifier>(classifierList);
-        for (EClassifier classifier : classifierList) {
-            if (classifier instanceof EClass) {
-                for (EClass eClass : ((EClass) classifier).getEAllSuperTypes()) {
-                    if (resultList.contains(eClass)) {
-                        resultList.remove(eClass);
+        if (resultList.size() > 1) {
+            for (EClassifier classifier : classifierList) {
+                if ("EObject".equals(classifier.getName())) {
+                    resultList.remove(classifier);
+                } else if (classifier instanceof EClass) {
+                    for (EClass eClass : ((EClass) classifier).getEAllSuperTypes()) {
+                        if (resultList.contains(eClass)) {
+                            resultList.remove(eClass);
+                        }
                     }
                 }
             }
