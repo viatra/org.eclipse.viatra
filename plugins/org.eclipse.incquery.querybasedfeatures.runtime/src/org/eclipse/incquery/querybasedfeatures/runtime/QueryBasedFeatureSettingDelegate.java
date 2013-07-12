@@ -18,6 +18,7 @@ import java.util.WeakHashMap;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
 import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
@@ -46,19 +47,41 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
 
     private final boolean dynamicEMFMode;
     
+    private boolean isResourceScope;
+    
     /**
-     * @param eStructuralFeature
-     * @param queryBasedFeatureSettingDelegateFactory
-     * @param querySpecfication
-     * @param dynamicEMFMode
+     * Constructs a new {@link QueryBasedFeatureSettingDelegate} instance based on the given parameters.
+     * The scope of the incquery engine in this case will be the one provided by {@link QueryBasedFeatureHelper.prepareNotifierForSource({@link InternalEObject})}.
+     *  
+     * @param eStructuralFeature the parent structural feature of the setting delegate
+     * @param factory the factory used to create incquery engine for the setting delegate
+     * @param querySpecification the query specification used for the evaluation of the setting delegate
+     * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
     public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
             QueryBasedFeatureSettingDelegateFactory factory,
             IQuerySpecification<Matcher> querySpecification, boolean dynamicEMFMode) {
+        this(eStructuralFeature, factory, querySpecification, false, dynamicEMFMode);
+    }
+    
+    /**
+     * Constructs a new {@link QueryBasedFeatureSettingDelegate} instance based on the given parameters.
+     * 
+     * @param eStructuralFeature the parent structural feature of the setting delegate
+     * @param factory the factory used to create incquery engine for the setting delegate
+     * @param querySpecification the query specification used for the evaluation of the setting delegate
+     * @param isResourceScope indicates whether the {@link Resource} of the {@link InternalEObject} is enough as a scope during the evaluation of the setting delegate 
+     * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
+     */
+    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
+            QueryBasedFeatureSettingDelegateFactory factory,
+            IQuerySpecification<Matcher> querySpecification, 
+            boolean isResourceScope, boolean dynamicEMFMode) {
         super(eStructuralFeature);
         this.delegateFactory = factory;
         this.querySpecification = querySpecification;
         this.dynamicEMFMode = dynamicEMFMode;
+        this.isResourceScope = isResourceScope;
         
         // TODO annotation processing to be done here
     }
@@ -67,7 +90,14 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     protected Object get(InternalEObject owner, boolean resolve, boolean coreType) {
         
         // TODO this can be expensive to do
-        Notifier notifierForSource = QueryBasedFeatureHelper.prepareNotifierForSource(owner);
+        Notifier notifierForSource = null;
+        if (isResourceScope) {
+            notifierForSource = owner.eResource();
+        }
+        if (notifierForSource == null) {
+            notifierForSource = QueryBasedFeatureHelper.prepareNotifierForSource(owner);    
+        }
+                
         AdvancedIncQueryEngine engine = null;
         try {
             engine = delegateFactory.getEngineForNotifier(notifierForSource, dynamicEMFMode);
