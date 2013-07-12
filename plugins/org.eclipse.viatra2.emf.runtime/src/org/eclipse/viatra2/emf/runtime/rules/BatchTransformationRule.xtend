@@ -12,20 +12,21 @@ package org.eclipse.viatra2.emf.runtime.rules
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
-import org.eclipse.incquery.runtime.evm.api.Job
-import org.eclipse.incquery.runtime.evm.api.RuleEngine
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
 import org.eclipse.incquery.runtime.evm.api.Activation
 import org.eclipse.incquery.runtime.evm.api.Context
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
+import org.eclipse.incquery.runtime.evm.api.Job
+import org.eclipse.incquery.runtime.evm.api.RuleEngine
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.specific.Jobs
-import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
  * 
- * Subclasses can simply override the abstract precondition and modelmanipulation methods.
+ * Subclasses can simply override the abstract precondition and model manipulation methods.
  *
  * @author Abel Hegedus
  *
@@ -57,17 +58,42 @@ abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher exten
 	 */
 	def protected IMatchProcessor<Match> getModelManipulation()
 	
+	private def firstActivation(RuleEngine engine) {
+		engine.getActivations(ruleSpec, IncQueryActivationStateEnum::APPEARED).head
+	}
+	
+	private def firstActivation(RuleEngine engine, EventFilter<Match> filter) {
+		engine.getActivations(ruleSpec, filter, IncQueryActivationStateEnum::APPEARED).head
+	}
+	
+	private def fireActivation(Activation<Match> act, Context context) {
+		if(act != null && act.enabled){
+ 			act.fire(context)
+		}
+	}
+	
 	/**
 	 * Goes through each possibly activation of the transformation rule and executes them.
 	 * These activations are each in Appeared state.
 	 */
 	def fireEachActivation(RuleEngine ruleEngine, Context context){
-		println("== Executing activations of " + ruleName + " ==")
+		println('''== Executing activations of «ruleName» ==''')
 		
- 		var Activation<Match> act = ( null ) while((act = ruleEngine.getActivations(getRuleSpec, IncQueryActivationStateEnum::APPEARED).head) != null){
- 			if(act.enabled){
-	 			act.fire(context)
- 			}
+ 		var Activation<Match> act
+ 		while((act = ruleEngine.firstActivation) != null){
+ 			act.fireActivation(context)
+ 		}
+	}
+	
+	/**
+	 * Goes through each possibly activation of the transformation rule that fulfill a filter and execute them.
+	 * These activations are each in Appeared state.
+	 */
+	def fireEachActivation(RuleEngine ruleEngine, Context context, EventFilter<Match> filter) {
+		println('''== Executing activations of «ruleName» with filter «filter» ==''')
+		var Activation<Match> act
+		while((act = ruleEngine.firstActivation(filter)) != null){
+ 			act.fireActivation(context)
  		}
 	}
 	
@@ -75,12 +101,23 @@ abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher exten
 	 * Selects one activation of the rule and executes it. 
 	 */
 	def fireOneActivation(RuleEngine ruleEngine, Context context){
-		println("== Executing one activation of " + ruleName + " ==")
+		println('''== Executing one activation of «ruleName» ==''')
 		
- 		var Activation<Match> act = ruleEngine.getActivations(getRuleSpec, IncQueryActivationStateEnum::APPEARED).head
-		if(act != null && act.enabled){
- 			act.fire(context)
-		}
+ 		var Activation<Match> act = ruleEngine.firstActivation
+ 		act.fireActivation(context)
+		
 	}
+	
+	/**
+	 * Selects one activation of the rule that fulfills a filtering match, and executes it. 
+	 */
+	def fireOneActivation(RuleEngine ruleEngine, Context context, EventFilter<Match> filter){
+		println('''== Executing one activation of «ruleName» with filter «filter»==''')
+		
+ 		var Activation<Match> act = ruleEngine.firstActivation(filter)
+ 		act.fireActivation(context)
+		
+	}
+
 	
 }
