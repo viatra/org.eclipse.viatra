@@ -75,6 +75,7 @@ public class Edge extends FormattableElement {
         } else {
             return IncQueryObservables.getObservableLabelFeature(match, label, this);
         }
+     // TODO review this code https://bugs.eclipse.org/bugs/show_bug.cgi?id=413542
     }
 
     @Override

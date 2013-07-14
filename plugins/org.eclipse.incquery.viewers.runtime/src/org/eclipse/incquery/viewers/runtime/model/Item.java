@@ -96,6 +96,7 @@ public class Item extends FormattableElement {
             return Observables.constantObservableValue("");
         } else {
             return IncQueryObservables.getObservableLabelFeature(sourceMatch, labelDefinition, this);
+            // TODO review this code https://bugs.eclipse.org/bugs/show_bug.cgi?id=413542
         }
     }
 
