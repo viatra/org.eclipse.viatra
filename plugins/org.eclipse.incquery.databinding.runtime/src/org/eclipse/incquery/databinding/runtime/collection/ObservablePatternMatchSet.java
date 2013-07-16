@@ -15,8 +15,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -165,16 +167,32 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         @Override
         public void addMatch(Match match) {
             cache.add(match);
-            SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
-            fireSetChange(diff);
+            final SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(match), Collections.EMPTY_SET);
+            Realm realm = getRealm();
+            Assert.isNotNull(realm, "Data binding Realm must not be null");
+			realm.exec(new Runnable() {
+
+				@Override
+				public void run() {
+					fireSetChange(diff);
+				}
+			});
         }
     
         @SuppressWarnings("unchecked")
         @Override
         public void removeMatch(Match match) {
             cache.remove(match);
-            SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
-            fireSetChange(diff);
+            final SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(match));
+            Realm realm = getRealm();
+            Assert.isNotNull(realm, "Data binding Realm must not be null");
+			realm.exec(new Runnable() {
+
+				@Override
+				public void run() {
+					fireSetChange(diff);
+				}
+			});
         }
     
     }

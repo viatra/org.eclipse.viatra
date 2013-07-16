@@ -15,9 +15,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -170,8 +172,16 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         public void addMatch(Match match) {
             ListDiffEntry diffentry = Diffs.createListDiffEntry(cache.size(), true, match);
             cache.add(match);
-            ListDiff diff = Diffs.createListDiff(diffentry);
-            fireListChange(diff);
+            final ListDiff diff = Diffs.createListDiff(diffentry);
+            Realm realm = getRealm();
+            Assert.isNotNull(realm, "Data binding Realm must not be null");
+			realm.exec(new Runnable() {
+
+				@Override
+				public void run() {
+					fireListChange(diff);
+				}
+			});
         }
 
         @Override
@@ -179,8 +189,16 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
             final int index = cache.indexOf(match);
             ListDiffEntry diffentry = Diffs.createListDiffEntry(index, false, match);
             cache.remove(match);
-            ListDiff diff = Diffs.createListDiff(diffentry);
-            fireListChange(diff);
+            final ListDiff diff = Diffs.createListDiff(diffentry);
+            Realm realm = getRealm();
+            Assert.isNotNull(realm, "Data binding Realm must not be null");
+			realm.exec(new Runnable() {
+
+				@Override
+				public void run() {
+					fireListChange(diff);
+				}
+			});
         }
     }
 
