@@ -27,6 +27,7 @@ import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
 import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
+import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
@@ -43,6 +44,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
     private final RuleInstance<Match> instance;
     private AttributeMonitor<Match> attributeMonitor;
     private final Map<IncQueryEventTypeEnum,IMatchProcessor<Match>> processors;
+    private UnregisterMonitorActivationNotificationListener unregisterListener;
     
     protected IncQueryEventHandler(IncQueryEventSource<Match> source, EventFilter<Match> filter, RuleInstance<Match> instance) {
         checkArgument(source != null, "Cannot create handler with null source");
@@ -97,21 +99,21 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
         prepareEventProcessors(processors);
         source.addHandler(this);
         attributeMonitor.addAttributeMonitorListener(source.getAttributeMonitorListener());
+        unregisterListener = checkNotNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
+        instance.addActivationNotificationListener(unregisterListener, false);
     }
 
-    protected void activationStateTransition(Activation<Match> activation, IncQueryEventTypeEnum eventType) {
-        ActivationState nextActivationState = instance.activationStateTransition(activation, eventType);
-        if(IncQueryActivationStateEnum.INACTIVE.equals(nextActivationState)){
-            attributeMonitor.unregisterFor(activation.getAtom());
-        }
+    protected UnregisterMonitorActivationNotificationListener prepareActivationNotificationListener() {
+        return new UnregisterMonitorActivationNotificationListener();
     }
+
 
     protected void prepareEventProcessors(Map<IncQueryEventTypeEnum,IMatchProcessor<Match>> processors) {
         
         processors.put(IncQueryEventTypeEnum.MATCH_APPEARS, new DefaultMatchEventProcessor() {
             @Override
             protected void activationExists(Activation<Match> activation) {
-                activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
+                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
             }
 
             @Override
@@ -120,13 +122,13 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
                 if(instance.getLifeCycle().containsTo(IncQueryActivationStateEnum.UPDATED)) {
                     attributeMonitor.registerFor(atom);
                 }
-                activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
+                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
             }
         });
         processors.put(IncQueryEventTypeEnum.MATCH_UPDATES, new DefaultMatchEventProcessor() {
             @Override
             protected void activationExists(Activation<Match> activation) {
-                activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_UPDATES);
+                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_UPDATES);
             }
 
             @Override
@@ -137,7 +139,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
         processors.put(IncQueryEventTypeEnum.MATCH_DISAPPEARS, new DefaultMatchEventProcessor() {
             @Override
             protected void activationExists(Activation<Match> activation) {
-                activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_DISAPPEARS);
+                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_DISAPPEARS);
             }
 
             @Override
@@ -150,6 +152,28 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
     
 
     
+    /**
+     * @author Abel Hegedus
+     *
+     */
+    private final class UnregisterMonitorActivationNotificationListener implements IActivationNotificationListener {
+        @SuppressWarnings("unchecked")
+        @Override
+        public void activationRemoved(Activation<?> activation, ActivationState oldState) {
+            attributeMonitor.unregisterFor((Match) activation.getAtom());
+        }
+
+        @Override
+        public void activationCreated(Activation<?> activation, ActivationState inactiveState) {
+        }
+
+        @Override
+        public void activationChanged(Activation<?> activation, ActivationState oldState, EventType event) {
+        }
+    }
+
+
+
     /**
      * This class is the common supertype for default event processors
      *  in the rule instance.
@@ -200,6 +224,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
 
     @Override
     public void dispose() {
+        instance.removeActivationNotificationListener(unregisterListener);
         source.removeHandler(this);
         attributeMonitor.dispose();
     }
