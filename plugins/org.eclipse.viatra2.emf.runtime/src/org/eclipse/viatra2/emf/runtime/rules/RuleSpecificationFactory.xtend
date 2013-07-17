@@ -50,7 +50,7 @@ abstract class RuleSpecificationFactory<Match extends IPatternMatch, Matcher ext
     def getRuleSpec(){
     	if(ruleSpec == null){
 		    val querySpec = getQuerySpecification
-		    ruleSpec = Rules::newSimpleMatcherRuleSpecification(querySpec, getLifeCycle, getJobs)
+		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, getLifeCycle, getJobs)
     	}
     	ruleSpec
     }
