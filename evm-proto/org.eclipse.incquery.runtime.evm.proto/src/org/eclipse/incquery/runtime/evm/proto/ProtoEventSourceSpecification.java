@@ -49,9 +49,4 @@ public class ProtoEventSourceSpecification implements EventSourceSpecification<S
         this.prefix = prefix;
     }
 
-    @Override
-    public EventFilter<String> createFilter(String atom) {
-        return new ProtoEventFilter(prefix+atom);
-    }
-
 }

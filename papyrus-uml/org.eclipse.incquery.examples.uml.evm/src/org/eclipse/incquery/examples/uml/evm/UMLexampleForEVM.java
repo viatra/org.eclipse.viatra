@@ -1,5 +1,8 @@
 package org.eclipse.incquery.examples.uml.evm;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
 
 import org.apache.log4j.Level;
@@ -8,14 +11,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.examples.uml.evm.queries.OnlyInheritedOperationsMatch;
 import org.eclipse.incquery.examples.uml.evm.queries.OnlyInheritedOperationsMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.util.OnlyInheritedOperationsProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.PossibleSuperClassMatch;
 import org.eclipse.incquery.examples.uml.evm.queries.PossibleSuperClassMatcher;
-import org.eclipse.incquery.examples.uml.evm.queries.util.PossibleSuperClassProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.SuperClassMatcher;
+import org.eclipse.incquery.examples.uml.evm.queries.util.OnlyInheritedOperationsProcessor;
+import org.eclipse.incquery.examples.uml.evm.queries.util.PossibleSuperClassProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.util.SuperClassProcessor;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
@@ -24,6 +26,7 @@ import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -67,8 +70,11 @@ public class UMLexampleForEVM {
 
             // add rule specifications to engine
             ruleEngine.addRule(createGeneralization);
+            testFilteredRules(engine, ruleEngine, createGeneralization);
+
             ruleEngine.addRule(createOperation);
 
+            
             // check rule applicability
             Set<Activation<PossibleSuperClassMatch>> createClassesActivations = ruleEngine.getActivations(createGeneralization);
             if (!createClassesActivations.isEmpty()) {
@@ -93,6 +99,24 @@ public class UMLexampleForEVM {
             e.printStackTrace();
         }
 
+    }
+
+    private void testFilteredRules(IncQueryEngine engine, RuleEngine ruleEngine,
+            RuleSpecification<PossibleSuperClassMatch> createGeneralization) throws IncQueryException {
+        assertFalse(ruleEngine.addRule(createGeneralization));
+        
+        PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
+        PossibleSuperClassMatch emptyMatch = matcher.newMatch(null, null);
+        PossibleSuperClassMatch arbitraryMatch = matcher.getOneArbitraryMatch();
+        EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newMatchFilter(emptyMatch);
+        EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newMatchFilter(emptyMatch);
+        EventFilter<PossibleSuperClassMatch> filter = Rules.newMatchFilter(arbitraryMatch);
+        EventFilter<PossibleSuperClassMatch> filter2 = Rules.newMatchFilter(arbitraryMatch);
+        
+        assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter1));
+        assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter2));
+        assertTrue(ruleEngine.addRule(createGeneralization, false, filter));
+        assertFalse(ruleEngine.addRule(createGeneralization, false, filter2));
     }
 
     @Test
@@ -120,8 +144,11 @@ public class UMLexampleForEVM {
 
             // add rule specifications to engine
             executionSchema.addRule(createGeneralization);
+            testFilteredRules(engine, executionSchema, createGeneralization);
+
             executionSchema.addRule(createOperation);
 
+            
             // execution schema waits for a scheduling to fire activations
             // we trigger this by removing one generalization at random
             SuperClassMatcher.querySpecification().getMatcher(engine).forOneArbitraryMatch(new SuperClassProcessor() {
@@ -163,7 +190,7 @@ public class UMLexampleForEVM {
         IQuerySpecification<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.querySpecification();
         // the rule specification is a model-independent definition that can be
         // used to instantiate a rule
-        RuleSpecification<PossibleSuperClassMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        RuleSpecification<PossibleSuperClassMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
@@ -179,8 +206,10 @@ public class UMLexampleForEVM {
         });
         DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
         IQuerySpecification<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.querySpecification();
-        RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newSimpleMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
+    
+    
 }
