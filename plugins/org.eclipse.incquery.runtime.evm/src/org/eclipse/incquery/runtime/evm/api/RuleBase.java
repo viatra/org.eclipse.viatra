@@ -67,9 +67,12 @@ public class RuleBase {
             final RuleSpecification<EventAtom> specification, final EventFilter<EventAtom> filter) {
         checkNotNull(specification, "Cannot instantiate null rule!");
         checkNotNull(filter, "Cannot instantiate rule with null filter!");
-        if(ruleInstanceTable.containsRow(specification)) {
-            return findInstance(specification, filter);
+//        if(ruleInstanceTable.containsRow(specification)) {
+        RuleInstance<EventAtom> instance = findInstance(specification, filter);
+        if(instance != null) {
+            return instance;
         }
+//        }
         RuleInstance<EventAtom> rule = specification.instantiateRule(eventRealm, filter);
         rule.addActivationNotificationListener(agenda.getActivationListener(), true);
         ruleInstanceTable.put(specification, filter, rule);

@@ -68,45 +68,52 @@ public class RuleEngine {
 
     /**
      * Adds a rule specification to the RuleBase.
-     *  If the rule already exists, it is returned instead of a new one.
+     *  If the rule already exists, no change occurs in the set of rules.
      *  
      * @param specification
+     * @return true if the rule was added, false if it already existed
      */
-    public <EventAtom> void addRule(
+    public <EventAtom> boolean addRule(
             final RuleSpecification<EventAtom> specification) {
-        addRule(specification, false, specification.createEmptyFilter());
+        return addRule(specification, false, specification.createEmptyFilter());
     }
 
     /**
      * Adds a rule specification to the RuleBase and fires all enabled activations if required.
-     * If the rule already exists, it is returned instead of a new one.
+     * If the rule already exists, no change occurs in the set of rules.
      * 
      * @param specification
-     * @param fireNow if true, all enabled activations of the new rule are fired immediately
+     * @param fireNow if true, all enabled activations of the rule are fired immediately
+     * @return true if the rule was added, false if it already existed
      */
-    public <EventAtom> void addRule(
+    public <EventAtom> boolean addRule(
             final RuleSpecification<EventAtom> specification, boolean fireNow) {
-                addRule(specification, fireNow, specification.createEmptyFilter());
+                return addRule(specification, fireNow, specification.createEmptyFilter());
             }
 
     /**
      * Adds a rule specification to the RuleBase and fires all enabled activations if required.
-     * If the rule already exists, it is returned instead of a new one.
+     * If the rule already exists, no change occurs in the set of rules.
      * 
      * @param specification
-     * @param fireNow if true, all enabled activations of the new rule are fired immediately
+     * @param fireNow if true, all enabled activations of the rule are fired immediately
      * @param filter the partial match to be used as a filter for activations
+     * @return true if the rule was added, false if it already existed
      */
-    public <EventAtom> void addRule(
+    public <EventAtom> boolean addRule(
             final RuleSpecification<EventAtom> specification, boolean fireNow, EventFilter<EventAtom> filter) {
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        //checkArgument(!filter.isMutable(), "Cannot instantiate rule with mutable filter!");
-        RuleInstance<EventAtom> instance;
-        instance = ruleBase.instantiateRule(specification, filter);
+        RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);;
+        boolean added = false;
+        if(instance == null) {
+            instance = ruleBase.instantiateRule(specification, filter);
+            added = true;
+        }
         if(fireNow) {
             fireActivations(instance);
         }
+        return added;
     }
 
     /**
@@ -245,7 +252,7 @@ public class RuleEngine {
     }
 
     /**
-     * @return the ruleBase
+     * @return the rule base
      */
     protected RuleBase getRuleBase() {
         return ruleBase;
@@ -253,9 +260,9 @@ public class RuleEngine {
     
     /**
      * 
-     * @return the IncQueryEngine of the ruleBase
+     * @return the event realm of the rule base
      */
-    public EventRealm getEventSource() {
+    public EventRealm getEventRealm() {
         return ruleBase.getEventRealm();
     }
     
@@ -264,7 +271,7 @@ public class RuleEngine {
     }
 
     /**
-     * Disposes of the ruleBase.
+     * Disposes of the rule base.
      */
     public void dispose() {
         ruleBase.dispose();

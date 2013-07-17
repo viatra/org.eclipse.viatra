@@ -20,7 +20,8 @@ public interface EventSourceSpecification<EventAtom> {
     
     EventFilter<EventAtom> createEmptyFilter();
     
-    EventFilter<EventAtom> createFilter(EventAtom atom);
+// NOTE we don't want to restrict filtering by atoms  
+//    EventFilter<EventAtom> createFilter(EventAtom atom);
     
     AbstractRuleInstanceBuilder<EventAtom> getRuleInstanceBuilder(EventRealm realm);
 }

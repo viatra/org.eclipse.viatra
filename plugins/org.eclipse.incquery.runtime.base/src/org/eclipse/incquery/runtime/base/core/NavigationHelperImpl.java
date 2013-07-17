@@ -530,9 +530,9 @@ public class NavigationHelperImpl implements NavigationHelper {
         Collection<EObject> observedObjects = lightweightObservers.get(observer);
         if(observedObjects == null) {
             observedObjects = new HashSet<EObject>();
-            observedObjects.add(observedObject);
+            lightweightObservers.put(observer, observedObjects);
         }
-        lightweightObservers.put(observer, observedObjects);
+        observedObjects.add(observedObject);
     }
     
     @Override

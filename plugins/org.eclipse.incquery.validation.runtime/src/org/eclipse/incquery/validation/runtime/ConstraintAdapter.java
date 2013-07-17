@@ -57,7 +57,7 @@ public class ConstraintAdapter {
         for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
                 .getId())) {
 
-            rules.add(Rules.newSimpleMatcherRuleSpecification(constraint.getQuerySpecification(),
+            rules.add(Rules.newMatcherRuleSpecification(constraint.getQuerySpecification(),
                     DefaultActivationLifeCycle.DEFAULT, ImmutableSet.of(
                             Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger))),
                             Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger))),
