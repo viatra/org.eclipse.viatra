@@ -574,7 +574,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
-        // Find and neg find (including count find as well)
+    	if (patternCall.getParameters().size() != patternCall.getPatternRef().getParameters().size()) {
+    		//This kind of error is detected in another place, however it throws an exception during literal checks
+    		return;
+    	}
+    	// Find and neg find (including count find as well)
         for (ValueReference valueReference : patternCall.getParameters()) {
             if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
                 Pattern pattern = patternCall.getPatternRef();
