@@ -19,6 +19,8 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventFilter;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSourceSpecification;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
@@ -44,7 +46,7 @@ public final class Rules {
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
     }
     
@@ -56,11 +58,11 @@ public final class Rules {
      * @param jobs
      * @return
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
-        return newSimpleMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
+        return newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
     }
     
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newSimpleMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         FavouredMatcherSourceSpecification<Match> sourceSpecification = new FavouredMatcherSourceSpecification<Match>(matcher);
         return new RuleSpecification<Match>(sourceSpecification, lifecycle, jobs);
     }
@@ -91,4 +93,15 @@ public final class Rules {
         }
     }
     
+    /**
+     * Creates an event filter that uses the IPatternMatch.isCompatibleWith to check event atoms.
+     * 
+     * <p/> Using the matches that are equal will result in equal filters.
+     * 
+     * @param filterMatch non-null match to use for filtering
+     * @return the event filter
+     */
+    public static <Match extends IPatternMatch> EventFilter<Match> newMatchFilter(Match filterMatch) {
+        return IncQueryEventFilter.createFilter(filterMatch);
+    }
 }

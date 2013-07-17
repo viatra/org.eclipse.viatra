@@ -56,7 +56,7 @@ public final class ObservableCollectionHelper {
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IQuerySpecification<Matcher> querySpecification) {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return Rules.newSimpleMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return Rules.newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
     
     /**
@@ -71,7 +71,7 @@ public final class ObservableCollectionHelper {
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return Rules.newSimpleMatcherRuleSpecification(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return Rules.newMatcherRuleSpecification(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
     }
 
     private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
@@ -87,7 +87,7 @@ public final class ObservableCollectionHelper {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
         if(filter != null) {
-            ruleEngine.addRule(specification, true, specification.createFilter(filter));
+            ruleEngine.addRule(specification, true, Rules.newMatchFilter(filter));
         } else {
             ruleEngine.addRule(specification, true);
         }

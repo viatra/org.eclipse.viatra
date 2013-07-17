@@ -100,9 +100,10 @@ public class RuleSpecification<EventAtom> {
         return sourceSpecification.createEmptyFilter();
     }
     
-    public EventFilter<EventAtom> createFilter(EventAtom atom){
-        return sourceSpecification.createFilter(atom);
-    }
+// NOTE we don't want to restrict filtering by atoms  
+//    public EventFilter<EventAtom> createFilter(EventAtom atom){
+//        return sourceSpecification.createFilter(atom);
+//    }
     
     /**
      * @return the lifeCycle

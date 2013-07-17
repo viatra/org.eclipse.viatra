@@ -15,6 +15,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 
+import com.google.common.base.Objects;
+
 /**
  * @author Abel Hegedus
  *
@@ -29,12 +31,53 @@ public class IncQueryEventFilter<Match extends IPatternMatch> implements EventFi
 
     @Override
     public boolean isProcessable(Match eventAtom) {
+        if(filterMatch == null) {
+            return true;
+        }
         return filterMatch.isCompatibleWith(eventAtom);
     }
 
     protected IncQueryEventFilter(Match filterMatch) {
         checkArgument(filterMatch != null, "Cannot create filter with null match");
         this.filterMatch = filterMatch;
+    }
+    
+    /**
+     * Only used internally to create empty filters
+     */
+    protected IncQueryEventFilter() {}
+    
+    /**
+     * 
+     * @param eventAtom
+     * @return
+     */
+    public static <Match extends IPatternMatch> IncQueryEventFilter<Match> createFilter(Match eventAtom) {
+        checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
+        checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
+        if(IncQueryEventRealm.isEmpty(eventAtom)) {
+            return new IncQueryEventFilter<Match>();
+        } else {
+            return new IncQueryEventFilter<Match>(eventAtom);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(filterMatch);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        @SuppressWarnings("rawtypes")
+        IncQueryEventFilter other = (IncQueryEventFilter) obj;
+        return Objects.equal(filterMatch, other.filterMatch);
     }
     
 }

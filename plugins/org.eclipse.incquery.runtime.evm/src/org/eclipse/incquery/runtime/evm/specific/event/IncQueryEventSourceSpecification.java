@@ -29,27 +29,11 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public class IncQueryEventSourceSpecification<Match extends IPatternMatch> implements EventSourceSpecification<Match> {
 
     private IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification;
-    private final EventFilter<Match> EMPTY_FILTER = new EventFilter<Match>() {
-        @Override
-        public boolean isProcessable(Match eventAtom) {
-            return true;
-        }
-    };
+    private final EventFilter<Match> EMPTY_FILTER = new IncQueryEventFilter<Match>();
     
     protected IncQueryEventSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory) {
         checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
         this.querySpecification = factory;
-    }
-
-    @Override
-    public EventFilter<Match> createFilter(Match eventAtom) {
-        checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
-        checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
-        if(IncQueryEventRealm.isEmpty(eventAtom)) {
-            return EMPTY_FILTER;
-        } else {
-            return new IncQueryEventFilter<Match>(eventAtom);
-        }
     }
 
     @Override
