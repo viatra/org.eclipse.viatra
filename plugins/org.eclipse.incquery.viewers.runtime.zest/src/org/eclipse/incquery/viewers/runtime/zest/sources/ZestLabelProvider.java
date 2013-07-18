@@ -23,6 +23,7 @@ import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.rete.network.Node;
+import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.FormattableElement;
@@ -167,6 +168,9 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
      */
     @Override
     public int getConnectionStyle(Object rel) {
+    	if (rel instanceof Containment) {
+    		return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+    	}
         return ZestStyles.CONNECTIONS_DIRECTED;
     }
 

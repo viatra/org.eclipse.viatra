@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
@@ -31,6 +32,15 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
 
     GraphViewer viewer;
     ViewerState state;
+    boolean displayContainment;
+    
+    public ZestContentProvider() {
+    	this(false);
+    }
+    
+    public ZestContentProvider(boolean displayContainment) {
+		this.displayContainment = displayContainment;
+    }
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -55,7 +65,10 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     @Override
     public Object[] getElements(Object inputElement) {
         if (state!=null) {
-            return Iterables.toArray(state.getEdgeList(), Edge.class);
+        	Iterable<Edge> it = (displayContainment) 
+        			? Iterables.concat(state.getEdgeList(), state.getContainmentList())
+        			: state.getEdgeList();        		
+			return Iterables.toArray(it, Edge.class);
         }
         else return new Object[]{};
     }
