@@ -34,7 +34,7 @@ public class ProtoEventSourceSpecification implements EventSourceSpecification<S
         return new AbstractRuleInstanceBuilder<String>() {
             
             @Override
-            public void prepareRuleInstance(RuleInstance<String> ruleInstance, EventFilter<String> filter) {
+            public void prepareRuleInstance(RuleInstance<String> ruleInstance, EventFilter<? super String> filter) {
                 ProtoEventSource source = new ProtoEventSource(ProtoEventSourceSpecification.this, (ProtoRealm) realm);
                 ProtoEventHandler handler = new ProtoEventHandler(source, (ProtoEventFilter) filter, ruleInstance);
                 source.addHandler(handler);

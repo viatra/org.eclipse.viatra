@@ -18,6 +18,7 @@ import org.eclipse.incquery.examples.uml.evm.queries.util.OnlyInheritedOperation
 import org.eclipse.incquery.examples.uml.evm.queries.util.PossibleSuperClassProcessor;
 import org.eclipse.incquery.examples.uml.evm.queries.util.SuperClassProcessor;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
@@ -74,7 +75,6 @@ public class UMLexampleForEVM {
 
             ruleEngine.addRule(createOperation);
 
-            
             // check rule applicability
             Set<Activation<PossibleSuperClassMatch>> createClassesActivations = ruleEngine.getActivations(createGeneralization);
             if (!createClassesActivations.isEmpty()) {
@@ -107,11 +107,24 @@ public class UMLexampleForEVM {
         
         PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
         PossibleSuperClassMatch emptyMatch = matcher.newMatch(null, null);
-        PossibleSuperClassMatch arbitraryMatch = matcher.getOneArbitraryMatch();
+        final PossibleSuperClassMatch arbitraryMatch = matcher.getOneArbitraryMatch();
         EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newMatchFilter(emptyMatch);
         EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newMatchFilter(emptyMatch);
         EventFilter<PossibleSuperClassMatch> filter = Rules.newMatchFilter(arbitraryMatch);
         EventFilter<PossibleSuperClassMatch> filter2 = Rules.newMatchFilter(arbitraryMatch);
+        
+        EventFilter<IPatternMatch> eventFilter = new EventFilter<IPatternMatch>() {
+            
+            Class cl = arbitraryMatch.getCl();
+            
+            @Override
+            public boolean isProcessable(IPatternMatch eventAtom) {
+                return eventAtom.get("cl").equals(cl);
+            }
+        };
+        
+        ruleEngine.addRule(createGeneralization, false, eventFilter);
+        assertFalse(ruleEngine.getActivations(createGeneralization, eventFilter).isEmpty());
         
         assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter1));
         assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter2));
