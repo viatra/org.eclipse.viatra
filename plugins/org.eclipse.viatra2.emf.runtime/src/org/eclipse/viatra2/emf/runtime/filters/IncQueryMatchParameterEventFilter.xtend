@@ -2,10 +2,17 @@ package org.eclipse.viatra2.emf.runtime.filters
 
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import java.util.Map
 
+// this filter can be used for EVM rules
 class IncQueryMatchParameterEventFilter implements EventFilter<IPatternMatch> {
   
-  val filterMap = newHashMap()
+  Map<String,Object> filterMap
+  
+  new(Map<String,Object> filterMap) {
+    this.filterMap = newHashMap()
+    this.filterMap.putAll(filterMap)
+  }
   
   override isProcessable(IPatternMatch eventAtom) {
     // if the parameter name is included in the filter, but has different value
@@ -15,12 +22,5 @@ class IncQueryMatchParameterEventFilter implements EventFilter<IPatternMatch> {
     // maybe this is not the best performance-wise :)
   }
   
-  def setFilteredParameter(String parameter, Object value){
-    filterMap.put(parameter, value)
-  }
-  
-  def unsetFilteredParameter(String parameter){
-    filterMap.remove(parameter)
-  }
-  
 }
+
