@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
-import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
@@ -23,48 +20,31 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.MatchUpdateAdapter;
-import org.eclipse.incquery.runtime.evm.api.event.Event;
 import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
-import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
-import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.adapter.EventSourceAdapter;
 import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class IncQueryEventSource<Match extends IPatternMatch> implements EventSource<Match> {
+public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourceAdapter<Match> {
     
-    private final IncQueryEventRealm realm;
-    private final IncQueryEventSourceSpecification<Match> sourceDefinition;
     private final IncQueryMatcher<Match> matcher;
     private IAttributeMonitorListener<Match> attributeMonitorListener;
-    private final Set<EventHandler<Match>> handlers;
     private IMatchUpdateListener<Match> matchUpdateListener;
     
     /**
      * 
      */
     protected IncQueryEventSource(IncQueryEventRealm realm, IncQueryEventSourceSpecification<Match> sourceDefinition) throws IncQueryException {
-        checkArgument(realm != null, "Cannot create event source for null realm!");
-        checkArgument(sourceDefinition != null, "Cannot create event source for null source definition!");
-        this.realm = realm;
-        this.sourceDefinition = sourceDefinition;
+        super(sourceDefinition, realm);
         IQuerySpecification<? extends IncQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
         IncQueryMatcher<Match> _matcher = factory.getMatcher(realm.getEngine());
         this.matcher = _matcher;
-        this.handlers = Sets.newHashSet();
     }
 
-    @Override
-    public EventSourceSpecification<Match> getSourceSpecification() {
-        return sourceDefinition;
-    }
-    
     /**
      * @return the matcher
      */
@@ -73,34 +53,21 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
     }
 
     @Override
-    public EventRealm getRealm() {
-        return realm;
-    }
-
-    protected boolean addHandler(EventHandler<Match> handler) {
-        checkArgument(handler != null, "Handler cannot be null!");
+    protected void beforeHandlerAdded(EventHandler<Match> handler, boolean handlersEmpty) {
         resendEventsForExistingMatches(handler);
-        if(handlers.isEmpty()) {
+        if(handlersEmpty) {
             ((AdvancedIncQueryEngine)this.matcher.getEngine()).addMatchUpdateListener(this.matcher, matchUpdateListener, false);
         }
-        return handlers.add(handler);
     }
     
-    protected boolean removeHandler(EventHandler<Match> handler) {
-        checkArgument(handler != null, "Handler cannot be null!");
-        boolean removed = handlers.remove(handler);
-        if(handlers.isEmpty()) {
+    @Override
+    protected void afterHandlerRemoved(EventHandler<Match> handler, boolean handlersEmpty) {
+        if(handlersEmpty) {
             ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
         }
-        return removed;
     }
    
-    public void notifyHandlers(Event<Match> event) {
-        for (EventHandler<Match> handler : handlers) {
-            handler.handleEvent(event);
-        }
-    }
-
+    @Override
     protected void prepareSource() {
         this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(),
                 "Prepared attribute monitor listener is null!");
@@ -147,10 +114,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> implements EventSo
     @Override
     public void dispose() {
         ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
-        for (EventHandler<Match> handler : this.handlers) {
-            handler.dispose();
-        }
-        this.handlers.clear(); // in case handler didn't remove itself
+        super.dispose();
     }
 
     /**

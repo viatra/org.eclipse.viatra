@@ -19,6 +19,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleInstance;
  */
 public abstract class AbstractRuleInstanceBuilder<EventAtom> {
 
-    public abstract void prepareRuleInstance(RuleInstance<EventAtom> ruleInstance, EventFilter<EventAtom> filter);
+    public abstract void prepareRuleInstance(RuleInstance<EventAtom> ruleInstance, EventFilter<? super EventAtom> filter);
     
 }

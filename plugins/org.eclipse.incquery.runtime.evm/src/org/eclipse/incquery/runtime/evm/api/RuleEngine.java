@@ -101,10 +101,10 @@ public class RuleEngine {
      * @return true if the rule was added, false if it already existed
      */
     public <EventAtom> boolean addRule(
-            final RuleSpecification<EventAtom> specification, boolean fireNow, EventFilter<EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, boolean fireNow, EventFilter<? super EventAtom> filter) {
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
-        RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);;
+        RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);
         boolean added = false;
         if(instance == null) {
             instance = ruleBase.instantiateRule(specification, filter);
@@ -166,7 +166,7 @@ public class RuleEngine {
      * @param filter
      * @return the immutable set of activations of the given filtered specification
      */
-    public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
+    public <EventAtom> Set<Activation<EventAtom>> getActivations(final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         return ImmutableSet.copyOf(ruleBase.getInstance(specification, filter).getAllActivations());
@@ -193,7 +193,7 @@ public class RuleEngine {
      * with the given state
      */
     public <EventAtom> Set<Activation<EventAtom>> getActivations(
-            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter, final ActivationState state) {
+            final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter, final ActivationState state) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(state, "Activation state must be specified!");
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
@@ -245,7 +245,7 @@ public class RuleEngine {
      * @return true, if the rule existed
      */
     public <EventAtom> boolean removeRule(
-            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         return ruleBase.removeRule(specification, filter);

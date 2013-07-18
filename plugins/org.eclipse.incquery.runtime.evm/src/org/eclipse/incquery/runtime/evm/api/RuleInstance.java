@@ -207,7 +207,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
         return specification;
     }
 
-    public EventFilter<EventAtom> getFilter(){
+    public EventFilter<? super EventAtom> getFilter(){
         checkState(handler != null, "Cannot get filter, bacause handler is null!");
         return handler.getEventFilter();
     }

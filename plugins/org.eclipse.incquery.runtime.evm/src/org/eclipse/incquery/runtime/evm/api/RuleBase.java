@@ -64,7 +64,7 @@ public class RuleBase {
      * @return the created or existing rule instance
      */
     protected <EventAtom> RuleInstance<EventAtom> instantiateRule(
-            final RuleSpecification<EventAtom> specification, final EventFilter<EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, final EventFilter<? super EventAtom> filter) {
         checkNotNull(specification, "Cannot instantiate null rule!");
         checkNotNull(filter, "Cannot instantiate rule with null filter!");
 //        if(ruleInstanceTable.containsRow(specification)) {
@@ -98,7 +98,7 @@ public class RuleBase {
      * @return true, if the specification had an instance in the RuleBase
      */
     protected <EventAtom> boolean removeRule(
-            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         checkNotNull(specification, "Cannot remove null rule specification!");
         checkNotNull(filter, "Cannot remove instance for null filter");
         RuleInstance<?> instance = findInstance(specification, filter);
@@ -152,7 +152,7 @@ public class RuleBase {
      * @return the instance, if it exists, null otherwise
      */
     public <EventAtom> RuleInstance<EventAtom> getInstance(
-            final RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         checkNotNull(specification, "Cannot get instance for null specification");
         checkNotNull(filter, "Cannot get instance for null filter");
         
@@ -160,7 +160,7 @@ public class RuleBase {
     }
 
     @SuppressWarnings("unchecked")
-    private <EventAtom> RuleInstance<EventAtom> findInstance(RuleSpecification<EventAtom> specification, EventFilter<EventAtom> filter) {
+    private <EventAtom> RuleInstance<EventAtom> findInstance(RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
 //        Collection<RuleInstance> instances = ruleInstanceTable.get(specification);
 //        if(instances.size() > 0) {
 //            

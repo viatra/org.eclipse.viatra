@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.7.0",
  org.eclipse.emf.workspace;bundle-version="1.5.1"
 Export-Package: org.eclipse.incquery.runtime.evm.api,
  org.eclipse.incquery.runtime.evm.api.event,
+ org.eclipse.incquery.runtime.evm.api.event.adapter,
  org.eclipse.incquery.runtime.evm.notification,
  org.eclipse.incquery.runtime.evm.qrm,
  org.eclipse.incquery.runtime.evm.specific,

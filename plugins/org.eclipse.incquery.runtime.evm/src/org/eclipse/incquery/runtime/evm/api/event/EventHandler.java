@@ -23,7 +23,7 @@ public interface EventHandler<EventAtom> {
     
     EventSource<EventAtom> getSource();
     
-    EventFilter<EventAtom> getEventFilter();
+    EventFilter<? super EventAtom> getEventFilter();
     
     void dispose();
 }

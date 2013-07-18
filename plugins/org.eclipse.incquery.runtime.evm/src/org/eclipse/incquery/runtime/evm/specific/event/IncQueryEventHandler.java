@@ -10,22 +10,20 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleInstance;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.Event;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
+import org.eclipse.incquery.runtime.evm.api.event.adapter.EventHandlerAdapter;
+import org.eclipse.incquery.runtime.evm.api.event.adapter.EventProcessorAdapter;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -37,117 +35,89 @@ import com.google.common.collect.Maps;
  * @author Abel Hegedus
  *
  */
-public class IncQueryEventHandler<Match extends IPatternMatch> implements EventHandler<Match> {
+public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHandlerAdapter<Match> {
 
-    private final IncQueryEventSource<Match> source;
-    private final EventFilter<Match> filter;
-    private final RuleInstance<Match> instance;
     private AttributeMonitor<Match> attributeMonitor;
-    private final Map<IncQueryEventTypeEnum,IMatchProcessor<Match>> processors;
     private UnregisterMonitorActivationNotificationListener unregisterListener;
     
-    protected IncQueryEventHandler(IncQueryEventSource<Match> source, EventFilter<Match> filter, RuleInstance<Match> instance) {
-        checkArgument(source != null, "Cannot create handler with null source");
-        checkArgument(filter != null, "Cannot create handler with null filter");
-        this.instance = instance;
-        this.source = source;
-        this.filter = filter;
-        this.processors = Maps.newEnumMap(IncQueryEventTypeEnum.class);
+    protected IncQueryEventHandler(IncQueryEventSource<Match> source, EventFilter<? super Match> filter, RuleInstance<Match> instance) {
+        super(source, filter, instance);
     }
 
-    @Override
-    public void handleEvent(Event<Match> event) {
-        Match eventAtom = event.getEventAtom();
-        if(filter.isProcessable(eventAtom)) {
-            EventType eventType = event.getEventType();
-            if(processors.containsKey(eventType)) {
-                IMatchProcessor<Match> processor = processors.get(eventType);
-                processor.process(event.getEventAtom());
-            }
-        }
-    }
-
-    @Override
-    public EventSource<Match> getSource() {
-        return source;
-    }
-
-    @Override
-    public EventFilter<Match> getEventFilter() {
-        return filter;
-    }
-    
-        
     /**
      * @return a new attribute monitor
      */
     protected AttributeMonitor<Match> prepareAttributeMonitor(){
         //return new DefaultAttributeMonitor<Match>();
         LightweightAttributeMonitor<Match> monitor = null;
+        IncQueryEventSource<Match> eventSource = (IncQueryEventSource<Match>) getSource();
         try {
-            monitor = new LightweightAttributeMonitor<Match>(source.getMatcher().getEngine().getBaseIndex());
+            monitor = new LightweightAttributeMonitor<Match>(eventSource.getMatcher().getEngine().getBaseIndex());
         } catch (IncQueryException e) {
             IncQueryLoggingUtil.getDefaultLogger().error("Error happened while accessing base index", e);
         }
         return monitor;
     }
     
-    protected void setInstance(RuleInstance<Match> instance) {
-        checkArgument(instance != null, "Instance cannot be null!");
-        this.instance.setHandler(this);
+    @Override
+    protected void prepareEventHandler() {
+        super.prepareEventHandler();
+        
         attributeMonitor = checkNotNull(prepareAttributeMonitor(), "Prepared attribute monitor is null!");
-        prepareEventProcessors(processors);
-        source.addHandler(this);
-        attributeMonitor.addAttributeMonitorListener(source.getAttributeMonitorListener());
+        IncQueryEventSource<Match> eventSource = (IncQueryEventSource<Match>) getSource();
+        eventSource.addHandler(this);
+        attributeMonitor.addAttributeMonitorListener(eventSource.getAttributeMonitorListener());
         unregisterListener = checkNotNull(prepareActivationNotificationListener(), "Prepared activation notification listener is null!");
-        instance.addActivationNotificationListener(unregisterListener, false);
+        getInstance().addActivationNotificationListener(unregisterListener, false);
     }
 
     protected UnregisterMonitorActivationNotificationListener prepareActivationNotificationListener() {
         return new UnregisterMonitorActivationNotificationListener();
     }
 
-
-    protected void prepareEventProcessors(Map<IncQueryEventTypeEnum,IMatchProcessor<Match>> processors) {
-        
-        processors.put(IncQueryEventTypeEnum.MATCH_APPEARS, new DefaultMatchEventProcessor() {
+    @Override
+    protected Map<EventType, EventProcessorAdapter<Match>> prepareEventProcessors() {
+    
+        Map<EventType,EventProcessorAdapter<Match>> processors = Maps.newHashMap();
+        processors.put(IncQueryEventTypeEnum.MATCH_APPEARS, new EventProcessorAdapter<Match>(getInstance()) {
             @Override
-            protected void activationExists(Activation<Match> activation) {
-                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
+            protected void activationExists(Event<Match> event, Activation<Match> activation) {
+                getInstance().activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
             }
 
             @Override
-            protected void activationMissing(Match atom) {
-                Activation<Match> activation = instance.createActivation(atom);
-                if(instance.getLifeCycle().containsTo(IncQueryActivationStateEnum.UPDATED)) {
-                    attributeMonitor.registerFor(atom);
+            protected void activationMissing(Event<Match> event) {
+                Match eventAtom = event.getEventAtom();
+                Activation<Match> activation = getInstance().createActivation(eventAtom);
+                if(getInstance().getLifeCycle().containsTo(IncQueryActivationStateEnum.UPDATED)) {
+                    attributeMonitor.registerFor(eventAtom);
                 }
-                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
+                getInstance().activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_APPEARS);
             }
         });
-        processors.put(IncQueryEventTypeEnum.MATCH_UPDATES, new DefaultMatchEventProcessor() {
+        processors.put(IncQueryEventTypeEnum.MATCH_UPDATES, new EventProcessorAdapter<Match>(getInstance()) {
             @Override
-            protected void activationExists(Activation<Match> activation) {
-                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_UPDATES);
+            protected void activationExists(Event<Match> event, Activation<Match> activation) {
+                getInstance().activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_UPDATES);
             }
 
             @Override
-            protected void activationMissing(Match atom) {
-                checkState(false, String.format("Atom %s updated without existing activation in rule instance %s!", atom, this));
+            protected void activationMissing(Event<Match> event) {
+                checkState(false, String.format("Atom %s updated without existing activation in rule instance %s!", event.getEventAtom(), this));
             }
         });
-        processors.put(IncQueryEventTypeEnum.MATCH_DISAPPEARS, new DefaultMatchEventProcessor() {
+        processors.put(IncQueryEventTypeEnum.MATCH_DISAPPEARS, new EventProcessorAdapter<Match>(getInstance()) {
             @Override
-            protected void activationExists(Activation<Match> activation) {
-                instance.activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_DISAPPEARS);
+            protected void activationExists(Event<Match> event, Activation<Match> activation) {
+                getInstance().activationStateTransition(activation, IncQueryEventTypeEnum.MATCH_DISAPPEARS);
             }
 
             @Override
-            protected void activationMissing(Match atom) {
-                checkState(false, String.format("Match %s disappeared without existing activation in rule instance %s!",atom,this));
+            protected void activationMissing(Event<Match> event) {
+                checkState(false, String.format("Match %s disappeared without existing activation in rule instance %s!",event.getEventAtom(),this));
             }
         });
-        
+        return processors;
     }
     
 
@@ -172,60 +142,10 @@ public class IncQueryEventHandler<Match extends IPatternMatch> implements EventH
         }
     }
 
-
-
-    /**
-     * This class is the common supertype for default event processors
-     *  in the rule instance.
-     *  
-     * @author Abel Hegedus
-     *
-     */
-    private abstract class DefaultMatchEventProcessor implements IMatchProcessor<Match> {
-        
-        /**
-         * This method is called with the match corresponding to the
-         * activation that is affected by the event.
-         * 
-         * @param atom
-         */
-        @Override
-        public void process(Match atom) {
-            checkNotNull(atom,"Cannot process null match!");
-            
-            Map<ActivationState, Activation<Match>> column = instance.getActivations().column(atom);
-            if(column.size() > 0) {
-                checkArgument(column.size() == 1, String.format("%s activations in the same rule for the same match",column.size() == 0 ? "No" : "Multiple"));
-                Activation<Match> act = column.values().iterator().next();
-                activationExists(act);
-            } else {
-                activationMissing(atom);
-            }
-        }
-        
-        /**
-         * This method is called by processMatchEvent if the activation
-         * already exists for the given match.
-         * 
-         * @param activation
-         */
-        protected abstract void activationExists(Activation<Match> activation);
-        
-        /**
-         * This method is called by processMatchEvent if the activation
-         * does not exists for the given match.
-         * 
-         * @param match
-         */
-        protected abstract void activationMissing(Match atom);
-    }
-
-
-
     @Override
     public void dispose() {
-        instance.removeActivationNotificationListener(unregisterListener);
-        source.removeHandler(this);
+        getInstance().removeActivationNotificationListener(unregisterListener);
+        ((IncQueryEventSource<Match>) getSource()).removeHandler(this);
         attributeMonitor.dispose();
     }
 

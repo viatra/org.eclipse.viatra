@@ -73,7 +73,7 @@ public class RuleSpecification<EventAtom> {
      * @param filter
      * @return the instantiated rule
      */
-    protected RuleInstance<EventAtom> instantiateRule(final EventRealm eventRealm, final EventFilter<EventAtom> filter) {
+    protected RuleInstance<EventAtom> instantiateRule(final EventRealm eventRealm, final EventFilter<? super EventAtom> filter) {
 //        boolean valid = eventRealm.validateSourceSpecification(sourceSpecification, filter);
 //        if(valid) {
 //            @SuppressWarnings("unchecked")

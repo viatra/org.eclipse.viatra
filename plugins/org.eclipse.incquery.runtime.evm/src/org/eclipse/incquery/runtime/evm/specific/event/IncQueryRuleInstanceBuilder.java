@@ -28,13 +28,13 @@ public class IncQueryRuleInstanceBuilder<Match extends IPatternMatch> extends Ab
     private IncQueryEventSourceSpecification<Match> sourceSpecification;
     
     @Override
-    public void prepareRuleInstance(RuleInstance<Match> ruleInstance, EventFilter<Match> filter) {
+    public void prepareRuleInstance(RuleInstance<Match> ruleInstance, EventFilter<? super Match> filter) {
         checkArgument(ruleInstance != null, "Cannot prepare null rule instance!");
         //checkArgument(filter instanceof IncQueryEventFilter, "Filter must be IncQueryEventFilter!");
         IncQueryEventSource<Match> source = checkNotNull(realm.createSource(sourceSpecification),
                 "Could not create source in realm!");
         IncQueryEventHandler<Match> handler = checkNotNull(new IncQueryEventHandler<Match>(source, filter, ruleInstance), "Could not create handler in source!");
-        handler.setInstance(ruleInstance);
+        handler.prepareEventHandler();
     }
 
     /**
@@ -42,8 +42,8 @@ public class IncQueryRuleInstanceBuilder<Match extends IPatternMatch> extends Ab
      */
     protected IncQueryRuleInstanceBuilder(IncQueryEventRealm realm, IncQueryEventSourceSpecification<Match> sourceSpecification) {
         checkArgument(realm != null, "Cannot create builder with null realm!");
-        this.realm = realm;
         checkArgument(sourceSpecification != null, "Cannot create builder with null realm!");
+        this.realm = realm;
         this.sourceSpecification = sourceSpecification;
     } 
     
