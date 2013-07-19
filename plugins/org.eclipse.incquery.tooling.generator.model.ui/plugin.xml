@@ -49,29 +49,6 @@
         </definition>
     </extension>
     <extension
-            point="org.eclipse.ui.preferencePages">
-        <page
-            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
-            name="GeneratorModel">
-            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
-        </page>
-        <page
-            category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
-            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.coloring"
-            name="Syntax Coloring">
-            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
-        </page>
-        <page
-            category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
-            class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.templates"
-            name="Templates">
-            <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
-        </page>
-    </extension>
-    <extension
             point="org.eclipse.ui.propertyPages">
         <page
             class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
@@ -261,15 +238,6 @@
          </command>
       </menuContribution>
    </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="org.eclipse.incquery.tooling.generator.model.GeneratorModel"
-	        class="org.eclipse.incquery.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="org.eclipse.incquery.tooling.generator.model.ui.keyword_GeneratorModel"/>
-	    </page>
-	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="org.eclipse.incquery.tooling.generator.model.GeneratorModel.compare.contentViewers"
