@@ -175,7 +175,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
 				@Override
 				public void run() {
-					fireSetChange(diff);
+				    if (!isDisposed()) {
+				        fireSetChange(diff);
+				    }
 				}
 			});
         }
@@ -191,7 +193,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
 				@Override
 				public void run() {
-					fireSetChange(diff);
+				    if (!isDisposed()) {
+				        fireSetChange(diff);
+				    }
 				}
 			});
         }

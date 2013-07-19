@@ -180,7 +180,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
 				@Override
 				public void run() {
-					fireListChange(diff);
+				    if (!isDisposed()) {
+				        fireListChange(diff);
+				    }
 				}
 			});
         }
@@ -197,7 +199,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
 				@Override
 				public void run() {
-					fireListChange(diff);
+				    if (!isDisposed()) {
+				        fireListChange(diff);
+				    }
 				}
 			});
         }
