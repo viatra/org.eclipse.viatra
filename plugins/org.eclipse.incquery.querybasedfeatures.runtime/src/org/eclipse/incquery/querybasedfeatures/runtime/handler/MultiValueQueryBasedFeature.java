@@ -137,6 +137,6 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
 
     @Override
     public Object getValue(Object source) {
-        return getManyReferenceValue(source);
+        return getManyReferenceValueAsEList(source);
     }
 }
