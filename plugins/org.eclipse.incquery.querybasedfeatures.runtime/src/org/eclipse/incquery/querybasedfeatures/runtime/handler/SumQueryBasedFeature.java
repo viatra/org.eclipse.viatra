@@ -118,8 +118,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
 
     @Override
     public Object getValue(Object source) {
-        // TODO Auto-generated method stub
-        return null;
+        return getIntValue(source);
     }
 
 }

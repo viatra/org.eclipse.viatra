@@ -68,5 +68,10 @@ public abstract class IterationQueryBasedFeature extends QueryBasedFeature {
      */
     protected abstract ENotificationImpl lostMatchIteration(IPatternMatch signature);
 
+    @Override
+    public Object getValue(Object source) {
+        return getValueIteration(source);
+    }
+    
     public abstract Object getValueIteration(Object source);
 }
