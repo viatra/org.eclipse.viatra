@@ -33,8 +33,8 @@ public class IncQueryGraphViewers {
 
     /**
      * 
-     * @deprecated Use {@link #bind(GraphViewer, ViewerState)} where
-     *             {@link ViewerState} consists of the shared data between
+     * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
+     *             {@link ViewerStateSet} consists of the shared data between
      *             various viewers.
      */
     public static void bind(GraphViewer viewer, ViewerDataModel model) {
@@ -43,12 +43,12 @@ public class IncQueryGraphViewers {
 
     /**
      * 
-	 * @deprecated Use {@link #bind(GraphViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
+	 * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
      */
     public static void bind(GraphViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-    	ViewerState state = new ViewerState(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE));
+    	ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE));
         bind(viewer, state);
     }
 

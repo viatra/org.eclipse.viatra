@@ -158,7 +158,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     /**
      * @return the specification
      */
-    protected RuleSpecification<Match> getSpecification() {
+    public RuleSpecification<Match> getSpecification() {
         return specification;
     }
 

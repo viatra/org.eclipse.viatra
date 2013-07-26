@@ -53,7 +53,7 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
-        return Iterables.toArray(Iterables.filter(state.getItemList(), filter), Item.class);
+        return Iterables.toArray(Iterables.filter(state.getItems(), filter), Item.class);
     }
 
     @Override

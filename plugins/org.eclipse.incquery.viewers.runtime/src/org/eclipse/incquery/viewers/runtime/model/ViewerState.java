@@ -1,26 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, istvanrath, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ *   istvanrath - initial API and implementation
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -28,224 +21,57 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 /**
- * <p>
- * A Viewer state represents a stateful data model for an IncQuery Viewer. The
- * state is capable of either returning observable lists of its content, and is
- * also capable of sending of sending state change notifications based to
- * {@link IViewerStateListener} implementations.
- * </p>
- * 
- * <p>
- * A Viewer can be initialized directly with a set of patterns and model, or a
- * {@link ViewerDataModel} can be used to prepare and share such data between
- * instances.
- * </p>
- * 
- * @author Zoltan Ujhelyi
- * 
+ * @author istvanrath
+ *
  */
-public final class ViewerState {
+public abstract class ViewerState {
 
-	private IObservableList itemList;
-	private IObservableList edgeList;
-
-	private IObservableList containmentList;
-
-	private Multimap<Object, Item> itemMap;
-	private Multimap<Item, Item> childrenMap;
-	private Map<Item, Item> parentMap;
-
-	private ViewerDataModel model;
-
-	public ViewerDataModel getModel() {
-		return model;
-	}
-
-	private ListenerList stateListeners = new ListenerList();
-
-	public enum ViewerStateFeature {
-		EDGE, CONTAINMENT
-	}
-
-	private Multimap<Object, Item> initializeItemMap() {
-		Map<Object, Collection<Item>> map = Maps.newHashMap();
-		return Multimaps.newListMultimap(map, new Supplier<List<Item>>() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public List<Item> get() {
-				ArrayList<Item> list = Lists.newArrayList();
-				return new WritableList(list, Item.class);
-			}
-
-		});
-	}
-
-	private IListChangeListener itemListener = new IListChangeListener() {
-
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			for (ListDiffEntry entry : diff.getDifferences()) {
-				Item item = (Item) entry.getElement();
-				if (entry.isAddition()) {
-					for (Object listener : stateListeners.getListeners()) {
-						((IViewerStateListener) listener).itemAppeared(item);
-					}
-				} else {
-					for (Object listener : stateListeners.getListeners()) {
-						((IViewerStateListener) listener).itemDisappeared(item);
-					}
-				}
-			}
-		}
-	};
-
-	private IListChangeListener edgeListener = new IListChangeListener() {
-
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			for (ListDiffEntry entry : diff.getDifferences()) {
-				Edge edge = (Edge) entry.getElement();
-				if (entry.isAddition()) {
-					for (Object listener : stateListeners.getListeners()) {
-						((IViewerStateListener) listener).edgeAppeared(edge);
-					}
-				} else {
-					for (Object listener : stateListeners.getListeners()) {
-						((IViewerStateListener) listener).edgeDisappeared(edge);
-					}
-				}
-			}
-		}
-	};
-
-	private IListChangeListener containmentListener = new IListChangeListener() {
-
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			ListDiff diff = event.diff;
-			for (ListDiffEntry entry : diff.getDifferences()) {
-				Containment edge = (Containment) entry.getElement();
-				if (entry.isAddition()) {
-					containmentAppeared(edge);
-				} else {
-					containmentDisappeared(edge);
-				}
-			}
-
-		}
-	};
-
-	public ViewerState(ResourceSet set, IncQueryEngine engine,
+	
+	/* factory method */
+	
+	// here you can easily switch between list and set-based implementations
+	private static boolean setMode = false;
+	// at the moment, the set-based one is very buggy
+	
+	public static ViewerState newInstance(ResourceSet set, IncQueryEngine engine,
 			Collection<Pattern> patterns, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
-		this.model = new ViewerDataModel(set, patterns, engine);
-		initializeViewerState(model, filter, features);
+		if (setMode)
+			return new ViewerStateSet(set, engine, patterns, filter, features);
+		else
+			return new ViewerStateList(set, engine, patterns, filter, features);		
 	}
-
-	public ViewerState(ViewerDataModel model, ViewerDataFilter filter,
-			Collection<ViewerStateFeature> features) {
-		this.model = model;
-		initializeViewerState(model, filter, features);
+	
+	public static ViewerState newInstance(ViewerDataModel model, ViewerDataFilter filter,
+			Collection<ViewerStateFeature> features)
+	{
+		if (setMode)
+			return new ViewerStateSet(model, filter, features);
+		else
+			return new ViewerStateList(model, filter, features);
 	}
-
-	private void initializeViewerState(ViewerDataModel model,
-			ViewerDataFilter filter, Collection<ViewerStateFeature> features) {
-		itemMap = initializeItemMap();
-		initializeItemList(model.initializeObservableItemList(filter, itemMap));
-		for (ViewerStateFeature feature : features) {
-			switch (feature) {
-			case EDGE:
-				initializeEdgeList(model.initializeObservableEdgeList(filter,
-						itemMap));
-				break;
-			case CONTAINMENT:
-				initializeContainmentList(model
-						.initializeObservableContainmentList(filter, itemMap));
-			}
-		}
-	}
-
-	/*
-	 * Item management
-	 */
+	
+	
+	
 	/**
-	 * Returns the item stored in this Viewer State
-	 * 
-	 * @return
+	 * Maps lowlevel model objects to their corresponding items.
 	 */
-	public IObservableList getItemList() {
-		return itemList;
-	}
-
-	private void initializeItemList(IObservableList itemList) {
-		if (this.itemList != null) {
-			removeItemListener(itemList);
-		}
-		this.itemList = itemList;
-		addItemListener(itemList);
-	}
-
-	private void addItemListener(IObservableList containmentList) {
-		containmentList.addListChangeListener(itemListener);
-	}
-
-	private void removeItemListener(IObservableList oldContainmentList) {
-		oldContainmentList.removeListChangeListener(itemListener);
-	}
-
-	/*
-	 * Edge management
-	 */
-
+	protected Multimap<Object, Item> itemMap;
+	
 	/**
-	 * Returns the edges stored in this Viewer State
-	 * 
-	 * @return
+	 * Maps parent-child relationships in the viewer model.
 	 */
-	public IObservableList getEdgeList() {
-		return edgeList;
-	}
-
-	private void initializeEdgeList(IObservableList edgeList) {
-		if (this.edgeList != null) {
-			removeEdgeListener(this.edgeList);
-		}
-		this.edgeList = edgeList;
-		addEdgeListener(edgeList);
-	}
-
-	private void addEdgeListener(IObservableList edgeList) {
-		edgeList.addListChangeListener(edgeListener);
-	}
-
-	private void removeEdgeListener(IObservableList oldEdgeList) {
-		oldEdgeList.removeListChangeListener(edgeListener);
-	}
-
-	/*
-	 * Containment management
-	 */
-
+	protected Multimap<Item, Item> childrenMap;
+	
 	/**
-	 * Returns the containments stored in this Viewer State
-	 * 
-	 * @return
-	 */
-	public IObservableList getContainmentList() {
-		return containmentList;
-	}
+     * Maps child-parent relationships in the viewer model.
+     */
+	protected Map<Item, Item> parentMap;
 
+	
 	public Collection<Item> getChildren(Item parent) {
 		return childrenMap.get(parent);
 	}
@@ -253,70 +79,55 @@ public final class ViewerState {
 	public Item getParent(Item child) {
 		return parentMap.get(child);
 	}
+	
+	protected ViewerDataModel model;
 
-	private void initializeContainmentList(IObservableList containmentList) {
-		if (this.containmentList != null) {
-			removeContainmentListener(this.containmentList);
-		}
-		this.containmentList = containmentList;
-		childrenMap = HashMultimap.create();
-		parentMap = Maps.newHashMap();
-		for (Object obj : containmentList) {
-			Containment containment = (Containment) obj;
-			containmentAppeared(containment);
-		}
-		addContainmentListener(containmentList);
+	public ViewerDataModel getModel() {
+		return model;
 	}
 
-	private void containmentAppeared(Containment containment) {
-		childrenMap.put(containment.getSource(), containment.getTarget());
-		parentMap.put(containment.getTarget(), containment.getSource());
-		for (Object listener : stateListeners.getListeners()) {
-			((IViewerStateListener) listener).containmentAppeared(containment);
-		}
+	public enum ViewerStateFeature {
+		EDGE, CONTAINMENT
 	}
-
-	private void containmentDisappeared(Containment containment) {
-		childrenMap.remove(containment.getSource(), containment.getTarget());
-		parentMap.remove(containment.getTarget());
-		for (Object listener : stateListeners.getListeners()) {
-			((IViewerStateListener) listener)
-					.containmentDisappeared(containment);
-		}
-	}
-
-	private void addContainmentListener(IObservableList oldContainmentList) {
-		oldContainmentList.addListChangeListener(containmentListener);
-	}
-
-	private void removeContainmentListener(IObservableList oldContainmentList) {
-		oldContainmentList.removeListChangeListener(containmentListener);
-	}
-
+	
+	
 	/*
 	 * Listener management
 	 */
 
+
+	protected ListenerList stateListeners = new ListenerList();
+	
 	/**
-	 * Adds a new state listener to the Viewer State
+	 * Adds a new state Listener to the Viewer State
 	 */
-	public void addStateListener(IViewerStateListener listener) {
-		stateListeners.add(listener);
+	public void addStateListener(IViewerStateListener Listener) {
+		stateListeners.add(Listener);
 	}
 
 	/**
-	 * Removes a state listener from the Viewer State
+	 * Removes a state Listener from the Viewer State
 	 */
-	public void removeStateListener(IViewerStateListener listener) {
-		stateListeners.remove(listener);
+	public void removeStateListener(IViewerStateListener Listener) {
+		stateListeners.remove(Listener);
 	}
 
 	/**
 	 * Exposes EObject -> Item* traceability information.
 	 * 
-	 * Access the list of Items mapped to an EObject.
+	 * Access the Set of Items mapped to an EObject.
 	 */
 	public Collection<Item> getItemsFor(EObject target) {
 		return itemMap.get(target);
 	}
+	
+	/* Hooks into concrete implementations */
+	
+	public abstract IObservableCollection getItems();
+	
+	public abstract IObservableCollection getEdges();
+	
+	public abstract IObservableCollection getContainments();
+	
+	
 }

@@ -13,6 +13,7 @@ package org.eclipse.incquery.viewers.runtime.model;
 import java.util.Map;
 
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -25,7 +26,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
- * A wrapper class for filter definitions. It is used to create filtered observable lists for patterns. A filter
+ * A wrapper class for filter definitions. It is used to create filtered observable Sets for patterns. A filter
  * definition is considered unchangeable</p>
  * 
  * <p>
@@ -40,26 +41,7 @@ public class ViewerDataFilter {
     public static ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
     private Map<Pattern, IPatternMatch> filterDefinitions;
-
-    final static class MatchList<Match extends IPatternMatch> extends ObservablePatternMatchList<Match> {
-
-        public <Matcher extends IncQueryMatcher<Match>> MatchList(IQuerySpecification<Matcher> querySpecification,
-                RuleEngine engine, Match filter) {
-            super(querySpecification, engine, filter);
-        }
-
-        public <Matcher extends IncQueryMatcher<Match>> MatchList(IQuerySpecification<Matcher> querySpecification,
-                RuleEngine engine) {
-            super(querySpecification, engine);
-        }
-
-        @Override
-        public RuleSpecification<Match> getSpecification() {
-            return super.getSpecification();
-        }
-
-    }
-
+    
     /**
      * Initializes an empty data filter.
      */
@@ -118,6 +100,27 @@ public class ViewerDataFilter {
     }
 
     /**
+     * Returns an observable Set of pattern matches, taking account the existing filter rules for a pattern. If no
+     * filtering rule is defined for the selected pattern, all matches are returned.
+     * 
+     * @param pattern
+     * @param engine
+     * @return
+     */
+    public ObservablePatternMatchSet<IPatternMatch> getObservableSet(Pattern pattern, RuleEngine engine) {
+        @SuppressWarnings("unchecked")
+        IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
+                .getOrCreateQuerySpecification(pattern);
+
+        ObservablePatternMatchSet<IPatternMatch> obsSet = isFiltered(pattern) ? new ObservablePatternMatchSet<IPatternMatch>(querySpecification,
+                engine,
+                getFilter(pattern)) : new ObservablePatternMatchSet<IPatternMatch>(querySpecification, engine);
+        return obsSet;
+    }
+   
+
+    
+    /**
      * Returns an observable list of pattern matches, taking account the existing filter rules for a pattern. If no
      * filtering rule is defined for the selected pattern, all matches are returned.
      * 
@@ -125,14 +128,15 @@ public class ViewerDataFilter {
      * @param engine
      * @return
      */
-    public MatchList<IPatternMatch> getObservableList(Pattern pattern, RuleEngine engine) {
+    public ObservablePatternMatchList<IPatternMatch> getObservableList(Pattern pattern, RuleEngine engine) {
         @SuppressWarnings("unchecked")
         IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
                 .getOrCreateQuerySpecification(pattern);
 
-        MatchList<IPatternMatch> obslist = isFiltered(pattern) ? new MatchList<IPatternMatch>(querySpecification,
+        ObservablePatternMatchList<IPatternMatch> obslist = isFiltered(pattern) ? new ObservablePatternMatchList<IPatternMatch>(querySpecification,
                 engine,
-                getFilter(pattern)) : new MatchList<IPatternMatch>(querySpecification, engine);
+                getFilter(pattern)) : new ObservablePatternMatchList<IPatternMatch>(querySpecification, engine);
         return obslist;
     }
 }
+

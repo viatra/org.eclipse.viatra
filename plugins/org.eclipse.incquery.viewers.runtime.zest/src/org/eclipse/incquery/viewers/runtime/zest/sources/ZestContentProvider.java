@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
@@ -66,8 +65,8 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     public Object[] getElements(Object inputElement) {
         if (state!=null) {
         	Iterable<Edge> it = (displayContainment) 
-        			? Iterables.concat(state.getEdgeList(), state.getContainmentList())
-        			: state.getEdgeList();        		
+        			? Iterables.concat(state.getEdges(), state.getContainments())
+        			: state.getEdges();        		
 			return Iterables.toArray(it, Edge.class);
         }
         else return new Object[]{};

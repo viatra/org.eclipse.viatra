@@ -30,8 +30,8 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
+	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
 	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
@@ -40,14 +40,13 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
+	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
 	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
 			ViewerDataFilter filter) {
-		bind(viewer,
-				new ViewerState(model, filter, ImmutableSet
+		bind(viewer, ViewerState.newInstance(model, filter, ImmutableSet
 						.of(ViewerStateFeature.CONTAINMENT)));
 	}
 
@@ -64,8 +63,8 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
+	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
 	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
@@ -74,13 +73,13 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
+	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
 	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
 			ViewerDataFilter filter) {
-		ViewerState state = new ViewerState(model, filter, ImmutableSet
+		ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet
 				.of(ViewerStateFeature.CONTAINMENT));
 		bind(viewer, state);
 	}

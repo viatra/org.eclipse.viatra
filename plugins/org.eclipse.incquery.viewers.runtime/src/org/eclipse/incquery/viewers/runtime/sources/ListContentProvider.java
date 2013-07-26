@@ -48,7 +48,7 @@ public class ListContentProvider extends AbstractViewerStateListener implements 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
-        return Iterables.toArray(state.getItemList(), Item.class);
+        return Iterables.toArray(state.getItems(), Item.class);
     }
 
     @Override
