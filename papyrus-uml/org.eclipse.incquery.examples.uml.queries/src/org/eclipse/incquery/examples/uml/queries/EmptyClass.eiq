@@ -4,7 +4,7 @@ import "http://www.eclipse.org/uml2/4.0.0/UML"
 
 @Edge(source = sup, target = sub, label = "direct")
 @ContainsItem(container = sup, item = sub)
-@Format(color = "#7f004b", lineWidth = 2)
+@Format(color = "#7f004b", lineWidth = 2, lineStyle = "dashed")
 pattern superClass(sub : Class, sup : Class) {
 	Generalization.specific(Gen, sub);
 	Generalization(Gen);

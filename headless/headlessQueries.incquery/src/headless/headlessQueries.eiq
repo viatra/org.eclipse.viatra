@@ -6,10 +6,10 @@ pattern eClassNames(c: EClass, n : EString)= {
 	EClass.name(c,n);
 }
 
-pattern eClassNamesKeyword(c: EClass, n: EString, keyword:EString)
+pattern eClassNamesKeyword(c: EClass, n: EString)
 {
 	EClass.name(c,n);
-	check(n.contains(keyword));
+	check("A" == n);
 }
 
 pattern eObject(o) {
