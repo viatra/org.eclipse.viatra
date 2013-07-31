@@ -70,8 +70,16 @@ public class XBaseEvaluator extends AbstractEvaluator {
         this.xExpression = xExpression;
         this.tupleNameMap = tupleNameMapping;
         this.pattern = pattern;
+        
+        // code moved to init function, to make sure it is invoked post-injection
+        
+    }
 
-        // First try to setup the generated code from the extension point
+    /**
+     * make sure to call this after members have been injected.
+     */
+    public void init() {
+     // First try to setup the generated code from the extension point
         IConfigurationElement[] configurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(
                 IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
         for (IConfigurationElement configurationElement : configurationElements) {
@@ -103,9 +111,12 @@ public class XBaseEvaluator extends AbstractEvaluator {
             }
         }
     }
-
+    
     @Override
     public Object doEvaluate(Tuple tuple) throws Throwable {
+        
+        init();
+        
         // First option: try to evalute with the generated code
         if (matchChecker != null) {
             return matchChecker.evaluateXExpression(tuple, tupleNameMap);

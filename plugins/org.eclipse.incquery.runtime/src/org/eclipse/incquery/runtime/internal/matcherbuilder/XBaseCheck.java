@@ -70,6 +70,7 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 
         XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, tupleNameMap, pattern);
         injector.injectMembers(evaluator);
+        evaluator.init();
         return buildable.buildPredicateChecker(evaluator, null, indices, stub);
     }
 
