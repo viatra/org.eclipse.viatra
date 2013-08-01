@@ -61,7 +61,7 @@ public class NodeToStubTraceInfo<PatternDescription> implements Node.TraceInfo.P
 	/**
 	 * @return the stub
 	 */
-	protected Stub<?> getStub() {
+	public Stub<?> getStub() {
 		return stub;
 	}
 
