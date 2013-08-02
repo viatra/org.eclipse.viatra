@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -117,7 +116,7 @@ public abstract class ViewerState {
 	 * 
 	 * Access the Set of Items mapped to an EObject.
 	 */
-	public Collection<Item> getItemsFor(EObject target) {
+	public Collection<Item> getItemsFor(Object target) {
 		return itemMap.get(target);
 	}
 	

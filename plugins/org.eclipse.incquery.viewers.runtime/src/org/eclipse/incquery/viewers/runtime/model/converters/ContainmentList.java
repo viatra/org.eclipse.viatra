@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
@@ -58,8 +57,8 @@ public class ContainmentList extends ComputedList {
             
             IPatternMatch match = (IPatternMatch) _match;
 
-            EObject sourceValue = (EObject) match.get(containerParameterName);
-            EObject destValue = (EObject) match.get(destParameterName);
+            Object sourceValue = match.get(containerParameterName);
+            Object destValue = match.get(destParameterName);
 
             for (Object _sourceItem : itemMap.get(sourceValue)) {
                 Item sourceItem = (Item) _sourceItem;

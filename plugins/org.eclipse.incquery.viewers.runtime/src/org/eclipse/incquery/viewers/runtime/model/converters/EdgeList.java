@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
@@ -68,8 +67,8 @@ public class EdgeList extends ComputedList {
             
             IPatternMatch match = (IPatternMatch) _match;
 
-            EObject sourceValue = (EObject) match.get(sourceParameterName);
-            EObject destValue = (EObject) match.get(destParameterName);
+            Object sourceValue = match.get(sourceParameterName);
+            Object destValue = match.get(destParameterName);
 
             for (Object _sourceItem : itemMap.get(sourceValue)) {
                 Item sourceItem = (Item) _sourceItem;
