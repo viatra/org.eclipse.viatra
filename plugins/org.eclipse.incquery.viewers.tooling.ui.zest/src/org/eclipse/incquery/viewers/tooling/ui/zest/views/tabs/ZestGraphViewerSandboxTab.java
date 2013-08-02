@@ -17,7 +17,7 @@ import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.AbstractViewerSandboxTab;
 import org.eclipse.incquery.viewers.tooling.ui.zest.Activator;
@@ -38,8 +38,9 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     }
 
     @Override
-    public void bindModel(ViewerDataModel model, ViewerDataFilter filter) {
-        IncQueryGraphViewers.bind(viewer, model, filter);
+    public void bindState(ViewerState state, ViewerDataFilter filter) {
+        // TODO support filtering
+        IncQueryGraphViewers.bind(viewer, state);//, filter);
     }
 
     @Override

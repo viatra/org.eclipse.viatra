@@ -49,5 +49,7 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     }
 
     protected abstract StructuredViewer getViewer();
+    
+    
     protected abstract StructuredViewer createViewer(Composite parent);
 }

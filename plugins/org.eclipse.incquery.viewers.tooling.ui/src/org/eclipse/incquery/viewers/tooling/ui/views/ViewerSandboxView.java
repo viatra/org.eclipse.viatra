@@ -28,7 +28,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.model.ViewersAnnotatedPatternTester;
 import org.eclipse.incquery.viewers.tooling.ui.Activator;
 import org.eclipse.incquery.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
@@ -51,6 +52,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -220,9 +222,10 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (resourceSet != null) {
-            ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns), getEngine(resourceSet));
+            //ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns), getEngine(resourceSet));
+            ViewerState state = ViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
-                tab.bindModel(viewmodel, filter);
+                tab.bindState(state, filter);
             }
         }
     }

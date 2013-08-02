@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -20,9 +20,9 @@ public class TreeViewerSandboxTab extends AbstractViewerSandboxTab {
     }
 
     @Override
-    public void bindModel(ViewerDataModel model, ViewerDataFilter filter) {
-        IncQueryViewerSupport.bind(viewer, model, filter);
-
+    public void bindState(ViewerState state, ViewerDataFilter filter) {
+        // TODO add support for filtering
+        IncQueryViewerSupport.bind(viewer, state);//, filter);
     }
 
     @Override

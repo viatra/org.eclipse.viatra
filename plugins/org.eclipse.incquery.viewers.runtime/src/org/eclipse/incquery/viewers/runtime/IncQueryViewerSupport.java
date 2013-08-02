@@ -30,7 +30,7 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerStateSet)} where
+	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
@@ -73,8 +73,8 @@ public class IncQueryViewerSupport {
 
 	/**
 	 * 
-	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerStateSet)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
+	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
+	 *             {@link ViewerState} consists of the shared data between
 	 *             various viewers.
 	 */
 	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
