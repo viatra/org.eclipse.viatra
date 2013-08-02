@@ -12,7 +12,6 @@ package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
 
 import java.util.List;
 
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -43,9 +42,8 @@ public interface IViewerSandboxTab extends ISelectionProvider {
      * Binds the content of a viewer state to the current tab
      * 
      * @param model
-     * @param filter
      */
-    void bindState(ViewerState state, ViewerDataFilter filter);
+    void bindState(ViewerState state);
     
     /**
      * Receive focus.

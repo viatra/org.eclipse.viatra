@@ -225,7 +225,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
             //ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns), getEngine(resourceSet));
             ViewerState state = ViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
-                tab.bindState(state, filter);
+                tab.bindState(state);
             }
         }
     }

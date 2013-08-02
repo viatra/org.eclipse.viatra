@@ -3,7 +3,6 @@ package org.eclipse.incquery.viewers.tooling.ui.views.tabs;
 import java.util.List;
 
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.ListViewer;
@@ -32,8 +31,7 @@ public class ListViewerSandboxTab extends AbstractViewerSandboxTab {
     }
 
     @Override
-    public void bindState(ViewerState state, ViewerDataFilter filter) {
-        // TODO add support for filtering
+    public void bindState(ViewerState state) {
         IncQueryViewerSupport.bind(viewer, state);//, filter);
     }
 
