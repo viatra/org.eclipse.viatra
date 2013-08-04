@@ -16,13 +16,12 @@ import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.incquery.runtime.api.IncQueryEngine
-import org.eclipse.incquery.runtime.api.impl.BaseMatcher
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmGenericType
-import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 
@@ -36,25 +35,7 @@ class PatternMatcherClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
-	@Inject extension PatternMatcherClassMethodInferrer
 	@Inject extension TypeReferences types
-
-	/**
-	 * Infers the {@link IncQueryMatcher} implementation class from a {@link Pattern}.
-	 */
-	def JvmDeclaredType inferMatcherClass(Pattern pattern, boolean isPrelinkingPhase, String matcherPackageName, JvmTypeReference matchClassRef) {
-		val matcherClass = pattern.toClass(pattern.matcherClassName) [
-   			it.packageName = matcherPackageName
-   			it.documentation = pattern.javadocMatcherClass.toString
-			//it.annotations += pattern.toAnnotation(typeof (SuppressWarnings), "unused")
-   			it.superTypes += pattern.newTypeRef(typeof(BaseMatcher), cloneWithProxies(matchClassRef))
-   		]
-   		matcherClass.inferStaticMethods(pattern, matcherClass)
-   		matcherClass.inferFields(pattern)
-   		matcherClass.inferConstructors(pattern)
-   		matcherClass.inferMethods(pattern, matchClassRef)
-   		return matcherClass
-   	}
 
    	
    	/**

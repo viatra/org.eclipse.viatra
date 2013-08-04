@@ -20,6 +20,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.patternregistry</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
@@ -50,6 +51,7 @@
 		<module>../../tests/org.eclipse.incquery.testing.queries</module>
 		<module>../../tests/org.eclipse.incquery.testing.ui</module>
 		<module>../../features/org.eclipse.incquery.runtime.feature</module>
+		<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
