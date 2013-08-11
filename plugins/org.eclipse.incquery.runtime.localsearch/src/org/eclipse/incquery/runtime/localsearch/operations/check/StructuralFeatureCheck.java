@@ -46,7 +46,7 @@ public class StructuralFeatureCheck extends CheckOperation {
                 return target.equals(source.eGet(feature));
             }
         } catch (ClassCastException e) {
-            throw new LocalSearchException(LocalSearchException.TYPE_ERROR);
+            throw new LocalSearchException(LocalSearchException.TYPE_ERROR, e);
         }
     }
 

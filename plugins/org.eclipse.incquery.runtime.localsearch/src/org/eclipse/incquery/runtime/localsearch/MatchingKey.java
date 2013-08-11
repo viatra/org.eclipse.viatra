@@ -26,15 +26,9 @@ public class MatchingKey {
     }
     
     public boolean equals(Object other) {
-        if (other != null && other instanceof MatchingKey) {
+        if (other instanceof MatchingKey) {
             MatchingKey otherKey = (MatchingKey) other;
-            // for (int i = 0; i < keys.length; i++) {
-            // if (! keys[i].equals(otherKey.keys[i])) {
-            // return false;
-            // }
-            // }
-            Arrays.equals(keys, otherKey.keys);
-            return true;
+            return Arrays.equals(keys, otherKey.keys);
         } else {
             return false;
         }
@@ -47,12 +41,13 @@ public class MatchingKey {
     public String toString() {
         StringBuffer key = new StringBuffer();
         for (int i = 0; i < keys.length; i++) {
-            key.append("_" + keys[i].toString()); 
+            key.append("_");
+            key.append(keys[i].toString());
         }
         return key.toString();
     }
     
     public Object[] toArray() {
-    	return keys;
+    	return keys.clone();
     }
 }

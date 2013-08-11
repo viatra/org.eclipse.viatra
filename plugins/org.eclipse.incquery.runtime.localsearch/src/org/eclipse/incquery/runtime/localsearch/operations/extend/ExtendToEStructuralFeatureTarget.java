@@ -61,7 +61,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
                 }
             }
         } catch (ClassCastException e) {
-            throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition));
+            throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition), e);
         }
     }
 
