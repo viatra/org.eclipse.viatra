@@ -73,5 +73,21 @@
             id="org.eclipse.incquery.examples.uml.queries.nonEmptyClass">
       </matcher>
    </extension>
+   <extension
+         id="org.eclipse.incquery.examples.uml.queries.umlInstanceOf"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.queries.util.UmlInstanceOfQuerySpecification$Provider"
+            id="org.eclipse.incquery.examples.uml.queries.umlInstanceOf">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.incquery.examples.uml.queries.MyProfileApplication"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.queries.util.MyProfileApplicationQuerySpecification$Provider"
+            id="org.eclipse.incquery.examples.uml.queries.MyProfileApplication">
+      </matcher>
+   </extension>
 
 </plugin>

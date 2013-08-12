@@ -17,5 +17,13 @@
     <packagedElement xmi:type="uml:Package" xmi:id="_WRUaoKWdEeK2her1tIkPKA" name="subpackage2">
       <packagedElement xmi:type="uml:Class" xmi:id="_X9CVkKWdEeK2her1tIkPKA" name="C"/>
     </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_zCUDQQMzEeOkmeKe8k_Ilw" name="objects">
+      <packagedElement xmi:type="uml:InstanceValue" xmi:id="_7Z71gAMzEeOkmeKe8k_Ilw" name="obj" type="__2wmIAMzEeOkmeKe8k_Ilw"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="__2wmIAMzEeOkmeKe8k_Ilw" name="Test"/>
+      <profileApplication xmi:id="_oG9TgAM0EeOkmeKe8k_Ilw" appliedProfile="_fsUpgAM0EeOkmeKe8k_Ilw"/>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Profile" xmi:id="_fsUpgAM0EeOkmeKe8k_Ilw" name="MyProfile">
+    <packagedElement xmi:type="uml:Stereotype" xmi:id="_hlVZkAM0EeOkmeKe8k_Ilw" name="MyStereotype"/>
   </packagedElement>
 </uml:Model>
