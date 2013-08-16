@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.job;
 
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.Context;
 
@@ -17,8 +18,7 @@ import org.eclipse.incquery.runtime.evm.api.Context;
  * @author Abel Hegedus
  *
  */
-public interface EventAtomDomainObjectProvider<EventAtom> {
+public interface EventAtomEditingDomainProvider<EventAtom> {
 
-    Object findDomainObject(Activation<? extends EventAtom> activation, Context context);
-    
+    EditingDomain findEditingDomain(Activation<? extends EventAtom> activation, Context context);
 }

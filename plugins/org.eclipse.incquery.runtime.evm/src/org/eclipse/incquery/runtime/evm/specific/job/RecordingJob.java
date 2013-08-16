@@ -27,25 +27,25 @@ import com.google.common.collect.Table;
 /**
  * A stateless job implementation that executes its action inside a {@link RecordingCommand}
  * if there is a {@link TransactionalEditingDomain} available.
- * 
+ *
  * @author Abel Hegedus
- * 
+ *
  */
 public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     public static final String TRANSACTIONAL_EDITING_DOMAIN = "org.eclipse.incquery.evm.TransactionalEditingDomain";
     public static final String RECORDING_JOB = "org.eclipse.incquery.evm.specifc.RecordingJobExecution";
     public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.evm.specific.RecordingJob.SessionData";
-    private final EventAtomDomainObjectProvider<EventAtom> provider;
+    private final EventAtomEditingDomainProvider<EventAtom> provider;
     /**
      * Data transfer class for storing the commands created by recording jobs.
-     * 
+     *
      * @author Abel Hegedus
      *
      */
     public static class RecordingJobContextData {
 
-        private Table<Activation<?>, RecordingJob<?>, Command> table;
+        private final Table<Activation<?>, RecordingJob<?>, Command> table;
 
         /**
          * Creates a new data transfer object
@@ -65,7 +65,7 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     /**
      * Creates a new recording job associated with the given state and processor.
-     * 
+     *
      * @param incQueryActivationStateEnum
      * @param matchProcessor
      */
@@ -73,8 +73,8 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
         super(recordedJob);
         this.provider = null;
     }
-    
-    public RecordingJob(final Job<EventAtom> recordedJob, EventAtomDomainObjectProvider<EventAtom> provider) {
+
+    public RecordingJob(final Job<EventAtom> recordedJob, final EventAtomEditingDomainProvider<EventAtom> provider) {
         super(recordedJob);
         checkArgument(provider != null, "Provider cannot be null!");
         this.provider = provider;
@@ -82,15 +82,15 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.eclipse.incquery.runtime.evm.api.StatelessJob#execute(org.eclipse.incquery.runtime.evm
      * .api.Activation)
      */
     @Override
     protected void execute(final Activation<? extends EventAtom> activation, final Context context) {
-        Object target = findDomainTarget(activation, context);
-        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(target);
+        final Object target = findDomainTarget(activation, context);
+        final TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(target);
         if (domain == null) {
             super.execute(activation, context);
         } else {
@@ -111,7 +111,7 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
      * This method is used to find a target that can be used for getting the {@link TransactionalEditingDomain}.
      * It tries to retrieve the domain from the context, otherwise it tries to find an EObject parameter in
      * the event atom of the activation.
-     * 
+     *
      * @param activation
      * @param context
      * @return the object to be used for finding the domain
@@ -119,20 +119,20 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
     protected Object findDomainTarget(final Activation<? extends EventAtom> activation, final Context context) {
         Object domainTarget = context.get(TRANSACTIONAL_EDITING_DOMAIN);
         if (domainTarget == null && provider != null) {
-            domainTarget = provider.findDomainObject(activation, context);
+            domainTarget = provider.findEditingDomain(activation, context);
         }
         return domainTarget;
     }
-    
+
     /**
      * Updates the data transfer object in the context with the command that was just executed.
-     * 
+     *
      * @param activation
      * @param context
      * @param command
      */
     private void updateSessionData(final Activation<? extends EventAtom> activation, final Context context, final Command command) {
-        Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
+        final Object data = context.get(RECORDING_JOB_SESSION_DATA_KEY);
         RecordingJobContextData result = null;
         if (data instanceof RecordingJobContextData) {
             result = (RecordingJobContextData) data;
