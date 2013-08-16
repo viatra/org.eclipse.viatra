@@ -33,12 +33,12 @@ import com.google.inject.Inject;
 
 /**
  * Runnable unit of registering patterns in given file.
- * 
+ *
  * Note that if the work is implemented as a job, NullPointerException will occur when creating observables as the
  * default realm will be null (because of non-ui thread).
- * 
+ *
  * @author Tamas Szabo
- * 
+ *
  */
 public class RuntimeMatcherRegistrator implements Runnable {
 
@@ -47,85 +47,96 @@ public class RuntimeMatcherRegistrator implements Runnable {
     @Inject
     DisplayUtil dbUtil;
 
-    public RuntimeMatcherRegistrator(IFile file) {
+    public RuntimeMatcherRegistrator(final IFile file) {
         this.file = file;
     }
 
     @Override
     public void run() {
-        QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
+        final QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
         if (queryExplorerInstance != null) {
-            MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
-            PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
-            List<Pattern> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
-            PatternModel newParsedModel = dbUtil.parseEPM(file);
-
-            // if no patterns were registered before, open the patterns viewer
-            if (QueryExplorerPatternRegistry.getInstance().isEmpty()) {
-                FlyoutControlComposite flyout = queryExplorerInstance.getPatternsViewerFlyout();
-                flyout.getPreferences().setState(IFlyoutPreferences.STATE_OPEN);
-                // redraw();
-                flyout.layout();
-            }
-
+            final MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
+            final PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
+            openPatternsViewerIfNoPreviousPatterns(queryExplorerInstance);
             // UNREGISTERING PATTERNS
-
-            List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
-            // deactivate patterns within the given file
-            QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
-
-            // unregister all active patterns from the roots and wipe the appropriate iq engine
-            for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-                for (Pattern pattern : allActivePatterns) {
-                    root.unregisterPattern(pattern);
-                }
-                // final IncQueryEngine engine =
-                // EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
-                final AdvancedIncQueryEngine engine = root.getKey().getEngine();
-                if (engine != null) {
-                    engine.wipe();
-                }
-            }
-
+            unregisterPatternsFromMatcherTreeViewer(vr);
             // remove labels from pattern registry for the corresponding pattern model
-            if (oldParsedModel != null) {
-                for (Pattern pattern : oldParsedModel) {
-                    viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
-                }
-            }
-
-            queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot().purge();
-            queryExplorerInstance.getPatternsViewer().refresh();
-
+            removeLabelsFromPatternRegistry(queryExplorerInstance, viewerInput);
             // REGISTERING PATTERNS
+            final List<Pattern> newPatterns = registerPatternsFromPatternModel(vr);
+            setCheckedStatesOnNewPatterns(queryExplorerInstance, viewerInput, newPatterns);
+        }
+    }
 
-            // registering patterns from file
-            List<Pattern> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
-            allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+    private void setCheckedStatesOnNewPatterns(final QueryExplorer queryExplorerInstance, final PatternComposite viewerInput,
+            final List<Pattern> newPatterns) {
+        final List<PatternComponent> components = new ArrayList<PatternComponent>();
+        for (final Pattern pattern : newPatterns) {
+            final PatternComponent component = viewerInput.addComponent(CorePatternLanguageHelper
+                    .getFullyQualifiedName(pattern));
+            components.add(component);
+        }
+        // note that after insertion a refresh is necessary otherwise setting check state will not work
+        queryExplorerInstance.getPatternsViewer().refresh();
 
-            // now the active patterns also contain of the new patterns
-            for (ObservablePatternMatcherRoot root : vr.getRoots()) {
-                root.registerPattern(allActivePatterns.toArray(new Pattern[allActivePatterns.size()]));
+        for (final PatternComponent component : components) {
+            queryExplorerInstance.getPatternsViewer().setChecked(component, true);
+        }
+
+        // it is enough to just call selection propagation for one pattern
+        if (components.size() > 0) {
+            components.get(0).getParent().propagateSelectionToTop(components.get(0));
+        }
+    }
+
+    private void removeLabelsFromPatternRegistry(final QueryExplorer queryExplorerInstance, final PatternComposite viewerInput) {
+        final List<Pattern> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
+        if (oldParsedModel != null) {
+            for (final Pattern pattern : oldParsedModel) {
+                viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
             }
+        }
 
-            // setting check states
-            List<PatternComponent> components = new ArrayList<PatternComponent>();
-            for (Pattern pattern : newPatterns) {
-                PatternComponent component = viewerInput.addComponent(CorePatternLanguageHelper
-                        .getFullyQualifiedName(pattern));
-                components.add(component);
-            }
-            // note that after insertion a refresh is necessary otherwise setting check state will not work
-            queryExplorerInstance.getPatternsViewer().refresh();
+        queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot().purge();
+        queryExplorerInstance.getPatternsViewer().refresh();
+    }
 
-            for (PatternComponent component : components) {
-                queryExplorerInstance.getPatternsViewer().setChecked(component, true);
-            }
+    private List<Pattern> registerPatternsFromPatternModel(final MatcherTreeViewerRoot vr) {
+        final PatternModel newParsedModel = dbUtil.parseEPM(file);
+        final List<Pattern> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+        final List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        // now the active patterns also contain of the new patterns
+        for (final ObservablePatternMatcherRoot root : vr.getRoots()) {
+            root.registerPattern(allActivePatterns.toArray(new Pattern[allActivePatterns.size()]));
+        }
+        return newPatterns;
+    }
 
-            // it is enough to just call selection propagation for one pattern
-            if (components.size() > 0) {
-                components.get(0).getParent().propagateSelectionToTop(components.get(0));
+    private void unregisterPatternsFromMatcherTreeViewer(final MatcherTreeViewerRoot vr) {
+        final List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        // deactivate patterns within the given file
+        QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
+
+        // unregister all active patterns from the roots and wipe the appropriate iq engine
+        for (final ObservablePatternMatcherRoot root : vr.getRoots()) {
+            for (final Pattern pattern : allActivePatterns) {
+                root.unregisterPattern(pattern);
             }
+            // final IncQueryEngine engine =
+            // EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
+            final AdvancedIncQueryEngine engine = root.getKey().getEngine();
+            if (engine != null) {
+                engine.wipe();
+            }
+        }
+    }
+
+    private void openPatternsViewerIfNoPreviousPatterns(final QueryExplorer queryExplorerInstance) {
+        if (QueryExplorerPatternRegistry.getInstance().isEmpty()) {
+            final FlyoutControlComposite flyout = queryExplorerInstance.getPatternsViewerFlyout();
+            flyout.getPreferences().setState(IFlyoutPreferences.STATE_OPEN);
+            // redraw();
+            flyout.layout();
         }
     }
 }
