@@ -20,7 +20,8 @@ import java.util.Set;
 public class CollectionHelper {
 
     /**
-     * Returns the intersection of two sets.
+     * Returns the intersection of two sets. It calls {@link Set#retainAll(java.util.Collection)} but returns a new set
+     * containing the elements of the intersection.
      * 
      * @param set1
      *            the first set
@@ -30,16 +31,14 @@ public class CollectionHelper {
      */
     public static <V> Set<V> intersection(Set<V> set1, Set<V> set2) {
         Set<V> intersection = new HashSet<V>();
-        for (V n : set1) {
-            if (set2.contains(n)) {
-                intersection.add(n);
-            }
-        }
+        intersection.addAll(set1);
+        intersection.retainAll(set2);
         return intersection;
     }
 
     /**
-     * Returns the difference of two sets (S1\S2).
+     * Returns the difference of two sets (S1\S2). It calls {@link Set#removeAll(java.util.Collection)} but returns a
+     * new set containing the elements of the difference.
      * 
      * @param set1
      *            the first set
@@ -49,11 +48,8 @@ public class CollectionHelper {
      */
     public static <V> Set<V> difference(Set<V> set1, Set<V> set2) {
         Set<V> difference = new HashSet<V>();
-        for (V n : set1) {
-            if (!set2.contains(n)) {
-                difference.add(n);
-            }
-        }
+        difference.addAll(set1);
+        difference.removeAll(set2);
         return difference;
     }
 

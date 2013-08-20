@@ -566,4 +566,5 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> sources = gds.getSourceNodes(node);
         return ((targets == null) || (targets.isEmpty())) && ((sources == null) || (sources.isEmpty()));
     }
+    
 }
