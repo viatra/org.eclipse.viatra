@@ -87,7 +87,6 @@ public class LocalSearchMatcher {
 
     protected void setPlan(SearchPlan plan) {
         this.plan = ImmutableList.of(plan);
-        ;
     }
 
     protected void setPlan(SearchPlan[] plan) {

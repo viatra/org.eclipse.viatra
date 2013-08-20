@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 public class MatchingTable extends AbstractCollection<MatchingFrame> {
     private Map<MatchingKey,Collection<MatchingFrame>> matchings;
     
-    private class MatchingIterator implements Iterator<MatchingFrame> {
+    private final class MatchingIterator implements Iterator<MatchingFrame> {
         Iterator<Entry<MatchingKey, Collection<MatchingFrame>>> iterator;
         
         private MatchingIterator() {
