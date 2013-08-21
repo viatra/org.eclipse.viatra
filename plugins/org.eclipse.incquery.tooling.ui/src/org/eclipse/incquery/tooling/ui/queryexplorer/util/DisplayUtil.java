@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -27,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.AdapterFactory;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
@@ -48,8 +52,10 @@ import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -60,10 +66,10 @@ import com.google.inject.Singleton;
 public class DisplayUtil {
 
 
-    private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = new HashMap<URI, AdapterFactoryLabelProvider>();
+    private static Map<URI, AdapterFactoryLabelProvider> registeredItemProviders = Maps.newHashMap();
     private static Map<URI, IConfigurationElement> uriConfElementMap = null;
     private static ILog logger = IncQueryGUIPlugin.getDefault().getLog();
-    private static Map<String, IMarker> orderByPatternMarkers = new HashMap<String, IMarker>();
+    private static Map<String, IMarker> orderByPatternMarkers = Maps.newHashMap();
     
 
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
@@ -72,6 +78,7 @@ public class DisplayUtil {
     
     @Inject
     private IResourceSetProvider resSetProvider;
+    private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
 
     /**
      * Creates a marker with a warning for the given pattern. The marker's message will be set to the given message
@@ -326,9 +333,47 @@ public class DisplayUtil {
         if (file == null) {
             return null;
         }
-        ResourceSet resourceSet = resSetProvider.get(file.getProject());
+        ResourceSet resourceSet = null;
+        IProject project = file.getProject();
+		if (resourceSetMap.containsKey(project)) {
+        	resourceSet = resourceSetMap.get(project);
+        } else {
+        	resourceSet = resSetProvider.get(project);
+        	resourceSetMap.put(project, resourceSet);
+        }
         URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
-        Resource resource = resourceSet.getResource(fileURI, true);
+        Resource resource = resourceSet.getResource(fileURI, false);
+        try {
+        	if (resource == null) {
+        		resource = resourceSet.createResource(fileURI);
+        	}
+        	if (resource.isLoaded()) {
+        		TreeIterator<EObject> it = resource.getAllContents();
+        		
+        		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
+        		
+        		while (it.hasNext()) {
+        			EObject next = it.next();
+        			if (next instanceof Pattern) {
+						Pattern oldPattern = (Pattern) next;
+        				
+						QueryExplorer queryExplorer = QueryExplorer.getInstance();
+						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(oldPattern));
+						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().purge();
+						queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
+						
+						queryRegistry.removeActivePattern(oldPattern);
+						it.prune();
+        			}
+        		}
+        		
+        		resource.unload();        		
+        	}
+			resource.load(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 
         if (resource != null) {
             if (resource.getErrors().size() > 0) {
