@@ -66,7 +66,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private boolean isDirty = false;
 
     // value -> feature (EAttribute or EReference) -> holder(s)
-    private Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
+    private final Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
 
     // feature ((String id or EStructuralFeature) -> holder(s)
     // constructed on-demand
@@ -77,46 +77,46 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap;
 
     // key (String id or EClass instance) -> instance(s)
-    private Map<Object, Set<EObject>> instanceMap;
+    private final Map<Object, Set<EObject>> instanceMap;
 
     // key (String id or EDataType instance) -> multiset of value(s)
-    private Map<Object, Map<Object, Integer>> dataTypeMap;
+    private final Map<Object, Map<Object, Integer>> dataTypeMap;
 
     // source -> feature (EReference) -> proxy target -> delayed visitors
-    private Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
+    private final Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
 
     // proxy source -> delayed visitors
-    private ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
+    private final ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
     // Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
-    private Set<EClassifier> knownClassifiers = new HashSet<EClassifier>();
+    private final Set<EClassifier> knownClassifiers = new HashSet<EClassifier>();
     // Field variable because it is needed for collision detection. Used for all EStructuralFeatures whose instances were encountered at least once.
-    private Set<EStructuralFeature> knownFeatures = new HashSet<EStructuralFeature>();
+    private final Set<EStructuralFeature> knownFeatures = new HashSet<EStructuralFeature>();
 
     // (EClass or String ID) -> all subtypes in knownClasses
-    private Map<Object, Set<Object>> subTypeMap = new HashMap<Object, Set<Object>>();
+    private final Map<Object, Set<Object>> subTypeMap = new HashMap<Object, Set<Object>>();
     // (EClass or String ID) -> all supertypes in knownClasses
-    private Map<Object, Set<Object>> superTypeMap = new HashMap<Object, Set<Object>>();
+    private final Map<Object, Set<Object>> superTypeMap = new HashMap<Object, Set<Object>>();
 
     // EPacakge NsURI -> EPackage instances; this is instance-level to detect collisions
-    private Multimap<String, EPackage> uniqueIDToPackage = HashMultimap.create();
-    
+    private final Multimap<String, EPackage> uniqueIDToPackage = HashMultimap.create();
+
     // static maps between metamodel elements and their unique IDs
-    private static Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
-    private static Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
-    private static Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
-    private static Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
+    private final Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
+    private final Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
+    private final Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
+    private final Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
     private Object eObjectClassKey = null;
-    
+
 
     // move optimization to avoid removing and re-adding entire subtrees
     protected EObject ignoreInsertionAndDeletion;
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
-    private boolean isDynamicModel;
+    private final boolean isDynamicModel;
 
-    public NavigationHelperContentAdapter(NavigationHelperImpl navigationHelper, boolean isDynamicModel) {
+    public NavigationHelperContentAdapter(final NavigationHelperImpl navigationHelper, final boolean isDynamicModel) {
         this.navigationHelper = navigationHelper;
         this.isDynamicModel = isDynamicModel;
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
@@ -125,10 +125,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.instanceMap = new HashMap<Object, Set<EObject>>();
         this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
     }
-    
+
     // key representative of the EObject class
-    
-    
+
+
 	/**
 	 * @return the eObjectClassKey
 	 */
@@ -139,7 +139,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		return eObjectClassKey;
 	}
 
-	protected Object toKey(EClassifier classifier) {
+	protected Object toKey(final EClassifier classifier) {
     	if (isDynamicModel) {
             return toKeyDynamicInternal(classifier);
     	} else {
@@ -147,11 +147,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     		return classifier;
     	}
     }
-	private String toKeyDynamicInternal(EClassifier classifier) {
+	private String toKeyDynamicInternal(final EClassifier classifier) {
 		String id = uniqueIDFromClassifier.get(classifier);
 		if (id == null) {
 		    Preconditions.checkArgument(!classifier.eIsProxy(), String.format("Classifier %s is an unresolved proxy", classifier));
-		    id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();            
+		    id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
 		    uniqueIDFromClassifier.put(classifier, id);
 		    uniqueIDToClassifier.put(id, classifier);
 		    // metamodel maintenance will call back toKey(), but now the ID maps are already filled
@@ -159,7 +159,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 		return id;
 	}
-    protected Object toKey(EStructuralFeature feature) {
+    protected Object toKey(final EStructuralFeature feature) {
     	if (isDynamicModel) {
         	String id = uniqueIDFromTypedElement.get(feature);
         	if (id == null) {
@@ -180,12 +180,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void notifyChanged(Notification notification) {
+    public void notifyChanged(final Notification notification) {
         try {
             // baseHandleNotification(notification);
             super.notifyChanged(notification);
 
-            Object oFeature = notification.getFeature();
+            final Object oFeature = notification.getFeature();
             final Object oNotifier = notification.getNotifier();
             if (oNotifier instanceof EObject && oFeature instanceof EStructuralFeature) {
                 final EObject notifier = (EObject) oNotifier;
@@ -199,7 +199,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.ADD_MANY:
-                    for (Object newElement : (Collection<?>) newValue) {
+                    for (final Object newElement : (Collection<?>) newValue) {
                         featureUpdate(true, notifier, feature, newElement);
                     }
                     notifyLightweightObservers(notifier, feature, notification);
@@ -213,7 +213,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     notifyLightweightObservers(notifier, feature, notification);
                     break;
                 case Notification.REMOVE_MANY:
-                    for (Object oldElement : (Collection<?>) oldValue) {
+                    for (final Object oldElement : (Collection<?>) oldValue) {
                         featureUpdate(false, notifier, feature, oldElement);
                     }
                     notifyLightweightObservers(notifier, feature, notification);
@@ -232,7 +232,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     break;
                 }
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             processingFatal(ex, "handle the following update notification: " + notification);
         }
 
@@ -247,31 +247,32 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void featureResolve(EObject source, EStructuralFeature feature, Object oldValue, Object newValue) {
-        EReference reference = (EReference) feature;
-        EObject proxy = (EObject) oldValue;
-        EObject resolved = (EObject) newValue;
+    private void featureResolve(final EObject source, final EStructuralFeature feature, final Object oldValue, final Object newValue) {
+        final EReference reference = (EReference) feature;
+        final EObject proxy = (EObject) oldValue;
+        final EObject resolved = (EObject) newValue;
 
         final List<EMFVisitor> objectVisitors = popVisitorsSuspendedOnObject(proxy);
-        for (EMFVisitor visitor : objectVisitors) {
+        for (final EMFVisitor visitor : objectVisitors) {
             EMFModelComprehension.traverseObject(visitor, resolved);
         }
 
         final List<EMFVisitor> featureVisitors = popVisitorsSuspendedOnFeature(source, reference, proxy);
-        for (EMFVisitor visitor : featureVisitors) {
+        for (final EMFVisitor visitor : featureVisitors) {
             EMFModelComprehension.traverseFeature(visitor, source, reference, resolved);
         }
     }
 
-    private void featureUpdate(boolean isInsertion, EObject notifier, EStructuralFeature feature, Object value) {
+    private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature, final Object value) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
         EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
     }
 
     @Override
     protected void addAdapter(final Notifier notifier) {
-        if (notifier == ignoreInsertionAndDeletion)
+        if (notifier == ignoreInsertionAndDeletion) {
             return;
+        }
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
@@ -283,17 +284,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     return null;
                 }
             });
-        } catch (InvocationTargetException ex) {
+        } catch (final InvocationTargetException ex) {
             processingFatal(ex.getCause(), "add the object: " + notifier);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             processingFatal(ex, "add the object: " + notifier);
         }
     }
 
     @Override
     protected void removeAdapter(final Notifier notifier) {
-        if (notifier == ignoreInsertionAndDeletion)
+        if (notifier == ignoreInsertionAndDeletion) {
             return;
+        }
         try {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
@@ -305,22 +307,22 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     return null;
                 }
             });
-        } catch (InvocationTargetException ex) {
+        } catch (final InvocationTargetException ex) {
             processingFatal(ex.getCause(), "remove the object: " + notifier);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             processingFatal(ex, "remove the object: " + notifier);
         }
     }
 
-    protected void processingFatal(Throwable ex, String task) {
+    protected void processingFatal(final Throwable ex, final String task) {
         navigationHelper.getLogger().fatal(logTaskFormat(task), ex);
     }
-    protected void processingError(Throwable ex, String task) {
+    protected void processingError(final Throwable ex, final String task) {
         navigationHelper.getLogger().error(logTaskFormat(task), ex);
     }
 
-	private String logTaskFormat(String task) {
-		return "EMF-IncQuery encountered an error in processing the EMF model. " 
+	private String logTaskFormat(final String task) {
+		return "EMF-IncQuery encountered an error in processing the EMF model. "
 				+ "This happened while trying to " + task;
 	}
 
@@ -329,23 +331,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the original {@link EStructuralFeature} instance or the String id.  
+     * This method uses the original {@link EStructuralFeature} instance or the String id.
      */
-    private void addToFeatureMap(Object featureKey, Object value, EObject holder) {
+    private void addToFeatureMap(final Object featureKey, final Object value, final EObject holder) {
         Set<EObject> setVal = valueToFeatureToHolderMap.get(value, featureKey);
 
         if (setVal == null) {
             setVal = new HashSet<EObject>();
             valueToFeatureToHolderMap.put(value, featureKey, setVal);
-           
+
         }
         setVal.add(holder);
     }
 
     /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id.
      */
-    private void addToReversedFeatureMap(Object feature, EObject holder) {
+    private void addToReversedFeatureMap(final Object feature, final EObject holder) {
         Multiset<EObject> setVal = featureToHolderMap.get(feature);
 
         if (setVal == null) {
@@ -356,9 +358,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id.
      */
-    private void addToDirectFeatureMap(EObject holder, Object feature, Object value) {
+    private void addToDirectFeatureMap(final EObject holder, final Object feature, final Object value) {
         Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
 
         if (setVal == null) {
@@ -369,9 +371,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id.
      */
-    private void removeFromReversedFeatureMap(Object feature, EObject holder) {
+    private void removeFromReversedFeatureMap(final Object feature, final EObject holder) {
         final Multiset<EObject> setVal = featureToHolderMap.get(feature);
         if (setVal != null) {
             setVal.remove(holder);
@@ -383,10 +385,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses the original {@link EStructuralFeature} instance. 
+     * This method uses the original {@link EStructuralFeature} instance.
      */
-    private void removeFromFeatureMap(Object featureKey, Object value, EObject holder) {
-        final Set<EObject> setHolder = 
+    private void removeFromFeatureMap(final Object featureKey, final Object value, final EObject holder) {
+        final Set<EObject> setHolder =
         		valueToFeatureToHolderMap.get(value, featureKey);
         if (setHolder != null) {
             setHolder.remove(holder);
@@ -398,9 +400,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id. 
+     * This method uses either the original {@link EStructuralFeature} instance or the String id.
      */
-    private void removeFromDirectFeatureMap(EObject holder, Object feature, Object value) {
+    private void removeFromDirectFeatureMap(final EObject holder, final Object feature, final Object value) {
         final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
         if (setVal != null) {
             setVal.remove(value);
@@ -411,8 +413,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    public void insertFeatureTuple(Object featureKey, Object value, EObject holder) {        
-        addToFeatureMap(featureKey, value, holder);    
+    public void insertFeatureTuple(final Object featureKey, final Object value, final EObject holder) {
+        addToFeatureMap(featureKey, value, holder);
         if (featureToHolderMap != null) {
             addToReversedFeatureMap(featureKey, holder);
         }
@@ -424,7 +426,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         notifyFeatureListeners(holder, featureKey, value, true);
     }
 
-    public void removeFeatureTuple(Object featureKey, Object value, EObject holder) {
+    public void removeFeatureTuple(final Object featureKey, final Object value, final EObject holder) {
         removeFromFeatureMap(featureKey, value, holder);
         if (featureToHolderMap != null) {
             removeFromReversedFeatureMap(featureKey, holder);
@@ -438,15 +440,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     // START ********* InstanceSet *********
-    public Set<EObject> getInstanceSet(Object keyClass) {
+    public Set<EObject> getInstanceSet(final Object keyClass) {
         return instanceMap.get(keyClass);
     }
 
-    public void removeInstanceSet(Object keyClass) {
+    public void removeInstanceSet(final Object keyClass) {
         instanceMap.remove(keyClass);
     }
 
-    public void insertIntoInstanceSet(Object keyClass, EObject value) {
+    public void insertIntoInstanceSet(final Object keyClass, final EObject value) {
         Set<EObject> set = instanceMap.get(keyClass);
         if (set == null) {
             set = new HashSet<EObject>();
@@ -458,8 +460,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         notifyInstanceListeners(keyClass, value, true);
     }
 
-    public void removeFromInstanceSet(Object keyClass, EObject value) {
-        Set<EObject> set = instanceMap.get(keyClass);
+    public void removeFromInstanceSet(final Object keyClass, final EObject value) {
+        final Set<EObject> set = instanceMap.get(keyClass);
         if (set != null) {
             set.remove(value);
 
@@ -475,16 +477,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // END ********* InstanceSet *********
 
     // START ********* DataTypeMap *********
-    public Map<Object, Integer> getDataTypeMap(Object keyType) {
+    public Map<Object, Integer> getDataTypeMap(final Object keyType) {
         return dataTypeMap.get(keyType);
     }
 
-    public void removeDataTypeMap(Object keyType) {
+    public void removeDataTypeMap(final Object keyType) {
        dataTypeMap.remove(keyType);
     }
 
-    public void insertIntoDataTypeMap(Object keyType, Object value) {
-        Map<Object, Integer> valMap = 
+    public void insertIntoDataTypeMap(final Object keyType, final Object value) {
+        Map<Object, Integer> valMap =
         		dataTypeMap.get(keyType);
         if (valMap == null) {
             valMap = new HashMap<Object, Integer>();
@@ -502,8 +504,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         notifyDataTypeListeners(keyType, value, true, firstOccurrence);
     }
 
-    public void removeFromDataTypeMap(Object keyType, Object value) {
-        Map<Object, Integer> valMap = 
+    public void removeFromDataTypeMap(final Object keyType, final Object value) {
+        final Map<Object, Integer> valMap =
         		dataTypeMap.get(keyType);
         if (valMap != null && valMap.get(value) != null) {
             Integer count = valMap.get(value);
@@ -524,12 +526,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     // END ********* DataTypeMap *********
-    
+
 //    /**
-//     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision 
-//     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the 
+//     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision
+//     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the
 //     * elements in the passed {@link Collection}.
-//     * 
+//     *
 //     * @param classifiers the collection of classifiers
 //     */
 //    protected <T extends EClassifier> void maintainMetamodel(Collection<T> classifiers) {
@@ -537,16 +539,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 //            maintainMetamodel(classifier);
 //        }
 //    }
-    
+
     /**
      * Checks the {@link EStructuralFeature}'s source and target {@link EPackage} for NsURI collision.
-     * An error message will be logged if a model element from an other {@link EPackage} 
-     * instance with the same NsURI has been already processed. The error message will be logged 
+     * An error message will be logged if a model element from an other {@link EPackage}
+     * instance with the same NsURI has been already processed. The error message will be logged
      * only for the first time for a given {@link EPackage} instance.
-     * 
+     *
      * @param classifier the classifier instance
      */
-    protected void maintainMetamodel(EStructuralFeature feature) {
+    protected void maintainMetamodel(final EStructuralFeature feature) {
         if (!knownFeatures.contains(feature)) {
         	knownFeatures.add(feature);
         	maintainMetamodel(feature.getEContainingClass());
@@ -558,71 +560,71 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * put subtype information into cache
      */
-    protected void maintainMetamodel(EClassifier classifier) {
+    protected void maintainMetamodel(final EClassifier classifier) {
         if (!knownClassifiers.contains(classifier)) {
             checkEPackage(classifier);
             knownClassifiers.add(classifier);
 
             if (classifier instanceof EClass) {
-            	EClass clazz = (EClass) classifier;
-            	Object clazzKey = toKey(clazz);
-	            for (EClass superType : clazz.getEAllSuperTypes()) {
+            	final EClass clazz = (EClass) classifier;
+            	final Object clazzKey = toKey(clazz);
+	            for (final EClass superType : clazz.getEAllSuperTypes()) {
 	                maintainTypeHierarhyInternal(clazzKey, toKey(superType));
 	            }
 	            maintainTypeHierarhyInternal(clazzKey, getEObjectClassKey());
             }
         }
     }
-   
+
     /**
      * Checks the {@link EClassifier}'s {@link EPackage} for NsURI collision.
-     * An error message will be logged if a model element from an other {@link EPackage} 
-     * instance with the same NsURI has been already processed. The error message will be logged 
+     * An error message will be logged if a model element from an other {@link EPackage}
+     * instance with the same NsURI has been already processed. The error message will be logged
      * only for the first time for a given {@link EPackage} instance.
-     * 
+     *
      * @param classifier the classifier instance
      */
-    private void checkEPackage(EClassifier classifier) {
+    private void checkEPackage(final EClassifier classifier) {
         final EPackage ePackage = classifier.getEPackage();
 		final String nsURI = ePackage.getNsURI();
-		Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
+		final Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
         if (!packagesOfURI.contains(ePackage)) {
             uniqueIDToPackage.put(nsURI, ePackage);
             //collision detection between EPackages (disabled in dynamic model mode)
-            if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI            
-                processingError(new IncQueryBaseException("NsURI ("+nsURI+ ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."), 
+            if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI
+                processingError(new IncQueryBaseException("NsURI ("+nsURI+ ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."),
                         "process new metamodel elements.");
             }
         }
     }
-    
+
     /**
      * Maintains subtype hierarchy
      * @param subClassKey EClass or String id of subclass
      * @param superClassKey EClass or String id of superclass
      */
-    private void maintainTypeHierarhyInternal(Object subClassKey, Object superClassKey) {
+    private void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
     	// update observed class and instance listener tables according to new subtype information
         if (navigationHelper.directlyObservedClasses.contains(superClassKey)) {
             navigationHelper.getAllObservedClassesInternal().add(subClassKey);
         }
 		final Table<Object, InstanceListener, Set<EClass>> instanceListeners = navigationHelper.peekInstanceListeners();
 		if (instanceListeners != null) { // table already constructed
-			for (Entry<InstanceListener, Set<EClass>> entry : instanceListeners.row(superClassKey).entrySet()) {
+			for (final Entry<InstanceListener, Set<EClass>> entry : instanceListeners.row(superClassKey).entrySet()) {
 				final InstanceListener listener = entry.getKey();
-				for (EClass subscriptionType : entry.getValue()) {
+				for (final EClass subscriptionType : entry.getValue()) {
 					navigationHelper.addInstanceListenerInternal(listener, subscriptionType, subClassKey);
 				}
 			}
 		}
-        
+
     	// update subtype maps
         Set<Object> subTypes = subTypeMap.get(superClassKey);
         if (subTypes == null) {
             subTypes = new HashSet<Object>();
             subTypeMap.put(superClassKey, subTypes);
         }
-        subTypes.add(subClassKey);      
+        subTypes.add(subClassKey);
         Set<Object> superTypes = superTypeMap.get(subClassKey);
         if (superTypes == null) {
         	superTypes = new HashSet<Object>();
@@ -631,12 +633,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         superTypes.add(superClassKey);
     }
 
-    private void notifyDataTypeListeners(Object typeKey, Object value, boolean isInsertion, boolean firstOrLastOccurrence) {
-    	for (Entry<DataTypeListener, Set<EDataType>> entry : 
-    			navigationHelper.getDataTypeListeners().row(typeKey).entrySet()) 
+    private void notifyDataTypeListeners(final Object typeKey, final Object value, final boolean isInsertion, final boolean firstOrLastOccurrence) {
+    	for (final Entry<DataTypeListener, Set<EDataType>> entry :
+    			navigationHelper.getDataTypeListeners().row(typeKey).entrySet())
     	{
-			DataTypeListener listener = entry.getKey();
-    		for (EDataType subscriptionType : entry.getValue()) {
+			final DataTypeListener listener = entry.getKey();
+    		for (final EDataType subscriptionType : entry.getValue()) {
                 if (isInsertion) {
                     listener.dataTypeInstanceInserted(subscriptionType, value, firstOrLastOccurrence);
                 } else {
@@ -646,12 +648,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
     }
 
-    private void notifyFeatureListeners(EObject host, Object featureKey, Object value, boolean isInsertion) {
-    	for (Entry<FeatureListener, Set<EStructuralFeature>> entry : 
-    			navigationHelper.getFeatureListeners().row(featureKey).entrySet()) 
+    private void notifyFeatureListeners(final EObject host, final Object featureKey, final Object value, final boolean isInsertion) {
+    	for (final Entry<FeatureListener, Set<EStructuralFeature>> entry :
+    			navigationHelper.getFeatureListeners().row(featureKey).entrySet())
     	{
-    		FeatureListener listener = entry.getKey();
-    		for (EStructuralFeature subscriptionType : entry.getValue()) {
+    		final FeatureListener listener = entry.getKey();
+    		for (final EStructuralFeature subscriptionType : entry.getValue()) {
                 if (isInsertion) {
                     listener.featureInserted(host, subscriptionType, value);
                 } else {
@@ -661,12 +663,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
     }
 
-    private void notifyInstanceListeners(Object clazzKey, EObject instance, boolean isInsertion) {
-	    for (Entry<InstanceListener, Set<EClass>> entry : 
-				navigationHelper.getInstanceListeners().row(clazzKey).entrySet()) 
+    private void notifyInstanceListeners(final Object clazzKey, final EObject instance, final boolean isInsertion) {
+	    for (final Entry<InstanceListener, Set<EClass>> entry :
+				navigationHelper.getInstanceListeners().row(clazzKey).entrySet())
 		{
-	    	InstanceListener listener = entry.getKey();
-			for (EClass subscriptionType : entry.getValue()) {
+	    	final InstanceListener listener = entry.getKey();
+			for (final EClass subscriptionType : entry.getValue()) {
 	            if (isInsertion) {
 	                listener.instanceInserted(subscriptionType, instance);
 	            } else {
@@ -675,9 +677,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 			}
 		}
     }
-    
-    private void notifyLightweightObservers(EObject host, EStructuralFeature feature, Notification notification) {
-        for (Entry<LightweightEObjectObserver, Collection<EObject>> entry : navigationHelper.getLightweightObservers().entrySet()) {
+
+    private void notifyLightweightObservers(final EObject host, final EStructuralFeature feature, final Notification notification) {
+        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : navigationHelper.getLightweightObservers().entrySet()) {
             if(entry.getValue().contains(host)) {
                 entry.getKey().notifyFeatureChanged(host, feature, notification);
             }
@@ -685,20 +687,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void initReversedFeatureMap() {
-        for (Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
+        for (final Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
             final Object feature = valueToFeatureHolderMap.getColumnKey();
-            for (EObject holder : valueToFeatureHolderMap.getValue()) {
+            for (final EObject holder : valueToFeatureHolderMap.getValue()) {
                 addToReversedFeatureMap(feature, holder);
             }
         }
     }
 
     private void initDirectFeatureMap() {
-        for (Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap
+        for (final Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap
                 .cellSet()) {
             final Object value = valueToFeatureHolderMap.getRowKey();
             final Object feature = valueToFeatureHolderMap.getColumnKey();
-            for (EObject holder : valueToFeatureHolderMap.getValue()) {
+            for (final EObject holder : valueToFeatureHolderMap.getValue()) {
                 addToDirectFeatureMap(holder, feature, value);
             }
         }
@@ -714,11 +716,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // resource list in the ResourceSet
     // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385039
     @Override
-    protected void setTarget(ResourceSet target) {
+    protected void setTarget(final ResourceSet target) {
         basicSetTarget(target);
-        List<Resource> resources = target.getResources();
+        final List<Resource> resources = target.getResources();
         for (int i = 0; i < resources.size(); ++i) {
-            Notifier notifier = resources.get(i);
+            final Notifier notifier = resources.get(i);
             if (!notifier.eAdapters().contains(this)) {
                 addAdapter(notifier);
             }
@@ -727,20 +729,20 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     // WORKAROUND (TMP) for eContents vs. derived features bug
     @Override
-    protected void setTarget(EObject target) {
+    protected void setTarget(final EObject target) {
         basicSetTarget(target);
         spreadToChildren(target, true);
     }
 
     @Override
-    protected void unsetTarget(EObject target) {
+    protected void unsetTarget(final EObject target) {
         basicUnsetTarget(target);
         spreadToChildren(target, false);
     }
 
-    protected void spreadToChildren(EObject target, boolean add) {
+    protected void spreadToChildren(final EObject target, final boolean add) {
         final EList<EReference> features = target.eClass().getEAllReferences();
-        for (EReference feature : features) {
+        for (final EReference feature : features) {
             if (!feature.isContainment()) {
                 continue;
             }
@@ -748,8 +750,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 continue;
             }
             if (feature.isMany()) {
-                Collection<?> values = (Collection<?>) target.eGet(feature);
-                for (Object value : values) {
+                final Collection<?> values = (Collection<?>) target.eGet(feature);
+                for (final Object value : values) {
                     final Notifier notifier = (Notifier) value;
                     if (add) {
                         addAdapter(notifier);
@@ -758,7 +760,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     }
                 }
             } else {
-                Object value = target.eGet(feature);
+                final Object value = target.eGet(feature);
                 if (value != null) {
                     final Notifier notifier = (Notifier) value;
                     if (add) {
@@ -771,8 +773,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    public void suspendVisitorOnUnresolvableFeature(EMFVisitor visitor, EObject source, EReference reference,
-            EObject target, boolean isInsertion) {
+    public void suspendVisitorOnUnresolvableFeature(final EMFVisitor visitor, final EObject source, final EReference reference,
+            final EObject target, final boolean isInsertion) {
         ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
         if (targetToVisitor == null) {
             targetToVisitor = ArrayListMultimap.create();
@@ -788,7 +790,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    public void suspendVisitorOnUnresolvableObject(EMFVisitor visitor, EObject source, boolean isInsertion) {
+    public void suspendVisitorOnUnresolvableObject(final EMFVisitor visitor, final EObject source, final boolean isInsertion) {
         if (isInsertion) {
             unresolvableProxyObjectsMap.put(source, visitor);
         } else {
@@ -796,8 +798,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private List<EMFVisitor> popVisitorsSuspendedOnFeature(EObject source, EReference reference, EObject target) {
-        ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
+    private List<EMFVisitor> popVisitorsSuspendedOnFeature(final EObject source, final EReference reference, final EObject target) {
+        final ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
         if (targetToVisitor == null) {
             return Collections.emptyList();
         }
@@ -808,7 +810,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return result;
     }
 
-    private List<EMFVisitor> popVisitorsSuspendedOnObject(EObject source) {
+    private List<EMFVisitor> popVisitorsSuspendedOnObject(final EObject source) {
         return unresolvableProxyObjectsMap.removeAll(source);
     }
 
@@ -873,17 +875,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     /**
      * Returns the corresponding {@link EStructuralFeature} instance for the id.
-     * 
+     *
      * @param featureId
      *            the id of the feature
      * @return the {@link EStructuralFeature} instance
      */
-    public EStructuralFeature getKnownFeature(String featureId) {
-        Collection<ETypedElement> features = uniqueIDToTypedElement.get(featureId);
+    public EStructuralFeature getKnownFeature(final String featureId) {
+        final Collection<ETypedElement> features = uniqueIDToTypedElement.get(featureId);
         if (features != null && !features.isEmpty()) {
             final ETypedElement next = features.iterator().next();
-            if (next instanceof EStructuralFeature)
-            	return (EStructuralFeature) next;
+            if (next instanceof EStructuralFeature) {
+                return (EStructuralFeature) next;
+            }
         }
         return null;
 
@@ -892,31 +895,34 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * Returns the corresponding {@link EClassifier} instance for the id.
      */
-    public EClassifier getKnownClassifier(String key) {
-		Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(key);
+    public EClassifier getKnownClassifier(final String key) {
+		final Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(key);
         if (classifiersOfThisID!=null && !classifiersOfThisID.isEmpty()) {
         	return classifiersOfThisID.iterator().next();
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Returns all EClasses that currently have direct instances cached by the index. 
-     * <p>Supertypes will not be returned, unless they have direct instances in the model as well. If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.  
-     * <p>Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned. 
+     * Returns all EClasses that currently have direct instances cached by the index.
+     * <p>Supertypes will not be returned, unless they have direct instances in the model as well. If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.
+     * <p>Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as representative and returned.
      */
     public Set<EClass> getAllCurrentClasses() {
-        Set<EClass> result = Sets.newHashSet();
-        Set<Object> classifierKeys = instanceMap.keySet();
-        for (Object classifierKey : classifierKeys) {
+        final Set<EClass> result = Sets.newHashSet();
+        final Set<Object> classifierKeys = instanceMap.keySet();
+        for (final Object classifierKey : classifierKeys) {
             if (isDynamicModel) {
                 final EClassifier knownClassifier = getKnownClassifier((String) classifierKey);
-                if (knownClassifier instanceof EClass)
+                if (knownClassifier instanceof EClass) {
                     result.add((EClass) knownClassifier);
+                }
             }
             else {
                 result.add((EClass) classifierKey);
             }
-        
+
         }
         return result;
     }
