@@ -72,7 +72,7 @@ public class ImportListLabelProvider extends StyledCellLabelProvider implements 
         if (element instanceof EPackage) {
             EPackage ePackage = (EPackage) element;
             text.append(ePackage.getNsURI());
-            if (ePackage.eResource().getURI().isPlatform()) {
+            if (ePackage.eResource() != null && ePackage.eResource().getURI().isPlatform()) {
                 text.append(String.format(" (%s)", ePackage.eResource().getURI()), StyledString.QUALIFIER_STYLER);
             }
             cell.setImage(imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE));
