@@ -221,9 +221,6 @@ public class PatternComposite extends PatternComponent {
      * 
      * @param patternFragment
      *            the pattern name fragment
-     * @param handleInWhole
-     *            tells whether to handle the whole pattern fragment (this is used when flat presentation is on and the
-     *            user wants to unregister a non-leaf element)
      */
     public void removeComponent(String patternFragment) {
         String[] tokens = patternFragment.split("\\.");
