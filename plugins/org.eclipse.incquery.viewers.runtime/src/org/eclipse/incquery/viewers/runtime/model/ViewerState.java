@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, istvanrath, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   istvanrath - initial API and implementation
+ *   Zoltan Ujhelyi, Istvan Rath - initial API and implementation
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
@@ -27,7 +27,23 @@ import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener
 import com.google.common.collect.Multimap;
 
 /**
- * @author istvanrath
+ * <p>
+ * A Viewer state represents a stateful data model for an IncQuery Viewer. The
+ * state is capable of either returning observable lists of its content, and is
+ * also capable of sending of sending state change notifications based to
+ * {@link IViewerStateListener} implementations.
+ * </p>
+ * 
+ * <p>
+ * A Viewer can be initialized directly with a set of patterns and model, or a
+ * {@link ViewerDataModel} can be used to prepare and share such data between
+ * instances.
+ * </p>
+ * 
+ * <p>
+ * A ViewerState needs to be cleaned up using the {@link #dispose()} method to unregister all listeners. 
+ * </p>
+ * @author Zoltan Ujhelyi, Istvan Rath
  *
  */
 public abstract class ViewerState {
@@ -157,5 +173,25 @@ public abstract class ViewerState {
 	
 	public abstract IObservableCollection getContainments();
 	
+	/**
+	 * Removes all listeners and disposes all observable collections managed by the class.
+	 */
+	public void dispose() {
+		for (Object _item : getItems()) {
+			Item item = (Item) _item;
+			item.getLabel().removeChangeListener(labelChangeListener);
+			item.dispose();
+		}
+		getItems().dispose();
+		for (Object _edge : getEdges()) {
+			Edge edge = (Edge) _edge;
+			edge.getLabel().removeChangeListener(labelChangeListener);
+			edge.dispose();
+		}
+		getEdges().dispose();
+		getContainments().dispose();
+		stateListeners.clear();
+		labelListeners.clear();
+	}
 	
 }

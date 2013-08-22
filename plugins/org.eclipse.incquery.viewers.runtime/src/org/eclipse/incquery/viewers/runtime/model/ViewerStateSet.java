@@ -34,18 +34,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 /**
- * <p>
- * A Viewer state represents a stateful data model for an IncQuery Viewer. The
- * state is capable of either returning observable Sets of its content, and is
- * also capable of sending of sending state change notifications based to
- * {@link IViewerStateListener} implementations.
- * </p>
- * 
- * <p>
- * A Viewer can be initialized directly with a set of patterns and model, or a
- * {@link ViewerDataModel} can be used to prepare and share such data between
- * instances.
- * </p>
+ * An {@link IObservableSet}-based implementation of {@link ViewerState}.
  * 
  * @author Istvan Rath
  * 

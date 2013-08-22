@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.event.ChangeListener;
-
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -37,18 +35,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 /**
- * <p>
- * A Viewer state represents a stateful data model for an IncQuery Viewer. The
- * state is capable of either returning observable lists of its content, and is
- * also capable of sending of sending state change notifications based to
- * {@link IViewerStateListener} implementations.
- * </p>
- * 
- * <p>
- * A Viewer can be initialized directly with a set of patterns and model, or a
- * {@link ViewerDataModel} can be used to prepare and share such data between
- * instances.
- * </p>
+ * An {@link IObservableList}-based implementation of {@link ViewerState}.
  * 
  * @author Zoltan Ujhelyi
  * 
