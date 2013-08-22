@@ -327,7 +327,7 @@ public class DisplayUtil {
      * 
      * @param file
      *            the .eiq file instance
-     * @return the parsed pattern model
+     * @return the parsed pattern model or null in case of error
      */
     public PatternModel parseEPM(IFile file) {
         if (file == null) {
@@ -346,8 +346,7 @@ public class DisplayUtil {
         try {
         	if (resource == null) {
         		resource = resourceSet.createResource(fileURI);
-        	}
-        	if (resource.isLoaded()) {
+        	} else if (resource.isLoaded()) {
         		TreeIterator<EObject> it = resource.getAllContents();
         		
         		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
@@ -371,7 +370,6 @@ public class DisplayUtil {
         	}
 			resource.load(null);
 		} catch (IOException e) {
-			e.printStackTrace();
 			return null;
 		}
 
