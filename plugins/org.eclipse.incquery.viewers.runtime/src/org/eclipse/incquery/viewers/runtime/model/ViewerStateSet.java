@@ -120,6 +120,7 @@ public final class ViewerStateSet extends ViewerState {
     				Item item = (Item) entry;
     				for (Object Listener : stateListeners.getListeners()) {
                         ((IViewerStateListener) Listener).itemAppeared(item);
+                        item.getLabel().addChangeListener(labelChangeListener);
                     }
 			    }
 			}
@@ -127,6 +128,7 @@ public final class ViewerStateSet extends ViewerState {
 			    if (entry instanceof Item) {
                     Item item = (Item) entry;
     			    for (Object Listener : stateListeners.getListeners()) {
+    			    	item.getLabel().removeChangeListener(labelChangeListener);
                         ((IViewerStateListener) Listener).itemDisappeared(item);
                     }
 			    }
@@ -145,6 +147,7 @@ public final class ViewerStateSet extends ViewerState {
                     Edge edge = (Edge) entry;
                     for (Object Listener : stateListeners.getListeners()) {
                         ((IViewerStateListener) Listener).edgeAppeared(edge);
+                        edge.getLabel().addChangeListener(labelChangeListener);
                     }
                 }
             }
@@ -152,6 +155,7 @@ public final class ViewerStateSet extends ViewerState {
                 if (entry instanceof Edge) {
                     Edge edge = (Edge) entry;
                     for (Object Listener : stateListeners.getListeners()) {
+                    	edge.getLabel().removeChangeListener(labelChangeListener);
                         ((IViewerStateListener) Listener).edgeDisappeared(edge);
                     }
                 }
@@ -219,10 +223,18 @@ public final class ViewerStateSet extends ViewerState {
 
 	private void initializeItemSet(IObservableSet itemSet) {
 		if (this.itemSet != null) {
+			for (Object _item : itemSet) {
+				Item item = (Item) _item;
+				item.getLabel().removeChangeListener(labelChangeListener);
+			}
 			removeItemListener(itemSet);
 		}
 		this.itemSet = itemSet;
 		addItemListener(itemSet);
+		for (Object _item : itemSet) {
+			Item item = (Item) _item;
+			item.getLabel().addChangeListener(labelChangeListener);
+		}
 	}
 
 	private void addItemListener(IObservableSet containmentSet) {
@@ -257,9 +269,17 @@ public final class ViewerStateSet extends ViewerState {
 	private void initializeEdgeSet(IObservableSet edgeSet) {
 		if (this.edgeSet != null) {
 			removeEdgeListener(this.edgeSet);
+			for (Object _edge : this.edgeSet) {
+				Edge edge = (Edge) _edge;
+				edge.getLabel().addChangeListener(labelChangeListener);
+			}
 		}
 		this.edgeSet = edgeSet;
 		addEdgeListener(edgeSet);
+		for (Object _edge : edgeSet) {
+			Edge edge = (Edge) _edge;
+			edge.getLabel().addChangeListener(labelChangeListener);
+		}
 	}
 
 	private void addEdgeListener(IObservableSet edgeSet) {
