@@ -26,6 +26,7 @@
 		<jacoco.version>0.6.3.201306030806</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.4.2</xtend.compiler.version>
+		<incquery.repository.url>http://download.eclipse.org/incquery/updates/integration</incquery.repository.url>
 		<!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -159,6 +160,13 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+    <repositories>
+      <repository>
+      	<id>incquery.update</id>
+      	<layout>p2</layout>
+      	<url>${incquery.repository.url}</url>
+      </repository>
+    </repositories>
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
 		<url>http://git.eclipse.org/c/viatra2/org.eclipse.viatra2.emf.git/</url>
