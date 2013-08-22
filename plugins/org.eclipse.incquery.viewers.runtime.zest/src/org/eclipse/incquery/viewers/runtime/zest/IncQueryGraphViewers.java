@@ -54,13 +54,13 @@ public class IncQueryGraphViewers {
 
 	public static void bind(GraphViewer viewer, ViewerState state) {
 		viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
+        viewer.setLabelProvider(new ZestLabelProvider(state, viewer.getControl().getDisplay()));
 		viewer.setInput(state);
 	}
 	
 	public static void bind(GraphViewer viewer, ViewerState state, boolean displayContainment) {
 		viewer.setContentProvider(new ZestContentProvider(displayContainment));
-		viewer.setLabelProvider(new ZestLabelProvider(viewer.getControl().getDisplay()));
+		viewer.setLabelProvider(new ZestLabelProvider(state, viewer.getControl().getDisplay()));
 		viewer.setInput(state);
 	}
 

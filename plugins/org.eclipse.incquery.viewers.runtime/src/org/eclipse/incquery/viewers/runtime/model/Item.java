@@ -74,6 +74,7 @@ public class Item extends FormattableElement {
     private final IPatternMatch sourceMatch;
     private final HierarchyPolicy policy;
     private String labelDefinition;
+    private IObservableValue label;
 
     private Object paramObject;
 
@@ -92,12 +93,15 @@ public class Item extends FormattableElement {
      * @return the label
      */
     public IObservableValue getLabel() {
-        if (labelDefinition == null || labelDefinition.isEmpty()) {
-            return Observables.constantObservableValue("");
-        } else {
-            return IncQueryObservables.getObservableLabelFeature(sourceMatch, labelDefinition, this);
-            // TODO review this code https://bugs.eclipse.org/bugs/show_bug.cgi?id=413542
-        }
+		if (label == null) {
+			if (labelDefinition == null || labelDefinition.isEmpty()) {
+				label = Observables.constantObservableValue("");
+			} else {
+				label = IncQueryObservables.getObservableLabelFeature(
+						sourceMatch, labelDefinition, this);
+			}
+		}
+		return label;
     }
 
     public Object getParamObject() {
@@ -144,4 +148,10 @@ public class Item extends FormattableElement {
         return true;
     }
 
+    /**
+     * TODO this method needs to be invoked from ViewerState
+     */
+    public void dispose() {
+    	label.dispose();
+    }
 }

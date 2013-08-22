@@ -28,6 +28,7 @@ import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.FormattableElement;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -47,7 +48,8 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     private Display display;
     private Map<RGB, Color> colorMap = Maps.newHashMap();
 
-    public ZestLabelProvider(Display display) {
+    public ZestLabelProvider(ViewerState state, Display display) {
+    	super(state);
         this.display = display;
 
     }

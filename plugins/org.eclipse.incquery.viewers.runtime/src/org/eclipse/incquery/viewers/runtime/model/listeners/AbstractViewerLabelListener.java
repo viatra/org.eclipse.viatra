@@ -10,27 +10,18 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model.listeners;
 
-import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 
-/**
- * Listener interface for the appearance and disappearance of elements.
- * @author Zoltan Ujhelyi
- *
- */
-public interface IViewerStateListener {
+public abstract class AbstractViewerLabelListener implements
+		IViewerLabelListener {
 
-    void itemAppeared(Item item);
+	@Override
+	public void labelUpdated(Item item, String newLabel) {
+	}
 
-    void itemDisappeared(Item item);
-
-    void containmentAppeared(Containment containment);
-
-    void containmentDisappeared(Containment containment);
-
-    void edgeAppeared(Edge edge);
-
-    void edgeDisappeared(Edge edge);
+	@Override
+	public void labelUpdated(Edge edge, String newLabel) {
+	}
 
 }

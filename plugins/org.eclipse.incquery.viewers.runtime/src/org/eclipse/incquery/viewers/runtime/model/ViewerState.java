@@ -13,11 +13,15 @@ package org.eclipse.incquery.viewers.runtime.model;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
 import com.google.common.collect.Multimap;
@@ -56,7 +60,7 @@ public abstract class ViewerState {
 	
 	
 	/**
-	 * Maps lowlevel model objects to their corresponding items.
+	 * Maps low-xlevel model objects to their corresponding items.
 	 */
 	protected Multimap<Object, Item> itemMap;
 	
@@ -69,7 +73,6 @@ public abstract class ViewerState {
      * Maps child-parent relationships in the viewer model.
      */
 	protected Map<Item, Item> parentMap;
-
 	
 	public Collection<Item> getChildren(Item parent) {
 		return childrenMap.get(parent);
@@ -97,20 +100,46 @@ public abstract class ViewerState {
 
 	protected ListenerList stateListeners = new ListenerList();
 	
+	protected ListenerList labelListeners = new ListenerList();
+	protected IChangeListener labelChangeListener = new IChangeListener() {
+		@Override
+        public void handleChange(ChangeEvent event) {
+            Object element = ((ObservableLabelFeature) event.getSource()).getContainer();
+            for (Object _listener : labelListeners.getListeners()) {
+            	IViewerLabelListener listener = (IViewerLabelListener) _listener;
+            	if (element instanceof Item) {
+            		Item item = (Item) element;
+					listener.labelUpdated(item, event.getObservable().toString());
+            	} else if (element instanceof Edge) {
+					Edge edge = (Edge) element;
+            		listener.labelUpdated(edge, event.getObservable().toString());
+            	}
+            }
+		}
+	};
+	
 	/**
 	 * Adds a new state Listener to the Viewer State
 	 */
-	public void addStateListener(IViewerStateListener Listener) {
-		stateListeners.add(Listener);
+	public void addStateListener(IViewerStateListener listener) {
+		stateListeners.add(listener);
 	}
 
 	/**
 	 * Removes a state Listener from the Viewer State
 	 */
-	public void removeStateListener(IViewerStateListener Listener) {
-		stateListeners.remove(Listener);
+	public void removeStateListener(IViewerStateListener listener) {
+		stateListeners.remove(listener);
 	}
-
+	
+	public void addLabelListener(IViewerLabelListener listener) {
+		labelListeners.add(listener);
+	}
+	
+	public void removeLabelListener(IViewerLabelListener listener) {
+		labelListeners.remove(listener);
+	}
+	
 	/**
 	 * Exposes EObject -> Item* traceability information.
 	 * 

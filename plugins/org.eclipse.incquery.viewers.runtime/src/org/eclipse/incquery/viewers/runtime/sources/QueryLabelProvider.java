@@ -18,6 +18,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
+import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerLabelListener;
+import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 
@@ -28,35 +31,35 @@ import com.google.common.collect.Lists;
  *
  */
 public class QueryLabelProvider extends LabelProvider {
+    
+    private IViewerLabelListener labelListener = new AbstractViewerLabelListener() {
 
-    private IChangeListener changeListener = new IChangeListener() {
-    		@Override
-            public void handleChange(ChangeEvent event) {
-                Object container = ((ObservableLabelFeature) event.getSource()).getContainer();
-            LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(QueryLabelProvider.this, container);
-    			fireLabelProviderChanged(newEvent);
-    		}
-    	};
-    private List<IObservableValue> observables = Lists.newArrayList();
+		@Override
+		public void labelUpdated(Item item, String newLabel) {
+			fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, item));
+		}
 
-    /**
-     * 
-     */
-    public QueryLabelProvider() {
-        super();
-    }
+		@Override
+		public void labelUpdated(Edge edge, String newLabel) {
+			fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, edge));			
+		}
+    	
+	};
+	
+	private ViewerState state; 
 
+	public QueryLabelProvider(ViewerState state) {
+		this.state = state;
+		state.addLabelListener(labelListener);
+	}
+	
     @Override
     public String getText(Object element) {
         if (element instanceof Item) {
             IObservableValue value = ((Item) element).getLabel();
-            value.addChangeListener(changeListener);
-            observables.add(value);
             return value.getValue().toString();
         } else if (element instanceof Edge) {
             IObservableValue value = ((Edge) element).getLabel();
-            value.addChangeListener(changeListener);
-            observables.add(value);
             return value.getValue().toString();
     	}
     	return "";
@@ -64,12 +67,8 @@ public class QueryLabelProvider extends LabelProvider {
 
     @Override
     public void dispose() {
-        for (IObservableValue value : observables) {
-            if (value != null && !value.isDisposed()) {
-                value.removeChangeListener(changeListener);
-            }
-        }
-        super.dispose();
+    	state.removeLabelListener(labelListener);
+    	super.dispose();
     }
 
 }

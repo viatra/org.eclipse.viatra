@@ -24,8 +24,9 @@ public class Edge extends FormattableElement {
     public static final String ANNOTATION_ID = "Edge";
 
     private Item source, target;
-    private String label;
+    private String labelDefinition;
     private IPatternMatch match;
+    private IObservableValue label;
 
     /**
      * @param source
@@ -37,7 +38,7 @@ public class Edge extends FormattableElement {
         this.source = source;
         this.target = target;
         this.match = match;
-        this.label = label;
+        this.labelDefinition = label;
     }
 
     /**
@@ -70,19 +71,22 @@ public class Edge extends FormattableElement {
      * @return the label
      */
     public IObservableValue getLabel() {
-        if (label == null || label.isEmpty()) {
-            return Observables.constantObservableValue("");
-        } else {
-            return IncQueryObservables.getObservableLabelFeature(match, label, this);
-        }
-     // TODO review this code https://bugs.eclipse.org/bugs/show_bug.cgi?id=413542
+		if (label == null) {
+			if (labelDefinition == null || labelDefinition.isEmpty()) {
+				label = Observables.constantObservableValue("");
+			} else {
+				label = IncQueryObservables.getObservableLabelFeature(match,
+						labelDefinition, this);
+			}
+		}
+    	return label;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((label == null) ? 0 : label.hashCode());
+        result = prime * result + ((labelDefinition == null) ? 0 : labelDefinition.hashCode());
         result = prime * result + ((match == null) ? 0 : match.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((target == null) ? 0 : target.hashCode());
@@ -98,10 +102,10 @@ public class Edge extends FormattableElement {
         if (getClass() != obj.getClass())
             return false;
         Edge other = (Edge) obj;
-        if (label == null) {
-            if (other.label != null)
+        if (labelDefinition == null) {
+            if (other.labelDefinition != null)
                 return false;
-        } else if (!label.equals(other.label))
+        } else if (!labelDefinition.equals(other.labelDefinition))
             return false;
         if (match == null) {
             if (other.match != null)
@@ -121,4 +125,11 @@ public class Edge extends FormattableElement {
         return true;
     }
 
+    /**
+     * TODO this method needs to be invoked from ViewerState
+     */
+    public void dispose() {
+    	label.dispose();
+    }
+    
 }

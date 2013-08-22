@@ -55,7 +55,7 @@ public class IncQueryViewerSupport {
 			viewer.setContentProvider(new ListContentProvider());
 		}
 		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-			viewer.setLabelProvider(new QueryLabelProvider());
+			viewer.setLabelProvider(new QueryLabelProvider(state));
 		}
 		viewer.setInput(state);
 		viewer.refresh();
@@ -89,7 +89,7 @@ public class IncQueryViewerSupport {
 			viewer.setContentProvider(new TreeContentProvider());
 		}
 		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-			viewer.setLabelProvider(new QueryLabelProvider());
+			viewer.setLabelProvider(new QueryLabelProvider(state));
 		}
 
 		viewer.setInput(state);

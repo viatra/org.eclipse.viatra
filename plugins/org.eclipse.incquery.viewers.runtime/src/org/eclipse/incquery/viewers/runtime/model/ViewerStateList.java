@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.event.ChangeListener;
+
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -96,9 +98,11 @@ public final class ViewerStateList extends ViewerState {
 				if (entry.isAddition()) {
 					for (Object listener : stateListeners.getListeners()) {
 						((IViewerStateListener) listener).itemAppeared(item);
+						item.getLabel().addChangeListener(labelChangeListener);
 					}
 				} else {
 					for (Object listener : stateListeners.getListeners()) {
+						item.getLabel().removeChangeListener(labelChangeListener);
 						((IViewerStateListener) listener).itemDisappeared(item);
 					}
 				}
@@ -116,9 +120,11 @@ public final class ViewerStateList extends ViewerState {
 				if (entry.isAddition()) {
 					for (Object listener : stateListeners.getListeners()) {
 						((IViewerStateListener) listener).edgeAppeared(edge);
+						edge.getLabel().addChangeListener(labelChangeListener);
 					}
 				} else {
 					for (Object listener : stateListeners.getListeners()) {
+						edge.getLabel().removeChangeListener(labelChangeListener);
 						((IViewerStateListener) listener).edgeDisappeared(edge);
 					}
 				}
@@ -184,10 +190,18 @@ public final class ViewerStateList extends ViewerState {
 
 	private void initializeItemList(IObservableList itemList) {
 		if (this.itemList != null) {
-			removeItemListener(itemList);
+			removeItemListener(this.itemList);
+			for (Object _item : this.itemList) {
+				Item item = (Item) _item;
+				item.getLabel().removeChangeListener(labelChangeListener);
+			}
 		}
 		this.itemList = itemList;
 		addItemListener(itemList);
+		for (Object _item : itemList) {
+			Item item = (Item) _item;
+			item.getLabel().addChangeListener(labelChangeListener);
+		}
 	}
 
 	private void addItemListener(IObservableList containmentList) {
@@ -219,9 +233,17 @@ public final class ViewerStateList extends ViewerState {
 	private void initializeEdgeList(IObservableList edgeList) {
 		if (this.edgeList != null) {
 			removeEdgeListener(this.edgeList);
+			for (Object _edge : edgeList) {
+				Edge edge = (Edge) _edge;
+				edge.getLabel().removeChangeListener(labelChangeListener);
+			}
 		}
 		this.edgeList = edgeList;
 		addEdgeListener(edgeList);
+		for (Object _edge : edgeList) {
+			Edge edge = (Edge) _edge;
+			edge.getLabel().addChangeListener(labelChangeListener);
+		}
 	}
 
 	private void addEdgeListener(IObservableList edgeList) {
