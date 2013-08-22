@@ -52,7 +52,6 @@
 							<groupId>org.eclipse.viatra2</groupId>
 							<artifactId>org.eclipse.viatra2.emf.target</artifactId>
 							<version>0.7.0-SNAPSHOT</version>
-							<classifier>viatra2.emf</classifier>
 						</artifact>
 					</target>
 					<ignoreTychoRepositories>true</ignoreTychoRepositories>
@@ -110,10 +109,6 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
-						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
-						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
-						</configuration> </execution> -->
 				</executions>
 			</plugin>
 		</plugins>

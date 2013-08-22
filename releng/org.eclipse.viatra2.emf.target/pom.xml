@@ -10,4 +10,5 @@
   </parent>
   <artifactId>org.eclipse.viatra2.emf.target</artifactId>
   <packaging>eclipse-target-definition</packaging>
+  
 </project>
