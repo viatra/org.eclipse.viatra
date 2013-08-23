@@ -84,7 +84,7 @@
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.4.2</xtend.compiler.version>
 		<!-- Sonar -->
-		<sonar.version>3.6</sonar.version>
+		<sonar.version>3.7</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
