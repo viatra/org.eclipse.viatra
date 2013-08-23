@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import java.util.List;
-
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
@@ -23,8 +18,6 @@ import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerLabelL
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
