@@ -33,7 +33,7 @@ class TransformationUtil {
     EventFilter<? super Match> filter    
   ) {
     
-    ruleEngine.addRule(ruleSpecification, false, filter)
+    ruleEngine.addRule(ruleSpecification, filter)
     
     println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
     var Activation<Match> act
