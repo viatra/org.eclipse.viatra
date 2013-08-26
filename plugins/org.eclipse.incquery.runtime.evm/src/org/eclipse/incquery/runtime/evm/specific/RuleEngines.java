@@ -51,7 +51,7 @@ public class RuleEngines {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
         RuleEngine ruleEngine = createIncQueryRuleEngine(engine);
         for (RuleSpecification<?> ruleSpecification : specifications) {
-            ruleEngine.addRule(ruleSpecification, false);
+            ruleEngine.addRule(ruleSpecification);
         }
         return ruleEngine;
     }
