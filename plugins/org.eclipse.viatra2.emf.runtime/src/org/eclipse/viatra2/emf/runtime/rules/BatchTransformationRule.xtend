@@ -34,10 +34,22 @@ import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
  * @author Abel Hegedus
  *
  */
-abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> {
+class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> {
 	
 	protected String ruleName
 	RuleSpecification<Match> ruleSpec
+	private val IQuerySpecification<Matcher> matcher
+	private val IMatchProcessor<Match> modelManipulation
+
+	new() {
+		matcher = null
+		modelManipulation = null
+	}
+	
+	new(IQuerySpecification<Matcher> matcher, IMatchProcessor<Match> modelManipulation) {
+		this.matcher = matcher
+		this.modelManipulation = modelManipulation
+	}
 
     def getRuleName() {
     	ruleName
@@ -45,97 +57,29 @@ abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher exten
 
 	/**
 	 * Returns a RuleSpecification that can be added to a rule engine.
-	 * TODO move this to {@link BatchTransformation}
 	 */
     def getRuleSpec(){
     	if(ruleSpec == null){
 		    val querySpec = precondition
-		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, getLifeCycle, getJobs)
+		    val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, modelManipulation)
+			val Job<Match> job = Jobs::newRecordingJob(stJob)
+		    
+		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR, newHashSet(job))
     	}
     	ruleSpec
     }
 	
-	def protected getLifeCycle() {
-		DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
-	}
-	
-	def protected getJobs() {
-		val proc = getModelManipulation
-		val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, proc)
-		val Job<Match> job = Jobs::newRecordingJob(stJob)
-		return <Job<Match>>newHashSet(job)
-	}
-	
 	/**
 	 * Returns the IMatcherFactory representing the pattern used as a precondition.
 	 */
-	def IQuerySpecification<Matcher> getPrecondition()
+	def IQuerySpecification<Matcher> getPrecondition() {
+		matcher
+	}
 	
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	def IMatchProcessor<Match> getModelManipulation()
-	
-	private def firstActivation(RuleEngine engine) {
-		engine.getActivations(ruleSpec, IncQueryActivationStateEnum::APPEARED).head
-	}
-	
-	private def firstActivation(RuleEngine engine, EventFilter<Match> filter) {
-		engine.getActivations(ruleSpec, filter, IncQueryActivationStateEnum::APPEARED).head
-	}
-	
-	private def fireActivation(Activation<Match> act, Context context) {
-		if(act != null && act.enabled){
- 			act.fire(context)
-		}
-	}
-	
-	/**
-	 * Goes through each possibly activation of the transformation rule and executes them.
-	 * These activations are each in Appeared state.
-	 */
-	def fireEachActivation(RuleEngine ruleEngine, Context context){
-		println('''== Executing activations of «ruleName» ==''')
-		
- 		var Activation<Match> act
- 		while((act = ruleEngine.firstActivation) != null){
- 			act.fireActivation(context)
- 		}
-	}
-	
-	/**
-	 * Goes through each possibly activation of the transformation rule that fulfill a filter and execute them.
-	 * These activations are each in Appeared state.
-	 */
-	def fireEachActivation(RuleEngine ruleEngine, Context context, EventFilter<Match> filter) {
-		println('''== Executing activations of «ruleName» with filter «filter» ==''')
-		var Activation<Match> act
-		while((act = ruleEngine.firstActivation(filter)) != null){
- 			act.fireActivation(context)
- 		}
-	}
-	
-	/**
-	 * Selects one activation of the rule and executes it. 
-	 */
-	def fireOneActivation(RuleEngine ruleEngine, Context context){
-		println('''== Executing one activation of «ruleName» ==''')
-		
- 		var Activation<Match> act = ruleEngine.firstActivation
- 		act.fireActivation(context)
-		
-	}
-	
-	/**
-	 * Selects one activation of the rule that fulfills a filtering match, and executes it. 
-	 */
-	def fireOneActivation(RuleEngine ruleEngine, Context context, EventFilter<Match> filter){
-		println('''== Executing one activation of «ruleName» with filter «filter»==''')
-		
- 		var Activation<Match> act = ruleEngine.firstActivation(filter)
- 		act.fireActivation(context)
-		
-	}
-
-	
+	def IMatchProcessor<Match> getModelManipulation() {	
+		modelManipulation
+	}	
 }

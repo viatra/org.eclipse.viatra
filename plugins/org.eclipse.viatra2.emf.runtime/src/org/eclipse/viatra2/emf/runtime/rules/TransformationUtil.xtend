@@ -25,49 +25,63 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEn
  *
  */
 class TransformationUtil {
-  
-  def <Match extends IPatternMatch> batchExecution(
-    RuleEngine ruleEngine,
-    Context context,
-    RuleSpecification<Match> ruleSpecification,
-    EventFilter<? super Match> filter    
-  ) {
-    
-    ruleEngine.addRule(ruleSpecification, filter)
-    
-    println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
-    var Activation<Match> act
-    while((act = ruleEngine.firstActivation(ruleSpecification, filter)) != null){
-      act.fireActivation(context)
-    }
-    println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
-    ruleEngine.removeRule(ruleSpecification, filter)
-    
-  }
-  
-  def <Match extends IPatternMatch> batchExecution(
-    RuleEngine ruleEngine,
-    Context context,
-    RuleSpecification<Match> ruleSpecification
-  ) {
-    val filter = ruleSpecification.createEmptyFilter
-    ruleEngine.batchExecution(context, ruleSpecification, filter)
-  }
-  
-  private def <Match extends IPatternMatch> firstActivation(
-    RuleEngine engine,
-    RuleSpecification<Match> ruleSpecification,
-    EventFilter<? super Match> filter
-  ) {
-    engine.getActivations(ruleSpecification, filter, IncQueryActivationStateEnum::APPEARED).head
-  }
-  
-  private def <Match extends IPatternMatch> fireActivation(
-    Activation<Match> act,
-    Context context
-  ) {
-    if(act != null && act.enabled){
-      act.fire(context)
-    }
-  }
+	
+	val RuleEngine ruleEngine
+	val Context context
+	
+	new(RuleEngine ruleEngine, Context context) {
+		this.ruleEngine = ruleEngine
+		this.context = context
+	}
+	
+	/**
+	 * Executes the selected rule with the selected filter as long as there
+	 * are possible matches of its preconditions. The matches are executed
+	 * one-by-one, in case of conflicts only one of the conflicting matches
+	 * will cause an execution. 
+ 	 */
+	def <Match extends IPatternMatch> batchExecution(
+		RuleSpecification<Match> ruleSpecification,
+		EventFilter<? super Match> filter
+	) {
+
+		ruleEngine.addRule(ruleSpecification, filter)
+
+		println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
+		var Activation<Match> act
+		while ((act = ruleSpecification.firstActivation(filter)) != null) {
+			act.fireActivation
+		}
+		println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
+		ruleEngine.removeRule(ruleSpecification, filter)
+
+	}
+
+	/**
+	 * Executes the selected rule with the selected filter as long as there
+	 * are possible matches of its preconditions. The matches are executed
+	 * one-by-one, in case of conflicts only one of the conflicting matches
+	 * will cause an execution. 
+ 	 */
+	def <Match extends IPatternMatch> batchExecution(
+		RuleSpecification<Match> ruleSpecification
+	) {
+		val filter = ruleSpecification.createEmptyFilter
+		ruleSpecification.batchExecution(filter)
+	}
+
+	private def <Match extends IPatternMatch> firstActivation(
+		RuleSpecification<Match> ruleSpecification,
+		EventFilter<? super Match> filter
+	) {
+		ruleEngine.getActivations(ruleSpecification, filter, IncQueryActivationStateEnum::APPEARED).head
+	}
+
+	private def <Match extends IPatternMatch> fireActivation(
+		Activation<Match> act
+	) {
+		if (act != null && act.enabled) {
+			act.fire(context)
+		}
+	}
 }

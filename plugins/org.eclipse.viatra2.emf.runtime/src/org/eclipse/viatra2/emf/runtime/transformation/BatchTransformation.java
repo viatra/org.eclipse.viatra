@@ -7,10 +7,12 @@ import java.util.concurrent.Callable;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
+import org.eclipse.viatra2.emf.runtime.rules.TransformationUtil;
 
 /**
  * A base class for batch transformations.
@@ -23,24 +25,34 @@ public abstract class BatchTransformation {
 	protected final RuleEngine ruleEngine;
 	protected final AdvancedIncQueryEngine iqEngine;
 	protected final boolean selfManagedEngines;
+	protected final TransformationUtil util;
+	protected final Context context;
 
 	public BatchTransformation(Resource resource) throws IncQueryException {
-		iqEngine = AdvancedIncQueryEngine.createUnmanagedEngine(resource);
-		ruleEngine = RuleEngines.createIncQueryRuleEngine(iqEngine);
-		selfManagedEngines = true;
+		this(AdvancedIncQueryEngine.createUnmanagedEngine(resource));
 	}
 
 	public BatchTransformation(ResourceSet set) throws IncQueryException {
-		iqEngine = AdvancedIncQueryEngine.createUnmanagedEngine(set);
-		ruleEngine = RuleEngines.createIncQueryRuleEngine(iqEngine);
-		selfManagedEngines = true;
+		this(AdvancedIncQueryEngine.createUnmanagedEngine(set));
 	}
 
 	public BatchTransformation(RuleEngine ruleEngine,
 			AdvancedIncQueryEngine iqEngine) {
+		this(ruleEngine, iqEngine, false);
+	}
+	
+	private BatchTransformation(AdvancedIncQueryEngine iqEngine) {
+		this(RuleEngines.createIncQueryRuleEngine(iqEngine), iqEngine, true);
+	}
+	
+	private BatchTransformation(RuleEngine ruleEngine,
+			AdvancedIncQueryEngine iqEngine, boolean selfManagedEngine) {
 		this.ruleEngine = ruleEngine;
 		this.iqEngine = iqEngine;
-		selfManagedEngines = false;
+		this.selfManagedEngines = selfManagedEngine;
+		
+		context = Context.create();
+		util = new TransformationUtil(ruleEngine, context);
 	}
 
 	/**
@@ -79,4 +91,5 @@ public abstract class BatchTransformation {
 			iqEngine.dispose();
 		}
 	}
+
 }
