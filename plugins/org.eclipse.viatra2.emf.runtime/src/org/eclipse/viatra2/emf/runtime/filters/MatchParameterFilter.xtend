@@ -24,13 +24,17 @@ import java.util.Map
  * @author Abel Hegedus
  *
  */
- class IncQueryMatchParameterEventFilter implements EventFilter<IPatternMatch> {
+ class MatchParameterFilter implements EventFilter<IPatternMatch> {
   
   Map<String,Object> filterMap
   
   new(Map<String,Object> filterMap) {
     this.filterMap = newHashMap()
     this.filterMap.putAll(filterMap)
+  }
+  
+  new(Pair<String, ? extends Object>... parameters) {
+  	this.filterMap = newHashMap(parameters)
   }
   
   override isProcessable(IPatternMatch eventAtom) {
