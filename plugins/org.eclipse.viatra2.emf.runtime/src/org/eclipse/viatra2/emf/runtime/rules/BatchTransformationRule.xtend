@@ -22,6 +22,9 @@ import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.specific.Jobs
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification
+import org.eclipse.incquery.runtime.evm.specific.Rules
+import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -31,32 +34,47 @@ import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLife
  * @author Abel Hegedus
  *
  */
-abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> extends RuleSpecificationFactory<Match,Matcher> {
+abstract class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> {
 	
-	override protected getLifeCycle() {
+	protected String ruleName
+	RuleSpecification<Match> ruleSpec
+
+    def getRuleName() {
+    	ruleName
+    }
+
+	/**
+	 * Returns a RuleSpecification that can be added to a rule engine.
+	 * TODO move this to {@link BatchTransformation}
+	 */
+    def getRuleSpec(){
+    	if(ruleSpec == null){
+		    val querySpec = precondition
+		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, getLifeCycle, getJobs)
+    	}
+    	ruleSpec
+    }
+	
+	def protected getLifeCycle() {
 		DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
 	}
 	
-	override protected getJobs() {
+	def protected getJobs() {
 		val proc = getModelManipulation
 		val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, proc)
 		val Job<Match> job = Jobs::newRecordingJob(stJob)
 		return <Job<Match>>newHashSet(job)
 	}
 	
-	override protected getQuerySpecification() {
-		getPrecondition
-	}
-	
 	/**
 	 * Returns the IMatcherFactory representing the pattern used as a precondition.
 	 */
-	def protected IQuerySpecification<Matcher> getPrecondition()
+	def IQuerySpecification<Matcher> getPrecondition()
 	
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	def protected IMatchProcessor<Match> getModelManipulation()
+	def IMatchProcessor<Match> getModelManipulation()
 	
 	private def firstActivation(RuleEngine engine) {
 		engine.getActivations(ruleSpec, IncQueryActivationStateEnum::APPEARED).head
