@@ -220,7 +220,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	 * @see org.eclipse.incquery.tooling.core.targetPlatform.ITargetPlatformMetamodelLoader#listEPackages()
 	 */
 	@Override
-	public Iterable<String> listEPackages() {
+	public List<String> listEPackages() {
 		List<String> packageURIs = new LinkedList<String>();
 		for(TargetPlatformMetamodel entry: load()){
 			packageURIs.add(entry.getPackageURI());

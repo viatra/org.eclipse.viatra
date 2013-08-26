@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.tooling.core.targetplatform;
 
+import java.util.List;
+
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -23,9 +25,9 @@ public interface ITargetPlatformMetamodelLoader {
 
 	/**
 	 * List the URIs of the available EPackages 
-	 * @return an iterable containing the ns URIs of the registered EPackages
+	 * @return a list containing the ns URIs of the registered EPackages
 	 */
-	public Iterable<String> listEPackages();
+	public List<String> listEPackages();
 	
 	/**
 	 * Load the EPackage with the given ns URI

@@ -52,7 +52,7 @@ public class MetamodelProviderService implements IMetamodelProvider {
     }
 
     @Override
-    public IScope getAllMetamodelObjects(EObject context) {
+    public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
         final Map<String, EPackage> metamodelMap = getMetamodelMap();
         Set<String> packageURIs = new HashSet<String>(metamodelMap.keySet());
         Iterable<IEObjectDescription> metamodels = Iterables.transform(packageURIs,
@@ -78,11 +78,11 @@ public class MetamodelProviderService implements IMetamodelProvider {
         Map<String, EPackage> packageMap = Maps.newHashMap();
         Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
         for (String key : nsURISet) {
-        	try {
-        		packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
-        	} catch (Exception e) {
-        		logger.error(String.format("Error loading EPackage %s: %s", key, e.getMessage()));
-        	}
+            try {
+                packageMap.put(key, EPackage.Registry.INSTANCE.getEPackage(key));
+            } catch (Exception e) {
+                logger.error(String.format("Error loading EPackage %s: %s", key, e.getMessage()));
+            }
         }
         return packageMap;
 
@@ -90,26 +90,45 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
     @Override
     public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-        if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
+        // first try to look up the EPackage in the ResourceSet contents 
+        // in case of xcore resources accessing the EPackage.Registry will throw a ClassCastException 
+        // because the corresponding object will be an XPackage not an EPackage
+        EPackage pack = lookUpEPackageInResourceSetContents(packageUri, resourceSet);
+        if (pack != null) {
+            return pack;
+        }
+        else if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
             return EPackage.Registry.INSTANCE.getEPackage(packageUri);
-        }
-        URI uri = null;
-        try {
-            uri = URI.createURI(packageUri);
-            if (uri.fragment() == null) {
-                Resource resource = resourceSet.getResource(uri, true);
-                return (EPackage) resource.getContents().get(0);
+        } else { 
+            URI uri = null;
+            try {
+                uri = URI.createURI(packageUri);
+                if (uri.fragment() == null) {
+                    Resource resource = resourceSet.getResource(uri, true);
+                    return (EPackage) resource.getContents().get(0);
+                }
+                return (EPackage) resourceSet.getEObject(uri, true);
+            } catch (RuntimeException ex) {
+                if (uri != null && uri.isPlatformResource()) {
+                    String platformString = uri.toPlatformString(true);
+                    URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
+                    return loadEPackage(platformPluginURI.toString(), resourceSet);
+                }
+                logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
+                return null;
             }
-            return (EPackage) resourceSet.getEObject(uri, true);
-        } catch (RuntimeException ex) {
-            if (uri != null && uri.isPlatformResource()) {
-                String platformString = uri.toPlatformString(true);
-                URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
-                return loadEPackage(platformPluginURI.toString(), resourceSet);
-            }
-            logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
-            return null;
         }
+    }
+
+    private EPackage lookUpEPackageInResourceSetContents(String packageUri, ResourceSet resourceSet) {
+        for (Resource resource : resourceSet.getResources()) {
+            for (EObject obj : resource.getContents()) {
+                if (obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(packageUri)) {
+                    return (EPackage) obj;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

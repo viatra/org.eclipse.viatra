@@ -31,6 +31,7 @@ import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternLanguageJv
 import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
+import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
@@ -50,6 +51,7 @@ import com.google.inject.name.Names;
 /**
  * Use this class to register components to be used within the IDE.
  */
+@SuppressWarnings({ "restriction", "deprecation" })
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
     private static final String loggerRoot = "org.eclipse.incquery";
 
@@ -142,5 +144,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     // contributed by org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
     public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
         return EMFPatternLanguageEditorCallback.class;
+    }
+    
+    @Override
+    public Class<? extends IJavaProjectProvider> bindIJavaProjectProvider() {
+        return IncQueryJavaProjectProvider.class;
     }
 }
