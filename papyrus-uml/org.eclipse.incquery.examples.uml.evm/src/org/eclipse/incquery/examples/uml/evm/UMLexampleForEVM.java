@@ -22,14 +22,13 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ConflictingActivationSet;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers;
+import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -45,7 +44,6 @@ import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.junit.Test;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 
 public class UMLexampleForEVM {
@@ -85,9 +83,7 @@ public class UMLexampleForEVM {
                 createClassesActivations.iterator().next().fire(context);
             }
 
-            final HashMultimap<RuleSpecification<?>, EventFilter<?>> specAndFilter = HashMultimap.create();
-            specAndFilter.put(createGeneralization, createGeneralization.createEmptyFilter());
-            final ConflictingActivationSet activationSet = ruleEngine.createConflictingActivationSet(ConflictResolvers.createArbitraryResolver(), specAndFilter);
+            final ScopedConflictSet activationSet = ruleEngine.createScopedConflictSet(createGeneralization, createGeneralization.createEmptyFilter());
             assertTrue(activationSet.getNextActivation() != null);
 
             // check for any applicable rules
