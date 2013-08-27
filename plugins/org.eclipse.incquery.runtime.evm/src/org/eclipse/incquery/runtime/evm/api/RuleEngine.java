@@ -65,6 +65,13 @@ public class RuleEngine {
         checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
         ruleBase.getAgenda().setConflictResolver(conflictResolver);
     }
+    
+    public <CSet extends ConflictSet> ConflictingActivationSet createConflictingActivationSet(ConflictResolver<CSet> conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
+        checkNotNull(specifications, "Specification set cannot be null!");
+        ConflictingActivationSet conflictingActivationSet = ruleBase.createConflictingActivationSet(conflictResolver, specifications);
+        return conflictingActivationSet;
+    }
 
     /**
      * Adds a rule specification to the RuleBase.
