@@ -1,18 +1,21 @@
 package org.eclipse.viatra2.emf.runtime.transformation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.GenericPatternGroup;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
 import org.eclipse.viatra2.emf.runtime.rules.TransformationUtil;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * A base class for batch transformations.
@@ -62,24 +65,15 @@ public abstract class BatchTransformation {
 	 * 
 	 * @throws IncQueryException
 	 */
+	@SuppressWarnings("rawtypes")
 	public void initializeIndexes() throws IncQueryException {
-		try {
-			iqEngine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					for (BatchTransformationRule<?, ?> rule : getRules()) {
-						iqEngine.getMatcher(rule.getPrecondition());
-					}
-					return null;
-				}
-
-			});
-		} catch (InvocationTargetException e) {
-			throw new IncQueryException("Error initializing pattern matcher: "
-					+ e.getMessage(), "Error initializing pattern matcher",
-					(Exception) e.getTargetException());
-		}
+		GenericPatternGroup.of(Iterables.toArray(Iterables.transform(getRules(), new Function<BatchTransformationRule, IQuerySpecification<?>>() {
+			
+			@Override
+			public IQuerySpecification<?> apply(BatchTransformationRule rule){
+				return rule.getPrecondition();
+			}
+		}),IQuerySpecification.class)).prepare(iqEngine);
 	}
 
 	@SuppressWarnings("rawtypes") //Workaround for Xtend type inference issue
