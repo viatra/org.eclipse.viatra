@@ -20,11 +20,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
+import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
@@ -197,16 +199,8 @@ public class RuleBase {
      * @param specifications
      * @return
      */
-    public <CSet extends ConflictSet> ConflictingActivationSet createConflictingActivationSet(final ConflictResolver<CSet> conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
-        final CSet conflictSet = conflictResolver.createConflictSet();
-        final ImmutableMultimap<RuleSpecification<?>,EventFilter<?>> immutableSpecifications = ImmutableMultimap.copyOf(specifications);
-        final ConflictingActivationSet set = new ConflictingActivationSet(this, conflictSet, immutableSpecifications);
-        for (final Entry<RuleSpecification<?>, EventFilter<?>> entry : specifications.entries()) {
-            final RuleInstance<?> instance = ruleInstanceTable.get(entry.getKey(), entry.getValue());
-            if(instance != null) {
-                instance.addActivationNotificationListener(set.getListener(), true);
-            }
-        }
+    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(final ConflictResolver<CSet> conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        final ScopedConflictSet set = new ScopedConflictSet(this, conflictResolver, specifications);
         return set;
     }
 

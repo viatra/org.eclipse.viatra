@@ -18,6 +18,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
+import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -66,13 +69,21 @@ public class RuleEngine {
         ruleBase.getAgenda().setConflictResolver(conflictResolver);
     }
     
-    public <CSet extends ConflictSet> ConflictingActivationSet createConflictingActivationSet(ConflictResolver<CSet> conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+    public <EventAtom> ScopedConflictSet createScopedConflictSet(RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> eventFilter) {
+        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), ImmutableMultimap.<RuleSpecification<?>, EventFilter<?>>of(specification, eventFilter));
+    }
+    
+    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), specifications);
+    }
+    
+    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(ConflictResolver<CSet> conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
         checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
         checkNotNull(specifications, "Specification set cannot be null!");
-        ConflictingActivationSet conflictingActivationSet = ruleBase.createConflictingActivationSet(conflictResolver, specifications);
-        return conflictingActivationSet;
+        ScopedConflictSet scopedConflictSet = ruleBase.createScopedConflictSet(conflictResolver, specifications);
+        return scopedConflictSet;
     }
-
+    
     /**
      * Adds a rule specification to the RuleBase.
      *  If the rule already exists, no change occurs in the set of rules.
@@ -119,7 +130,7 @@ public class RuleEngine {
      * @return the next enabled activation if exists, selected by the conflict resolver
      */
     public Activation<?> getNextActivation() {
-        return ruleBase.getAgenda().getNextActivation();
+        return ruleBase.getAgenda().getConflictSet().getNextActivation();
     }
 
     /**
@@ -127,8 +138,7 @@ public class RuleEngine {
      * @return an immutable set of conflicting activations
      */
     public Set<Activation<?>> getConflictingActivations() {
-        return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictingActivations());
-        //return Collections.unmodifiableSet(ruleBase.getAgenda().getConflictingActivations());
+        return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictSet().getConflictingActivations());
     }
     
     /**

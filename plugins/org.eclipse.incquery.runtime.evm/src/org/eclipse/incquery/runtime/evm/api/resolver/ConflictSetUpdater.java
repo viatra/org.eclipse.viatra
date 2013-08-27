@@ -8,8 +8,9 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api;
+package org.eclipse.incquery.runtime.evm.api.resolver;
 
+import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
@@ -18,22 +19,22 @@ import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationList
  * @author Abel Hegedus
  *
  */
-public class ConflictSetUpdatingListener implements IActivationNotificationListener {
+public class ConflictSetUpdater implements IActivationNotificationListener {
     /**
      *
      */
-    private final ConflictSet conflictSet;
+    private final ChangeableConflictSet changeableConflictSet;
 
     /**
-     * @param conflictSet
+     * @param changeableConflictSet
      */
-    public ConflictSetUpdatingListener(final ConflictSet conflictSet) {
-        this.conflictSet = conflictSet;
+    public ConflictSetUpdater(final ChangeableConflictSet changeableConflictSet) {
+        this.changeableConflictSet = changeableConflictSet;
     }
 
     @Override
     public void activationRemoved(final Activation<?> activation, final ActivationState oldState) {
-        conflictSet.removeActivation(activation);
+        changeableConflictSet.removeActivation(activation);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ConflictSetUpdatingListener implements IActivationNotificationListe
     public void activationChanged(final Activation<?> activation, final ActivationState oldState, final EventType event) {
         final ActivationState state = activation.getState();
         if(state.isInactive()) {
-            conflictSet.removeActivation(activation);
+            changeableConflictSet.removeActivation(activation);
         } else {
             refreshActivation(activation, state);
         }
@@ -54,9 +55,9 @@ public class ConflictSetUpdatingListener implements IActivationNotificationListe
 
     private void refreshActivation(final Activation<?> activation, final ActivationState state) {
         if (activation.isEnabled()) {
-            conflictSet.addActivation(activation);
+            changeableConflictSet.addActivation(activation);
         } else {
-            conflictSet.removeActivation(activation);
+            changeableConflictSet.removeActivation(activation);
         }
     }
 }

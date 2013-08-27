@@ -8,32 +8,16 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api;
+package org.eclipse.incquery.runtime.evm.api.resolver;
 
-import java.util.Set;
 
 /**
+ * 
  * @author Abel Hegedus
  *
  */
-public interface OrderedActivationSet {
+public interface ConflictResolver<CSet extends ChangeableConflictSet> {
 
-    /**
-     *
-     * @return the next activation chosen by the resolver
-     */
-    Activation<?> getNextActivation();
-
-    /**
-     *
-     * @return the set of activations that are considered as equal by the resolver
-     */
-    Set<Activation<?>> getNextActivations();
-
-    /**
-     *
-     * @return the set of all activations that are in conflict (all enabled activations)
-     */
-    Set<Activation<?>> getConflictingActivations();
-
+    CSet createConflictSet();
+    
 }

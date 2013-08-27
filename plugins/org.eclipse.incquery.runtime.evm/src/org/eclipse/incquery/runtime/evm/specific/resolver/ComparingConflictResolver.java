@@ -19,8 +19,8 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.api.ConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver.ComparingConflictSet;
 
 import com.google.common.collect.Sets;
@@ -33,9 +33,6 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
 
     private final Comparator<Activation<?>> comparator;
     
-    /**
-     * 
-     */
     public ComparingConflictResolver(Comparator<Activation<?>> comparator) {
         this.comparator = comparator;
     }
@@ -52,14 +49,11 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         return comparator;
     }
     
-    public static class ComparingConflictSet implements ConflictSet {
+    public static class ComparingConflictSet implements ChangeableConflictSet {
     
         private SortedSet<Activation<?>> set;
         private ComparingConflictResolver resolver;
         
-        /**
-         * 
-         */
         protected ComparingConflictSet(ComparingConflictResolver resolver, Comparator<Activation<?>> comparator) {
             checkArgument(comparator != null, "Comparator cannot be null!");
             this.resolver = resolver;

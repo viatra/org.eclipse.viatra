@@ -8,7 +8,9 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api;
+package org.eclipse.incquery.runtime.evm.api.resolver;
+
+import org.eclipse.incquery.runtime.evm.api.Activation;
 
 
 
@@ -18,18 +20,12 @@ package org.eclipse.incquery.runtime.evm.api;
  * @author Abel Hegedus
  *
  */
-public interface ConflictSet extends OrderedActivationSet {
-
-    /**
-     *
-     * @return the resolver corresponding to the conflict set
-     */
-    ConflictResolver<? extends ConflictSet> getConflictResolver();
+public interface ChangeableConflictSet extends ConflictSet {
 
     /**
      * This method is called by the Agenda when an activation changes state and becomes or is still enabled.
      *
-     * <p/>NOTE: The ConflictSet is responsible for handling that <code>add</code> may be called
+     * <p/>NOTE: The ChangeableConflictSet is responsible for handling that <code>add</code> may be called
      *  multiple times on an Activation already in the conflict set!
      *
      * @param activation the activation that should be added to the conflict set
@@ -40,7 +36,7 @@ public interface ConflictSet extends OrderedActivationSet {
     /**
      * This method is called by the Agenda when an activation changes state and becomes or is still disabled.
      *
-     * <p/>NOTE: The ConflictSet is responsible for handling that <code>remove</code> may be called
+     * <p/>NOTE: The ChangeableConflictSet is responsible for handling that <code>remove</code> may be called
      * on Activations that are not in the conflict set!
      *
      * @param activation the activation that should be removed from the conflict set

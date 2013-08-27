@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.evm.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 
 /**
  * The executor is responsible for firing enabled activations of its ruleBase,
@@ -73,7 +74,8 @@ public class Executor {
         }
         
         Activation<?> nextActivation = null;
-        while((nextActivation = ruleBase.getAgenda().getNextActivation()) != null) {
+        ChangeableConflictSet conflictSet = ruleBase.getAgenda().getConflictSet();
+        while((nextActivation = conflictSet.getNextActivation()) != null) {
             ruleBase.getLogger().debug("Executing: " + nextActivation + " in " + this);
             nextActivation.fire(context);
         }

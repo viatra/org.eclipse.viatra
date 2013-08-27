@@ -11,10 +11,12 @@
 package org.eclipse.incquery.runtime.evm.api;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictSetUpdater;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 
 import com.google.common.collect.HashMultimap;
@@ -29,10 +31,10 @@ import com.google.common.collect.Multimap;
 public class Agenda {
 
     private final Multimap<ActivationState, Activation<?>> activations;
-    private ConflictSet conflictSet;
+    private ChangeableConflictSet conflictSet;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
-    private final ConflictSetUpdatingListener updatingListener;
+    private final ConflictSetUpdater updatingListener;
 
     /**
      *
@@ -41,7 +43,7 @@ public class Agenda {
         this.ruleBase = ruleBase;
         activations = HashMultimap.create();
         this.conflictSet = conflictResolver.createConflictSet();
-        this.updatingListener = new ConflictSetUpdatingListener(conflictSet);
+        this.updatingListener = new ConflictSetUpdater(conflictSet);
         this.activationListener = new DefaultActivationNotificationListener();
     }
 
@@ -71,27 +73,6 @@ public class Agenda {
     }
 
     /**
-     * @return the activation selected as next in order by the conflict resolver
-     */
-    public Activation<?> getNextActivation() {
-        return conflictSet.getNextActivation();
-    }
-
-    /**
-     * @return the set of activations that are considered equal by the conflict resolver
-     */
-    public Set<Activation<?>> getNextActivations() {
-        return conflictSet.getNextActivations();
-    }
-
-    /**
-     * @return the set of activations in conflict (i.e. enabled)
-     */
-    public Set<Activation<?>> getConflictingActivations() {
-        return conflictSet.getConflictingActivations();
-    }
-
-    /**
      * @return the activationListener
      */
     public IActivationNotificationListener getActivationListener() {
@@ -103,11 +84,18 @@ public class Agenda {
      * @param resolver
      */
     public void setConflictResolver(final ConflictResolver<?> resolver) {
-        final ConflictSet set = resolver.createConflictSet();
+        final ChangeableConflictSet set = resolver.createConflictSet();
         for (final Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
         this.conflictSet = set;
+    }
+
+    /**
+     * @return the conflictSet
+     */
+    public ChangeableConflictSet getConflictSet() {
+        return conflictSet;
     }
 
     /**
