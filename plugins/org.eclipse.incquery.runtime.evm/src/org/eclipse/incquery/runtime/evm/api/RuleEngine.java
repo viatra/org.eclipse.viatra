@@ -86,7 +86,7 @@ public class RuleEngine {
     }
 
     /**
-     * Adds a rule specification to the RuleBase and fires all enabled activations if required.
+     * Adds a rule specification to the RuleBase with the given filter.
      * If the rule already exists, no change occurs in the set of rules.
      * 
      * @param specification
@@ -100,7 +100,7 @@ public class RuleEngine {
         RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);
         boolean added = false;
         if(instance == null) {
-            instance = ruleBase.instantiateRule(specification, filter);
+            ruleBase.instantiateRule(specification, filter);
             added = true;
         }
         return added;
@@ -175,7 +175,7 @@ public class RuleEngine {
     }
 
     /**
-     * TODO javadoc
+     * 
      * @param specification 
      * @param filter 
      * @param state
