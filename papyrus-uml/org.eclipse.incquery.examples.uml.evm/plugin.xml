@@ -89,5 +89,13 @@
             id="org.eclipse.incquery.examples.uml.evm.queries.nonEmptyClass">
       </matcher>
    </extension>
+   <extension
+         id="org.eclipse.incquery.examples.uml.evm.queries.test"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.examples.uml.evm.queries.util.TestQuerySpecification$Provider"
+            id="org.eclipse.incquery.examples.uml.evm.queries.test">
+      </matcher>
+   </extension>
 
 </plugin>

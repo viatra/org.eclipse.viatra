@@ -36,38 +36,38 @@ public class ProtoApp {
 
     @Test
     public void testProtoEventRealm() {
-        
-        ProtoRealm protoRealm = new ProtoRealm();
-        RuleEngine engine = EventDrivenVM.createRuleEngine(protoRealm);
+
+        final ProtoRealm protoRealm = new ProtoRealm();
+        final RuleEngine engine = EventDrivenVM.createRuleEngine(protoRealm);
         engine.getLogger().setLevel(Level.DEBUG);
 
-        ActivationLifeCycle lifeCycle = ActivationLifeCycle.create(ProtoActivationStates.IS_NOT);
+        final ActivationLifeCycle lifeCycle = ActivationLifeCycle.create(ProtoActivationStates.IS_NOT);
         lifeCycle.addStateTransition(ProtoActivationStates.IS_NOT, ProtoEventType.PUSH, ProtoActivationStates.IS);
         lifeCycle.addStateTransition(ProtoActivationStates.IS, RuleEngineEventType.FIRE, ProtoActivationStates.IS_NOT);
 
-        Job<String> job = new Job<String>(ProtoActivationStates.IS) {
+        final Job<String> job = new Job<String>(ProtoActivationStates.IS) {
             @Override
-            protected void execute(Activation<? extends String> activation, Context context) {
+            protected void execute(final Activation<? extends String> activation, final Context context) {
                 System.out.println("String pushed" + activation.getAtom());
             }
             @Override
-            protected void handleError(Activation<? extends String> activation, Exception exception, Context context) {
+            protected void handleError(final Activation<? extends String> activation, final Exception exception, final Context context) {
                 // not gonna happen
             }
         };
-        
-        ProtoEventSourceSpecification sourceSpec = new ProtoEventSourceSpecification("test");
-        
-        RuleSpecification<String> ruleSpec = new RuleSpecification<String>(sourceSpec, lifeCycle, Sets.newHashSet(job));
-        
-        ProtoEventFilter filter = new ProtoEventFilter("t");
-        engine.addRule(ruleSpec, false, filter);
-        
+
+        final ProtoEventSourceSpecification sourceSpec = new ProtoEventSourceSpecification("test");
+
+        final RuleSpecification<String> ruleSpec = new RuleSpecification<String>(sourceSpec, lifeCycle, Sets.newHashSet(job));
+
+        final ProtoEventFilter filter = new ProtoEventFilter("t");
+        engine.addRule(ruleSpec, filter);
+
         protoRealm.pushString("PUSH THIS!");
-        
+
         engine.getNextActivation().fire(Context.create());
-        
+
     }
-    
-    
+
+
 }

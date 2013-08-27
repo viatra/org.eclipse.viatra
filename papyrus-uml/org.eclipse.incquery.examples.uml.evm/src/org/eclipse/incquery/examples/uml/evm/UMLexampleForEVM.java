@@ -22,12 +22,14 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.incquery.runtime.evm.api.ConflictingActivationSet;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -43,6 +45,7 @@ import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.junit.Test;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 
 public class UMLexampleForEVM {
@@ -50,24 +53,24 @@ public class UMLexampleForEVM {
     @Test
     public void RuleEngineExample() {
 
-        ResourceSet resourceSet = new ResourceSetImpl();
-        URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
+        final ResourceSet resourceSet = new ResourceSetImpl();
+        final URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
                 false);
         resourceSet.getResource(fileURI, true);
 
         try {
             // create IncQueryEngine for the resource set
-            IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
+            final IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
             // create rule engine over IncQueryEngine
-            RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
+            final RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
             // set logger level to debug to see activation life-cycle events
             ruleEngine.getLogger().setLevel(Level.DEBUG);
             // create context for execution
-            Context context = Context.create();
+            final Context context = Context.create();
 
             // prepare rule specifications
-            RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
-            RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
+            final RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
+            final RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
 
             // add rule specifications to engine
             ruleEngine.addRule(createGeneralization);
@@ -76,17 +79,25 @@ public class UMLexampleForEVM {
             ruleEngine.addRule(createOperation);
 
             // check rule applicability
-            Set<Activation<PossibleSuperClassMatch>> createClassesActivations = ruleEngine.getActivations(createGeneralization);
+            final Set<Activation<PossibleSuperClassMatch>> createClassesActivations = ruleEngine.getActivations(createGeneralization);
             if (!createClassesActivations.isEmpty()) {
                 // fire activation of a given rule
                 createClassesActivations.iterator().next().fire(context);
             }
+
+            final HashMultimap<RuleSpecification<?>, EventFilter<?>> specAndFilter = HashMultimap.create();
+            specAndFilter.put(createGeneralization, createGeneralization.createEmptyFilter());
+            final ConflictingActivationSet activationSet = ruleEngine.createConflictingActivationSet(ConflictResolvers.createArbitraryResolver(), specAndFilter);
+            assertTrue(activationSet.getNextActivation() != null);
 
             // check for any applicable rules
             while (!ruleEngine.getConflictingActivations().isEmpty()) {
                 // fire next activation as long as possible
                 ruleEngine.getNextActivation().fire(context);
             }
+
+            assertTrue(activationSet.getNextActivation() == null);
+            activationSet.dispose();
 
             // rules that are no longer needed can be removed
             ruleEngine.removeRule(createGeneralization);
@@ -95,65 +106,65 @@ public class UMLexampleForEVM {
             // disposed
             ruleEngine.dispose();
 
-        } catch (IncQueryException e) {
+        } catch (final IncQueryException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void testFilteredRules(IncQueryEngine engine, RuleEngine ruleEngine,
-            RuleSpecification<PossibleSuperClassMatch> createGeneralization) throws IncQueryException {
+    private void testFilteredRules(final IncQueryEngine engine, final RuleEngine ruleEngine,
+            final RuleSpecification<PossibleSuperClassMatch> createGeneralization) throws IncQueryException {
         assertFalse(ruleEngine.addRule(createGeneralization));
-        
-        PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
-        PossibleSuperClassMatch emptyMatch = matcher.newMatch(null, null);
+
+        final PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
+        final PossibleSuperClassMatch emptyMatch = matcher.newMatch(null, null);
         final PossibleSuperClassMatch arbitraryMatch = matcher.getOneArbitraryMatch();
-        EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newMatchFilter(emptyMatch);
-        EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newMatchFilter(emptyMatch);
-        EventFilter<PossibleSuperClassMatch> filter = Rules.newMatchFilter(arbitraryMatch);
-        EventFilter<PossibleSuperClassMatch> filter2 = Rules.newMatchFilter(arbitraryMatch);
-        
-        EventFilter<IPatternMatch> eventFilter = new EventFilter<IPatternMatch>() {
-            
+        final EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newMatchFilter(emptyMatch);
+        final EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newMatchFilter(emptyMatch);
+        final EventFilter<PossibleSuperClassMatch> filter = Rules.newMatchFilter(arbitraryMatch);
+        final EventFilter<PossibleSuperClassMatch> filter2 = Rules.newMatchFilter(arbitraryMatch);
+
+        final EventFilter<IPatternMatch> eventFilter = new EventFilter<IPatternMatch>() {
+
             Class cl = arbitraryMatch.getCl();
-            
+
             @Override
-            public boolean isProcessable(IPatternMatch eventAtom) {
+            public boolean isProcessable(final IPatternMatch eventAtom) {
                 return eventAtom.get("cl").equals(cl);
             }
         };
-        
-        ruleEngine.addRule(createGeneralization, false, eventFilter);
+
+        ruleEngine.addRule(createGeneralization, eventFilter);
         assertFalse(ruleEngine.getActivations(createGeneralization, eventFilter).isEmpty());
-        
-        assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter1));
-        assertFalse(ruleEngine.addRule(createGeneralization, false, emptyFilter2));
-        assertTrue(ruleEngine.addRule(createGeneralization, false, filter));
-        assertFalse(ruleEngine.addRule(createGeneralization, false, filter2));
+
+        assertFalse(ruleEngine.addRule(createGeneralization, emptyFilter1));
+        assertFalse(ruleEngine.addRule(createGeneralization, emptyFilter2));
+        assertTrue(ruleEngine.addRule(createGeneralization, filter));
+        assertFalse(ruleEngine.addRule(createGeneralization, filter2));
     }
 
     @Test
     public void ExecutionSchemaExample() {
 
-        ResourceSet resourceSet = new ResourceSetImpl();
-        URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
+        final ResourceSet resourceSet = new ResourceSetImpl();
+        final URI fileURI = URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml",
                 false);
         resourceSet.getResource(fileURI, true);
 
         try {
             // create IncQueryEngine for the resource set
-            IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
+            final IncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet);
             // use IQBase update callback for scheduling execution
-            UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(engine);
+            final UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(engine);
             // create execution schema over IncQueryEngine
-            ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
+            final ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
             // set logger level to debug to see activation life-cycle events
             executionSchema.getLogger().setLevel(Level.DEBUG);
 
-            
+
             // prepare rule specifications
-            RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
-            RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
+            final RuleSpecification<PossibleSuperClassMatch> createGeneralization = getCreateGeneralizationRule();
+            final RuleSpecification<OnlyInheritedOperationsMatch> createOperation = getCreateOperationRule();
 
             // add rule specifications to engine
             executionSchema.addRule(createGeneralization);
@@ -161,13 +172,13 @@ public class UMLexampleForEVM {
 
             executionSchema.addRule(createOperation);
 
-            
+
             // execution schema waits for a scheduling to fire activations
             // we trigger this by removing one generalization at random
             SuperClassMatcher.querySpecification().getMatcher(engine).forOneArbitraryMatch(new SuperClassProcessor() {
 
                 @Override
-                public void process(Class sub, Class sup) {
+                public void process(final Class sub, final Class sup) {
                     sub.getGeneralizations().remove(0);
                 }
             });
@@ -179,7 +190,7 @@ public class UMLexampleForEVM {
             // rules until disposed
             executionSchema.dispose();
 
-        } catch (IncQueryException e) {
+        } catch (final IncQueryException e) {
             e.printStackTrace();
         }
 
@@ -188,41 +199,42 @@ public class UMLexampleForEVM {
     private RuleSpecification<PossibleSuperClassMatch> getCreateGeneralizationRule() throws IncQueryException {
         // the job specifies what to do when an activation is fired in the given
         // state
-        Job<PossibleSuperClassMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new PossibleSuperClassProcessor() {
+        final Job<PossibleSuperClassMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new PossibleSuperClassProcessor() {
             @Override
-            public void process(Class cl, Class sup) {
+            public void process(final Class cl, final Class sup) {
                 System.out.println("Found cl " + cl + " without superclass");
-                Generalization generalization = UMLFactory.eINSTANCE.createGeneralization();
+                final Generalization generalization = UMLFactory.eINSTANCE.createGeneralization();
                 generalization.setGeneral(sup);
                 generalization.setSpecific(cl);
             }
         });
         // the life-cycle determines how events affect the state of activations
-        DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+        final DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
         // the factory is used to initialize the matcher for the precondition
-        IQuerySpecification<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.querySpecification();
+        final IQuerySpecification<PossibleSuperClassMatcher> factory = PossibleSuperClassMatcher.querySpecification();
         // the rule specification is a model-independent definition that can be
         // used to instantiate a rule
-        RuleSpecification<PossibleSuperClassMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+        final RuleSpecification<PossibleSuperClassMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
     private RuleSpecification<OnlyInheritedOperationsMatch> getCreateOperationRule() throws IncQueryException {
-        Job<OnlyInheritedOperationsMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new OnlyInheritedOperationsProcessor() {
+        final Job<OnlyInheritedOperationsMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new OnlyInheritedOperationsProcessor() {
             @Override
-            public void process(Class cl) {
+            public void process(final Class cl) {
                 System.out.println("Found class " + cl + " without operation");
-                Operation operation = UMLFactory.eINSTANCE.createOperation();
+                final Operation operation = UMLFactory.eINSTANCE.createOperation();
                 operation.setName("newOp");
                 operation.setClass_(cl);
             }
         });
-        DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-        IQuerySpecification<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.querySpecification();
-        RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
+
+        final DefaultActivationLifeCycle lifecycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+        final IQuerySpecification<OnlyInheritedOperationsMatcher> factory = OnlyInheritedOperationsMatcher.querySpecification();
+        final RuleSpecification<OnlyInheritedOperationsMatch> spec = Rules.newMatcherRuleSpecification(factory, lifecycle, Sets.newHashSet(job));
         return spec;
     }
 
-    
-    
+
+
 }
