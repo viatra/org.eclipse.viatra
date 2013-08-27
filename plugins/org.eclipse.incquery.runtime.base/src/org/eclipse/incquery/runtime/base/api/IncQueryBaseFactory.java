@@ -24,7 +24,10 @@ import org.eclipse.incquery.runtime.base.core.TransitiveClosureHelperImpl;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 /**
- * Factory class for the utils in the library: - NavigationHelper (automatic and manual) - TransitiveClosureUtil
+ * Factory class for the utils in the library: <ul>
+ * <li>NavigationHelper (automatic and manual) 
+ * <li>TransitiveClosureUtil
+ * </ul>
  * 
  * @author Tamas Szabo
  * 
@@ -51,7 +54,8 @@ public class IncQueryBaseFactory {
     }
 
     /**
-     * The method creates a {@link NavigationHelper} index for the given EMF model root.
+     * The method creates a {@link NavigationHelper} index for the given EMF model root. 
+     * A new instance will be created on every call.
      * <p>
      * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. If
      * wildcard mode is off, the client will have to manually register the interesting aspects of the model.
@@ -82,6 +86,7 @@ public class IncQueryBaseFactory {
     
     /**
      * The method creates a {@link NavigationHelper} index for the given EMF model root.
+     * A new instance will be created on every call.
      * <p>
      * A NavigationHelper in wildcard mode will process and index all EStructuralFeatures, EClasses and EDatatypes. If
      * wildcard mode is off, the client will have to manually register the interesting aspects of the model.
@@ -116,6 +121,7 @@ public class IncQueryBaseFactory {
 
     /**
      * The method creates a TransitiveClosureHelper instance for the given EMF model root.
+     * A new instance will be created on every call.
      * 
      * <p>
      * One must specify the set of EReferences that will be considered as edges. The set can contain multiple elements;
@@ -135,6 +141,7 @@ public class IncQueryBaseFactory {
 
     /**
      * The method creates a TransitiveClosureHelper instance built on an existing NavigationHelper.
+     * A new instance will be created on every call.
      * 
      * <p>
      * One must specify the set of EReferences that will be considered as edges. The set can contain multiple elements;
