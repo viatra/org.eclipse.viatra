@@ -21,7 +21,7 @@ import com.google.common.base.Objects;
  * @author Abel Hegedus
  *
  */
-public class IncQueryEventFilter<Match extends IPatternMatch> implements EventFilter<Match> {
+public class IncQuerySinglePatternMatchEventFilter<Match extends IPatternMatch> implements EventFilter<Match> {
 
     private Match filterMatch;
     
@@ -37,7 +37,7 @@ public class IncQueryEventFilter<Match extends IPatternMatch> implements EventFi
         return filterMatch.isCompatibleWith(eventAtom);
     }
 
-    protected IncQueryEventFilter(Match filterMatch) {
+    protected IncQuerySinglePatternMatchEventFilter(Match filterMatch) {
         checkArgument(filterMatch != null, "Cannot create filter with null match");
         this.filterMatch = filterMatch;
     }
@@ -45,20 +45,20 @@ public class IncQueryEventFilter<Match extends IPatternMatch> implements EventFi
     /**
      * Only used internally to create empty filters
      */
-    protected IncQueryEventFilter() {}
+    protected IncQuerySinglePatternMatchEventFilter() {}
     
     /**
      * 
      * @param eventAtom
      * @return
      */
-    public static <Match extends IPatternMatch> IncQueryEventFilter<Match> createFilter(Match eventAtom) {
+    public static <Match extends IPatternMatch> IncQuerySinglePatternMatchEventFilter<Match> createFilter(Match eventAtom) {
         checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
         checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
         if(IncQueryEventRealm.isEmpty(eventAtom)) {
-            return new IncQueryEventFilter<Match>();
+            return new IncQuerySinglePatternMatchEventFilter<Match>();
         } else {
-            return new IncQueryEventFilter<Match>(eventAtom);
+            return new IncQuerySinglePatternMatchEventFilter<Match>(eventAtom);
         }
     }
 
@@ -76,7 +76,7 @@ public class IncQueryEventFilter<Match extends IPatternMatch> implements EventFi
         if (getClass() != obj.getClass())
             return false;
         @SuppressWarnings("rawtypes")
-        IncQueryEventFilter other = (IncQueryEventFilter) obj;
+        IncQuerySinglePatternMatchEventFilter other = (IncQuerySinglePatternMatchEventFilter) obj;
         return Objects.equal(filterMatch, other.filterMatch);
     }
     

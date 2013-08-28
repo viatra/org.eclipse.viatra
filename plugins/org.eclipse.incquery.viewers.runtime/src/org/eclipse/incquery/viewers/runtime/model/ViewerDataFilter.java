@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
@@ -19,19 +20,19 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
- * A wrapper class for filter definitions. It is used to create filtered observable Sets for patterns. A filter
- * definition is considered unchangeable</p>
+ * <p>A wrapper class for filter definitions. It is used to create filtered observable Sets for patterns. A filter
+ * definition is considered unchangeable for the entire lifecycle of the ViewerFilter instance.</p>
  * 
  * <p>
  * <strong>Warning</strong> After using a filter to create a {@link ViewerDataFilter}, the updates of this filter will
- * not be pushed to the Filter
+ * not be pushed to the Filter</p>
  * 
  * @author Zoltan Ujhelyi
  * 
@@ -40,7 +41,7 @@ public class ViewerDataFilter {
 
     public static ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
-    private Map<Pattern, IPatternMatch> filterDefinitions;
+    private Map<Pattern, ViewerFilterDefinition> filterDefinitions;
     
     /**
      * Initializes an empty data filter.
@@ -54,7 +55,7 @@ public class ViewerDataFilter {
      * 
      * @param filters
      */
-    public ViewerDataFilter(Map<Pattern, IPatternMatch> filters) {
+    private ViewerDataFilter(Map<Pattern, ViewerFilterDefinition> filters) {
         filterDefinitions = Maps.newHashMap(filters);
     }
 
@@ -74,10 +75,22 @@ public class ViewerDataFilter {
      * @param pattern
      * @param match
      */
-    public void addFilter(Pattern pattern, IPatternMatch match) {
+    public void addSingleFilter(Pattern pattern, IPatternMatch match) {
         Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
                 + pattern.getName());
-        filterDefinitions.put(pattern, match);
+        filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
+                IncQueryFilterSemantics.SINGLE, 
+                match, 
+                null));
+    }
+    
+    public void addMultiFilter(Pattern pattern, Collection<IPatternMatch> matches, IncQueryFilterSemantics semantics) {
+        Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
+                + pattern.getName());
+        filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
+                semantics, 
+                null, 
+                matches));
     }
 
     /**
@@ -95,7 +108,7 @@ public class ViewerDataFilter {
         return filterDefinitions.containsKey(pattern);
     }
 
-    public IPatternMatch getFilter(Pattern pattern) {
+    public ViewerFilterDefinition getFilter(Pattern pattern) {
         return filterDefinitions.get(pattern);
     }
 
@@ -112,10 +125,23 @@ public class ViewerDataFilter {
         IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
                 .getOrCreateQuerySpecification(pattern);
 
-        ObservablePatternMatchSet<IPatternMatch> obsSet = isFiltered(pattern) ? new ObservablePatternMatchSet<IPatternMatch>(querySpecification,
-                engine,
-                getFilter(pattern)) : new ObservablePatternMatchSet<IPatternMatch>(querySpecification, engine);
-        return obsSet;
+        if (isFiltered(pattern)) {
+            ViewerFilterDefinition def = getFilter(pattern);
+            switch (def.semantics) {
+            case SINGLE:
+                return new ObservablePatternMatchSet<IPatternMatch>(querySpecification,
+                        engine,
+                        def.singleFilterMatch); 
+            default:
+                return new ObservablePatternMatchSet<IPatternMatch>(querySpecification,
+                        engine,
+                        def.filterMatches,
+                        def.semantics);
+            }
+        }
+        else {
+            return new ObservablePatternMatchSet<IPatternMatch>(querySpecification, engine);
+        }
     }
    
 
@@ -133,10 +159,23 @@ public class ViewerDataFilter {
         IQuerySpecification<IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry
                 .getOrCreateQuerySpecification(pattern);
 
-        ObservablePatternMatchList<IPatternMatch> obslist = isFiltered(pattern) ? new ObservablePatternMatchList<IPatternMatch>(querySpecification,
-                engine,
-                getFilter(pattern)) : new ObservablePatternMatchList<IPatternMatch>(querySpecification, engine);
-        return obslist;
+        if (isFiltered(pattern)) {
+            ViewerFilterDefinition def = getFilter(pattern);
+            switch (def.semantics) {
+            case SINGLE:
+                return new ObservablePatternMatchList<IPatternMatch>(querySpecification,
+                        engine,
+                        def.singleFilterMatch); 
+            default:
+                return new ObservablePatternMatchList<IPatternMatch>(querySpecification,
+                        engine,
+                        def.filterMatches,
+                        def.semantics);
+            }
+        }
+        else {
+            return new ObservablePatternMatchList<IPatternMatch>(querySpecification, engine);
+        }
     }
 }
 

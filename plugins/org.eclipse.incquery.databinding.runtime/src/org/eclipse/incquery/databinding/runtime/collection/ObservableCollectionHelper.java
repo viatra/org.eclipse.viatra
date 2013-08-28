@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -28,6 +29,7 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 import com.google.common.collect.ImmutableSet;
@@ -90,8 +92,21 @@ public final class ObservableCollectionHelper {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
         if(filter != null) {
-            EventFilter<Match> matchFilter = Rules.newMatchFilter(filter);
+            EventFilter<Match> matchFilter = Rules.newSingleMatchFilter(filter);
 			ruleEngine.addRule(specification, matchFilter);
+            fireActivations(ruleEngine, specification, matchFilter);
+        } else {
+            ruleEngine.addRule(specification);
+            fireActivations(ruleEngine, specification, specification.createEmptyFilter());
+        }
+    }
+    
+    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
+        RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+                Schedulers.getIQEngineSchedulerFactory(engine));
+        if(multifilters != null) {
+            EventFilter<Match> matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
+            ruleEngine.addRule(specification, matchFilter);
             fireActivations(ruleEngine, specification, matchFilter);
         } else {
             ruleEngine.addRule(specification);

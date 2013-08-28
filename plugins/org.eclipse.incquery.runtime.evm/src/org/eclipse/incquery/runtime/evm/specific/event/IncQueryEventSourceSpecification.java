@@ -29,7 +29,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public class IncQueryEventSourceSpecification<Match extends IPatternMatch> implements EventSourceSpecification<Match> {
 
     private IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification;
-    private final EventFilter<Match> EMPTY_FILTER = new IncQueryEventFilter<Match>();
+    private final EventFilter<Match> EMPTY_FILTER = new IncQuerySinglePatternMatchEventFilter<Match>();
     
     protected IncQueryEventSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory) {
         checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
