@@ -55,11 +55,7 @@ public class IncQuerySinglePatternMatchEventFilter<Match extends IPatternMatch> 
     public static <Match extends IPatternMatch> IncQuerySinglePatternMatchEventFilter<Match> createFilter(Match eventAtom) {
         checkArgument(eventAtom != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
         checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
-        if(IncQueryEventRealm.isEmpty(eventAtom)) {
-            return new IncQuerySinglePatternMatchEventFilter<Match>();
-        } else {
-            return new IncQuerySinglePatternMatchEventFilter<Match>(eventAtom);
-        }
+        return new IncQuerySinglePatternMatchEventFilter<Match>(eventAtom);
     }
 
     @Override

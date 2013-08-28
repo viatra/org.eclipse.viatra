@@ -74,9 +74,6 @@ public final class Rules {
         
         private final IncQueryMatcher<Match> matcher;
         
-        /**
-         * 
-         */
         public FavouredMatcherSourceSpecification(IncQueryMatcher<Match> matcher) {
             super(getQuerySpecification(matcher));
             this.matcher = matcher;
@@ -109,11 +106,11 @@ public final class Rules {
     }
     
     /**
-     * Creates a "multi OR" event filter that uses the IPatternMatch.isCompatibleWith to check event atoms against a collection
-     * of filter (partial) matches. This variant uses the "OR" semantics, i.e. if any one of the matches is compatible,
-     * then the event atom is processed.
+     * Creates a "multi" event filter that uses the IPatternMatch.isCompatibleWith to check event atoms against a collection
+     * of filter (partial) matches. The possible semantics are documented in {@link IncQueryFilterSemantics}.
      * 
      * @param filterMatchs non-null match to use for filtering
+     * @param semantics the filter semantics to use
      * @return the event filter
      */
     public static <Match extends IPatternMatch> EventFilter<Match> newMultiMatchFilter(Collection<Match> filterMatches, IncQueryFilterSemantics semantics) {

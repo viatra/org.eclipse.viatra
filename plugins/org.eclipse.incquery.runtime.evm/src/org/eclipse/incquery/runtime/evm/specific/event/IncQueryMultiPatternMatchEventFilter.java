@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Abel Hegedus - initial API and implementation
+ *   Istvan Rath  - implementation
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.event;
 
@@ -65,11 +66,6 @@ public class IncQueryMultiPatternMatchEventFilter<Match extends IPatternMatch> i
     }
     
     /**
-     * Only used internally to create empty filters
-     */
-    protected IncQueryMultiPatternMatchEventFilter() {}
-    
-    /**
      * 
      * @param eventAtom
      * @return
@@ -79,11 +75,7 @@ public class IncQueryMultiPatternMatchEventFilter<Match extends IPatternMatch> i
         for (Match eventAtom : eventAtoms) {
             checkArgument(!eventAtom.isMutable(), "Cannot create filter for mutable match!");
         }
-//        if(IncQueryEventRealm.isEmpty(eventAtom)) {
-//            return new IncQueryMultiPatternMatchEventFilter<Match>();
-//        } else {
-            return new IncQueryMultiPatternMatchEventFilter<Match>(eventAtoms, semantics);
-//        }
+        return new IncQueryMultiPatternMatchEventFilter<Match>(eventAtoms, semantics);
     }
 
     @Override
