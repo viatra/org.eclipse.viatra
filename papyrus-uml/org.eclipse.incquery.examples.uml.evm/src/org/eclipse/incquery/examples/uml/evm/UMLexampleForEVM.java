@@ -115,10 +115,10 @@ public class UMLexampleForEVM {
         final PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
         final PossibleSuperClassMatch emptyMatch = matcher.newMatch(null, null);
         final PossibleSuperClassMatch arbitraryMatch = matcher.getOneArbitraryMatch();
-        final EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newMatchFilter(emptyMatch);
-        final EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newMatchFilter(emptyMatch);
-        final EventFilter<PossibleSuperClassMatch> filter = Rules.newMatchFilter(arbitraryMatch);
-        final EventFilter<PossibleSuperClassMatch> filter2 = Rules.newMatchFilter(arbitraryMatch);
+        final EventFilter<PossibleSuperClassMatch> emptyFilter1 = Rules.newSingleMatchFilter(emptyMatch);
+        final EventFilter<PossibleSuperClassMatch> emptyFilter2 = Rules.newSingleMatchFilter(emptyMatch);
+        final EventFilter<PossibleSuperClassMatch> filter = Rules.newSingleMatchFilter(arbitraryMatch);
+        final EventFilter<PossibleSuperClassMatch> filter2 = Rules.newSingleMatchFilter(arbitraryMatch);
 
         final EventFilter<IPatternMatch> eventFilter = new EventFilter<IPatternMatch>() {
 
@@ -133,7 +133,7 @@ public class UMLexampleForEVM {
         ruleEngine.addRule(createGeneralization, eventFilter);
         assertFalse(ruleEngine.getActivations(createGeneralization, eventFilter).isEmpty());
 
-        assertFalse(ruleEngine.addRule(createGeneralization, emptyFilter1));
+        assertTrue(ruleEngine.addRule(createGeneralization, emptyFilter1)); // empty filter different from no filter
         assertFalse(ruleEngine.addRule(createGeneralization, emptyFilter2));
         assertTrue(ruleEngine.addRule(createGeneralization, filter));
         assertFalse(ruleEngine.addRule(createGeneralization, filter2));
