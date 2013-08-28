@@ -131,4 +131,5 @@ public final class EventDrivenVM {
             final Set<RuleSpecification<?>> specifications) {
                 return RuleEngines.createIncQueryRuleEngine(engine, specifications);
             }
+    
 }

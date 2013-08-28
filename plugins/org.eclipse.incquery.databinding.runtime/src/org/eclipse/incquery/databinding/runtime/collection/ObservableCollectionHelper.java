@@ -17,9 +17,12 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
@@ -87,10 +90,28 @@ public final class ObservableCollectionHelper {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
         if(filter != null) {
-            ruleEngine.addRule(specification, true, Rules.newMatchFilter(filter));
+            EventFilter<Match> matchFilter = Rules.newMatchFilter(filter);
+			ruleEngine.addRule(specification, matchFilter);
+            fireActivations(ruleEngine, specification, matchFilter);
         } else {
-            ruleEngine.addRule(specification, true);
+            ruleEngine.addRule(specification);
+            fireActivations(ruleEngine, specification, specification.createEmptyFilter());
         }
+    }
+    
+    /**
+     * 'Naive' firing of all activations - only works if they do not conflict. In data binding this is always true.
+     * @param ruleEngine
+     * @param specification
+     * @param filter
+     */
+    static <Match extends IPatternMatch> void fireActivations(final RuleEngine ruleEngine, final RuleSpecification<Match> specification, final EventFilter<Match> filter) {
+    	Set<Activation<Match>> activations = ruleEngine.getActivations(specification, filter);
+    	Context context = Context.create();
+    	
+    	for (Activation<Match> activation : activations) {
+    		activation.fire(context);
+    	}
     }
     
 //    public static <Match extends IPatternMatch> void addPrioritizedRuleSpecification(RuleEngine engine,

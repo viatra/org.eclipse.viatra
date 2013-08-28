@@ -18,6 +18,9 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
+import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -65,7 +68,22 @@ public class RuleEngine {
         checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
         ruleBase.getAgenda().setConflictResolver(conflictResolver);
     }
-
+    
+    public <EventAtom> ScopedConflictSet createScopedConflictSet(RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> eventFilter) {
+        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), ImmutableMultimap.<RuleSpecification<?>, EventFilter<?>>of(specification, eventFilter));
+    }
+    
+    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), specifications);
+    }
+    
+    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(ConflictResolver<CSet> conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+        checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
+        checkNotNull(specifications, "Specification set cannot be null!");
+        ScopedConflictSet scopedConflictSet = ruleBase.createScopedConflictSet(conflictResolver, specifications);
+        return scopedConflictSet;
+    }
+    
     /**
      * Adds a rule specification to the RuleBase.
      *  If the rule already exists, no change occurs in the set of rules.
@@ -75,43 +93,26 @@ public class RuleEngine {
      */
     public <EventAtom> boolean addRule(
             final RuleSpecification<EventAtom> specification) {
-        return addRule(specification, false, specification.createEmptyFilter());
+        return addRule(specification, specification.createEmptyFilter());
     }
 
     /**
-     * Adds a rule specification to the RuleBase and fires all enabled activations if required.
+     * Adds a rule specification to the RuleBase with the given filter.
      * If the rule already exists, no change occurs in the set of rules.
      * 
      * @param specification
-     * @param fireNow if true, all enabled activations of the rule are fired immediately
-     * @return true if the rule was added, false if it already existed
-     */
-    public <EventAtom> boolean addRule(
-            final RuleSpecification<EventAtom> specification, boolean fireNow) {
-                return addRule(specification, fireNow, specification.createEmptyFilter());
-            }
-
-    /**
-     * Adds a rule specification to the RuleBase and fires all enabled activations if required.
-     * If the rule already exists, no change occurs in the set of rules.
-     * 
-     * @param specification
-     * @param fireNow if true, all enabled activations of the rule are fired immediately
      * @param filter the partial match to be used as a filter for activations
      * @return true if the rule was added, false if it already existed
      */
     public <EventAtom> boolean addRule(
-            final RuleSpecification<EventAtom> specification, boolean fireNow, EventFilter<? super EventAtom> filter) {
+            final RuleSpecification<EventAtom> specification, EventFilter<? super EventAtom> filter) {
         checkNotNull(filter, FILTER_MUST_BE_SPECIFIED);
         checkNotNull(specification, RULE_SPECIFICATION_MUST_BE_SPECIFIED);
         RuleInstance<EventAtom> instance = ruleBase.getInstance(specification, filter);
         boolean added = false;
         if(instance == null) {
-            instance = ruleBase.instantiateRule(specification, filter);
+            ruleBase.instantiateRule(specification, filter);
             added = true;
-        }
-        if(fireNow) {
-            fireActivations(instance);
         }
         return added;
     }
@@ -129,7 +130,7 @@ public class RuleEngine {
      * @return the next enabled activation if exists, selected by the conflict resolver
      */
     public Activation<?> getNextActivation() {
-        return ruleBase.getAgenda().getNextActivation();
+        return ruleBase.getAgenda().getConflictSet().getNextActivation();
     }
 
     /**
@@ -137,8 +138,7 @@ public class RuleEngine {
      * @return an immutable set of conflicting activations
      */
     public Set<Activation<?>> getConflictingActivations() {
-        return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictingActivations());
-        //return Collections.unmodifiableSet(ruleBase.getAgenda().getConflictingActivations());
+        return ImmutableSet.copyOf(ruleBase.getAgenda().getConflictSet().getConflictingActivations());
     }
     
     /**
@@ -185,7 +185,7 @@ public class RuleEngine {
     }
 
     /**
-     * TODO javadoc
+     * 
      * @param specification 
      * @param filter 
      * @param state
@@ -200,20 +200,6 @@ public class RuleEngine {
         return ImmutableSet.copyOf(ruleBase.getInstance(specification, filter).getActivations(state));
     }
     
-    
-
-    /**
-     * Fires all activations of the given rule instance.
-     * 
-     * @param instance
-     */
-    protected <EventAtom> void fireActivations(RuleInstance<EventAtom> instance) {
-        Context context = new Context();
-        for (Activation<EventAtom> act : instance.getAllActivations()) {
-            act.fire(context);
-        }
-    }
-
     /**
      * 
      * @return the immutable set of rules in the EVM

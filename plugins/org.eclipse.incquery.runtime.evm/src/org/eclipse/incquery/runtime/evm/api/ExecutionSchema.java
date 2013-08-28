@@ -64,14 +64,5 @@ public class ExecutionSchema extends RuleEngine {
     public Context getContext() {
         return scheduler.getExecutor().getContext();
     }
-    
-    /**
-     * Since a scheduler is defined, activations cannot be fired directly,
-     * instead, an out-of-order schedule call is sent.
-     */
-    @Override
-    protected <EventAtom> void fireActivations(RuleInstance<EventAtom> instance) {
-        scheduler.schedule();
-    }
 
 }

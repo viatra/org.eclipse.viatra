@@ -20,8 +20,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ConflictSet;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
  * @author Abel Hegedus
  *
  */
-public class FixedPriorityConflictSet implements ConflictSet {
+public class FixedPriorityConflictSet implements ChangeableConflictSet {
 
     protected final Multimap<Integer, Activation<?>> priorityBuckets;
     private Map<RuleSpecification<?>, Integer> priorityMap;

@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.api;
+package org.eclipse.incquery.runtime.evm.api.resolver;
 
 
 /**
@@ -16,7 +16,7 @@ package org.eclipse.incquery.runtime.evm.api;
  * @author Abel Hegedus
  *
  */
-public interface ConflictResolver<CSet extends ConflictSet> {
+public interface ConflictResolver<CSet extends ChangeableConflictSet> {
 
     CSet createConflictSet();
     

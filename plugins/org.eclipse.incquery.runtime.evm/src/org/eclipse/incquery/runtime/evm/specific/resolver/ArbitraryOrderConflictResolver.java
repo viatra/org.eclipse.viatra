@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.api.ConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver.ArbitraryConflictSet;
 
 import com.google.common.collect.Sets;
@@ -31,7 +31,7 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         return new ArbitraryConflictSet(this);
     }
     
-    public static final class ArbitraryConflictSet implements ConflictSet {
+    public static final class ArbitraryConflictSet implements ChangeableConflictSet {
 
         private final Set<Activation<?>> container;
         private final ArbitraryOrderConflictResolver resolver;

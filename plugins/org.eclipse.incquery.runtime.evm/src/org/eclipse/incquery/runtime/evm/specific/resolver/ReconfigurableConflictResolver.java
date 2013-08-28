@@ -14,14 +14,14 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.evm.api.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.api.ConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 
 /**
  * @author Abel Hegedus
  *
  */
-public abstract class ReconfigurableConflictResolver<RCSet extends ConflictSet> implements ConflictResolver<RCSet> {
+public abstract class ReconfigurableConflictResolver<RCSet extends ChangeableConflictSet> implements ConflictResolver<RCSet> {
 
     private Set<WeakReference<RCSet>> conflictSets = new HashSet<WeakReference<RCSet>>(); 
     
