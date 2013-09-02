@@ -14,12 +14,15 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle
 import org.eclipse.incquery.runtime.evm.api.Job
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
+import org.eclipse.incquery.runtime.evm.api.event.EventType.RuleEngineEventType
 import org.eclipse.incquery.runtime.evm.specific.Jobs
 import org.eclipse.incquery.runtime.evm.specific.Rules
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -35,11 +38,21 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	RuleSpecification<Match> ruleSpec
 	private val IQuerySpecification<Matcher> precondition
 	private val IMatchProcessor<Match> action
+	private val ActivationLifeCycle lifecycle = {
+		val cycle= ActivationLifeCycle.create(IncQueryActivationStateEnum::INACTIVE)
+		
+		cycle.addStateTransition(IncQueryActivationStateEnum::INACTIVE, IncQueryEventTypeEnum::MATCH_APPEARS, IncQueryActivationStateEnum::APPEARED)
+		cycle.addStateTransition(IncQueryActivationStateEnum::APPEARED, RuleEngineEventType::FIRE, IncQueryActivationStateEnum::APPEARED)
+		cycle.addStateTransition(IncQueryActivationStateEnum::APPEARED, IncQueryEventTypeEnum::MATCH_DISAPPEARS, IncQueryActivationStateEnum::INACTIVE)
+		
+		UnmodifiableActivationLifeCycle::copyOf(cycle)
+	}
 
 	new() {
 		precondition = null
 		action = null
 		ruleName = ""
+		
 	}
 	
 	new(IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
@@ -64,7 +77,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 		    val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, action)
 			val Job<Match> job = Jobs::newRecordingJob(stJob)
 		    
-		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR, newHashSet(job))
+		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job))
     	}
     	ruleSpec
     }
