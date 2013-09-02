@@ -88,7 +88,7 @@ public class Agenda {
         for (final Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
-        updatingListener = new ConflictSetUpdater(conflictSet);
+        updatingListener = new ConflictSetUpdater(set);
         this.conflictSet = set;
     }
 
