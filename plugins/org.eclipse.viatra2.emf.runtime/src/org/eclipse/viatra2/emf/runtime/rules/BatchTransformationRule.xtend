@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.evm.specific.Rules
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -32,13 +33,12 @@ import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivatio
  * @author Abel Hegedus, Zoltan Ujhelyi
  *
  */
-class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> {
+class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> implements ITransformationRule<Match,Matcher> {
 	
-	protected String ruleName
-	RuleSpecification<Match> ruleSpec
-	private val IQuerySpecification<Matcher> precondition
-	private val IMatchProcessor<Match> action
-	private val ActivationLifeCycle lifecycle = {
+	/**
+	 * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 
+	 */
+	static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
 		val cycle= ActivationLifeCycle.create(IncQueryActivationStateEnum::INACTIVE)
 		
 		cycle.addStateTransition(IncQueryActivationStateEnum::INACTIVE, IncQueryEventTypeEnum::MATCH_APPEARS, IncQueryActivationStateEnum::APPEARED)
@@ -47,21 +47,46 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 		
 		UnmodifiableActivationLifeCycle::copyOf(cycle)
 	}
+	/**
+	 * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same activation.
+	 */
+	static val STATEFUL_RULE_LIFECYCLE = DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
 
-	new() {
-		precondition = null
-		action = null
-		ruleName = ""
+	protected String ruleName
+	private val ActivationLifeCycle lifecycle
+	RuleSpecification<Match> ruleSpec
+	private val IQuerySpecification<Matcher> precondition
+	private val IMatchProcessor<Match> action
+
+	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createRule(
+		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
+		createRule("", precondition, action)
+	}
+
+	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createRule(String name,
+		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
+		new BatchTransformationRule(name, precondition, STATELESS_RULE_LIFECYCLE, action)
+	}
+	
+	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createStatefulRule(
+		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
+		createStatefulRule("", precondition, action)
+	}
+
+	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createStatefulRule(String name,
+		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
+		new BatchTransformationRule(name, precondition, STATEFUL_RULE_LIFECYCLE, action)
+	}
+
+	protected new() {
+		this("", null, STATELESS_RULE_LIFECYCLE, null)
 		
 	}
 	
-	new(IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
-		this("", precondition, action)
-	}
-
-	new(String rulename, IQuerySpecification<Matcher> matcher, IMatchProcessor<Match> action) {
+	protected new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
 		this.precondition = matcher
 		this.action = action
+		this.lifecycle = lifecycle
 	}
 	
     def getRuleName() {
@@ -71,7 +96,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Returns a RuleSpecification that can be added to a rule engine.
 	 */
-    def getRuleSpec(){
+    override getRuleSpecification(){
     	if(ruleSpec == null){
 		    val querySpec = precondition
 		    val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, action)
@@ -85,14 +110,14 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Returns the IMatcherFactory representing the pattern used as a precondition.
 	 */
-	def IQuerySpecification<Matcher> getPrecondition() {
+	override IQuerySpecification<Matcher> getPrecondition() {
 		precondition
 	}
 	
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	def IMatchProcessor<Match> getModelManipulation() {	
+	override IMatchProcessor<Match> getModelManipulation() {	
 		action
 	}	
 }
