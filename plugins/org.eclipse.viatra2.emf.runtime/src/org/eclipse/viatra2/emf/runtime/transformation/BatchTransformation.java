@@ -12,7 +12,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
-import org.eclipse.viatra2.emf.runtime.rules.TransformationUtil;
+import org.eclipse.viatra2.emf.runtime.rules.TransformationStatements;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -28,7 +28,7 @@ public abstract class BatchTransformation {
 	protected final RuleEngine ruleEngine;
 	protected final AdvancedIncQueryEngine iqEngine;
 	protected final boolean selfManagedEngines;
-	protected final TransformationUtil util;
+	protected TransformationStatements statements;
 	protected final Context context;
 
 	public BatchTransformation(Resource resource) throws IncQueryException {
@@ -55,7 +55,7 @@ public abstract class BatchTransformation {
 		this.selfManagedEngines = selfManagedEngine;
 		
 		context = Context.create();
-		util = new TransformationUtil(ruleEngine, context);
+		statements = new TransformationStatements(ruleEngine, context);
 	}
 
 	/**

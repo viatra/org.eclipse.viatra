@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
  * @author Abel Hegedus, Zoltan Ujhelyi
  *
  */
-class TransformationUtil {
+class TransformationStatements {
 	
 	val RuleEngine ruleEngine
 	val Context context
@@ -42,10 +42,10 @@ class TransformationUtil {
 	 * will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until (
-		RuleSpecification<Match> ruleSpecification, Predicate<Match> breakCondition
+		ITransformationRule<Match, ?> rule, Predicate<Match> breakCondition
 	) {
-		val filter = ruleSpecification.createEmptyFilter
-		ruleSpecification.until(breakCondition, filter)
+		val filter = rule.ruleSpecification.createEmptyFilter
+		rule.ruleSpecification.until(breakCondition, filter)
 	}
 
 	/**
@@ -55,6 +55,14 @@ class TransformationUtil {
 	 * will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
+		ITransformationRule<Match, ?> rule,
+		Predicate<Match> breakCondition,
+		EventFilter<? super Match> filter
+	) {
+		rule.ruleSpecification.until(breakCondition, filter)
+	}
+	
+	private def <Match extends IPatternMatch> until(
 		RuleSpecification<Match> ruleSpecification,
 		Predicate<Match> breakCondition,
 		EventFilter<? super Match> filter
@@ -78,15 +86,18 @@ class TransformationUtil {
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
-	def <Match extends IPatternMatch> forall(RuleSpecification<Match> ruleSpecification) {
-		val filter = ruleSpecification.createEmptyFilter
-		ruleSpecification.forall(filter)
+	def <Match extends IPatternMatch> forall(ITransformationRule<Match, ?> rule) {
+		val filter = rule.ruleSpecification.createEmptyFilter
+		rule.ruleSpecification.forall(filter)
 	}
-
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
-	def <Match extends IPatternMatch> forall(
+	def <Match extends IPatternMatch> forall(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
+		rule.ruleSpecification.forall(filter)
+	}
+
+	private def <Match extends IPatternMatch> forall(
 		RuleSpecification<Match> ruleSpecification,
 		EventFilter<? super Match> filter
 	) {
@@ -119,12 +130,26 @@ class TransformationUtil {
 		ruleEngine.removeRule(ruleSpecification, filter)
 	}
 
+    /**
+	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
+	 * 
+	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
+	 */
+	def <Match extends IPatternMatch> choose(ITransformationRule<Match, ?> rule) {
+		val filter = rule.ruleSpecification.createEmptyFilter
+		rule.ruleSpecification.choose(filter)
+	}
+	
 	/**
 	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
 	 * 
 	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
 	 */
-	def <Match extends IPatternMatch> choose(RuleSpecification<Match> ruleSpecification, EventFilter<? super Match> filter) {
+	def <Match extends IPatternMatch> choose(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
+		rule.ruleSpecification.choose(filter)
+	}
+		
+	private def <Match extends IPatternMatch> choose(RuleSpecification<Match> ruleSpecification, EventFilter<? super Match> filter) {
 		val conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
 		
 		val act = conflictSet.conflictingActivations as Activation<Match>
@@ -133,15 +158,6 @@ class TransformationUtil {
 		conflictSet.dispose
 	}
 
-    /**
-	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
-	 * 
-	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
-	 */
-	def <Match extends IPatternMatch> choose(RuleSpecification<Match> ruleSpecification) {
-		val filter = ruleSpecification.createEmptyFilter
-		ruleSpecification.choose(filter)
-	}	
 
 	private def fireActivation (Activation<?> act) {
 		if (act != null && act.enabled) {
