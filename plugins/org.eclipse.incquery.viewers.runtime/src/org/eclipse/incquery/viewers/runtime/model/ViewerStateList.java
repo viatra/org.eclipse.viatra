@@ -191,12 +191,12 @@ public final class ViewerStateList extends ViewerState {
 		}
 	}
 
-	private void addItemListener(IObservableList containmentList) {
-		containmentList.addListChangeListener(itemListener);
+	private void addItemListener(IObservableList _itemList) {
+		_itemList.addListChangeListener(itemListener);
 	}
 
-	private void removeItemListener(IObservableList oldContainmentList) {
-		oldContainmentList.removeListChangeListener(itemListener);
+	private void removeItemListener(IObservableList _oldItemList) {
+		_oldItemList.removeListChangeListener(itemListener);
 	}
 
 	/*

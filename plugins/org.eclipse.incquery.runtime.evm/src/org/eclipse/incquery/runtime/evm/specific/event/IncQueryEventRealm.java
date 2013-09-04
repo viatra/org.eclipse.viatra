@@ -28,9 +28,6 @@ public class IncQueryEventRealm implements EventRealm {
 
     private IncQueryEngine engine;
     
-    /**
-     * 
-     */
     protected IncQueryEventRealm(IncQueryEngine engine) {
         checkArgument(engine != null, "Cannot create event realm for null engine!");
         this.engine = engine;
@@ -43,30 +40,6 @@ public class IncQueryEventRealm implements EventRealm {
         return engine;
     }
 
-    protected static boolean isEmpty(IPatternMatch match) {
-        if(match != null) {
-            for (Object o : match.toArray()) {
-                if (o != null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
-//    @Override
-//    public <Match extends IPatternMatch> EventSource<Match> createSource(EventSourceSpecification<Match> sourceSpecification) {
-//        checkArgument(sourceSpecification instanceof IncQueryEventSourceSpecification, "Source definition must be IncQueryEventSourceSpecification!");
-//        IncQueryEventSource<Match> eventSource = null;
-//        try {
-//            eventSource = new IncQueryEventSource<Match>(this, (IncQueryEventSourceSpecification<Match>)sourceSpecification);
-//            eventSource.prepareSource();
-//        } catch (IncQueryException e) {
-//            engine.getLogger().error("Could not create matcher for event source definition " + sourceSpecification + " in realm " + this, e);
-//        }
-//        return eventSource;
-//    }
-    
     protected <Match extends IPatternMatch> IncQueryEventSource<Match> createSource(
             EventSourceSpecification<Match> sourceSpecification) {
         checkArgument(sourceSpecification instanceof IncQueryEventSourceSpecification,

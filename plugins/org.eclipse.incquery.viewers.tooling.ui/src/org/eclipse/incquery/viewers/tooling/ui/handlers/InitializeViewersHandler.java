@@ -98,7 +98,7 @@ public class InitializeViewersHandler extends AbstractHandler {
             final Object[] filter = matcher.getFilter();
             if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
                 final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
-                dataFilter.addFilter(matcher.getMatcher().getPattern(), filterMatch);
+                dataFilter.addSingleFilter(matcher.getMatcher().getPattern(), filterMatch);
             }
         }
         return dataFilter;

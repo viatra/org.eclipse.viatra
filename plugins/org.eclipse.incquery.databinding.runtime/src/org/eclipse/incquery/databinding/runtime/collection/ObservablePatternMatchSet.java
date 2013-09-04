@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.Sets;
@@ -89,6 +91,13 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         ObservableCollectionHelper.prepareRuleEngine(engine, specification, filter);
     }
 
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
+            IncQueryEngine engine, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
+        this(querySpecification);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, multifilters, semantics);
+    }
+
+    
     /**
      * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
      * {@link IncQueryEngine}.
@@ -124,11 +133,21 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             RuleEngine engine, Match filter) {
         this(querySpecification);
-        EventFilter<Match> matchFilter = Rules.newMatchFilter(filter);
+        EventFilter<Match> matchFilter = Rules.newSingleMatchFilter(filter);
 		engine.addRule(specification, matchFilter);
 		ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
     }
 
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
+            RuleEngine engine, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
+        this(querySpecification);
+        EventFilter<Match> matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
+        engine.addRule(specification, matchFilter);
+        ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
+    }
+    
+    
+    
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification) {
         super();
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);

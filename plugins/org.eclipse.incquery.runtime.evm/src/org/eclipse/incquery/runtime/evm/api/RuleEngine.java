@@ -117,6 +117,26 @@ public class RuleEngine {
         return added;
     }
 
+	/**
+	 * Decides whether a rule specification is already added to the RuleBase
+	 * without filter.
+	 */
+	public <EventAtom> boolean containsRule(
+			final RuleSpecification<EventAtom> specification) {
+		return containsRule(specification, specification.createEmptyFilter());
+	}
+
+	/**
+	 * Decides whether a rule specification is already added to the RuleBase
+	 * with the specified filter.
+	 */
+	public <EventAtom> boolean containsRule(
+			final RuleSpecification<EventAtom> specification,
+			EventFilter<? super EventAtom> filter) {
+		return ruleBase.getRuleSpecificationMultimap().containsEntry(
+				specification, filter);
+	}
+    
     /**
      * 
      * @return a copy of the multimap containing all activations
@@ -203,6 +223,7 @@ public class RuleEngine {
     /**
      * 
      * @return the immutable set of rules in the EVM
+     * @deprecated use the {@link #getRuleSpecificationMultimap()} instead as it returns the filter configurations as well
      */
     public Set<RuleSpecification<?>> getRuleSpecifications() {
         return ImmutableSet.copyOf(ruleBase.getRuleSpecificationMultimap().keySet());

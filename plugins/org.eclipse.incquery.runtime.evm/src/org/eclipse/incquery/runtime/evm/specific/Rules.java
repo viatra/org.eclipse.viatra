@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -20,9 +21,11 @@ import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventFilter;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSourceSpecification;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryMultiPatternMatchEventFilter;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQuerySinglePatternMatchEventFilter;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
@@ -71,9 +74,6 @@ public final class Rules {
         
         private final IncQueryMatcher<Match> matcher;
         
-        /**
-         * 
-         */
         public FavouredMatcherSourceSpecification(IncQueryMatcher<Match> matcher) {
             super(getQuerySpecification(matcher));
             this.matcher = matcher;
@@ -101,7 +101,20 @@ public final class Rules {
      * @param filterMatch non-null match to use for filtering
      * @return the event filter
      */
-    public static <Match extends IPatternMatch> EventFilter<Match> newMatchFilter(Match filterMatch) {
-        return IncQueryEventFilter.createFilter(filterMatch);
+    public static <Match extends IPatternMatch> EventFilter<Match> newSingleMatchFilter(Match filterMatch) {
+        return IncQuerySinglePatternMatchEventFilter.createFilter(filterMatch);
     }
+    
+    /**
+     * Creates a "multi" event filter that uses the IPatternMatch.isCompatibleWith to check event atoms against a collection
+     * of filter (partial) matches. The possible semantics are documented in {@link IncQueryFilterSemantics}.
+     * 
+     * @param filterMatchs non-null match to use for filtering
+     * @param semantics the filter semantics to use
+     * @return the event filter
+     */
+    public static <Match extends IPatternMatch> EventFilter<Match> newMultiMatchFilter(Collection<Match> filterMatches, IncQueryFilterSemantics semantics) {
+        return IncQueryMultiPatternMatchEventFilter.createFilter(filterMatches, semantics);
+    }
+    
 }

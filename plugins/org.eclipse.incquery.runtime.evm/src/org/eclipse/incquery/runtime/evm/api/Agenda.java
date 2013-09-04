@@ -34,7 +34,7 @@ public class Agenda {
     private ChangeableConflictSet conflictSet;
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
-    private final ConflictSetUpdater updatingListener;
+    private ConflictSetUpdater updatingListener;
 
     /**
      *
@@ -88,6 +88,7 @@ public class Agenda {
         for (final Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);
         }
+        updatingListener = new ConflictSetUpdater(set);
         this.conflictSet = set;
     }
 
