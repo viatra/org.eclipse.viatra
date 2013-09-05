@@ -1,6 +1,7 @@
 package org.eclipse.viatra2.emf.runtime.transformation;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -12,6 +13,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
+import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup;
 import org.eclipse.viatra2.emf.runtime.rules.TransformationStatements;
 
 import com.google.common.base.Function;
@@ -30,6 +32,7 @@ public abstract class BatchTransformation {
 	protected final boolean selfManagedEngines;
 	protected TransformationStatements statements;
 	protected final Context context;
+	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
 	public BatchTransformation(Resource resource) throws IncQueryException {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(resource));
@@ -57,27 +60,24 @@ public abstract class BatchTransformation {
 		context = Context.create();
 		statements = new TransformationStatements(ruleEngine, context);
 	}
-
-	/**
-	 * This method can be used to initialize all indexes required for the rules
-	 * returned by {@link #getRules()} method. If the method is not called, the
-	 * indexes are initialized on a per-rule basis on their first use.
-	 * 
-	 * @throws IncQueryException
-	 */
-	@SuppressWarnings("rawtypes")
+	
+	public void addRule(@SuppressWarnings("rawtypes") BatchTransformationRule rule) {
+		rules.add(rule);
+	}
+	
+	public void addRules(TransformationRuleGroup rules) {
+		rules.addAll(rules);
+	}
+	
 	public void initializeIndexes() throws IncQueryException {
-		GenericPatternGroup.of(Iterables.toArray(Iterables.transform(getRules(), new Function<BatchTransformationRule, IQuerySpecification<?>>() {
+		GenericPatternGroup.of(Iterables.toArray(Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
 			
 			@Override
-			public IQuerySpecification<?> apply(BatchTransformationRule rule){
+			public IQuerySpecification<?> apply(BatchTransformationRule<?,?> rule){
 				return rule.getPrecondition();
 			}
-		}),IQuerySpecification.class)).prepare(iqEngine);
+		}), IQuerySpecification.class)).prepare(iqEngine);
 	}
-
-	@SuppressWarnings("rawtypes") //Workaround for Xtend type inference issue
-	protected abstract Collection<BatchTransformationRule> getRules();
 
 	public void dispose() {
 		if (selfManagedEngines) {

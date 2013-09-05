@@ -37,9 +37,9 @@ class TransformationStatements {
 	
 	/**
 	 * Executes the selected rule with the selected filter as long as there
-	 * are possible matches of its preconditions. The matches are executed
-	 * one-by-one, in case of conflicts only one of the conflicting matches
-	 * will cause an execution. 
+	 * are possible matches of its preconditions and the break condition is
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until (
 		ITransformationRule<Match, ?> rule, Predicate<Match> breakCondition
@@ -50,9 +50,9 @@ class TransformationStatements {
 
 	/**
 	 * Executes the selected rule with the selected filter as long as there
-	 * are possible matches of its preconditions. The matches are executed
-	 * one-by-one, in case of conflicts only one of the conflicting matches
-	 * will cause an execution. 
+	 * are possible matches of its preconditions and the break condition is
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
 		ITransformationRule<Match, ?> rule,
