@@ -24,23 +24,32 @@ import com.google.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class IncQueryXcoreLabelProvider extends XbaseLabelProvider {
-    
+
     private ImageDescriptor attributeImageDescriptor;
-    
-	@Inject
-	public IncQueryXcoreLabelProvider(AdapterFactoryLabelProvider delegate) {
-		super(delegate);
-		this.attributeImageDescriptor = new OverlayImageDescriptor(
-		        IncQueryXcoreActivator.getInstance().getImageRegistry().getDescriptor("underlay").createImage(),
-		        ImageDescriptor.createFromURL((URL) EcoreEditPlugin.INSTANCE.getImage("full/obj16/EReference"))); 
-	}
-	
-	@Override
-	public Image getImage(Object element) {
-	    if (element instanceof XIncQueryDerivedFeature) {
-	        return attributeImageDescriptor.createImage();
-	    }
-	    return super.getImage(element);
-	}
-	
+    private ImageDescriptor referenceImageDescriptor;
+
+    @Inject
+    public IncQueryXcoreLabelProvider(AdapterFactoryLabelProvider delegate) {
+        super(delegate);
+        this.attributeImageDescriptor = new OverlayImageDescriptor(IncQueryXcoreActivator.getInstance()
+                .getImageRegistry().getDescriptor("underlay").createImage(),
+                ImageDescriptor.createFromURL((URL) EcoreEditPlugin.INSTANCE.getImage("full/obj16/EAttribute")));
+        this.referenceImageDescriptor = new OverlayImageDescriptor(IncQueryXcoreActivator.getInstance()
+                .getImageRegistry().getDescriptor("underlay").createImage(),
+                ImageDescriptor.createFromURL((URL) EcoreEditPlugin.INSTANCE.getImage("full/obj16/EReference")));
+    }
+
+    @Override
+    public Image getImage(Object element) {
+        if (element instanceof XIncQueryDerivedFeature) {
+            if (((XIncQueryDerivedFeature) element).isReference()) {
+                return referenceImageDescriptor.createImage();
+            }
+            else {
+                return attributeImageDescriptor.createImage();
+            }
+        }
+        return super.getImage(element);
+    }
+
 }
