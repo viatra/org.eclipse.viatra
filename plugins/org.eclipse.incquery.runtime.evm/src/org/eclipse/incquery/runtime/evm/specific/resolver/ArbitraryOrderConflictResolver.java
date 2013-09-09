@@ -10,39 +10,23 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.resolver;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver.ArbitraryConflictSet;
-
-import com.google.common.collect.Sets;
+import org.eclipse.incquery.runtime.evm.specific.resolver.impl.HashSetBasedConflictSetImpl;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class ArbitraryOrderConflictResolver implements ConflictResolver<ArbitraryConflictSet> {
+public class ArbitraryOrderConflictResolver implements ConflictResolver {
 
     @Override
     public ArbitraryConflictSet createConflictSet() {
-        return new ArbitraryConflictSet(this);
+        return new ArbitraryConflictSet();
     }
     
-    public static final class ArbitraryConflictSet implements ChangeableConflictSet {
+    public final class ArbitraryConflictSet extends HashSetBasedConflictSetImpl  {
 
-        private final Set<Activation<?>> container;
-        private final ArbitraryOrderConflictResolver resolver;
-        /**
-         * 
-         */
-        protected ArbitraryConflictSet(ArbitraryOrderConflictResolver resolver) {
-            this.resolver = resolver;
-            container = Sets.newHashSet();
-        }
-        
         @Override
         public Activation<?> getNextActivation() {
             if(!container.isEmpty()) {
@@ -52,29 +36,10 @@ public class ArbitraryOrderConflictResolver implements ConflictResolver<Arbitrar
         }
 
         @Override
-        public boolean addActivation(Activation<?> activation) {
-            return container.add(activation);
-        }
-
-        @Override
-        public boolean removeActivation(Activation<?> activation) {
-            return container.remove(activation);
-        }
-
-        @Override
         public ArbitraryOrderConflictResolver getConflictResolver() {
-            return resolver;
+            return ArbitraryOrderConflictResolver.this;
         }
 
-        @Override
-        public Set<Activation<?>> getNextActivations() {
-            return Collections.unmodifiableSet(container);
-        }
-
-        @Override
-        public Set<Activation<?>> getConflictingActivations() {
-            return Collections.unmodifiableSet(container);
-        }
         
     }
 }

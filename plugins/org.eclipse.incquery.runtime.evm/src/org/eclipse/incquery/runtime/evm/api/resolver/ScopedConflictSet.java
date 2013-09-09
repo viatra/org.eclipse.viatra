@@ -37,7 +37,7 @@ public class ScopedConflictSet implements ConflictSet{
     /**
      *
      */
-    public <CSet extends ChangeableConflictSet> ScopedConflictSet(final RuleBase ruleBase, final ConflictResolver<CSet> conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specificationFilters) {
+    public ScopedConflictSet(final RuleBase ruleBase, final ConflictResolver conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specificationFilters) {
         this.ruleBase = ruleBase;
         this.changeableConflictSet = conflictResolver.createConflictSet();
         this.specificationFilters = ImmutableMultimap.copyOf(specificationFilters);
@@ -107,7 +107,7 @@ public class ScopedConflictSet implements ConflictSet{
     }
 
     @Override
-    public ConflictResolver<? extends ChangeableConflictSet> getConflictResolver() {
+    public ConflictResolver getConflictResolver() {
         return changeableConflictSet.getConflictResolver();
     }
 }

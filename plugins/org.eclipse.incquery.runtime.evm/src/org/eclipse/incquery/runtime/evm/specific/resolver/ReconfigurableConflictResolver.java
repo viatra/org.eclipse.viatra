@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
  * @author Abel Hegedus
  *
  */
-public abstract class ReconfigurableConflictResolver<RCSet extends ChangeableConflictSet> implements ConflictResolver<RCSet> {
+public abstract class ReconfigurableConflictResolver<RCSet extends ChangeableConflictSet> implements ConflictResolver {
 
     private Set<WeakReference<RCSet>> conflictSets = new HashSet<WeakReference<RCSet>>(); 
     

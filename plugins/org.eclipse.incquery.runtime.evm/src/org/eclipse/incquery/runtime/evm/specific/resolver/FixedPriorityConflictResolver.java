@@ -16,7 +16,6 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 
 import com.google.common.collect.Maps;
@@ -25,7 +24,7 @@ import com.google.common.collect.Maps;
  * @author Abel Hegedus
  *
  */
-public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver<FixedPriorityConflictSet> {
+public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver {
 
     protected Map<RuleSpecification<?>, Integer> priorities;
     

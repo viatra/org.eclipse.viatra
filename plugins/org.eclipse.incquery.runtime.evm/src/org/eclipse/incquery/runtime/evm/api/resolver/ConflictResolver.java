@@ -16,8 +16,8 @@ package org.eclipse.incquery.runtime.evm.api.resolver;
  * @author Abel Hegedus
  *
  */
-public interface ConflictResolver<CSet extends ChangeableConflictSet> {
+public interface ConflictResolver {
 
-    CSet createConflictSet();
+    ChangeableConflictSet createConflictSet();
     
 }
