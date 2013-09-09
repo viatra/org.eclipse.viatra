@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
+import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
 
 /**
  * Utility class for simple rule usage
@@ -29,6 +30,11 @@ class TransformationStatements {
 	
 	val RuleEngine ruleEngine
 	val Context context
+	
+	new(BatchTransformation transformation) {
+		ruleEngine = transformation.ruleEngine
+		context = transformation.context
+	}
 	
 	new(RuleEngine ruleEngine, Context context) {
 		this.ruleEngine = ruleEngine

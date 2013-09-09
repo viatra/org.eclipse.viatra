@@ -14,7 +14,6 @@ import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
 import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup;
-import org.eclipse.viatra2.emf.runtime.rules.TransformationStatements;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -30,7 +29,6 @@ public abstract class BatchTransformation {
 	protected final RuleEngine ruleEngine;
 	protected final AdvancedIncQueryEngine iqEngine;
 	protected final boolean selfManagedEngines;
-	protected TransformationStatements statements;
 	protected final Context context;
 	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
@@ -58,7 +56,6 @@ public abstract class BatchTransformation {
 		this.selfManagedEngines = selfManagedEngine;
 		
 		context = Context.create();
-		statements = new TransformationStatements(ruleEngine, context);
 	}
 	
 	public void addRule(@SuppressWarnings("rawtypes") BatchTransformationRule rule) {
@@ -79,6 +76,14 @@ public abstract class BatchTransformation {
 		}), IQuerySpecification.class)).prepare(iqEngine);
 	}
 
+	public RuleEngine getRuleEngine() {
+		return ruleEngine;
+	}
+	
+	public Context getContext() {
+		return context;
+	}
+	
 	public void dispose() {
 		if (selfManagedEngines) {
 			ruleEngine.dispose();
