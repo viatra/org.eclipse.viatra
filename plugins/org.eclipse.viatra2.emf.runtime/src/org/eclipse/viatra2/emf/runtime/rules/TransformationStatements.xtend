@@ -78,10 +78,10 @@ class TransformationStatements {
 
 		println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
 		var Activation<Match> act
-		var exit = false
-		while (!exit && ((act = conflictSet.nextActivation as Activation<Match>) != null)) {
+		var continue = true
+		while (continue && ((act = conflictSet.nextActivation as Activation<Match>) != null)) {
 			act.fireActivation
-			exit = breakCondition.apply(act.atom)
+			continue = breakCondition.apply(act.atom)
 		}
 		println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
 		conflictSet.dispose
