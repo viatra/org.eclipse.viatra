@@ -21,7 +21,6 @@ import java.util.SortedSet;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.specific.resolver.ComparingConflictResolver.ComparingConflictSet;
 
 import com.google.common.collect.Sets;
 
@@ -29,7 +28,7 @@ import com.google.common.collect.Sets;
  * @author Abel Hegedus
  *
  */
-public class ComparingConflictResolver implements ConflictResolver<ComparingConflictSet> {
+public class ComparingConflictResolver implements ConflictResolver {
 
     private final Comparator<Activation<?>> comparator;
     
@@ -39,7 +38,7 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
     
     @Override
     public ComparingConflictSet createConflictSet() {
-        return new ComparingConflictSet(this, comparator);
+        return new ComparingConflictSet(comparator);
     }
 
     /**
@@ -49,14 +48,12 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
         return comparator;
     }
     
-    public static class ComparingConflictSet implements ChangeableConflictSet {
+    public class ComparingConflictSet implements ChangeableConflictSet {
     
         private SortedSet<Activation<?>> set;
-        private ComparingConflictResolver resolver;
         
-        protected ComparingConflictSet(ComparingConflictResolver resolver, Comparator<Activation<?>> comparator) {
+        protected ComparingConflictSet(Comparator<Activation<?>> comparator) {
             checkArgument(comparator != null, "Comparator cannot be null!");
-            this.resolver = resolver;
             set = Sets.newTreeSet(comparator);
         }
         
@@ -82,7 +79,7 @@ public class ComparingConflictResolver implements ConflictResolver<ComparingConf
 
         @Override
         public ComparingConflictResolver getConflictResolver() {
-            return resolver;
+            return ComparingConflictResolver.this;
         }
 
         @Override

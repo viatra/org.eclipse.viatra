@@ -41,6 +41,6 @@ public interface ConflictSet {
     /**
      * @return
      */
-    ConflictResolver<? extends ChangeableConflictSet> getConflictResolver();
+    ConflictResolver getConflictResolver();
 
 }

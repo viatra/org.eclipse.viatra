@@ -20,7 +20,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
@@ -199,7 +198,7 @@ public class RuleBase {
      * @param specifications
      * @return
      */
-    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(final ConflictResolver<CSet> conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+    public ScopedConflictSet createScopedConflictSet(final ConflictResolver conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
         final ScopedConflictSet set = new ScopedConflictSet(this, conflictResolver, specifications);
         return set;
     }

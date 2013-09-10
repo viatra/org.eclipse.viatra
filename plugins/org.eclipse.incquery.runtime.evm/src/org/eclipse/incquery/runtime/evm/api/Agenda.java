@@ -39,7 +39,7 @@ public class Agenda {
     /**
      *
      */
-    public Agenda(final RuleBase ruleBase, final ConflictResolver<?> conflictResolver) {
+    public Agenda(final RuleBase ruleBase, final ConflictResolver conflictResolver) {
         this.ruleBase = ruleBase;
         activations = HashMultimap.create();
         this.conflictSet = conflictResolver.createConflictSet();
@@ -83,7 +83,7 @@ public class Agenda {
      *
      * @param resolver
      */
-    public void setConflictResolver(final ConflictResolver<?> resolver) {
+    public void setConflictResolver(final ConflictResolver resolver) {
         final ChangeableConflictSet set = resolver.createConflictSet();
         for (final Activation<?> act : conflictSet.getConflictingActivations()) {
             set.addActivation(act);

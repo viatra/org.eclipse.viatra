@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
@@ -64,7 +63,7 @@ public class RuleEngine {
         return new RuleEngine(ruleBase);
     }
 
-    public void setConflictResolver(ConflictResolver<?> conflictResolver) {
+    public void setConflictResolver(ConflictResolver conflictResolver) {
         checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
         ruleBase.getAgenda().setConflictResolver(conflictResolver);
     }
@@ -73,11 +72,11 @@ public class RuleEngine {
         return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), ImmutableMultimap.<RuleSpecification<?>, EventFilter<?>>of(specification, eventFilter));
     }
     
-    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+    public ScopedConflictSet createScopedConflictSet(Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
         return createScopedConflictSet(ruleBase.getAgenda().getConflictSet().getConflictResolver(), specifications);
     }
     
-    public <CSet extends ChangeableConflictSet> ScopedConflictSet createScopedConflictSet(ConflictResolver<CSet> conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
+    public ScopedConflictSet createScopedConflictSet(ConflictResolver conflictResolver, Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
         checkNotNull(conflictResolver, "Conflict resolver cannot be null!");
         checkNotNull(specifications, "Specification set cannot be null!");
         ScopedConflictSet scopedConflictSet = ruleBase.createScopedConflictSet(conflictResolver, specifications);
@@ -225,7 +224,8 @@ public class RuleEngine {
      * @return the immutable set of rules in the EVM
      * @deprecated use the {@link #getRuleSpecificationMultimap()} instead as it returns the filter configurations as well
      */
-    public Set<RuleSpecification<?>> getRuleSpecifications() {
+    @Deprecated
+	public Set<RuleSpecification<?>> getRuleSpecifications() {
         return ImmutableSet.copyOf(ruleBase.getRuleSpecificationMultimap().keySet());
     }
     
