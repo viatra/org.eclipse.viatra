@@ -11,9 +11,11 @@
 
 package org.eclipse.incquery.runtime.base.itc.alg.incscc;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,17 +49,7 @@ public class UnionFind<V> {
      * @return the root element
      */
     public V makeSet(V[] nodes) {
-        if (nodes.length > 1) {
-            V root = makeSet(nodes[0]);
-            for (int i = 1; i < nodes.length; i++) {
-                root = union(nodes[i], root);
-            }
-            return root;
-        } else if (nodes.length == 1) {
-            return makeSet(nodes[0]);
-        } else {
-            return null;
-        }
+        return makeSet(Arrays.asList(nodes));
     }
 
     /**
@@ -68,14 +60,13 @@ public class UnionFind<V> {
      * @return the root element
      */
     public V makeSet(Collection<V> nodes) {
-        if (nodes.size() > 1) {
-            V root = makeSet(nodes.iterator().next());
-            for (V node : nodes) {
-                root = union(node, root);
+        if (nodes.size() > 0) {
+            Iterator<V> iterator = nodes.iterator();
+            V root = makeSet(iterator.next());
+            while (iterator.hasNext()) {
+                root = union(root, iterator.next());
             }
             return root;
-        } else if (nodes.size() == 1) {
-            return makeSet(nodes.iterator().next());
         } else {
             return null;
         }
@@ -131,27 +122,13 @@ public class UnionFind<V> {
      * @return the new root of the two sets
      */
     public V union(V x, V y) {
-
         V xRoot = find(x);
         V yRoot = find(y);
 
-        if ((xRoot == null) && (yRoot == null)) {
-            makeSet(x);
-            makeSet(y);
-            return union(x, y);
+        if ((xRoot == null) || (yRoot == null)) {
+            return union( (xRoot == null) ? makeSet(x) : xRoot, (yRoot == null) ? makeSet(y) : yRoot);
         }
-
-        else if ((xRoot != null) && (yRoot == null)) {
-            makeSet(y);
-            return union(x, y);
-        }
-
-        else if ((xRoot == null) && (yRoot != null)) {
-            makeSet(x);
-            return union(x, y);
-        }
-
-        else if ((xRoot != null) && (yRoot != null) && !xRoot.equals(yRoot)) {
+        else if (!xRoot.equals(yRoot)) {
             UnionFindNodeProperty<V> xRootProp = nodeMap.get(xRoot);
             UnionFindNodeProperty<V> yRootProp = nodeMap.get(yRoot);
 
@@ -160,20 +137,16 @@ public class UnionFind<V> {
                 setMap.get(yRoot).addAll(setMap.get(xRoot));
                 setMap.remove(xRoot);
                 return yRoot;
-            } else if (xRootProp.rank > yRootProp.rank) {
+            } else {// (xRootProp.rank >= yRootProp.rank)
                 yRootProp.parent = xRoot;
-                setMap.get(xRoot).addAll(setMap.get(yRoot));
-                setMap.remove(yRoot);
-                return xRoot;
-            } else {
-                yRootProp.parent = xRoot;
-                xRootProp.rank += 1;
+                yRootProp.rank = (xRootProp.rank == yRootProp.rank) ? yRootProp.rank + 1 : yRootProp.rank;
                 setMap.get(xRoot).addAll(setMap.get(yRoot));
                 setMap.remove(yRoot);
                 return xRoot;
             }
-        } else
+        } else {
             return xRoot;
+        }
     }
 
     /**
