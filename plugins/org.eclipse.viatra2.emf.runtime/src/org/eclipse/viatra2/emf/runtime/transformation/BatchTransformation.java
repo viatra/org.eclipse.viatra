@@ -24,7 +24,7 @@ import com.google.common.collect.Iterables;
  * @author Zoltan Ujhelyi
  * 
  */
-public abstract class BatchTransformation {
+public class BatchTransformation {
 
 	protected final RuleEngine ruleEngine;
 	protected final AdvancedIncQueryEngine iqEngine;
