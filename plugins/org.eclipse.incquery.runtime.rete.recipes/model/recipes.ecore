@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="recipes" nsURI="http://www.eclipse.org/incquery/rete/recipes"
+    nsPrefix="recipes">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="basePackage" value="org.eclipse.incquery.runtime.rete"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="ReteRecipe">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="recipeNodes" upperBound="-1"
+        eType="#//ReteRecipeNode" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReteRecipeNode" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SingleParentNode" abstract="true" eSuperTypes="#//ReteRecipeNode">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ReteRecipeNode"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Mask" eSuperTypes="#//ReteRecipeNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="abstract class DualParentNode extends ReteRecipeNode {&#xA;&#x9;refers ReteRecipeNode firstParent&#xA;&#x9;refers ReteRecipeNode secondParent&#xA;}"/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Index" eSuperTypes="#//ReteRecipeNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Input" eSuperTypes="#//ReteRecipeNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="**** Input and output ****"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeIdentifier" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UniquenessEnforcer" eSuperTypes="#//SingleParentNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Production" eSuperTypes="#//UniquenessEnforcer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Filter" abstract="true" eSuperTypes="#//SingleParentNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="**** Simple nodes ****"/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InequalityFilter" eSuperTypes="#//Filter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subject" eType="#//Index"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inequals" upperBound="-1"
+        eType="#//Index" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EqualityFilter" eSuperTypes="#//Filter">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="indices" upperBound="-1"
+        eType="#//Index" containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Trimmer" eSuperTypes="#//SingleParentNode">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mask" eType="#//Mask" containment="true"
+        resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExpressionEnforcer" abstract="true"
+      eSuperTypes="#//SingleParentNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="*** Expressions ****"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" unique="false"
+        eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="map" unique="false" transient="true">
+      <eGenericType eClassifier="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EMap">
+        <eTypeArguments eClassifier="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+        <eTypeArguments eClassifier="#//Index"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Check" eSuperTypes="#//ExpressionEnforcer"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Eval" eSuperTypes="#//ExpressionEnforcer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="result" eType="#//Index"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Aggregator" abstract="true" eSuperTypes="#//SingleParentNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="*** Aggregators"/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CountAggregator" eSuperTypes="#//Aggregator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ProjectionIndexer" eSuperTypes="#//SingleParentNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="*** Joins ****"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mask" eType="#//Mask" containment="true"
+        resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DualParentNode" abstract="true" eSuperTypes="#//ReteRecipeNode">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftParent" eType="#//ProjectionIndexer"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightParent" eType="#//ProjectionIndexer"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Join" eSuperTypes="#//DualParentNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AntiJoin" eSuperTypes="#//DualParentNode"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AggregatorJoin" eSuperTypes="#//DualParentNode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="*** Safe aggregator compounds"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aggregator" eType="#//Aggregator"
+        containment="true" resolveProxies="false"/>
+  </eClassifiers>
+</ecore:EPackage>

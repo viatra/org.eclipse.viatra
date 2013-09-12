@@ -1,0 +1,172 @@
+@Ecore(nsURI="http://www.eclipse.org/incquery/rete/recipes")
+package org.eclipse.incquery.runtime.rete.recipes
+
+/*
+ * Container for Rete recipes.
+ */
+class ReteRecipe {
+	contains ReteNodeRecipe[] recipeNodes
+}
+
+/*
+ * Abstract base class for model elements that represent "Rete node recipes",
+ * that is DTOs that carry information for Rete network construction.
+ */
+abstract class ReteNodeRecipe {
+	//String traceInfo
+	//Object[] traceObjects
+}
+
+/*
+ * Abstract base class for single-parent node recipes.
+ */
+abstract class SingleParentNodeRecipe extends ReteNodeRecipe {
+	refers ReteNodeRecipe parent
+}
+/*
+ * Abstract base class for alpha node recipes.
+ */
+abstract class AlphaRecipe extends SingleParentNodeRecipe {}
+
+/*
+ * Represents helper nodes that provide projection indexing for Beta nodes.
+ */
+class ProjectionIndexer extends SingleParentNodeRecipe {
+	contains Mask mask
+}
+
+/*
+ * Abstract base class for Beta node recipes.
+ */
+abstract class BetaRecipe extends ReteNodeRecipe {
+	contains ProjectionIndexer leftParent
+	contains ProjectionIndexer rightParent
+	// TODO complementer mask?
+}
+
+
+/*** helper concepts: masks and indices *****/
+class Mask extends ReteNodeRecipe {
+	contains Index[] sourceIndices
+	int sourceArity // TODO move to NodeRecipe instead?
+}
+class Index extends ReteNodeRecipe {
+	int index // TODO attribute instead of class?
+}
+
+class StringIndexMapEntry wraps java.util.Map$Entry{
+	String key
+	refers Index value
+}
+
+/***** Input and output *****/
+
+/*
+ * Represents input nodes for the Rete network, i.e. nodes
+ * that generate input tuples for processing.
+ */
+abstract class InputRecipe extends ReteNodeRecipe {
+	String typeIdentifier // TODO: improve typing
+}
+
+class UnaryInputRecipe extends InputRecipe {}
+
+class BinaryInputRecipe extends InputRecipe {}
+
+/*
+ * Represents nodes that enforce tuple uniqueness, i.e. filter out
+ * duplicate input tuples for output.
+ */
+class UniquenessEnforcerRecipe extends ReteNodeRecipe {
+	refers ReteNodeRecipe[] parents
+} 
+
+/*
+ * The production node represents the output of the Rete network,
+ * from which the results of a query can be read.
+ */
+class ProductionRecipe extends UniquenessEnforcerRecipe {}
+
+/***** Simple nodes *****/
+
+/*
+ * Simple node that stores constant values.
+ */
+class ConstantRecipe extends ReteNodeRecipe {
+	/*
+	 * Stores constant values. May be empty.
+	 */
+	Object[] constantValues
+}
+
+/*
+ * Abstract base class for nodes that implement filtering operations.
+ */
+abstract class FilterRecipe extends AlphaRecipe { }
+class InequalityFilterRecipe extends FilterRecipe {
+	contains Index subject
+	contains Index[] inequals
+}
+class EqualityFilterRecipe extends FilterRecipe {
+	contains Index[] indices
+}
+
+/*
+ * Implements projection without uniqueness checking.
+ */
+class TrimmerRecipe extends AlphaRecipe {
+	contains Mask mask
+}
+
+/**** Expressions *****/
+
+/*
+ * Abstract base class for Rete nodes that evaluate an expression.
+ */
+abstract class ExpressionEnforcerRecipe extends AlphaRecipe {
+	/*
+	 * Provides traceability to expression representation.
+	 */
+	Object expression
+	/*
+	 * String -> Index map.
+	 * Maps variable names in the expression to tuple indices.
+	 */
+	contains StringIndexMapEntry[] mappedIndices
+}
+/*
+ * Computes the result of the boolean expression evaluation and
+ * only passes tuples for which the result is true.
+ */
+class CheckRecipe extends ExpressionEnforcerRecipe {}
+/*
+ * Computes the result of expression evaluation and suffixes the result
+ * to output tuples as the last element.
+ */
+class EvalRecipe extends ExpressionEnforcerRecipe {}
+
+
+
+/**** Aggregators */
+
+/*
+ * Represents a (compound) node that performs an aggregation
+ * operation.
+ */
+abstract class AggregatorRecipe extends AlphaRecipe {}
+class CountAggregatorRecipe extends AggregatorRecipe {}
+
+/**** Joins *****/
+
+
+
+class JoinRecipe extends BetaRecipe {}
+abstract class ExistenceJoinRecipe extends BetaRecipe {}
+class SemiJoinRecipe extends ExistenceJoinRecipe {}
+class AntiJoinRecipe extends ExistenceJoinRecipe {}
+
+/**** Safe aggregator compounds */
+class AggregatorJoinRecipe extends BetaRecipe {
+	contains AggregatorRecipe aggregator
+}
+
