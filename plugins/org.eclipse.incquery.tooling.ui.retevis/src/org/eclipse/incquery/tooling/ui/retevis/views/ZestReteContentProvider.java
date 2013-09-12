@@ -49,6 +49,7 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
     }
     
     private Object[] filterElements(Object[] elements) {
+        if (elements!=null) {
         ArrayList<Object> r= new ArrayList<Object>();
         for (Object o : elements) {
             if (! (
@@ -62,6 +63,8 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
             }
         }
         return r.toArray();
+        }
+        return null;
     }
 
     @Override

@@ -15,4 +15,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef4.zest.layouts;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.tooling.ui.retevis.theme
+Export-Package: org.eclipse.incquery.tooling.ui.retevis.theme,
+ org.eclipse.incquery.tooling.ui.retevis.views

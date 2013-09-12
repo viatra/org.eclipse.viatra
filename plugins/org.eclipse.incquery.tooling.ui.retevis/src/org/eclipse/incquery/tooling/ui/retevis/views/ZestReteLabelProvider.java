@@ -198,11 +198,12 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
     }
 
     private Collection<Stub<Address<?>>> getStubsForNode(Node n) {
+        if (n!=null) {
         Collection<Stub<Address<?>>> r = reverseMap.get(n);
         if (r != null)
             return r;
-        else
-            return Collections.emptySet();
+        }
+        return Collections.emptySet();
     }
 
     private Map<Node, Collection<Stub<Address<?>>>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
