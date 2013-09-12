@@ -10,7 +10,7 @@ import org.eclipse.emf.common.util.EList;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * **** Simple nodes ****
+ * Simple node that stores constant values.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,6 +33,8 @@ public interface ConstantRecipe extends ReteNodeRecipe
    * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * Stores constant values. May be empty.
+   * 
+   * TODO store constants as strings instead? (for easier serialization)
    * <!-- end-model-doc -->
    * @return the value of the '<em>Constant Values</em>' attribute list.
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getConstantRecipe_ConstantValues()

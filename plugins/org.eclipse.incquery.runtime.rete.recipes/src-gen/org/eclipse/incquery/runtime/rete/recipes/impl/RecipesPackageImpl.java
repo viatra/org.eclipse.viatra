@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -26,7 +27,6 @@ import org.eclipse.incquery.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExistenceJoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.FilterRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.Index;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
@@ -99,13 +99,6 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * @generated
    */
   private EClass maskEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass indexEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -255,6 +248,13 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
   private EClass aggregatorJoinRecipeEClass = null;
 
   /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EDataType indexEDataType = null;
+
+  /**
    * Creates an instance of the model <b>Package</b>, registered with
    * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
    * package URI value.
@@ -355,6 +355,16 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getReteNodeRecipe_TraceInfo()
+  {
+    return (EAttribute)reteNodeRecipeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getSingleParentNodeRecipe()
   {
     return singleParentNodeRecipeEClass;
@@ -445,9 +455,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMask_SourceIndices()
+  public EAttribute getMask_SourceIndices()
   {
-    return (EReference)maskEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)maskEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -458,26 +468,6 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
   public EAttribute getMask_SourceArity()
   {
     return (EAttribute)maskEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIndex()
-  {
-    return indexEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getIndex_Index()
-  {
-    return (EAttribute)indexEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -505,9 +495,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStringIndexMapEntry_Value()
+  public EAttribute getStringIndexMapEntry_Value()
   {
-    return (EReference)stringIndexMapEntryEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)stringIndexMapEntryEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -625,9 +615,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getInequalityFilterRecipe_Subject()
+  public EAttribute getInequalityFilterRecipe_Subject()
   {
-    return (EReference)inequalityFilterRecipeEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)inequalityFilterRecipeEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -635,9 +625,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getInequalityFilterRecipe_Inequals()
+  public EAttribute getInequalityFilterRecipe_Inequals()
   {
-    return (EReference)inequalityFilterRecipeEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)inequalityFilterRecipeEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -655,9 +645,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getEqualityFilterRecipe_Indices()
+  public EAttribute getEqualityFilterRecipe_Indices()
   {
-    return (EReference)equalityFilterRecipeEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)equalityFilterRecipeEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -815,6 +805,16 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EDataType getIndex()
+  {
+    return indexEDataType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public RecipesFactory getRecipesFactory()
   {
     return (RecipesFactory)getEFactoryInstance();
@@ -844,6 +844,7 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     createEReference(reteRecipeEClass, RETE_RECIPE__RECIPE_NODES);
 
     reteNodeRecipeEClass = createEClass(RETE_NODE_RECIPE);
+    createEAttribute(reteNodeRecipeEClass, RETE_NODE_RECIPE__TRACE_INFO);
 
     singleParentNodeRecipeEClass = createEClass(SINGLE_PARENT_NODE_RECIPE);
     createEReference(singleParentNodeRecipeEClass, SINGLE_PARENT_NODE_RECIPE__PARENT);
@@ -858,15 +859,12 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     createEReference(betaRecipeEClass, BETA_RECIPE__RIGHT_PARENT);
 
     maskEClass = createEClass(MASK);
-    createEReference(maskEClass, MASK__SOURCE_INDICES);
+    createEAttribute(maskEClass, MASK__SOURCE_INDICES);
     createEAttribute(maskEClass, MASK__SOURCE_ARITY);
-
-    indexEClass = createEClass(INDEX);
-    createEAttribute(indexEClass, INDEX__INDEX);
 
     stringIndexMapEntryEClass = createEClass(STRING_INDEX_MAP_ENTRY);
     createEAttribute(stringIndexMapEntryEClass, STRING_INDEX_MAP_ENTRY__KEY);
-    createEReference(stringIndexMapEntryEClass, STRING_INDEX_MAP_ENTRY__VALUE);
+    createEAttribute(stringIndexMapEntryEClass, STRING_INDEX_MAP_ENTRY__VALUE);
 
     inputRecipeEClass = createEClass(INPUT_RECIPE);
     createEAttribute(inputRecipeEClass, INPUT_RECIPE__TYPE_IDENTIFIER);
@@ -886,11 +884,11 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     filterRecipeEClass = createEClass(FILTER_RECIPE);
 
     inequalityFilterRecipeEClass = createEClass(INEQUALITY_FILTER_RECIPE);
-    createEReference(inequalityFilterRecipeEClass, INEQUALITY_FILTER_RECIPE__SUBJECT);
-    createEReference(inequalityFilterRecipeEClass, INEQUALITY_FILTER_RECIPE__INEQUALS);
+    createEAttribute(inequalityFilterRecipeEClass, INEQUALITY_FILTER_RECIPE__SUBJECT);
+    createEAttribute(inequalityFilterRecipeEClass, INEQUALITY_FILTER_RECIPE__INEQUALS);
 
     equalityFilterRecipeEClass = createEClass(EQUALITY_FILTER_RECIPE);
-    createEReference(equalityFilterRecipeEClass, EQUALITY_FILTER_RECIPE__INDICES);
+    createEAttribute(equalityFilterRecipeEClass, EQUALITY_FILTER_RECIPE__INDICES);
 
     trimmerRecipeEClass = createEClass(TRIMMER_RECIPE);
     createEReference(trimmerRecipeEClass, TRIMMER_RECIPE__MASK);
@@ -917,6 +915,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     aggregatorJoinRecipeEClass = createEClass(AGGREGATOR_JOIN_RECIPE);
     createEReference(aggregatorJoinRecipeEClass, AGGREGATOR_JOIN_RECIPE__AGGREGATOR);
+
+    // Create data types
+    indexEDataType = createEDataType(INDEX);
   }
 
   /**
@@ -955,8 +956,6 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     alphaRecipeEClass.getESuperTypes().add(this.getSingleParentNodeRecipe());
     projectionIndexerEClass.getESuperTypes().add(this.getSingleParentNodeRecipe());
     betaRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
-    maskEClass.getESuperTypes().add(this.getReteNodeRecipe());
-    indexEClass.getESuperTypes().add(this.getReteNodeRecipe());
     inputRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
     unaryInputRecipeEClass.getESuperTypes().add(this.getInputRecipe());
     binaryInputRecipeEClass.getESuperTypes().add(this.getInputRecipe());
@@ -983,6 +982,7 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     initEReference(getReteRecipe_RecipeNodes(), this.getReteNodeRecipe(), null, "recipeNodes", null, 0, -1, ReteRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(reteNodeRecipeEClass, ReteNodeRecipe.class, "ReteNodeRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getReteNodeRecipe_TraceInfo(), theEcorePackage.getEString(), "traceInfo", null, 0, 1, ReteNodeRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(singleParentNodeRecipeEClass, SingleParentNodeRecipe.class, "SingleParentNodeRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSingleParentNodeRecipe_Parent(), this.getReteNodeRecipe(), null, "parent", null, 0, 1, SingleParentNodeRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -997,15 +997,12 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     initEReference(getBetaRecipe_RightParent(), this.getProjectionIndexer(), null, "rightParent", null, 0, 1, BetaRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(maskEClass, Mask.class, "Mask", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getMask_SourceIndices(), this.getIndex(), null, "sourceIndices", null, 0, -1, Mask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMask_SourceIndices(), this.getIndex(), "sourceIndices", null, 0, -1, Mask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMask_SourceArity(), theEcorePackage.getEInt(), "sourceArity", null, 0, 1, Mask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(indexEClass, Index.class, "Index", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIndex_Index(), theEcorePackage.getEInt(), "index", null, 0, 1, Index.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(stringIndexMapEntryEClass, Map.Entry.class, "StringIndexMapEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStringIndexMapEntry_Key(), theEcorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStringIndexMapEntry_Value(), this.getIndex(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStringIndexMapEntry_Value(), this.getIndex(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(inputRecipeEClass, InputRecipe.class, "InputRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getInputRecipe_TypeIdentifier(), theEcorePackage.getEString(), "typeIdentifier", null, 0, 1, InputRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1025,11 +1022,11 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     initEClass(filterRecipeEClass, FilterRecipe.class, "FilterRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(inequalityFilterRecipeEClass, InequalityFilterRecipe.class, "InequalityFilterRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getInequalityFilterRecipe_Subject(), this.getIndex(), null, "subject", null, 0, 1, InequalityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getInequalityFilterRecipe_Inequals(), this.getIndex(), null, "inequals", null, 0, -1, InequalityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getInequalityFilterRecipe_Subject(), this.getIndex(), "subject", null, 0, 1, InequalityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getInequalityFilterRecipe_Inequals(), this.getIndex(), "inequals", null, 0, -1, InequalityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(equalityFilterRecipeEClass, EqualityFilterRecipe.class, "EqualityFilterRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getEqualityFilterRecipe_Indices(), this.getIndex(), null, "indices", null, 0, -1, EqualityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getEqualityFilterRecipe_Indices(), this.getIndex(), "indices", null, 0, -1, EqualityFilterRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(trimmerRecipeEClass, TrimmerRecipe.class, "TrimmerRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getTrimmerRecipe_Mask(), this.getMask(), null, "mask", null, 0, 1, TrimmerRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1056,6 +1053,9 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     initEClass(aggregatorJoinRecipeEClass, AggregatorJoinRecipe.class, "AggregatorJoinRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAggregatorJoinRecipe_Aggregator(), this.getAggregatorRecipe(), null, "aggregator", null, 0, 1, AggregatorJoinRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    // Initialize data types
+    initEDataType(indexEDataType, Integer.class, "Index", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
     // Create resource
     createResource(eNS_URI);

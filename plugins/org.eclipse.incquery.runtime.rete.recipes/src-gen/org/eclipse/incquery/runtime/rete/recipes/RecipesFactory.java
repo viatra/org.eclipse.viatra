@@ -50,15 +50,6 @@ public interface RecipesFactory extends EFactory
   Mask createMask();
 
   /**
-   * Returns a new object of class '<em>Index</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Index</em>'.
-   * @generated
-   */
-  Index createIndex();
-
-  /**
    * Returns a new object of class '<em>Unary Input Recipe</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

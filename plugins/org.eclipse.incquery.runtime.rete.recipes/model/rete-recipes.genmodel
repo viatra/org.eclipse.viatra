@@ -23,52 +23,69 @@
   <modelPluginVariables>org.eclipse.emf.ecore.xcore.lib</modelPluginVariables>
   <genPackages prefix="Recipes" basePackage="org.eclipse.incquery.runtime.rete" disposableProviderFactory="true"
       ecorePackage="recipes.ecore#/">
+    <genDataTypes ecoreDataType="recipes.ecore#//Index"/>
     <genClasses ecoreClass="recipes.ecore#//ReteRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ReteRecipe/recipeNodes"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//ReteRecipeNode"/>
-    <genClasses image="false" ecoreClass="recipes.ecore#//SingleParentNode">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleParentNode/parent"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//ReteNodeRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ReteNodeRecipe/traceInfo"/>
     </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//Mask"/>
-    <genClasses ecoreClass="recipes.ecore#//Index"/>
-    <genClasses ecoreClass="recipes.ecore#//Input">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//Input/typeIdentifier"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//SingleParentNodeRecipe">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleParentNodeRecipe/parent"/>
     </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//UniquenessEnforcer"/>
-    <genClasses ecoreClass="recipes.ecore#//Production"/>
-    <genClasses image="false" ecoreClass="recipes.ecore#//Filter"/>
-    <genClasses ecoreClass="recipes.ecore#//InequalityFilter">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//InequalityFilter/subject"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//InequalityFilter/inequals"/>
-    </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//EqualityFilter">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//EqualityFilter/indices"/>
-    </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//Trimmer">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//Trimmer/mask"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//ExpressionEnforcer">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ExpressionEnforcer/expression"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ExpressionEnforcer/map"/>
-    </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//Check"/>
-    <genClasses ecoreClass="recipes.ecore#//Eval">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//Eval/result"/>
-    </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//Aggregator"/>
-    <genClasses ecoreClass="recipes.ecore#//CountAggregator"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//AlphaRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//ProjectionIndexer">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ProjectionIndexer/mask"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//DualParentNode">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//DualParentNode/leftParent"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//DualParentNode/rightParent"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//BetaRecipe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//BetaRecipe/leftParent"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//BetaRecipe/rightParent"/>
     </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//Join"/>
-    <genClasses ecoreClass="recipes.ecore#//AntiJoin"/>
-    <genClasses ecoreClass="recipes.ecore#//AggregatorJoin">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//AggregatorJoin/aggregator"/>
+    <genClasses ecoreClass="recipes.ecore#//Mask">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//Mask/sourceIndices"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//Mask/sourceArity"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//StringIndexMapEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="recipes.ecore#//InputRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/typeIdentifier"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//UnaryInputRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//BinaryInputRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//UniquenessEnforcerRecipe">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//UniquenessEnforcerRecipe/parents"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//ProductionRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//ConstantRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ConstantRecipe/constantValues"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="recipes.ecore#//FilterRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//InequalityFilterRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InequalityFilterRecipe/subject"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InequalityFilterRecipe/inequals"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//EqualityFilterRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//EqualityFilterRecipe/indices"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//TrimmerRecipe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//TrimmerRecipe/mask"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="recipes.ecore#//ExpressionEnforcerRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ExpressionEnforcerRecipe/expression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ExpressionEnforcerRecipe/mappedIndices"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//CheckRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//EvalRecipe"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//AggregatorRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//CountAggregatorRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//JoinRecipe"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//ExistenceJoinRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//SemiJoinRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//AntiJoinRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//AggregatorJoinRecipe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//AggregatorJoinRecipe/aggregator"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

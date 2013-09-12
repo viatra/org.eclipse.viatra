@@ -4,18 +4,13 @@ package org.eclipse.incquery.runtime.rete.recipes.impl;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.Index;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
 /**
@@ -34,14 +29,14 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements EqualityFilterRecipe
 {
   /**
-   * The cached value of the '{@link #getIndices() <em>Indices</em>}' containment reference list.
+   * The cached value of the '{@link #getIndices() <em>Indices</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getIndices()
    * @generated
    * @ordered
    */
-  protected EList<Index> indices;
+  protected EList<Integer> indices;
 
   /**
    * <!-- begin-user-doc -->
@@ -69,29 +64,13 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Index> getIndices()
+  public EList<Integer> getIndices()
   {
     if (indices == null)
     {
-      indices = new EObjectContainmentEList<Index>(Index.class, this, RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES);
+      indices = new EDataTypeEList<Integer>(Integer.class, this, RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES);
     }
     return indices;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
-  {
-    switch (featureID)
-    {
-      case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
-        return ((InternalEList<?>)getIndices()).basicRemove(otherEnd, msgs);
-    }
-    return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
   /**
@@ -123,7 +102,7 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
     {
       case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
         getIndices().clear();
-        getIndices().addAll((Collection<? extends Index>)newValue);
+        getIndices().addAll((Collection<? extends Integer>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -160,6 +139,23 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
         return indices != null && !indices.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (indices: ");
+    result.append(indices);
+    result.append(')');
+    return result.toString();
   }
 
 } //EqualityFilterRecipeImpl

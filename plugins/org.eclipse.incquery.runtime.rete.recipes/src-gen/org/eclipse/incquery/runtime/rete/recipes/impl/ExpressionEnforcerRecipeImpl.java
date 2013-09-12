@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.Index;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
 /**
@@ -64,7 +63,7 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
    * @generated
    * @ordered
    */
-  protected EMap<String, Index> mappedIndices;
+  protected EMap<String, Integer> mappedIndices;
 
   /**
    * <!-- begin-user-doc -->
@@ -115,11 +114,11 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public EMap<String, Index> getMappedIndices()
+  public EMap<String, Integer> getMappedIndices()
   {
     if (mappedIndices == null)
     {
-      mappedIndices = new EcoreEMap<String,Index>(RecipesPackage.Literals.STRING_INDEX_MAP_ENTRY, StringIndexMapEntryImpl.class, this, RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES);
+      mappedIndices = new EcoreEMap<String,Integer>(RecipesPackage.Literals.STRING_INDEX_MAP_ENTRY, StringIndexMapEntryImpl.class, this, RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES);
     }
     return mappedIndices;
   }

@@ -24,45 +24,45 @@ import org.eclipse.emf.common.util.EList;
 public interface InequalityFilterRecipe extends FilterRecipe
 {
   /**
-   * Returns the value of the '<em><b>Subject</b></em>' containment reference.
+   * Returns the value of the '<em><b>Subject</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Subject</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Subject</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Subject</em>' containment reference.
-   * @see #setSubject(Index)
+   * @return the value of the '<em>Subject</em>' attribute.
+   * @see #setSubject(Integer)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getInequalityFilterRecipe_Subject()
-   * @model containment="true"
+   * @model unique="false" dataType="org.eclipse.incquery.runtime.rete.recipes.Index"
    * @generated
    */
-  Index getSubject();
+  Integer getSubject();
 
   /**
-   * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getSubject <em>Subject</em>}' containment reference.
+   * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getSubject <em>Subject</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Subject</em>' containment reference.
+   * @param value the new value of the '<em>Subject</em>' attribute.
    * @see #getSubject()
    * @generated
    */
-  void setSubject(Index value);
+  void setSubject(Integer value);
 
   /**
-   * Returns the value of the '<em><b>Inequals</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.incquery.runtime.rete.recipes.Index}.
+   * Returns the value of the '<em><b>Inequals</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.Integer}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Inequals</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Inequals</em>' attribute list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Inequals</em>' containment reference list.
+   * @return the value of the '<em>Inequals</em>' attribute list.
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getInequalityFilterRecipe_Inequals()
-   * @model containment="true"
+   * @model unique="false" dataType="org.eclipse.incquery.runtime.rete.recipes.Index"
    * @generated
    */
-  EList<Index> getInequals();
+  EList<Integer> getInequals();
 
 } // InequalityFilterRecipe

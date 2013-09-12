@@ -112,12 +112,7 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
         return createMaskAdapter();
       }
       @Override
-      public Adapter caseIndex(Index object)
-      {
-        return createIndexAdapter();
-      }
-      @Override
-      public Adapter caseStringIndexMapEntry(Map.Entry<String, Index> object)
+      public Adapter caseStringIndexMapEntry(Map.Entry<String, Integer> object)
       {
         return createStringIndexMapEntryAdapter();
       }
@@ -344,21 +339,6 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createMaskAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.Index <em>Index</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.incquery.runtime.rete.recipes.Index
-   * @generated
-   */
-  public Adapter createIndexAdapter()
   {
     return null;
   }

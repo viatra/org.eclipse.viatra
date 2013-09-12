@@ -4,13 +4,15 @@ package org.eclipse.incquery.runtime.rete.recipes;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.ecore.EObject;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Mask</b></em>'.
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * ** helper concepts: masks and indices ****
+ * A mask defines the set of tuple variables that need to be taken into consideration for operations.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -25,32 +27,30 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface Mask extends ReteNodeRecipe
+public interface Mask extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Source Indices</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.incquery.runtime.rete.recipes.Index}.
+   * Returns the value of the '<em><b>Source Indices</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.Integer}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Source Indices</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Source Indices</em>' containment reference list.
+   * <!-- begin-model-doc -->
+   * The indices that are relevant for tuple operations.
+   * <!-- end-model-doc -->
+   * @return the value of the '<em>Source Indices</em>' attribute list.
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getMask_SourceIndices()
-   * @model containment="true"
+   * @model unique="false" dataType="org.eclipse.incquery.runtime.rete.recipes.Index"
    * @generated
    */
-  EList<Index> getSourceIndices();
+  EList<Integer> getSourceIndices();
 
   /**
    * Returns the value of the '<em><b>Source Arity</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Source Arity</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * The arity of tuples.
+   * <!-- end-model-doc -->
    * @return the value of the '<em>Source Arity</em>' attribute.
    * @see #setSourceArity(int)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getMask_SourceArity()

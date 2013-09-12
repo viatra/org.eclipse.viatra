@@ -10,7 +10,7 @@ import org.eclipse.emf.common.util.EMap;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * *** Expressions ****
+ * Abstract base class for Rete nodes that evaluate an expression.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -55,7 +55,7 @@ public interface ExpressionEnforcerRecipe extends AlphaRecipe
   /**
    * Returns the value of the '<em><b>Mapped Indices</b></em>' map.
    * The key is of type {@link java.lang.String},
-   * and the value is of type {@link org.eclipse.incquery.runtime.rete.recipes.Index},
+   * and the value is of type {@link java.lang.Integer},
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
@@ -67,6 +67,6 @@ public interface ExpressionEnforcerRecipe extends AlphaRecipe
    * @model mapType="org.eclipse.incquery.runtime.rete.recipes.StringIndexMapEntry<org.eclipse.emf.ecore.EString, org.eclipse.incquery.runtime.rete.recipes.Index>"
    * @generated
    */
-  EMap<String, Index> getMappedIndices();
+  EMap<String, Integer> getMappedIndices();
 
 } // ExpressionEnforcerRecipe

@@ -5,6 +5,7 @@ package org.eclipse.incquery.runtime.rete.recipes.impl;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -69,7 +70,6 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.RETE_RECIPE: return createReteRecipe();
       case RecipesPackage.PROJECTION_INDEXER: return createProjectionIndexer();
       case RecipesPackage.MASK: return createMask();
-      case RecipesPackage.INDEX: return createIndex();
       case RecipesPackage.STRING_INDEX_MAP_ENTRY: return (EObject)createStringIndexMapEntry();
       case RecipesPackage.UNARY_INPUT_RECIPE: return createUnaryInputRecipe();
       case RecipesPackage.BINARY_INPUT_RECIPE: return createBinaryInputRecipe();
@@ -88,6 +88,40 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.AGGREGATOR_JOIN_RECIPE: return createAggregatorJoinRecipe();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case RecipesPackage.INDEX:
+        return createIndexFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case RecipesPackage.INDEX:
+        return convertIndexToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -129,18 +163,7 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Index createIndex()
-  {
-    IndexImpl index = new IndexImpl();
-    return index;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Map.Entry<String, Index> createStringIndexMapEntry()
+  public Map.Entry<String, Integer> createStringIndexMapEntry()
   {
     StringIndexMapEntryImpl stringIndexMapEntry = new StringIndexMapEntryImpl();
     return stringIndexMapEntry;
@@ -309,6 +332,26 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
   {
     AggregatorJoinRecipeImpl aggregatorJoinRecipe = new AggregatorJoinRecipeImpl();
     return aggregatorJoinRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Integer createIndexFromString(EDataType eDataType, String initialValue)
+  {
+    return (Integer)super.createFromString(eDataType, initialValue);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertIndexToString(EDataType eDataType, Object instanceValue)
+  {
+    return super.convertToString(eDataType, instanceValue);
   }
 
   /**

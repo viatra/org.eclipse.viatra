@@ -9,7 +9,8 @@ package org.eclipse.incquery.runtime.rete.recipes;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * **** Input and output ****
+ * Represents input nodes for the Rete network, i.e. nodes
+ * that generate input tuples for processing.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -28,11 +29,11 @@ public interface InputRecipe extends ReteNodeRecipe
   /**
    * Returns the value of the '<em><b>Type Identifier</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Type Identifier</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   * Temporary construct for identifying types.
+   * TODO improve type references
+   * <!-- end-model-doc -->
    * @return the value of the '<em>Type Identifier</em>' attribute.
    * @see #setTypeIdentifier(String)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getInputRecipe_TypeIdentifier()

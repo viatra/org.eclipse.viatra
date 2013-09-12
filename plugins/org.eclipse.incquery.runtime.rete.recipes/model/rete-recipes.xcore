@@ -1,6 +1,8 @@
 @Ecore(nsURI="http://www.eclipse.org/incquery/rete/recipes")
 package org.eclipse.incquery.runtime.rete.recipes
 
+// Base concepts
+
 /*
  * Container for Rete recipes.
  */
@@ -13,8 +15,10 @@ class ReteRecipe {
  * that is DTOs that carry information for Rete network construction.
  */
 abstract class ReteNodeRecipe {
-	//String traceInfo
-	//Object[] traceObjects
+	/*
+	 * Temporary construct for storing traceability information.
+	 */
+	String traceInfo
 }
 
 /*
@@ -45,28 +49,44 @@ abstract class BetaRecipe extends ReteNodeRecipe {
 }
 
 
-/*** helper concepts: masks and indices *****/
-class Mask extends ReteNodeRecipe {
-	contains Index[] sourceIndices
+// helper concepts: masks and indices
+
+/*
+ * A mask defines the set of tuple variables that need to be taken into consideration for operations.
+ */
+class Mask {
+	/*
+	 * The indices that are relevant for tuple operations.
+	 */
+	Index[] sourceIndices
+	/*
+	 * The arity of tuples.
+	 */
 	int sourceArity // TODO move to NodeRecipe instead?
 }
-class Index extends ReteNodeRecipe {
-	int index // TODO attribute instead of class?
-}
+/*
+ * Indexes tell which variable of tuples are relevant for a given operation.
+ * TODO: is this necessary at all?
+ */
+type Index wraps Integer
 
 class StringIndexMapEntry wraps java.util.Map$Entry{
 	String key
-	refers Index value
+	Index value
 }
 
-/***** Input and output *****/
+// Input and output
 
 /*
  * Represents input nodes for the Rete network, i.e. nodes
  * that generate input tuples for processing.
  */
 abstract class InputRecipe extends ReteNodeRecipe {
-	String typeIdentifier // TODO: improve typing
+	/*
+	 * Temporary construct for identifying types.
+	 * TODO improve type references
+	 */
+	String typeIdentifier
 }
 
 class UnaryInputRecipe extends InputRecipe {}
@@ -87,7 +107,7 @@ class UniquenessEnforcerRecipe extends ReteNodeRecipe {
  */
 class ProductionRecipe extends UniquenessEnforcerRecipe {}
 
-/***** Simple nodes *****/
+// Simple nodes
 
 /*
  * Simple node that stores constant values.
@@ -95,6 +115,8 @@ class ProductionRecipe extends UniquenessEnforcerRecipe {}
 class ConstantRecipe extends ReteNodeRecipe {
 	/*
 	 * Stores constant values. May be empty.
+	 * 
+	 * TODO store constants as strings instead? (for easier serialization)
 	 */
 	Object[] constantValues
 }
@@ -104,11 +126,11 @@ class ConstantRecipe extends ReteNodeRecipe {
  */
 abstract class FilterRecipe extends AlphaRecipe { }
 class InequalityFilterRecipe extends FilterRecipe {
-	contains Index subject
-	contains Index[] inequals
+	Index subject
+	Index[] inequals
 }
 class EqualityFilterRecipe extends FilterRecipe {
-	contains Index[] indices
+	Index[] indices
 }
 
 /*
@@ -118,7 +140,7 @@ class TrimmerRecipe extends AlphaRecipe {
 	contains Mask mask
 }
 
-/**** Expressions *****/
+// Expressions
 
 /*
  * Abstract base class for Rete nodes that evaluate an expression.
@@ -147,25 +169,52 @@ class EvalRecipe extends ExpressionEnforcerRecipe {}
 
 
 
-/**** Aggregators */
+// Aggregators
 
 /*
  * Represents a (compound) node that performs an aggregation
  * operation.
  */
 abstract class AggregatorRecipe extends AlphaRecipe {}
+
+/*
+ * The count aggregator node represents a "cound find" operation.
+ */
 class CountAggregatorRecipe extends AggregatorRecipe {}
 
-/**** Joins *****/
+// Joins 
 
-
-
+/*
+ * The most basic beta operation, the join node performs a join operation over two input tuple sets.
+ */
 class JoinRecipe extends BetaRecipe {}
+
+/*
+ * Existence joins are TODO
+ * 
+ * See http://en.wikipedia.org/wiki/Relational_algebra
+ */
 abstract class ExistenceJoinRecipe extends BetaRecipe {}
+
+/*
+ * A semi-join is TODO
+ * 
+ * See http://en.wikipedia.org/wiki/Relational_algebra
+ */
 class SemiJoinRecipe extends ExistenceJoinRecipe {}
+
+/*
+ * An anti-join is TODO
+ * 
+ * See http://en.wikipedia.org/wiki/Relational_algebra 
+ */
 class AntiJoinRecipe extends ExistenceJoinRecipe {}
 
-/**** Safe aggregator compounds */
+// Safe aggregator compounds
+
+/*
+ * An aggregator join node is a beta node that performs an aggregation operation.
+ */
 class AggregatorJoinRecipe extends BetaRecipe {
 	contains AggregatorRecipe aggregator
 }

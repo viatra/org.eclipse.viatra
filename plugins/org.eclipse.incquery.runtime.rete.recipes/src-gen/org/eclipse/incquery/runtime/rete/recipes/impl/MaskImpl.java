@@ -5,19 +5,16 @@ package org.eclipse.incquery.runtime.rete.recipes.impl;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 
-import org.eclipse.incquery.runtime.rete.recipes.Index;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
@@ -35,17 +32,17 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
  *
  * @generated
  */
-public class MaskImpl extends ReteNodeRecipeImpl implements Mask
+public class MaskImpl extends MinimalEObjectImpl.Container implements Mask
 {
   /**
-   * The cached value of the '{@link #getSourceIndices() <em>Source Indices</em>}' containment reference list.
+   * The cached value of the '{@link #getSourceIndices() <em>Source Indices</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getSourceIndices()
    * @generated
    * @ordered
    */
-  protected EList<Index> sourceIndices;
+  protected EList<Integer> sourceIndices;
 
   /**
    * The default value of the '{@link #getSourceArity() <em>Source Arity</em>}' attribute.
@@ -93,11 +90,11 @@ public class MaskImpl extends ReteNodeRecipeImpl implements Mask
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Index> getSourceIndices()
+  public EList<Integer> getSourceIndices()
   {
     if (sourceIndices == null)
     {
-      sourceIndices = new EObjectContainmentEList<Index>(Index.class, this, RecipesPackage.MASK__SOURCE_INDICES);
+      sourceIndices = new EDataTypeEList<Integer>(Integer.class, this, RecipesPackage.MASK__SOURCE_INDICES);
     }
     return sourceIndices;
   }
@@ -131,22 +128,6 @@ public class MaskImpl extends ReteNodeRecipeImpl implements Mask
    * @generated
    */
   @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
-  {
-    switch (featureID)
-    {
-      case RecipesPackage.MASK__SOURCE_INDICES:
-        return ((InternalEList<?>)getSourceIndices()).basicRemove(otherEnd, msgs);
-    }
-    return super.eInverseRemove(otherEnd, featureID, msgs);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
@@ -172,7 +153,7 @@ public class MaskImpl extends ReteNodeRecipeImpl implements Mask
     {
       case RecipesPackage.MASK__SOURCE_INDICES:
         getSourceIndices().clear();
-        getSourceIndices().addAll((Collection<? extends Index>)newValue);
+        getSourceIndices().addAll((Collection<? extends Integer>)newValue);
         return;
       case RecipesPackage.MASK__SOURCE_ARITY:
         setSourceArity((Integer)newValue);
@@ -230,7 +211,9 @@ public class MaskImpl extends ReteNodeRecipeImpl implements Mask
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (sourceArity: ");
+    result.append(" (sourceIndices: ");
+    result.append(sourceIndices);
+    result.append(", sourceArity: ");
     result.append(sourceArity);
     result.append(')');
     return result.toString();

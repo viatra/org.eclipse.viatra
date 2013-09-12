@@ -9,7 +9,8 @@ package org.eclipse.incquery.runtime.rete.recipes;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * *** Aggregators
+ * Represents a (compound) node that performs an aggregation
+ * operation.
  * <!-- end-model-doc -->
  *
  *

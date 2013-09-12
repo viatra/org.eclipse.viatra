@@ -126,21 +126,12 @@ public class RecipesSwitch<T> extends Switch<T>
       {
         Mask mask = (Mask)theEObject;
         T result = caseMask(mask);
-        if (result == null) result = caseReteNodeRecipe(mask);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case RecipesPackage.INDEX:
-      {
-        Index index = (Index)theEObject;
-        T result = caseIndex(index);
-        if (result == null) result = caseReteNodeRecipe(index);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
       case RecipesPackage.STRING_INDEX_MAP_ENTRY:
       {
-        @SuppressWarnings("unchecked") Map.Entry<String, Index> stringIndexMapEntry = (Map.Entry<String, Index>)theEObject;
+        @SuppressWarnings("unchecked") Map.Entry<String, Integer> stringIndexMapEntry = (Map.Entry<String, Integer>)theEObject;
         T result = caseStringIndexMapEntry(stringIndexMapEntry);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -455,22 +446,6 @@ public class RecipesSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Index</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Index</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIndex(Index object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>String Index Map Entry</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -481,7 +456,7 @@ public class RecipesSwitch<T> extends Switch<T>
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseStringIndexMapEntry(Map.Entry<String, Index> object)
+  public T caseStringIndexMapEntry(Map.Entry<String, Integer> object)
   {
     return null;
   }

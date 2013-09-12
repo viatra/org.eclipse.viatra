@@ -9,7 +9,7 @@ package org.eclipse.incquery.runtime.rete.recipes;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * *** Joins ****
+ * The most basic beta operation, the join node performs a join operation over two input tuple sets.
  * <!-- end-model-doc -->
  *
  *

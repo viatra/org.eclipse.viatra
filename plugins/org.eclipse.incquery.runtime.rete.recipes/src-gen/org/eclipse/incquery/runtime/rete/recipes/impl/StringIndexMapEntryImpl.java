@@ -9,12 +9,10 @@ import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.incquery.runtime.rete.recipes.Index;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
 /**
@@ -31,7 +29,7 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
  *
  * @generated
  */
-public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implements BasicEMap.Entry<String,Index>
+public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implements BasicEMap.Entry<String,Integer>
 {
   /**
    * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
@@ -54,14 +52,24 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
   protected String key = KEY_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getTypedValue() <em>Value</em>}' reference.
+   * The default value of the '{@link #getTypedValue() <em>Value</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getTypedValue()
    * @generated
    * @ordered
    */
-  protected Index value;
+  protected static final Integer VALUE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTypedValue() <em>Value</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTypedValue()
+   * @generated
+   * @ordered
+   */
+  protected Integer value = VALUE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -112,27 +120,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Index getTypedValue()
-  {
-    if (value != null && value.eIsProxy())
-    {
-      InternalEObject oldValue = (InternalEObject)value;
-      value = (Index)eResolveProxy(oldValue);
-      if (value != oldValue)
-      {
-        if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE, oldValue, value));
-      }
-    }
-    return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Index basicGetTypedValue()
+  public Integer getTypedValue()
   {
     return value;
   }
@@ -142,9 +130,9 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTypedValue(Index newValue)
+  public void setTypedValue(Integer newValue)
   {
-    Index oldValue = value;
+    Integer oldValue = value;
     value = newValue;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE, oldValue, value));
@@ -163,8 +151,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__KEY:
         return getTypedKey();
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE:
-        if (resolve) return getTypedValue();
-        return basicGetTypedValue();
+        return getTypedValue();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -183,7 +170,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
         setTypedKey((String)newValue);
         return;
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE:
-        setTypedValue((Index)newValue);
+        setTypedValue((Integer)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -203,7 +190,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
         setTypedKey(KEY_EDEFAULT);
         return;
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE:
-        setTypedValue((Index)null);
+        setTypedValue(VALUE_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -222,7 +209,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__KEY:
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
       case RecipesPackage.STRING_INDEX_MAP_ENTRY__VALUE:
-        return value != null;
+        return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
     }
     return super.eIsSet(featureID);
   }
@@ -240,6 +227,8 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (key: ");
     result.append(key);
+    result.append(", value: ");
+    result.append(value);
     result.append(')');
     return result.toString();
   }
@@ -301,7 +290,7 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Index getValue()
+  public Integer getValue()
   {
     return getTypedValue();
   }
@@ -311,9 +300,9 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Index setValue(Index value)
+  public Integer setValue(Integer value)
   {
-    Index oldValue = getValue();
+    Integer oldValue = getValue();
     setTypedValue(value);
     return oldValue;
   }
@@ -324,10 +313,10 @@ public class StringIndexMapEntryImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @SuppressWarnings("unchecked")
-  public EMap<String, Index> getEMap()
+  public EMap<String, Integer> getEMap()
   {
     EObject container = eContainer();
-    return container == null ? null : (EMap<String, Index>)container.eGet(eContainmentFeature());
+    return container == null ? null : (EMap<String, Integer>)container.eGet(eContainmentFeature());
   }
 
 } //StringIndexMapEntryImpl

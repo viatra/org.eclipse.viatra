@@ -4,6 +4,7 @@ package org.eclipse.incquery.runtime.rete.recipes;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -106,13 +107,22 @@ public interface RecipesPackage extends EPackage
   int RETE_NODE_RECIPE = 1;
 
   /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RETE_NODE_RECIPE__TRACE_INFO = 0;
+
+  /**
    * The number of structural features of the '<em>Rete Node Recipe</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RETE_NODE_RECIPE_FEATURE_COUNT = 0;
+  int RETE_NODE_RECIPE_FEATURE_COUNT = 1;
 
   /**
    * The number of operations of the '<em>Rete Node Recipe</em>' class.
@@ -132,6 +142,15 @@ public interface RecipesPackage extends EPackage
    * @generated
    */
   int SINGLE_PARENT_NODE_RECIPE = 2;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SINGLE_PARENT_NODE_RECIPE__TRACE_INFO = RETE_NODE_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -171,6 +190,15 @@ public interface RecipesPackage extends EPackage
   int ALPHA_RECIPE = 3;
 
   /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ALPHA_RECIPE__TRACE_INFO = SINGLE_PARENT_NODE_RECIPE__TRACE_INFO;
+
+  /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -206,6 +234,15 @@ public interface RecipesPackage extends EPackage
    * @generated
    */
   int PROJECTION_INDEXER = 4;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROJECTION_INDEXER__TRACE_INFO = SINGLE_PARENT_NODE_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -254,6 +291,15 @@ public interface RecipesPackage extends EPackage
   int BETA_RECIPE = 5;
 
   /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BETA_RECIPE__TRACE_INFO = RETE_NODE_RECIPE__TRACE_INFO;
+
+  /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -300,13 +346,13 @@ public interface RecipesPackage extends EPackage
   int MASK = 6;
 
   /**
-   * The feature id for the '<em><b>Source Indices</b></em>' containment reference list.
+   * The feature id for the '<em><b>Source Indices</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MASK__SOURCE_INDICES = RETE_NODE_RECIPE_FEATURE_COUNT + 0;
+  int MASK__SOURCE_INDICES = 0;
 
   /**
    * The feature id for the '<em><b>Source Arity</b></em>' attribute.
@@ -315,7 +361,7 @@ public interface RecipesPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MASK__SOURCE_ARITY = RETE_NODE_RECIPE_FEATURE_COUNT + 1;
+  int MASK__SOURCE_ARITY = 1;
 
   /**
    * The number of structural features of the '<em>Mask</em>' class.
@@ -324,7 +370,7 @@ public interface RecipesPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MASK_FEATURE_COUNT = RETE_NODE_RECIPE_FEATURE_COUNT + 2;
+  int MASK_FEATURE_COUNT = 2;
 
   /**
    * The number of operations of the '<em>Mask</em>' class.
@@ -333,44 +379,7 @@ public interface RecipesPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MASK_OPERATION_COUNT = RETE_NODE_RECIPE_OPERATION_COUNT + 0;
-
-  /**
-   * The meta object id for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.IndexImpl <em>Index</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.eclipse.incquery.runtime.rete.recipes.impl.IndexImpl
-   * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getIndex()
-   * @generated
-   */
-  int INDEX = 7;
-
-  /**
-   * The feature id for the '<em><b>Index</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int INDEX__INDEX = RETE_NODE_RECIPE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Index</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int INDEX_FEATURE_COUNT = RETE_NODE_RECIPE_FEATURE_COUNT + 1;
-
-  /**
-   * The number of operations of the '<em>Index</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int INDEX_OPERATION_COUNT = RETE_NODE_RECIPE_OPERATION_COUNT + 0;
+  int MASK_OPERATION_COUNT = 0;
 
   /**
    * The meta object id for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.StringIndexMapEntryImpl <em>String Index Map Entry</em>}' class.
@@ -380,7 +389,7 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getStringIndexMapEntry()
    * @generated
    */
-  int STRING_INDEX_MAP_ENTRY = 8;
+  int STRING_INDEX_MAP_ENTRY = 7;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -392,7 +401,7 @@ public interface RecipesPackage extends EPackage
   int STRING_INDEX_MAP_ENTRY__KEY = 0;
 
   /**
-   * The feature id for the '<em><b>Value</b></em>' reference.
+   * The feature id for the '<em><b>Value</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -426,7 +435,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getInputRecipe()
    * @generated
    */
-  int INPUT_RECIPE = 9;
+  int INPUT_RECIPE = 8;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INPUT_RECIPE__TRACE_INFO = RETE_NODE_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Type Identifier</b></em>' attribute.
@@ -463,7 +481,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getUnaryInputRecipe()
    * @generated
    */
-  int UNARY_INPUT_RECIPE = 10;
+  int UNARY_INPUT_RECIPE = 9;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNARY_INPUT_RECIPE__TRACE_INFO = INPUT_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Type Identifier</b></em>' attribute.
@@ -500,7 +527,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getBinaryInputRecipe()
    * @generated
    */
-  int BINARY_INPUT_RECIPE = 11;
+  int BINARY_INPUT_RECIPE = 10;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BINARY_INPUT_RECIPE__TRACE_INFO = INPUT_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Type Identifier</b></em>' attribute.
@@ -537,7 +573,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getUniquenessEnforcerRecipe()
    * @generated
    */
-  int UNIQUENESS_ENFORCER_RECIPE = 12;
+  int UNIQUENESS_ENFORCER_RECIPE = 11;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIQUENESS_ENFORCER_RECIPE__TRACE_INFO = RETE_NODE_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parents</b></em>' reference list.
@@ -574,7 +619,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getProductionRecipe()
    * @generated
    */
-  int PRODUCTION_RECIPE = 13;
+  int PRODUCTION_RECIPE = 12;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRODUCTION_RECIPE__TRACE_INFO = UNIQUENESS_ENFORCER_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parents</b></em>' reference list.
@@ -611,7 +665,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getConstantRecipe()
    * @generated
    */
-  int CONSTANT_RECIPE = 14;
+  int CONSTANT_RECIPE = 13;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONSTANT_RECIPE__TRACE_INFO = RETE_NODE_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Constant Values</b></em>' attribute list.
@@ -648,7 +711,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getFilterRecipe()
    * @generated
    */
-  int FILTER_RECIPE = 15;
+  int FILTER_RECIPE = 14;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FILTER_RECIPE__TRACE_INFO = ALPHA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -685,7 +757,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getInequalityFilterRecipe()
    * @generated
    */
-  int INEQUALITY_FILTER_RECIPE = 16;
+  int INEQUALITY_FILTER_RECIPE = 15;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INEQUALITY_FILTER_RECIPE__TRACE_INFO = FILTER_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -697,7 +778,7 @@ public interface RecipesPackage extends EPackage
   int INEQUALITY_FILTER_RECIPE__PARENT = FILTER_RECIPE__PARENT;
 
   /**
-   * The feature id for the '<em><b>Subject</b></em>' containment reference.
+   * The feature id for the '<em><b>Subject</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -706,7 +787,7 @@ public interface RecipesPackage extends EPackage
   int INEQUALITY_FILTER_RECIPE__SUBJECT = FILTER_RECIPE_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Inequals</b></em>' containment reference list.
+   * The feature id for the '<em><b>Inequals</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -740,7 +821,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getEqualityFilterRecipe()
    * @generated
    */
-  int EQUALITY_FILTER_RECIPE = 17;
+  int EQUALITY_FILTER_RECIPE = 16;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EQUALITY_FILTER_RECIPE__TRACE_INFO = FILTER_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -752,7 +842,7 @@ public interface RecipesPackage extends EPackage
   int EQUALITY_FILTER_RECIPE__PARENT = FILTER_RECIPE__PARENT;
 
   /**
-   * The feature id for the '<em><b>Indices</b></em>' containment reference list.
+   * The feature id for the '<em><b>Indices</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -786,7 +876,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getTrimmerRecipe()
    * @generated
    */
-  int TRIMMER_RECIPE = 18;
+  int TRIMMER_RECIPE = 17;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRIMMER_RECIPE__TRACE_INFO = ALPHA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -832,7 +931,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getExpressionEnforcerRecipe()
    * @generated
    */
-  int EXPRESSION_ENFORCER_RECIPE = 19;
+  int EXPRESSION_ENFORCER_RECIPE = 18;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_ENFORCER_RECIPE__TRACE_INFO = ALPHA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -887,7 +995,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getCheckRecipe()
    * @generated
    */
-  int CHECK_RECIPE = 20;
+  int CHECK_RECIPE = 19;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CHECK_RECIPE__TRACE_INFO = EXPRESSION_ENFORCER_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -942,7 +1059,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getEvalRecipe()
    * @generated
    */
-  int EVAL_RECIPE = 21;
+  int EVAL_RECIPE = 20;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EVAL_RECIPE__TRACE_INFO = EXPRESSION_ENFORCER_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -997,7 +1123,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getAggregatorRecipe()
    * @generated
    */
-  int AGGREGATOR_RECIPE = 22;
+  int AGGREGATOR_RECIPE = 21;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int AGGREGATOR_RECIPE__TRACE_INFO = ALPHA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -1034,7 +1169,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getCountAggregatorRecipe()
    * @generated
    */
-  int COUNT_AGGREGATOR_RECIPE = 23;
+  int COUNT_AGGREGATOR_RECIPE = 22;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COUNT_AGGREGATOR_RECIPE__TRACE_INFO = AGGREGATOR_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -1071,7 +1215,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getJoinRecipe()
    * @generated
    */
-  int JOIN_RECIPE = 24;
+  int JOIN_RECIPE = 23;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int JOIN_RECIPE__TRACE_INFO = BETA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
@@ -1117,7 +1270,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getExistenceJoinRecipe()
    * @generated
    */
-  int EXISTENCE_JOIN_RECIPE = 25;
+  int EXISTENCE_JOIN_RECIPE = 24;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXISTENCE_JOIN_RECIPE__TRACE_INFO = BETA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
@@ -1163,7 +1325,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getSemiJoinRecipe()
    * @generated
    */
-  int SEMI_JOIN_RECIPE = 26;
+  int SEMI_JOIN_RECIPE = 25;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SEMI_JOIN_RECIPE__TRACE_INFO = EXISTENCE_JOIN_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
@@ -1209,7 +1380,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getAntiJoinRecipe()
    * @generated
    */
-  int ANTI_JOIN_RECIPE = 27;
+  int ANTI_JOIN_RECIPE = 26;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ANTI_JOIN_RECIPE__TRACE_INFO = EXISTENCE_JOIN_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
@@ -1255,7 +1435,16 @@ public interface RecipesPackage extends EPackage
    * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getAggregatorJoinRecipe()
    * @generated
    */
-  int AGGREGATOR_JOIN_RECIPE = 28;
+  int AGGREGATOR_JOIN_RECIPE = 27;
+
+  /**
+   * The feature id for the '<em><b>Trace Info</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int AGGREGATOR_JOIN_RECIPE__TRACE_INFO = BETA_RECIPE__TRACE_INFO;
 
   /**
    * The feature id for the '<em><b>Left Parent</b></em>' containment reference.
@@ -1302,6 +1491,16 @@ public interface RecipesPackage extends EPackage
    */
   int AGGREGATOR_JOIN_RECIPE_OPERATION_COUNT = BETA_RECIPE_OPERATION_COUNT + 0;
 
+  /**
+   * The meta object id for the '<em>Index</em>' data type.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see java.lang.Integer
+   * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getIndex()
+   * @generated
+   */
+  int INDEX = 28;
+
 
   /**
    * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.ReteRecipe <em>Rete Recipe</em>}'.
@@ -1333,6 +1532,17 @@ public interface RecipesPackage extends EPackage
    * @generated
    */
   EClass getReteNodeRecipe();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe#getTraceInfo <em>Trace Info</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trace Info</em>'.
+   * @see org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe#getTraceInfo()
+   * @see #getReteNodeRecipe()
+   * @generated
+   */
+  EAttribute getReteNodeRecipe_TraceInfo();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.SingleParentNodeRecipe <em>Single Parent Node Recipe</em>}'.
@@ -1429,15 +1639,15 @@ public interface RecipesPackage extends EPackage
   EClass getMask();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.eclipse.incquery.runtime.rete.recipes.Mask#getSourceIndices <em>Source Indices</em>}'.
+   * Returns the meta object for the attribute list '{@link org.eclipse.incquery.runtime.rete.recipes.Mask#getSourceIndices <em>Source Indices</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Source Indices</em>'.
+   * @return the meta object for the attribute list '<em>Source Indices</em>'.
    * @see org.eclipse.incquery.runtime.rete.recipes.Mask#getSourceIndices()
    * @see #getMask()
    * @generated
    */
-  EReference getMask_SourceIndices();
+  EAttribute getMask_SourceIndices();
 
   /**
    * Returns the meta object for the attribute '{@link org.eclipse.incquery.runtime.rete.recipes.Mask#getSourceArity <em>Source Arity</em>}'.
@@ -1451,34 +1661,13 @@ public interface RecipesPackage extends EPackage
   EAttribute getMask_SourceArity();
 
   /**
-   * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.Index <em>Index</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Index</em>'.
-   * @see org.eclipse.incquery.runtime.rete.recipes.Index
-   * @generated
-   */
-  EClass getIndex();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.eclipse.incquery.runtime.rete.recipes.Index#getIndex <em>Index</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Index</em>'.
-   * @see org.eclipse.incquery.runtime.rete.recipes.Index#getIndex()
-   * @see #getIndex()
-   * @generated
-   */
-  EAttribute getIndex_Index();
-
-  /**
    * Returns the meta object for class '{@link java.util.Map.Entry <em>String Index Map Entry</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for class '<em>String Index Map Entry</em>'.
    * @see java.util.Map.Entry
    * @model keyUnique="false" keyDataType="org.eclipse.emf.ecore.EString"
-   *        valueType="org.eclipse.incquery.runtime.rete.recipes.Index"
+   *        valueUnique="false" valueDataType="org.eclipse.incquery.runtime.rete.recipes.Index"
    * @generated
    */
   EClass getStringIndexMapEntry();
@@ -1495,15 +1684,15 @@ public interface RecipesPackage extends EPackage
   EAttribute getStringIndexMapEntry_Key();
 
   /**
-   * Returns the meta object for the reference '{@link java.util.Map.Entry <em>Value</em>}'.
+   * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Value</em>'.
+   * @return the meta object for the attribute '<em>Value</em>'.
    * @see java.util.Map.Entry
    * @see #getStringIndexMapEntry()
    * @generated
    */
-  EReference getStringIndexMapEntry_Value();
+  EAttribute getStringIndexMapEntry_Value();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.InputRecipe <em>Input Recipe</em>}'.
@@ -1619,26 +1808,26 @@ public interface RecipesPackage extends EPackage
   EClass getInequalityFilterRecipe();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getSubject <em>Subject</em>}'.
+   * Returns the meta object for the attribute '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getSubject <em>Subject</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Subject</em>'.
+   * @return the meta object for the attribute '<em>Subject</em>'.
    * @see org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getSubject()
    * @see #getInequalityFilterRecipe()
    * @generated
    */
-  EReference getInequalityFilterRecipe_Subject();
+  EAttribute getInequalityFilterRecipe_Subject();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getInequals <em>Inequals</em>}'.
+   * Returns the meta object for the attribute list '{@link org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getInequals <em>Inequals</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Inequals</em>'.
+   * @return the meta object for the attribute list '<em>Inequals</em>'.
    * @see org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe#getInequals()
    * @see #getInequalityFilterRecipe()
    * @generated
    */
-  EReference getInequalityFilterRecipe_Inequals();
+  EAttribute getInequalityFilterRecipe_Inequals();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe <em>Equality Filter Recipe</em>}'.
@@ -1651,15 +1840,15 @@ public interface RecipesPackage extends EPackage
   EClass getEqualityFilterRecipe();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe#getIndices <em>Indices</em>}'.
+   * Returns the meta object for the attribute list '{@link org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe#getIndices <em>Indices</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Indices</em>'.
+   * @return the meta object for the attribute list '<em>Indices</em>'.
    * @see org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe#getIndices()
    * @see #getEqualityFilterRecipe()
    * @generated
    */
-  EReference getEqualityFilterRecipe_Indices();
+  EAttribute getEqualityFilterRecipe_Indices();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe <em>Trimmer Recipe</em>}'.
@@ -1816,6 +2005,17 @@ public interface RecipesPackage extends EPackage
   EReference getAggregatorJoinRecipe_Aggregator();
 
   /**
+   * Returns the meta object for data type '{@link java.lang.Integer <em>Index</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for data type '<em>Index</em>'.
+   * @see java.lang.Integer
+   * @model instanceClass="java.lang.Integer"
+   * @generated
+   */
+  EDataType getIndex();
+
+  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1866,6 +2066,14 @@ public interface RecipesPackage extends EPackage
      * @generated
      */
     EClass RETE_NODE_RECIPE = eINSTANCE.getReteNodeRecipe();
+
+    /**
+     * The meta object literal for the '<em><b>Trace Info</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RETE_NODE_RECIPE__TRACE_INFO = eINSTANCE.getReteNodeRecipe_TraceInfo();
 
     /**
      * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.SingleParentNodeRecipeImpl <em>Single Parent Node Recipe</em>}' class.
@@ -1950,12 +2158,12 @@ public interface RecipesPackage extends EPackage
     EClass MASK = eINSTANCE.getMask();
 
     /**
-     * The meta object literal for the '<em><b>Source Indices</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Source Indices</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference MASK__SOURCE_INDICES = eINSTANCE.getMask_SourceIndices();
+    EAttribute MASK__SOURCE_INDICES = eINSTANCE.getMask_SourceIndices();
 
     /**
      * The meta object literal for the '<em><b>Source Arity</b></em>' attribute feature.
@@ -1964,24 +2172,6 @@ public interface RecipesPackage extends EPackage
      * @generated
      */
     EAttribute MASK__SOURCE_ARITY = eINSTANCE.getMask_SourceArity();
-
-    /**
-     * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.IndexImpl <em>Index</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.incquery.runtime.rete.recipes.impl.IndexImpl
-     * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getIndex()
-     * @generated
-     */
-    EClass INDEX = eINSTANCE.getIndex();
-
-    /**
-     * The meta object literal for the '<em><b>Index</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute INDEX__INDEX = eINSTANCE.getIndex_Index();
 
     /**
      * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.StringIndexMapEntryImpl <em>String Index Map Entry</em>}' class.
@@ -2002,12 +2192,12 @@ public interface RecipesPackage extends EPackage
     EAttribute STRING_INDEX_MAP_ENTRY__KEY = eINSTANCE.getStringIndexMapEntry_Key();
 
     /**
-     * The meta object literal for the '<em><b>Value</b></em>' reference feature.
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference STRING_INDEX_MAP_ENTRY__VALUE = eINSTANCE.getStringIndexMapEntry_Value();
+    EAttribute STRING_INDEX_MAP_ENTRY__VALUE = eINSTANCE.getStringIndexMapEntry_Value();
 
     /**
      * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.InputRecipeImpl <em>Input Recipe</em>}' class.
@@ -2114,20 +2304,20 @@ public interface RecipesPackage extends EPackage
     EClass INEQUALITY_FILTER_RECIPE = eINSTANCE.getInequalityFilterRecipe();
 
     /**
-     * The meta object literal for the '<em><b>Subject</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Subject</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference INEQUALITY_FILTER_RECIPE__SUBJECT = eINSTANCE.getInequalityFilterRecipe_Subject();
+    EAttribute INEQUALITY_FILTER_RECIPE__SUBJECT = eINSTANCE.getInequalityFilterRecipe_Subject();
 
     /**
-     * The meta object literal for the '<em><b>Inequals</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Inequals</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference INEQUALITY_FILTER_RECIPE__INEQUALS = eINSTANCE.getInequalityFilterRecipe_Inequals();
+    EAttribute INEQUALITY_FILTER_RECIPE__INEQUALS = eINSTANCE.getInequalityFilterRecipe_Inequals();
 
     /**
      * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.EqualityFilterRecipeImpl <em>Equality Filter Recipe</em>}' class.
@@ -2140,12 +2330,12 @@ public interface RecipesPackage extends EPackage
     EClass EQUALITY_FILTER_RECIPE = eINSTANCE.getEqualityFilterRecipe();
 
     /**
-     * The meta object literal for the '<em><b>Indices</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Indices</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference EQUALITY_FILTER_RECIPE__INDICES = eINSTANCE.getEqualityFilterRecipe_Indices();
+    EAttribute EQUALITY_FILTER_RECIPE__INDICES = eINSTANCE.getEqualityFilterRecipe_Indices();
 
     /**
      * The meta object literal for the '{@link org.eclipse.incquery.runtime.rete.recipes.impl.TrimmerRecipeImpl <em>Trimmer Recipe</em>}' class.
@@ -2288,6 +2478,16 @@ public interface RecipesPackage extends EPackage
      * @generated
      */
     EReference AGGREGATOR_JOIN_RECIPE__AGGREGATOR = eINSTANCE.getAggregatorJoinRecipe_Aggregator();
+
+    /**
+     * The meta object literal for the '<em>Index</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.lang.Integer
+     * @see org.eclipse.incquery.runtime.rete.recipes.impl.RecipesPackageImpl#getIndex()
+     * @generated
+     */
+    EDataType INDEX = eINSTANCE.getIndex();
 
   }
 

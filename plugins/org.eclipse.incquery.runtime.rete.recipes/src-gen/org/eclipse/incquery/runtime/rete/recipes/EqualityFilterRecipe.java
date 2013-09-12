@@ -23,19 +23,19 @@ import org.eclipse.emf.common.util.EList;
 public interface EqualityFilterRecipe extends FilterRecipe
 {
   /**
-   * Returns the value of the '<em><b>Indices</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.incquery.runtime.rete.recipes.Index}.
+   * Returns the value of the '<em><b>Indices</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.Integer}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Indices</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Indices</em>' attribute list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Indices</em>' containment reference list.
+   * @return the value of the '<em>Indices</em>' attribute list.
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getEqualityFilterRecipe_Indices()
-   * @model containment="true"
+   * @model unique="false" dataType="org.eclipse.incquery.runtime.rete.recipes.Index"
    * @generated
    */
-  EList<Index> getIndices();
+  EList<Integer> getIndices();
 
 } // EqualityFilterRecipe

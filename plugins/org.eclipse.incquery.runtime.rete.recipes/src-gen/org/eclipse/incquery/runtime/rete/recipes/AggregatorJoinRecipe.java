@@ -9,7 +9,7 @@ package org.eclipse.incquery.runtime.rete.recipes;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * *** Safe aggregator compounds
+ * An aggregator join node is a beta node that performs an aggregation operation.
  * <!-- end-model-doc -->
  *
  * <p>
