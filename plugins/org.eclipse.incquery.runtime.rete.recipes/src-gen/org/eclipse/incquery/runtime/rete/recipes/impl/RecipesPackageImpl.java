@@ -31,6 +31,7 @@ import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
+import org.eclipse.incquery.runtime.rete.recipes.MultiParentNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
@@ -39,6 +40,7 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ReteRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.SemiJoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.SingleParentNodeRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
@@ -78,6 +80,27 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * @generated
    */
   private EClass alphaRecipeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass multiParentNodeRecipeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass uniquenessEnforcerRecipeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass productionRecipeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -133,21 +156,14 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass uniquenessEnforcerRecipeEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass productionRecipeEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass constantRecipeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass transitiveClosureRecipeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -395,6 +411,56 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getMultiParentNodeRecipe()
+  {
+    return multiParentNodeRecipeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMultiParentNodeRecipe_Parents()
+  {
+    return (EReference)multiParentNodeRecipeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getUniquenessEnforcerRecipe()
+  {
+    return uniquenessEnforcerRecipeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getProductionRecipe()
+  {
+    return productionRecipeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getProductionRecipe_Pattern()
+  {
+    return (EAttribute)productionRecipeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getProjectionIndexer()
   {
     return projectionIndexerEClass;
@@ -545,36 +611,6 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getUniquenessEnforcerRecipe()
-  {
-    return uniquenessEnforcerRecipeEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getUniquenessEnforcerRecipe_Parents()
-  {
-    return (EReference)uniquenessEnforcerRecipeEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getProductionRecipe()
-  {
-    return productionRecipeEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getConstantRecipe()
   {
     return constantRecipeEClass;
@@ -588,6 +624,16 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
   public EAttribute getConstantRecipe_ConstantValues()
   {
     return (EAttribute)constantRecipeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTransitiveClosureRecipe()
+  {
+    return transitiveClosureRecipeEClass;
   }
 
   /**
@@ -851,6 +897,14 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     alphaRecipeEClass = createEClass(ALPHA_RECIPE);
 
+    multiParentNodeRecipeEClass = createEClass(MULTI_PARENT_NODE_RECIPE);
+    createEReference(multiParentNodeRecipeEClass, MULTI_PARENT_NODE_RECIPE__PARENTS);
+
+    uniquenessEnforcerRecipeEClass = createEClass(UNIQUENESS_ENFORCER_RECIPE);
+
+    productionRecipeEClass = createEClass(PRODUCTION_RECIPE);
+    createEAttribute(productionRecipeEClass, PRODUCTION_RECIPE__PATTERN);
+
     projectionIndexerEClass = createEClass(PROJECTION_INDEXER);
     createEReference(projectionIndexerEClass, PROJECTION_INDEXER__MASK);
 
@@ -873,13 +927,10 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     binaryInputRecipeEClass = createEClass(BINARY_INPUT_RECIPE);
 
-    uniquenessEnforcerRecipeEClass = createEClass(UNIQUENESS_ENFORCER_RECIPE);
-    createEReference(uniquenessEnforcerRecipeEClass, UNIQUENESS_ENFORCER_RECIPE__PARENTS);
-
-    productionRecipeEClass = createEClass(PRODUCTION_RECIPE);
-
     constantRecipeEClass = createEClass(CONSTANT_RECIPE);
     createEAttribute(constantRecipeEClass, CONSTANT_RECIPE__CONSTANT_VALUES);
+
+    transitiveClosureRecipeEClass = createEClass(TRANSITIVE_CLOSURE_RECIPE);
 
     filterRecipeEClass = createEClass(FILTER_RECIPE);
 
@@ -954,14 +1005,16 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
     // Add supertypes to classes
     singleParentNodeRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
     alphaRecipeEClass.getESuperTypes().add(this.getSingleParentNodeRecipe());
+    multiParentNodeRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
+    uniquenessEnforcerRecipeEClass.getESuperTypes().add(this.getMultiParentNodeRecipe());
+    productionRecipeEClass.getESuperTypes().add(this.getMultiParentNodeRecipe());
     projectionIndexerEClass.getESuperTypes().add(this.getSingleParentNodeRecipe());
     betaRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
     inputRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
     unaryInputRecipeEClass.getESuperTypes().add(this.getInputRecipe());
     binaryInputRecipeEClass.getESuperTypes().add(this.getInputRecipe());
-    uniquenessEnforcerRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
-    productionRecipeEClass.getESuperTypes().add(this.getUniquenessEnforcerRecipe());
     constantRecipeEClass.getESuperTypes().add(this.getReteNodeRecipe());
+    transitiveClosureRecipeEClass.getESuperTypes().add(this.getAlphaRecipe());
     filterRecipeEClass.getESuperTypes().add(this.getAlphaRecipe());
     inequalityFilterRecipeEClass.getESuperTypes().add(this.getFilterRecipe());
     equalityFilterRecipeEClass.getESuperTypes().add(this.getFilterRecipe());
@@ -989,6 +1042,14 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     initEClass(alphaRecipeEClass, AlphaRecipe.class, "AlphaRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+    initEClass(multiParentNodeRecipeEClass, MultiParentNodeRecipe.class, "MultiParentNodeRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMultiParentNodeRecipe_Parents(), this.getReteNodeRecipe(), null, "parents", null, 0, -1, MultiParentNodeRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(uniquenessEnforcerRecipeEClass, UniquenessEnforcerRecipe.class, "UniquenessEnforcerRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(productionRecipeEClass, ProductionRecipe.class, "ProductionRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getProductionRecipe_Pattern(), theEcorePackage.getEJavaObject(), "pattern", null, 0, 1, ProductionRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(projectionIndexerEClass, ProjectionIndexer.class, "ProjectionIndexer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getProjectionIndexer_Mask(), this.getMask(), null, "mask", null, 0, 1, ProjectionIndexer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -1011,13 +1072,10 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     initEClass(binaryInputRecipeEClass, BinaryInputRecipe.class, "BinaryInputRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(uniquenessEnforcerRecipeEClass, UniquenessEnforcerRecipe.class, "UniquenessEnforcerRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getUniquenessEnforcerRecipe_Parents(), this.getReteNodeRecipe(), null, "parents", null, 0, -1, UniquenessEnforcerRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(productionRecipeEClass, ProductionRecipe.class, "ProductionRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
     initEClass(constantRecipeEClass, ConstantRecipe.class, "ConstantRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getConstantRecipe_ConstantValues(), theEcorePackage.getEJavaObject(), "constantValues", null, 0, -1, ConstantRecipe.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(transitiveClosureRecipeEClass, TransitiveClosureRecipe.class, "TransitiveClosureRecipe", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(filterRecipeEClass, FilterRecipe.class, "FilterRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

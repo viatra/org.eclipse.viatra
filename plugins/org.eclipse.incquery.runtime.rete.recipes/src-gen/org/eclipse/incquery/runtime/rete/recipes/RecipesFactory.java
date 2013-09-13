@@ -32,6 +32,24 @@ public interface RecipesFactory extends EFactory
   ReteRecipe createReteRecipe();
 
   /**
+   * Returns a new object of class '<em>Uniqueness Enforcer Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Uniqueness Enforcer Recipe</em>'.
+   * @generated
+   */
+  UniquenessEnforcerRecipe createUniquenessEnforcerRecipe();
+
+  /**
+   * Returns a new object of class '<em>Production Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Production Recipe</em>'.
+   * @generated
+   */
+  ProductionRecipe createProductionRecipe();
+
+  /**
    * Returns a new object of class '<em>Projection Indexer</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -68,24 +86,6 @@ public interface RecipesFactory extends EFactory
   BinaryInputRecipe createBinaryInputRecipe();
 
   /**
-   * Returns a new object of class '<em>Uniqueness Enforcer Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Uniqueness Enforcer Recipe</em>'.
-   * @generated
-   */
-  UniquenessEnforcerRecipe createUniquenessEnforcerRecipe();
-
-  /**
-   * Returns a new object of class '<em>Production Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Production Recipe</em>'.
-   * @generated
-   */
-  ProductionRecipe createProductionRecipe();
-
-  /**
    * Returns a new object of class '<em>Constant Recipe</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -93,6 +93,15 @@ public interface RecipesFactory extends EFactory
    * @generated
    */
   ConstantRecipe createConstantRecipe();
+
+  /**
+   * Returns a new object of class '<em>Transitive Closure Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Transitive Closure Recipe</em>'.
+   * @generated
+   */
+  TransitiveClosureRecipe createTransitiveClosureRecipe();
 
   /**
    * Returns a new object of class '<em>Inequality Filter Recipe</em>'.

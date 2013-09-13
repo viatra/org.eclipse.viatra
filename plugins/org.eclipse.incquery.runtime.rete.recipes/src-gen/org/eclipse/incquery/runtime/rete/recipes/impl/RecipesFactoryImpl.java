@@ -68,14 +68,15 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
     switch (eClass.getClassifierID())
     {
       case RecipesPackage.RETE_RECIPE: return createReteRecipe();
+      case RecipesPackage.UNIQUENESS_ENFORCER_RECIPE: return createUniquenessEnforcerRecipe();
+      case RecipesPackage.PRODUCTION_RECIPE: return createProductionRecipe();
       case RecipesPackage.PROJECTION_INDEXER: return createProjectionIndexer();
       case RecipesPackage.MASK: return createMask();
       case RecipesPackage.STRING_INDEX_MAP_ENTRY: return (EObject)createStringIndexMapEntry();
       case RecipesPackage.UNARY_INPUT_RECIPE: return createUnaryInputRecipe();
       case RecipesPackage.BINARY_INPUT_RECIPE: return createBinaryInputRecipe();
-      case RecipesPackage.UNIQUENESS_ENFORCER_RECIPE: return createUniquenessEnforcerRecipe();
-      case RecipesPackage.PRODUCTION_RECIPE: return createProductionRecipe();
       case RecipesPackage.CONSTANT_RECIPE: return createConstantRecipe();
+      case RecipesPackage.TRANSITIVE_CLOSURE_RECIPE: return createTransitiveClosureRecipe();
       case RecipesPackage.INEQUALITY_FILTER_RECIPE: return createInequalityFilterRecipe();
       case RecipesPackage.EQUALITY_FILTER_RECIPE: return createEqualityFilterRecipe();
       case RecipesPackage.TRIMMER_RECIPE: return createTrimmerRecipe();
@@ -141,6 +142,28 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public UniquenessEnforcerRecipe createUniquenessEnforcerRecipe()
+  {
+    UniquenessEnforcerRecipeImpl uniquenessEnforcerRecipe = new UniquenessEnforcerRecipeImpl();
+    return uniquenessEnforcerRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ProductionRecipe createProductionRecipe()
+  {
+    ProductionRecipeImpl productionRecipe = new ProductionRecipeImpl();
+    return productionRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ProjectionIndexer createProjectionIndexer()
   {
     ProjectionIndexerImpl projectionIndexer = new ProjectionIndexerImpl();
@@ -196,32 +219,21 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public UniquenessEnforcerRecipe createUniquenessEnforcerRecipe()
-  {
-    UniquenessEnforcerRecipeImpl uniquenessEnforcerRecipe = new UniquenessEnforcerRecipeImpl();
-    return uniquenessEnforcerRecipe;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ProductionRecipe createProductionRecipe()
-  {
-    ProductionRecipeImpl productionRecipe = new ProductionRecipeImpl();
-    return productionRecipe;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public ConstantRecipe createConstantRecipe()
   {
     ConstantRecipeImpl constantRecipe = new ConstantRecipeImpl();
     return constantRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TransitiveClosureRecipe createTransitiveClosureRecipe()
+  {
+    TransitiveClosureRecipeImpl transitiveClosureRecipe = new TransitiveClosureRecipeImpl();
+    return transitiveClosureRecipe;
   }
 
   /**

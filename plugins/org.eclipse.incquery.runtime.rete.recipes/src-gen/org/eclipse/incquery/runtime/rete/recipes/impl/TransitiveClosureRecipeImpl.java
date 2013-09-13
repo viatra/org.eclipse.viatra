@@ -5,25 +5,25 @@ package org.eclipse.incquery.runtime.rete.recipes.impl;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
-import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Uniqueness Enforcer Recipe</b></em>'.
+ * An implementation of the model object '<em><b>Transitive Closure Recipe</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class UniquenessEnforcerRecipeImpl extends MultiParentNodeRecipeImpl implements UniquenessEnforcerRecipe
+public class TransitiveClosureRecipeImpl extends AlphaRecipeImpl implements TransitiveClosureRecipe
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected UniquenessEnforcerRecipeImpl()
+  protected TransitiveClosureRecipeImpl()
   {
     super();
   }
@@ -36,7 +36,7 @@ public class UniquenessEnforcerRecipeImpl extends MultiParentNodeRecipeImpl impl
   @Override
   protected EClass eStaticClass()
   {
-    return RecipesPackage.Literals.UNIQUENESS_ENFORCER_RECIPE;
+    return RecipesPackage.Literals.TRANSITIVE_CLOSURE_RECIPE;
   }
 
-} //UniquenessEnforcerRecipeImpl
+} //TransitiveClosureRecipeImpl

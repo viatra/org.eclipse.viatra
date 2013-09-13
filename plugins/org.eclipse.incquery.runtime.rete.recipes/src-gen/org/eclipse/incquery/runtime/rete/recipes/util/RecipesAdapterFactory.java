@@ -97,6 +97,21 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
         return createAlphaRecipeAdapter();
       }
       @Override
+      public Adapter caseMultiParentNodeRecipe(MultiParentNodeRecipe object)
+      {
+        return createMultiParentNodeRecipeAdapter();
+      }
+      @Override
+      public Adapter caseUniquenessEnforcerRecipe(UniquenessEnforcerRecipe object)
+      {
+        return createUniquenessEnforcerRecipeAdapter();
+      }
+      @Override
+      public Adapter caseProductionRecipe(ProductionRecipe object)
+      {
+        return createProductionRecipeAdapter();
+      }
+      @Override
       public Adapter caseProjectionIndexer(ProjectionIndexer object)
       {
         return createProjectionIndexerAdapter();
@@ -132,19 +147,14 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
         return createBinaryInputRecipeAdapter();
       }
       @Override
-      public Adapter caseUniquenessEnforcerRecipe(UniquenessEnforcerRecipe object)
-      {
-        return createUniquenessEnforcerRecipeAdapter();
-      }
-      @Override
-      public Adapter caseProductionRecipe(ProductionRecipe object)
-      {
-        return createProductionRecipeAdapter();
-      }
-      @Override
       public Adapter caseConstantRecipe(ConstantRecipe object)
       {
         return createConstantRecipeAdapter();
+      }
+      @Override
+      public Adapter caseTransitiveClosureRecipe(TransitiveClosureRecipe object)
+      {
+        return createTransitiveClosureRecipeAdapter();
       }
       @Override
       public Adapter caseFilterRecipe(FilterRecipe object)
@@ -299,6 +309,51 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.MultiParentNodeRecipe <em>Multi Parent Node Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.MultiParentNodeRecipe
+   * @generated
+   */
+  public Adapter createMultiParentNodeRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe <em>Uniqueness Enforcer Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe
+   * @generated
+   */
+  public Adapter createUniquenessEnforcerRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe <em>Production Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe
+   * @generated
+   */
+  public Adapter createProductionRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexer <em>Projection Indexer</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -404,36 +459,6 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe <em>Uniqueness Enforcer Recipe</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe
-   * @generated
-   */
-  public Adapter createUniquenessEnforcerRecipeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe <em>Production Recipe</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe
-   * @generated
-   */
-  public Adapter createProductionRecipeAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe <em>Constant Recipe</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -444,6 +469,21 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createConstantRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe <em>Transitive Closure Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe
+   * @generated
+   */
+  public Adapter createTransitiveClosureRecipeAdapter()
   {
     return null;
   }

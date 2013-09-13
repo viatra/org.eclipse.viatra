@@ -105,6 +105,32 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case RecipesPackage.MULTI_PARENT_NODE_RECIPE:
+      {
+        MultiParentNodeRecipe multiParentNodeRecipe = (MultiParentNodeRecipe)theEObject;
+        T result = caseMultiParentNodeRecipe(multiParentNodeRecipe);
+        if (result == null) result = caseReteNodeRecipe(multiParentNodeRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.UNIQUENESS_ENFORCER_RECIPE:
+      {
+        UniquenessEnforcerRecipe uniquenessEnforcerRecipe = (UniquenessEnforcerRecipe)theEObject;
+        T result = caseUniquenessEnforcerRecipe(uniquenessEnforcerRecipe);
+        if (result == null) result = caseMultiParentNodeRecipe(uniquenessEnforcerRecipe);
+        if (result == null) result = caseReteNodeRecipe(uniquenessEnforcerRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.PRODUCTION_RECIPE:
+      {
+        ProductionRecipe productionRecipe = (ProductionRecipe)theEObject;
+        T result = caseProductionRecipe(productionRecipe);
+        if (result == null) result = caseMultiParentNodeRecipe(productionRecipe);
+        if (result == null) result = caseReteNodeRecipe(productionRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case RecipesPackage.PROJECTION_INDEXER:
       {
         ProjectionIndexer projectionIndexer = (ProjectionIndexer)theEObject;
@@ -162,28 +188,21 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case RecipesPackage.UNIQUENESS_ENFORCER_RECIPE:
-      {
-        UniquenessEnforcerRecipe uniquenessEnforcerRecipe = (UniquenessEnforcerRecipe)theEObject;
-        T result = caseUniquenessEnforcerRecipe(uniquenessEnforcerRecipe);
-        if (result == null) result = caseReteNodeRecipe(uniquenessEnforcerRecipe);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case RecipesPackage.PRODUCTION_RECIPE:
-      {
-        ProductionRecipe productionRecipe = (ProductionRecipe)theEObject;
-        T result = caseProductionRecipe(productionRecipe);
-        if (result == null) result = caseUniquenessEnforcerRecipe(productionRecipe);
-        if (result == null) result = caseReteNodeRecipe(productionRecipe);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case RecipesPackage.CONSTANT_RECIPE:
       {
         ConstantRecipe constantRecipe = (ConstantRecipe)theEObject;
         T result = caseConstantRecipe(constantRecipe);
         if (result == null) result = caseReteNodeRecipe(constantRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.TRANSITIVE_CLOSURE_RECIPE:
+      {
+        TransitiveClosureRecipe transitiveClosureRecipe = (TransitiveClosureRecipe)theEObject;
+        T result = caseTransitiveClosureRecipe(transitiveClosureRecipe);
+        if (result == null) result = caseAlphaRecipe(transitiveClosureRecipe);
+        if (result == null) result = caseSingleParentNodeRecipe(transitiveClosureRecipe);
+        if (result == null) result = caseReteNodeRecipe(transitiveClosureRecipe);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -398,6 +417,54 @@ public class RecipesSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Multi Parent Node Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Multi Parent Node Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMultiParentNodeRecipe(MultiParentNodeRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Uniqueness Enforcer Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Uniqueness Enforcer Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUniquenessEnforcerRecipe(UniquenessEnforcerRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Production Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Production Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseProductionRecipe(ProductionRecipe object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Projection Indexer</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -510,38 +577,6 @@ public class RecipesSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Uniqueness Enforcer Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Uniqueness Enforcer Recipe</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseUniquenessEnforcerRecipe(UniquenessEnforcerRecipe object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Production Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Production Recipe</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseProductionRecipe(ProductionRecipe object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Constant Recipe</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -553,6 +588,22 @@ public class RecipesSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseConstantRecipe(ConstantRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Transitive Closure Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Transitive Closure Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTransitiveClosureRecipe(TransitiveClosureRecipe object)
   {
     return null;
   }

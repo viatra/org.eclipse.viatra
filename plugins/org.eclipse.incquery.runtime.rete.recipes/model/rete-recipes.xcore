@@ -2,7 +2,8 @@
 package org.eclipse.incquery.runtime.rete.recipes
 
 // TODO missing things:
-// - transitive closure
+// - transitive closure - DONE
+// - more / better traceability to pattern language, expressions
 
 // Base concepts
 
@@ -30,10 +31,34 @@ abstract class ReteNodeRecipe {
 abstract class SingleParentNodeRecipe extends ReteNodeRecipe {
 	refers ReteNodeRecipe parent
 }
+
 /*
  * Abstract base class for alpha node recipes.
  */
 abstract class AlphaRecipe extends SingleParentNodeRecipe {}
+
+
+abstract class MultiParentNodeRecipe extends ReteNodeRecipe {
+	refers ReteNodeRecipe[] parents
+}
+
+/*
+ * Represents nodes that enforce tuple uniqueness, i.e. filter out
+ * duplicate input tuples for output.
+ */
+class UniquenessEnforcerRecipe extends MultiParentNodeRecipe { } 
+
+/*
+ * The production node represents the output of the Rete network,
+ * from which the results of a query can be read.
+ */
+class ProductionRecipe extends MultiParentNodeRecipe {
+	/*
+	 * Traceability link to defining pattern object (from EMFPatternLanguage)
+	 */
+	Object pattern
+}
+
 
 /*
  * Represents helper nodes that provide projection indexing for Beta nodes.
@@ -97,22 +122,6 @@ class UnaryInputRecipe extends InputRecipe {}
 class BinaryInputRecipe extends InputRecipe {}
 
 /*
- * Represents nodes that enforce tuple uniqueness, i.e. filter out
- * duplicate input tuples for output.
- */
-class UniquenessEnforcerRecipe extends ReteNodeRecipe {
-	refers ReteNodeRecipe[] parents
-} 
-
-/*
- * The production node represents the output of the Rete network,
- * from which the results of a query can be read.
- */
-class ProductionRecipe extends UniquenessEnforcerRecipe {}
-
-// Simple nodes
-
-/*
  * Simple node that stores constant values.
  */
 class ConstantRecipe extends ReteNodeRecipe {
@@ -123,6 +132,13 @@ class ConstantRecipe extends ReteNodeRecipe {
 	 */
 	Object[] constantValues
 }
+
+// Simple nodes
+
+/*
+ * Represents transitive closure.
+ */
+class TransitiveClosureRecipe extends AlphaRecipe { }
 
 /*
  * Abstract base class for nodes that implement filtering operations.
