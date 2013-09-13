@@ -1,6 +1,9 @@
 @Ecore(nsURI="http://www.eclipse.org/incquery/rete/recipes")
 package org.eclipse.incquery.runtime.rete.recipes
 
+// TODO missing things:
+// - transitive closure
+
 // Base concepts
 
 /*
