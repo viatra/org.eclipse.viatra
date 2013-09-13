@@ -29,6 +29,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet;
+import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -82,6 +83,8 @@ public class UMLexampleForEVM {
                 // fire activation of a given rule
                 createClassesActivations.iterator().next().fire(context);
             }
+            
+            ruleEngine.setConflictResolver(ConflictResolvers.createFixedPriorityResolver());
 
             final ScopedConflictSet activationSet = ruleEngine.createScopedConflictSet(createGeneralization, createGeneralization.createEmptyFilter());
             assertTrue(activationSet.getNextActivation() != null);
