@@ -31,8 +31,6 @@ public class TestingLogAppender extends AppenderSkeleton implements Appender {
 	private static final Level LEVEL_MIN = Level.WARN;
 
 	private final Map<String,StringBuilder> messages = new HashMap<String, StringBuilder>();
-	private final Map<String,Throwable> errors = new HashMap<String, Throwable>();
-	private final Map<String,Throwable> warnings = new HashMap<String, Throwable>();
 	private final StringBuilder output = new StringBuilder();
 	
 	public TestingLogAppender() {
@@ -43,90 +41,12 @@ public class TestingLogAppender extends AppenderSkeleton implements Appender {
 		newFilter.setLevelMin(LEVEL_MIN);
 		addFilter(newFilter);
 	}
-	
-//	private void logDebug(String message) {
-//		StringBuilder sb = messages.get("DEBUG");
-//		if(sb == null) {
-//			sb = new StringBuilder();
-//			messages.put("DEBUG", sb);
-//		}
-//		sb.append(message).append('\n');
-//	}
-//
-//	private void logError(String message) {
-//		StringBuilder sb = messages.get("ERROR");
-//		if(sb == null) {
-//			sb = new StringBuilder();
-//			messages.put("ERROR", sb);
-//		}
-//		sb.append(message).append('\n');
-//		output.append(message).append('\n');
-//	}
-//
-//	private void logError(String message, Throwable cause) {
-//		StringBuilder sb = messages.get("ERROR");
-//		if(sb == null) {
-//			sb = new StringBuilder();
-//			messages.put("ERROR", sb);
-//		}
-//		sb.append(message).append('\n');
-//		errors.put(message, cause);
-//		output.append(message).append('\n');
-//    output.append(getStackTraceAsString(cause)).append('\n');
-//	}
-//
-//	private void logWarning(String message) {
-//		StringBuilder sb = messages.get("WARNING");
-//		if(sb == null) {
-//			sb = new StringBuilder();
-//			messages.put("WARNING", sb);
-//		}
-//		sb.append(message).append('\n');
-//		output.append(message).append('\n');
-//	}
-//
-//	private void logWarning(String message, Throwable cause) {
-//		StringBuilder sb = messages.get("WARNING");
-//		if(sb == null) {
-//			sb = new StringBuilder();
-//			messages.put("WARNING", sb);
-//		}
-//		sb.append(message).append('\n');
-//		warnings.put(message, cause);
-//		output.append(message).append('\n');
-//		output.append(getStackTraceAsString(cause)).append('\n');
-//	}
-//
-//	/**
-//	 * @param cause
-//	 * @return
-//	 */
-//	private String getStackTraceAsString(Throwable cause) {
-//		final Writer result = new StringWriter();
-//	  final PrintWriter printWriter = new PrintWriter(result);
-//	  cause.printStackTrace(printWriter);
-//		return result.toString();
-//	}
 
 	/**
 	 * @return the messages
 	 */
 	public Map<String, StringBuilder> getMessages() {
 		return messages;
-	}
-	
-	/**
-	 * @return the errors
-	 */
-	public Map<String, Throwable> getErrors() {
-		return errors;
-	}
-	
-	/**
-	 * @return the warnings
-	 */
-	public Map<String, Throwable> getWarnings() {
-		return warnings;
 	}
 	
 	/**
@@ -138,8 +58,6 @@ public class TestingLogAppender extends AppenderSkeleton implements Appender {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
