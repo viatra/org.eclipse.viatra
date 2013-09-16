@@ -68,6 +68,14 @@ class TransformationStatements {
 		rule.ruleSpecification.until(breakCondition, filter)
 	}
 	
+	def until(TransformationRuleGroup rules, Predicate<IPatternMatch> breakCondition) {
+		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.filteredRuleMap)
+		
+		conflictSet.until(breakCondition)
+		
+		conflictSet.dispose
+	}
+	
 	private def <Match extends IPatternMatch> until(
 		RuleSpecification<Match> ruleSpecification,
 		Predicate<Match> breakCondition,
@@ -75,18 +83,22 @@ class TransformationStatements {
 	) {
 		registerRule(ruleSpecification, filter)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
-
 		println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
+
+		conflictSet.until(breakCondition)		
+		println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
+		conflictSet.dispose
+		
+		disposeRule(ruleSpecification, filter)
+	}
+	
+	private def <Match extends IPatternMatch> until(ScopedConflictSet conflictSet, Predicate<Match> breakCondition) {
 		var Activation<Match> act
 		var continue = true
 		while (continue && ((act = conflictSet.nextActivation as Activation<Match>) != null)) {
 			act.fireActivation
 			continue = breakCondition.apply(act.atom)
 		}
-		println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
-		conflictSet.dispose
-		
-		disposeRule(ruleSpecification, filter)
 	}
 	
 	/**
@@ -128,6 +140,15 @@ class TransformationStatements {
 		ruleEngine.addRule(ruleSpecification, filter)
 	}
 	
+	def registerRules(TransformationRuleGroup rules) {
+		rules.forEach[
+			if (value != null)
+				ruleEngine.addRule(key.ruleSpecification, value)
+			else
+				ruleEngine.addRule(key.ruleSpecification)
+		]
+	}
+	
 	def <Match extends IPatternMatch> disposeRule(RuleSpecification<Match> ruleSpecification) {
 		ruleSpecification.disposeRule(ruleSpecification.createEmptyFilter)	
 	}
@@ -136,6 +157,15 @@ class TransformationStatements {
 		ruleEngine.removeRule(ruleSpecification, filter)
 	}
 
+	def disposeRules(TransformationRuleGroup rules) {
+		rules.forEach[
+			if (value != null)
+				ruleEngine.removeRule(key.ruleSpecification, value)
+			else
+				ruleEngine.removeRule(key.ruleSpecification)
+		]
+	}
+	
     /**
 	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
 	 * 
