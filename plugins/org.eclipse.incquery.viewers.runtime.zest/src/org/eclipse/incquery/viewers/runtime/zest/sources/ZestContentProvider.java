@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
-import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.Iterables;
@@ -28,10 +26,6 @@ import com.google.common.collect.Iterables;
  */
 public class ZestContentProvider extends AbstractZestContentProvider implements IGraphContentProvider {
 
-    GraphViewer viewer;
-    ViewerState state;
-    boolean displayContainment;
-    
     public ZestContentProvider() {
     	this(false);
     }
@@ -75,11 +69,6 @@ public class ZestContentProvider extends AbstractZestContentProvider implements 
     @Override
     public void edgeDisappeared(Edge edge) {
         viewer.removeRelationship(edge);
-    }
-
-    @Override
-    public void dispose() {
-    	super.dispose();
     }
 
 }
