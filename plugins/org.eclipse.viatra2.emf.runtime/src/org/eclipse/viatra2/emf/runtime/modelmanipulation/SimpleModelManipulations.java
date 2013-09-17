@@ -1,10 +1,14 @@
 package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -51,13 +55,26 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void doAdd(EObject container, EReference reference,
-			EObject element) throws ModelManipulationException {
-		((EList)container.eGet(reference)).add(element);
+			Collection<? extends EObject> elements) throws ModelManipulationException {
+		((EList)container.eGet(reference)).addAll(elements);
 	}
 	
 	@Override
+	protected void doSet(EObject container, EStructuralFeature feature,
+			Object value) {
+		container.eSet(feature, value);
+	}
+
+	@Override
 	protected void doRemove(EObject object) throws ModelManipulationException {
 		EcoreUtil.remove(object);
+	}
+
+	@Override
+	protected void doRemove(EObject container, EStructuralFeature reference)
+			throws ModelManipulationException {
+		List<?> list = (List<?>) container.eGet(reference);
+		list.clear();
 	}
 
 	@SuppressWarnings("rawtypes")

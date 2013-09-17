@@ -1,16 +1,20 @@
 package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -49,10 +53,10 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 	}
 
 	@Override
-	protected void doAdd(EObject container, EReference reference, EObject element)
+	protected void doAdd(EObject container, EReference reference, Collection<? extends EObject> elements)
 			throws ModelManipulationException {
 		Command createCommand = AddCommand.create(domain, container, reference,
-				element);
+				elements);
 		executeCommand(createCommand);
 	}
 
@@ -62,6 +66,13 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 		Command createCommand = AddCommand.create(domain, container, attribute,
 				value);
 		executeCommand(createCommand);
+	}
+
+	@Override
+	protected void doSet(EObject container, EStructuralFeature feature,
+			Object value) throws ModelManipulationException {
+		Command setCommand = SetCommand.create(domain, container, feature, value);
+		executeCommand(setCommand);
 	}
 
 	@Override
@@ -75,6 +86,14 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 			EObject element) throws ModelManipulationException {
 		Command removeCommand = RemoveCommand.create(domain, container,
 				reference, element);
+		executeCommand(removeCommand);
+	}
+
+	@Override
+	protected void doRemove(EObject container, EStructuralFeature reference)
+			throws ModelManipulationException {
+		Collection<?> list = (Collection<?>) container.eGet(reference);
+		Command removeCommand = RemoveCommand.create(domain, container, reference, list);
 		executeCommand(removeCommand);
 	}
 

@@ -7,10 +7,12 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Abstract base class for model manipulation implementation. It checks for the
@@ -47,13 +49,17 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	 */
 	protected abstract void doRemove(EObject object)
 			throws ModelManipulationException;
+	
+	protected abstract void doRemove(EObject container, EStructuralFeature reference) throws ModelManipulationException;
 
 	protected abstract void doAdd(EObject container, EAttribute attribute,
 			Object value) throws ModelManipulationException;
 
 	protected abstract void doAdd(EObject container, EReference reference,
-			EObject element) throws ModelManipulationException;
+			Collection<? extends EObject> element) throws ModelManipulationException;
 
+	protected abstract void doSet(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
+	
 	protected abstract EObject doCreate(EObject container,
 			EReference reference, EClass clazz);
 
@@ -68,17 +74,25 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
 	@Override
 	public EObject create(EObject container, EReference reference) {
-		EClass containerClass = container.eClass();
-		Preconditions
-				.checkArgument(
-						containerClass.getEAllReferences().contains(container),
-						"The container of EClass %s does neither define or inherit an EReference %s.",
-						containerClass.getName(), reference.getName());
-		Preconditions
-				.checkArgument(reference.isContainment(),
-						"Created elements must be inserted directly into the containment hierarchy.");
+		
 		EClass clazz = reference.getEReferenceType();
 
+		return create(container, reference, clazz);
+	}
+	
+	@Override
+	public EObject create(EObject container, EReference reference, EClass clazz) {
+		EClass containerClass = container.eClass();
+		Preconditions
+		.checkArgument(
+				containerClass.getEAllReferences().contains(container),
+				"The container of EClass %s does neither define or inherit an EReference %s.",
+				containerClass.getName(), reference.getName());
+		Preconditions
+		.checkArgument(reference.isContainment(),
+				"Created elements must be inserted directly into the containment hierarchy.");
+		Preconditions.checkArgument(!clazz.isAbstract(), "Cannot instantiate abstract EClass %s.", clazz.getName());
+		
 		return doCreate(container, reference, clazz);
 	}
 
@@ -99,9 +113,28 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 						!reference.isContainment(),
 						"Adding existing elements into the containment reference %s is not supported.",
 						reference.getName());
-		doAdd(container, reference, element);
+		doAdd(container, reference, ImmutableList.of(element));
 	}
 
+	@Override
+	public void add(EObject container, EReference reference, Collection<? extends EObject> elements)
+			throws ModelManipulationException {
+		EClass containerClass = container.eClass();
+		Preconditions
+				.checkArgument(
+						containerClass.getEAllReferences().contains(container),
+						"The container of EClass %s does neither define or inherit an EReference %s.",
+						containerClass.getName(), reference.getName());
+		Preconditions.checkArgument(reference.getUpperBound() > 1,
+				"The EAttribute %s must have an upper bound larger than 1.",
+				reference.getName());
+		Preconditions
+				.checkArgument(
+						!reference.isContainment(),
+						"Adding existing elements into the containment reference %s is not supported.",
+						reference.getName());
+		doAdd(container, reference, elements);	
+	}
 	@Override
 	public void add(EObject container, EAttribute attribute, Object value)
 			throws ModelManipulationException {
@@ -116,6 +149,19 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 				attribute.getName());
 
 		doAdd(container, attribute, value);
+	}
+	
+	@Override
+	public void set(EObject container, EStructuralFeature feature, Object value)
+			throws ModelManipulationException {
+		EClass containerClass = container.eClass();
+		Preconditions
+				.checkArgument(
+						!containerClass.getEAllStructuralFeatures().contains(feature),
+						"The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+						containerClass.getName(), feature.getName());
+		Preconditions.checkArgument(!feature.isMany(), "The feature %s must have an upper bound of 1.", feature.getName());
+		doSet(container, feature, value);
 	}
 
 	@Override
@@ -132,6 +178,13 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		} else {
 			doRemove(container, reference, element);
 		}
+	}
+
+	@Override
+	public void remove(EObject container, EStructuralFeature reference)
+			throws ModelManipulationException {
+		Preconditions.checkArgument(reference.isMany(), "Remove only works on references with 'many' multiplicity.");
+		doRemove(container, reference);
 	}
 
 	@Override
