@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2013, Zoltan Ujhelyi and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 
 import java.util.Collection;
@@ -9,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
