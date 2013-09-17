@@ -19,6 +19,10 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
 import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
+import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.incquery.runtime.api.IncQueryEngine
+import org.eclipse.viatra2.emf.runtime.filters.MatchParameterFilter
 
 /**
  * Utility class for simple rule usage
@@ -28,17 +32,20 @@ import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
  */
 class TransformationStatements {
 	
+	val IncQueryEngine iqEngine
 	val RuleEngine ruleEngine
 	val Context context
 	
 	new(BatchTransformation transformation) {
 		ruleEngine = transformation.ruleEngine
 		context = transformation.context
+		iqEngine = transformation.iqEngine
 	}
 	
-	new(RuleEngine ruleEngine, Context context) {
+	new(RuleEngine ruleEngine, IncQueryEngine iqEngine, Context context) {
 		this.ruleEngine = ruleEngine
 		this.context = context
+		this.iqEngine = iqEngine
 	}
 	
 	/**
@@ -54,6 +61,19 @@ class TransformationStatements {
 		rule.ruleSpecification.until(breakCondition, filter)
 	}
 
+	/**
+	 * Executes the selected rule with the selected filter as long as there
+	 * are possible matches of its preconditions and the break condition is
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * only one of the conflicting matches will cause an execution. 
+ 	 */
+	def <Match extends IPatternMatch> until(
+		ITransformationRule<Match, ?> rule,
+		Predicate<Match> breakCondition,
+		Pair<String, Object>... filterParameters
+	) {
+		rule.ruleSpecification.until(breakCondition, new MatchParameterFilter(filterParameters))
+	}
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
@@ -111,6 +131,12 @@ class TransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
+	def <Match extends IPatternMatch> forall(ITransformationRule<Match, ?> rule, Pair<String, Object>... parameterFilter) {
+		rule.ruleSpecification.forall(new MatchParameterFilter(parameterFilter))
+	}
+	/**
+	 * Executes the selected rule with the selected filter on its current match set of the precondition.
+ 	 */
 	def <Match extends IPatternMatch> forall(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
 		rule.ruleSpecification.forall(filter)
 	}
@@ -130,6 +156,34 @@ class TransformationStatements {
 		
 		disposeRule(ruleSpecification, filter)
 		conflictSet.dispose
+	}
+	
+//	def <Match extends IPatternMatch> find(IQuerySpecification<IncQueryMatcher<Match>> query, MatchParameterFilter filter) {
+//		val matcher = query.getMatcher(iqEngine)
+//		val matchFilter = matcher.newMatch()
+//		matcher.getOneArbitraryMatch(matchFilter)		        
+//	}
+	
+	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query) {
+		val matcher = query.getMatcher(iqEngine)
+		val filter = matcher.newMatch()
+		matcher.getOneArbitraryMatch(filter)		        
+	}
+	
+	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, Pair<String, Object>... filters) {
+		find(query, new MatchParameterFilter(filters))
+	}
+	
+	
+	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, MatchParameterFilter filter) {
+		val matcher = query.getMatcher(iqEngine)
+		
+		find(query, filter.toMatch(matcher))
+	}
+	
+	private def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, Match filter) {
+		val matcher = query.getMatcher(iqEngine)
+		matcher.getOneArbitraryMatch(filter)		        
 	}
 
 	def <Match extends IPatternMatch> registerRule(RuleSpecification<Match> ruleSpecification) {

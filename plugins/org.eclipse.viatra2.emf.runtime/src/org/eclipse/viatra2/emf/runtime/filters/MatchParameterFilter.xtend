@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.runtime.filters
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import java.util.Map
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
 
 /**
  * A EVM filter that uses a parameter-value map that can be used for 
@@ -45,5 +46,15 @@ import java.util.Map
     // maybe this is not the best performance-wise :)
   }
   
+  def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> toMatch(Matcher matcher) {
+  	val match = matcher.newEmptyMatch
+  	matcher.parameterNames.forEach[
+  		if (filterMap.containsKey(it)) {
+  			match.set(it, filterMap.get(it))	
+  		}
+  	]
+  	
+  	match
+  }
 }
 

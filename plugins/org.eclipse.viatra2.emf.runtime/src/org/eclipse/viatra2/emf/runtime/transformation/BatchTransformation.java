@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.GenericPatternGroup;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -78,6 +79,10 @@ public class BatchTransformation {
 
 	public RuleEngine getRuleEngine() {
 		return ruleEngine;
+	}
+	
+	public IncQueryEngine getIqEngine() {
+		return iqEngine;
 	}
 	
 	public Context getContext() {
