@@ -119,16 +119,16 @@ public abstract class ViewerState {
 	protected ListenerList labelListeners = new ListenerList();
 	protected IChangeListener labelChangeListener = new IChangeListener() {
 		@Override
-        public void handleChange(ChangeEvent event) {
+		public void handleChange(ChangeEvent event) {
             Object element = ((ObservableLabelFeature) event.getSource()).getContainer();
             for (Object _listener : labelListeners.getListeners()) {
             	IViewerLabelListener listener = (IViewerLabelListener) _listener;
             	if (element instanceof Item) {
             		Item item = (Item) element;
-					listener.labelUpdated(item, event.getObservable().toString());
+					listener.labelUpdated(item, ((Item) element).getLabel().getValue().toString());
             	} else if (element instanceof Edge) {
 					Edge edge = (Edge) element;
-            		listener.labelUpdated(edge, event.getObservable().toString());
+            		listener.labelUpdated(edge, ((Edge) element).getLabel().getValue().toString());
             	}
             }
 		}
