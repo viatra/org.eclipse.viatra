@@ -20,17 +20,10 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 public class SimpleModelManipulations extends AbstractModelManipulations{
 
-	IncQueryEngine engine;
-	
-	public SimpleModelManipulations(IncQueryEngine engine) {
-		  this.engine = engine;
-	}
-	
 	@Override
 	protected EObject doCreate(Resource res, EClass clazz)
 			throws ModelManipulationException {

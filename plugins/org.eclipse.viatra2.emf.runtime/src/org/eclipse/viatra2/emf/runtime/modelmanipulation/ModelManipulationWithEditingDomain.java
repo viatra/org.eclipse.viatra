@@ -25,20 +25,16 @@ import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
 
 	EditingDomain domain;
-	IncQueryEngine engine;
 
 
-	public ModelManipulationWithEditingDomain(EditingDomain domain,
-			IncQueryEngine engine) {
+	public ModelManipulationWithEditingDomain(EditingDomain domain) {
 		super();
 		this.domain = domain;
-		this.engine = engine;
 	}
 
 	@Override
@@ -53,11 +49,11 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 
 	@Override
 	protected EObject doCreate(EObject container, EReference reference,
-			EClass clazz) {
+			EClass clazz) throws ModelManipulationException {
 		EObject obj = EcoreUtil.create(clazz);
 		Command createCommand = AddCommand.create(domain, container, reference,
 				obj);
-		createCommand.execute();
+		executeCommand(createCommand);
 		return obj;
 	}
 
@@ -109,11 +105,12 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 		}
 	}
 
-	private void executeCommand(Command command)
+	protected void executeCommand(Command command)
 			throws ModelManipulationException {
 		if (command.canExecute()) {
 			command.execute();
 		}
 		throw new ModelManipulationException("Cannot execute command");
 	}
+
 }

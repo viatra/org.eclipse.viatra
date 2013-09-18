@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -33,8 +34,15 @@ import com.google.common.collect.ImmutableList;
  */
 public abstract class AbstractModelManipulations implements IModelManipulations {
 
+	protected IncQueryEngine engine;
+	
 	public AbstractModelManipulations() {
 		super();
+	}
+
+	@Override
+	public void setEngine(IncQueryEngine engine) {
+		this.engine = engine;
 	}
 
 	protected <Type extends EObject> void doMoveTo(Collection<Type> what,
@@ -67,7 +75,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	protected abstract void doSet(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
 	
 	protected abstract EObject doCreate(EObject container,
-			EReference reference, EClass clazz);
+			EReference reference, EClass clazz) throws ModelManipulationException;
 
 	protected abstract EObject doCreate(Resource res, EClass clazz)
 			throws ModelManipulationException;
@@ -79,7 +87,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	}
 	
 	@Override
-	public EObject createChild(EObject container, EReference reference, EClass clazz) {
+	public EObject createChild(EObject container, EReference reference, EClass clazz) throws ModelManipulationException {
 		EClass containerClass = container.eClass();
 		Preconditions
 		.checkArgument(
