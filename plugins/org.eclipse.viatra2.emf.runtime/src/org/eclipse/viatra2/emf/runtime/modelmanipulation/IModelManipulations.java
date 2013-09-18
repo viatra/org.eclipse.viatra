@@ -30,23 +30,16 @@ public interface IModelManipulations {
 	/**
 	 * Creates an EObject and puts it into the selected reference of a container. The container reference must be a containment reference.
 	 */
-	EObject create(EObject container, EReference reference) throws ModelManipulationException;
-	
-	EObject create(EObject container, EReference reference, EClass clazz) throws ModelManipulationException;
+	EObject createChild(EObject container, EReference reference, EClass clazz) throws ModelManipulationException;
 
 	/**
-	 * Adds an existing model element to a selected EReference. The reference must <em>not</em> be a containment reference.
+	 * Adds an existing model element to a selected EReference. The feature is an EReference, it must <em>not</em> be a containment reference.
 	 */
-	void add(EObject container, EReference reference,
-			EObject element) throws ModelManipulationException;
+	void addTo(EObject container, EStructuralFeature feature,
+			Object element) throws ModelManipulationException;
 	
-	void add(EObject container, EReference reference,
-			Collection<? extends EObject> element) throws ModelManipulationException;
-	/**
-	 * Adds a selected value to the list of attributes 
-	 */
-	void add(EObject container, EAttribute attribute,
-			Object value) throws ModelManipulationException;
+	void addTo(EObject container, EStructuralFeature reference,
+			Collection<? extends Object> element) throws ModelManipulationException;
 
 	void set(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
 	/**

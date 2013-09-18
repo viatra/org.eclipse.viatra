@@ -14,7 +14,6 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -63,18 +62,10 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 	}
 
 	@Override
-	protected void doAdd(EObject container, EReference reference, Collection<? extends EObject> elements)
+	protected void doAdd(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
 			throws ModelManipulationException {
-		Command createCommand = AddCommand.create(domain, container, reference,
+		Command createCommand = AddCommand.create(domain, container, feature,
 				elements);
-		executeCommand(createCommand);
-	}
-
-	@Override
-	protected void doAdd(EObject container, EAttribute attribute, Object value)
-			throws ModelManipulationException {
-		Command createCommand = AddCommand.create(domain, container, attribute,
-				value);
 		executeCommand(createCommand);
 	}
 

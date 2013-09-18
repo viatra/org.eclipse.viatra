@@ -61,11 +61,8 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	
 	protected abstract void doRemove(EObject container, EStructuralFeature reference) throws ModelManipulationException;
 
-	protected abstract void doAdd(EObject container, EAttribute attribute,
-			Object value) throws ModelManipulationException;
-
-	protected abstract void doAdd(EObject container, EReference reference,
-			Collection<? extends EObject> element) throws ModelManipulationException;
+	protected abstract void doAdd(EObject container, EStructuralFeature reference,
+			Collection<? extends Object> element) throws ModelManipulationException;
 
 	protected abstract void doSet(EObject container, EStructuralFeature feature, Object value) throws ModelManipulationException;
 	
@@ -80,17 +77,9 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 			throws ModelManipulationException {
 		return doCreate(res, clazz);
 	}
-
-	@Override
-	public EObject create(EObject container, EReference reference) {
-		
-		EClass clazz = reference.getEReferenceType();
-
-		return create(container, reference, clazz);
-	}
 	
 	@Override
-	public EObject create(EObject container, EReference reference, EClass clazz) {
+	public EObject createChild(EObject container, EReference reference, EClass clazz) {
 		EClass containerClass = container.eClass();
 		Preconditions
 		.checkArgument(
@@ -106,58 +95,30 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	}
 
 	@Override
-	public void add(EObject container, EReference reference, EObject element)
+	public void addTo(EObject container, EStructuralFeature feature, Object element)
 			throws ModelManipulationException {
-		EClass containerClass = container.eClass();
-		Preconditions
-				.checkArgument(
-						containerClass.getEAllReferences().contains(container),
-						"The container of EClass %s does neither define or inherit an EReference %s.",
-						containerClass.getName(), reference.getName());
-		Preconditions.checkArgument(reference.getUpperBound() > 1,
-				"The EAttribute %s must have an upper bound larger than 1.",
-				reference.getName());
-		Preconditions
-				.checkArgument(
-						!reference.isContainment(),
-						"Adding existing elements into the containment reference %s is not supported.",
-						reference.getName());
-		doAdd(container, reference, ImmutableList.of(element));
+		
+		addTo(container, feature, ImmutableList.of(element));
 	}
 
 	@Override
-	public void add(EObject container, EReference reference, Collection<? extends EObject> elements)
+	public void addTo(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
 			throws ModelManipulationException {
 		EClass containerClass = container.eClass();
 		Preconditions
 				.checkArgument(
-						containerClass.getEAllReferences().contains(container),
-						"The container of EClass %s does neither define or inherit an EReference %s.",
-						containerClass.getName(), reference.getName());
-		Preconditions.checkArgument(reference.getUpperBound() > 1,
+						containerClass.getEAllStructuralFeatures().contains(container),
+						"The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
+						containerClass.getName(), feature.getName());
+		Preconditions.checkArgument(feature.getUpperBound() > 1,
 				"The EAttribute %s must have an upper bound larger than 1.",
-				reference.getName());
+				feature.getName());
 		Preconditions
 				.checkArgument(
-						!reference.isContainment(),
+						!(feature instanceof EReference && ((EReference)feature).isContainment()),
 						"Adding existing elements into the containment reference %s is not supported.",
-						reference.getName());
-		doAdd(container, reference, elements);	
-	}
-	@Override
-	public void add(EObject container, EAttribute attribute, Object value)
-			throws ModelManipulationException {
-		EClass containerClass = container.eClass();
-		Preconditions
-				.checkArgument(
-						!containerClass.getEAllAttributes().contains(attribute),
-						"The container of EClass %s does neither define or inherit an EAttribute %s.",
-						containerClass.getName(), attribute.getName());
-		Preconditions.checkArgument(attribute.getUpperBound() > 1,
-				"The EAttribute %s must have an upper bound larger than 1.",
-				attribute.getName());
-
-		doAdd(container, attribute, value);
+						feature.getName());
+		doAdd(container, feature, elements);	
 	}
 	
 	@Override

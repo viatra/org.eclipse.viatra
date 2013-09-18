@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -55,17 +54,8 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	protected void doAdd(EObject container, EAttribute attribute, Object value)
-			throws ModelManipulationException {
-		if (attribute.isMany()) {
-			((EList)container.eGet(attribute)).add(value);
-		}
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	protected void doAdd(EObject container, EReference reference,
-			Collection<? extends EObject> elements) throws ModelManipulationException {
+	protected void doAdd(EObject container, EStructuralFeature reference,
+			Collection<? extends Object> elements) throws ModelManipulationException {
 		((EList)container.eGet(reference)).addAll(elements);
 	}
 	
