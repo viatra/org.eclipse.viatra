@@ -16,6 +16,7 @@ import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
+import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
 
 import com.google.common.collect.ImmutableSet;
@@ -28,39 +29,71 @@ import com.google.common.collect.ImmutableSet;
  */
 public class IncQueryGraphViewers {
 
-    private IncQueryGraphViewers() {
-    }
+	private IncQueryGraphViewers() {
+	}
 
-    /**
-     * 
-     * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
-     *             {@link ViewerStateSet} consists of the shared data between
-     *             various viewers.
-     */
-    public static void bind(GraphViewer viewer, ViewerDataModel model) {
-        bind(viewer, model, ViewerDataFilter.UNFILTERED);
-    }
-
-    /**
-     * 
+	/**
+	 * 
 	 * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
-     */
-    public static void bind(GraphViewer viewer, ViewerDataModel model, ViewerDataFilter filter) {
-    	ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet.of(ViewerStateFeature.EDGE));
-        bind(viewer, state);
-    }
+	 */
+	public static void bind(GraphViewer viewer, ViewerDataModel model) {
+		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+	}
 
+	/**
+	 * 
+	 * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
+	 *             {@link ViewerStateSet} consists of the shared data between
+	 *             various viewers.
+	 */
+	public static void bind(GraphViewer viewer, ViewerDataModel model,
+			ViewerDataFilter filter) {
+		ViewerState state = ViewerState.newInstance(model, filter,
+				ImmutableSet.of(ViewerStateFeature.EDGE));
+		bind(viewer, state);
+	}
+
+	/**
+	 * The basic bindings does not support isolated nodes but is more
+	 * performant. If the graph contains isolated nodes, use
+	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
+	 */
 	public static void bind(GraphViewer viewer, ViewerState state) {
 		viewer.setContentProvider(new ZestContentProvider());
-        viewer.setLabelProvider(new ZestLabelProvider(state, viewer.getControl().getDisplay()));
+		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+				.getControl().getDisplay()));
 		viewer.setInput(state);
 	}
-	
-	public static void bind(GraphViewer viewer, ViewerState state, boolean displayContainment) {
+
+	/**
+	 * The basic bindings does not support isolated nodes but is more
+	 * performant. If the graph contains isolated nodes, use
+	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState, boolean)} instead.
+	 */
+	public static void bind(GraphViewer viewer, ViewerState state,
+			boolean displayContainment) {
 		viewer.setContentProvider(new ZestContentProvider(displayContainment));
-		viewer.setLabelProvider(new ZestLabelProvider(state, viewer.getControl().getDisplay()));
+		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+				.getControl().getDisplay()));
+		viewer.setInput(state);
+	}
+
+	public static void bindWithIsolatedNodes(GraphViewer viewer,
+			ViewerState state) {
+		viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
+		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+				.getControl().getDisplay()));
+		viewer.setInput(state);
+	}
+
+	public static void bindWithIsolatedNodes(GraphViewer viewer,
+			ViewerState state, boolean displayContainment) {
+		viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider(
+				displayContainment));
+		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
+				.getControl().getDisplay()));
 		viewer.setInput(state);
 	}
 

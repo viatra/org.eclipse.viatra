@@ -94,8 +94,9 @@ public final class QuerySpecificationRegistry {
 
     private static void prepareQuerySpecification(Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications, Set<String> duplicates,
             IConfigurationElement el) {
+        String id = null;
         try {
-            String id = el.getAttribute("id");
+            id = el.getAttribute("id");
             @SuppressWarnings("unchecked")
             IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> provider = (IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>) el
                     .createExecutableExtension("querySpecificationProvider");
@@ -113,9 +114,12 @@ public final class QuerySpecificationRegistry {
                         + el.getDeclaringExtension().getUniqueIdentifier());
             }
         } catch (Exception e) {
-        	IncQueryLoggingUtil.getDefaultLogger().error(
-                    "[QuerySpecificationRegistry] Exception during query specification registry initialization "
-                            + e.getMessage(), e);
+            if(id == null) {
+                id = "undefined in plugin.xml";
+            }
+            IncQueryLoggingUtil.getDefaultLogger().error(
+                    "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing ID: "
+                            + id + "! " + e.getMessage(), e);
         }
     }
 
