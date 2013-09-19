@@ -38,7 +38,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 
 	 */
-	static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
+	public static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
 		val cycle= ActivationLifeCycle.create(IncQueryActivationStateEnum::INACTIVE)
 		
 		cycle.addStateTransition(IncQueryActivationStateEnum::INACTIVE, IncQueryEventTypeEnum::MATCH_APPEARS, IncQueryActivationStateEnum::APPEARED)
@@ -50,7 +50,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same activation.
 	 */
-	static val STATEFUL_RULE_LIFECYCLE = DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
+	public static val STATEFUL_RULE_LIFECYCLE = DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
 
 	protected String ruleName
 	private val ActivationLifeCycle lifecycle
@@ -58,32 +58,12 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	private val IQuerySpecification<Matcher> precondition
 	private val IMatchProcessor<Match> action
 
-	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createRule(
-		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
-		createRule("", precondition, action)
-	}
-
-	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createRule(String name,
-		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
-		new BatchTransformationRule(name, precondition, STATELESS_RULE_LIFECYCLE, action)
-	}
-	
-	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createStatefulRule(
-		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
-		createStatefulRule("", precondition, action)
-	}
-
-	def static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> createStatefulRule(String name,
-		IQuerySpecification<Matcher> precondition, IMatchProcessor<Match> action) {
-		new BatchTransformationRule(name, precondition, STATEFUL_RULE_LIFECYCLE, action)
-	}
-
 	protected new() {
 		this("", null, STATELESS_RULE_LIFECYCLE, null)
 		
 	}
 	
-	protected new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
+	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
 		this.precondition = matcher
 		this.action = action
 		this.lifecycle = lifecycle
