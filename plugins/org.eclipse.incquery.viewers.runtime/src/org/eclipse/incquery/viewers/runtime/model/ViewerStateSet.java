@@ -349,7 +349,7 @@ public final class ViewerStateSet extends ViewerState {
 	
 	private void checkDanglingEdge(Edge e) {
 	    //this.item
-	    // TODO
+	    // TODO runtime checking - depends on set-based implementation
 	}
 	
 	
