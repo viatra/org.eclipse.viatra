@@ -68,7 +68,6 @@
 		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
-		<module>../../releng/org.eclipse.incquery.licence.feature</module>
 		<module>../../releng/org.eclipse.incquery.update</module>
 		<module>../../releng/org.eclipse.incquery.update.extras</module>
 	</modules>
@@ -109,8 +108,7 @@
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
 							<artifactId>org.eclipse.incquery.update</artifactId>
-							<!-- <version>${project.version}</version> Does not work because of the licence-->
-							<version>0.7.1-SNAPSHOT</version>
+							<version>${project.version}</version>
 							<classifier>emfpattern</classifier>
 						</artifact>
 					</target>
