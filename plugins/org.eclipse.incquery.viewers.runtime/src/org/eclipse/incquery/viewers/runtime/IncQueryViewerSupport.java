@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime;
 
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
-import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.incquery.viewers.runtime.sources.TreeContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Zoltan Ujhelyi
@@ -34,9 +29,9 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-	}
+//	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
+//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+//	}
 
 	/**
 	 * 
@@ -44,12 +39,17 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
-			ViewerDataFilter filter) {
-		bind(viewer, ViewerState.newInstance(model, filter, ImmutableSet
-						.of(ViewerStateFeature.CONTAINMENT)));
-	}
+//	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
+//			ViewerDataFilter filter) {
+//		bind(viewer, ViewerState.newInstance(model, filter, ImmutableSet
+//						.of(ViewerStateFeature.CONTAINMENT)));
+//	}
 
+	/**
+	 * Bind the viewerstate to the list viewer.
+	 * @param viewer
+	 * @param state
+	 */
 	public static void bind(AbstractListViewer viewer, ViewerState state) {
 		if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
 			viewer.setContentProvider(new ListContentProvider());
@@ -67,9 +67,9 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
-		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-	}
+//	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
+//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+//	}
 
 	/**
 	 * 
@@ -77,13 +77,18 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerState} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
-			ViewerDataFilter filter) {
-		ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet
-				.of(ViewerStateFeature.CONTAINMENT));
-		bind(viewer, state);
-	}
+//	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
+//			ViewerDataFilter filter) {
+//		ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet
+//				.of(ViewerStateFeature.CONTAINMENT));
+//		bind(viewer, state);
+//	}
 
+	/**
+	 * Bind the viewerstate to the tree viewer.
+	 * @param viewer
+	 * @param state
+	 */
 	public static void bind(AbstractTreeViewer viewer, ViewerState state) {
 		if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
 			viewer.setContentProvider(new TreeContentProvider());

@@ -42,7 +42,7 @@ public class ZestContentProvider extends AbstractZestContentProvider implements 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
-        if (state!=null) {
+        if (state!=null && !state.isDisposed()) {
         	Iterable<Edge> it = (displayContainment) 
         			? Iterables.concat(state.getEdges(), state.getContainments())
         			: state.getEdges();        		

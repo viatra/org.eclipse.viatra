@@ -83,9 +83,9 @@ public class ViewerDataModel {
      * @param group
      * @param engine
      */
-    public ViewerDataModel(ResourceSet model, IPatternGroup group, IncQueryEngine engine) {
-        this(model, group.getPatterns(), engine);
-    }
+//    public ViewerDataModel(ResourceSet model, IPatternGroup group, IncQueryEngine engine) {
+//        this(model, group.getPatterns(), engine);
+//    }
 
     /**
      * Initializes a Viewer Data model using a set of patterns and a selected engine.
@@ -423,6 +423,16 @@ public class ViewerDataModel {
         }
         MultiList list = new MultiList(containmentListsObservable.toArray(new IObservableList[containmentListsObservable.size()]));
         return list;
+    }
+    
+    /**
+     * Dispose of this {@link ViewerDataModel} instance.
+     * Releases the underlying {@link RuleEngine}.
+     */
+    public void dispose(){
+    	if (this.ruleEngine!=null) {
+    		this.ruleEngine.dispose();
+    	}
     }
     
 }

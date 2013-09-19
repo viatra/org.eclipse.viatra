@@ -24,6 +24,8 @@ import com.google.common.collect.Sets;
  * For now, this is an inefficient implementation, as on every compute, it iterates through all of the 
  * sources and completely recomputes the result.
  * 
+ * TODO improve performance by incremental update handling
+ * 
  * @author Istvan Rath
  *
  */

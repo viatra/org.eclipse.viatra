@@ -42,6 +42,7 @@ import com.google.common.collect.Multimaps;
  */
 public final class ViewerStateList extends ViewerState {
 
+	
 	ViewerStateList(ResourceSet set, IncQueryEngine engine,
 			Collection<Pattern> patterns, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {

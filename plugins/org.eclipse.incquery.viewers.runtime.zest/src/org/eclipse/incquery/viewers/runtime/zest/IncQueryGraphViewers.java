@@ -11,15 +11,10 @@
 package org.eclipse.incquery.viewers.runtime.zest;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
-import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * API to bind the result of model queries to Zest {@link GraphViewer} widgets.
@@ -38,9 +33,9 @@ public class IncQueryGraphViewers {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(GraphViewer viewer, ViewerDataModel model) {
-		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-	}
+//	public static void bind(GraphViewer viewer, ViewerDataModel model) {
+//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
+//	}
 
 	/**
 	 * 
@@ -48,12 +43,12 @@ public class IncQueryGraphViewers {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-	public static void bind(GraphViewer viewer, ViewerDataModel model,
-			ViewerDataFilter filter) {
-		ViewerState state = ViewerState.newInstance(model, filter,
-				ImmutableSet.of(ViewerStateFeature.EDGE));
-		bind(viewer, state);
-	}
+//	public static void bind(GraphViewer viewer, ViewerDataModel model,
+//			ViewerDataFilter filter) {
+//		ViewerState state = ViewerState.newInstance(model, filter,
+//				ImmutableSet.of(ViewerStateFeature.EDGE));
+//		bind(viewer, state);
+//	}
 
 	/**
 	 * The basic bindings does not support isolated nodes but is more

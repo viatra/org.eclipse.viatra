@@ -64,13 +64,22 @@ public abstract class ViewerState {
 			return new ViewerStateList(set, engine, patterns, filter, features);		
 	}
 	
+	/**
+	 * If true, then the viewerstate has an "external" model that should not be disposed internally.
+	 */
+	protected boolean hasExternalViewerDataModel = false;
+	
 	public static ViewerState newInstance(ViewerDataModel model, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features)
 	{
+		ViewerState s = null;
 		if (setMode)
-			return new ViewerStateSet(model, filter, features);
+			s = new ViewerStateSet(model, filter, features);
 		else
-			return new ViewerStateList(model, filter, features);
+			s=  new ViewerStateList(model, filter, features);
+		
+		s.hasExternalViewerDataModel=true;
+		return s;
 	}
 	
 	
@@ -100,9 +109,9 @@ public abstract class ViewerState {
 	
 	protected ViewerDataModel model;
 
-	public ViewerDataModel getModel() {
-		return model;
-	}
+//	public ViewerDataModel getModel() {
+//		return model;
+//	}
 
 	public enum ViewerStateFeature {
 		EDGE, CONTAINMENT
@@ -177,21 +186,40 @@ public abstract class ViewerState {
 	 * Removes all listeners and disposes all observable collections managed by the class.
 	 */
 	public void dispose() {
-		for (Object _item : getItems()) {
-			Item item = (Item) _item;
-			item.getLabel().removeChangeListener(labelChangeListener);
-			item.dispose();
+		if (!getItems().isDisposed()) {
+			for (Object _item : getItems()) {
+				Item item = (Item) _item;
+				item.getLabel().removeChangeListener(labelChangeListener);
+				item.dispose();
+			}
+			getItems().dispose();
+			
 		}
-		getItems().dispose();
-		for (Object _edge : getEdges()) {
-			Edge edge = (Edge) _edge;
-			edge.getLabel().removeChangeListener(labelChangeListener);
-			edge.dispose();
+		if (!getEdges().isDisposed()) {
+			for (Object _edge : getEdges()) {
+				Edge edge = (Edge) _edge;
+				edge.getLabel().removeChangeListener(labelChangeListener);
+				edge.dispose();
+			}
+			getEdges().dispose();
 		}
-		getEdges().dispose();
-		getContainments().dispose();
+		if (!getContainments().isDisposed()) {
+			getContainments().dispose();
+		}
+		
 		stateListeners.clear();
 		labelListeners.clear();
+		
+		if (!hasExternalViewerDataModel) {
+			// we have an "internal" data model -> dispose it too
+			this.model.dispose();
+		}
+		
 	}
+	
+	public boolean isDisposed(){
+		return this.getItems().isDisposed() || this.getEdges().isDisposed() || this.getContainments().isDisposed();
+	}
+	
 	
 }

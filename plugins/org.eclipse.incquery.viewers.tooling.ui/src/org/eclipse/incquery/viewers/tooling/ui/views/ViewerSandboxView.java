@@ -69,6 +69,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     private List<IViewerSandboxTab> tabList;
     private CTabFolder folder;
     private AdvancedIncQueryEngine engine;
+	private ViewerState state;
 
     public static ViewerSandboxView getInstance() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -222,8 +223,11 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (resourceSet != null) {
-            //ViewerDataModel viewmodel = new ViewerDataModel(resourceSet, getPatternsWithProperAnnotations(patterns), getEngine(resourceSet));
-            ViewerState state = ViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        	if (state!=null) {
+        		// dispose any previous viewerstate
+        		state.dispose();
+        	}
+            state = ViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindState(state);
             }
@@ -250,6 +254,9 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     @Override
     public void dispose() {
+    	if (state !=null) {
+    		state.dispose();
+    	}
         if (engine != null) {
             engine.dispose();
         }
