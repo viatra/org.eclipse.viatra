@@ -65,4 +65,12 @@ public class ExecutionSchema extends RuleEngine {
         return scheduler.getExecutor().getContext();
     }
 
+    /**
+     * Starts the executor without waiting for a scheduling event.
+     * Can be used for executing enabled activations of added rules
+     *  without waiting for or otherwise forcing a scheduling event.
+     */
+    public void startUnscheduledExecution() {
+        scheduler.getExecutor().schedule();
+    }
 }

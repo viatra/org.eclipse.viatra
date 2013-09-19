@@ -10,29 +10,22 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
-import org.eclipse.incquery.viewers.runtime.model.Item;
-import org.eclipse.incquery.viewers.runtime.model.ViewerState;
-import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerStateListener;
 import org.eclipse.jface.viewers.Viewer;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 
 /**
- * Content provider for Zest graphs.
+ * Content provider for Zest graphs. The implementation is more performant than
+ * {@link ZestContentWithIsolatedNodesProvider}, but does not support displaying
+ * isolated nodes.
  * 
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestContentProvider extends AbstractViewerStateListener implements IGraphContentProvider {
+public class ZestContentProvider extends AbstractZestContentProvider implements IGraphContentProvider {
 
-    GraphViewer viewer;
-    ViewerState state;
-    boolean displayContainment;
-    
     public ZestContentProvider() {
     	this(false);
     }
@@ -43,27 +36,13 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        Preconditions.checkArgument(viewer instanceof GraphViewer);
-        this.viewer = (GraphViewer) viewer;
-        if (oldInput instanceof ViewerState) {
-            ((ViewerState) oldInput).removeStateListener(this);
-        }
-        if (newInput == null) {
-            this.state = null;
-        }
-        if (newInput instanceof ViewerState) {
-            this.state = (ViewerState) newInput;
-            state.addStateListener(this);
-        } else if (newInput != null) {
-            throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
-                    .getClass().getName()));
-        }
+        super.inputChanged(viewer, oldInput, newInput);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
-        if (state!=null) {
+        if (state!=null && !state.isDisposed()) {
         	Iterable<Edge> it = (displayContainment) 
         			? Iterables.concat(state.getEdges(), state.getContainments())
         			: state.getEdges();        		
@@ -71,17 +50,17 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
         }
         else return new Object[]{};
     }
-
+    
     @Override
-    public void itemAppeared(Item item) {
-        viewer.addNode(item);
+    public Object getSource(Object rel) {
+    	return ((Edge)rel).getSource();
     }
-
+    
     @Override
-    public void itemDisappeared(Item item) {
-        viewer.removeNode(item);
+    public Object getDestination(Object rel) {
+    	return ((Edge)rel).getTarget();
     }
-
+    
     @Override
     public void edgeAppeared(Edge edge) {
         viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
@@ -91,23 +70,5 @@ public class ZestContentProvider extends AbstractViewerStateListener implements 
     public void edgeDisappeared(Edge edge) {
         viewer.removeRelationship(edge);
     }
-
-    @Override
-    public void dispose() {
-        if (state != null) {
-            state.removeStateListener(this);
-        }
-
-    }
-
-	@Override
-	public Object getSource(Object rel) {
-		return ((Edge)rel).getSource();
-	}
-
-	@Override
-	public Object getDestination(Object rel) {
-		return ((Edge)rel).getTarget();
-	}
 
 }
