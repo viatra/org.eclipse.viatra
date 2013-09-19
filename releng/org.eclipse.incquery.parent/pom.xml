@@ -237,6 +237,11 @@
 			<name>Fornax Plugin Repository</name>
 			<url>http://www.fornax-platform.org/m2/repository</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>eclipse.plugin.repository</id>
+			<name>repo.eclipse.org Plug-in repository</name>
+			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
