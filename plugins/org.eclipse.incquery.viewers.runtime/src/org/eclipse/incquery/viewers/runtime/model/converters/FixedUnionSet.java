@@ -24,7 +24,8 @@ import com.google.common.collect.Sets;
  * For now, this is an inefficient implementation, as on every compute, it iterates through all of the 
  * sources and completely recomputes the result.
  * 
- * TODO improve performance by incremental update handling
+ * Also, it is buggy. Does not work for some unknown reason.
+ * 
  * 
  * @author Istvan Rath
  *
@@ -37,6 +38,7 @@ public class FixedUnionSet extends ComputedSet {
 	 * 
 	 */
 	public FixedUnionSet(IObservableSet[] sets) {
+	    super();
 		this.sets = sets;
 	}
 	

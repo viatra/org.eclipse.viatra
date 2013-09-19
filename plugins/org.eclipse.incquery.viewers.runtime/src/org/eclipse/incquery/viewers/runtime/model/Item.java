@@ -148,9 +148,6 @@ public class Item extends FormattableElement {
         return true;
     }
 
-    /**
-     * TODO this method needs to be invoked from ViewerState
-     */
     public void dispose() {
     	label.dispose();
     }
