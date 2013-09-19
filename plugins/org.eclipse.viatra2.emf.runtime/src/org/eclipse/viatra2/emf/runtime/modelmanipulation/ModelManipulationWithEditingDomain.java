@@ -13,7 +13,7 @@ package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -25,15 +25,40 @@ import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
 
 	EditingDomain domain;
 
+	private class MoveEObjectCommand extends AddCommand {
 
-	public ModelManipulationWithEditingDomain(EditingDomain domain) {
-		super();
+		public MoveEObjectCommand(EditingDomain domain, EObject owner,
+				EStructuralFeature feature, Object value) {
+			super(domain, owner, feature, value);
+		}
+
+		@Override
+		public void doExecute() {
+			try {
+				for (Object obj : collection) {
+					engine.getBaseIndex().cheapMoveTo((EObject)obj, owner, (EReference)feature);
+				}
+			} catch (IncQueryException e) {
+				throw new WrappedException(new ModelManipulationException(e));
+			}
+		}
+
+		@Override
+		public void doUndo() {
+			throw new UnsupportedOperationException("Undoing IncQuery move is not supported.");
+		}
+		
+	}
+	
+	public ModelManipulationWithEditingDomain(IncQueryEngine engine, EditingDomain domain) {
+		super(engine);
 		this.domain = domain;
 	}
 
@@ -95,14 +120,8 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 	}
 
 	@Override
-	protected <Type extends EObject> void doMoveTo(Type what, EList<Type> where)
-			throws ModelManipulationException {
-		try {
-			//TODO command!
-			engine.getBaseIndex().cheapMoveTo(what, where);
-		} catch (IncQueryException e) {
-			throw new ModelManipulationException(e);
-		}
+	protected void doMoveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException {
+		new MoveEObjectCommand(domain, newContainer, reference, what);
 	}
 
 	protected void executeCommand(Command command)

@@ -12,13 +12,11 @@ package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 public interface IModelManipulations {
 
@@ -69,11 +67,9 @@ public interface IModelManipulations {
 	void remove(EObject container, EStructuralFeature reference)
 			throws ModelManipulationException;
 
-	<Type extends EObject> void moveTo(Type what, EList<Type> where)
+	void moveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException;
 
-	<Type extends EObject> void moveTo(Collection<Type> what, EList<Type> where)
-			throws ModelManipulationException;
-	
-	void setEngine(IncQueryEngine engine);
+	void moveTo(Collection<EObject> what, EObject newContainer, EReference reference)
+			throws ModelManipulationException;	
 }

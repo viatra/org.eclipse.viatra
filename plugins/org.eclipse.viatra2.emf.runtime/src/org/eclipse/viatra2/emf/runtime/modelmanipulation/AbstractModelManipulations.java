@@ -12,8 +12,6 @@ package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -34,26 +32,20 @@ import com.google.common.collect.ImmutableList;
  */
 public abstract class AbstractModelManipulations implements IModelManipulations {
 
-	protected IncQueryEngine engine;
+	protected final IncQueryEngine engine;
 	
-	public AbstractModelManipulations() {
+	public AbstractModelManipulations(IncQueryEngine engine) {
 		super();
-	}
-
-	@Override
-	public void setEngine(IncQueryEngine engine) {
 		this.engine = engine;
 	}
 
-	protected <Type extends EObject> void doMoveTo(Collection<Type> what,
-			EList<Type> where) throws ModelManipulationException {
-		for (Type obj : what) {
-			moveTo(obj, where);
+	protected void doMoveTo(Collection<EObject> what, EObject newContainer, EReference reference) throws ModelManipulationException {
+		for (EObject obj : what) {
+			doMoveTo(obj, newContainer, reference);
 		}
 	}
 
-	protected abstract <Type extends EObject> void doMoveTo(Type what,
-			EList<Type> where) throws ModelManipulationException;
+	protected abstract void doMoveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException;
 
 	/**
 	 * Remove a non-containment reference value
@@ -166,15 +158,14 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 	}
 
 	@Override
-	public <Type extends EObject> void moveTo(Type what, EList<Type> where)
+	public void moveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException {
-		doMoveTo(what, where);
+		doMoveTo(what, newContainer, reference);
 	}
 
 	@Override
-	public <Type extends EObject> void moveTo(Collection<Type> what,
-			EList<Type> where) throws ModelManipulationException {
-		doMoveTo(what, where);
+	public void moveTo(Collection<EObject> what, EObject newContainer, EReference reference) throws ModelManipulationException {
+		doMoveTo(what, newContainer, reference);
 	}
 
 }

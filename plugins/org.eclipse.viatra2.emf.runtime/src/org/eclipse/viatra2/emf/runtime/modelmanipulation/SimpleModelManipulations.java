@@ -20,9 +20,14 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 public class SimpleModelManipulations extends AbstractModelManipulations{
+
+	public SimpleModelManipulations(IncQueryEngine engine) {
+		super(engine);
+	}
 
 	@Override
 	protected EObject doCreate(Resource res, EClass clazz)
@@ -79,10 +84,10 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	}
 
 	@Override
-	protected <Type extends EObject> void doMoveTo(Type what, EList<Type> where)
+	protected void doMoveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException {
 		try {
-			engine.getBaseIndex().cheapMoveTo(what, where);
+			engine.getBaseIndex().cheapMoveTo(what, newContainer, reference);
 		} catch (IncQueryException e) {
 			throw new ModelManipulationException(e);
 		}
