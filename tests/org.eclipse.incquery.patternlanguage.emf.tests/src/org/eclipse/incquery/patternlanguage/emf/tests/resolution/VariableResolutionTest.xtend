@@ -12,7 +12,7 @@
 package org.eclipse.incquery.patternlanguage.emf.tests.resolution
 
 import com.google.inject.Inject
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue

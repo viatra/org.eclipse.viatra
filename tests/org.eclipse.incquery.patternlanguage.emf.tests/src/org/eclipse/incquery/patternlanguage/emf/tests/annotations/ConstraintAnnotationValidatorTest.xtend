@@ -13,7 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.tests.annotations
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator

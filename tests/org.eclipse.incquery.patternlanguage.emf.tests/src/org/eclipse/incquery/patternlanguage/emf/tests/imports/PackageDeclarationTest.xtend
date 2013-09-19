@@ -12,7 +12,7 @@
 package org.eclipse.incquery.patternlanguage.emf.tests.imports
 
 import com.google.inject.Inject
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage$Literals
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
