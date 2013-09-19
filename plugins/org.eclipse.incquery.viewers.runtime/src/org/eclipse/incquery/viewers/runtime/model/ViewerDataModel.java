@@ -31,7 +31,6 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
@@ -51,6 +50,7 @@ import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeSet;
+import org.eclipse.incquery.viewers.runtime.model.converters.FixedUnionSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
@@ -172,7 +172,7 @@ public class ViewerDataModel {
                         new UpdateSetStrategy().setConverter(new ItemConverter(annotation, formatAnnotation)));
             }
         }
-        UnionSet Set = new UnionSet(nodeSetsObservable.toArray(new IObservableSet[]{}));
+        FixedUnionSet Set = new FixedUnionSet(nodeSetsObservable.toArray(new IObservableSet[]{}));
         for (Object _item : Set) {
             Item item = (Item) _item;
             itemMap.put(item.getParamObject(), item);
@@ -269,7 +269,7 @@ public class ViewerDataModel {
      * 
      * @return an observable Set of {@link Edge} elements representing the match results in the model.
      */
-    public ObservableSet initializeObservableEdgeSet(final Multimap<Object, Item> itemMap) {
+    public IObservableSet initializeObservableEdgeSet(final Multimap<Object, Item> itemMap) {
         return initializeObservableEdgeSet(ViewerDataFilter.UNFILTERED, itemMap);
     }
 
@@ -297,7 +297,7 @@ public class ViewerDataModel {
      * 
      * @return an observable Set of {@link Edge} elements representing the match results in the model.
      */
-    public ObservableSet initializeObservableEdgeSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
+    public IObservableSet initializeObservableEdgeSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
         final String annotationName = Edge.ANNOTATION_ID;
         Set<IObservableSet> edgeSetsObservable = new HashSet<IObservableSet>();
         for (final Pattern edgePattern : getPatterns(annotationName)) {
@@ -311,7 +311,7 @@ public class ViewerDataModel {
                 edgeSetsObservable.add(resultSet);
             }
         }
-        UnionSet Set = new UnionSet(edgeSetsObservable.toArray(new IObservableSet[]{}));
+        FixedUnionSet Set = new FixedUnionSet(edgeSetsObservable.toArray(new IObservableSet[]{}));
         return Set;
     }
 
@@ -353,7 +353,7 @@ public class ViewerDataModel {
      * 
      * @return an observable Set of {@link Edge} elements representing the match results in the model.
      */
-    public ObservableSet initializeObservableContainmentSet(final Multimap<Object, Item> itemMap) {
+    public IObservableSet initializeObservableContainmentSet(final Multimap<Object, Item> itemMap) {
         return initializeObservableContainmentSet(ViewerDataFilter.UNFILTERED, itemMap);
     }
 
@@ -382,7 +382,7 @@ public class ViewerDataModel {
      * 
      * @return an observable Set of {@link Edge} elements representing the match results in the model.
      */
-    public ObservableSet initializeObservableContainmentSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
+    public IObservableSet initializeObservableContainmentSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
         final String annotationName = Containment.ANNOTATION_ID;
         Set<IObservableSet> containmentSetsObservable = new HashSet<IObservableSet>();
         for (final Pattern containmentPattern : getPatterns(annotationName)) {
@@ -394,7 +394,7 @@ public class ViewerDataModel {
                 containmentSetsObservable.add(resultSet);
             }
         }
-        UnionSet Set = new UnionSet(containmentSetsObservable.toArray(new IObservableSet[]{}));
+        FixedUnionSet Set = new FixedUnionSet(containmentSetsObservable.toArray(new IObservableSet[]{}));
         return Set;
     }
 

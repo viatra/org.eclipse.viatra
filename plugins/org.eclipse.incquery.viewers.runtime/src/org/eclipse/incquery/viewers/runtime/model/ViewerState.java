@@ -52,7 +52,7 @@ public abstract class ViewerState {
 	/* factory method */
 	
 	// here you can easily switch between list and set-based implementations
-	private static boolean setMode = false;
+	private static boolean setMode = true;
 	// at the moment, the set-based one is very buggy
 	
 	public static ViewerState newInstance(ResourceSet set, IncQueryEngine engine,
