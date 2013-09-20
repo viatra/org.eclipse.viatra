@@ -11,14 +11,21 @@
 package org.eclipse.incquery.viewers.runtime.model;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.MultiList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 
 import com.google.common.collect.Multimap;
 
 /**
- * @author istvanrath
- *
+ * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
+ * 
+ * Caution: set-based helper methods are not tested thoroughly yet!
+ * 
+ * 
+ * If you instantiate this class yourself, then be sure to dispose() of it once it is not needed anymore.
+ * 
+ * @author Zoltan Ujhelyi
+ * @author Istvan Rath
+ * 
  */
 public abstract class ViewerDataModel {
 
@@ -92,7 +99,7 @@ public abstract class ViewerDataModel {
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
-	public MultiList initializeObservableEdgeList(final Multimap<Object, Item> itemMap) {
+	public IObservableList initializeObservableEdgeList(final Multimap<Object, Item> itemMap) {
 	    return initializeObservableEdgeList(ViewerDataFilter.UNFILTERED, itemMap);
 	}
 
@@ -120,7 +127,7 @@ public abstract class ViewerDataModel {
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
-	public abstract MultiList initializeObservableEdgeList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
+	public abstract IObservableList initializeObservableEdgeList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
 
 	/**
 	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
@@ -144,7 +151,7 @@ public abstract class ViewerDataModel {
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
-	public MultiList initializeObservableContainmentList(final Multimap<Object, Item> itemMap) {
+	public IObservableList initializeObservableContainmentList(final Multimap<Object, Item> itemMap) {
 	    return initializeObservableContainmentList(ViewerDataFilter.UNFILTERED, itemMap);
 	}
 
@@ -171,7 +178,7 @@ public abstract class ViewerDataModel {
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
-	public abstract MultiList initializeObservableContainmentList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
+	public abstract IObservableList initializeObservableContainmentList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
 	
 	/**
 	 * Dispose of the data model once it's not needed anymore.

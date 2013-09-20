@@ -40,7 +40,7 @@ import com.google.common.collect.Multimaps;
 public class ViewerStateSet extends ViewerState {
 
 	
-	ViewerStateSet(ViewerDataModel model, ViewerDataFilter filter,
+	public ViewerStateSet(ViewerDataModel model, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
 		this.model = model;
 		initializeViewerState(model, filter, features);

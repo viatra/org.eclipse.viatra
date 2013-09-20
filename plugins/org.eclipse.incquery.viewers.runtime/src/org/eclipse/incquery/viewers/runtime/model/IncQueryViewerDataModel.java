@@ -54,14 +54,13 @@ import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
-//import org.eclipse.incquery.viewers.runtime.model.converters.FixedUnionSet;
 import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
- * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
+ * A {@link ViewerDataModel} implementation for IncQuery/EVM model sources.
  * 
  * Caution: set-based helper methods are not tested thoroughly yet!
  * 
@@ -80,17 +79,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     
     RuleEngine ruleEngine;
     FixedPriorityConflictResolver resolver;
-
-    /**
-     * Initializes a viewer model from a group of patterns over a
-     * 
-     * @param model
-     * @param group
-     * @param engine
-     */
-//    public ViewerDataModel(ResourceSet model, IPatternGroup group, IncQueryEngine engine) {
-//        this(model, group.getPatterns(), engine);
-//    }
 
     /**
      * Initializes a Viewer Data model using a set of patterns and a selected engine.
@@ -176,7 +164,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
             }
         }
 	    
-	    // XXX Abel look here
         //UnionSet Set = new UnionSet(nodeSetsObservable.toArray(new IObservableSet[]{}));
 	    
 	    UnionSet Set = new UnionSet(nodeSetsObservable.keySet().toArray(new IObservableSet[]{}));
@@ -274,7 +261,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	            edgeSetsObservable.add(resultSet);
 	        }
 	    }
-	    // XXX Abel look here
 	    UnionSet Set = new UnionSet(edgeSetsObservable.toArray(new IObservableSet[]{}));
 	    return Set;
 	}
@@ -311,7 +297,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	            containmentSetsObservable.add(resultSet);
 	        }
 	    }
-	    // XXX Abel look here
 	    UnionSet Set = new UnionSet(containmentSetsObservable.toArray(new IObservableSet[]{}));
 	    return Set;
 	}
@@ -333,7 +318,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	    return list;
 	}
     
- // XXX Abel switch between set-list here
+    // XXX switch between set-list here
  	protected static boolean setMode = true;
  	
  	/* factory method */
