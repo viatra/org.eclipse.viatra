@@ -26,8 +26,8 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
  */
 public abstract class IncQueryViewerState extends ViewerState {
 
-
-	protected static boolean setMode = true;
+    // XXX Abel switch between set-list here
+	protected static boolean setMode = false;
 	
 	/* factory method */
 	
