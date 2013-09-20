@@ -34,7 +34,7 @@ import com.google.common.collect.Multimap;
  * @author Istvan Rath
  * 
  */
-public class EdgeSet extends ComputedSet {
+public class EdgeSet extends FixedComputedSet {
     private String labelParameterName;
     private String sourceParameterName;
     private String destParameterName;

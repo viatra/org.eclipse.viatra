@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.tests.values
 
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.XtextRunner
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.InjectWith

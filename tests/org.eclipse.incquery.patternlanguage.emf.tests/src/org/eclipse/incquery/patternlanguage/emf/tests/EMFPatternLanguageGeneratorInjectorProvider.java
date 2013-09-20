@@ -1,6 +1,5 @@
 package org.eclipse.incquery.patternlanguage.emf.tests;
 
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
 

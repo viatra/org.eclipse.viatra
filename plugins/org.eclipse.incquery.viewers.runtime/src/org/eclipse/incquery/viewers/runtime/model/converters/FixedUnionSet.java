@@ -12,7 +12,6 @@ package org.eclipse.incquery.viewers.runtime.model.converters;
 
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 
@@ -30,7 +29,7 @@ import com.google.common.collect.Sets;
  * @author Istvan Rath
  *
  */
-public class FixedUnionSet extends ComputedSet {
+public class FixedUnionSet extends FixedComputedSet {
 
 	IObservableSet[] sets;
 	

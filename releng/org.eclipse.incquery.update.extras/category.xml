@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.sdk.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.sdk.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.tooling.ui.visualization.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.tooling.ui.visualization.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.tooling.ui.visualization.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.tooling.ui.visualization.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.source" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.patternregistry.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.patternregistry.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.patternregistry.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.patternregistry.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.tooling.ui.patternregistry.feature_0.7.1.qualifier.jar" id="org.eclipse.incquery.tooling.ui.patternregistry.feature" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.tooling.ui.patternregistry.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.tooling.ui.patternregistry.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.localsearch.feature.source_0.7.1.qualifier.jar" id="org.eclipse.incquery.runtime.localsearch.feature.source" version="0.7.1.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.localsearch.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.localsearch.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>

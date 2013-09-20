@@ -31,6 +31,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
@@ -38,7 +39,6 @@ import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatc
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IPatternGroup;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -50,7 +50,7 @@ import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeList;
 import org.eclipse.incquery.viewers.runtime.model.converters.EdgeSet;
-import org.eclipse.incquery.viewers.runtime.model.converters.FixedUnionSet;
+//import org.eclipse.incquery.viewers.runtime.model.converters.FixedUnionSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
@@ -59,6 +59,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
+ * 
+ * Caution: set-based helper methods are seriously buggy!
+ * 
+ * 
+ * If you instantiate this class yourself, then be sure to dispose() of it once it is not needed anymore.
  * 
  * @author Zoltan Ujhelyi
  * @author Istvan Rath
@@ -172,7 +177,8 @@ public class ViewerDataModel {
                         new UpdateSetStrategy().setConverter(new ItemConverter(annotation, formatAnnotation)));
             }
         }
-        FixedUnionSet Set = new FixedUnionSet(nodeSetsObservable.toArray(new IObservableSet[]{}));
+        // XXX Abel look here
+        UnionSet Set = new UnionSet(nodeSetsObservable.toArray(new IObservableSet[]{}));
         for (Object _item : Set) {
             Item item = (Item) _item;
             itemMap.put(item.getParamObject(), item);
@@ -311,7 +317,8 @@ public class ViewerDataModel {
                 edgeSetsObservable.add(resultSet);
             }
         }
-        FixedUnionSet Set = new FixedUnionSet(edgeSetsObservable.toArray(new IObservableSet[]{}));
+        // XXX Abel look here
+        UnionSet Set = new UnionSet(edgeSetsObservable.toArray(new IObservableSet[]{}));
         return Set;
     }
 
@@ -394,7 +401,8 @@ public class ViewerDataModel {
                 containmentSetsObservable.add(resultSet);
             }
         }
-        FixedUnionSet Set = new FixedUnionSet(containmentSetsObservable.toArray(new IObservableSet[]{}));
+        // XXX Abel look here
+        UnionSet Set = new UnionSet(containmentSetsObservable.toArray(new IObservableSet[]{}));
         return Set;
     }
 

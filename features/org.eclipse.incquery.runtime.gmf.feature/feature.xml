@@ -2,10 +2,10 @@
 <feature
       id="org.eclipse.incquery.runtime.gmf.feature"
       label="GMF Support for EMF-IncQuery (Incubation)"
-      version="0.7.1.qualifier"
+      version="0.8.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
-      license-feature="org.eclipse.incquery.licence.feature"
-      license-feature-version="1.0.0.qualifier">
+      license-feature="org.eclipse.incquery.runtime.feature"
+      license-feature-version="0.8.0.qualifier">
 
    <description>
       EMF-IncQuery GMF extensions. Validator and query browser support for various GMF editors.

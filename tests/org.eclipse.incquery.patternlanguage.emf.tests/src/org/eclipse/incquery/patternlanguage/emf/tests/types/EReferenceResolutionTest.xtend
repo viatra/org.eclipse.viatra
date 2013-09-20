@@ -13,7 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.tests.types
 
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.XtextRunner
 import com.google.inject.Inject
 import org.eclipse.xtext.junit4.util.ParseHelper

@@ -12,7 +12,7 @@
 package org.eclipse.incquery.patternlanguage.emf.tests.types
 
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.xtext.junit4.InjectWith
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.XtextRunner
