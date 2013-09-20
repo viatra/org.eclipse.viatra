@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, Abel Hegedus, Istvan Rath and Daniel Varro
+ * Copyright (c) 2008, 2009 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   abelhegedus - initial API and implementation
+ *     Matthew Hall - initial API and implementation (bug 237703)
+ *     Matthew Hall - bug 274081
+ *     Abel Hegedus - bug 414297
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
@@ -26,8 +28,53 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
+ * A lazily calculated set that automatically computes and registers listeners
+ * on its dependencies as long as all of its dependencies are
+ * {@link IObservable} objects. Any change to one of the observable dependencies
+ * causes the set to be recomputed.
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
+ * <p>
+ * Example: compute the set of all primes greater than 1 and less than the value
+ * of an {@link IObservableValue} &lt; {@link Integer} &gt;.
+ * </p>
+ * 
+ * <pre>
+ * final IObservableValue max = WritableValue.withValueType(Integer.TYPE);
+ * max.setValue(new Integer(0));
+ * IObservableSet primes = new ComputedSet() {
+ *  protected Set calculate() {
+ *      int maxVal = ((Integer) max.getValue()).intValue();
+ * 
+ *      Set result = new HashSet();
+ *      outer: for (int i = 2; i &lt; maxVal; i++) {
+ *          for (Iterator it = result.iterator(); it.hasNext();) {
+ *              Integer knownPrime = (Integer) it.next();
+ *              if (i % knownPrime.intValue() == 0)
+ *                  continue outer;
+ *          }
+ *          result.add(new Integer(i));
+ *      }
+ *      return result;
+ *  }
+ * };
+ * 
+ * System.out.println(primes); // =&gt; &quot;[]&quot;
+ * 
+ * max.setValue(new Integer(20));
+ * System.out.println(primes); // =&gt; &quot;[2, 3, 5, 7, 11, 13, 17, 19]&quot;
+ * </pre>
+ * 
+ * @since 1.2
+ * 
+ * 
+ * 
  * This code is a verbatim copy of {@link ComputedSet}, 
  * with the patch from https://bugs.eclipse.org/bugs/show_bug.cgi?id=414297
  * @author abelhegedus

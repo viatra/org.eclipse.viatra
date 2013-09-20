@@ -21,9 +21,6 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
 import com.google.common.base.Supplier;
@@ -36,21 +33,13 @@ import com.google.common.collect.Multimaps;
 /**
  * An {@link IObservableSet}-based implementation of {@link ViewerState}.
  * 
- * Caution: this implementation is buggy!
  * 
  * @author Istvan Rath
  * 
  */
-public final class ViewerStateSet extends IncQueryViewerState {
+public class ViewerStateSet extends ViewerState {
 
 	
-	ViewerStateSet(ResourceSet set, IncQueryEngine engine,
-			Collection<Pattern> patterns, ViewerDataFilter filter,
-			Collection<ViewerStateFeature> features) {
-		this.model = new ViewerDataModel(set, patterns, engine);
-		initializeViewerState(model, filter, features);
-	}
-
 	ViewerStateSet(ViewerDataModel model, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
 		this.model = model;

@@ -34,7 +34,7 @@ import com.google.common.collect.Multimap;
  * 
  * <p>
  * A Viewer can be initialized directly with a set of patterns and model, or a
- * {@link ViewerDataModel} can be used to prepare and share such data between
+ * {@link IncQueryViewerDataModel} can be used to prepare and share such data between
  * instances.
  * </p>
  * 

@@ -22,9 +22,6 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
 import com.google.common.base.Supplier;
@@ -40,15 +37,8 @@ import com.google.common.collect.Multimaps;
  * @author Zoltan Ujhelyi
  * 
  */
-public final class ViewerStateList extends IncQueryViewerState {
+public class ViewerStateList extends ViewerState {
 
-	
-	ViewerStateList(ResourceSet set, IncQueryEngine engine,
-			Collection<Pattern> patterns, ViewerDataFilter filter,
-			Collection<ViewerStateFeature> features) {
-		this.model = new ViewerDataModel(set, patterns, engine);
-		initializeViewerState(model, filter, features);
-	}
 
 	ViewerStateList(ViewerDataModel model, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
