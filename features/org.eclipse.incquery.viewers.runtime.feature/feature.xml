@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.incquery.viewers.runtime.feature"
       label="EMF-IncQuery Viewers Runtime (Incubation)"
-      version="0.7.1.qualifier"
+      version="0.8.0.qualifier"
       provider-name="Eclipse EMF-IncQuery"
       license-feature="org.eclipse.incquery.runtime.feature"
       license-feature-version="0.7.1.qualifier">

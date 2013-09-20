@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.runtime;singleton:=true
-Bundle-Version: 0.7.1.qualifier
+Bundle-Version: 0.8.0.qualifier
 Bundle-Activator: org.eclipse.incquery.runtime.IncQueryRuntimePlugin
 Require-Bundle: org.eclipse.incquery.runtime.rete;bundle-version="0.7.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.6.0";visibility:=reexport,
