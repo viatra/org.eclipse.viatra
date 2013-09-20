@@ -27,6 +27,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
@@ -227,7 +228,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         		// dispose any previous viewerstate
         		state.dispose();
         	}
-            state = ViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            state = IncQueryViewerState.newInstance(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindState(state);
             }

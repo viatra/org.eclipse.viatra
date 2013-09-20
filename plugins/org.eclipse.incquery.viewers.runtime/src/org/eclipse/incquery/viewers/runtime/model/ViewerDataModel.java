@@ -38,7 +38,6 @@ import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatc
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IPatternGroup;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -59,6 +58,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
+ * 
+ * Caution: set-based helper methods are seriously buggy!
+ * 
+ * 
+ * If you instantiate this class yourself, then be sure to dispose() of it once it is not needed anymore.
  * 
  * @author Zoltan Ujhelyi
  * @author Istvan Rath

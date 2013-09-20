@@ -33,7 +33,7 @@ import com.google.common.collect.Multimap;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ContainmentSet extends ComputedSet {
+public class ContainmentSet extends FixedComputedSet {
     private String containerParameterName;
     private String destParameterName;
     private Multimap<Object, Item> itemMap;

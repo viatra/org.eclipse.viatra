@@ -40,17 +40,17 @@ import com.google.common.collect.Multimaps;
  * @author Zoltan Ujhelyi
  * 
  */
-public final class ViewerStateList extends IncQueryViewerState {
+public final class IncQueryViewerStateList extends IncQueryViewerState {
 
 	
-	ViewerStateList(ResourceSet set, IncQueryEngine engine,
+	IncQueryViewerStateList(ResourceSet set, IncQueryEngine engine,
 			Collection<Pattern> patterns, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
 		this.model = new ViewerDataModel(set, patterns, engine);
 		initializeViewerState(model, filter, features);
 	}
 
-	ViewerStateList(ViewerDataModel model, ViewerDataFilter filter,
+	IncQueryViewerStateList(ViewerDataModel model, ViewerDataFilter filter,
 			Collection<ViewerStateFeature> features) {
 		this.model = model;
 		initializeViewerState(model, filter, features);

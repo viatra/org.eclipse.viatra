@@ -36,10 +36,12 @@ import com.google.common.collect.Multimaps;
 /**
  * An {@link IObservableSet}-based implementation of {@link ViewerState}.
  * 
+ * Caution: this implementation is buggy!
+ * 
  * @author Istvan Rath
  * 
  */
-public final class ViewerStateSet extends ViewerState {
+public final class ViewerStateSet extends IncQueryViewerState {
 
 	
 	ViewerStateSet(ResourceSet set, IncQueryEngine engine,

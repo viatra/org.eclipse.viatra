@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi, Istvan Rath - initial API and implementation
+ *   ujhelyiz - initial API and implementation
+ *   istvanrath - refactoring
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
@@ -17,10 +18,7 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
@@ -48,57 +46,23 @@ import com.google.common.collect.Multimap;
  */
 public abstract class ViewerState {
 
-	
-	/* factory method */
-	
-	// here you can easily switch between list and set-based implementations
-	private static boolean setMode = false;
-	// at the moment, the set-based one is very buggy
-	
-	public static ViewerState newInstance(ResourceSet set, IncQueryEngine engine,
-			Collection<Pattern> patterns, ViewerDataFilter filter,
-			Collection<ViewerStateFeature> features) {
-		if (setMode)
-			return new ViewerStateSet(set, engine, patterns, filter, features);
-		else
-			return new ViewerStateList(set, engine, patterns, filter, features);		
-	}
-	
 	/**
 	 * If true, then the viewerstate has an "external" model that should not be disposed internally.
 	 */
 	protected boolean hasExternalViewerDataModel = false;
-	
-	public static ViewerState newInstance(ViewerDataModel model, ViewerDataFilter filter,
-			Collection<ViewerStateFeature> features)
-	{
-		ViewerState s = null;
-		if (setMode)
-			s = new ViewerStateSet(model, filter, features);
-		else
-			s=  new ViewerStateList(model, filter, features);
-		
-		s.hasExternalViewerDataModel=true;
-		return s;
-	}
-	
-	
-	
 	/**
 	 * Maps low-xlevel model objects to their corresponding items.
 	 */
 	protected Multimap<Object, Item> itemMap;
-	
 	/**
 	 * Maps parent-child relationships in the viewer model.
 	 */
 	protected Multimap<Item, Item> childrenMap;
-	
 	/**
-     * Maps child-parent relationships in the viewer model.
-     */
+	 * Maps child-parent relationships in the viewer model.
+	 */
 	protected Map<Item, Item> parentMap;
-	
+
 	public Collection<Item> getChildren(Item parent) {
 		return childrenMap.get(parent);
 	}
@@ -106,43 +70,32 @@ public abstract class ViewerState {
 	public Item getParent(Item child) {
 		return parentMap.get(child);
 	}
-	
-	protected ViewerDataModel model;
 
-//	public ViewerDataModel getModel() {
-//		return model;
-//	}
+	protected ViewerDataModel model;
 
 	public enum ViewerStateFeature {
 		EDGE, CONTAINMENT
 	}
-	
-	
-	/*
-	 * Listener management
-	 */
-
 
 	protected ListenerList stateListeners = new ListenerList();
-	
 	protected ListenerList labelListeners = new ListenerList();
 	protected IChangeListener labelChangeListener = new IChangeListener() {
-		@Override
-		public void handleChange(ChangeEvent event) {
-            Object element = ((ObservableLabelFeature) event.getSource()).getContainer();
-            for (Object _listener : labelListeners.getListeners()) {
-            	IViewerLabelListener listener = (IViewerLabelListener) _listener;
-            	if (element instanceof Item) {
-            		Item item = (Item) element;
-					listener.labelUpdated(item, ((Item) element).getLabel().getValue().toString());
-            	} else if (element instanceof Edge) {
-					Edge edge = (Edge) element;
-            		listener.labelUpdated(edge, ((Edge) element).getLabel().getValue().toString());
-            	}
-            }
-		}
-	};
-	
+			@Override
+			public void handleChange(ChangeEvent event) {
+	            Object element = ((ObservableLabelFeature) event.getSource()).getContainer();
+	            for (Object _listener : labelListeners.getListeners()) {
+	            	IViewerLabelListener listener = (IViewerLabelListener) _listener;
+	            	if (element instanceof Item) {
+	            		Item item = (Item) element;
+						listener.labelUpdated(item, ((Item) element).getLabel().getValue().toString());
+	            	} else if (element instanceof Edge) {
+						Edge edge = (Edge) element;
+	            		listener.labelUpdated(edge, ((Edge) element).getLabel().getValue().toString());
+	            	}
+	            }
+			}
+		};
+
 	/**
 	 * Adds a new state Listener to the Viewer State
 	 */
@@ -156,15 +109,15 @@ public abstract class ViewerState {
 	public void removeStateListener(IViewerStateListener listener) {
 		stateListeners.remove(listener);
 	}
-	
+
 	public void addLabelListener(IViewerLabelListener listener) {
 		labelListeners.add(listener);
 	}
-	
+
 	public void removeLabelListener(IViewerLabelListener listener) {
 		labelListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Exposes EObject -> Item* traceability information.
 	 * 
@@ -173,15 +126,13 @@ public abstract class ViewerState {
 	public Collection<Item> getItemsFor(Object target) {
 		return itemMap.get(target);
 	}
-	
-	/* Hooks into concrete implementations */
-	
+
 	public abstract IObservableCollection getItems();
-	
+
 	public abstract IObservableCollection getEdges();
-	
+
 	public abstract IObservableCollection getContainments();
-	
+
 	/**
 	 * Removes all listeners and disposes all observable collections managed by the class.
 	 */
@@ -216,10 +167,9 @@ public abstract class ViewerState {
 		}
 		
 	}
-	
-	public boolean isDisposed(){
+
+	public boolean isDisposed() {
 		return this.getItems().isDisposed() || this.getEdges().isDisposed() || this.getContainments().isDisposed();
 	}
-	
-	
+
 }
