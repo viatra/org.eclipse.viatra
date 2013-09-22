@@ -18,10 +18,6 @@ import com.google.common.collect.Multimap;
 /**
  * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
  * 
- * Caution: set-based helper methods are not tested thoroughly yet!
- * 
- * 
- * If you instantiate this class yourself, then be sure to dispose() of it once it is not needed anymore.
  * 
  * @author Zoltan Ujhelyi
  * @author Istvan Rath
