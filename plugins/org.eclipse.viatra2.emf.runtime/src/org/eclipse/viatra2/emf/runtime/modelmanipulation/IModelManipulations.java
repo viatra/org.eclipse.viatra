@@ -67,6 +67,8 @@ public interface IModelManipulations {
 	void remove(EObject container, EStructuralFeature reference)
 			throws ModelManipulationException;
 
+	void moveTo(EObject what, Resource newContainer) throws ModelManipulationException;
+	
 	void moveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException;
 

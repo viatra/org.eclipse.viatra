@@ -13,6 +13,7 @@ package org.eclipse.viatra2.emf.runtime.modelmanipulation;
 import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -33,6 +34,13 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 	EditingDomain domain;
 
 	private class MoveEObjectCommand extends AddCommand {
+
+		
+		
+		public MoveEObjectCommand(EditingDomain domain, EList<?> list,
+				Object value) {
+			super(domain, list, value);
+		}
 
 		public MoveEObjectCommand(EditingDomain domain, EObject owner,
 				EStructuralFeature feature, Object value) {
@@ -120,8 +128,15 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 	}
 
 	@Override
+	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
+		MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer.getContents(), what);
+		executeCommand(moveCommand);
+	}
+	
+	@Override
 	protected void doMoveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException {
-		new MoveEObjectCommand(domain, newContainer, reference, what);
+		MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer, reference, what);
+		executeCommand(moveCommand);
 	}
 
 	protected void executeCommand(Command command)

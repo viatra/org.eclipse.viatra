@@ -93,4 +93,12 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 		}
 	}
 
+	@Override
+	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
+		try {
+			engine.getBaseIndex().cheapMoveTo(what, newContainer.getContents());
+		} catch (IncQueryException e) {
+			throw new ModelManipulationException(e);
+		}
+	}
 }

@@ -45,6 +45,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		}
 	}
 
+	protected abstract void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException;
 	protected abstract void doMoveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException;
 
 	/**
@@ -157,6 +158,11 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		doRemove(container, reference);
 	}
 
+	@Override
+	public void moveTo(EObject what, Resource newContainer) throws ModelManipulationException {
+		doMoveTo(what, newContainer);
+	}
+	
 	@Override
 	public void moveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException {
