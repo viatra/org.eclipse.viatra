@@ -79,8 +79,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
     override getRuleSpecification(){
     	if(ruleSpec == null){
 		    val querySpec = precondition
-		    val Job<Match> stJob = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, action)
-			val Job<Match> job = Jobs::newRecordingJob(stJob)
+		    val Job<Match> job = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, action)
 		    
 		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job))
     	}
