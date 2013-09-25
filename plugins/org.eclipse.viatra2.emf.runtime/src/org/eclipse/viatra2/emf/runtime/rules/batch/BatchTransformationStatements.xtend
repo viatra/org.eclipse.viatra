@@ -8,21 +8,24 @@
  * Contributors:
  *   Abel Hegedus, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.runtime.rules
+package org.eclipse.viatra2.emf.runtime.rules.batch
 
 import com.google.common.base.Predicate
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.api.IncQueryEngine
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.evm.api.Activation
 import org.eclipse.incquery.runtime.evm.api.Context
 import org.eclipse.incquery.runtime.evm.api.RuleEngine
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
-import org.eclipse.viatra2.emf.runtime.transformation.BatchTransformation
-import org.eclipse.incquery.runtime.api.IQuerySpecification
-import org.eclipse.incquery.runtime.api.IncQueryMatcher
-import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.viatra2.emf.runtime.filters.MatchParameterFilter
+import org.eclipse.viatra2.emf.runtime.rules.ITransformationRule
+import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup
+import org.eclipse.viatra2.emf.runtime.transformation.batch.BatchTransformation
+import org.eclipse.xtext.xbase.lib.Pair
 
 /**
  * Utility class for simple rule usage
@@ -30,7 +33,7 @@ import org.eclipse.viatra2.emf.runtime.filters.MatchParameterFilter
  * @author Abel Hegedus, Zoltan Ujhelyi
  *
  */
-class TransformationStatements {
+class BatchTransformationStatements {
 	
 	val IncQueryEngine iqEngine
 	val RuleEngine ruleEngine
@@ -194,7 +197,7 @@ class TransformationStatements {
 		ruleEngine.addRule(ruleSpecification, filter)
 	}
 	
-	def registerRules(TransformationRuleGroup rules) {
+	def registerRules(TransformationRuleGroup<BatchTransformationRule> rules) {
 		rules.forEach[
 			if (value != null)
 				ruleEngine.addRule(key.ruleSpecification, value)
@@ -211,7 +214,7 @@ class TransformationStatements {
 		ruleEngine.removeRule(ruleSpecification, filter)
 	}
 
-	def disposeRules(TransformationRuleGroup rules) {
+	def disposeRules(TransformationRuleGroup<BatchTransformationRule> rules) {
 		rules.forEach[
 			if (value != null)
 				ruleEngine.removeRule(key.ruleSpecification, value)

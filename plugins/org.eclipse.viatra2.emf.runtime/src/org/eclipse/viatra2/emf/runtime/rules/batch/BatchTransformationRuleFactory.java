@@ -1,4 +1,4 @@
-package org.eclipse.viatra2.emf.runtime.rules;
+package org.eclipse.viatra2.emf.runtime.rules.batch;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;

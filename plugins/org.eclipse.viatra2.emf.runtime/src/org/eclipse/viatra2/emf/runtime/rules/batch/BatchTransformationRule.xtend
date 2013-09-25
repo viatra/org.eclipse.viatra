@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.runtime.rules
+package org.eclipse.viatra2.emf.runtime.rules.batch
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.incquery.runtime.api.IPatternMatch
@@ -22,8 +22,9 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs
 import org.eclipse.incquery.runtime.evm.specific.Rules
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
+import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
+import org.eclipse.viatra2.emf.runtime.rules.ITransformationRule
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -96,7 +97,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	override IMatchProcessor<Match> getModelManipulation() {	
+	def IMatchProcessor<Match> getModelManipulation() {	
 		action
 	}	
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.runtime.rules;
 
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -21,5 +20,4 @@ public interface ITransformationRule<Match extends IPatternMatch, Matcher extend
 
 	RuleSpecification<Match> getRuleSpecification();
 	IQuerySpecification<Matcher> getPrecondition();
-	IMatchProcessor<Match> getModelManipulation();
 }

@@ -28,12 +28,12 @@ import com.google.common.collect.Sets;
  * Helper collection for grouping transformation rules 
  */
 @SuppressWarnings("rawtypes")
-public class TransformationRuleGroup extends HashSet<Pair<BatchTransformationRule, EventFilter>> {
+public class TransformationRuleGroup<Rule extends ITransformationRule> extends HashSet<Pair<Rule, EventFilter>> {
 
 	private final class RuleTransformerFunction<Match extends IPatternMatch> implements
-			Function<Pair<BatchTransformationRule<Match, ?>, EventFilter>, RuleSpecification<Match>> {
+			Function<Pair<Rule, EventFilter>, RuleSpecification<?>> {
 		@Override
-		public RuleSpecification<Match> apply(Pair<BatchTransformationRule<Match, ?>, EventFilter> rule) {
+		public RuleSpecification<?> apply(Pair<Rule, EventFilter> rule) {
 			return rule.getKey().getRuleSpecification();
 		}
 	}
@@ -44,16 +44,16 @@ public class TransformationRuleGroup extends HashSet<Pair<BatchTransformationRul
 		super();
 	}
 	
-	public TransformationRuleGroup(BatchTransformationRule... rules) {
+	public TransformationRuleGroup(Rule... rules) {
 		super(rules.length);
-		for (BatchTransformationRule rule : rules) {
-			add(new Pair<BatchTransformationRule, EventFilter>(rule, null));
+		for (Rule rule : rules) {
+			add(new Pair<Rule, EventFilter>(rule, null));
 		}
 	}
 	
-	public TransformationRuleGroup(Pair<BatchTransformationRule, EventFilter>... rules) {
+	public TransformationRuleGroup(Pair<Rule, EventFilter>... rules) {
 		super(rules.length);
-		for (Pair<BatchTransformationRule, EventFilter> rule : rules) {
+		for (Pair<Rule, EventFilter> rule : rules) {
 			add(rule);
 		}
 	}
@@ -65,7 +65,7 @@ public class TransformationRuleGroup extends HashSet<Pair<BatchTransformationRul
 	
 	public Multimap<RuleSpecification<?>, EventFilter<?>> getFilteredRuleMap() {
 		Multimap<RuleSpecification<?>, EventFilter<?>> map = HashMultimap.<RuleSpecification<?>, EventFilter<?>>create();
-		for (Pair<BatchTransformationRule, EventFilter> element : this) {
+		for (Pair<Rule, EventFilter> element : this) {
 			RuleSpecification spec = element.getKey().getRuleSpecification();
 			EventFilter filter = element.getValue() != null ? element.getValue() : spec.createEmptyFilter();
 			map.put(spec, filter);

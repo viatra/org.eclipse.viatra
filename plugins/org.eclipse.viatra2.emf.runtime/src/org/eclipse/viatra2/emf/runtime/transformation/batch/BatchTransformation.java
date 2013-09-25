@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra2.emf.runtime.transformation;
+package org.eclipse.viatra2.emf.runtime.transformation.batch;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +23,8 @@ import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra2.emf.runtime.rules.BatchTransformationRule;
 import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup;
+import org.eclipse.viatra2.emf.runtime.rules.batch.BatchTransformationRule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -73,7 +73,7 @@ public class BatchTransformation {
 		rules.add(rule);
 	}
 	
-	public void addRules(TransformationRuleGroup rules) {
+	public void addRules(@SuppressWarnings("rawtypes") TransformationRuleGroup<BatchTransformationRule> rules) {
 		rules.addAll(rules);
 	}
 	
