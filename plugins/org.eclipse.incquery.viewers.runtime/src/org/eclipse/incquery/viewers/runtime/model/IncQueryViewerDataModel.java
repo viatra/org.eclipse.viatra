@@ -319,7 +319,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	}
     
     // XXX switch between set-list here
- 	protected static boolean setMode = true;
+ 	protected static boolean setMode = false;
  	
  	/* factory method */
  	
