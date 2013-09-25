@@ -83,7 +83,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		EClass containerClass = container.eClass();
 		Preconditions
 		.checkArgument(
-				containerClass.getEAllReferences().contains(container),
+				!(containerClass.getEAllReferences().contains(container)),
 				"The container of EClass %s does neither define or inherit an EReference %s.",
 				containerClass.getName(), reference.getName());
 		Preconditions
@@ -107,7 +107,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		EClass containerClass = container.eClass();
 		Preconditions
 				.checkArgument(
-						containerClass.getEAllStructuralFeatures().contains(container),
+						!(containerClass.getEAllStructuralFeatures().contains(container)),
 						"The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
 						containerClass.getName(), feature.getName());
 		Preconditions.checkArgument(feature.getUpperBound() > 1,
@@ -127,7 +127,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		EClass containerClass = container.eClass();
 		Preconditions
 				.checkArgument(
-						!containerClass.getEAllStructuralFeatures().contains(feature),
+						containerClass.getEAllStructuralFeatures().contains(feature),
 						"The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
 						containerClass.getName(), feature.getName());
 		Preconditions.checkArgument(!feature.isMany(), "The feature %s must have an upper bound of 1.", feature.getName());
