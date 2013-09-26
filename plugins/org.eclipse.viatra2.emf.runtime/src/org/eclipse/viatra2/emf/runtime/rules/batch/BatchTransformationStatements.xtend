@@ -54,7 +54,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until (
@@ -67,7 +67,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
@@ -80,7 +80,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
@@ -91,7 +91,14 @@ class BatchTransformationStatements {
 		rule.ruleSpecification.until(breakCondition, filter)
 	}
 	
-	def until(TransformationRuleGroup rules, Predicate<IPatternMatch> breakCondition) {
+	/**
+	 * Executes the selected rules with the selected filter as long as there
+	 * are possible matches of any of their preconditions and the break condition is
+	 * fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * only one of the conflicting matches will cause an execution. 
+ 	 */
+	def until(TransformationRuleGroup<BatchTransformationRule> rules, Predicate<IPatternMatch> breakCondition) {
+		registerRules(rules)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.filteredRuleMap)
 		
 		conflictSet.until(breakCondition)
