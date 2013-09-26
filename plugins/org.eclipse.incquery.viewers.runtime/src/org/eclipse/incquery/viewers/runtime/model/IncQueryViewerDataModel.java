@@ -56,6 +56,8 @@ import org.eclipse.incquery.viewers.runtime.model.converters.EdgeSet;
 import org.eclipse.incquery.viewers.runtime.model.converters.ItemConverter;
 import org.eclipse.incquery.viewers.runtime.util.ViewersConflictResolver;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -109,9 +111,16 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
         return model;
     }
 
-    public Collection<Pattern> getPatterns(String annotation) {
-        return patterns;
-    }
+	public Collection<Pattern> getPatterns(final String annotation) {
+		return Collections2.filter(patterns, new Predicate<Pattern>() {
+
+			@Override
+			public boolean apply(Pattern pattern) {
+				return CorePatternLanguageHelper.getFirstAnnotationByName(
+						pattern, annotation) != null;
+			}
+		});
+	}
 
     public Logger getLogger() {
         return logger;
