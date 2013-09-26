@@ -54,7 +54,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until (
@@ -67,7 +67,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
@@ -80,7 +80,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rule with the selected filter as long as there
 	 * are possible matches of its preconditions and the break condition is
-	 * fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> until(
@@ -94,7 +94,7 @@ class BatchTransformationStatements {
 	/**
 	 * Executes the selected rules with the selected filter as long as there
 	 * are possible matches of any of their preconditions and the break condition is
-	 * fulfilled. The matches are executed one-by-one, in case of conflicts
+	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def until(TransformationRuleGroup<BatchTransformationRule> rules, Predicate<IPatternMatch> breakCondition) {
@@ -127,7 +127,7 @@ class BatchTransformationStatements {
 		var continue = true
 		while (continue && ((act = conflictSet.nextActivation as Activation<Match>) != null)) {
 			act.fireActivation
-			continue = breakCondition.apply(act.atom)
+			continue = !breakCondition.apply(act.atom)
 		}
 	}
 	
