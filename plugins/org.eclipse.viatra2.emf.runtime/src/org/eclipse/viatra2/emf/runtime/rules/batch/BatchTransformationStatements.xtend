@@ -26,6 +26,7 @@ import org.eclipse.viatra2.emf.runtime.rules.ITransformationRule
 import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup
 import org.eclipse.viatra2.emf.runtime.transformation.batch.BatchTransformation
 import org.eclipse.xtext.xbase.lib.Pair
+import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
 
 /**
  * Utility class for simple rule usage
@@ -97,7 +98,7 @@ class BatchTransformationStatements {
 	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
-	def until(TransformationRuleGroup<BatchTransformationRule> rules, Predicate<IPatternMatch> breakCondition) {
+	def until(TransformationRuleGroup rules, Predicate<IPatternMatch> breakCondition) {
 		registerRules(rules)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.filteredRuleMap)
 		
@@ -204,7 +205,7 @@ class BatchTransformationStatements {
 		ruleEngine.addRule(ruleSpecification, filter)
 	}
 	
-	def registerRules(TransformationRuleGroup<BatchTransformationRule> rules) {
+	def registerRules(TransformationRuleGroup rules) {
 		rules.forEach[
 			if (value != null)
 				ruleEngine.addRule(key.ruleSpecification, value)
@@ -221,7 +222,7 @@ class BatchTransformationStatements {
 		ruleEngine.removeRule(ruleSpecification, filter)
 	}
 
-	def disposeRules(TransformationRuleGroup<BatchTransformationRule> rules) {
+	def disposeRules(TransformationRuleGroup rules) {
 		rules.forEach[
 			if (value != null)
 				ruleEngine.removeRule(key.ruleSpecification, value)

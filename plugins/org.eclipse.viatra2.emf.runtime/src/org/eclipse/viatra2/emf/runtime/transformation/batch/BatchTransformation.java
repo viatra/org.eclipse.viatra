@@ -73,7 +73,7 @@ public class BatchTransformation {
 		rules.add(rule);
 	}
 	
-	public void addRules(@SuppressWarnings("rawtypes") TransformationRuleGroup<BatchTransformationRule> rules) {
+	public void addRules(TransformationRuleGroup rules) {
 		rules.addAll(rules);
 	}
 	
