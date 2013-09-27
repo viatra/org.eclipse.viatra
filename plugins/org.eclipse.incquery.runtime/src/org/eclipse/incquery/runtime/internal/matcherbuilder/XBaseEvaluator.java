@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
 import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.util.CheckExpressionUtil;
+import org.eclipse.incquery.runtime.util.ExpressionUtil;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.util.CancelIndicator;
@@ -84,7 +84,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
                 IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
         for (IConfigurationElement configurationElement : configurationElements) {
             String id = configurationElement.getAttribute("id");
-            if (id.equals(CheckExpressionUtil.getExpressionUniqueID(pattern, xExpression))) {
+            if (id.equals(ExpressionUtil.getExpressionUniqueID(pattern, xExpression))) {
                 Object object = null;
                 try {
                     object = configurationElement.createExecutableExtension("evaluatorClass");
@@ -100,9 +100,9 @@ public class XBaseEvaluator extends AbstractEvaluator {
         // Second option, setup the attributes for the interpreted approach
         if (matchChecker == null) {
             try {
-                ClassLoader classLoader = ClassLoaderUtil.getClassLoader(CheckExpressionUtil.getIFile(pattern));
+                ClassLoader classLoader = ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern));
                 if (classLoader != null) {
-                    interpreter.setClassLoader(ClassLoaderUtil.getClassLoader(CheckExpressionUtil.getIFile(pattern)));
+                    interpreter.setClassLoader(ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern)));
                 }
             } catch (MalformedURLException malformedURLException) {
                 logger.error("XBase Java evaluator extension point initialization failed.", malformedURLException);

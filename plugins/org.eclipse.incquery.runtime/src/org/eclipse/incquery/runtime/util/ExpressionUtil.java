@@ -16,13 +16,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.xtext.xbase.XExpression;
 
-public class CheckExpressionUtil {
+public class ExpressionUtil {
 
     /**
      * Returns a unique string name for the given xexpression + pattern combination. The format is FQN_(pattern body
@@ -53,16 +51,13 @@ public class CheckExpressionUtil {
         int patternBodyNumber = 0;
         for (PatternBody patternBody : pattern.getBodies()) {
             patternBodyNumber++;
-            int checkConstraintNumber = 0;
-            for (Constraint constraint : patternBody.getConstraints()) {
-                if (constraint instanceof CheckConstraint) {
-                    CheckConstraint checkConstraint = (CheckConstraint) constraint;
-                    checkConstraintNumber++;
-                    if (xExpression.equals(checkConstraint.getExpression())) {
-                        return patternBodyNumber + "_" + checkConstraintNumber;
-                    }
-                }
-            }
+            int expressionNumber = 0;
+            for (XExpression xExpression2 : CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(patternBody)) {
+                    expressionNumber++;
+                    if (xExpression.equals(xExpression2)) {
+                        return patternBodyNumber + "_" + expressionNumber;
+                    }			
+			}
         }
         return null;
     }

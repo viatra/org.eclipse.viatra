@@ -154,7 +154,10 @@ ListValue returns LiteralValueReference:
 	{ListValue} '{' values+=ValueReference (',' values+=ValueReference)* '}';
 	
 ComputationValue returns ValueReference:
-	AggregatedValue;
+	AggregatedValue | FunctionEvaluationValue;
+	
+FunctionEvaluationValue returns ValueReference:
+	{FunctionEvaluationValue} 'eval' '(' expression=XExpression ')';
 	
 AggregatedValue returns ComputationValue:
  	{AggregatedValue} /*'aggregate'*/ aggregator=AggregatorExpression call=PatternCall;

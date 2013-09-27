@@ -25,6 +25,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
@@ -32,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
+import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.collect.Maps;
 
@@ -63,6 +65,15 @@ public class EMFPatternTypeUtil {
             if (aggregatedValue.getAggregator() instanceof CountAggregator) {
                 return EcorePackage.Literals.EINT;
             }
+        } else if (valueReference instanceof FunctionEvaluationValue) {
+        	FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
+        	final XExpression xExpression = eval.getExpression();
+        	
+//        	// TODO call type provider for eval() expression
+//            JvmTypeReference type = provider.getCommonReturnType(xExpression, true);
+//            String simpleName = primitives.asPrimitiveIfWrapperType(type).getSimpleName();
+
+            return EcorePackage.Literals.EJAVA_OBJECT;
         } else if (valueReference instanceof EnumValue) {
             EnumValue enumValue = (EnumValue) valueReference;
             return enumValue.getEnumeration();

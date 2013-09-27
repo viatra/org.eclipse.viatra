@@ -31,6 +31,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
@@ -111,6 +112,10 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
     String text(CheckConstraint constraint) {
         return String.format("check()");
     }
+    
+    String text(FunctionEvaluationValue eval) {
+        return String.format("eval()");
+    }
 
     String text(AggregatedValue aggregate) {
         String aggregator = getAggregatorText(aggregate.getAggregator());
@@ -172,6 +177,8 @@ public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider
             return enumName + "::" + enumVal.getLiteral().getLiteral();
         } else if (ref instanceof AggregatedValue) {
             return text((AggregatedValue) ref);
+        } else if (ref instanceof FunctionEvaluationValue) {
+            return text((FunctionEvaluationValue) ref);
         }
         return null;
     }
