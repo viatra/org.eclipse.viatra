@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
-import org.eclipse.incquery.runtime.rete.boundary.AbstractEvaluator;
+import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
@@ -84,6 +84,8 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
 
     public Stub<StubHandle> buildPredicateChecker(AbstractEvaluator evaluator, Integer rhsIndex, int[] affectedIndices,
             Stub<StubHandle> stub);
+	public abstract Stub<StubHandle> buildFunctionEvaluator(AbstractEvaluator evaluator, Stub<StubHandle> stub, 
+			Object computedResultCalibrationElement);
 
     /**
      * @return a buildable that potentially acts on a separate container
@@ -96,4 +98,5 @@ public interface Buildable<PatternDescription, StubHandle, Collector> {
     public Buildable<PatternDescription, StubHandle, Collector> putOnTab(PatternDescription effort, IPatternMatcherContext<PatternDescription> context);
 
     public void reinitialize();
+
 }

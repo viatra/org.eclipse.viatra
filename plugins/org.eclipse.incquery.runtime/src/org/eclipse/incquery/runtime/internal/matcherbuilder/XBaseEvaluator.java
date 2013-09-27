@@ -22,7 +22,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
-import org.eclipse.incquery.runtime.rete.boundary.AbstractEvaluator;
+import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.CheckExpressionUtil;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
@@ -113,7 +113,7 @@ public class XBaseEvaluator extends AbstractEvaluator {
     }
     
     @Override
-    public Object doEvaluate(Tuple tuple) throws Throwable {
+    public Object evaluate(Tuple tuple) throws Throwable {
         
         init();
         

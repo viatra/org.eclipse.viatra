@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
+import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
+
 /**
  * @author Bergmann Gábor
  * 

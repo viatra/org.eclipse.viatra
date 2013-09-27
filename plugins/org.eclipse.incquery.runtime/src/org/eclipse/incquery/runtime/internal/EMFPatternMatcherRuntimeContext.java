@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
-import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
+import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
