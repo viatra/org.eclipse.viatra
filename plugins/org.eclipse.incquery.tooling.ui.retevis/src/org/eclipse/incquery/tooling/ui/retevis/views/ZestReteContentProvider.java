@@ -14,8 +14,8 @@ package org.eclipse.incquery.tooling.ui.retevis.views;
 import java.util.ArrayList;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
-import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
