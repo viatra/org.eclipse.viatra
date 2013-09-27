@@ -24,17 +24,18 @@ import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
-import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.BaseTypeSafePredicateCheck;
+import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.BaseTypeSafeCheckOrEvalConstraint;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.inject.Injector;
 
 /**
- * XExpression check constraint: the given XExpression formed over the variables must evaluate to true.
+ * XExpression check/eval constraint: 
+ * the given XExpression formed over the variables must evaluate to outputVariable (if given) or true (if outputVariable == null).
  */
 @SuppressWarnings("restriction")
-public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, StubHandle> {
+public class XBaseCheckOrEval<StubHandle> extends BaseTypeSafeCheckOrEvalConstraint<Pattern, StubHandle> {
 
     private final XExpression xExpression;
     private final EPMBodyToPSystem<StubHandle, ?> pGraph;
@@ -44,8 +45,8 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
      * @param pSystem
      * @param affectedVariables
      */
-    public XBaseCheck(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression, Pattern pattern) {
-        super(pGraph.pSystem, getExternalPNodeReferencesOfXExpression(pGraph, xExpression));
+    public XBaseCheckOrEval(EPMBodyToPSystem<StubHandle, ?> pGraph, XExpression xExpression, Pattern pattern, PVariable outputVariable) {
+        super(pGraph.pSystem, getExternalPNodeReferencesOfXExpression(pGraph, xExpression), outputVariable);
         this.pGraph = pGraph;
         this.xExpression = xExpression;
         this.pattern = pattern;
@@ -71,7 +72,13 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
         XBaseEvaluator evaluator = new XBaseEvaluator(xExpression, tupleNameMap, pattern);
         injector.injectMembers(evaluator);
         evaluator.init();
-        return buildable.buildPredicateChecker(evaluator, null, indices, stub);
+        
+        // TODO project to affected indices, then join back?
+        
+        if (outputVariable == null)
+        	return buildable.buildPredicateChecker(evaluator, null, indices, stub);
+        else 
+        	return buildable.buildFunctionEvaluator(evaluator, stub, outputVariable);        	
     }
 
     private static Set<PVariable> getExternalPNodeReferencesOfXExpression(EPMBodyToPSystem<?, ?> pGraph,
@@ -86,12 +93,9 @@ public class XBaseCheck<StubHandle> extends BaseTypeSafePredicateCheck<Pattern, 
 
     @Override
     protected String toStringRest() {
-        return new FlatTuple(new ArrayList<PVariable>(getAffectedVariables()).toArray()).toString() + "|="
+        return new FlatTuple(new ArrayList<PVariable>(inputVariables).toArray()).toString() + "|="
                 + xExpression.toString();
     }
 
-    @Override
-    protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
-    }
 
 }
