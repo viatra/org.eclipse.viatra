@@ -47,6 +47,12 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
         tab.setControl(viewer.getControl());
 
     }
+    
+    @Override
+    public void dispose() {
+    	// not necessary for jface-based viewers
+    	// getViewer().dispose();
+    }
 
     protected abstract StructuredViewer getViewer();
     

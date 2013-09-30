@@ -61,4 +61,10 @@ public interface IViewerSandboxTab extends ISelectionProvider {
      * @return
      */
     List<IContributionItem> getToolBarContributions();
+    
+    /**
+     * Called when the UI is being disposed.
+     */
+    void dispose();
+    
 }

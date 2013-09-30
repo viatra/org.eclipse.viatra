@@ -255,6 +255,9 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     @Override
     public void dispose() {
+    	for (IViewerSandboxTab tab : tabList) {
+            tab.dispose();
+        }
     	if (state !=null) {
     		state.dispose();
     	}
