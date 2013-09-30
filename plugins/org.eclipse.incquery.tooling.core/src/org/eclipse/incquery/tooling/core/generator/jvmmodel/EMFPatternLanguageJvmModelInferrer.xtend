@@ -18,7 +18,6 @@ import org.eclipse.incquery.tooling.core.generator.builder.GeneratorIssueCodes
 import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.common.types.JvmVisibility
@@ -32,6 +31,7 @@ import java.util.List
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -72,7 +72,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
    		val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
-   		val hasCheckExpression = CorePatternLanguageHelper::hasCheckExpression(pattern);
+   		val hasCheckExpression = CorePatternLanguageHelper::hasXBaseExpression(pattern);
    		if (!pattern.name.nullOrEmpty && (isPublic || hasCheckExpression)) {
    			logger.debug("Inferring Jvm Model for " + pattern.name);
 	   		try {

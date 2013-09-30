@@ -35,11 +35,8 @@ import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidationD
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.incquery.runtime.util.CheckExpressionUtil;
+import org.eclipse.incquery.runtime.util.ExpressionUtil;
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.incquery.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.incquery.tooling.core.generator.GenerateXExpressionEvaluatorExtension;
@@ -190,7 +187,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             if (obj instanceof Pattern) {
                 Pattern pattern = (Pattern) obj;
                 boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
-                if (isPublic || CorePatternLanguageHelper.hasCheckExpression(pattern)) {
+                if (isPublic || CorePatternLanguageHelper.hasXBaseExpression(pattern)) {
                     if (isPublic) {
                         Iterable<IPluginExtension> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
                                 .extensionContribution(pattern, extensionGenerator);
@@ -207,20 +204,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
     private void doPostGenerateExpressionEvaluator(IProject project, ExtensionGenerator extensionGenerator,
             Pattern pattern) {
-        for (PatternBody patternBody : pattern.getBodies()) {
-            for (Constraint constraint : patternBody.getConstraints()) {
-                if (constraint instanceof CheckConstraint) {
-                    CheckConstraint checkConstraint = (CheckConstraint) constraint;
-                    XExpression xExpression = checkConstraint.getExpression();
-                    String expressionID = CheckExpressionUtil.getExpressionUniqueID(pattern, xExpression);
-                    String expressionUniqueNameInPattern = CheckExpressionUtil.getExpressionUniqueNameInPattern(
-                            pattern, xExpression);
-                    Iterable<IPluginExtension> xExpressionEvaluatorExtensionContribution = xExpressionEvaluatorExtensionGenerator
-                            .extensionContribution(pattern, expressionID, expressionUniqueNameInPattern,
-                                    extensionGenerator);
-                    ensureSupport.appendAllExtension(project, xExpressionEvaluatorExtensionContribution);
-                }
-            }
+        for (XExpression xExpression : CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(pattern)) {
+                String expressionID = ExpressionUtil.getExpressionUniqueID(pattern, xExpression);
+                String expressionUniqueNameInPattern = ExpressionUtil.getExpressionUniqueNameInPattern(
+                        pattern, xExpression);
+                Iterable<IPluginExtension> xExpressionEvaluatorExtensionContribution = xExpressionEvaluatorExtensionGenerator
+                        .extensionContribution(pattern, expressionID, expressionUniqueNameInPattern,
+                                extensionGenerator);
+                ensureSupport.appendAllExtension(project, xExpressionEvaluatorExtensionContribution);
         }
     }
 

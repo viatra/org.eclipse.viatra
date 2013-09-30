@@ -9,13 +9,12 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.rete.boundary;
+package org.eclipse.incquery.runtime.rete.eval;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
@@ -26,7 +25,6 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMemory;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -54,9 +52,9 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     protected Set<Tuple> outgoing;
     protected MemoryNullIndexer memoryNullIndexer;
     protected MemoryIdentityIndexer memoryIdentityIndexer;
-    protected Map<Object, Collection<Tuple>> elementOccurences;
-    protected Map<Tuple, Set<Tuple>> invoker2traces;
-    protected Map<Tuple, Set<Tuple>> trace2invokers;
+//    protected Map<Object, Collection<Tuple>> elementOccurences;
+//    protected Map<Tuple, Set<Tuple>> invoker2traces;
+//    protected Map<Tuple, Set<Tuple>> trace2invokers;
     //protected Address<ASMFunctionTraceNotifierNode> asmFunctionTraceNotifier;
     //protected Address<ElementChangeNotifierNode> elementChangeNotifier;
     protected AbstractEvaluator evaluator;
@@ -82,10 +80,10 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         this.tupleWidth = tupleWidth;
         this.evaluator = evaluator;
 
-        this.elementOccurences = CollectionsFactory.getMap();//new HashMap<Object, Collection<Tuple>>();
+//        this.elementOccurences = CollectionsFactory.getMap();//new HashMap<Object, Collection<Tuple>>();
         this.outgoing = CollectionsFactory.getSet();//new HashSet<Tuple>();
-        this.invoker2traces = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
-        this.trace2invokers = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
+//        this.invoker2traces = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
+//        this.trace2invokers = CollectionsFactory.getMap();//new HashMap<Tuple, Set<Tuple>>();
         // extractASMFunctions();
         //this.asmFunctionTraceNotifier = Address.of(new ASMFunctionTraceNotifierNode(reteContainer));
         //this.elementChangeNotifier = Address.of(new ElementChangeNotifierNode(reteContainer));
@@ -122,10 +120,10 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     @Override
     public void update(Direction direction, Tuple wrappers) {
         Tuple updateElement = boundary.unwrapTuple(wrappers);
-        updateOccurences(direction, updateElement);
+//        updateOccurences(direction, updateElement);
         if (direction == Direction.REVOKE) {
             if (outgoing.remove(updateElement)) {
-                clearTraces(updateElement);
+//                clearTraces(updateElement);
                 propagateUpdate(Direction.REVOKE, wrappers);
             }
         } else /* (direction == Direction.INSERT) */
@@ -134,52 +132,52 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         }
     }
 
-    protected void notifyASMFunctionValueChanged(Tuple trace) {
-        // System.out.println("TEN notified");
-        Set<Tuple> invokers = trace2invokers.get(trace);
-        if (invokers != null) {
-            LinkedList<Tuple> copy = new LinkedList<Tuple>(invokers);
-            for (Tuple ps : copy)
-                check(ps);
-        }
-    }
+//    protected void notifyASMFunctionValueChanged(Tuple trace) {
+//        // System.out.println("TEN notified");
+//        Set<Tuple> invokers = trace2invokers.get(trace);
+//        if (invokers != null) {
+//            LinkedList<Tuple> copy = new LinkedList<Tuple>(invokers);
+//            for (Tuple ps : copy)
+//                check(ps);
+//        }
+//    }
 
-    protected void notifyElementChange(Object element) {
-        for (Tuple ps : elementOccurences.get(element))
-            check(ps);
-    }
+//    protected void notifyElementChange(Object element) {
+//        for (Tuple ps : elementOccurences.get(element))
+//            check(ps);
+//    }
 
-    protected void updateOccurences(Direction direction, Tuple ps) {
-        for (Integer i : affectedIndices) {
-            Object element = ps.get(i);
-            // if (element instanceof IModelElement) {
-            updateElementOccurence(direction, ps, element);
-            // }
-        }
-    }
+//    protected void updateOccurences(Direction direction, Tuple ps) {
+//        for (Integer i : affectedIndices) {
+//            Object element = ps.get(i);
+//            // if (element instanceof IModelElement) {
+//            updateElementOccurence(direction, ps, element);
+//            // }
+//        }
+//    }
 
-    protected void updateElementOccurence(Direction direction, Tuple ps, Object element) {
-        Collection<Tuple> occurences;
-        if (direction == Direction.INSERT) {
-            occurences = elementOccurences.get(element);
-            boolean change = occurences == null;
-            if (change) {
-                occurences = new TupleMemory();
-                elementOccurences.put(element, occurences);
-                engine.getManipulationListener().registerSensitiveTerm(element, this);
-            }
-            occurences.add(ps);
-        } else // REVOKE
-        {
-            occurences = elementOccurences.get(element);
-            occurences.remove(ps);
-            boolean change = occurences.isEmpty();
-            if (change) {
-                elementOccurences.remove(element);
-                engine.getManipulationListener().unregisterSensitiveTerm(element, this);
-            }
-        }
-    }
+//    protected void updateElementOccurence(Direction direction, Tuple ps, Object element) {
+//        Collection<Tuple> occurences;
+//        if (direction == Direction.INSERT) {
+//            occurences = elementOccurences.get(element);
+//            boolean change = occurences == null;
+//            if (change) {
+//                occurences = new TupleMemory();
+//                elementOccurences.put(element, occurences);
+//                engine.getManipulationListener().registerSensitiveTerm(element, this);
+//            }
+//            occurences.add(ps);
+//        } else // REVOKE
+//        {
+//            occurences = elementOccurences.get(element);
+//            occurences.remove(ps);
+//            boolean change = occurences.isEmpty();
+//            if (change) {
+//                elementOccurences.remove(element);
+//                engine.getManipulationListener().unregisterSensitiveTerm(element, this);
+//            }
+//        }
+//    }
 
     protected void check(Tuple ps) {
         boolean result = evaluateExpression(ps);
@@ -216,8 +214,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     }
 
     public Object evaluateTerm(Tuple ps) {
-        // clearing ASMfunction traces
-        clearTraces(ps);
+//        // clearing ASMfunction traces
+//        clearTraces(ps);
 
         // actual evaluation
         Object result = null;
@@ -237,8 +235,8 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             result = Boolean.FALSE;
         }
 
-        // saving ASMFunction traces
-        saveTraces(ps, evaluator.getTraces());
+//        // saving ASMFunction traces
+//        saveTraces(ps, evaluator.getTraces());
 
         return result;
     }
@@ -247,36 +245,36 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         return ps.toString();
     }
 
-    protected void clearTraces(Tuple invoker) {
-        Set<Tuple> traces = invoker2traces.get(invoker);
-        if (traces != null) {
-            invoker2traces.remove(invoker);
-            for (Tuple trace : traces) {
-                Set<Tuple> invokers = trace2invokers.get(trace);
-                invokers.remove(invoker);
-                if (invokers.isEmpty()) {
-                    trace2invokers.remove(trace);
-                    engine.geTraceListener().unregisterSensitiveTrace(trace, this);
-                }
-            }
-        }
-    }
-
-    protected void saveTraces(Tuple invoker, Set<Tuple> traces) {
-        if (traces != null && !traces.isEmpty()) {
-            invoker2traces.put(invoker, traces);
-
-            for (Tuple trace : traces) {
-                Set<Tuple> invokers = trace2invokers.get(trace);
-                if (invokers == null) {
-                    invokers = CollectionsFactory.getSet();//new HashSet<Tuple>();
-                    trace2invokers.put(trace, invokers);
-                    engine.geTraceListener().registerSensitiveTrace(trace, this);
-                }
-                invokers.add(invoker);
-            }
-        }
-    }
+//    protected void clearTraces(Tuple invoker) {
+//        Set<Tuple> traces = invoker2traces.get(invoker);
+//        if (traces != null) {
+//            invoker2traces.remove(invoker);
+//            for (Tuple trace : traces) {
+//                Set<Tuple> invokers = trace2invokers.get(trace);
+//                invokers.remove(invoker);
+//                if (invokers.isEmpty()) {
+//                    trace2invokers.remove(trace);
+//                    engine.geTraceListener().unregisterSensitiveTrace(trace, this);
+//                }
+//            }
+//        }
+//    }
+//
+//    protected void saveTraces(Tuple invoker, Set<Tuple> traces) {
+//        if (traces != null && !traces.isEmpty()) {
+//            invoker2traces.put(invoker, traces);
+//
+//            for (Tuple trace : traces) {
+//                Set<Tuple> invokers = trace2invokers.get(trace);
+//                if (invokers == null) {
+//                    invokers = CollectionsFactory.getSet();//new HashSet<Tuple>();
+//                    trace2invokers.put(trace, invokers);
+//                    engine.geTraceListener().registerSensitiveTrace(trace, this);
+//                }
+//                invokers.add(invoker);
+//            }
+//        }
+//    }
 
     @Override
     protected void propagateUpdate(Direction direction, Tuple updateElement) {

@@ -42,6 +42,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
@@ -60,6 +61,7 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
+import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.common.base.Predicate;
@@ -344,8 +346,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         .getVariablesFromValueReference(rightValueReference);
                 if (CompareFeature.EQUALITY.equals(compareConstraint.getFeature())) {
                     // Equality ==
-                    if (!isValueReferenceAggregated(leftValueReference)
-                            && !isValueReferenceAggregated(rightValueReference)) {
+                    if (!isValueReferenceComputed(leftValueReference)
+                            && !isValueReferenceComputed(rightValueReference)) {
                         positiveVariables.addAll(leftVariables);
                         positiveVariables.addAll(rightVariables);
                         generalVariables.addAll(leftVariables);
@@ -366,7 +368,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 if (!patternCompositionConstraint.isNegative()) {
                     // Positive composition (find)
                     for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                        if (!isValueReferenceAggregated(valueReference)) {
+                        if (!isValueReferenceComputed(valueReference)) {
                             positiveVariables.addAll(CorePatternLanguageHelper
                                     .getVariablesFromValueReference(valueReference));
                             generalVariables.addAll(CorePatternLanguageHelper
@@ -393,7 +395,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 if (pathExpressionHead.getSrc() != null) {
                     pathExpressionHeadSourceVariable = pathExpressionHead.getSrc().getVariable();
                 }
-                if (!isValueReferenceAggregated(valueReference)) {
+                if (!isValueReferenceComputed(valueReference)) {
                     positiveVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     positiveVariables.add(pathExpressionHeadSourceVariable);
                     generalVariables.addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
@@ -414,7 +416,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
 
         // Second run
-        // If variables in an aggregated formula (e.g.: count find Pattern(X,Y)) are in the same union in the positive
+        // If variables in a computation formula (e.g.: count find Pattern(X,Y)) are in the same union in the positive
         // case then they are considered to be in a positive relation with the respective target as well
         // M == count find Pattern(X,Y), so M with X and Y is positive if X and Y is positive
         // If the aggregated contains unnamed/running vars it should be omitted during the positive relation checking
@@ -427,8 +429,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         // Equality (==), with aggregates in it
                         ValueReference leftValueReference = compareConstraint.getLeftOperand();
                         ValueReference rightValueReference = compareConstraint.getRightOperand();
-                        if (isValueReferenceAggregated(leftValueReference)
-                                || isValueReferenceAggregated(rightValueReference)) {
+                        if (isValueReferenceComputed(leftValueReference)
+                                || isValueReferenceComputed(rightValueReference)) {
                             Set<Variable> leftVariables = CorePatternLanguageHelper
                                     .getVariablesFromValueReference(leftValueReference);
                             Set<Variable> rightVariables = CorePatternLanguageHelper
@@ -513,6 +515,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     private static boolean isValueReferenceAggregated(ValueReference valueReference) {
         return valueReference instanceof AggregatedValue;
+    }
+
+    private static boolean isValueReferenceComputed(ValueReference valueReference) {
+        return valueReference instanceof ComputationValue;
     }
 
     /**
@@ -644,22 +650,32 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * This validator looks up all variables in the {@link CheckConstraint} and reports an error if one them is not an
      * {@link EDataType} instance. We do not allow arbitrary EMF elements in, so the checks are less likely to have
      * side-effects.
-     * 
-     * @param checkConstraint
      */
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
-        for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(checkConstraint
-                .getExpression(), associations)) {
+		checkForWrongVariablesInXExpressionsInternal(checkConstraint.getExpression());
+    }
+    /**
+     * This validator looks up all variables in the {@link FunctionEvaluationValue} and reports an error if one them is not an
+     * {@link EDataType} instance. We do not allow arbitrary EMF elements in, so the checks are less likely to have
+     * side-effects.
+     */
+    @Check
+    public void checkForWrongVariablesInXExpressions(FunctionEvaluationValue eval) {
+		checkForWrongVariablesInXExpressionsInternal(eval.getExpression());
+    }
+    
+	private void checkForWrongVariablesInXExpressionsInternal(final XExpression expression) {
+		for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression, associations)) {
             EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
             if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
                                                                            // NPE for classifier.getName()
-                error("Only simple EDataTypes are allowed in check expressions. The variable " + variable.getName()
-                        + " has a type of " + classifier.getName() + ".", checkConstraint, null,
+                error("Only simple EDataTypes are allowed in check() and eval() expressions. The variable " + variable.getName()
+                        + " has a type of " + classifier.getName() + ".", expression.eContainer(), null,
                         EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
             }
         }
-    }
+	}
 
     /**
      * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a

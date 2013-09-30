@@ -29,6 +29,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
@@ -160,6 +161,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
             return getPNode(((VariableValue) reference).getValue());
         else if (reference instanceof AggregatedValue)
             return aggregate((AggregatedValue) reference);
+        else if (reference instanceof FunctionEvaluationValue)
+            return eval((FunctionEvaluationValue) reference);
         else if (reference instanceof IntValue)
             return pSystem.newConstantVariable(((IntValue) reference).getValue());
         else if (reference instanceof StringValue)
@@ -179,7 +182,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
                             pattern.getName() }, "Unsupported value expression", pattern);
     }
 
-    protected PVariable newVirtual() {
+	protected PVariable newVirtual() {
         return pSystem.newVirtualVariable();
     }
 
@@ -244,19 +247,10 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         } else if (constraint instanceof CheckConstraint) {
             final CheckConstraint check = (CheckConstraint) constraint;
             gatherCheckConstraint(check);
-            // TODO OTHER CONSTRAINT TYPES
         } else {
             throw new RetePatternBuildException("Unsupported constraint type {1} in pattern {2}.", new String[] {
                     constraint.eClass().getName(), patternFQN }, "Unsupported constraint type", pattern);
         }
-    }
-
-    /**
-     * @param check
-     */
-    protected void gatherCheckConstraint(final CheckConstraint check) {
-        XExpression expression = check.getExpression();
-        new XBaseCheck<StubHandle>(this, expression, pattern);
     }
 
     /**
@@ -366,6 +360,20 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
                     pattern);
     }
 
+    protected void gatherCheckConstraint(final CheckConstraint check) {
+        XExpression expression = check.getExpression();
+        new XBaseCheckOrEval<StubHandle>(this, expression, pattern, null);
+    }
+
+    protected PVariable eval(FunctionEvaluationValue eval) {
+        PVariable result = newVirtual();
+
+        XExpression expression = eval.getExpression();
+        new XBaseCheckOrEval<StubHandle>(this, expression, pattern, result);
+        
+        return result;
+	}
+
     protected PVariable aggregate(AggregatedValue reference) throws RetePatternBuildException {
         PVariable result = newVirtual();
 
@@ -383,6 +391,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 
         return result;
     }
+
 
     /**
      * @return the string describing a metamodel type, for debug / exception purposes

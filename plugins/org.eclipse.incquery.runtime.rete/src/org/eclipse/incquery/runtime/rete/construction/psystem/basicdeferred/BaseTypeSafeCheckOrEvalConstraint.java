@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,27 +28,39 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPC
  * @author Bergmann Gábor
  * 
  */
-public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle> extends
+public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, StubHandle> extends
         VariableDeferredPConstraint<PatternDescription, StubHandle> {
     private Map<PVariable, Set<Object>> allTypeRestrictions;
+    
+    protected Set<PVariable> inputVariables;
+    protected PVariable outputVariable;
 
     /**
      * @param buildable
-     * @param affectedVariables
+     * @param inputVariables
+     * @param outputVariable null iff no output (check-only)
      */
-    public BaseTypeSafePredicateCheck(PSystem<PatternDescription, StubHandle, ?> pSystem,
-            Set<PVariable> affectedVariables) {
-        super(pSystem, affectedVariables);
+    public BaseTypeSafeCheckOrEvalConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem,
+            Set<PVariable> inputVariables, final PVariable outputVariable) {
+        super(pSystem, 
+        		(outputVariable == null) ? 
+        				inputVariables : 
+        				new HashSet<PVariable>(inputVariables){{add(outputVariable);}});
+        this.inputVariables = inputVariables;
+        this.outputVariable = outputVariable;
     }
 
     @Override
     public Set<PVariable> getDeducedVariables() {
-        return Collections.emptySet();
+        if (outputVariable == null) 
+        	return Collections.emptySet(); 
+        else
+        	return Collections.singleton(outputVariable);
     }
 
     @Override
     protected Set<PVariable> getDeferringVariables() {
-        return getAffectedVariables();
+        return inputVariables;
     }
 
     @Override
@@ -65,7 +78,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
      * @return a variable whose type safety is not enforced yet, or null if the stub is typesafe
      */
     protected PVariable checkTypeSafety(Stub<StubHandle> stub) {
-        for (PVariable pVariable : getAffectedVariables()) {
+        for (PVariable pVariable : inputVariables) {
             Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
             Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, stub.getAllEnforcedConstraints());
             Set<Object> uncheckedTypeRestrictions = TypeHelper.subsumeTypes(allTypeRestrictionsForVariable,
@@ -82,7 +95,7 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
     public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
         if (allTypeRestrictions == null) {
             allTypeRestrictions = CollectionsFactory.getMap();//new HashMap<PVariable, Set<Object>>();
-            for (PVariable pVariable : getAffectedVariables()) {
+            for (PVariable pVariable : inputVariables) {
                 allTypeRestrictions.put(pVariable,
                         TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
             }
@@ -102,5 +115,16 @@ public abstract class BaseTypeSafePredicateCheck<PatternDescription, StubHandle>
             throw new RetePatternBuildException(msg, args, shortMsg, null);
         }
 
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#doReplaceVariable(org.eclipse.incquery.runtime.rete.construction.psystem.PVariable, org.eclipse.incquery.runtime.rete.construction.psystem.PVariable)
+     */
+    @Override
+    protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+    	if (inputVariables.remove(obsolete)) 
+    		inputVariables.add(replacement);
+    	if (outputVariable == obsolete) 
+    		outputVariable = replacement;
     }
 }

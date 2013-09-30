@@ -11,9 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
-import org.eclipse.incquery.runtime.rete.boundary.AbstractEvaluator;
-import org.eclipse.incquery.runtime.rete.boundary.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
+import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
+import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.DualInputNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
@@ -240,6 +241,10 @@ public class ReteContainerBuildable<PatternDescription> implements
         PredicateEvaluatorNode ten = new PredicateEvaluatorNode(engine, targetContainer, rhsIndex, affectedIndices,
                 stub.getVariablesTuple().getSize(), evaluator);
         Address<PredicateEvaluatorNode> checker = Address.of(ten);
+    	
+//    	// TODO - eventually replace with newer version
+//    	CachedPredicateEvaluatorNode cpen = new CachedPredicateEvaluatorNode(targetContainer, engine, evaluator, stub.getVariablesTuple().getSize());
+//        Address<CachedPredicateEvaluatorNode> checker = Address.of(cpen);
 
         reteNet.connectRemoteNodes(stub.getHandle(), checker, true);
 
@@ -247,11 +252,27 @@ public class ReteContainerBuildable<PatternDescription> implements
 
         return trace(result);
     }
+    @Override
+	public Stub<Address<? extends Supplier>> buildFunctionEvaluator(AbstractEvaluator evaluator, 
+            Stub<Address<? extends Supplier>> stub, Object computedResultCalibrationElement) {
+    	CachedFunctionEvaluatorNode cfen = new CachedFunctionEvaluatorNode(targetContainer, engine, evaluator, stub.getVariablesTuple().getSize());
+        Address<CachedFunctionEvaluatorNode> computer = Address.of(cfen);
+
+        reteNet.connectRemoteNodes(stub.getHandle(), computer, true);
+
+        Object[] newCalibrationElement = { computedResultCalibrationElement };
+        Tuple newCalibrationPattern = new LeftInheritanceTuple(stub.getVariablesTuple(), newCalibrationElement);
+
+        Stub<Address<? extends Supplier>> result = new Stub<Address<? extends Supplier>>(stub,
+                newCalibrationPattern, computer);
+
+        return trace(result);
+    }
 
     /**
      * @return trace(a buildable that potentially acts on a separate container
      */
-    public ReteContainerBuildable<PatternDescription> getNextContainer() {
+    public Buildable<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> getNextContainer() {
         return new ReteContainerBuildable<PatternDescription>(engine, reteNet.getNextContainer());
     }
 
@@ -284,7 +305,7 @@ public class ReteContainerBuildable<PatternDescription> implements
     /**
      * No need to distinguish
      */
-    public ReteContainerBuildable<PatternDescription> putOnTab(PatternDescription effort, IPatternMatcherContext<PatternDescription> effortContext) {
+    public Buildable<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> putOnTab(PatternDescription effort, IPatternMatcherContext<PatternDescription> effortContext) {
     	final ReteContainerBuildable<PatternDescription> patternSpecific;
     	try {
     		patternSpecific = (ReteContainerBuildable<PatternDescription>) this.clone();

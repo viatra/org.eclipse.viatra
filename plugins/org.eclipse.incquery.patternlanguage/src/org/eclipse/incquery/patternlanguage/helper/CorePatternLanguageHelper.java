@@ -27,9 +27,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
-import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
@@ -100,17 +100,31 @@ public final class CorePatternLanguageHelper {
 
     /**
      * @param pattern
-     * @return true if the pattern contains xbase check expression, false otherwise.
+     * @return true if the pattern contains xbase check() or eval() expressions, false otherwise.
      */
-    public static boolean hasCheckExpression(Pattern pattern) {
-        for (PatternBody patternBody : pattern.getBodies()) {
-            for (Constraint constraint : patternBody.getConstraints()) {
-                if (constraint instanceof CheckConstraint) {
-                    return true;
-                }
-            }
-        }
+    public static boolean hasXBaseExpression(Pattern pattern) {
+    	final TreeIterator<EObject> eAllContents = pattern.eAllContents();
+    	while (eAllContents.hasNext()) {
+    		if (eAllContents.next() instanceof XExpression)
+    			return true;
+    	}
         return false;
+    }
+    
+    /**
+     * @return all xbase check() or eval() expressions in the pattern
+     */
+    public static Collection<XExpression> getAllTopLevelXBaseExpressions(EObject patternOrBody) {
+    	final ArrayList<XExpression> result = new ArrayList<XExpression>();
+    	final TreeIterator<EObject> eAllContents = patternOrBody.eAllContents();
+    	while (eAllContents.hasNext()) {
+    		final EObject content = eAllContents.next();
+			if (content instanceof XExpression) {
+				result.add((XExpression) content);
+    			eAllContents.prune(); // do not include subexpressions 
+    		}
+    	}
+        return result;
     }
 
     /**
@@ -404,12 +418,31 @@ public final class CorePatternLanguageHelper {
                         resultSet.add(variable);
                     }
                 }
+            } else if (valueReference instanceof FunctionEvaluationValue) {
+            	FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
+            	final List<Variable> usedVariables = 
+            			CorePatternLanguageHelper.getUsedVariables(eval.getExpression(), containerPatternBody(eval).getVariables());
+            	resultSet.addAll(usedVariables);
             }
         }
         return resultSet;
     }
 
     /**
+     * @return the pattern body that contains the value reference
+     */
+	public static PatternBody containerPatternBody(ValueReference val) {
+		for (EObject cursor = val; cursor!=null; cursor = cursor.eContainer())
+			if (cursor instanceof PatternBody) 
+				return (PatternBody) cursor;
+		// cursor == null --> not contained in PatternBody
+		throw new IllegalArgumentException(
+				String.format(
+						"Misplaced value reference %s not contained in any pattern body", 
+						val));
+	}
+
+	/**
      * @param patternBody
      * @return A list of variables, which are running/unnamed variables in the pattern body. These variables' name
      *         starts with the "_" prefix, and can be found in find, count find calls.
@@ -458,6 +491,19 @@ public final class CorePatternLanguageHelper {
                             resultSet.add(variable);
                         }
                     }
+                }
+            } else if (valueReference instanceof FunctionEvaluationValue) {
+            	// TODO this is constant empty?
+            	FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
+            	final List<Variable> usedVariables = 
+            			CorePatternLanguageHelper.getUsedVariables(eval.getExpression(), 
+            					containerPatternBody(eval).getVariables());
+                if (!onlyFromAggregatedValues) {
+                	for (Variable variable : usedVariables) {
+                		if (variable.getName().startsWith("_")) { // can this ever be true?
+                			resultSet.add(variable);
+                		}
+                	}
                 }
             }
         }

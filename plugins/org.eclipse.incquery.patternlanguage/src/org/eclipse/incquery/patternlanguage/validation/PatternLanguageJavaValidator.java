@@ -34,6 +34,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
@@ -522,10 +523,9 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         TreeIterator<EObject> it = body.eAllContents();
         while (it.hasNext()) {
             EObject obj = it.next();
-            if (obj instanceof CheckConstraint) {
-                CheckConstraint constraint = (CheckConstraint) obj;
-                for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(constraint
-                        .getExpression(), associations)) {
+            if (obj instanceof XExpression) {
+            	XExpression expression = (XExpression) obj;
+                for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression, associations)) {
                     refCounters.get(var).incrementCounter(ReferenceType.READ_ONLY);
                 }
                 it.prune();
@@ -574,6 +574,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
         if (parent instanceof CheckConstraint) {
             return ReferenceType.READ_ONLY;
+        } else if (parent instanceof FunctionEvaluationValue) {
+                return ReferenceType.READ_ONLY;
         } else if (parent instanceof CompareConstraint) {
             CompareConstraint constraint = (CompareConstraint) parent;
             if (constraint.getFeature() == CompareFeature.EQUALITY) {
@@ -621,8 +623,20 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
-        XExpression xExpression = checkConstraint.getExpression();
-        Set<String> elementsWithWarnings = new HashSet<String>();
+        checkForImpureJavaCallsInternal(
+        		checkConstraint.getExpression(), 
+        		PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION);
+    }
+    @Check(CheckType.NORMAL)
+    public void checkForImpureJavaCallsInEvalExpressions(FunctionEvaluationValue eval) {
+        checkForImpureJavaCallsInternal(
+        		eval.getExpression(), 
+        		PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE__EXPRESSION);
+    }
+
+	private void checkForImpureJavaCallsInternal(XExpression xExpression,
+			EStructuralFeature feature) {
+		Set<String> elementsWithWarnings = new HashSet<String>();
         if (xExpression != null) {
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
             while (eAllContents.hasNext()) {
@@ -641,20 +655,20 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
         if (!elementsWithWarnings.isEmpty()) {
             if (elementsWithWarnings.size() > 1) {
-                warning("There are potentially problematic java calls in the check expression. Custom java calls without @Pure annotations "
+                warning("There are potentially problematic java calls in the check()/eval() expression. Custom java calls without @Pure annotations "
                         + "considered unsafe in IncQuery. The possible erroneous calls are the following: "
-                        + elementsWithWarnings + ".", checkConstraint,
-                        PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
+                        + elementsWithWarnings + ".", xExpression.eContainer(),
+                        feature,
                         IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
             } else {
-                warning("There is a potentially problematic java call in the check expression. Custom java calls without @Pure annotations "
+                warning("There is a potentially problematic java call in the check()/eval() expression. Custom java calls without @Pure annotations "
                         + "considered unsafe in IncQuery. The possible erroneous call is the following: "
-                        + elementsWithWarnings + ".", checkConstraint,
-                        PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION,
+                        + elementsWithWarnings + ".", xExpression.eContainer(),
+                        feature,
                         IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
             }
         }
-    }
+	}
 
     @Override
     public void warning(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {

@@ -51,23 +51,26 @@ class PatternMatchEvaluatorClassInferrer {
 		var int patternBodyNumber = 0
 		for (patternBody:pattern.bodies) {
 			patternBodyNumber = patternBodyNumber + 1
-			var int checkConstraintNumber = 0
-  			for (constraint:patternBody.constraints) {
-  				if (constraint instanceof CheckConstraint) {
-  					checkConstraintNumber = checkConstraintNumber + 1
-  					val String postFix = patternBodyNumber + "_" + checkConstraintNumber
-  					val XExpression xExpression = (constraint as CheckConstraint).expression
-					val checkerClass = pattern.toClass(pattern.evaluatorClassName + postFix ) [
-  						it.packageName = checkerPackageName
-  						it.documentation = pattern.javadocEvaluatorClass.toString
-  						it.superTypes += pattern.newTypeRef(typeof(IMatchChecker))
-  					]
-  					//Forcing a boolean return type for check expression
-  					//Results in less misleading error messages
-  					//checkerClass.inferEvaluatorClassMethods(pattern, xExpression)
-  					checkerClass.inferEvaluatorClassMethods(pattern, patternBody, xExpression, pattern.newTypeRef(typeof(Boolean)))
-  					result.add(checkerClass)
-  				}
+			var int expressionNumber = 0
+  			for (xExpression: CorePatternLanguageHelper::getAllTopLevelXBaseExpressions(pattern)) {
+				expressionNumber = expressionNumber + 1
+				val String postFix = patternBodyNumber + "_" + expressionNumber
+				val checkerClass = pattern.toClass(pattern.evaluatorClassName + postFix ) [
+					it.packageName = checkerPackageName
+					it.documentation = pattern.javadocEvaluatorClass.toString
+					it.superTypes += pattern.newTypeRef(typeof(IMatchChecker))
+				]
+				
+				//Forcing a boolean return type for check expression
+				//Results in less misleading error messages
+				val returnType = 
+					if (xExpression.eContainer instanceof CheckConstraint)
+						pattern.newTypeRef(typeof(Boolean))
+					else
+						pattern.newTypeRef(typeof(Object))
+						
+				checkerClass.inferEvaluatorClassMethods(pattern, patternBody, xExpression, returnType)
+				result.add(checkerClass)
   			}
   		}
   		return result

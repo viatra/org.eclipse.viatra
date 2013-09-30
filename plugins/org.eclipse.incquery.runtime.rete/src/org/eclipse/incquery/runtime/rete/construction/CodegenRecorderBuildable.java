@@ -377,7 +377,8 @@ public abstract class CodegenRecorderBuildable<PatternDescription> implements
     @Override
     public void patternFinished(PatternDescription pattern, IPatternMatcherContext<PatternDescription> context, String collector) {
     	// NO-OP
-    };
+    }
+
 
     // /**
     // * @pre coordinator.isComplete()
