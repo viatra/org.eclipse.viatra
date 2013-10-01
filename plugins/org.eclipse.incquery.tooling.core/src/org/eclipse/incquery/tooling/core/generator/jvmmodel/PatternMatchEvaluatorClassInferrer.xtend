@@ -49,10 +49,10 @@ class PatternMatchEvaluatorClassInferrer {
 	def List<JvmDeclaredType> inferEvaluatorClass(Pattern pattern, String checkerPackageName) {
 		val List<JvmDeclaredType> result = new ArrayList<JvmDeclaredType>()
 		var int patternBodyNumber = 0
-		for (patternBody:pattern.bodies) {
+		for (patternBody: pattern.bodies) {
 			patternBodyNumber = patternBodyNumber + 1
 			var int expressionNumber = 0
-  			for (xExpression: CorePatternLanguageHelper::getAllTopLevelXBaseExpressions(pattern)) {
+  			for (xExpression: CorePatternLanguageHelper::getAllTopLevelXBaseExpressions(patternBody)) {
 				expressionNumber = expressionNumber + 1
 				val String postFix = patternBodyNumber + "_" + expressionNumber
 				val checkerClass = pattern.toClass(pattern.evaluatorClassName + postFix ) [
