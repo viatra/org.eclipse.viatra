@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +96,17 @@ public class XBaseCheckOrEval<StubHandle> extends BaseTypeSafeCheckOrEvalConstra
     protected String toStringRest() {
         return new FlatTuple(new ArrayList<PVariable>(inputVariables).toArray()).toString() + "|="
                 + xExpression.toString();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalDependencies()
+     */
+    @Override
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	if (outputVariable == null) 
+    		return Collections.emptyMap();
+    	else 
+    		return Collections.singletonMap(inputVariables, Collections.singleton(outputVariable));
     }
 
 
