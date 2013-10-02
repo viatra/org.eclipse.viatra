@@ -134,4 +134,26 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
 	}
 
+	@Test
+	def multibodyCheck() {
+		val model = parseHelper.parse('''
+			package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern object(obj) {
+				EObject(obj);
+			}
+
+			pattern andPrecond(n) {
+				n == c1;
+				c1 == count find object(_);
+				check(c1 >= 2);	
+			}/* or {
+				n == c2;
+				c2 == count find object(_);
+				check(c2 >= 2);	
+			}*/
+		''')
+		tester.validate(model).assertOK
+	}
 }
