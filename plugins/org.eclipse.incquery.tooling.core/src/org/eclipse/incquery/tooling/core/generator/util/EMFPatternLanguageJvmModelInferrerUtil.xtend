@@ -132,6 +132,11 @@ class EMFPatternLanguageJvmModelInferrerUtil {
    		"Mutable"
    	}
    	
+	def groupMatchersClassName(PatternModel model) {
+		val fileName = model.modelFileName 
+		return fileName.toFirstUpper + "Matchers"
+	}
+   	
 	/**
 	 * Returns the ProcessorClass name based on the Pattern's name
 	 */   	

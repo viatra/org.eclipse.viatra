@@ -57,6 +57,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension PatternMatchProcessorClassInferrer
 	@Inject extension PatternMatchEvaluatorClassInferrer
 	@Inject extension PatternGroupClassInferrer
+	@Inject extension GroupMatchersClassInferrer
 	@Inject extension JavadocInferrer	
 	@Inject extension TypeReferences types
 	@Inject extension IJvmModelAssociator associator
@@ -163,6 +164,8 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			val groupClass = model.inferPatternGroup
    			model.associatePrimary(groupClass)
    			acceptor.accept(groupClass)
+   			val matchersClass = model.inferGroupMatchers
+   			acceptor.accept(matchersClass)
    		} catch (IllegalArgumentException e){
    			errorFeedback.reportErrorNoLocation(model, e.message, GeneratorIssueCodes::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
    		} catch(Exception e) {
