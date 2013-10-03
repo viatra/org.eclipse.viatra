@@ -196,34 +196,6 @@ class BatchTransformationStatements {
 		disposeRule(ruleSpecification, filter)
 		conflictSet.dispose
 	}
-	
-//	def <Match extends IPatternMatch> find(IQuerySpecification<IncQueryMatcher<Match>> query, MatchParameterFilter filter) {
-//		val matcher = query.getMatcher(iqEngine)
-//		val matchFilter = matcher.newMatch()
-//		matcher.getOneArbitraryMatch(matchFilter)		        
-//	}
-	
-	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query) {
-		val matcher = query.getMatcher(iqEngine)
-		val filter = matcher.newMatch()
-		matcher.getOneArbitraryMatch(filter)		        
-	}
-	
-	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, Pair<String, Object>... filters) {
-		find(query, new MatchParameterFilter(filters))
-	}
-	
-	
-	def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, MatchParameterFilter filter) {
-		val matcher = query.getMatcher(iqEngine)
-		
-		find(query, filter.toMatch(matcher))
-	}
-	
-	private def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> find(IQuerySpecification<Matcher> query, Match filter) {
-		val matcher = query.getMatcher(iqEngine)
-		matcher.getOneArbitraryMatch(filter)		        
-	}
 
 	def <Match extends IPatternMatch> registerRule(RuleSpecification<Match> ruleSpecification) {
 		ruleSpecification.registerRule(ruleSpecification.createEmptyFilter)	
