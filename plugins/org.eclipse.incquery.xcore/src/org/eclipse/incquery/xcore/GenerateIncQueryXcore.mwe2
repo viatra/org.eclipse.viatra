@@ -1,0 +1,114 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo (itemis AG) - initial API and implementation
+ *******************************************************************************/
+module org.eclipse.incquery.xcore.GenerateIncQueryXcore
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.generator.*
+import org.eclipse.xtext.ui.generator.*
+
+var grammarURI = "classpath:/org/eclipse/incquery/xcore/IncQueryXcore.xtext"
+var fileExtensions = "xcoreiq"
+var projectName = "org.eclipse.incquery.xcore"
+var runtimeProject = "../${projectName}"
+
+Workflow {
+    bean = StandaloneSetup {
+    	scanClassPath = true
+    	platformUri = "${runtimeProject}/.."
+    	registerGeneratedEPackage = "org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage"
+    	registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/src-gen/org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel"
+    	registerGeneratedEPackage = "org.eclipse.incquery.xcore.XcorePackage"
+		registerGenModelFile = "platform:/resource/org.eclipse.incquery.xcore/model/IncQueryXcore.genmodel"
+    	registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
+		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
+    }
+    
+    component = DirectoryCleaner {
+    	directory = "${runtimeProject}/src-gen"
+    }
+    
+    component = DirectoryCleaner {
+    	directory = "${runtimeProject}.ui/src-gen"
+    }
+    
+    component = Generator {
+    	pathRtProject = runtimeProject
+    	pathUiProject = "${runtimeProject}.ui"
+    	projectNameRt = projectName
+    	projectNameUi = "${projectName}.ui"
+    	language = auto-inject {
+    		uri = grammarURI
+    
+			fragment = grammarAccess.GrammarAccessFragment {}
+
+			fragment = resourceFactory.ResourceFactoryFragment {
+				fileExtensions = fileExtensions
+			}
+
+			fragment = parser.antlr.XtextAntlrGeneratorFragment {
+				options = {
+					classSplitting = true
+				}
+			}
+			
+			fragment = junit.Junit4Fragment{}
+
+			fragment = ecore2xtext.Ecore2XtextValueConverterServiceFragment {}
+
+			fragment = validation.JavaValidatorFragment {}
+
+			fragment = scoping.ImportNamespacesScopingFragment {}
+			
+			fragment = exporting.QualifiedNamesFragment {}
+            
+            fragment = outline.QuickOutlineFragment {}
+
+			fragment = labeling.LabelProviderFragment {}
+
+			fragment = parser.antlr.XtextAntlrUiGeneratorFragment {
+				options = {
+					classSplitting = true
+				}
+			}
+
+            fragment = compare.CompareFragment {
+                fileExtensions = fileExtensions
+            }
+
+			fragment = builder.BuilderIntegrationFragment {}
+			
+			fragment = generator.GeneratorFragment {
+				generateJavaMain = false
+				generateMwe = false
+			}
+
+			fragment = refactoring.RefactorElementNameFragment {
+				useJdtRefactoring = true
+			}
+
+			fragment = types.TypesGeneratorFragment {}
+			
+			fragment = xbase.XbaseGeneratorFragment {
+				generateXtendInferrer = false
+			}
+			
+			fragment = contentAssist.JavaBasedContentAssistFragment {}
+
+			fragment = parser.antlr.XtextAntlrUiGeneratorFragment {
+				options = {
+					classSplitting = true
+				}
+			}
+    	}
+    }
+}
+

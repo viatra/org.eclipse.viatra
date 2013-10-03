@@ -11,7 +11,9 @@
 
 package org.eclipse.incquery.tooling.core.targetplatform;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
@@ -25,7 +27,6 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -48,21 +49,25 @@ public class TargetPlatformMetamodelProviderService extends
 	 * @see org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService#getAllMetamodelObjects(org.eclipse.emf.ecore.EObject)
 	 */
 	@Override
-	public IScope getAllMetamodelObjects(EObject context) {
+	public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
 		final ResourceSet resourceSet = context.eResource().getResourceSet();
-		Iterable<String> tpmetamodels = metamodelLoader.listEPackages();
-        Iterable<IEObjectDescription> metamodels = Iterables.transform(tpmetamodels,
-                new Function<String, IEObjectDescription>() {
-                    @Override
-                    public IEObjectDescription apply(String from) {
-                        EPackage ePackage = metamodelLoader.loadPackage(resourceSet, from);
-             
-                        QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(from);
-                        
-                        return EObjectDescription.create(qualifiedName, ePackage,
-                                Collections.singletonMap("nsURI", "true"));
-                    }
-                });
+		List<String> tpmetamodels = metamodelLoader.listEPackages();
+		List<IEObjectDescription> metamodels = new ArrayList<IEObjectDescription>();
+		for (String metamodel : tpmetamodels) {
+		    EPackage ePackage = metamodelLoader.loadPackage(resourceSet, metamodel);
+            QualifiedName qualifiedName = qualifiedNameConverter.toQualifiedName(metamodel);
+            metamodels.add(EObjectDescription.create(qualifiedName, ePackage,
+                    Collections.singletonMap("nsURI", "true")));
+		}
+		
+		for (IEObjectDescription description : delegateScope.getAllElements()) {
+		    String value = description.getUserData("nsURI");
+		    boolean isNsURI = (value == null) ? false : Boolean.valueOf(value);
+		    if (!tpmetamodels.contains(description.getQualifiedName().toString()) && isNsURI) {
+		        metamodels.add(description);
+		        tpmetamodels.add(description.getQualifiedName().toString());
+		    }
+		}
         return new SimpleScope(IScope.NULLSCOPE, Iterables.filter(metamodels, 
         		new Predicate<IEObjectDescription>() {
         	public boolean apply(IEObjectDescription desc){

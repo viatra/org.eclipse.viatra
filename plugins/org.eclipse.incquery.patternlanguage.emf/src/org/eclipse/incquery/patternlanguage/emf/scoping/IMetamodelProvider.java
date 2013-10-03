@@ -19,11 +19,15 @@ import org.eclipse.xtext.scoping.IScope;
 public interface IMetamodelProvider {
 
     /**
-     * Returns a set of all available EPackages wrapped into {@link IEObjectDescription} for the use of scoping
+     * Returns a set of all available EPackages wrapped into {@link IEObjectDescription} for the use of scoping.
+     * It uses the {@link IEObjectDescription}s from the delegate scope provider too, this way the 
+     * {@link EPackage}s from the XText index will be available too. 
      * 
+     * @param delegateScope the delegate scope
+     * @param context the context object for the scoping
      * @return
      */
-    IScope getAllMetamodelObjects(EObject context);
+    IScope getAllMetamodelObjects(IScope delegateScope, EObject context);
 
     /**
      * Loads an EMF package from the nsURI or resource URI of the model, and uses the resource set given as the second

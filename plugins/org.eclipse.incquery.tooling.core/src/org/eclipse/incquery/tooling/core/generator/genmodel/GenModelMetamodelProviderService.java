@@ -95,7 +95,7 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
     }
 
     @Override
-    public IScope getAllMetamodelObjects(EObject ctx) {
+    public IScope getAllMetamodelObjects(IScope delegateScope, EObject ctx) {
         Preconditions.checkNotNull(ctx, "Context is required");
         Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
         IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
@@ -120,7 +120,7 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
         }
         // The FilteringScope is used to ensure elements in eiq genmodel are not accidentally found in the parent
         // version
-        return new SimpleScope(new FilteringScope(super.getAllMetamodelObjects(ctx), new ParentScopeFilter(
+        return new SimpleScope(new FilteringScope(super.getAllMetamodelObjects(delegateScope, ctx), new ParentScopeFilter(
                 referencedPackages)), referencedPackages);
     }
 

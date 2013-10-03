@@ -67,11 +67,12 @@ import com.google.inject.Inject;
 public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageDeclarativeScopeProvider {
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
+    
     @Inject
     private IMetamodelProvider metamodelProvider;
 
     public IScope scope_EPackage(PackageImport ctx, EReference ref) {
-        return metamodelProvider.getAllMetamodelObjects(ctx);
+        return metamodelProvider.getAllMetamodelObjects(this.delegateGetScope(ctx, ref), ctx);
     }
 
     public IScope scope_EClassifier(PatternBody ctx, EReference ref) {
