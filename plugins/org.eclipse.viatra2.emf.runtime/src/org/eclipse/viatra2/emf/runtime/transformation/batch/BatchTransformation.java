@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2013, Zoltan Ujhelyi and Daniel Varro
+ * Copyright (c) 2004-2013, Zoltan Ujhelyi, Istvan David and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra2.emf.runtime.rules.TransformationRuleGroup;
 import org.eclipse.viatra2.emf.runtime.rules.batch.BatchTransformationRule;
+import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -73,8 +74,14 @@ public class BatchTransformation {
 		rules.add(rule);
 	}
 	
-	public void addRules(TransformationRuleGroup rules) {
-		rules.addAll(rules);
+	public void addRules(TransformationRuleGroup ruleGroup) {
+		for (Pair<?, ?> pair : ruleGroup) {
+			Object key = pair.getKey();
+			if (!(key instanceof BatchTransformationRule)) {
+				continue;
+			}
+			rules.add((BatchTransformationRule<?, ?>) key);
+		}
 	}
 	
 	public void initializeIndexes() throws IncQueryException {
