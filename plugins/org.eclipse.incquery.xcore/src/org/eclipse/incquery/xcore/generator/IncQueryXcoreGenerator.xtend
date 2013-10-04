@@ -16,6 +16,7 @@ import java.util.HashSet
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.emf.ecore.xcore.XClass
@@ -29,12 +30,15 @@ import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 
 class IncQueryXcoreGenerator extends XcoreGenerator {
+	
+	@Inject
+	XbaseCompiler compiler
 
 	@Inject
-	private extension IncQueryXcoreMapper mappings
+ 	private extension IncQueryXcoreMapper mappings
 
 	public static String queryBasedFeatureFactory = "org.eclipse.incquery.querybasedfeature"
 	
