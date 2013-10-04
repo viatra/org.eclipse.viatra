@@ -1,6 +1,7 @@
 //@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
-@GenModel(editDirectory="/library.edit/src")
-@GenModel(editorDirectory="/library.editor/src")
+//@GenModel(editDirectory="/library.edit/src")
+//@GenModel(editorDirectory="/library.editor/src")
+// these annotations are buggy too
 package library
 
 //import-incqueries library.*;

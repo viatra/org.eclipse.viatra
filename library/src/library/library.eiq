@@ -27,10 +27,11 @@ pattern numberOfBooksOfWriter(W : Writer, N) {
 	N == count find bookOfWriter(W, _B);
 }
 
-@Item(item = B, label = "$B.title$ [$N2$]")
+//@Item(item = B, label = "$B.title$ [$N2$]")
+// TODO: this seems to introduce a weird bug
 pattern numberOfWriters(B : Book, N2) {
 	N == count find writerOfBook(B, _W);
-	N2 == eval(N+1);
+	N2 == eval(N+1-1);
 }
 
 pattern writerOfBook(B : Book, W : Writer) {
@@ -50,5 +51,5 @@ pattern bookOfWriter(w : Writer, b : Book) {
 @Item(item = w, label = "Writer: $w.name$")
 pattern writer(w) { Writer(w);}
 
-
+@Item(item = b, label = "$b.title$")
 pattern book(b) { Book(b); }
