@@ -1,0 +1,54 @@
+package library
+
+//import "http://eclipse.org/incquery/xcore/library"
+import "library"
+
+@Edge(source = w, target = b, label = "own")
+@Format(
+	lineStyle = "dashed"
+)
+pattern ownBooksOfWriter(w : Writer, b : Book) {
+	Writer.books(w, b);
+	find numberOfWriters(b, 1);
+} 
+pattern allBookCitations(B1 : Book, B2 : Book) {
+	find bookCitation+(B1, B2);
+}
+
+pattern bookCitation(B1 : Book, B2 : Book) {
+	Book.citations(B1, B2);
+}
+
+pattern numberOfCitations(B1 : Book, N) {
+	N == count find allBookCitations(B1, _B2);
+}
+
+pattern numberOfBooksOfWriter(W : Writer, N) {
+	N == count find bookOfWriter(W, _B);
+}
+
+@Item(item = B, label = "$B.title$ [$N2$]")
+pattern numberOfWriters(B : Book, N2) {
+	N == count find writerOfBook(B, _W);
+	N2 == eval(N+1);
+}
+
+pattern writerOfBook(B : Book, W : Writer) {
+	Book.writers(B, W);
+}
+
+@Edge(source = w, target = b, label = "author")
+//@ContainsItem(container = w, item = b)
+pattern bookOfWriter(w : Writer, b : Book) {
+	Writer.books(w, b);
+}
+
+
+
+// viewers patterns
+
+@Item(item = w, label = "Writer: $w.name$")
+pattern writer(w) { Writer(w);}
+
+
+pattern book(b) { Book(b); }

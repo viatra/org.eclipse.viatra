@@ -1,0 +1,50 @@
+//@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
+@GenModel(editDirectory="/library.edit/src")
+@GenModel(editorDirectory="/library.editor/src")
+package library
+
+//import-incqueries library.*;
+
+class Library {  
+	String name
+	contains Writer[] writers opposite library
+	contains Book[] books opposite library
+}
+class Writer {   
+	String name 
+	
+	derived String lastName get {
+		if (name != null) {
+			val index = name.lastIndexOf(" ")
+			if (index == -1) {
+				name
+			}
+			else {
+				name.substring(index+1)
+			}
+		}
+	}
+	
+	container Library library opposite writers
+	refers Book[] books opposite writers
+	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
+} 
+
+class Book {
+	String title  
+	Integer pages
+	BookCategory bookCategory
+	refers Book[] citations
+	refers Writer[] writers opposite books
+	container Library library opposite books
+
+	incquery-derived Integer numberOfCitations spec numberOfCitations 
+	incquery-derived refers Book[] allCitations spec allBookCitations 
+	incquery-derived Integer numberOfAuthors spec numberOfWriters
+}
+
+enum BookCategory {
+	Mystery = 0,
+	ScienceFiction = 1,
+	Biography = 2
+}
