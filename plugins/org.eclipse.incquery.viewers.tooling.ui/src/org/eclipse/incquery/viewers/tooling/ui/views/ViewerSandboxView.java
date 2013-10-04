@@ -239,8 +239,8 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         if (engine != null) {
             engine.dispose();
         }
-        // make sure that the engine is initialized in wildcard and dynamic EMF mode
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet, true, true);
+        // make sure that the engine is initialized in non-wildcard and dynamic EMF mode
+        engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet, false, true);
         return engine;
     }
 
