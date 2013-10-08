@@ -11,7 +11,6 @@
 package org.eclipse.incquery.validation.runtime.ui;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.validation.runtime.ValidationUtil;
 import org.eclipse.ui.IEditorPart;
 
@@ -24,7 +23,7 @@ public class ValidationInitUtil {
 
     }
 
-    public static void initializeAdapters(IEditorPart activeEditor, Notifier root) throws IncQueryException {
+    public static void initializeAdapters(IEditorPart activeEditor, Notifier root) {
         // if(adapterMap.containsKey(activeEditor)) {
         // FIXME define proper semantics for validation based on selection
         // FIXME handle already existing violations

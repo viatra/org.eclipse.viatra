@@ -16,7 +16,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
 import org.eclipse.incquery.validation.runtime.ui.ValidationInitUtil;
 import org.eclipse.ui.IEditorPart;
@@ -30,11 +29,7 @@ public class InitValidatorsForEditorHandler extends AbstractHandler {
         IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
         ResourceSet resourceSet = (ResourceSet) modelConnector.getNotifier(IModelConnectorTypeEnum.RESOURCESET);
         if (resourceSet != null) {
-            try {
-                ValidationInitUtil.initializeAdapters(editorPart, resourceSet);
-            } catch (IncQueryException ex) {
-                throw new ExecutionException("Could not validate constraints due to a pattern matcher error", ex);
-            }
+            ValidationInitUtil.initializeAdapters(editorPart, resourceSet);
         }
         return null;
     }
