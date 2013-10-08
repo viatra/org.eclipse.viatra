@@ -20,8 +20,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
@@ -40,7 +42,7 @@ import com.google.common.collect.Iterables;
  * @author Istvan Rath
  * 
  */
-public class InitializeViewersHandler extends AbstractHandler {
+public class InitializeViewersHandlerResource extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -67,7 +69,10 @@ public class InitializeViewersHandler extends AbstractHandler {
                         
                         if (ViewerSandboxView.getInstance() != null) {
                             ViewerDataFilter filter = prepareFilterInformation(root);
-                            ViewerSandboxView.getInstance().setContents(resourceSet, patterns, filter);
+                            
+                            // calculate the single resource that is of interest
+                            EMFModelConnector emc = new EMFModelConnector(editorPart);
+                            ViewerSandboxView.getInstance().setContents(emc.getNotifier(IModelConnectorTypeEnum.RESOURCE), patterns, filter);
                         }
                     }
                 }

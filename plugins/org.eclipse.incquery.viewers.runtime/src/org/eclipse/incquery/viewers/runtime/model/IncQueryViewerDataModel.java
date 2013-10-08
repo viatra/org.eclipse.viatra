@@ -35,7 +35,6 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -76,7 +75,7 @@ import com.google.common.collect.Sets;
 public class IncQueryViewerDataModel extends ViewerDataModel {
     private IncQueryEngine engine;
     private Logger logger;
-    private ResourceSet model;
+//  private ResourceSet model;
     private Set<Pattern> patterns;
     
     RuleEngine ruleEngine;
@@ -85,13 +84,12 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     /**
      * Initializes a Viewer Data model using a set of patterns and a selected engine.
      * 
-     * @param model
      * @param patterns
      * @param engine
      * @throws IncQueryException
      */
-    public IncQueryViewerDataModel(ResourceSet model, Collection<Pattern> patterns, IncQueryEngine engine) {
-        this.model = model;
+    public IncQueryViewerDataModel(Collection<Pattern> patterns, IncQueryEngine engine) {
+//      this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
         logger = engine.getLogger();
@@ -107,9 +105,9 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
         return engine;
     }
 
-    public ResourceSet getModel() {
-        return model;
-    }
+//    public ResourceSet getModel() {
+//        return model;
+//    }
 
 	public Collection<Pattern> getPatterns(final String annotation) {
 		return Collections2.filter(patterns, new Predicate<Pattern>() {
@@ -345,10 +343,10 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	 * @param features
  	 * @return
  	 */
- 	public static ViewerState newViewerState(ResourceSet set, IncQueryEngine engine,
+ 	public static ViewerState newViewerState(IncQueryEngine engine,
  			Collection<Pattern> patterns, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features) {
- 		IncQueryViewerDataModel m = new IncQueryViewerDataModel(set, patterns, engine);
+ 		IncQueryViewerDataModel m = new IncQueryViewerDataModel(patterns, engine);
   		ViewerState r = newViewerState(m, filter, features);
   		r.hasExternalViewerDataModel=false;
   		return r;

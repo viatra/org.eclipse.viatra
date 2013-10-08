@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -221,26 +221,26 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
         }
     }
 
-    public void setContents(ResourceSet resourceSet, Collection<Pattern> patterns, ViewerDataFilter filter)
+    public void setContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
-        if (resourceSet != null) {
+        if (model != null) {
         	if (state!=null) {
         		// dispose any previous viewerstate
         		state.dispose();
         	}
-            state = IncQueryViewerDataModel.newViewerState(resourceSet, getEngine(resourceSet), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindState(state);
             }
         }
     }
 
-    private AdvancedIncQueryEngine getEngine(ResourceSet resourceSet) throws IncQueryException {
+    private AdvancedIncQueryEngine getEngine(Notifier model) throws IncQueryException {
         if (engine != null) {
             engine.dispose();
         }
         // make sure that the engine is initialized in non-wildcard and dynamic EMF mode
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(resourceSet, false, true);
+        engine = AdvancedIncQueryEngine.createUnmanagedEngine(model, false, true);
         return engine;
     }
 
