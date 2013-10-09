@@ -269,7 +269,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 	
 	def private findJavaFile(GenPackage pckg, GenClass genSourceClass, IJavaProject javaProject){
-		val prefix = pckg.ecorePackage.name
+		val prefix = pckg.getEcorePackage.name
 		val suffix = pckg.classPackageSuffix
 		val base = pckg.basePackage
 		var packageNameTmp = ""
@@ -346,7 +346,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			//val handlerType = ast.newParameterizedType(ast.newSimpleType(ast.newSimpleName(HANDLER_NAME)))
 			//handlerType.typeArguments.add(ast.newSimpleType(ast.newSimpleName(feature.ecoreFeature.EType.name)))
 			handlerField.setType(handlerType)
-			handlerField.modifiers.add(ast.newModifier(Modifier$ModifierKeyword::PRIVATE_KEYWORD))
+			handlerField.modifiers().add(ast.newModifier(Modifier$ModifierKeyword::PRIVATE_KEYWORD))
 			val handlerTag = ast.newTagElement
 			val tagText = ast.newTextElement
 			tagText.text = "EMF-IncQuery handler for query-based feature "+feature.name 
