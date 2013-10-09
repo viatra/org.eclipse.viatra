@@ -1,23 +1,64 @@
 package library
 
-//import "http://eclipse.org/incquery/xcore/library"
-import "library"
+import "http://eclipse.org/incquery/xcore/library"
+//import "library"
 
-@Edge(source = w, target = b, label = "own")
-@Format(
-	lineStyle = "dashed"
-)
+// TODO:
+// pattern calls + neg
+// transitive closure
+// check, eval
+
+// viewers
+// validation
+
+
+// ***** relationships ********
+
+
+/*
+ * The "own" books of writer, i.e. the ones that have only w as the author.
+ */
 pattern ownBooksOfWriter(w : Writer, b : Book) {
 	Writer.books(w, b);
 	find numberOfWriters(b, 1);
 } 
-pattern allBookCitations(B1 : Book, B2 : Book) {
-	find bookCitation+(B1, B2);
+
+/*
+ * All of the (transitive) citations of Book b1 contain Book b2.
+ */
+pattern allBookCitations(b1 : Book, b2 : Book) {
+	find bookCitation+(b1, b2);
 }
 
-pattern bookCitation(B1 : Book, B2 : Book) {
-	Book.citations(B1, B2);
+
+/*
+ * Book ref is contained in the set of books that (transitively) reference Book b. 
+ */
+@Edge(source = b, target = ref, label = "ref+")
+@Format(lineStyle = "dashed")
+pattern allReferencesTo(b: Book, ref: Book){
+	find bookCitation+(ref,b);
 }
+
+@Edge(source = b1, target = b2, label = "cites")
+pattern bookCitation(b1 : Book, b2 : Book) {
+	Book.citations(b1, b2);
+}
+
+/*
+ * Writer w1 is influenced by w2, since he wrote some book
+ * that (indirectly or directly) references one of w2's works.
+ */
+@Edge(source = w1, target = w2, label = "influencedBy")
+@Format(lineColor = "#ff0000")
+pattern influencedBy(w1: Writer, w2: Writer) {
+	Book.writers(b1,w1);
+	Book.writers(b2,w2);
+	find allReferencesTo(b2,b1);
+}
+
+
+// ************* numbers **********
 
 pattern numberOfCitations(B1 : Book, N) {
 	N == count find allBookCitations(B1, _B2);
@@ -39,17 +80,7 @@ pattern writerOfBook(B : Book, W : Writer) {
 }
 
 @Edge(source = w, target = b, label = "author")
-//@ContainsItem(container = w, item = b)
 pattern bookOfWriter(w : Writer, b : Book) {
 	Writer.books(w, b);
 }
 
-
-
-// viewers patterns
-
-@Item(item = w, label = "Writer: $w.name$")
-pattern writer(w) { Writer(w);}
-
-@Item(item = b, label = "$b.title$")
-pattern book(b) { Book(b); }

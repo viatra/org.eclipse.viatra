@@ -2,10 +2,50 @@
 <plugin>
 
    <extension
+         id="library.writersInLibrary"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.WritersInLibraryQuerySpecification$Provider"
+            id="library.writersInLibrary">
+      </matcher>
+   </extension>
+   <extension
+         id="library.booksInLibrary"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.BooksInLibraryQuerySpecification$Provider"
+            id="library.booksInLibrary">
+      </matcher>
+   </extension>
+   <extension
+         id="library.library"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.LibraryQuerySpecification$Provider"
+            id="library.library">
+      </matcher>
+   </extension>
+   <extension
+         id="library.writer"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.WriterQuerySpecification$Provider"
+            id="library.writer">
+      </matcher>
+   </extension>
+   <extension
+         id="library.book"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.BookQuerySpecification$Provider"
+            id="library.book">
+      </matcher>
+   </extension>
+   <extension
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/library.xcoreiq"
-            uri="library"
+            uri="http://eclipse.org/incquery/xcore/library"
             class="library.LibraryPackage">
       </package>
    </extension>
@@ -26,11 +66,27 @@
       </matcher>
    </extension>
    <extension
+         id="library.allReferencesTo"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.AllReferencesToQuerySpecification$Provider"
+            id="library.allReferencesTo">
+      </matcher>
+   </extension>
+   <extension
          id="library.bookCitation"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.BookCitationQuerySpecification$Provider"
             id="library.bookCitation">
+      </matcher>
+   </extension>
+   <extension
+         id="library.influencedBy"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.InfluencedByQuerySpecification$Provider"
+            id="library.influencedBy">
       </matcher>
    </extension>
    <extension
@@ -79,22 +135,6 @@
       <matcher
             querySpecificationProvider="library.util.BookOfWriterQuerySpecification$Provider"
             id="library.bookOfWriter">
-      </matcher>
-   </extension>
-   <extension
-         id="library.writer"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.WriterQuerySpecification$Provider"
-            id="library.writer">
-      </matcher>
-   </extension>
-   <extension
-         id="library.book"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.BookQuerySpecification$Provider"
-            id="library.book">
       </matcher>
    </extension>
 
