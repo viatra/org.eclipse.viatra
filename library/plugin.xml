@@ -42,14 +42,6 @@
       </matcher>
    </extension>
    <extension
-         point="org.eclipse.emf.ecore.generated_package">
-      <package
-            genModel="src/library/library.xcoreiq"
-            uri="http://eclipse.org/incquery/xcore/library"
-            class="library.LibraryPackage">
-      </package>
-   </extension>
-   <extension
          id="library.ownBooksOfWriter"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
@@ -136,6 +128,14 @@
             querySpecificationProvider="library.util.BookOfWriterQuerySpecification$Provider"
             id="library.bookOfWriter">
       </matcher>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated library -->
+      <package
+            uri="http://eclipse.org/incquery/xcore/library"
+            class="library.LibraryPackage"
+            genModel="src/library/library.xcoreiq"/>
    </extension>
 
 </plugin>
