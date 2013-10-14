@@ -14,14 +14,18 @@ package org.eclipse.incquery.viewers.runtime.zest.sources;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.ForestRouter;
+import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.TreeRouter;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
@@ -69,6 +73,13 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
             return element.getNumberProperty(property);
         }
         return -1;
+    }
+    
+    private String getStringProperty(FormattableElement element, String property) {
+    	if (element.isFormatted()) {
+    		return element.getStringProperty(property);
+    	}
+    	return "";
     }
 
     private Color getColor(RGB rgb) {
@@ -170,10 +181,25 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
      */
     @Override
     public int getConnectionStyle(Object rel) {
+    	// handle containments specially
     	if (rel instanceof Containment) {
     		return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
     	}
-        return ZestStyles.CONNECTIONS_DIRECTED;
+    	// handle lineStyle property
+    	if (rel instanceof FormattableElement) {
+    		String lS = getStringProperty((FormattableElement) rel, FormatSpecification.LINE_STYLE);
+    		if ("dashed".equalsIgnoreCase(lS)) {
+    			return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
+    		}
+    		else if ("dotted".equalsIgnoreCase(lS)) {
+    			return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+    		}
+    		else if ("dashdot".equalsIgnoreCase(lS)) {
+    			return ZestStyles.CONNECTIONS_DASH_DOT | ZestStyles.CONNECTIONS_DIRECTED;
+    		}
+    	}
+    	// default
+        return ZestStyles.CONNECTIONS_SOLID | ZestStyles.CONNECTIONS_DIRECTED;
     }
 
     /*
@@ -184,7 +210,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     @Override
     public Color getColor(Object rel) {
         if (rel instanceof Edge) {
-            return getColorProperty((FormattableElement) rel, FormatSpecification.COLOR);
+            return getColorProperty((FormattableElement) rel, FormatSpecification.LINE_COLOR);
         }
         return null;
     }
@@ -220,8 +246,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
      */
     @Override
     public ConnectionRouter getRouter(Object rel) {
-        // TODO Auto-generated method stub
-        return null;
+        return new BendpointConnectionRouter();
     }
 
 }
