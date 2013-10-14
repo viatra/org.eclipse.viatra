@@ -13,16 +13,8 @@ package org.eclipse.incquery.patternlanguage.emf.ui.outline;
 import java.util.Iterator;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
