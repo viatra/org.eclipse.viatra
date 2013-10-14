@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -121,15 +122,35 @@ public class MetamodelProviderService implements IMetamodelProvider {
     }
 
     private EPackage lookUpEPackageInResourceSetContents(String packageUri, ResourceSet resourceSet) {
-        for (Resource resource : resourceSet.getResources()) {
-            for (EObject obj : resource.getContents()) {
-                if (obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(packageUri)) {
-                    return (EPackage) obj;
-                }
-            }
+        Set<Resource> processedResources = new HashSet<Resource>(); 
+        while (processedResources.size() != resourceSet.getResources().size()) {
+        	Set<Resource> resources = new HashSet<Resource>(resourceSet.getResources());
+        	resources.removeAll(processedResources);
+			for (Resource resource : resources) {
+				EPackage pkg = findEPackageInResource(packageUri, resource);
+				if (pkg != null) {
+					return pkg;
+				}
+				processedResources.add(resource);
+			}
         }
         return null;
     }
+
+	private EPackage findEPackageInResource(String packageUri, Resource resource) {
+		TreeIterator<EObject> it = resource.getAllContents();
+		while(it.hasNext()) {
+			EObject obj = it.next();
+			if (obj instanceof EPackage) {
+				if (((EPackage) obj).getNsURI().equals(packageUri)) {
+					return (EPackage) obj;
+				}
+			} else {
+				it.prune();
+			}
+		}
+		return null;
+	}
 
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
