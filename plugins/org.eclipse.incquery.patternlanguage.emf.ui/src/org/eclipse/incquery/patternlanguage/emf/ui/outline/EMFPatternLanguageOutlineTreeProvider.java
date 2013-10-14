@@ -36,10 +36,6 @@ import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
 public class EMFPatternLanguageOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
     protected void _createChildren(DocumentRootNode parentNode, PatternModel model) {
-        // adding a structuralfeaturenode for ecore package imports
-        createEStructuralFeatureNode(parentNode, model,
-                EMFPatternLanguagePackage.Literals.PATTERN_MODEL__IMPORT_PACKAGES, _image(model),
-                "import declarations", false);
         // adding patterns to the default DocumentRootNode
         for (EObject element : model.getPatterns()) {
             createNode(parentNode, element);
@@ -47,44 +43,7 @@ public class EMFPatternLanguageOutlineTreeProvider extends DefaultOutlineTreePro
     }
 
     protected void _createChildren(IOutlineNode parentNode, Pattern model) {
-        if (model.getBodies().size() == 1) {
-            _createChildren(parentNode, model.getBodies().get(0));
-        } else {
-            for (PatternBody body : model.getBodies()) {
-                createNode(parentNode, body);
-            }
-        }
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, PatternBody body) {
-        for (EObject childElement : body.getConstraints())
-            createNode(parentNode, childElement);
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, CompareConstraint constraint) {
-        // By leaving this method empty, the Compare Constraint will not have any children in the outline view
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, EClassifierConstraint constraint) {
-        // By leaving this method empty, the EClass Constraint will not have any children in the outline view
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, PathExpressionConstraint constraint) {
-        PathExpressionHead head = constraint.getHead();
-        if (head.getTail() != null) {
-            createNode(parentNode, head.getTail());
-        }
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, PathExpressionTail tail) {
-        if (tail.getTail() != null) {
-            createNode(parentNode, tail.getTail());
-        }
-    }
-
-    protected void _createChildren(IOutlineNode parentNode, PatternCompositionConstraint constraint) {
-        // By leaving this method empty, the Pattern Composition Constraint will not have any children in the outline
-        // view
+        //As this method is empty, patterns will have no children in the Outline
     }
 
     /**
