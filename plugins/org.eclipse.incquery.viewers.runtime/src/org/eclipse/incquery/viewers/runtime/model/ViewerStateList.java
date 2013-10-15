@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -21,15 +18,11 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 /**
  * An {@link IObservableList}-based implementation of {@link ViewerState}.
@@ -53,17 +46,7 @@ public class ViewerStateList extends ViewerState {
 
 	
 	private Multimap<Object, Item> initializeItemMap() {
-		Map<Object, Collection<Item>> map = Maps.newHashMap();
-		return Multimaps.newListMultimap(map, new Supplier<List<Item>>() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public List<Item> get() {
-				ArrayList<Item> list = Lists.newArrayList();
-				return new WritableList(list, Item.class);
-			}
-
-		});
+	    return new ItemMap();
 	}
 
 	private IListChangeListener itemListener = new IListChangeListener() {
@@ -78,6 +61,9 @@ public class ViewerStateList extends ViewerState {
 						((IViewerStateListener) listener).itemAppeared(item);
 						item.getLabel().addChangeListener(labelChangeListener);
 					}
+					for (Edge edge : edgeDelayer.removeDelayedEdgesForItem(item)) {
+                        handleEdgeAddition(edge);
+                    }
 				} else {
 					for (Object listener : stateListeners.getListeners()) {
 						item.getLabel().removeChangeListener(labelChangeListener);
@@ -95,21 +81,57 @@ public class ViewerStateList extends ViewerState {
 			ListDiff diff = event.diff;
 			for (ListDiffEntry entry : diff.getDifferences()) {
 				Edge edge = (Edge) entry.getElement();
-				if (entry.isAddition()) {
-					for (Object listener : stateListeners.getListeners()) {
-						((IViewerStateListener) listener).edgeAppeared(edge);
-						edge.getLabel().addChangeListener(labelChangeListener);
-					}
-				} else {
-					for (Object listener : stateListeners.getListeners()) {
-						edge.getLabel().removeChangeListener(labelChangeListener);
-						((IViewerStateListener) listener).edgeDisappeared(edge);
-					}
-				}
+				boolean existingSource = itemMap.containsValue(edge.getSource());
+                boolean existingTarget = itemMap.containsValue(edge.getTarget());
+                if (existingSource && existingTarget) {
+                    if (entry.isAddition()) {
+                        handleEdgeAddition(edge);
+                    } else {
+                        for (Object listener : stateListeners.getListeners()) {
+                            edge.getLabel().removeChangeListener(labelChangeListener);
+                            ((IViewerStateListener) listener).edgeDisappeared(edge);
+                        }
+                    }
+                } else {
+                    handleEdgeDelay(entry, edge, existingSource, existingTarget);
+                }
 			}
 		}
 	};
 
+	private void handleEdgeDelay(ListDiffEntry entry, Edge edge, boolean existingSource, boolean existingTarget) {
+        if (entry.isAddition()) {
+            if (!existingSource) {
+                edgeDelayer.delayEdgeForNonExistingSource(edge);
+            }
+            if (!existingTarget) {
+                edgeDelayer.delayEdgeForNonExistingTarget(edge);
+            }
+        } else {
+            if (edge instanceof Containment) {
+                childrenMap.remove(edge.getSource(), edge.getTarget());
+                parentMap.remove(edge.getTarget());
+            }
+            if (!existingSource) {
+                edgeDelayer.removeDelayedEdgeForNonExistingSource(edge);
+            }
+            if (!existingTarget) {
+                edgeDelayer.removeDelayedEdgeForNonExistingTarget(edge);
+            }
+        }
+    }
+
+    private void handleEdgeAddition(Edge edge) {
+        if (edge instanceof Containment) {
+            containmentAppeared((Containment) edge);
+        } else {
+            for (Object listener : stateListeners.getListeners()) {
+                ((IViewerStateListener) listener).edgeAppeared(edge);
+                edge.getLabel().addChangeListener(labelChangeListener);
+            }
+        }
+    }
+    
 	private IListChangeListener containmentListener = new IListChangeListener() {
 
 		@Override
@@ -117,11 +139,17 @@ public class ViewerStateList extends ViewerState {
 			ListDiff diff = event.diff;
 			for (ListDiffEntry entry : diff.getDifferences()) {
 				Containment edge = (Containment) entry.getElement();
-				if (entry.isAddition()) {
-					containmentAppeared(edge);
-				} else {
-					containmentDisappeared(edge);
-				}
+				boolean existingSource = itemMap.containsValue(edge.getSource());
+                boolean existingTarget = itemMap.containsValue(edge.getTarget());
+                if (existingSource && existingTarget) {
+                    if (entry.isAddition()) {
+                        containmentAppeared(edge);
+                    } else {
+                        containmentDisappeared(edge);
+                    }
+                } else {
+                    handleEdgeDelay(entry, edge, existingSource, existingTarget);
+                }
 			}
 
 		}
