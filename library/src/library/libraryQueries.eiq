@@ -1,11 +1,9 @@
 package library
 
-import "http://eclipse.org/incquery/xcore/library"
-//import "library"
+import "library"
 
 // TODO:
 // pattern calls + neg
-// transitive closure
 // check, eval
 
 // viewers
@@ -14,6 +12,26 @@ import "http://eclipse.org/incquery/xcore/library"
 
 // ***** relationships ********
 
+pattern mostBooksInCategory(l : Library, c) {
+	n1 == count find categoryOfBook(BookCategory::Biography, _a);
+	n2 == count find categoryOfBook(BookCategory::Mystery, _b);
+	n3 == count find categoryOfBook(BookCategory::ScienceFiction, _c);
+	Library(l);
+	c == eval(Math.max(Math.max(n1, n2), n3));
+}
+
+pattern numberOfBooksInCategory(c : BookCategory, n) {
+	n == count find categoryOfBook(c, _b);
+}
+
+pattern categoryOfBook(c : BookCategory, b : Book) {
+	Book.bookCategory(b, c);
+}
+
+pattern isValidWriter(w : Writer, b) {
+	find numberOfBooksOfWriter(w, n);
+	b == eval(n > 0);
+}
 
 /*
  * The "own" books of writer, i.e. the ones that have only w as the author.
@@ -83,4 +101,3 @@ pattern writerOfBook(B : Book, W : Writer) {
 pattern bookOfWriter(w : Writer, b : Book) {
 	Writer.books(w, b);
 }
-

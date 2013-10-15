@@ -5,7 +5,7 @@
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/library.xcoreiq"
-            uri="http://eclipse.org/incquery/xcore/library"
+            uri="library"
             class="library.LibraryPackage">
       </package>
    </extension>
@@ -48,6 +48,54 @@
             querySpecificationProvider="library.util.BookQuerySpecification$Provider"
             id="library.book">
       </matcher>
+   </extension>
+   <extension
+         id="library.mostBooksInCategory"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.MostBooksInCategoryQuerySpecification$Provider"
+            id="library.mostBooksInCategory">
+      </matcher>
+   </extension>
+   <extension
+         id="library.mostBooksInCategory"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.MostBooksInCategoryEvaluator1_1"
+            id="library.mostBooksInCategory_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.numberOfBooksInCategory"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.NumberOfBooksInCategoryQuerySpecification$Provider"
+            id="library.numberOfBooksInCategory">
+      </matcher>
+   </extension>
+   <extension
+         id="library.categoryOfBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.CategoryOfBookQuerySpecification$Provider"
+            id="library.categoryOfBook">
+      </matcher>
+   </extension>
+   <extension
+         id="library.isValidWriter"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.IsValidWriterQuerySpecification$Provider"
+            id="library.isValidWriter">
+      </matcher>
+   </extension>
+   <extension
+         id="library.isValidWriter"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.IsValidWriterEvaluator1_1"
+            id="library.isValidWriter_1_1">
+      </evaluator>
    </extension>
    <extension
          id="library.ownBooksOfWriter"

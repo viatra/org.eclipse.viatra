@@ -1,7 +1,6 @@
 package library
 
-import "http://eclipse.org/incquery/xcore/library"
-//import "library"
+import "library"
 
 // ******** viewers helper patterns *******
 

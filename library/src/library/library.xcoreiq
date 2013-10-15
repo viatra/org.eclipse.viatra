@@ -1,15 +1,15 @@
-@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
+//@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
 //@GenModel(editDirectory="/library.edit/src")
 //@GenModel(editorDirectory="/library.editor/src")
 package library
 
-//import-incqueries library.*;
-
 class Library {  
-	String name
+	String name 
+	incquery-derived Integer mostBooksInCategory spec mostBooksInCategory
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
 }
+
 class Writer {   
 	String name 
 	
@@ -28,7 +28,8 @@ class Writer {
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
-} 
+	incquery-derived Boolean isValid spec isValidWriter
+}
 
 class Book {
 	String title  
@@ -40,7 +41,7 @@ class Book {
 
 	incquery-derived Integer numberOfCitations spec numberOfCitations 
 	incquery-derived refers Book[] allCitations spec allBookCitations 
-	incquery-derived Integer numberOfAuthors spec numberOfWriters
+	incquery-derived Integer numberOfWriters spec numberOfWriters
 }
 
 enum BookCategory {
