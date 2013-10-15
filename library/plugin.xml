@@ -5,7 +5,7 @@
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/library.xcoreiq"
-            uri="library"
+            uri="http://eclipse.org/incquery/xcore/library"
             class="library.LibraryPackage">
       </package>
    </extension>
