@@ -63,6 +63,8 @@ public abstract class ViewerState {
 	 */
 	protected Map<Item, Item> parentMap;
 
+	protected EdgeDelayer edgeDelayer = new EdgeDelayer();
+	
 	public Collection<Item> getChildren(Item parent) {
 		return childrenMap.get(parent);
 	}
