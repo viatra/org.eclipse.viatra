@@ -19,6 +19,8 @@ import org.eclipse.incquery.patternlanguage.emf.IResourceSetPreparer;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.xtext.common.types.access.ClasspathTypeProviderFactory;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory;
 
 import com.google.inject.Injector;
 
@@ -63,12 +65,12 @@ public class XmiModelUtil {
      * @see {@link ResourceSet#getResource(URI, boolean)}
      */
     public static Resource getGlobalXmiResource(XmiModelUtilRunningOptionEnum optionEnum, String bundleName,
-            IResourceSetPreparer preparer) throws IncQueryException {
+            ResourceSet set) throws IncQueryException {
         try {
-            ResourceSet set = prepareXtextResource();
-            if (preparer != null) {
-                preparer.prepareResourceSet(set);
-            }
+//            ResourceSet set = prepareXtextResource();
+//            if (preparer != null) {
+//                preparer.prepareResourceSet(set);
+//            }
             final URI globalXmiResourceURI = getGlobalXmiResourceURI(optionEnum, bundleName);
             return set.getResource(globalXmiResourceURI, true);
         } catch (Exception ex) {
@@ -98,7 +100,7 @@ public class XmiModelUtil {
      */
     public static ResourceSet prepareXtextResource(Injector injector) {
         ResourceSet set = injector.getInstance(ResourceSet.class);
-        ClasspathTypeProviderFactory cptf = injector.getInstance(ClasspathTypeProviderFactory.class);
+        Factory cptf = injector.getInstance(IJvmTypeProvider.Factory.class);
         cptf.createTypeProvider(set);
         return set;
     }

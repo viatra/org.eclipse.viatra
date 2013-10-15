@@ -51,6 +51,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Function;
@@ -108,6 +109,9 @@ public class CleanSupport {
 
     @Inject
     private Logger logger;
+    
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
 
     /**
      * Performs a full clean on the currently built project and all related fragments.
@@ -194,7 +198,7 @@ public class CleanSupport {
             Resource globalXmiModel;
             try {
                 globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE,
-                        project.getName(), new PrepareResourceSetWithLoader(project));
+                        project.getName(), resourceSetProvider.get(project));
             Iterator<EObject> iter = globalXmiModel.getAllContents();
             while (iter.hasNext()) {
                 EObject obj = iter.next();
@@ -244,7 +248,7 @@ public class CleanSupport {
         IProject modelProject = context.getBuiltProject();
         if (getGlobalXmiFile(modelProject).exists()) {
             Resource globalXmiModel = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_RESOURCE,
-                    modelProject.getName(), new PrepareResourceSetWithLoader(modelProject));
+                    modelProject.getName(), resourceSetProvider.get(modelProject));
             for (Delta delta : relevantDeltas) {
                 if (delta.getNew() != null /* && shouldGenerate(deltaResource, context) */) {
                 	Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
