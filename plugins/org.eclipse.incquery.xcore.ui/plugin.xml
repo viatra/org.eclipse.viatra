@@ -6,13 +6,14 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="org.eclipse.incquery.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
-            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            default="true"
-            extensions="xcoreiq"
-            id="org.eclipse.incquery.xcore.IncQueryXcore"
-            matchingStrategy="org.eclipse.incquery.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
-            name="Xcore Editor (with IncQuery support)">
+              class="org.eclipse.incquery.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+              contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+              default="true"
+              extensions="xcoreiq"
+              icon="icons/XcoreModelFile.gif"
+              id="org.eclipse.incquery.xcore.IncQueryXcore"
+              matchingStrategy="org.eclipse.incquery.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
+              name="Xcore Editor (with IncQuery support)">
         </editor>
     </extension>
     <extension
