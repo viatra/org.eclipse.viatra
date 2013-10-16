@@ -146,14 +146,6 @@
       </matcher>
    </extension>
    <extension
-         id="library.suspiciousBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.SuspiciousBookQuerySpecification$Provider"
-            id="library.suspiciousBook">
-      </matcher>
-   </extension>
-   <extension
          id="library.writersInLibrary"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
@@ -191,6 +183,14 @@
       <matcher
             querySpecificationProvider="library.util.BookQuerySpecification$Provider"
             id="library.book">
+      </matcher>
+   </extension>
+   <extension
+         id="library.suspiciousBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.SuspiciousBookQuerySpecification$Provider"
+            id="library.suspiciousBook">
       </matcher>
    </extension>
 
