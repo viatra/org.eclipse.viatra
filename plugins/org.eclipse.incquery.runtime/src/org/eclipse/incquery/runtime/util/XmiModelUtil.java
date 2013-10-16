@@ -47,7 +47,8 @@ public class XmiModelUtil {
      */
     public static Resource getGlobalXmiResource(XmiModelUtilRunningOptionEnum optionEnum, String bundleName)
             throws IncQueryException {
-        return getGlobalXmiResource(optionEnum, bundleName, null);
+      ResourceSet set = prepareXtextResource();
+      return getGlobalXmiResource(optionEnum, bundleName, set);
     }
 
     /**
