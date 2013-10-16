@@ -50,27 +50,27 @@
       </matcher>
    </extension>
    <extension
-         id="library.mostBooksInCategory"
+         id="library.moreBooksInCategoryThan"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.MostBooksInCategoryQuerySpecification$Provider"
-            id="library.mostBooksInCategory">
+            querySpecificationProvider="library.util.MoreBooksInCategoryThanQuerySpecification$Provider"
+            id="library.moreBooksInCategoryThan">
       </matcher>
    </extension>
    <extension
-         id="library.mostBooksInCategory"
+         id="library.moreBooksInCategoryThan"
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
-            evaluatorClass="library.util.MostBooksInCategoryEvaluator1_1"
-            id="library.mostBooksInCategory_1_1">
+            evaluatorClass="library.util.MoreBooksInCategoryThanEvaluator1_1"
+            id="library.moreBooksInCategoryThan_1_1">
       </evaluator>
    </extension>
    <extension
-         id="library.numberOfBooksInCategory"
+         id="library.mostPopularBookCategory"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.NumberOfBooksInCategoryQuerySpecification$Provider"
-            id="library.numberOfBooksInCategory">
+            querySpecificationProvider="library.util.MostPopularBookCategoryQuerySpecification$Provider"
+            id="library.mostPopularBookCategory">
       </matcher>
    </extension>
    <extension

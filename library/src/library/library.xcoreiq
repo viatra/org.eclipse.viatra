@@ -5,7 +5,7 @@ package library
 
 class Library {  
 	String name 
-	incquery-derived Integer mostBooksInCategory spec mostBooksInCategory
+	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
 }

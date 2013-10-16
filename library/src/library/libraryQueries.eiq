@@ -12,16 +12,21 @@ import "library"
 
 // ***** relationships ********
 
-pattern mostBooksInCategory(l : Library, c) {
-	n1 == count find categoryOfBook(BookCategory::Biography, _a);
-	n2 == count find categoryOfBook(BookCategory::Mystery, _b);
-	n3 == count find categoryOfBook(BookCategory::ScienceFiction, _c);
-	Library(l);
-	c == eval(Math.max(Math.max(n1, n2), n3));
+/*
+ * There are more books with category C1 than books with category C2. 
+ */
+pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
+	N == count find categoryOfBook(C1, _B1);
+	M == count find categoryOfBook(C2, _B2);
+	check(N > M);
 }
 
-pattern numberOfBooksInCategory(c : BookCategory, n) {
-	n == count find categoryOfBook(c, _b);
+/*
+ * Category C has the most books in the Library L.
+ */
+pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
+	Library(L);
+	neg find moreBooksInCategoryThan(_Cx, C);
 }
 
 pattern categoryOfBook(c : BookCategory, b : Book) {
@@ -78,10 +83,16 @@ pattern influencedBy(w1: Writer, w2: Writer) {
 
 // ************* numbers **********
 
+/*
+ * The number of (transitive) citations of Book B1 is N.
+ */
 pattern numberOfCitations(B1 : Book, N) {
 	N == count find allBookCitations(B1, _B2);
 }
 
+/*
+ * The number of the books of Writer W is N.  
+ */
 pattern numberOfBooksOfWriter(W : Writer, N) {
 	N == count find bookOfWriter(W, _B);
 }
