@@ -51,6 +51,11 @@ public class IncQueryViewerSupport {
 	 * @param state
 	 */
 	public static void bind(AbstractListViewer viewer, ViewerState state) {
+		// this seems to be necessary to avoid a databinding-related exception 
+		// which comes when the viewer already had some contents before the current run		
+		if (viewer.getInput()!=null) {
+			viewer.setInput(null);
+		}
 		
 		if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof ListContentProvider) {
 			// dispose already existing content provider
@@ -63,19 +68,9 @@ public class IncQueryViewerSupport {
 			((QueryLabelProvider)viewer.getLabelProvider()).dispose();
 		}
 
-		
-		/*
-		if (!(viewer.getContentProvider() instanceof ListContentProvider)) {
-			viewer.setContentProvider(new ListContentProvider());
-		}
-		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-			viewer.setLabelProvider(new QueryLabelProvider(state));
-		}
-		*/
-		
-		viewer.setInput(state);
 		viewer.setContentProvider(new ListContentProvider());
 		viewer.setLabelProvider(new QueryLabelProvider(state));
+		viewer.setInput(state);			
 		viewer.refresh();
 	}
 
@@ -108,31 +103,25 @@ public class IncQueryViewerSupport {
 	 * @param state
 	 */
 	public static void bind(AbstractTreeViewer viewer, ViewerState state) {
-		
+		// this seems to be necessary to avoid a databinding-related exception 
+		// which comes when the viewer already had some contents before the current run
+		if (viewer.getInput()!=null) {
+			viewer.setInput(null);
+		}
 		
 		if (viewer.getContentProvider()!=null && viewer.getContentProvider() instanceof TreeContentProvider) {
 			// dispose already existing content provider
 			((TreeContentProvider)viewer.getContentProvider()).dispose();
 		}
-
 		
 		if (viewer.getLabelProvider()!=null && viewer.getLabelProvider() instanceof QueryLabelProvider) {
 			// dispose already existing label provider
 			((QueryLabelProvider)viewer.getLabelProvider()).dispose();
 		}
-		
-		/*
-		if (!(viewer.getContentProvider() instanceof TreeContentProvider)) {
-			viewer.setContentProvider(new TreeContentProvider());
-		}
-		if (!(viewer.getLabelProvider() instanceof QueryLabelProvider)) {
-			viewer.setLabelProvider(new QueryLabelProvider(state));
-		}
-		*/
-
-		viewer.setInput(state);
+				
 		viewer.setContentProvider(new TreeContentProvider());
 		viewer.setLabelProvider(new QueryLabelProvider(state));
+		viewer.setInput(state);	
 		viewer.refresh();
 	}
 }
