@@ -1,13 +1,17 @@
 //@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
-//@GenModel(editDirectory="/library.edit/src")
-//@GenModel(editorDirectory="/library.editor/src")
+@GenModel(editDirectory="/library.edit/src")
+@GenModel(editorDirectory="/library.editor/src")
 package library
 
 class Library {  
 	String name 
-	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
+	
+	// derived features
+	
+	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
+	incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
 }
 
 class Writer {   
@@ -27,12 +31,15 @@ class Writer {
 	
 	container Library library opposite writers
 	refers Book[] books opposite writers
+	
+	// derived features
+	
 	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
 	incquery-derived Boolean isValid spec isValidWriter
 }
 
 class Book {
-	String title  
+	String title = "" // set a default value
 	Integer pages
 	BookCategory bookCategory
 	refers Book[] citations

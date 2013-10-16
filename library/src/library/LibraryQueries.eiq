@@ -15,19 +15,21 @@ import "library"
 /*
  * There are more books with category C1 than books with category C2. 
  */
+
 pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	N == count find categoryOfBook(C1, _B1);
 	M == count find categoryOfBook(C2, _B2);
 	check(N > M);
-}
+} 
 
 /*
  * Category C has the most books in the Library L.
  */
+
 pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
 	Library(L);
 	neg find moreBooksInCategoryThan(_Cx, C);
-}
+} 
 
 pattern categoryOfBook(c : BookCategory, b : Book) {
 	Book.bookCategory(b, c);
@@ -43,7 +45,7 @@ pattern isValidWriter(w : Writer, b) {
  */
 pattern ownBooksOfWriter(w : Writer, b : Book) {
 	Writer.books(w, b);
-	find numberOfWriters(b, 1);
+//	find numberOfWriters(b, 1);
 } 
 
 /*

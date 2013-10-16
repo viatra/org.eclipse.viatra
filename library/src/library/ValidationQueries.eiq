@@ -1,0 +1,30 @@
+package library
+
+import "library"
+
+/*
+ * A "suspicious" book is one that:
+ *  - is empty (missing some important field)
+ *  - is weird (it transitively cites itself)
+ */
+pattern suspiciousBook(L:Library, B: Book) {
+	Library.books(L,B);
+	find emptyBook(B);
+} 
+//or {
+//	Library.books(L,B);
+//	find weirdBook(B);
+//}
+
+
+private pattern emptyBook(B: Book) {
+	Book.title(B,"");
+//	check(Title == "");
+} 
+//or {
+//	Book.numberOfWriters(B,0);	
+//}
+
+//private pattern weirdBook(B : Book) {
+//	find allBookCitations(B,B);
+//}
