@@ -12,10 +12,28 @@ import "library"
 
 // ***** relationships ********
 
+pattern averageNumberOfCoauthorsPerBook(W : Writer, A) {
+	NumOfBooks == count find writerOfBook(_B, W);
+	NumOfCoAuthors == count find coAuthorsOfWriter(W, _CW);
+	A == eval(if (NumOfBooks == 0) 0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
+}
+
+pattern coAuthorsOfWriter(W : Writer, CW : Writer) {
+	Book(B);
+	Writer.books(W, B);
+	Writer.books(CW, B);
+	W != CW;
+}
+
+pattern writerName(W : Writer, N) {
+	Writer.firstName(W, FN);
+	Writer.lastName(W, LN);
+	N == eval(FN + " " + LN);
+}
+
 /*
  * There are more books with category C1 than books with category C2. 
  */
-
 pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	N == count find categoryOfBook(C1, _B1);
 	M == count find categoryOfBook(C2, _B2);
@@ -43,9 +61,9 @@ pattern isValidWriter(w : Writer, b) {
 /*
  * The "own" books of writer, i.e. the ones that have only w as the author.
  */
-pattern ownBooksOfWriter(w : Writer, b : Book) {
-	Writer.books(w, b);
-//	find numberOfWriters(b, 1);
+pattern ownBooksOfWriter(W : Writer, B : Book) {
+	Writer.books(W, B);
+	find numberOfWriters(B, 1);
 } 
 
 /*
@@ -101,9 +119,8 @@ pattern numberOfBooksOfWriter(W : Writer, N) {
 
 //@Item(item = B, label = "$B.title$ [$N2$]")
 // TODO: this seems to introduce a weird bug
-pattern numberOfWriters(B : Book, N2) {
+pattern numberOfWriters(B : Book, N) {
 	N == count find writerOfBook(B, _W);
-	N2 == eval(N+1-1);
 }
 
 pattern writerOfBook(B : Book, W : Writer) {

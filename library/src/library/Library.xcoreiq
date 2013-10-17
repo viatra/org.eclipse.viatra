@@ -10,30 +10,25 @@ class Library {
 	
 	// derived features
 	
+	//incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
 	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
-	incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
 }
 
-class Writer {   
-	String name 
+class Writer {
+	String firstName   
+	String lastName
+	incquery-derived String name spec writerName
 	
-	derived String lastName get {
-		if (name != null) {
-			val index = name.lastIndexOf(" ")
-			if (index == -1) {
-				name
-			}
-			else {
-				name.substring(index+1)
-			}
-		}
+	derived String testName get {
+		return firstName + " " + lastName
 	}
 	
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	
 	// derived features
-	
+	incquery-derived Double averageNumberOfCoauthorsPerBook spec averageNumberOfCoauthorsPerBook
+	incquery-derived refers Writer[] coAuthors spec coAuthorsOfWriter
 	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
 	incquery-derived Boolean isValid spec isValidWriter
 }
