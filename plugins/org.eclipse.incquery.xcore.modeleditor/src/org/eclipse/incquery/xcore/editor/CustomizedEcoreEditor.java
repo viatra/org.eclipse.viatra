@@ -64,6 +64,13 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 	}
 	
 	@Override
+	public void dispose() {
+		// TODO write settingdelegate deinitialization here
+		// when the editor is closed, all the queries registered must be gone
+		super.dispose();
+	}
+	
+	@Override
 	public void createPages() {
 		// Creates the model from the editor input
 	    //
