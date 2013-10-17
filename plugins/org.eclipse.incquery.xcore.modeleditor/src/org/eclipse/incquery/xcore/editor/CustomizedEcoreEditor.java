@@ -71,7 +71,6 @@ public class CustomizedEcoreEditor extends EcoreEditor {
         super.init(site, editorInput);
     }
     
-
     private void initializeRegistry() {
         ResourceSet resourceSet = new ResourceSetImpl();
         for (Resource resource : editingDomain.getResourceSet().getResources()) {
@@ -100,12 +99,10 @@ public class CustomizedEcoreEditor extends EcoreEditor {
             QuerySpecificationRegistry.unregisterQuerySpecification(spec);
         }
     }
-
-    @Override
-    public void createPages() {
-        // Creates the model from the editor input
-        //
-        createModel();
+	
+	@Override
+	public void createPages() {
+	    createModel();
 
         initializeRegistry();
 
