@@ -133,12 +133,21 @@ public final class QuerySpecificationRegistry {
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
         } else {
-        	IncQueryLoggingUtil
+            IncQueryLoggingUtil
                     .getDefaultLogger()
                     .warn(String
                             .format("[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!",
                                     qualifiedName));
         }
+    }
+    
+    /**
+     * Removes the query specification from the registry which belongs to the given fully qualified pattern name.  
+     * 
+     * @param patternFQN the fully qualified name of the pattern
+     */
+    public static void unregisterQuerySpecification(String patternFQN) {
+        QUERY_SPECIFICATIONS.remove(patternFQN);
     }
 
     /**

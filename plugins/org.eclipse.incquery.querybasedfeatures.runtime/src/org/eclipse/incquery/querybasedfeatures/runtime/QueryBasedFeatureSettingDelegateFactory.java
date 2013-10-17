@@ -30,6 +30,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
 
 import com.google.common.base.Preconditions;
 
@@ -70,7 +71,12 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
         if(querySpec != null) {
-            result = createSettingDelegate(eStructuralFeature, querySpec, false, false);
+            if (querySpec instanceof GenericQuerySpecification) {
+                result = createSettingDelegate(eStructuralFeature, querySpec, true, true);                
+            }
+            else {
+                result = createSettingDelegate(eStructuralFeature, querySpec, false, false);
+            }
         } else {
             return new BasicSettingDelegate.Stateless(eStructuralFeature) {
                 

@@ -23,5 +23,6 @@ Export-Package: org.eclipse.incquery.runtime,
  org.eclipse.incquery.runtime.api,
  org.eclipse.incquery.runtime.api.impl,
  org.eclipse.incquery.runtime.extensibility,
+ org.eclipse.incquery.runtime.internal.apiimpl,
  org.eclipse.incquery.runtime.util
 Bundle-ActivationPolicy: lazy
