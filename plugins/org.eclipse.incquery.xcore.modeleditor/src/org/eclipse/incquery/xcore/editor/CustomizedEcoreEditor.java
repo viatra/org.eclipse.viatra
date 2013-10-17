@@ -34,6 +34,8 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -50,6 +52,17 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class CustomizedEcoreEditor extends EcoreEditor {
 
+	@Override
+	public void init(IEditorSite site, IEditorInput editorInput) {
+		// TODO write settingdelegate initialization here
+
+		// locate .eiq files somehow
+		// load them as per http://wiki.eclipse.org/EMFIncQuery/UserDocumentation/API/Advanced#Loading_EIQ_resources_programmatically
+		// register them in the Query Spec registry
+		
+		super.init(site, editorInput);
+	}
+	
 	@Override
 	public void createPages() {
 		// Creates the model from the editor input
