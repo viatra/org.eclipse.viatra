@@ -10,7 +10,7 @@ class Library {
 	
 	// derived features
 	
-	//incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
+	incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
 	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
 }
 

@@ -11,21 +11,21 @@ pattern suspiciousBook(L:Library, B: Book) {
 	Library.books(L,B);
 	find emptyBook(B);
 } 
-or {
-	Library.books(L,B);
-	find weirdBook(B);
-}
+//or {
+//	Library.books(L,B);
+//	find weirdBook(B);
+//}
 
 
 private pattern emptyBook(B: Book) {
-	Book.title(B,"");
-//	check(Title.length == 0); // this wreaks havoc
+	Book.title(B,Title);
+	check(Title.length == 0); // this wreaks havoc
 } 
-or {
-	//Book.numberOfWriters(B,0);// this wreaks havoc too
-	find numberOfWriters(B,0);
-}
+//or {
+//	//Book.numberOfWriters(B,0);// this wreaks havoc too
+//	find numberOfWriters(B,0);
+//}
 
-private pattern weirdBook(B : Book) {
-	find allBookCitations(B,B);
-}
+//private pattern weirdBook(B : Book) {
+//	find allBookCitations(B,B);
+//}
