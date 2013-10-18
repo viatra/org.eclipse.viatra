@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.ui.viewer.ColumnViewerInformationControlToolTipSupport;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.presentation.EcoreEditor;
 import org.eclipse.emf.ecore.presentation.EcoreEditorPlugin;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.ui.celleditor.AdapterFactoryTreeEditor;
@@ -27,6 +29,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.edit.ui.provider.DecoratingColumLabelProvider;
 import org.eclipse.emf.edit.ui.provider.DiagnosticDecorator;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
@@ -34,6 +37,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -54,6 +58,9 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
  * Customized Ecore editor that avoids the dangerous {@link DiagnosticDecorator} of the superclass.
  * 
@@ -64,13 +71,65 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class CustomizedEcoreEditor extends EcoreEditor {
     
+	private void log(String msg) {
+		// TODO proper logging
+		System.out.println(msg);
+	}
+	
     private Set<String> specs = new HashSet<String>();
 
     @Override
     public void init(IEditorSite site, IEditorInput editorInput) {
+    	initializeQuerySpecificationRegistry();
         super.init(site, editorInput);
     }
     
+	private void initializeQuerySpecificationRegistry() {
+		// TODO eliminate hard coded stuff
+		// use a trick to load Pattern models from a file
+		
+//		new EMFPatternLanguageStandaloneSetup()
+//	    {
+//	     @Override
+//	     public Injector createInjector() { return Guice.createInjector(new GeneratorModule()); }
+//	    }
+//	   .createInjectorAndDoEMFRegistration();
+		
+		ResourceSet resourceSet = new ResourceSetImpl();
+		URI fileURI1 = URI.createPlatformResourceURI("library/src/library/LibraryQueries.eiq",false);
+		URI fileURI2 = URI.createPlatformResourceURI("library/src/library/ValidationQueries.eiq",false);
+		URI fileURI3 = URI.createPlatformResourceURI("library/src/library/HelperQueries.eiq",false);
+		
+		Resource patternResource1 = resourceSet.getResource(fileURI1, true);
+		Resource patternResource2 = resourceSet.getResource(fileURI2, true);
+		Resource patternResource3 = resourceSet.getResource(fileURI3, true);
+		
+		if (patternResource1!=null) initReg(patternResource1);
+		if (patternResource2!=null) initReg(patternResource2);
+		if (patternResource3!=null) initReg(patternResource3);
+	}
+	
+	private void initReg(Resource patternResource) {
+		if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
+			log("Registering patterns from "+patternResource.getURI());
+            EObject topElement = patternResource.getContents().get(0);
+            if (topElement instanceof PatternModel) {
+                for (Pattern pattern : ((PatternModel) topElement).getPatterns()) {
+                    IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> spec = QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
+                    QuerySpecificationRegistry.registerQuerySpecification(spec);
+                    specs.add(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+                    log("Registered " + spec.getPatternFullyQualifiedName());
+                }
+            }
+        } 
+		else {
+			log("Skipping registration from "+patternResource.getURI()+" due to errors: "+patternResource.getErrors().size());
+			for (Diagnostic d : patternResource.getErrors()) {
+				log("\t"+d.getMessage());
+			}
+		}
+	}
+
     private void initializeRegistry() {
         ResourceSet resourceSet = new ResourceSetImpl();
         for (Resource resource : editingDomain.getResourceSet().getResources()) {
@@ -104,7 +163,7 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 	public void createPages() {
 	    createModel();
 
-        initializeRegistry();
+        // initializeRegistry();
 
         // Only creates the other pages if there is something that can be edited
         //
