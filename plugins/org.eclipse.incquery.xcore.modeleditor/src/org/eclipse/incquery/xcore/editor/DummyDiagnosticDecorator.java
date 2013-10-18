@@ -1144,12 +1144,14 @@ public class DummyDiagnosticDecorator extends CellLabelProvider implements ILabe
 
 	  public Image decorateImage(Image image, Object object)
 	  {
-	    Diagnostic diagnostic = getDecorations().get(object);
+		  // TODO HACK
+	    //Diagnostic diagnostic = getDecorations().get(object);
+	    /*
 	    if (diagnostic != null && diagnostic.getSeverity() >= Diagnostic.WARNING)
 	    {
 	      return decorate(image, diagnostic);
 	    }
-	    else
+	    else */
 	    {
 	      return image;
 	    }
