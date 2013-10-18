@@ -12,7 +12,6 @@ import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
@@ -33,7 +32,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public String getTabTitle() {
-        return "Graph";
+        return "Zest Graph";
     }
 
     @Override
@@ -55,7 +54,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     protected StructuredViewer createViewer(Composite parent) {
         viewer = new GraphViewer(parent, SWT.None);
         viewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-        LayoutAlgorithm layout = new TreeLayoutAlgorithm(TreeLayoutAlgorithm.BOTTOM_UP);
+        LayoutAlgorithm layout = new CustomSpaceTreeLayoutAlgorithm();
         viewer.setLayoutAlgorithm(layout, true);
         
         refreshGraph.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/refresh.gif"));
@@ -70,7 +69,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
         mgr.add(createLayoutAction("Tree", new TreeLayoutAlgorithm()));
         mgr.add(createLayoutAction("Spring", new SpringLayoutAlgorithm()));
         mgr.add(createLayoutAction("Radial", new RadialLayoutAlgorithm()));
-        mgr.add(createLayoutAction("SpaceTree", new SpaceTreeLayoutAlgorithm()));
+        mgr.add(createLayoutAction("SpaceTree", new CustomSpaceTreeLayoutAlgorithm()));
         SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
         HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
         mgr.add(createLayoutAction("Sugiyama (unstable)",new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {sugiyamaAlgorithm, shiftAlgorithm })));
