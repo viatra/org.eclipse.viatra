@@ -30,6 +30,7 @@ import org.eclipse.emf.edit.ui.provider.DecoratingColumLabelProvider;
 import org.eclipse.emf.edit.ui.provider.DiagnosticDecorator;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.incquery.patternlanguage.emf.IResourceSetPreparer;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
@@ -37,6 +38,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -59,6 +61,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
@@ -84,6 +87,7 @@ public class CustomizedEcoreEditor extends EcoreEditor {
         super.init(site, editorInput);
     }
     
+    
 	private void initializeQuerySpecificationRegistry() {
 		// TODO eliminate hard coded stuff
 		// use a trick to load Pattern models from a file
@@ -95,7 +99,8 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 //	    }
 //	   .createInjectorAndDoEMFRegistration();
 		
-		ResourceSet resourceSet = new ResourceSetImpl();
+		ResourceSet resourceSet = XmiModelUtil.prepareXtextResource();
+		
 		URI fileURI1 = URI.createPlatformResourceURI("library/src/library/LibraryQueries.eiq",false);
 		URI fileURI2 = URI.createPlatformResourceURI("library/src/library/ValidationQueries.eiq",false);
 		URI fileURI3 = URI.createPlatformResourceURI("library/src/library/HelperQueries.eiq",false);
