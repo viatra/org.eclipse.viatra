@@ -36,9 +36,7 @@ import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -48,7 +46,6 @@ import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -66,7 +63,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 /**
  * A common helper class for generating IncQuery-related projects.
@@ -666,7 +662,7 @@ public abstract class ProjectGenerationHelper {
 			} else {
 				//Removing project name prefix from extension id, otherwise these will be multiplied on save
 				String projectId = bundleModel.getPlugin().getId();
-				if (extensionId != null && extensionId != "") {
+				if (StringExtensions.isNullOrEmpty(extensionId)) {
 					extension.setId(extensionId.substring(projectId.length() + 1));
 				}
 			}
