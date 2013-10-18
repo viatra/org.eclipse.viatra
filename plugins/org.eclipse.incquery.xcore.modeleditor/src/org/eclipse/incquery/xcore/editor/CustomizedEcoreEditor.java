@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.ui.viewer.ColumnViewerInformationControlToolTipSupport;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -59,6 +60,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -74,6 +76,9 @@ import com.google.inject.Injector;
  */
 public class CustomizedEcoreEditor extends EcoreEditor {
     
+	@Inject
+	IResourceSetProvider provider;
+	
 	private void log(String msg) {
 		// TODO proper logging
 		System.out.println(msg);
@@ -99,7 +104,8 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 //	    }
 //	   .createInjectorAndDoEMFRegistration();
 		
-		ResourceSet resourceSet = XmiModelUtil.prepareXtextResource();
+//		ResourceSet resourceSet = XmiModelUtil.prepareXtextResource();
+		ResourceSet resourceSet = provider.get(ResourcesPlugin.getWorkspace().getRoot().getProject("library"));
 		
 		URI fileURI1 = URI.createPlatformResourceURI("library/src/library/LibraryQueries.eiq",false);
 		URI fileURI2 = URI.createPlatformResourceURI("library/src/library/ValidationQueries.eiq",false);
