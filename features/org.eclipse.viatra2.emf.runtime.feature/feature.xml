@@ -5,7 +5,7 @@
       version="0.7.0.qualifier"
       provider-name="Eclipse VIATRA2 Project"
       license-feature="org.eclipse.incquery.runtime.feature"
-      license-feature-version="0.7.1.qualifier">
+      license-feature-version="0.8.0.qualifier">
 
    <description url="http://www.example.com/description">
       VIATRA2 EMF Support
