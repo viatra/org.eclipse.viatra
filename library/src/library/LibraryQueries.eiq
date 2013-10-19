@@ -3,12 +3,8 @@ package library
 import "library"
 
 // TODO:
-// pattern calls + neg
-// check, eval
-
 // viewers
 // validation
-
 
 // ***** relationships ********
 
@@ -72,7 +68,6 @@ pattern ownBooksOfWriter(W : Writer, B : Book) {
 pattern allBookCitations(b1 : Book, b2 : Book) {
 	find bookCitation+(b1, b2);
 }
-
 
 /*
  * Book ref is contained in the set of books that (transitively) reference Book b. 

@@ -1,6 +1,6 @@
 //@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
-@GenModel(editDirectory="/library.edit/src")
-@GenModel(editorDirectory="/library.editor/src")
+//@GenModel(editDirectory="/library.edit/src")
+//@GenModel(editorDirectory="/library.editor/src")
 package library
 
 class Library {  
@@ -9,7 +9,6 @@ class Library {
 	contains Book[] books opposite library
 	
 	// derived features
-	
 	incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
 	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
 }
@@ -17,16 +16,11 @@ class Library {
 class Writer {
 	String firstName   
 	String lastName
-	incquery-derived String name spec writerName
-	
-	derived String testName get {
-		return firstName + " " + lastName
-	}
-	
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	
 	// derived features
+	incquery-derived String name spec writerName
 	incquery-derived Double averageNumberOfCoauthorsPerBook spec averageNumberOfCoauthorsPerBook
 	incquery-derived refers Writer[] coAuthors spec coAuthorsOfWriter
 	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
@@ -41,6 +35,7 @@ class Book {
 	refers Writer[] writers opposite books
 	container Library library opposite books
 
+	// derived features
 	incquery-derived Integer numberOfCitations spec numberOfCitations 
 	incquery-derived refers Book[] allCitations spec allBookCitations 
 	incquery-derived Integer numberOfWriters spec numberOfWriters
