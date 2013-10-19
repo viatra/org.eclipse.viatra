@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.ForestRouter;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.routers.TreeRouter;
 import org.eclipse.incquery.runtime.rete.network.Node;
@@ -248,5 +249,14 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     public ConnectionRouter getRouter(Object rel) {
         return new BendpointConnectionRouter();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getConnectionDecorator(java.lang.Object)
+	 */
+	@Override
+	public IConnectionDecorator getConnectionDecorator(Object rel) {
+		// TODO implement label provider
+		return null;
+	}
 
 }
