@@ -37,7 +37,7 @@ public interface IViewerSandboxTab extends ISelectionProvider {
      * @param parent
      */
     void createPartControl(CTabFolder folder);
-
+    
     /**
      * Binds the content of a viewer state to the current tab
      * 

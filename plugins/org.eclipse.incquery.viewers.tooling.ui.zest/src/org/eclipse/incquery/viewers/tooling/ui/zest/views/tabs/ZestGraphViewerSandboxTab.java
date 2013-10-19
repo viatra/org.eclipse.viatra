@@ -33,7 +33,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public String getTabTitle() {
-        return "Graph";
+        return "Zest Graph";
     }
 
     @Override

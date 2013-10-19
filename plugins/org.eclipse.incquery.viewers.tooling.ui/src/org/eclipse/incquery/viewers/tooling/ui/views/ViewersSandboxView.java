@@ -59,23 +59,23 @@ import com.google.common.collect.Lists;
 
 /**
  * Implementation of the Viewer Sandbox view. It supports displaying models based on the
- * {@value #SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
+ * {@value ViewersToolingViewsUtil#SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
  * 
  */
-public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
+public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
 
     public static final String ID = "org.eclipse.incquery.viewers.tooling.ui.sandbox";
-    public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.incquery.viewers.tooling.ui.viewersandboxtab";
-
+    
+    
     private List<IViewerSandboxTab> tabList;
     private CTabFolder folder;
     private AdvancedIncQueryEngine engine;
 	private ViewerState state;
 
-    public static ViewerSandboxView getInstance() {
+    public static ViewersSandboxView getInstance() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
-            return (ViewerSandboxView) activeWorkbenchWindow.getActivePage().findView(ID);
+            return (ViewersSandboxView) activeWorkbenchWindow.getActivePage().findView(ID);
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
     public void initializeTabList() {
         tabList = Lists.newArrayList();
         IConfigurationElement[] providers = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                SANDBOX_TAB_EXTENSION_ID);
+                ViewersToolingViewsUtil.SANDBOX_TAB_EXTENSION_ID);
         for (IConfigurationElement provider : providers) {
             IViewerSandboxTab tab;
             try {
@@ -126,9 +126,9 @@ public class ViewerSandboxView extends ViewPart implements ISelectionProvider {
 
     @Override
     public void setFocus() {
-        // TODO implement setFocus correctly
         if (!tabList.isEmpty()) {
-            tabList.get(0).setFocus();
+//            tabList.get(0).setFocus();
+            tabList.get(folder.getSelectionIndex()).setFocus();
         }
     }
 

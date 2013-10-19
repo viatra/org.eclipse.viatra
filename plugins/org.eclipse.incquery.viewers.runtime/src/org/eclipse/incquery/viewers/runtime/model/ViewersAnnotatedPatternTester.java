@@ -16,8 +16,7 @@ import com.google.common.base.Predicate;
 
 /**
  * Helper predicate to decide whether a pattern is annotated with one of the Viewers framework annotations (
- * {@value Item#ANNOTATION_ID}, {@value Edge#ANNOTATION_ID}, {@value Containment#ANNOTATION_ID} or
- * {@value FormatSpecification#FORMAT_ANNOTATION}).
+ * {@value Item#ANNOTATION_ID}, {@value Edge#ANNOTATION_ID}, {@value Containment#ANNOTATION_ID}.
  * 
  * @author Zoltan Ujhelyi
  * 
@@ -31,6 +30,6 @@ public class ViewersAnnotatedPatternTester implements Predicate<Annotation> {
             return false;
         }
         return (name.equals(Item.ANNOTATION_ID) || name.equals(Edge.ANNOTATION_ID)
-                || name.equals(Containment.ANNOTATION_ID) || name.equals(FormatSpecification.FORMAT_ANNOTATION));
+                || name.equals(Containment.ANNOTATION_ID));// || name.equals(FormatSpecification.FORMAT_ANNOTATION));
     }
 }

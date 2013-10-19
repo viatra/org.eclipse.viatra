@@ -45,7 +45,6 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
         tab.setText(getTabTitle());
         StructuredViewer viewer = createViewer(folder);
         tab.setControl(viewer.getControl());
-
     }
     
     @Override
