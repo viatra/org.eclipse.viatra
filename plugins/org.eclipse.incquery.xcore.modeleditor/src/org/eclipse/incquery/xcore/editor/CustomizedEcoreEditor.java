@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.xcore.editor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,9 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -54,6 +57,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -94,8 +99,9 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 
     @Override
     public void init(IEditorSite site, IEditorInput editorInput) {
-    	initializeRegistryFromSeparateResourceSet(editorInput);
+    	//initializeRegistryFromSeparateResourceSet_WorkspaceTraversal(editorInput);
         super.init(site, editorInput);
+        site.getPage().addSelectionListener(revealSelectionListener);
     }
     
     // doesn't work, as the classpath for the "main" resourceset is not set up properly
@@ -106,8 +112,24 @@ public class CustomizedEcoreEditor extends EcoreEditor {
             }
         }
     }
+	
+	private void initializeRegistryFromSeparateResourceSet_MainResourceTraversal(IEditorInput input) {
+		if (input instanceof IFileEditorInput) {
+			// this is where the Xtext magic happens :-)
+			final ResourceSet resourceSet = provider.get(((IFileEditorInput)input).getFile().getProject());
+			// load all EIQs from the main resourceset again, but in a different resourceset
+			for (Resource resource : editingDomain.getResourceSet().getResources()) {
+	            if (resource.getURI().toString().endsWith(".eiq")) {
+	            	Resource patternResource = resourceSet.getResource(resource.getURI(), true);
+	            	if (patternResource!=null) {
+	            		initReg(patternResource);
+	            	}
+	            }
+	        }
+		}
+	}
 	 
-	private void initializeRegistryFromSeparateResourceSet(IEditorInput input) {
+	private void initializeRegistryFromSeparateResourceSet_WorkspaceTraversal(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput finput = (IFileEditorInput)input;
 			// this is where the Xtext magic happens :-)
@@ -167,6 +189,7 @@ public class CustomizedEcoreEditor extends EcoreEditor {
     
     @Override
     public void dispose() {
+    	getSite().getPage().removeSelectionListener(revealSelectionListener);
         super.dispose();
         for (String spec : specs) {
             QuerySpecificationRegistry.unregisterQuerySpecification(spec);
@@ -181,7 +204,8 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 	public void createPages() {
 	    createModel();
 
-	    //initializeRegistryFromMainResourceSet();
+	    //initializeRegistryFromMainResourceSet(); // doesn't work :-(
+	    initializeRegistryFromSeparateResourceSet_MainResourceTraversal(this.getEditorInput());
 	    
         // Only creates the other pages if there is something that can be edited
         //
@@ -332,4 +356,24 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 
         return propertySheetPage;
     }
+    
+    // back-reveal feature
+    private final ISelectionListener revealSelectionListener = new ISelectionListener() {
+        @Override
+        public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+            if (!part.equals(CustomizedEcoreEditor.this) && selection instanceof IStructuredSelection) {
+                IStructuredSelection sel = (IStructuredSelection) selection;
+                // unwrap incquery viewers model elements to EObjects
+                ArrayList<EObject> eSel = new ArrayList<EObject>();
+                for (Object _o : sel.toArray()) {
+                    if (_o instanceof EObject) {
+                        eSel.add((EObject) _o);
+                    }
+                }
+                CustomizedEcoreEditor.this.setSelectionToViewer(eSel);
+            }
+        }
+    };
+    
+    
 }
