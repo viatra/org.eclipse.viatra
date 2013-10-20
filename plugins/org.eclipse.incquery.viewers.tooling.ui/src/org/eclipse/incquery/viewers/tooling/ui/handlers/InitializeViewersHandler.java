@@ -61,7 +61,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	                            ViewerDataFilter filter = prepareFilterInformation(root);
 	                            // calculate the single resource that is of interest
 	                            EMFModelConnector emc = new EMFModelConnector(editorPart);
-	                            ViewersToolingViewsUtil.setContentsOnView(emc.getNotifier(type), patterns, filter);
+	                            ViewersToolingViewsUtil.initializeContentsOnView(emc.getNotifier(type), patterns, filter);
 	                    }
 	                }
 	            } catch (IncQueryException e) {

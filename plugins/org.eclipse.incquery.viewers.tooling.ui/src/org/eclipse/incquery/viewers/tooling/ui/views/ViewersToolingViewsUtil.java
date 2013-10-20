@@ -26,11 +26,11 @@ public final class ViewersToolingViewsUtil {
 
 	public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.incquery.viewers.tooling.ui.viewersandboxtab";
 
-	public static void setContentsOnView(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
+	public static void initializeContentsOnView(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
 		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
 		
 		ViewersMultiSandboxView.ensureOpen();
-		ViewersMultiSandboxView.getInstance().setContents(model, patterns, filter);
+		ViewersMultiSandboxView.getInstance().initializeContents(model, patterns, filter);
 	}
 	
 	

@@ -22,6 +22,8 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
@@ -54,6 +56,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * TODO comment me
+ * @author istvanrath
+ *
+ */
 public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
 	private List<IViewerSandboxTab> tabList;
@@ -249,34 +256,54 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     
     ComponentConfiguration configuration;
     
-    public void setContents(ComponentConfiguration c) throws IncQueryException {
+    // this is called by the settings tab
+    void applyConfiguration(ComponentConfiguration c) {
+    	try {
+			doSetContents(c.model, c.patterns, c.filter);
+		} catch (IncQueryException e) {
+			ViewersMultiSandboxView.log("applyConfiguration", e);
+		}
+    }
+    
+    public void initializeContents(ComponentConfiguration c) throws IncQueryException {
     	if (c!=null) {
-    		setContents(c.model, c.patterns, c.filter);
+    		initializeContents(c.model, c.patterns, c.filter);
     	}
     }
 
-	public void setContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
+	public void initializeContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
-        	if (state!=null) {
-        		// dispose any previous viewerstate
-        		state.dispose();
-        	}
-        	this.configuration = new ComponentConfiguration(model,patterns,filter);
-            state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-            for (IViewerSandboxTab tab : tabList) {
-                tab.bindState(state);
-            }
+        	doSetContents(model, patterns, filter);
             settings.configurationChanged(this.configuration);
         }
     }
 
+	private void doSetContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
+		if (state!=null) {
+    		// dispose any previous viewerstate
+    		state.dispose();
+    	}
+    	this.configuration = new ComponentConfiguration(model,patterns,filter);
+        state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        for (IViewerSandboxTab tab : tabList) {
+            tab.bindState(state);
+        }
+	}
+	
+	
     private AdvancedIncQueryEngine getEngine(Notifier model) throws IncQueryException {
         if (engine != null) {
             engine.dispose();
         }
-        // make sure that the engine is initialized in non-wildcard and dynamic EMF mode
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(model, false, true);
+        // make sure that the engine is initialized according to how the Query Explorer is set up through preferences
+        boolean wildcardMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
+                .getBoolean(PreferenceConstants.WILDCARD_MODE);
+        boolean dynamicEMFMode = IncQueryGUIPlugin.getDefault().getPreferenceStore()
+                .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
+        
+        engine = AdvancedIncQueryEngine.createUnmanagedEngine(model, wildcardMode, dynamicEMFMode);
+        ViewersMultiSandboxView.log("Viewers initialized a new IncQuery engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
         return engine;
     }
 

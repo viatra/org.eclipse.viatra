@@ -55,7 +55,7 @@
             category="org.eclipse.incquery.tooling.ui"
             class="org.eclipse.incquery.viewers.tooling.ui.views.ViewersMultiSandboxView"
             icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
-            id="org.eclipse.incquery.viewers.tooling.ui.multisandbox"
+            id="org.eclipse.incquery.viewers.tooling.ui.sandbox"
             name="IncQuery Viewers Sandbox"
             restorable="true">
       </view>

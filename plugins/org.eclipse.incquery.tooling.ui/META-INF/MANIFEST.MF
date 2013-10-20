@@ -44,11 +44,13 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.xtext.builder;bundle-version="[2.4.2,2.6.0)"
 Bundle-Activator: org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.tooling.ui.dialog,
+Export-Package: org.eclipse.incquery.tooling.ui,
+ org.eclipse.incquery.tooling.ui.dialog,
  org.eclipse.incquery.tooling.ui.queryexplorer,
  org.eclipse.incquery.tooling.ui.queryexplorer.adapters,
  org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher,
  org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer,
  org.eclipse.incquery.tooling.ui.queryexplorer.handlers,
+ org.eclipse.incquery.tooling.ui.queryexplorer.preference,
  org.eclipse.incquery.tooling.ui.queryexplorer.util
 

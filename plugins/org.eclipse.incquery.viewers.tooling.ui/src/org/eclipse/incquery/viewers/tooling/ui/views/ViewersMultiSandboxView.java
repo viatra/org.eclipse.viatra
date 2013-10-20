@@ -51,6 +51,15 @@ import com.google.common.collect.Lists;
  */
 public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvider {
 
+	public static final String ID = "org.eclipse.incquery.viewers.tooling.ui.sandbox";
+
+	static void log(String message) {
+		Activator
+		.getDefault()
+		.getLog()
+		.log(new Status(IStatus.INFO, Activator.PLUGIN_ID, message));
+	}
+	
 	static void log(String methodname, Exception e) {
 		Activator
 		.getDefault()
@@ -59,19 +68,18 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 				.getLocalizedMessage(), e));
 	}
 	
-	public static final String ID = "org.eclipse.incquery.viewers.tooling.ui.multisandbox";
 	
 	private ViewersMultiSandboxViewComponent defaultComponent;
 	private List<ViewersMultiSandboxViewComponent> additionalComponents = Lists.newArrayList();
 	private ViewersMultiSandboxViewComponent currentComponent;
 	SashForm container;
 	
-	public void setContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
+	public void initializeContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
-        	defaultComponent.setContents(model, patterns, filter);
+        	defaultComponent.initializeContents(model, patterns, filter);
         	for (ViewersMultiSandboxViewComponent c : additionalComponents) {
-        		c.setContents(model, patterns, filter);
+        		c.initializeContents(model, patterns, filter);
         	}
          }
     }
@@ -167,8 +175,8 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     
     private Action getCloseCurrentComponentAction = new Action("Close current component") {
     	{
-    		//setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/collapseall_16x16.gif"));
-    		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/layout-join-vertical_16x16.png"));
+    		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/collapse.gif"));
+    		//setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/layout-join-vertical_16x16.png"));
 //    		setEnabled(isEnabled());
     	}
     	public void run() {
@@ -199,8 +207,8 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     
     private Action getAddNewComponentAction = new Action("Create new component") {
     	{
-    		//setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/expandall_16x16.gif"));
-    		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/layout-split-vertical_16x16.png"));
+    		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/expand.gif"));
+    		//setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/layout-split-vertical_16x16.png"));
     	}
     	public void run() {
     		ViewersMultiSandboxViewComponent newC = new ViewersMultiSandboxViewComponent(ViewersMultiSandboxView.this);
@@ -211,7 +219,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     		}
     		// set contents from default
     		try {
-				newC.setContents(defaultComponent.configuration);
+				newC.initializeContents(defaultComponent.configuration);
 			} catch (IncQueryException e) {
 				log("addNewComponentAction.run",e);
 			}
@@ -224,8 +232,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     
     private Action getSwitchSashingAction = new Action("Switch between horizontal and vertical mode", IAction.AS_CHECK_BOX) { 
     	{
-    		setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/application_tile_horizontal_16x16.png"));
-    		setChecked(isVerticalSashing);
+    		setState();
     	}
     	public void run() {
     		isVerticalSashing = !isVerticalSashing;
@@ -235,8 +242,18 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     		else {
     			container.setOrientation(SWT.HORIZONTAL);
     		}
-    		setChecked(isVerticalSashing);
+    		setState();
     	};
+    	
+    	void setState() {
+    		setChecked(isVerticalSashing);
+    		if (isVerticalSashing) {
+    			setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/vertical.gif"));
+    		}
+    		else {
+    			setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/horizontal.gif"));
+    		}
+    	}
     };
     
     

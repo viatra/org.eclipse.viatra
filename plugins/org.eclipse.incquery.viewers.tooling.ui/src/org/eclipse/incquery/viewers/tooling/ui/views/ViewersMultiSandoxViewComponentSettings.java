@@ -11,19 +11,26 @@
 package org.eclipse.incquery.viewers.tooling.ui.views;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.model.ViewersRuntimeModelUtil;
 import org.eclipse.incquery.viewers.tooling.ui.views.ViewersMultiSandboxViewComponent.ComponentConfiguration;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,28 +38,40 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import com.google.common.collect.Maps;
+
 /**
  * 
  * @author istvanrath
  * 
- * TODO
- *  - checkstatelistener, checkstateprovider
- *  - handle apply button
  *
  */
 public class ViewersMultiSandoxViewComponentSettings {
 
-	private CheckboxTreeViewer activatedQueriesList;
+	private CheckboxTreeViewer activatedPatternsViewer;
 	
 	private ViewersMultiSandboxViewComponent owner;
+	
+	private Map<Pattern, Boolean> checkedPatterns = Maps.newHashMap();
+	
+	private ComponentConfiguration config;
 	
 	public ViewersMultiSandoxViewComponentSettings(ViewersMultiSandboxViewComponent c) {
 		this.owner = c;
 	}
 	
+	// this is called when the multi sandbox view component is initialized by the user
 	public void configurationChanged(ComponentConfiguration c) {
-		// TODO
-		activatedQueriesList.setInput(c.patterns);
+		this.config = c;
+		this.checkedPatterns.clear();
+		for (Pattern p : this.config.patterns) {
+			this.checkedPatterns.put(p,	true);
+		}
+		this.activatedPatternsViewer.setInput(this.checkedPatterns.keySet());
+	}
+	
+	private void applyConfiguration() {
+		owner.applyConfiguration(config);
 	}
 	
 	public void createUI() {
@@ -68,70 +87,170 @@ public class ViewersMultiSandoxViewComponentSettings {
 	    patternListGroup.setLayout(new FillLayout());
 	    patternListGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 	    patternListGroup.setText("Activated queries");
-	    activatedQueriesList = new CheckboxTreeViewer(patternListGroup, SWT.BORDER | SWT.CHECK);
-	    activatedQueriesList.setLabelProvider(new LabelProvider(){
-	    	@Override
-	    	public String getText(Object element) {
-	    		if (element instanceof Pattern) {
-	    			Pattern p = (Pattern) element;
-	    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
-	    				return "Item : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
-	    			}
-	    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
-	    				return "Edge : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
-	    			}
-	    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
-	    				return "Containment : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
-	    			}
-	    		}
-	    		return super.getText(element);
-	    	}
-	    });
-	    activatedQueriesList.setContentProvider(new ITreeContentProvider() {
-			
-	    	@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-			
-			@Override
-			public void dispose() {}
-			
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return ((Collection<?>)inputElement).toArray();
-			}
-			
-			@Override
-			public boolean hasChildren(Object element) {
-				return false;
-			}
-			
-			@Override
-			public Object getParent(Object element) {
-				return null;
-			}
-			
-			@Override
-			public Object[] getChildren(Object parentElement) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-	    activatedQueriesList.addCheckStateListener(new ICheckStateListener() {
-			
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+	    activatedPatternsViewer = new CheckboxTreeViewer(patternListGroup, SWT.BORDER | SWT.CHECK);
+	    activatedPatternsViewer.setLabelProvider(new PatternListLabelProvider());
+	    activatedPatternsViewer.setContentProvider(new PatternListContentProvider());
+	    activatedPatternsViewer.addCheckStateListener(new PatternListCheckStateListener());
+	    activatedPatternsViewer.setCheckStateProvider(new PatternListCheckStateProvider());
+	    activatedPatternsViewer.setComparator(new PatternListComparator());
 	    
 	    
-	    // TODO other settings (e.g. filters etc)
+	    // TODO other settings 
+	    // filters
+	    // switch between resource and resourceset mode (?)
+	    // dynamic, wildcard mode switches
 	    
 	    Button applyButton = new Button(sTabComposite, SWT.PUSH);
 	    applyButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 	    applyButton.setBounds(0, 0, 94, 28);
 	    applyButton.setText("Apply");
+	    applyButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				applyConfiguration();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				applyConfiguration();
+			}
+		});
+	}
+	
+
+	
+	class PatternListCheckStateProvider implements ICheckStateProvider {
+
+		@Override
+		public boolean isChecked(Object element) {
+			return checkedPatterns.get(element);
+		}
+
+		@Override
+		public boolean isGrayed(Object element) {
+			// patterns are never grayed in the pattern list
+			return false;
+		}
+		
+	}
+	
+	class PatternListCheckStateListener implements ICheckStateListener {
+
+		@Override
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			checkedPatterns.put((Pattern) event.getElement(),event.getChecked());
+			if (event.getChecked()) {
+				config.patterns.add( ((Pattern)event.getElement()) );
+			}
+			else {
+				config.patterns.remove( event.getElement() );
+			}
+		}
+		
+	}
+	
+	class PatternListLabelProvider extends LabelProvider {
+		private Image itemIcon;
+		private Image edgeIcon; 
+		private Image contIcon;
+		
+		{
+			itemIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/item.gif").createImage();
+			edgeIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/edge.gif").createImage();
+			contIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/containment.gif").createImage();
+		}
+		
+		@Override
+    	public String getText(Object element) {
+    		if (element instanceof Pattern) {
+    			Pattern p = (Pattern) element;
+    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
+    				return "Item : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    			}
+    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
+    				return "Edge : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    			}
+    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
+    				return "Containment : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    			}
+    		}
+    		return super.getText(element);
+    	}
+		
+		@Override
+		public Image getImage(Object element) {
+			if (element instanceof Pattern) {
+    			Pattern p = (Pattern) element;
+    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
+    				return itemIcon;
+    			}
+    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
+    				return edgeIcon;
+    			}
+    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
+    				return contIcon;
+    			}
+    		}
+			return super.getImage(element);
+		}
+		
+		@Override
+		public void dispose() {
+			itemIcon.dispose();
+	    	edgeIcon.dispose();
+	    	contIcon.dispose();
+			super.dispose();
+		}
+	}
+	
+	class PatternListComparator extends ViewerComparator {
+		@Override
+    	public int category(Object element) {
+			if (element instanceof Pattern) {
+    			Pattern p = (Pattern) element;
+    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
+    				return 0;
+    			}
+    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
+    				return 1;
+    			}
+    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
+    				return 2;
+    			}
+    		}
+    		return super.category(element);
+    	}
+
+	}
+	
+	class PatternListContentProvider implements ITreeContentProvider {
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+		
+		@Override
+		public void dispose() {}
+		
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return ((Collection<?>)inputElement).toArray();
+			//return checkedPatterns.keySet().toArray();
+		}
+		
+		@Override
+		public boolean hasChildren(Object element) {
+			return false;
+		}
+		
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+		
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			return null;
+		}
 	}
 	
 }
