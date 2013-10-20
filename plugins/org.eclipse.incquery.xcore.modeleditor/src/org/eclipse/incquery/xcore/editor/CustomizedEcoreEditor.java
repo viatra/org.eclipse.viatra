@@ -361,11 +361,12 @@ public class CustomizedEcoreEditor extends EcoreEditor {
     private final ISelectionListener revealSelectionListener = new ISelectionListener() {
         @Override
         public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        	// avoid infinite loop
             if (!part.equals(CustomizedEcoreEditor.this) && selection instanceof IStructuredSelection) {
                 IStructuredSelection sel = (IStructuredSelection) selection;
-                // unwrap incquery viewers model elements to EObjects
                 ArrayList<EObject> eSel = new ArrayList<EObject>();
                 for (Object _o : sel.toArray()) {
+                	System.out.println("\t"+_o);
                     if (_o instanceof EObject) {
                         eSel.add((EObject) _o);
                     }
