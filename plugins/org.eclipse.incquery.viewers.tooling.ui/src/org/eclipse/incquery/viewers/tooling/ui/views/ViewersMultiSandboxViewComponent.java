@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
+import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.Item;
@@ -249,32 +250,20 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         return r;
     }
     
-    public class ComponentConfiguration
-    {
-    	Notifier model;
-    	Collection<Pattern> patterns;
-    	ViewerDataFilter filter;
-    	public ComponentConfiguration(Notifier _model, Collection<Pattern> _patterns, ViewerDataFilter _filter) {
-    		this.model = _model;
-    		this.patterns = _patterns;
-    		this.filter = _filter;
-		}
-    }
-    
-    ComponentConfiguration initialConfiguration;
+    ViewersComponentConfiguration initialConfiguration;
     
     // this is called by the settings tab
-    void applyConfiguration(ComponentConfiguration c) {
+    void applyConfiguration(ViewersComponentConfiguration c) {
     	try {
-			doSetContents(c.model, c.patterns, c.filter);
+			doSetContents(c.getModel(), c.getPatterns(), c.getFilter());
 		} catch (IncQueryException e) {
 			ViewersMultiSandboxView.log("applyConfiguration", e);
 		}
     }
     
-    public void initializeContents(ComponentConfiguration c) throws IncQueryException {
+    public void initializeContents(ViewersComponentConfiguration c) throws IncQueryException {
     	if (c!=null) {
-    		initializeContents(c.model, c.patterns, c.filter);
+    		initializeContents(c.getModel(), c.getPatterns(), c.getFilter());
     	}
     }
 
@@ -282,7 +271,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
             throws IncQueryException {
         if (model != null) {
         	Collection<Pattern> patterns = getPatternsWithProperAnnotations(_patterns);
-        	this.initialConfiguration = new ComponentConfiguration(model,patterns,filter);
+        	this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
         	doSetContents(model, patterns, filter);
             settings.initialConfigurationChanged(this.initialConfiguration);
         }
@@ -358,7 +347,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 	    			proxy.add(((Edge)e).getTarget().getParamObject());
 	    		}
 	    	}
-	    	System.out.println(proxy);
+	    	//System.out.println(proxy);
     	}
     	return new StructuredSelection(proxy);
     }

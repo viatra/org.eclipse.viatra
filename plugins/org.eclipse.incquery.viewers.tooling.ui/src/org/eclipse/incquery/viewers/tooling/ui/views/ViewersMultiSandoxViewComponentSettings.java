@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.tooling.ui.views;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
+import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.model.ViewersRuntimeModelUtil;
-import org.eclipse.incquery.viewers.tooling.ui.views.ViewersMultiSandboxViewComponent.ComponentConfiguration;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -39,7 +38,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -56,29 +54,22 @@ public class ViewersMultiSandoxViewComponentSettings {
 	
 	private Map<Pattern, Boolean> checkedPatterns = Maps.newHashMap();
 	
-	private ComponentConfiguration currentConfiguration;
+	private ViewersComponentConfiguration currentConfiguration;
 	
 	public ViewersMultiSandoxViewComponentSettings(ViewersMultiSandboxViewComponent c) {
 		this.owner = c;
 	}
 	
 	// this is called when the multi sandbox view component is initialized by the user
-	public void initialConfigurationChanged(ComponentConfiguration c) {
-		this.currentConfiguration = newCopy(c);
+	public void initialConfigurationChanged(ViewersComponentConfiguration c) {
+		this.currentConfiguration = c.newCopy();
 		this.checkedPatterns.clear();
-		for (Pattern p : this.currentConfiguration.patterns) {
+		for (Pattern p : this.currentConfiguration.getPatterns()) {
 			this.checkedPatterns.put(p,	true);
 		}
 		this.activatedPatternsViewer.setInput(this.checkedPatterns.keySet());
 	}
 	
-	private ComponentConfiguration newCopy(ComponentConfiguration c) {
-		ArrayList<Pattern> r = Lists.newArrayList();
-		r.addAll(c.patterns);
-		// TODO proper copy support for filters
-		return owner.new ComponentConfiguration(c.model, r, c.filter);
-	}
-
 	private void applyConfiguration() {
 		owner.applyConfiguration(currentConfiguration);
 	}
@@ -150,10 +141,10 @@ public class ViewersMultiSandoxViewComponentSettings {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			checkedPatterns.put((Pattern) event.getElement(),event.getChecked());
 			if (event.getChecked()) {
-				currentConfiguration.patterns.add( ((Pattern)event.getElement()) );
+				currentConfiguration.getPatterns().add( ((Pattern)event.getElement()) );
 			}
 			else {
-				currentConfiguration.patterns.remove( event.getElement() );
+				currentConfiguration.getPatterns().remove( event.getElement() );
 			}
 		}
 		

@@ -14,6 +14,8 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.viewers.runtime,
+ org.eclipse.incquery.viewers.runtime.extensions,
+ org.eclipse.incquery.viewers.runtime.extensions.jface,
  org.eclipse.incquery.viewers.runtime.model,
  org.eclipse.incquery.viewers.runtime.model.listeners,
  org.eclipse.incquery.viewers.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.zest"

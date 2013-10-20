@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.ui.viewer.ColumnViewerInformationControlToolTipSupport;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -39,6 +40,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.viewers.runtime.extensions.IViewersAwarePart;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -79,7 +81,7 @@ import com.google.inject.Inject;
  * @author istvanrath
  * 
  */
-public class CustomizedEcoreEditor extends EcoreEditor {
+public class CustomizedEcoreEditor extends EcoreEditor implements IViewersAwarePart {
     
 	@Inject
 	IResourceSetProvider provider;
@@ -375,6 +377,12 @@ public class CustomizedEcoreEditor extends EcoreEditor {
             }
         }
     };
+
+
+	@Override
+	public Notifier getModel() {
+		return this.editingDomain.getResourceSet();
+	}
     
     
 }
