@@ -37,7 +37,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public void bindState(ViewerState state) {
-        IncQueryGraphViewers.bind(viewer, state);
+        IncQueryGraphViewers.bindWithIsolatedNodes(viewer, state);
     }
 
     @Override

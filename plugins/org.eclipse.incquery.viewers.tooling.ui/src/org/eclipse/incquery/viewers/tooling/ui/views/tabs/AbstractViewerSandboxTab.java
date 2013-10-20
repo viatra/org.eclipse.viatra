@@ -13,12 +13,12 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
 
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
-        getViewer().removeSelectionChangedListener(listener);
+        getViewer().addSelectionChangedListener(listener);
     }
 
     @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-        getViewer().addSelectionChangedListener(listener);
+        getViewer().removeSelectionChangedListener(listener);
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     
     @Override
     public void dispose() {
-    	// not necessary for jface-based viewers
+    	// TODO proper dispose support for jface-based viewers
     	// getViewer().dispose();
     }
 
