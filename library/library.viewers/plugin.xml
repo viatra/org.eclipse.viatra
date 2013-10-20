@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Library Example"
+            id="library.viewers">
+      </category>
+      <view
+            name="Library Zest Sample"
+            icon="icons/sample.gif"
+            category="library.viewers"
+            class="library.viewers.views.ZestView"
+            id="library.viewers.views.LibrarySampleZestView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="library.viewers.views.LibrarySampleZestView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
