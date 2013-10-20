@@ -16,18 +16,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class QueryBasedUIPlugin extends AbstractUIPlugin {
+public class ViewersRuntimePlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.incquery.querybasedui.runtime"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.incquery.viewers.runtime"; //$NON-NLS-1$
 
 	// The shared instance
-	private static QueryBasedUIPlugin plugin;
+	private static ViewersRuntimePlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public QueryBasedUIPlugin() {
+	public ViewersRuntimePlugin() {
 	}
 
 	/*
@@ -53,7 +53,7 @@ public class QueryBasedUIPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static QueryBasedUIPlugin getDefault() {
+	public static ViewersRuntimePlugin getDefault() {
 		return plugin;
 	}
 
