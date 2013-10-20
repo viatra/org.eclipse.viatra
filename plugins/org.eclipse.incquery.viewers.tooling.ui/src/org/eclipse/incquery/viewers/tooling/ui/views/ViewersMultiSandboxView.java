@@ -219,7 +219,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     		}
     		// set contents from default
     		try {
-				newC.initializeContents(defaultComponent.configuration);
+				newC.initializeContents(defaultComponent.initialConfiguration);
 			} catch (IncQueryException e) {
 				log("addNewComponentAction.run",e);
 			}

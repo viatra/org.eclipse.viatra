@@ -261,7 +261,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 		}
     }
     
-    ComponentConfiguration configuration;
+    ComponentConfiguration initialConfiguration;
     
     // this is called by the settings tab
     void applyConfiguration(ComponentConfiguration c) {
@@ -278,11 +278,13 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     	}
     }
 
-	public void initializeContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
+	public void initializeContents(Notifier model, Collection<Pattern> _patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
+        	Collection<Pattern> patterns = getPatternsWithProperAnnotations(_patterns);
+        	this.initialConfiguration = new ComponentConfiguration(model,patterns,filter);
         	doSetContents(model, patterns, filter);
-            settings.configurationChanged(this.configuration);
+            settings.initialConfigurationChanged(this.initialConfiguration);
         }
     }
 
@@ -291,7 +293,6 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     		// dispose any previous viewerstate
     		state.dispose();
     	}
-    	this.configuration = new ComponentConfiguration(model,patterns,filter);
         state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
         for (IViewerSandboxTab tab : tabList) {
             tab.bindState(state);
