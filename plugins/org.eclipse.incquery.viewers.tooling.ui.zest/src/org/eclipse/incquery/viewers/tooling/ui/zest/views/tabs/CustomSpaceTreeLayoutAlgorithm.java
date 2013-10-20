@@ -6,15 +6,15 @@ public class CustomSpaceTreeLayoutAlgorithm extends SpaceTreeLayoutAlgorithm {
 
 	public CustomSpaceTreeLayoutAlgorithm(int bottomUp, boolean b) {
 		super(bottomUp, b);
-		customStufF();
+		customStuff();
 	}
 
 	public CustomSpaceTreeLayoutAlgorithm() {
 		super();
-		customStufF();
+		customStuff();
 	}
 	
-	void customStufF() {
+	void customStuff() {
 		setLeafGap(50);
 		setBranchGap(50 + 15);
 		setLayerGap(70);

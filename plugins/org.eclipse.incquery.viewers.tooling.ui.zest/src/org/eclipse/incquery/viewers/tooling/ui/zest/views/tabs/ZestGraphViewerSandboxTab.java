@@ -37,7 +37,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public void bindState(ViewerState state) {
-        IncQueryGraphViewers.bind(viewer, state);//, filter);
+        IncQueryGraphViewers.bind(viewer, state);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     protected StructuredViewer createViewer(Composite parent) {
         viewer = new GraphViewer(parent, SWT.None);
         viewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-        LayoutAlgorithm layout = new CustomSpaceTreeLayoutAlgorithm();
+        LayoutAlgorithm layout = new SpringLayoutAlgorithm();
         viewer.setLayoutAlgorithm(layout, true);
         
         refreshGraph.setImageDescriptor(Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID,"icons/refresh.gif"));
@@ -69,7 +69,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
         mgr.add(createLayoutAction("Tree", new TreeLayoutAlgorithm()));
         mgr.add(createLayoutAction("Spring", new SpringLayoutAlgorithm()));
         mgr.add(createLayoutAction("Radial", new RadialLayoutAlgorithm()));
-        mgr.add(createLayoutAction("SpaceTree", new CustomSpaceTreeLayoutAlgorithm()));
+        //mgr.add(createLayoutAction("SpaceTree", new CustomSpaceTreeLayoutAlgorithm()));
         SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
         HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
         mgr.add(createLayoutAction("Sugiyama (unstable)",new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {sugiyamaAlgorithm, shiftAlgorithm })));
@@ -89,6 +89,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     private void redraw() {
         if (viewer != null) {
             viewer.applyLayout();
+            viewer.refresh();
         }
     }
 
