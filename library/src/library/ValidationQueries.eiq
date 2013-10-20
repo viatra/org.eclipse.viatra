@@ -17,10 +17,10 @@ or {
 }
 
 private pattern emptyBook(B: Book) {
-//	Book.title(B, T);
-//	check({T.length == 0});
-//} 
-////or {
+	Book.title(B, T);
+	check(T.length == 0);
+} 
+or {
 //	Book.numberOfWriters(B,0);// this wreaks havoc too
 	find numberOfWriters(B,0);
 }
