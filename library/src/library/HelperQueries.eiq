@@ -21,8 +21,10 @@ pattern library(l) { Library(l); }
 
 @Item(item = w, label = "Writer: $w.name$", hierarchy = "child")
 @Format(color = "#626fc9", textColor = "#ffffff")
+@QueryExplorer(display = true)
 pattern writer(w) { Writer(w);}
 
 @Item(item = b, label = "$b.title$", hierarchy = "child")
 @Format(color = "#b22300", textColor = "#ffffff")
+@QueryExplorer(display = true)
 pattern book(b) { Book(b); }

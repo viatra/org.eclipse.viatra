@@ -123,6 +123,7 @@ pattern writerOfBook(B : Book, W : Writer) {
 }
 
 @Edge(source = w, target = b, label = "author")
+@QueryExplorer(display = true)
 pattern bookOfWriter(w : Writer, b : Book) {
 	Writer.books(w, b);
 }
