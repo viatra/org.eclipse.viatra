@@ -49,7 +49,7 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     
     @Override
     public void dispose() {
-    	// TODO proper dispose support for jface-based viewers
+    	// TODO is proper dispose support for jface-based viewers necessary?
     	// getViewer().dispose();
     }
 

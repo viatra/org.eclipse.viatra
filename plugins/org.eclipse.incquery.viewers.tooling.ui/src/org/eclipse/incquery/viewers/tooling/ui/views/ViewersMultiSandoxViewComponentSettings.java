@@ -41,6 +41,10 @@ import org.eclipse.swt.widgets.Group;
 import com.google.common.collect.Maps;
 
 /**
+ * A helper class for maintaining the settings UI for a {@link ViewersMultiSandboxViewComponent}.
+ * 
+ * Responsibilities:
+ *  - maintaining a structure of enabled queries and allowing the user to dynamically change it
  * 
  * @author istvanrath
  * 

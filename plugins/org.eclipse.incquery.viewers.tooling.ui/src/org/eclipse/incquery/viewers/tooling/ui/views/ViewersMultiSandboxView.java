@@ -48,11 +48,23 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import com.google.common.collect.Lists;
 
 /**
- *	TODO comment me 
+ * 
+ * View to aid developing queries for IncQuery Viewers.
+ * 
+ * It supports displaying models based on the
+ * {@value ViewersToolingViewsUtil#SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
+ * 
+ * Supports a compound architecture, whereby it can be "split" into several {@link ViewersMultiSandboxViewComponent}s.
+ * 
+ * The responsibility of this class is:
+ *  - provide common utilities such as logging and view opening, initialization, property sheet
+ *  - delegate business logic to its components
+ *  -- selection synchronization
+ *  -- content initialization
+ *  - support a simple UI for multi-component operation (actions)
+ * 
  * @author istvanrath
  *
- * todos:
- *  - add forward reveal mode support
  */
 public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvider {
 

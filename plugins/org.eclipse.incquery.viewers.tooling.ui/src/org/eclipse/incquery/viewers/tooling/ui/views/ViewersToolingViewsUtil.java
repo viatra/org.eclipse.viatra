@@ -28,7 +28,6 @@ public final class ViewersToolingViewsUtil {
 
 	public static void initializeContentsOnView(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
 		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
-		
 		ViewersMultiSandboxView.ensureOpen();
 		ViewersMultiSandboxView.getInstance().initializeContents(model, patterns, filter);
 	}

@@ -56,7 +56,14 @@ public class ViewersComponentConfiguration
 		this(_model,_patterns,ViewerDataFilter.UNFILTERED);
 	}
 	
-
+	/**
+	 * TODO this does not seem to be usable at the moment
+	 * 
+	 * Java generics bugs?
+	 * 
+	 * @param specs
+	 * @return
+	 */
 	public static ViewersComponentConfiguration fromQuerySpecs(Collection<IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>>> specs)
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();

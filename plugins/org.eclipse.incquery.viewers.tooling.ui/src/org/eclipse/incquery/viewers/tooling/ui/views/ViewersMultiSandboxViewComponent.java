@@ -57,7 +57,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * TODO comment me
+ * A component for the {@link ViewersMultiSandboxView}.
+ * 
+ * Responsible for hosting plugin-contributed {@link IViewerSandboxTab}s,
+ * and delegating business logic calls to them.
+ * 
+ * Maintains a common {@link ViewerState} that is shared for each tab.
+ * 
+ * It is initialized using a {@link ViewersComponentConfiguration} that is
+ * managed in a separate, special tab supported by a {@link ViewersMultiSandoxViewComponentSettings}.
+ * 
+ * 
+ * 
  * @author istvanrath
  *
  */

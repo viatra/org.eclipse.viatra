@@ -13,6 +13,7 @@ package org.eclipse.incquery.viewers.runtime.extensions;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -31,20 +33,19 @@ import org.eclipse.ui.part.ViewPart;
  * Utility class to serve as an extension for {@link ViewPart}s wishing to use
  * IncQuery Viewers.
  * 
- * 
- * 
  * @author istvanrath
  *
  */
 public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupport {
 
     /**
-     * TODO comment me, change me
+     * Defines the matching scope for the underlying {@link IncQueryEngine}.
+     * TODO is {@link IModelConnectorTypeEnum} the proper choice for this?
      */
 	protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
 	
 	/**
-	 * TODO comment me
+	 * The {@link ViewerState} that represents the stateful model behind the contents shown by the owner.
 	 */
 	protected ViewerState state;
 	
@@ -140,8 +141,7 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     	try {
 			return IncQueryEngine.on( this.modelSource );
 		} catch (IncQueryException e) {
-			// TODO proper logging
-			e.printStackTrace();
+			ViewersRuntimePlugin.getDefault().getLog().log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));;
 		}
     	return null;
     }
@@ -190,5 +190,5 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     
     
     
-    // ******************** TODO propertsheetpage support ************* //
+    // ******************** TODO propertysheetpage support
 }

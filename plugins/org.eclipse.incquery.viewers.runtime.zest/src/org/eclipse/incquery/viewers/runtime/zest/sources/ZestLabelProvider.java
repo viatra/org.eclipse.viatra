@@ -220,7 +220,6 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
      */
     @Override
     public Color getHighlightColor(Object rel) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -252,7 +251,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	 */
 	@Override
 	public IConnectionDecorator getConnectionDecorator(Object rel) {
-		// TODO implement label provider
+		// TODO implement connection decorator
 		return null;
 	}
 

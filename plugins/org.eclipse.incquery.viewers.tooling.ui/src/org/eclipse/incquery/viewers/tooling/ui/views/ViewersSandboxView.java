@@ -61,6 +61,7 @@ import com.google.common.collect.Lists;
  * Implementation of the Viewer Sandbox view. It supports displaying models based on the
  * {@value ViewersToolingViewsUtil#SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
  * 
+ * @deprecated superseded by {@link ViewersMultiSandboxView}
  */
 public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
 
