@@ -10,7 +10,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
-
+	
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
         getViewer().addSelectionChangedListener(listener);

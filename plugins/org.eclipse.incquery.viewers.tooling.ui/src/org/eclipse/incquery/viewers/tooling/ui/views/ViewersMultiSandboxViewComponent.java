@@ -340,9 +340,6 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
             return StructuredSelection.EMPTY;
         }
     }
-    
-
-    //Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
 
     SelectionHelper selectionHelper = new SelectionHelper();
 
