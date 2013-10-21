@@ -27,6 +27,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
+ * Helper class for bidirectional selection synchronization support for
+ * IncQuery Viewers components.
+ * 
  * @author istvanrath
  *
  */

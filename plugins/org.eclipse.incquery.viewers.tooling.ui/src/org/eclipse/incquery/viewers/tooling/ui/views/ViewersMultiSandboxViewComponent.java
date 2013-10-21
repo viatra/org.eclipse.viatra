@@ -313,7 +313,8 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 	@Override
     public void setSelection(ISelection selection) {
         for (IViewerSandboxTab tab : tabList) {
-            tab.setSelection(selection);
+        	// unwrap for forward selection synchronization
+            tab.setSelection(selectionHelper.unwrapElements_EObjectsToViewersElements(selection, state));
         }
     }
 

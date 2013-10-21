@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.tooling.ui.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,10 +30,14 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -134,8 +139,19 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 				
 		fillToolBar(getCurrentComponent());
 		getSite().setSelectionProvider(this);
+		getSite().getPage().addSelectionListener(forwardRevealListener);
 	}
 
+	
+	@Override
+	public void dispose() {
+		defaultComponent.dispose();
+		for (ViewersMultiSandboxViewComponent c : additionalComponents) {
+			c.dispose();
+		}
+		getSite().getPage().removeSelectionListener(forwardRevealListener);
+		super.dispose();
+	}
 	
 	
 	@Override
@@ -289,6 +305,23 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 		getCurrentComponent().setSelection(selection);		
 	}
 	
+	/**
+     * Selection listener for the "forward reveal" feature.
+     */
+    private final ISelectionListener forwardRevealListener = new ISelectionListener() {
+        @Override
+        public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+            if (!ViewersMultiSandboxView.this.equals(part) && selection instanceof IStructuredSelection) {
+                ArrayList<Notifier> r = new ArrayList<Notifier>();
+                for (Object _target : ((IStructuredSelection) selection).toArray()) {
+                    if (_target instanceof Notifier) {
+                        r.add((Notifier) _target);
+                    }
+                }
+                setSelection(new StructuredSelection(r));
+            }
+        }
+    };
 	
 
 }
