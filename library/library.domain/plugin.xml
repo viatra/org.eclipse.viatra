@@ -2,7 +2,17 @@
 <plugin>
 
    <extension
+         name=""
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            genModel="src/library/Library.xcoreiq"
+            uri="library"
+            class="library.LibraryPackage">
+      </package>
+   </extension>
+   <extension
          id="library.writersInLibrary"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WritersInLibraryQuerySpecification$Provider"
@@ -11,6 +21,7 @@
    </extension>
    <extension
          id="library.booksInLibrary"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.BooksInLibraryQuerySpecification$Provider"
@@ -19,6 +30,7 @@
    </extension>
    <extension
          id="library.library"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.LibraryQuerySpecification$Provider"
@@ -27,6 +39,7 @@
    </extension>
    <extension
          id="library.writer"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WriterQuerySpecification$Provider"
@@ -35,27 +48,12 @@
    </extension>
    <extension
          id="library.book"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.BookQuerySpecification$Provider"
             id="library.book">
       </matcher>
-   </extension>
-   <extension
-         id="library.suspiciousBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.SuspiciousBookQuerySpecification$Provider"
-            id="library.suspiciousBook">
-      </matcher>
-   </extension>
-   <extension
-         id="library.emptyBook"
-         point="org.eclipse.incquery.runtime.xexpressionevaluator">
-      <evaluator
-            evaluatorClass="library.util.EmptyBookEvaluator1_1"
-            id="library.emptyBook_1_1">
-      </evaluator>
    </extension>
    <extension
          id="library.coAuthorsOfWriter"
@@ -209,13 +207,29 @@
             id="library.bookOfWriter">
       </matcher>
    </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated Library -->
-      <package
-            uri="library"
-            class="library.LibraryPackage"
-            genModel="src/library/Library.xcoreiq"/>
+   <extension
+         id="library.suspiciousBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.SuspiciousBookQuerySpecification$Provider"
+            id="library.suspiciousBook">
+      </matcher>
+   </extension>
+   <extension
+         id="library.emptyBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.EmptyBookQuerySpecification$Provider"
+            id="library.emptyBook">
+      </matcher>
+   </extension>
+   <extension
+         id="library.emptyBook"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.EmptyBookEvaluator1_1"
+            id="library.emptyBook_1_1">
+      </evaluator>
    </extension>
 
 </plugin>

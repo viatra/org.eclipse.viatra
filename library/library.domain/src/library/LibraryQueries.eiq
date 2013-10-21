@@ -4,32 +4,6 @@ import "library"
 
 // ***** relationships ********
 
-/*
- * A "suspicious" book is one that:
- *  - is empty (missing some important field)
- *  - is weird (it transitively cites itself)
- */
-pattern suspiciousBook(L:Library, B: Book) {
-	Library.books(L,B);
-	find emptyBook(B);
-} 
-or {
-	Library.books(L,B);
-	find weirdBook(B);
-}
-
-private pattern emptyBook(B: Book) {
-	Book.title(B, T);
-	check(T.length == 0);
-} 
-or {
-//	Book.numberOfWriters(B,0);// this wreaks havoc too
- 	find numberOfWriters(B,0);
-}
-
-private pattern weirdBook(B : Book) {
-	find allBookCitations(B, B);
-}
 
 /*
  * CW is the coauthor of W (they share the same book and CW != W) 
@@ -155,4 +129,36 @@ pattern writerOfBook(B : Book, W : Writer) {
 @QueryExplorer(display = true)
 pattern bookOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
+}
+
+
+/*
+ * validation stuff
+ */
+ /*
+ * A "suspicious" book is one that:
+ *  - is empty (missing some important field)
+ *  - is weird (it transitively cites itself)
+ */
+pattern suspiciousBook(L:Library, B: Book) {
+	Library.books(L,B);
+	find emptyBook(B);
+} 
+or {
+	Library.books(L,B);
+	find weirdBook(B);
+}
+
+pattern emptyBook(B: Book) {
+	Book.title(B, T);
+	check((T as String).length == 0); // works well
+	//check(T.length == 0); // doesn't work (?)
+} 
+or {
+//	Book.numberOfWriters(B,0);// this wreaks havoc too
+ 	find numberOfWriters(B,0);
+}
+
+private pattern weirdBook(B : Book) {
+	find allBookCitations(B, B);
 }
