@@ -11,6 +11,7 @@ import org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestV
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.part.ViewPart
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum
 
 class ZestView extends ViewPart implements IZoomableWorkbenchPart {
 	
@@ -28,7 +29,7 @@ class ZestView extends ViewPart implements IZoomableWorkbenchPart {
 		queries.add( BookQuerySpecification.instance.patternFullyQualifiedName )
 		queries.add( BookOfWriterQuerySpecification.instance.patternFullyQualifiedName )
 		val config = ViewersComponentConfiguration.fromQuerySpecFQNs( queries )
-		viewSupport = new IncQueryViewersZestViewSupport(this,config,graphViewer)
+		viewSupport = new IncQueryViewersZestViewSupport(this,config,IModelConnectorTypeEnum.RESOURCESET,graphViewer)
 		
 		// initialization with the help of support object
 		init
