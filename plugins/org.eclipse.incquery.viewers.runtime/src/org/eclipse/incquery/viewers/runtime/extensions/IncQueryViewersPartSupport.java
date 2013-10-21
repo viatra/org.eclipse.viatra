@@ -24,6 +24,10 @@ import org.eclipse.ui.part.WorkbenchPart;
  * Utility class to serve as an extension for {@link WorkbenchPart}s wishing to use
  * IncQuery Viewers.
  * 
+ * Supports:
+ *  - "forward reveal" mode, i.e. listen to global selection changes and attempt to show the corresponding
+ *  contents inside the owner (through the callback "filteredSelectionChanged")
+ * 
  * @author istvanrath
  *
  */
@@ -76,10 +80,6 @@ public abstract class IncQueryViewersPartSupport {
                     }
                 }
                 filteredSelectionChanged(r);
-                // TODO forward reveal
-//                if (owner instanceof ISelectionProvider) {
-//                	((ISelectionProvider)owner).setSelection(new StructuredSelection(r));
-//                }
             }
         }
     };

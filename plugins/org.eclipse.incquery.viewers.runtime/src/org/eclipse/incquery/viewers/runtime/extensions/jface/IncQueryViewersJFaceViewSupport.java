@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.extensions.jface;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
@@ -24,6 +27,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
@@ -113,6 +117,8 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 
     // ******************** selection synchronization support **********//
     
+	// "Backward"
+	
 	SelectionHelper selectionHelper = new SelectionHelper();
 
 	/* (non-Javadoc)
@@ -129,7 +135,7 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 	 */
 	@Override
 	public ISelection getSelection() {
-		return selectionHelper.unwrapElements(jfaceViewer.getSelection());
+		return selectionHelper.unwrapElements_ViewersElementsToEObjects(jfaceViewer.getSelection());
 	}
 
 	/* (non-Javadoc)
@@ -147,9 +153,22 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 	 */
 	@Override
 	public void setSelection(ISelection selection) {
-		this.jfaceViewer.setSelection(selection);
+		//this.jfaceViewer.setSelection(selection);
+		// unwrap elements
+		this.jfaceViewer.setSelection(selectionHelper.unwrapElements_EObjectsToViewersElements(selection, state));
 	}
 
 	
+	// "Forward"
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#filteredSelectionChanged(java.util.List)
+	 */
+	@Override
+	protected void filteredSelectionChanged(List<Notifier> eObjects) {
+		super.filteredSelectionChanged(eObjects);
+		// additionally, attempt to sychronize our contents
+        setSelection(new StructuredSelection(eObjects));
+	}
 
 }

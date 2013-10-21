@@ -30,6 +30,9 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * Utility class to serve as an extension for {@link ViewPart}s wishing to use
  * IncQuery Viewers.
+ * 
+ * 
+ * 
  * @author istvanrath
  *
  */
@@ -71,6 +74,7 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
      */
     @Override
     protected void filteredSelectionChanged(List<Notifier> eObjects) {
+    	// extract model source
     	Notifier target = extractModelSource(eObjects);
     	if (target!=null && !target.equals(this.modelSource)) {
     		// we have found a new target

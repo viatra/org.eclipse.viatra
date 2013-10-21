@@ -13,8 +13,10 @@ package org.eclipse.incquery.viewers.runtime.extensions;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,13 +39,13 @@ public class SelectionHelper {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			for (ISelectionChangedListener l : selectionChangedListeners) {
-				l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements(event.getSelection())));
+				l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements_ViewersElementsToEObjects(event.getSelection())));
 			}
 		}
 	};
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ISelection unwrapElements(ISelection sel) {
+	public ISelection unwrapElements_ViewersElementsToEObjects(ISelection sel) {
     	List proxy = Lists.newArrayList();
     	if (sel instanceof IStructuredSelection) {
 	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
@@ -53,6 +55,19 @@ public class SelectionHelper {
 	    		else if (e instanceof Edge) {
 	    			proxy.add(((Edge)e).getSource().getParamObject());
 	    			proxy.add(((Edge)e).getTarget().getParamObject());
+	    		}
+	    	}
+    	}
+    	return new StructuredSelection(proxy);
+    }
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public ISelection unwrapElements_EObjectsToViewersElements(ISelection sel, ViewerState state) {
+    	List proxy = Lists.newArrayList();
+    	if (sel instanceof IStructuredSelection) {
+	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
+	    		if (e instanceof EObject) {
+	    			proxy.addAll(state.getItemsFor(e));
 	    		}
 	    	}
     	}

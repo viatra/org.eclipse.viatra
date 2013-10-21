@@ -323,7 +323,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
        	IViewerSandboxTab tab = getCurrentContributedTab();
        	if (tab!=null) {
             // unwrap incquery viewers model elements to EObjects
-            return selectionHelper.unwrapElements( getCurrentContributedTab().getSelection() );
+            return selectionHelper.unwrapElements_ViewersElementsToEObjects( getCurrentContributedTab().getSelection() );
         } else {
             return StructuredSelection.EMPTY;
         }
