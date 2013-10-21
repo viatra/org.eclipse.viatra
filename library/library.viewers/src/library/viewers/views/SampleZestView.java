@@ -7,6 +7,7 @@ import library.util.WriterQuerySpecification;
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport;
@@ -30,7 +31,8 @@ public class SampleZestView extends ViewPart implements IZoomableWorkbenchPart {
 			queries.add(WriterQuerySpecification.instance().getPatternFullyQualifiedName());
 			this.viewSupport = new IncQueryViewersZestViewSupport(
 					this, 
-					ViewersComponentConfiguration.fromQuerySpecFQNs( queries ), 
+					ViewersComponentConfiguration.fromQuerySpecFQNs( queries ),
+					IModelConnectorTypeEnum.RESOURCESET,
 					graphViewer);
 			this.viewSupport.init();
 			this.viewSupport.createPartControl(parent,this.graphViewer.getGraphControl());
