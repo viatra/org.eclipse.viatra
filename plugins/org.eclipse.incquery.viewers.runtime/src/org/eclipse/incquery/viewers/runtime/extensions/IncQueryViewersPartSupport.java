@@ -11,12 +11,12 @@
 package org.eclipse.incquery.viewers.runtime.extensions;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.WorkbenchPart;
@@ -28,7 +28,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  * @author istvanrath
  *
  */
-public class IncQueryViewersPartSupport {
+public abstract class IncQueryViewersPartSupport {
 
 	/**
 	 * The "owner" of this support instance.
@@ -72,17 +72,20 @@ public class IncQueryViewersPartSupport {
         @Override
         public void selectionChanged(IWorkbenchPart part, ISelection selection) {
             if (!owner.equals(part) && selection instanceof IStructuredSelection) {
-                ArrayList<EObject> r = new ArrayList<EObject>();
+                ArrayList<Notifier> r = new ArrayList<Notifier>();
                 for (Object _target : ((IStructuredSelection) selection).toArray()) {
-                    if (_target instanceof EObject) {
-                        r.add((EObject) _target);
+                    if (_target instanceof Notifier) {
+                        r.add((Notifier) _target);
                     }
                 }
-                if (owner instanceof ISelectionProvider) {
-                	((ISelectionProvider)owner).setSelection(new StructuredSelection(r));
-                }
+                filteredSelectionChanged(r);
+//                if (owner instanceof ISelectionProvider) {
+//                	((ISelectionProvider)owner).setSelection(new StructuredSelection(r));
+//                }
             }
         }
     };
 	
+    protected abstract void filteredSelectionChanged(List<Notifier> eObjects);
+    
 }

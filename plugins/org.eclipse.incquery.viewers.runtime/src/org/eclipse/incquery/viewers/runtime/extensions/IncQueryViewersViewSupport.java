@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.extensions;
 
+import java.util.List;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -28,105 +34,89 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupport {
 
+    // TODO change me
+	protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
+	
 	/**
 	 * Constructs a new View support instance.
 	 */
-	public IncQueryViewersViewSupport(IViewPart _owner, ViewersComponentConfiguration _config) {
+	public IncQueryViewersViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope) {
 		super(_owner, _config);
+		this.connectorType = _scope;
 	}
 	
 	protected IViewPart getOwner() {
 		return (IViewPart)owner;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#init()
-	 */
-	@Override
-	public void init() {
-		super.init();
-		owner.getSite().getPage().addPartListener(partListener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#dispose()
-	 */
-	@Override
-	public void dispose() {
-		owner.getSite().getPage().removePartListener(partListener);
-		super.dispose();
-	}
-	
-	 /**
-     * Part listener for making sure that our views always show content which is relevant to the currently active
-     * .
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#filteredSelectionChanged(java.util.List)
      */
-    private final IPartListener partListener = new IPartListener() {
-        @Override
-        public void partOpened(IWorkbenchPart part) {
-            testAndSet();
-        }
-
-        @Override
-        public void partDeactivated(IWorkbenchPart part) {
-            testAndSet();
-        }
-
-        @Override
-        public void partClosed(IWorkbenchPart part) {
-            testAndSet();
-        }
-
-        @Override
-        public void partBroughtToTop(IWorkbenchPart part) {
-            testAndSet();
-        }
-
-        @Override
-        public void partActivated(IWorkbenchPart part) {
-            testAndSet();
-        }
-
-		private void testAndSet() {
-			IWorkbenchPart part = owner.getSite().getPage().getActivePart();
-			if (part!=null) {
-				IViewersAwarePart vapart = null;
-				if (part instanceof IViewersAwarePart) {
-					vapart = (IViewersAwarePart) part;
-				} else {
-					vapart = (IViewersAwarePart) part
-							.getAdapter(IViewersAwarePart.class);
-				}
-				if (vapart != null) {
-					if (!vapart.equals(contentsSource)) {
-						setContentsSource(((IViewersAwarePart) vapart));
-					} else if (contentsSource != null) {
-						unsetContentsSource();
-					}
-				}
-			}
-		}
-    };
+    @Override
+    protected void filteredSelectionChanged(List<Notifier> eObjects) {
+    	Notifier target = extractModelSource(eObjects);
+    	if (target!=null && !target.equals(this.modelSource)) {
+    		// we have found a new target
+    		setModelSource(target);
+    	}
+    }
     
-    protected IViewersAwarePart contentsSource;
+
     
-    private void setContentsSource(IViewersAwarePart p) {
-    	this.contentsSource = p;
+    private Notifier extractModelSource(List<Notifier> notifiers) {
+    	// extract logic
+    	switch (connectorType) {
+    	default:
+    	case RESOURCESET:
+	    	for (Notifier n : notifiers) {
+	    		if (n instanceof ResourceSet) {
+	    			return n;
+	    		}
+	    		else if (n instanceof Resource) {
+	    			return ((Resource)n).getResourceSet();
+	    		}
+	    		else {
+	    			EObject eO = (EObject)n;
+	    			return eO.eResource().getResourceSet();
+	    		}
+	    	}
+    	case RESOURCE:
+    		for (Notifier n : notifiers) {
+	    		if (n instanceof ResourceSet) {
+	    			continue; // we cannot extract a resource from a resourceset reliably
+	    		}
+	    		else if (n instanceof Resource) {
+	    			return ((Resource)n);
+	    		}
+	    		else {
+	    			EObject eO = (EObject)n;
+	    			return eO.eResource();
+	    		}
+	    	}
+    	}
+    	return null;
+    }
+    
+    protected Notifier modelSource;
+    
+    private void setModelSource(Notifier p) {
+    	this.modelSource = p;
     	// TODO propertySheetPage setCurrent
     	bindModel();
     	showView();
     }
     
-    private void unsetContentsSource() {
+    private void unsetModelSource() {
     	hideView();
     	unbindModel();
     	// proppage setCurrentEditor null
-    	this.contentsSource = null;
+    	this.modelSource = null;
     }
-
-    protected IncQueryEngine getEngine(IViewersAwarePart p) {
+    
+    protected IncQueryEngine getEngine() {
+    	Assert.isNotNull(this.modelSource);
     	try {
-			return IncQueryEngine.on(p.getModel());
+			return IncQueryEngine.on( this.modelSource );
 		} catch (IncQueryException e) {
 			// TODO proper logging
 			e.printStackTrace();

@@ -23,6 +23,7 @@ import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.extensions.jface.IncQueryViewersJFaceViewSupport;
@@ -56,8 +57,9 @@ public class IncQueryViewersZestViewSupport extends
 	public IncQueryViewersZestViewSupport(
 			IViewPart _owner,
 			ViewersComponentConfiguration _config,
+			IModelConnectorTypeEnum _scope,
 			GraphViewer _graphViewer) {
-		super(_owner, _config, _graphViewer);
+		super(_owner, _config, _scope, _graphViewer);
 		this.graphViewer = _graphViewer;
 	}
 
@@ -82,7 +84,7 @@ public class IncQueryViewersZestViewSupport extends
 		if (state!=null && !state.isDisposed()) {
     		state.dispose();
     	}
-		IncQueryEngine engine = getEngine(contentsSource);
+		IncQueryEngine engine = getEngine();
 		if (engine!=null) {
 			state = IncQueryViewerDataModel.newViewerState(
 					engine, 

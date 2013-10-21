@@ -11,6 +11,7 @@
 package org.eclipse.incquery.viewers.runtime.extensions.jface;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
 import org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport;
@@ -42,8 +43,8 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 	/**
 	 * @param _owner
 	 */
-	public IncQueryViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, StructuredViewer _jfaceViewer) {
-		super(_owner, _config);
+	public IncQueryViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope, StructuredViewer _jfaceViewer) {
+		super(_owner, _config, _scope);
 		this.jfaceViewer = _jfaceViewer;
 	}
 
@@ -58,7 +59,7 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 		if (state!=null && !state.isDisposed()) {
     		state.dispose();
     	}
-		IncQueryEngine engine = getEngine(contentsSource);
+		IncQueryEngine engine = getEngine();
 		if (engine!=null) {
 			this.configuration.setModel(engine.getScope());
 			state = IncQueryViewerDataModel.newViewerState(
