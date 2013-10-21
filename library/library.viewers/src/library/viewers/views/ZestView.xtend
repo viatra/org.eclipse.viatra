@@ -6,12 +6,12 @@ import library.util.BookQuerySpecification
 import library.util.WriterQuerySpecification
 import org.eclipse.gef4.zest.core.viewers.GraphViewer
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration
 import org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport
 import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.part.ViewPart
-import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum
 
 class ZestView extends ViewPart implements IZoomableWorkbenchPart {
 	
@@ -29,12 +29,16 @@ class ZestView extends ViewPart implements IZoomableWorkbenchPart {
 		queries.add( BookQuerySpecification.instance.patternFullyQualifiedName )
 		queries.add( BookOfWriterQuerySpecification.instance.patternFullyQualifiedName )
 		val config = ViewersComponentConfiguration.fromQuerySpecFQNs( queries )
-		viewSupport = new IncQueryViewersZestViewSupport(this,config,IModelConnectorTypeEnum.RESOURCESET,graphViewer)
+		viewSupport = new IncQueryViewersZestViewSupport(
+			this,config,IModelConnectorTypeEnum.RESOURCESET,graphViewer
+		)
 		
-		// initialization with the help of support object
-		init
+		// UI initialization with the help of support object
 		createPartControl(parent,graphViewer.graphControl)
+		// create a default toolbar
 		createToolbar
+		// "backward" selection synchronization
+		site.setSelectionProvider(viewSupport)
 	}
 	
 	override setFocus() {
@@ -44,7 +48,9 @@ class ZestView extends ViewPart implements IZoomableWorkbenchPart {
 	}
 	
 	override dispose() {
-		viewSupport.dispose
+		if (viewSupport!=null) {
+			viewSupport.dispose
+		}
 		super.dispose()
 	}
 	

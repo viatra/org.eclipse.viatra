@@ -34,7 +34,6 @@ public class SampleZestView extends ViewPart implements IZoomableWorkbenchPart {
 					ViewersComponentConfiguration.fromQuerySpecFQNs( queries ),
 					IModelConnectorTypeEnum.RESOURCESET,
 					graphViewer);
-			this.viewSupport.init();
 			this.viewSupport.createPartControl(parent,this.graphViewer.getGraphControl());
 			this.viewSupport.createToolbar();
 		} catch (IncQueryException e) {
