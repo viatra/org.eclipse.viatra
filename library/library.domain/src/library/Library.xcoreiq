@@ -24,7 +24,6 @@ class Writer {
 	incquery-derived Double averageNumberOfCoauthorsPerBook spec averageNumberOfCoauthorsPerBook
 	incquery-derived refers Writer[] coAuthors spec coAuthorsOfWriter
 	incquery-derived refers Book[] ownBooks spec ownBooksOfWriter
-	incquery-derived Boolean isValid spec isValidWriter
 }
 
 class Book {

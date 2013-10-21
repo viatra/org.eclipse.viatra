@@ -2,18 +2,38 @@ package library
 
 import "library"
 
-// TODO:
-// viewers
-// validation
-
 // ***** relationships ********
 
-pattern averageNumberOfCoauthorsPerBook(W : Writer, A) {
-	NumOfBooks == count find writerOfBook(_B, W);
-	NumOfCoAuthors == count find coAuthorsOfWriter(W, _CW);
-	A == eval(if (NumOfBooks == 0) 0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
+/*
+ * A "suspicious" book is one that:
+ *  - is empty (missing some important field)
+ *  - is weird (it transitively cites itself)
+ */
+pattern suspiciousBook(L:Library, B: Book) {
+	Library.books(L,B);
+	find emptyBook(B);
+} 
+or {
+	Library.books(L,B);
+	find weirdBook(B);
 }
 
+private pattern emptyBook(B: Book) {
+	Book.title(B, T);
+	check(T.length == 0);
+} 
+or {
+//	Book.numberOfWriters(B,0);// this wreaks havoc too
+ 	find numberOfWriters(B,0);
+}
+
+private pattern weirdBook(B : Book) {
+	find allBookCitations(B, B);
+}
+
+/*
+ * CW is the coauthor of W (they share the same book and CW != W) 
+ */
 pattern coAuthorsOfWriter(W : Writer, CW : Writer) {
 	Book(B);
 	Writer.books(W, B);
@@ -21,12 +41,23 @@ pattern coAuthorsOfWriter(W : Writer, CW : Writer) {
 	W != CW;
 }
 
+/*
+ * The name of the writer W is N (first name and last name are concatenated)
+ */
 pattern writerName(W : Writer, N) {
 	Writer.firstName(W, FN);
 	Writer.lastName(W, LN);
 	N == eval(FN + " " + LN);
 }
 
+/*
+ * Category C has the most books in the Library L.
+ */
+pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
+	Library(L);
+	neg find moreBooksInCategoryThan(_Cx, C);
+}
+ 
 /*
  * There are more books with category C1 than books with category C2. 
  */
@@ -36,22 +67,8 @@ pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	check(N > M);
 } 
 
-/*
- * Category C has the most books in the Library L.
- */
-
-pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
-	Library(L);
-	neg find moreBooksInCategoryThan(_Cx, C);
-} 
-
 pattern categoryOfBook(c : BookCategory, b : Book) {
 	Book.bookCategory(b, c);
-}
-
-pattern isValidWriter(w : Writer, b) {
-	find numberOfBooksOfWriter(w, n);
-	b == eval(n > 0);
 }
 
 /*
@@ -65,38 +82,50 @@ pattern ownBooksOfWriter(W : Writer, B : Book) {
 /*
  * All of the (transitive) citations of Book b1 contain Book b2.
  */
-pattern allBookCitations(b1 : Book, b2 : Book) {
-	find bookCitation+(b1, b2);
+pattern allBookCitations(B1 : Book, B2 : Book) {
+	find bookCitation+(B1, B2);
 }
 
 /*
  * Book ref is contained in the set of books that (transitively) reference Book b. 
  */
-@Edge(source = b, target = ref, label = "ref+")
+@Edge(source = B, target = Ref, label = "ref+")
 @Format(lineStyle = "dashed")
-pattern allReferencesTo(b: Book, ref: Book){
-	find bookCitation+(ref,b);
+pattern allReferencesTo(B: Book, Ref: Book){
+	find bookCitation+(Ref, B);
 }
 
-@Edge(source = b1, target = b2, label = "cites")
-pattern bookCitation(b1 : Book, b2 : Book) {
-	Book.citations(b1, b2);
+/*
+ * Book b1 cites Book b2.
+ */
+@Edge(source = B1, target = B2, label = "cites")
+pattern bookCitation(B1 : Book, B2 : Book) {
+	Book.citations(B1, B2);
 }
 
 /*
  * Writer w1 is influenced by w2, since he wrote some book
  * that (indirectly or directly) references one of w2's works.
  */
-@Edge(source = w1, target = w2, label = "influencedBy")
+@Edge(source = W1, target = W2, label = "influencedBy")
 @Format(lineColor = "#ff0000")
-pattern influencedBy(w1: Writer, w2: Writer) {
-	Book.writers(b1,w1);
-	Book.writers(b2,w2);
-	find allReferencesTo(b2,b1);
+pattern influencedBy(W1: Writer, W2: Writer) {
+	Book.writers(B1, W1);
+	Book.writers(B2, W2);
+	find allReferencesTo(B2, B1);
 }
 
-
 // ************* numbers **********
+
+/*
+ * The average number of coauthors per book of a writer is 
+ * the number of coauthors divided by the number of books.  
+ */
+pattern averageNumberOfCoauthorsPerBook(W : Writer, A) {
+	NumOfBooks == count find writerOfBook(_B, W);
+	NumOfCoAuthors == count find coAuthorsOfWriter(W, _CW);
+	A == eval(if (NumOfBooks == 0) 0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
+}
 
 /*
  * The number of (transitive) citations of Book B1 is N.
@@ -122,8 +151,8 @@ pattern writerOfBook(B : Book, W : Writer) {
 	Book.writers(B, W);
 }
 
-@Edge(source = w, target = b, label = "author")
+@Edge(source = W, target = B, label = "author")
 @QueryExplorer(display = true)
-pattern bookOfWriter(w : Writer, b : Book) {
-	Writer.books(w, b);
+pattern bookOfWriter(W : Writer, B : Book) {
+	Writer.books(W, B);
 }
