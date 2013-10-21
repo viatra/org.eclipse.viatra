@@ -15,12 +15,15 @@ import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport;
 import org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport;
+import org.eclipse.incquery.viewers.runtime.extensions.SelectionHelper;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel;
-import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
@@ -34,11 +37,9 @@ import com.google.common.collect.ImmutableSet;
  * @author istvanrath
  *
  */
-public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport {
+public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport implements ISelectionProvider {
 
 	protected StructuredViewer jfaceViewer;
-	
-	protected ViewerState state;
 	
 	/**
 	 * @param _owner
@@ -48,6 +49,24 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 		this.jfaceViewer = _jfaceViewer;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#init()
+	 */
+	@Override
+	protected void init() {
+		super.init();
+		jfaceViewer.addSelectionChangedListener(selectionHelper.trickyListener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#dispose()
+	 */
+	@Override
+	public void dispose() {
+		jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
+		super.dispose();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#bindModel()
 	 */
@@ -81,8 +100,56 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 	 */
 	@Override
 	protected void unbindModel() {
-		jfaceViewer.setInput(null);
-		state.dispose();
+		if (jfaceViewer != null) {
+			// check for contents first
+			if (jfaceViewer.getInput() !=null) {
+				jfaceViewer.setInput(null);
+			}
+		}
+		if (state != null && !state.isDisposed()) {
+			state.dispose();
+		}
 	}
+
+    // ******************** selection synchronization support **********//
+    
+	SelectionHelper selectionHelper = new SelectionHelper();
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		selectionHelper.selectionChangedListeners.add(listener);
+		//this.jfaceViewer.addSelectionChangedListener(listener);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	@Override
+	public ISelection getSelection() {
+		return selectionHelper.unwrapElements(jfaceViewer.getSelection());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		//this.jfaceViewer.removeSelectionChangedListener(listener);
+		selectionHelper.selectionChangedListeners.remove(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	@Override
+	public void setSelection(ISelection selection) {
+		this.jfaceViewer.setSelection(selection);
+	}
+
+	
 
 }

@@ -67,7 +67,7 @@ public class IncQueryViewersZestViewSupport extends
 	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#init()
 	 */
 	@Override
-	public void init() {
+	protected void init() {
 		super.init();
 		this.graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		this.graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());

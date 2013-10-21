@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,8 +35,15 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupport {
 
-    // TODO change me
+    /**
+     * TODO comment me, change me
+     */
 	protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
+	
+	/**
+	 * TODO comment me
+	 */
+	protected ViewerState state;
 	
 	/**
 	 * Constructs a new View support instance.
@@ -49,6 +57,15 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
 		return (IViewPart)owner;
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#dispose()
+	 */
+	@Override
+	public void dispose() {
+		unbindModel();
+		super.dispose();
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#filteredSelectionChanged(java.util.List)
      */
@@ -57,6 +74,7 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     	Notifier target = extractModelSource(eObjects);
     	if (target!=null && !target.equals(this.modelSource)) {
     		// we have found a new target
+    		unsetModelSource();
     		setModelSource(target);
     	}
     }
@@ -130,6 +148,11 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
 
     private StackLayout layout;
 
+    /**
+     * Create the SWT UI for the owner.
+     * @param _parent the SWT part received by the owner in its createPartControl method
+     * @param _contents the SWT UI to be displayed for actual contents
+     */
     public void createPartControl(Composite _parent, Composite _contents) {
         parent = _parent;
         layout = new StackLayout();
@@ -137,6 +160,8 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
         contents = _contents;
         cover = new Composite(parent, SWT.NO_SCROLL);
         layout.topControl = cover;
+        // init
+        init();
     }
     
     private void showView() {
@@ -158,6 +183,7 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
      * Subclasses unbind their viewer models here.
      */
     protected abstract void unbindModel();
+    
     
     
     // ******************** TODO propertsheetpage support ************* //

@@ -13,7 +13,6 @@ package org.eclipse.incquery.viewers.tooling.ui.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,10 +23,9 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
+import org.eclipse.incquery.viewers.runtime.extensions.SelectionHelper;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
-import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel;
-import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
@@ -40,8 +38,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -59,7 +55,6 @@ import org.eclipse.ui.IViewSite;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * TODO comment me
@@ -115,7 +110,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 		for (IViewerSandboxTab tab : tabList) {
 			tab.createPartControl(folder);
 			// initialize our tricky listener to punch through unwrapped selections in a 2nd round
-			tab.addSelectionChangedListener(trickyListener);
+			tab.addSelectionChangedListener(selectionHelper.trickyListener);
 		}
 
 		folder.setSelection(0);
@@ -156,7 +151,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 	public void dispose() {
 		
 		for (IViewerSandboxTab tab : tabList) {
-			tab.removeSelectionChangedListener(trickyListener);
+			tab.removeSelectionChangedListener(selectionHelper.trickyListener);
 			tab.dispose();
 		}
 		if (state != null) {
@@ -328,45 +323,20 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
        	IViewerSandboxTab tab = getCurrentContributedTab();
        	if (tab!=null) {
             // unwrap incquery viewers model elements to EObjects
-            return unwrapElements( getCurrentContributedTab().getSelection() );
+            return selectionHelper.unwrapElements( getCurrentContributedTab().getSelection() );
         } else {
             return StructuredSelection.EMPTY;
         }
     }
     
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	private ISelection unwrapElements(ISelection sel) {
-    	List proxy = Lists.newArrayList();
-    	if (sel instanceof IStructuredSelection) {
-	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
-	    		if (e instanceof Item) {
-	    			proxy.add(((Item)e).getParamObject());
-	    		}
-	    		else if (e instanceof Edge) {
-	    			proxy.add(((Edge)e).getSource().getParamObject());
-	    			proxy.add(((Edge)e).getTarget().getParamObject());
-	    		}
-	    	}
-	    	//System.out.println(proxy);
-    	}
-    	return new StructuredSelection(proxy);
-    }
 
-    Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
-    ISelectionChangedListener trickyListener = new ISelectionChangedListener() {
-		
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			for (ISelectionChangedListener l : selectionChangedListeners) {
-				l.selectionChanged(new SelectionChangedEvent(event.getSelectionProvider(), unwrapElements(event.getSelection())));
-			}
-		}
-	};
+    //Set<ISelectionChangedListener> selectionChangedListeners = Sets.newHashSet();
 
+    SelectionHelper selectionHelper = new SelectionHelper();
 
     @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
-    	selectionChangedListeners.add(listener);
+    	selectionHelper.selectionChangedListeners.add(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.addSelectionChangedListener(listener);
         }
@@ -374,7 +344,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
     @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-    	selectionChangedListeners.remove(listener);
+    	selectionHelper.selectionChangedListeners.remove(listener);
         for (IViewerSandboxTab tab : tabList) {
             tab.removeSelectionChangedListener(listener);
         }

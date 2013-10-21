@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
@@ -45,10 +44,8 @@ public abstract class IncQueryViewersPartSupport {
 	
 	/**
 	 * Initialize the support instance.
-	 * Should be called when the owner {@link IWorkbenchPart} has finished initializing itself
-	 * (typically at the end of its init() method).
 	 */
-	public void init() {
+	protected void init() {
 		this.owner.getSite().getPage().addSelectionListener(forwardRevealListener);
 	}
 	
@@ -79,6 +76,7 @@ public abstract class IncQueryViewersPartSupport {
                     }
                 }
                 filteredSelectionChanged(r);
+                // TODO forward reveal
 //                if (owner instanceof ISelectionProvider) {
 //                	((ISelectionProvider)owner).setSelection(new StructuredSelection(r));
 //                }
