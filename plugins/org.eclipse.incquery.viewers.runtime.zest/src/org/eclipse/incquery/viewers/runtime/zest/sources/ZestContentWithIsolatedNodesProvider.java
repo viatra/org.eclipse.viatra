@@ -46,7 +46,7 @@ public class ZestContentWithIsolatedNodesProvider extends
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
-		if (newInput instanceof ViewerState) {
+		if (this.state != null) {
 			initializeEdgeTable(this.state);
 		}
 	}
@@ -98,6 +98,9 @@ public class ZestContentWithIsolatedNodesProvider extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getElements(Object inputElement) {
+		if (state == null) {
+			return new Object[0];
+		}
 		IObservableCollection items = state.getItems();
 		return items.toArray(new Object[items.size()]);
 	}

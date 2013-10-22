@@ -50,8 +50,11 @@ public abstract class AbstractZestContentProvider extends
 			this.state = null;
 		} else if (newInput instanceof ViewerState) {
 			this.state = (ViewerState) newInput;
-			
-			state.addStateListener(this);
+			if (this.state.isDisposed()) {
+				this.state = null;
+			} else {
+				state.addStateListener(this);
+			}
 		} else {
 			throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
 	                .getClass().getName()));

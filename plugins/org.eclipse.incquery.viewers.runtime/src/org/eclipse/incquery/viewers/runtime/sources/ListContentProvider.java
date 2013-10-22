@@ -38,7 +38,11 @@ public class ListContentProvider extends AbstractViewerStateListener implements 
         }
         if (newInput instanceof ViewerState) {
             this.state = (ViewerState) newInput;
-            state.addStateListener(this);
+            if (this.state.isDisposed()) {
+				this.state = null;
+			} else {
+				state.addStateListener(this);
+			}
         } else if (newInput != null) {
             throw new IllegalArgumentException(String.format("Invalid input type %s for List Viewer.", newInput
                     .getClass().getName()));
@@ -48,6 +52,9 @@ public class ListContentProvider extends AbstractViewerStateListener implements 
     @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
+    	if (state == null) {
+    		return new Object[0];
+    	}
         return Iterables.toArray(state.getItems(), Item.class);
     }
 
