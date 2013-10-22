@@ -1,0 +1,56 @@
+package library.base
+
+class Library {  
+	String baseName 
+	contains Writer[] writers opposite library
+	contains Book[] books opposite library
+	
+	derived String name get {
+		return baseName + " (" + mostPopularBookCategory + ")"
+	}
+	
+	derived BookCategory mostPopularBookCategory get {
+		var com.google.common.collect.Multiset<BookCategory> map = com.google.common.collect.HashMultiset.create;
+		
+		for (b : this.books) {
+			map.add(b.bookCategory);
+		}
+		
+		var BookCategory category;
+		var int max = 0;
+		for (e : map.entrySet) {
+			if (e.count > max) {
+				max = e.count;
+				category = e.element;
+			}
+		}
+		
+		return category;
+	}
+}
+
+class Writer {
+	String firstName   
+	String lastName
+	container Library library opposite writers
+	refers Book[] books opposite writers
+	
+	derived String name get {
+		return firstName + " " + lastName
+	}
+}
+
+class Book {
+	String title = "" // set a default value
+	Integer pages
+	BookCategory bookCategory
+	refers Book[] citations
+	refers Writer[] writers opposite books
+	container Library library opposite books
+}
+
+enum BookCategory {
+	Mystery = 0,
+	ScienceFiction = 1,
+	Biography = 2
+}

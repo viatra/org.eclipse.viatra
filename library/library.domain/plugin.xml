@@ -11,120 +11,48 @@
       </package>
    </extension>
    <extension
-         id="library.validation.suspiciousBook"
+         id="library.writersInLibrary"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.validation.util.SuspiciousBookQuerySpecification$Provider"
-            id="library.validation.suspiciousBook">
+            querySpecificationProvider="library.util.WritersInLibraryQuerySpecification$Provider"
+            id="library.writersInLibrary">
       </matcher>
    </extension>
    <extension
-         id="library.validation.emptyBook"
+         id="library.booksInLibrary"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.validation.util.EmptyBookQuerySpecification$Provider"
-            id="library.validation.emptyBook">
+            querySpecificationProvider="library.util.BooksInLibraryQuerySpecification$Provider"
+            id="library.booksInLibrary">
       </matcher>
    </extension>
    <extension
-         id="library.validation.emptyBook"
-         name=""
-         point="org.eclipse.incquery.runtime.xexpressionevaluator">
-      <evaluator
-            evaluatorClass="library.validation.util.EmptyBookEvaluator1_1"
-            id="library.validation.emptyBook_1_1">
-      </evaluator>
-   </extension>
-   <extension
-         id="library.validation.weirdBook"
+         id="library.library"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.validation.util.WeirdBookQuerySpecification$Provider"
-            id="library.validation.weirdBook">
+            querySpecificationProvider="library.util.LibraryQuerySpecification$Provider"
+            id="library.library">
       </matcher>
    </extension>
    <extension
-         id="library.viewers.library"
+         id="library.writer"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.viewers.util.LibraryQuerySpecification$Provider"
-            id="library.viewers.library">
+            querySpecificationProvider="library.util.WriterQuerySpecification$Provider"
+            id="library.writer">
       </matcher>
    </extension>
    <extension
-         id="library.viewers.writer"
+         id="library.book"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.viewers.util.WriterQuerySpecification$Provider"
-            id="library.viewers.writer">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.book"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookQuerySpecification$Provider"
-            id="library.viewers.book">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.writersInLibrary"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.WritersInLibraryQuerySpecification$Provider"
-            id="library.viewers.writersInLibrary">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.booksInLibrary"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BooksInLibraryQuerySpecification$Provider"
-            id="library.viewers.booksInLibrary">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.allReferencesTo"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.AllReferencesToQuerySpecification$Provider"
-            id="library.viewers.allReferencesTo">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.bookCitation"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookCitationQuerySpecification$Provider"
-            id="library.viewers.bookCitation">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.influencedBy"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.InfluencedByQuerySpecification$Provider"
-            id="library.viewers.influencedBy">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.bookOfWriter"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookOfWriterQuerySpecification$Provider"
-            id="library.viewers.bookOfWriter">
+            querySpecificationProvider="library.util.BookQuerySpecification$Provider"
+            id="library.book">
       </matcher>
    </extension>
    <extension
@@ -216,6 +144,14 @@
       </matcher>
    </extension>
    <extension
+         id="library.influencedBy"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.InfluencedByQuerySpecification$Provider"
+            id="library.influencedBy">
+      </matcher>
+   </extension>
+   <extension
          id="library.averageNumberOfCoauthorsPerBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
@@ -272,20 +208,28 @@
       </matcher>
    </extension>
    <extension
-         id="library.weirdBook3"
+         id="library.suspiciousBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.WeirdBook3QuerySpecification$Provider"
-            id="library.weirdBook3">
+            querySpecificationProvider="library.util.SuspiciousBookQuerySpecification$Provider"
+            id="library.suspiciousBook">
       </matcher>
    </extension>
    <extension
-         id="library.weirdBook4"
+         id="library.emptyBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.WeirdBook4QuerySpecification$Provider"
-            id="library.weirdBook4">
+            querySpecificationProvider="library.util.EmptyBookQuerySpecification$Provider"
+            id="library.emptyBook">
       </matcher>
+   </extension>
+   <extension
+         id="library.emptyBook"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.EmptyBookEvaluator1_1"
+            id="library.emptyBook_1_1">
+      </evaluator>
    </extension>
 
 </plugin>
