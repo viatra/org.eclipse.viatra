@@ -66,14 +66,16 @@ public class SelectionHelper {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ISelection unwrapElements_EObjectsToViewersElements(ISelection sel, ViewerState state) {
-    	List proxy = Lists.newArrayList();
-    	if (sel instanceof IStructuredSelection) {
-	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
-	    		if (e instanceof EObject) {
-	    			proxy.addAll(state.getItemsFor(e));
-	    		}
+		List proxy = Lists.newArrayList();
+			if (state!=null) {
+				if (sel instanceof IStructuredSelection) {
+		    	for (Object e : ((IStructuredSelection)sel).toArray()) {
+		    		if (e instanceof EObject) {
+		    			proxy.addAll(state.getItemsFor(e));
+		    		}
+		    	}
 	    	}
-    	}
+		}
     	return new StructuredSelection(proxy);
     }
 }
