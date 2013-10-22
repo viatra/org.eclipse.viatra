@@ -662,7 +662,7 @@ public abstract class ProjectGenerationHelper {
 			} else {
 				//Removing project name prefix from extension id, otherwise these will be multiplied on save
 				String projectId = bundleModel.getPlugin().getId();
-				if (StringExtensions.isNullOrEmpty(extensionId)) {
+				if (!StringExtensions.isNullOrEmpty(extensionId)) {
 					extension.setId(extensionId.substring(projectId.length() + 1));
 				}
 			}
