@@ -2,7 +2,7 @@ package library.viewers.views;
 
 import java.util.Collection;
 
-import library.util.WriterQuerySpecification;
+import library.viewers.util.WriterQuerySpecification;
 
 import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;

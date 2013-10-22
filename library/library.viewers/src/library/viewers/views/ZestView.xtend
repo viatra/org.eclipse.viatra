@@ -1,9 +1,9 @@
 package library.viewers.views
 
 import com.google.common.collect.Sets
-import library.util.BookOfWriterQuerySpecification
-import library.util.BookQuerySpecification
-import library.util.WriterQuerySpecification
+import library.viewers.util.BookOfWriterQuerySpecification
+import library.viewers.util.BookQuerySpecification
+import library.viewers.util.WriterQuerySpecification
 import org.eclipse.gef4.zest.core.viewers.GraphViewer
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum

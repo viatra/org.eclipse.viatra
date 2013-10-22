@@ -63,8 +63,6 @@ pattern allBookCitations(B1 : Book, B2 : Book) {
 /*
  * Book ref is contained in the set of books that (transitively) reference Book b. 
  */
-@Edge(source = B, target = Ref, label = "ref+")
-@Format(lineStyle = "dashed")
 pattern allReferencesTo(B: Book, Ref: Book){
 	find bookCitation+(Ref, B);
 }
@@ -72,22 +70,10 @@ pattern allReferencesTo(B: Book, Ref: Book){
 /*
  * Book b1 cites Book b2.
  */
-@Edge(source = B1, target = B2, label = "cites")
 pattern bookCitation(B1 : Book, B2 : Book) {
 	Book.citations(B1, B2);
 }
 
-/*
- * Writer w1 is influenced by w2, since he wrote some book
- * that (indirectly or directly) references one of w2's works.
- */
-@Edge(source = W1, target = W2, label = "influencedBy")
-@Format(lineColor = "#ff0000")
-pattern influencedBy(W1: Writer, W2: Writer) {
-	Book.writers(B1, W1);
-	Book.writers(B2, W2);
-	find allReferencesTo(B2, B1);
-}
 
 // ************* numbers **********
 
@@ -115,8 +101,6 @@ pattern numberOfBooksOfWriter(W : Writer, N) {
 	N == count find bookOfWriter(W, _B);
 }
 
-//@Item(item = B, label = "$B.title$ [$N2$]")
-// TODO: this seems to introduce a weird bug
 pattern numberOfWriters(B : Book, N) {
 	N == count find writerOfBook(B, _W);
 }
@@ -125,40 +109,18 @@ pattern writerOfBook(B : Book, W : Writer) {
 	Book.writers(B, W);
 }
 
-@Edge(source = W, target = B, label = "author")
-@QueryExplorer(display = true)
 pattern bookOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
 }
 
+// bug hunt
 
-/*
- * validation stuff
- */
- /*
- * A "suspicious" book is one that:
- *  - is empty (missing some important field)
- *  - is weird (it transitively cites itself)
- */
-pattern suspiciousBook(L:Library, B: Book) {
-	Library.books(L,B);
-	find emptyBook(B);
-} 
-or {
-	Library.books(L,B);
-	find weirdBook(B);
+@QueryExplorer(display = true)
+pattern weirdBook3(B : Book) {
+	Book.allCitations(B, B); // doesn't work
 }
 
-pattern emptyBook(B: Book) {
-	Book.title(B, T);
-	check((T as String).length == 0); // works well
-	//check(T.length == 0); // doesn't work (?)
-} 
-or {
-//	Book.numberOfWriters(B,0);// this wreaks havoc too
- 	find numberOfWriters(B,0);
-}
-
-private pattern weirdBook(B : Book) {
-	find allBookCitations(B, B);
+@QueryExplorer(display = true)
+pattern weirdBook4(B : Book) {
+	find allBookCitations(B,B); // works
 }

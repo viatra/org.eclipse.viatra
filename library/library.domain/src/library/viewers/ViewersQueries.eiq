@@ -1,0 +1,61 @@
+package library.viewers
+
+import "library"
+
+// Viewers patterns 
+
+// items
+
+@Item(item = l, hierarchy = "root", label = "$l.name$")
+pattern library(l) { Library(l); }
+
+@Item(item = w, label = "Writer: $w.name$", hierarchy = "child")
+@Format(color = "#626fc9", textColor = "#ffffff")
+pattern writer(w) { Writer(w);}
+
+@Item(item = b, label = "$b.title$", hierarchy = "child")
+@Format(color = "#b22300", textColor = "#ffffff")
+pattern book(b) { Book(b); }
+
+// containment relationships
+
+@ContainsItem(container = l, item = w)
+pattern writersInLibrary(w:Writer, l:Library){
+	Library.writers(l,w);
+}
+
+@ContainsItem(container = l, item = b)
+pattern booksInLibrary(b:Book, l:Library){
+	Library.books(l,b);
+}
+
+// edges
+
+@Edge(source = B, target = Ref, label = "ref+")
+@Format(lineStyle = "dashed")
+pattern allReferencesTo(B: Book, Ref: Book){
+	find bookCitation+(Ref, B);
+}
+
+@Edge(source = B1, target = B2, label = "cites")
+pattern bookCitation(B1 : Book, B2 : Book) {
+	Book.citations(B1, B2);
+}
+
+/*
+ * Writer w1 is influenced by w2, since he wrote some book
+ * that (indirectly or directly) references one of w2's works.
+ */
+@Edge(source = W1, target = W2, label = "influencedBy")
+@Format(lineColor = "#ff0000")
+pattern influencedBy(W1: Writer, W2: Writer) {
+	Book.writers(B1, W1);
+	Book.writers(B2, W2);
+	find allReferencesTo(B2, B1);
+}
+
+@Edge(source = W, target = B, label = "author")
+@QueryExplorer(display = true)
+pattern bookOfWriter(W : Writer, B : Book) {
+	Writer.books(W, B);
+}

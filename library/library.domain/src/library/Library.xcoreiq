@@ -9,7 +9,7 @@ class Library {
 	contains Book[] books opposite library
 	
 	// derived features
-	incquery-derived refers Book[] suspiciousBooks spec suspiciousBook
+	incquery-derived refers Book[] suspiciousBooks spec validation.suspiciousBook
 	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
 }
 

@@ -1,0 +1,36 @@
+package library.validation
+
+import "library"
+
+// Validation queries
+ 
+ /*
+ * A "suspicious" book is one that:
+ *  - is empty (missing some important field)
+ *  - is weird (it transitively cites itself)
+ */
+pattern suspiciousBook(L:Library, B: Book) {
+	Library.books(L,B);
+	find emptyBook(B);
+} 
+or {
+	Library.books(L,B);
+	find weirdBook(B);
+}
+
+pattern emptyBook(B: Book) {
+	Book.title(B, T);
+	check((T as String).length == 0); // works well
+	//check(T.length == 0); // doesn't work (?)
+} 
+or {
+	Book.numberOfWriters(B,0);// this wreaks havoc too
+}
+
+pattern weirdBook(B : Book) {
+	Book.allCitations(B, B); // doesn't work
+}
+
+//pattern weirdBook2(B:Book) {
+//	find library.allBookCitations(B,B); // works with dynamic mode, but introduces cyclic linking error
+//}

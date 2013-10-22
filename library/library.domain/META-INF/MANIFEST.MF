@@ -8,7 +8,11 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: library,
  library.impl,
- library.util
+ library.util,
+ library.validation,
+ library.validation.util,
+ library.viewers,
+ library.viewers.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.xtext.xbase.lib;visibility:=reexport,
