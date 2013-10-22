@@ -33,6 +33,7 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 /**
  * @author Abel Hegedus
@@ -43,11 +44,21 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 
     private final Map<Notifier, WeakReference<AdvancedIncQueryEngine>> engineMap;
     
+    private final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specificationMap;
+    
     /**
      * 
      */
     public QueryBasedFeatureSettingDelegateFactory() {
         engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedIncQueryEngine>>();
+        specificationMap = Maps.newHashMap();
+    }
+    
+    /**
+     * @return the specificationMap
+     */
+    public Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
+        return specificationMap;
     }
     
     protected AdvancedIncQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws IncQueryException {
@@ -99,13 +110,16 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         return result;
     }
 
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> findQuerySpecification(
+    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> findQuerySpecification(
             EStructuralFeature eStructuralFeature) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = null;
         EAnnotation annotation = eStructuralFeature.getEAnnotation(QueryBasedFeatures.ANNOTATION_SOURCE);
         if(annotation != null) {
             String patternFQN = annotation.getDetails().get(QueryBasedFeatures.PATTERN_FQN_KEY);
-            querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+            if(specificationMap.containsKey(patternFQN)) {
+                querySpec = specificationMap.get(patternFQN);
+            } else {
+                querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
             // TODO let's use Pattern Registry instead (requires added dependency!)
 //                List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
 //                if(patternInfosByFQN.size() > 0) {
@@ -114,6 +128,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 //                        IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
 //                    }
 //                }
+            }
         }
         return querySpec;
     }
