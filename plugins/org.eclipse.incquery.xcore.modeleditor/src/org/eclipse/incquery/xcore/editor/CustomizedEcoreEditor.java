@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.ui.viewer.ColumnViewerInformationControlToolTipSupport;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.presentation.EcoreEditor;
 import org.eclipse.emf.ecore.presentation.EcoreEditorPlugin;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -35,6 +36,8 @@ import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
+import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureSettingDelegateFactory;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -167,9 +170,18 @@ public class CustomizedEcoreEditor extends EcoreEditor {
                 	String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
                 	if (!specs.contains(fqn)) {
                 		IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> spec = QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
-                        QuerySpecificationRegistry.registerQuerySpecification(spec);
+                        
+                		QueryBasedFeatureSettingDelegateFactory f = (QueryBasedFeatureSettingDelegateFactory) EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.get(QueryBasedFeatures.ANNOTATION_SOURCE);
+                		if (f!=null)
+                		{
+                			f.getSpecificationMap().put(fqn, spec);
+                			log("Registered derived feature pattern directly through QBFSDF " + fqn);	
+                		}
+                		else {
+                			QuerySpecificationRegistry.registerQuerySpecification(spec);
+                			log("Registered derived feature pattern indirectly through QSR " + fqn);	
+                		}    
                         specs.add(fqn);
-                        log("Registered derived feature pattern " + fqn);	
                 	}
                 	else {
                 		log("Skipped the duplicate registration of derived feature pattern " + fqn);
@@ -192,7 +204,14 @@ public class CustomizedEcoreEditor extends EcoreEditor {
     	getSite().getPage().removeSelectionListener(revealSelectionListener);
         super.dispose();
         for (String spec : specs) {
-            QuerySpecificationRegistry.unregisterQuerySpecification(spec);
+        	QueryBasedFeatureSettingDelegateFactory f = (QueryBasedFeatureSettingDelegateFactory) EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.get(QueryBasedFeatures.ANNOTATION_SOURCE);
+    		if (f!=null)
+    		{
+    			f.getSpecificationMap().remove(spec);
+    		}
+    		else {
+    			QuerySpecificationRegistry.unregisterQuerySpecification(spec);
+    		}
             log("Unregistered "+spec);
         }
     }
