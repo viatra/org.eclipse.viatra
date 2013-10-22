@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2013, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   istvanrath - initial API and implementation
+ *******************************************************************************/
 package library.viewers.views
 
 import com.google.common.collect.Sets
@@ -13,7 +23,10 @@ import org.eclipse.swt.SWT
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.part.ViewPart
 
-class ZestView extends ViewPart implements IZoomableWorkbenchPart {
+/**
+ * Sample graph view component based on IncQuery Viewers Extensions for Zest viewers.
+ */
+class SampleZestView extends ViewPart implements IZoomableWorkbenchPart {
 	
 	GraphViewer graphViewer;
 	

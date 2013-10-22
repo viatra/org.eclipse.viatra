@@ -12,6 +12,7 @@
    </extension>
    <extension
          id="library.coAuthorsOfWriter"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.CoAuthorsOfWriterQuerySpecification$Provider"
@@ -20,6 +21,7 @@
    </extension>
    <extension
          id="library.writerName"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WriterNameQuerySpecification$Provider"
@@ -28,6 +30,7 @@
    </extension>
    <extension
          id="library.writerName"
+         name=""
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
             evaluatorClass="library.util.WriterNameEvaluator1_1"
@@ -36,6 +39,7 @@
    </extension>
    <extension
          id="library.mostPopularBookCategory"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.MostPopularBookCategoryQuerySpecification$Provider"
@@ -44,6 +48,7 @@
    </extension>
    <extension
          id="library.moreBooksInCategoryThan"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.MoreBooksInCategoryThanQuerySpecification$Provider"
@@ -52,6 +57,7 @@
    </extension>
    <extension
          id="library.moreBooksInCategoryThan"
+         name=""
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
             evaluatorClass="library.util.MoreBooksInCategoryThanEvaluator1_1"
@@ -60,6 +66,7 @@
    </extension>
    <extension
          id="library.categoryOfBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.CategoryOfBookQuerySpecification$Provider"
@@ -68,6 +75,7 @@
    </extension>
    <extension
          id="library.ownBooksOfWriter"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.OwnBooksOfWriterQuerySpecification$Provider"
@@ -76,6 +84,7 @@
    </extension>
    <extension
          id="library.allBookCitations"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.AllBookCitationsQuerySpecification$Provider"
@@ -84,6 +93,7 @@
    </extension>
    <extension
          id="library.allReferencesTo"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.AllReferencesToQuerySpecification$Provider"
@@ -92,6 +102,7 @@
    </extension>
    <extension
          id="library.bookCitation"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.BookCitationQuerySpecification$Provider"
@@ -100,6 +111,7 @@
    </extension>
    <extension
          id="library.averageNumberOfCoauthorsPerBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.AverageNumberOfCoauthorsPerBookQuerySpecification$Provider"
@@ -108,6 +120,7 @@
    </extension>
    <extension
          id="library.averageNumberOfCoauthorsPerBook"
+         name=""
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
             evaluatorClass="library.util.AverageNumberOfCoauthorsPerBookEvaluator1_1"
@@ -116,6 +129,7 @@
    </extension>
    <extension
          id="library.numberOfCitations"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.NumberOfCitationsQuerySpecification$Provider"
@@ -124,6 +138,7 @@
    </extension>
    <extension
          id="library.numberOfBooksOfWriter"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.NumberOfBooksOfWriterQuerySpecification$Provider"
@@ -132,6 +147,7 @@
    </extension>
    <extension
          id="library.numberOfWriters"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.NumberOfWritersQuerySpecification$Provider"
@@ -140,6 +156,7 @@
    </extension>
    <extension
          id="library.writerOfBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WriterOfBookQuerySpecification$Provider"
@@ -148,6 +165,7 @@
    </extension>
    <extension
          id="library.bookOfWriter"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.BookOfWriterQuerySpecification$Provider"
@@ -156,6 +174,7 @@
    </extension>
    <extension
          id="library.weirdBook3"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WeirdBook3QuerySpecification$Provider"
@@ -164,6 +183,7 @@
    </extension>
    <extension
          id="library.weirdBook4"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.util.WeirdBook4QuerySpecification$Provider"
@@ -172,6 +192,7 @@
    </extension>
    <extension
          id="library.validation.suspiciousBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.validation.util.SuspiciousBookQuerySpecification$Provider"
@@ -180,6 +201,7 @@
    </extension>
    <extension
          id="library.validation.emptyBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.validation.util.EmptyBookQuerySpecification$Provider"
@@ -188,6 +210,7 @@
    </extension>
    <extension
          id="library.validation.emptyBook"
+         name=""
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
             evaluatorClass="library.validation.util.EmptyBookEvaluator1_1"
@@ -196,6 +219,7 @@
    </extension>
    <extension
          id="library.validation.weirdBook"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.validation.util.WeirdBookQuerySpecification$Provider"

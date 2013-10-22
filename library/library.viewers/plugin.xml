@@ -12,8 +12,15 @@
             name="Library Zest Sample"
             icon="icons/sample.gif"
             category="library.viewers"
-            class="library.viewers.views.ZestView"
+            class="library.viewers.views.SampleZestView"
             id="library.viewers.views.LibrarySampleZestView">
+      </view>
+      <view
+            name="Library List Sample"
+            icon="icons/sample.gif"
+            category="library.viewers"
+            class="library.viewers.views.SampleListView"
+            id="library.viewers.views.LibrarySampleListView">
       </view>
    </extension>
    <extension
@@ -25,6 +32,15 @@
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"
                id="library.viewers.views.LibrarySampleZestView">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="library.viewers.views.LibrarySampleListView">
          </view>
       </perspectiveExtension>
    </extension>
