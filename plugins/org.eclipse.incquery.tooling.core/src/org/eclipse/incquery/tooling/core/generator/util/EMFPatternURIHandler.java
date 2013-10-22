@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -110,6 +111,7 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
              * FIXME what happens if two packages contain objects with the exact same ID???
              */
             for (EPackage p : uriToEPackageMap.values()) {
+            	try {
                 EObject eObject = p.eResource().getEObject(fragment);
                 EPackage e = p;
                 if(eObject != null) {
@@ -139,6 +141,9 @@ public class EMFPatternURIHandler extends URIHandlerImpl {
                     newUri = newUri.appendFragment(newFragment);
                     return newUri;
                 }
+            	} catch (WrappedException e) {
+            		//XXX Incorrect try, this is not the EPackage we are looking for
+            	}
             }
         }
         return super.deresolve(uri);
