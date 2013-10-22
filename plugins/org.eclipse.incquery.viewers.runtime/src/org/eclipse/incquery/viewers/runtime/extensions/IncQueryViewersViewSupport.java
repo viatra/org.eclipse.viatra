@@ -26,6 +26,7 @@ import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
 
@@ -148,7 +149,8 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     
     // ***************** layout stuff ***************** //
     
-    private Composite parent, cover, contents;
+    private Composite parent, cover; 
+    private Control contents;
 
     private StackLayout layout;
 
@@ -157,7 +159,7 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
      * @param _parent the SWT part received by the owner in its createPartControl method
      * @param _contents the SWT UI to be displayed for actual contents
      */
-    public void createPartControl(Composite _parent, Composite _contents) {
+    public void createPartControl(Composite _parent, Control _contents) {
         parent = _parent;
         layout = new StackLayout();
         parent.setLayout(layout);
