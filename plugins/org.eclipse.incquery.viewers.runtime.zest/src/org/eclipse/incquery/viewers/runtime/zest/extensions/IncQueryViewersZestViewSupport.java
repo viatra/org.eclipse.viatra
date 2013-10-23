@@ -91,7 +91,8 @@ public class IncQueryViewersZestViewSupport extends
 	    			this.configuration.getPatterns(), 
 	    			this.configuration.getFilter(),  
 	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			IncQueryGraphViewers.bind(((GraphViewer)jfaceViewer), state);
+			//IncQueryGraphViewers.bind(((GraphViewer)jfaceViewer), state);
+			IncQueryGraphViewers.bindWithIsolatedNodes(((GraphViewer)jfaceViewer), state);
 		}
 	}
 	
