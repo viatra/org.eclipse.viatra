@@ -12,7 +12,7 @@ package library.viewers.views;
 
 import java.util.Collection;
 
-import library.viewers.util.WriterQuerySpecification;
+import library.validation.util.SuspiciousBookQuerySpecification;
 
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -50,7 +50,7 @@ public class SampleListView extends ViewPart {
 			
 			// set up the queries that this demo will be using
 			final Collection<String> queries = Sets.newHashSet();
-			queries.add(WriterQuerySpecification.instance().getPatternFullyQualifiedName());
+			queries.add(SuspiciousBookQuerySpecification.instance().getPatternFullyQualifiedName());
 			
 			// initialize the helper object
 			this.viewSupport = new IncQueryViewersJFaceViewSupport(

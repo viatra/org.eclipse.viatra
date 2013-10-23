@@ -9,14 +9,14 @@
             id="library.viewers">
       </category>
       <view
-            name="Library Zest Sample"
+            name="Influence relationships"
             icon="icons/sample.gif"
             category="library.viewers"
             class="library.viewers.views.SampleZestView"
             id="library.viewers.views.LibrarySampleZestView">
       </view>
       <view
-            name="Library List Sample"
+            name="Suspicious books"
             icon="icons/sample.gif"
             category="library.viewers"
             class="library.viewers.views.SampleListView"

@@ -123,15 +123,3 @@ pattern writerOfBook(B : Book, W : Writer) {
 pattern bookOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
 }
-
-// bug hunt
-
-@QueryExplorer(display = true)
-pattern weirdBook3(B : Book) {
-	Book.allCitations(B, B); // doesn't work
-}
-
-@QueryExplorer(display = true)
-pattern weirdBook4(B : Book) {
-	find allBookCitations(B,B); // works
-}

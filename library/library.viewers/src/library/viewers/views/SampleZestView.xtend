@@ -11,8 +11,7 @@
 package library.viewers.views
 
 import com.google.common.collect.Sets
-import library.viewers.util.BookOfWriterQuerySpecification
-import library.viewers.util.BookQuerySpecification
+import library.viewers.util.InfluencedByQuerySpecification
 import library.viewers.util.WriterQuerySpecification
 import org.eclipse.gef4.zest.core.viewers.GraphViewer
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart
@@ -39,8 +38,8 @@ class SampleZestView extends ViewPart implements IZoomableWorkbenchPart {
 		// initialize support object
 		val queries = Sets.newHashSet
 		queries.add( WriterQuerySpecification.instance.patternFullyQualifiedName )
-		queries.add( BookQuerySpecification.instance.patternFullyQualifiedName )
-		queries.add( BookOfWriterQuerySpecification.instance.patternFullyQualifiedName )
+		queries.add( InfluencedByQuerySpecification.instance.patternFullyQualifiedName )
+		
 		val config = ViewersComponentConfiguration.fromQuerySpecFQNs( queries )
 		viewSupport = new IncQueryViewersZestViewSupport(
 			this,config,IModelConnectorTypeEnum.RESOURCESET,graphViewer

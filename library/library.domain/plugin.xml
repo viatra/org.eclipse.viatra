@@ -173,21 +173,75 @@
       </matcher>
    </extension>
    <extension
-         id="library.weirdBook3"
+         id="library.viewers.library"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.WeirdBook3QuerySpecification$Provider"
-            id="library.weirdBook3">
+            querySpecificationProvider="library.viewers.util.LibraryQuerySpecification$Provider"
+            id="library.viewers.library">
       </matcher>
    </extension>
    <extension
-         id="library.weirdBook4"
+         id="library.viewers.writer"
          name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.WeirdBook4QuerySpecification$Provider"
-            id="library.weirdBook4">
+            querySpecificationProvider="library.viewers.util.WriterQuerySpecification$Provider"
+            id="library.viewers.writer">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.book"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.BookQuerySpecification$Provider"
+            id="library.viewers.book">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.writersInLibrary"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.WritersInLibraryQuerySpecification$Provider"
+            id="library.viewers.writersInLibrary">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.booksInLibrary"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.BooksInLibraryQuerySpecification$Provider"
+            id="library.viewers.booksInLibrary">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.allReferencesTo"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.AllReferencesToQuerySpecification$Provider"
+            id="library.viewers.allReferencesTo">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.influencedBy"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.InfluencedByQuerySpecification$Provider"
+            id="library.viewers.influencedBy">
+      </matcher>
+   </extension>
+   <extension
+         id="library.viewers.bookOfWriter"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.viewers.util.BookOfWriterQuerySpecification$Provider"
+            id="library.viewers.bookOfWriter">
       </matcher>
    </extension>
    <extension
@@ -227,76 +281,85 @@
       </matcher>
    </extension>
    <extension
-         id="library.viewers.library"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.LibraryQuerySpecification$Provider"
-            id="library.viewers.library">
-      </matcher>
+         id="extension.derived.suspiciousBooks"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="suspiciousBooks"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.writer"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.WriterQuerySpecification$Provider"
-            id="library.viewers.writer">
-      </matcher>
+         id="extension.derived.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="mostPopularBookCategory"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.book"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookQuerySpecification$Provider"
-            id="library.viewers.book">
-      </matcher>
+         id="extension.derived.name"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="name"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.writersInLibrary"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.WritersInLibraryQuerySpecification$Provider"
-            id="library.viewers.writersInLibrary">
-      </matcher>
+         id="extension.derived.averageNumberOfCoauthorsPerBook"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="averageNumberOfCoauthorsPerBook"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.booksInLibrary"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BooksInLibraryQuerySpecification$Provider"
-            id="library.viewers.booksInLibrary">
-      </matcher>
+         id="extension.derived.coAuthors"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="coAuthors"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.allReferencesTo"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.AllReferencesToQuerySpecification$Provider"
-            id="library.viewers.allReferencesTo">
-      </matcher>
+         id="extension.derived.ownBooks"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="ownBooks"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.bookCitation"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookCitationQuerySpecification$Provider"
-            id="library.viewers.bookCitation">
-      </matcher>
+         id="extension.derived.numberOfCitations"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="numberOfCitations"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.influencedBy"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.InfluencedByQuerySpecification$Provider"
-            id="library.viewers.influencedBy">
-      </matcher>
+         id="extension.derived.allCitations"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="allCitations"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.viewers.bookOfWriter"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.util.BookOfWriterQuerySpecification$Provider"
-            id="library.viewers.bookOfWriter">
-      </matcher>
+         id="extension.derived.numberOfWriters"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="numberOfWriters"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
 
 </plugin>

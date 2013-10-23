@@ -24,7 +24,7 @@ pattern library(l) { Library(l); }
 @Format(color = "#626fc9", textColor = "#ffffff")
 pattern writer(w) { Writer(w);}
 
-@Item(item = b, label = "$b.title$", hierarchy = "child")
+@Item(item = b, label = "Book: $b.title$", hierarchy = "child")
 @Format(color = "#b22300", textColor = "#ffffff")
 pattern book(b) { Book(b); }
 
@@ -45,13 +45,9 @@ pattern booksInLibrary(b:Book, l:Library){
 @Edge(source = B, target = Ref, label = "ref+")
 @Format(lineStyle = "dashed")
 pattern allReferencesTo(B: Book, Ref: Book){
-	find bookCitation+(Ref, B);
-}
-
-@Edge(source = B1, target = B2, label = "cites")
-pattern bookCitation(B1 : Book, B2 : Book) {
-	Book.citations(B1, B2);
-}
+	//find bookCitation+(Ref, B);
+	Book.allCitations(Ref,B);
+} 
 
 /*
  * Writer w1 is influenced by w2, since he wrote some book

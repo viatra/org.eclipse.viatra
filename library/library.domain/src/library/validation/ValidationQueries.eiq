@@ -20,6 +20,7 @@ import "library"
  *  - is empty (missing some important field)
  *  - is weird (it transitively cites itself)
  */
+@Item(item = B, label = "Suspicious book $B.title$")
 pattern suspiciousBook(L:Library, B: Book) {
 	Library.books(L,B);
 	find emptyBook(B);
@@ -29,19 +30,20 @@ or {
 	find weirdBook(B);
 }
 
+/*
+ * B is an empty book because it has either no title and/or no authors.
+ */
 pattern emptyBook(B: Book) {
 	Book.title(B, T);
-	check((T as String).length == 0); // works well
-	//check(T.length == 0); // doesn't work (?)
+	check((T as String).length == 0);
 } 
 or {
-	Book.numberOfWriters(B,0);// this wreaks havoc too
+	Book.numberOfWriters(B,0);
 }
 
+/*
+ * B is a weird Book because it transitively cites itself.
+ */
 pattern weirdBook(B : Book) {
-	Book.allCitations(B, B); // doesn't work
+	Book.allCitations(B, B);
 }
-
-//pattern weirdBook2(B:Book) {
-//	find library.allBookCitations(B,B); // works with dynamic mode, but introduces cyclic linking error
-//}
