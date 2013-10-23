@@ -1,3 +1,26 @@
 package library.base
 
+import "library.base"
+
 //TODO add pattern definitions here
+
+pattern libraryName(L : Library, N) {
+	Library.baseName(L, BN);
+	find mostPopularBookCategory(L, C);
+	N == eval(BN + " (" + C.toString + ")");
+}
+
+pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
+	Library(L);
+	neg find moreBooksInCategoryThan(_C, C);
+}
+ 
+pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
+	N == count find categoryOfBook(C1, _B1);
+	M == count find categoryOfBook(C2, _B2);
+	check(N > M);
+} 
+
+pattern categoryOfBook(c : BookCategory, b : Book) {
+	Book.bookCategory(b, c);
+}

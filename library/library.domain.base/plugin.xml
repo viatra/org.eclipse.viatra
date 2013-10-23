@@ -1,17 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-
-<!--
--->
-
 <plugin>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated Library -->
+   <extension
+         name=""
+         point="org.eclipse.emf.ecore.generated_package">
       <package
+            genModel="src/library/base/Library.xcoreiq"
             uri="library.base"
-            class="library.base.BasePackage"
-            genModel="src/library/base/Library.xcoreiq"/>
+            class="library.base.BasePackage">
+      </package>
+   </extension>
+   <extension
+         id="extension.derived.name"
+         name=""
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="name"
+            package-nsUri="library.base">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="library.base.writerName"
+         name=""
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
+            id="library.base.writerName">
+      </matcher>
+   </extension>
+   <extension
+         id="library.base.writerName"
+         name=""
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.base.util.WriterNameEvaluator1_1"
+            id="library.base.writerName_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.base.libraryName"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.LibraryNameQuerySpecification$Provider"
+            id="library.base.libraryName">
+      </matcher>
+   </extension>
+   <extension
+         id="library.base.libraryName"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.base.util.LibraryNameEvaluator1_1"
+            id="library.base.libraryName_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.base.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.MostPopularBookCategoryQuerySpecification$Provider"
+            id="library.base.mostPopularBookCategory">
+      </matcher>
+   </extension>
+   <extension
+         id="library.base.moreBooksInCategoryThan"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.MoreBooksInCategoryThanQuerySpecification$Provider"
+            id="library.base.moreBooksInCategoryThan">
+      </matcher>
+   </extension>
+   <extension
+         id="library.base.moreBooksInCategoryThan"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.base.util.MoreBooksInCategoryThanEvaluator1_1"
+            id="library.base.moreBooksInCategoryThan_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.base.categoryOfBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.CategoryOfBookQuerySpecification$Provider"
+            id="library.base.categoryOfBook">
+      </matcher>
    </extension>
 
 </plugin>

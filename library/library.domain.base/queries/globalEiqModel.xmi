@@ -1,4 +1,194 @@
 <?xml version="1.0" encoding="ASCII"?>
-<eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage">
-  <importPackages/>
-</eMFPatternLanguage:PatternModel>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
+  <eMFPatternLanguage:PatternModel>
+    <patterns name="library.base.libraryName" fileName="platform:/resource/library.domain.base/src/library/base/BaseQueries.eiq">
+      <parameters name="L">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+        </type>
+      </parameters>
+      <parameters name="N"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="library.base#//Library/baseName"/>
+              </type>
+            </tail>
+            <src var="L"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="BN"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
+          <call patternRef="/0/@patterns.1">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="L"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="C"/>
+            </parameters>
+          </call>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="N"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:FunctionEvaluationValue">
+            <expression xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
+              <leftOperand xsi:type="xbase:XBinaryOperation">
+                <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
+                <leftOperand xsi:type="xbase:XBinaryOperation">
+                  <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
+                  <leftOperand xsi:type="xbase:XFeatureCall" feature="/1"/>
+                  <rightOperand xsi:type="xbase:XStringLiteral" value=" ("/>
+                </leftOperand>
+                <rightOperand xsi:type="xbase:XMemberFeatureCall">
+                  <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.Object#java.lang.Object.toString()"/>
+                  <memberCallTarget xsi:type="xbase:XFeatureCall" feature="/2"/>
+                </rightOperand>
+              </leftOperand>
+              <rightOperand xsi:type="xbase:XStringLiteral" value=")"/>
+            </expression>
+          </rightOperand>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="library.base.mostPopularBookCategory" fileName="platform:/resource/library.domain.base/src/library/base/BaseQueries.eiq">
+      <parameters name="L">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+        </type>
+      </parameters>
+      <parameters name="C">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EEnum" href="library.base#//BookCategory"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+          </type>
+          <var var="L"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
+          <call patternRef="/0/@patterns.2">
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="_C"/>
+            </parameters>
+            <parameters xsi:type="patternLanguage:VariableValue">
+              <value var="C"/>
+            </parameters>
+          </call>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="library.base.moreBooksInCategoryThan" fileName="platform:/resource/library.domain.base/src/library/base/BaseQueries.eiq">
+      <parameters name="C1">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EEnum" href="library.base#//BookCategory"/>
+        </type>
+      </parameters>
+      <parameters name="C2">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EEnum" href="library.base#//BookCategory"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="N"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.3">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="C1"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_B1"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="M"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.3">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="C2"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_B2"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CheckConstraint">
+          <expression xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.ComparableExtensions#org.eclipse.xtext.xbase.lib.ComparableExtensions.operator_greaterThan(java.lang.Comparable,C)"/>
+            <leftOperand xsi:type="xbase:XFeatureCall" feature="/3"/>
+            <rightOperand xsi:type="xbase:XFeatureCall" feature="/4"/>
+          </expression>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="library.base.categoryOfBook" fileName="platform:/resource/library.domain.base/src/library/base/BaseQueries.eiq">
+      <parameters name="c">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EEnum" href="library.base#//BookCategory"/>
+        </type>
+      </parameters>
+      <parameters name="b">
+        <type xsi:type="eMFPatternLanguage:ClassType">
+          <classname xsi:type="ecore:EClass" href="library.base#//Book"/>
+        </type>
+      </parameters>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="library.base#//Book"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="library.base#//Book/bookCategory"/>
+              </type>
+            </tail>
+            <src var="b"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="c"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <importPackages>
+      <packageImport>
+        <ePackage href="library.base#/"/>
+      </packageImport>
+    </importPackages>
+  </eMFPatternLanguage:PatternModel>
+  <types:JvmFormalParameter name="BN">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="C">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="N">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="M">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+</xmi:XMI>

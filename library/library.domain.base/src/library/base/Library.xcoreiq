@@ -5,6 +5,8 @@ class Library {
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
 	
+	//incquery-derived String name spec libraryName
+	
 	derived String name get {
 		return baseName + " (" + mostPopularBookCategory + ")"
 	}
