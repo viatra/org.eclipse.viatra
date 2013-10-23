@@ -43,16 +43,13 @@
             <expression xsi:type="xbase:XBinaryOperation">
               <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
               <leftOperand xsi:type="xbase:XBinaryOperation">
-                <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
+                <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.Object)"/>
                 <leftOperand xsi:type="xbase:XBinaryOperation">
                   <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
                   <leftOperand xsi:type="xbase:XFeatureCall" feature="/1"/>
                   <rightOperand xsi:type="xbase:XStringLiteral" value=" ("/>
                 </leftOperand>
-                <rightOperand xsi:type="xbase:XMemberFeatureCall">
-                  <feature xsi:type="types:JvmOperation" href="java:/Objects/java.lang.Object#java.lang.Object.toString()"/>
-                  <memberCallTarget xsi:type="xbase:XFeatureCall" feature="/2"/>
-                </rightOperand>
+                <rightOperand xsi:type="xbase:XFeatureCall" feature="/2"/>
               </leftOperand>
               <rightOperand xsi:type="xbase:XStringLiteral" value=")"/>
             </expression>
@@ -72,16 +69,31 @@
         </type>
       </parameters>
       <bodies>
-        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
-          <type xsi:type="eMFPatternLanguage:ClassType">
-            <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
-          </type>
-          <var var="L"/>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="library.base#//Library/books"/>
+              </type>
+              <tail>
+                <type xsi:type="eMFPatternLanguage:ReferenceType">
+                  <refname xsi:type="ecore:EAttribute" href="library.base#//Book/bookCategory"/>
+                </type>
+              </tail>
+            </tail>
+            <src var="L"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="C"/>
+            </dst>
+          </head>
         </constraints>
         <constraints xsi:type="patternLanguage:PatternCompositionConstraint" negative="true">
           <call patternRef="/0/@patterns.2">
             <parameters xsi:type="patternLanguage:VariableValue">
-              <value var="_C"/>
+              <value var="_BC"/>
             </parameters>
             <parameters xsi:type="patternLanguage:VariableValue">
               <value var="C"/>

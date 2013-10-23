@@ -21,24 +21,6 @@
       </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.base.writerName"
-         name=""
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
-            id="library.base.writerName">
-      </matcher>
-   </extension>
-   <extension
-         id="library.base.writerName"
-         name=""
-         point="org.eclipse.incquery.runtime.xexpressionevaluator">
-      <evaluator
-            evaluatorClass="library.base.util.WriterNameEvaluator1_1"
-            id="library.base.writerName_1_1">
-      </evaluator>
-   </extension>
-   <extension
          id="library.base.libraryName"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher

@@ -7,12 +7,12 @@ import "library.base"
 pattern libraryName(L : Library, N) {
 	Library.baseName(L, BN);
 	find mostPopularBookCategory(L, C);
-	N == eval(BN + " (" + C.toString + ")");
+	N == eval(BN + " (" + C + ")");
 }
 
 pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
-	Library(L);
-	neg find moreBooksInCategoryThan(_C, C);
+	Library.books.bookCategory(L, C);
+	neg find moreBooksInCategoryThan(_BC, C);
 }
  
 pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
