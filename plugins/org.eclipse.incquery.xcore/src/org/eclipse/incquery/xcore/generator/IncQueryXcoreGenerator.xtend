@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.xcore.generator
 
+import com.google.common.collect.Lists
 import com.google.inject.Inject
 import java.util.Collections
 import java.util.HashSet
+import java.util.List
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.ecore.EPackage
@@ -25,8 +29,11 @@ import org.eclipse.emf.ecore.xcore.XPackage
 import org.eclipse.emf.ecore.xcore.XStructuralFeature
 import org.eclipse.emf.ecore.xcore.generator.XcoreGenerator
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
+import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
+import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper
 import org.eclipse.incquery.xcore.XIncQueryDerivedFeature
 import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper
+import org.eclipse.pde.core.plugin.IPluginExtension
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -46,7 +53,12 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 		val pack = resource.contents.head as XPackage
 
 		val EPackage ePackage = pack.mapping.EPackage
-
+		val List<IPluginExtension> extensions = Lists.newArrayList()
+		val GenModel genModel = resource.contents.filter(typeof(GenModel)).head
+		val IProject project = ResourcesPlugin.workspace.root.getProject(genModel.modelPluginID);
+		val ExtensionGenerator exGen = new ExtensionGenerator
+		exGen.setProject(project)
+		
 		//Set annotation for the query based feature factory
 		EcoreUtil::setAnnotation(
 			ePackage,
@@ -102,6 +114,8 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 									"patternFQN",
 									(feature.pattern.eContainer as PatternModel).packageName + "." +
 										feature.pattern.name)
+										
+								extensions.add(WellBehavingFeatureDefinitionGenerator.generateExtension(eStructuralFeature, exGen))
 							}
 						}
 					}
@@ -130,6 +144,7 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 			}
 		}
 
-		generateGenModel(resource.contents.filter(typeof(GenModel)).head, fsa)
+		generateGenModel(genModel, fsa)
+		ProjectGenerationHelper.ensureExtensions(project, extensions, WellBehavingFeatureDefinitionGenerator.removableExtensionIdentifiers)
 	}
 }

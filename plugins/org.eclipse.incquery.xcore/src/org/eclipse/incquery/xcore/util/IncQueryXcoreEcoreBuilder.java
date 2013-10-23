@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.xcore.XReference;
 import org.eclipse.emf.ecore.xcore.XTypeParameter;
 import org.eclipse.emf.ecore.xcore.util.XcoreEcoreBuilder;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
 import org.eclipse.incquery.xcore.generator.IncQueryXcoreGenerator;
 import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper;
@@ -129,13 +130,9 @@ public class IncQueryXcoreEcoreBuilder extends XcoreEcoreBuilder {
                             "patternFQN", 
                             CorePatternLanguageHelper.getFullyQualifiedName(pattern)
                     );
-//                    Object factory = EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.get(IncQueryXcoreGenerator.queryBasedFeatureFactory);
-//                    if (factory != null && factory instanceof QueryBasedFeatureSettingDelegateFactory) {
-//                        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> spec = QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
-//                        ((EStructuralFeature.Internal) eStructuralFeature).
-//                            setSettingDelegate(((QueryBasedFeatureSettingDelegateFactory) factory).
-//                                    createSettingDelegate(eStructuralFeature, spec, true, true));
-//                    } 
+                    
+                    // mark the feature as well-behaving
+                    WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedFeature(eStructuralFeature);
                 }
             }
         });
