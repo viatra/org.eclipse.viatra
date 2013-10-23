@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.base.comprehension;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,13 +31,10 @@ import org.eclipse.incquery.runtime.base.IncQueryBasePlugin;
  * 
  */
 public class WellbehavingDerivedFeatureRegistry {
-    private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = new ArrayList<EStructuralFeature>();;
-    private static Collection<EClass> contributedWellbehavingDerivedClasses = new ArrayList<EClass>();;
-    private static Collection<EPackage> contributedWellbehavingDerivedPackages = new ArrayList<EPackage>();;
+    private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = Collections.newSetFromMap(new WeakHashMap<EStructuralFeature, Boolean>());
+    private static Collection<EClass> contributedWellbehavingDerivedClasses = Collections.newSetFromMap(new WeakHashMap<EClass, Boolean>());
+    private static Collection<EPackage> contributedWellbehavingDerivedPackages = Collections.newSetFromMap(new WeakHashMap<EPackage, Boolean>());
 
-    /**
-	 * 
-	 */
     private WellbehavingDerivedFeatureRegistry() {
     }
 
