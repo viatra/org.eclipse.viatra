@@ -5,9 +5,15 @@ import "library.base"
 //TODO add pattern definitions here
 
 pattern libraryName(L : Library, N) {
+	Library.books.bookCategory(L, C);
 	Library.baseName(L, BN);
-	find mostPopularBookCategory(L, C);
+	1 == count find mostPopularBookCategory(L, C);
 	N == eval(BN + " (" + C + ")");
+} or {
+	Library.baseName(L, BN);
+	V == count find mostPopularBookCategory(L, _C);
+	check( V == 0 || V > 1);
+	N == eval(BN + " (None)");
 }
 
 pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
@@ -18,7 +24,8 @@ pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
 pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	N == count find categoryOfBook(C1, _B1);
 	M == count find categoryOfBook(C2, _B2);
-	check(N > M);
+	check(N >= M);
+	C1 != C2;
 } 
 
 pattern categoryOfBook(c : BookCategory, b : Book) {

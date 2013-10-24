@@ -16,6 +16,27 @@
             </type>
             <tail>
               <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="library.base#//Library/books"/>
+              </type>
+              <tail>
+                <type xsi:type="eMFPatternLanguage:ReferenceType">
+                  <refname xsi:type="ecore:EAttribute" href="library.base#//Book/bookCategory"/>
+                </type>
+              </tail>
+            </tail>
+            <src var="L"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="C"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
                 <refname xsi:type="ecore:EAttribute" href="library.base#//Library/baseName"/>
               </type>
             </tail>
@@ -25,15 +46,19 @@
             </dst>
           </head>
         </constraints>
-        <constraints xsi:type="patternLanguage:PatternCompositionConstraint">
-          <call patternRef="/0/@patterns.1">
-            <parameters xsi:type="patternLanguage:VariableValue">
-              <value var="L"/>
-            </parameters>
-            <parameters xsi:type="patternLanguage:VariableValue">
-              <value var="C"/>
-            </parameters>
-          </call>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:IntValue" value="1"/>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.1">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="L"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="C"/>
+              </parameters>
+            </call>
+          </rightOperand>
         </constraints>
         <constraints xsi:type="patternLanguage:CompareConstraint">
           <leftOperand xsi:type="patternLanguage:VariableValue">
@@ -52,6 +77,67 @@
                 <rightOperand xsi:type="xbase:XFeatureCall" feature="/2"/>
               </leftOperand>
               <rightOperand xsi:type="xbase:XStringLiteral" value=")"/>
+            </expression>
+          </rightOperand>
+        </constraints>
+      </bodies>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="library.base#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="library.base#//Library/baseName"/>
+              </type>
+            </tail>
+            <src var="L"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="BN"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="V"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.1">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="L"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_C"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CheckConstraint">
+          <expression xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.BooleanExtensions#org.eclipse.xtext.xbase.lib.BooleanExtensions.operator_or(boolean,boolean)"/>
+            <leftOperand xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_equals(int,int)"/>
+              <leftOperand xsi:type="xbase:XFeatureCall" feature="/3"/>
+              <rightOperand xsi:type="xbase:XNumberLiteral" value="0"/>
+            </leftOperand>
+            <rightOperand xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_greaterThan(int,int)"/>
+              <leftOperand xsi:type="xbase:XFeatureCall" feature="/4"/>
+              <rightOperand xsi:type="xbase:XNumberLiteral" value="1"/>
+            </rightOperand>
+          </expression>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="N"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:FunctionEvaluationValue">
+            <expression xsi:type="xbase:XBinaryOperation">
+              <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.StringExtensions#org.eclipse.xtext.xbase.lib.StringExtensions.operator_plus(java.lang.String,java.lang.String)"/>
+              <leftOperand xsi:type="xbase:XFeatureCall" feature="/5"/>
+              <rightOperand xsi:type="xbase:XStringLiteral" value=" (None)"/>
             </expression>
           </rightOperand>
         </constraints>
@@ -148,10 +234,18 @@
         </constraints>
         <constraints xsi:type="patternLanguage:CheckConstraint">
           <expression xsi:type="xbase:XBinaryOperation">
-            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.ComparableExtensions#org.eclipse.xtext.xbase.lib.ComparableExtensions.operator_greaterThan(java.lang.Comparable,C)"/>
-            <leftOperand xsi:type="xbase:XFeatureCall" feature="/3"/>
-            <rightOperand xsi:type="xbase:XFeatureCall" feature="/4"/>
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.ComparableExtensions#org.eclipse.xtext.xbase.lib.ComparableExtensions.operator_greaterEqualsThan(java.lang.Comparable,C)"/>
+            <leftOperand xsi:type="xbase:XFeatureCall" feature="/6"/>
+            <rightOperand xsi:type="xbase:XFeatureCall" feature="/7"/>
           </expression>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint" feature="!=">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="C1"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:VariableValue">
+            <value var="C2"/>
+          </rightOperand>
         </constraints>
       </bodies>
     </patterns>
@@ -195,6 +289,15 @@
     <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
   </types:JvmFormalParameter>
   <types:JvmFormalParameter name="C">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="V">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="V">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="BN">
     <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
   </types:JvmFormalParameter>
   <types:JvmFormalParameter name="N">

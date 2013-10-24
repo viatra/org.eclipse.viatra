@@ -11,6 +11,26 @@
       </package>
    </extension>
    <extension
+         id="extension.derived.bookCategory"
+         name=""
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="bookCategory"
+            package-nsUri="library.base">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="extension.derived.category"
+         name=""
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="category"
+            package-nsUri="library.base">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
          id="extension.derived.name"
          name=""
          point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
@@ -32,8 +52,8 @@
          id="library.base.libraryName"
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
-            evaluatorClass="library.base.util.LibraryNameEvaluator1_1"
-            id="library.base.libraryName_1_1">
+            evaluatorClass="library.base.util.LibraryNameEvaluator2_2"
+            id="library.base.libraryName_2_2">
       </evaluator>
    </extension>
    <extension

@@ -1,3 +1,5 @@
+//@GenModel(editDirectory="/library.domain.base.edit/src")
+//@GenModel(editorDirectory="/library.domain.base.editor/src")
 package library.base
 
 class Library {  
@@ -6,7 +8,7 @@ class Library {
 	contains Book[] books opposite library
 	
 	incquery-derived String name spec libraryName
-	
+ 
 	/*derived String name get {
 		return baseName + " (" + mostPopularBookCategory + ")"
 	}
