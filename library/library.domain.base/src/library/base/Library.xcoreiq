@@ -1,36 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2013, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo - initial API and implementation
+ *   Istvan Rath - minor modifications
+ *******************************************************************************/
+
+//@Ecore(nsPrefix="library.base", nsURI="http://eclipse.org/incquery/xcore/library.base")
 //@GenModel(editDirectory="/library.domain.base.edit/src")
 //@GenModel(editorDirectory="/library.domain.base.editor/src")
 package library.base
 
 class Library {  
-	String baseName 
+	String name
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
-	
-	incquery-derived String name spec libraryName
- 
-	/*derived String name get {
-		return baseName + " (" + mostPopularBookCategory + ")"
-	}
-	
-	derived BookCategory mostPopularBookCategory get {
-		var com.google.common.collect.Multiset<BookCategory> map = com.google.common.collect.HashMultiset.create;
-		
-		for (b : this.books) {
-			map.add(b.bookCategory);
-		}
-		
-		var BookCategory category;
-		var int max = 0;
-		for (e : map.entrySet) {
-			if (e.count > max) {
-				max = e.count;
-				category = e.element;
-			}
-		}
-		
-		return category;
-	}*/
 }
 
 class Writer {
@@ -39,13 +27,22 @@ class Writer {
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	
-	derived String name get {
-		return firstName + " " + lastName
-	}
+	incquery-derived String name spec writerName
+	
+//	derived String name get {
+//		return firstName + " (" + books.size + ")"
+//	}
 }
 
 class Book {
 	String title = "" // set a default value
+	
+	incquery-derived String name spec bookTitle
+	
+//	derived String name get {
+//		return title + " (" + writers.size + ")"
+//	}
+	
 	Integer pages
 	BookCategory bookCategory
 	refers Book[] citations

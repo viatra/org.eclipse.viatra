@@ -1,33 +1,42 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2013, Tamas Szabo, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Tamas Szabo - initial API and implementation
+ *   Istvan Rath - minor modifications
+ *******************************************************************************/
 package library.base
 
 import "library.base"
 
 //TODO add pattern definitions here
 
-pattern libraryName(L : Library, N) {
-	Library.books.bookCategory(L, C);
-	Library.baseName(L, BN);
-	1 == count find mostPopularBookCategory(L, C);
-	N == eval(BN + " (" + C + ")");
-} or {
-	Library.baseName(L, BN);
-	V == count find mostPopularBookCategory(L, _C);
-	check( V == 0 || V > 1);
-	N == eval(BN + " (None)");
+pattern writerName(W : Writer, N) {
+	Writer.firstName(W, FN);
+	Writer.lastName(W, LN);
+	find numberOfBooksOfWriter(W, C);
+	N == eval(FN + " " + LN + " (" + C + ")");
 }
 
-pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
-	Library.books.bookCategory(L, C);
-	neg find moreBooksInCategoryThan(_BC, C);
+pattern numberOfBooksOfWriter(W : Writer, N) {
+	N == count find bookOfWriter(W, _B);
 }
- 
-pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
-	N == count find categoryOfBook(C1, _B1);
-	M == count find categoryOfBook(C2, _B2);
-	check(N >= M);
-	C1 != C2;
-} 
 
-pattern categoryOfBook(c : BookCategory, b : Book) {
-	Book.bookCategory(b, c);
+pattern bookOfWriter(W : Writer, B : Book) {
+	Writer.books(W, B);
 }
+
+pattern bookTitle(B : Book, N) {
+	Book.title(B, T);
+	find numberOfWritersOfBook(B, C);
+	N == eval(T + " (" + C + ")");
+}
+
+pattern numberOfWritersOfBook(B : Book, C) {
+	C == count find bookOfWriter(_W, B);
+}
+
