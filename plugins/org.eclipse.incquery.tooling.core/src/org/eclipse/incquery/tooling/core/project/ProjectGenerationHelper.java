@@ -19,7 +19,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -35,7 +34,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -49,10 +47,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
-import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -559,19 +553,15 @@ public abstract class ProjectGenerationHelper {
             return;
         }
             
-        IFile pluginXml = PDEProject.getPluginXml(project);
-        //___plugin_partition comes from PDE PluginInputContext#getPartitionName()
-        IDocumentProvider p = new ForwardingDocumentProvider("___plugin_partition", new IDocumentSetupParticipant() {
-			public void setup(IDocument document) {
-			}
-		}, new TextFileDocumentProvider());
-        p.connect(pluginXml);
-		IDocument document = p.getDocument(pluginXml);
-        PluginModel pluginModel = new PluginModel(document, true);
+        WorkspaceBundlePluginModel bundleModel = new WorkspaceBundlePluginModel(
+        		PDEProject.getManifest(project),
+        		PDEProject.getPluginXml(project));
+        bundleModel.setBundleDescription(PluginRegistry.findModel(project).getBundleDescription());
+        bundleModel.load();
         
-        IPluginModelBase projectModel = PluginRegistry.findModel(project);
         
-		IExtensions extensions = pluginModel.getExtensions();
+		IExtensions extensions = bundleModel.getExtensionsModel()
+				.getExtensions();
 		for (final IPluginExtension extension : extensions
 				.getExtensions()) {
 			final String extensionId = extension.getId();
@@ -589,7 +579,7 @@ public abstract class ProjectGenerationHelper {
 				extensions.remove(extension);
 			} else {
 				//Removing project name prefix from extension id, otherwise these will be multiplied on save
-				String projectId = projectModel.getBundleDescription().getName();
+				String projectId = bundleModel.getPlugin().getId();
 				if (extensionId != null && extensionId != "") {
 					extension.setId(extensionId.substring(projectId.length() + 1));
 				}
@@ -605,8 +595,8 @@ public abstract class ProjectGenerationHelper {
 				extensions.remove(oldExtension);
 			}
 		}
-		pluginModel.save();
-		
+
+		bundleModel.save();
     }
 
     private static IPluginExtension findOldVersion(IExtensions extensions, IPluginExtension newExtension) {
@@ -704,6 +694,24 @@ public abstract class ProjectGenerationHelper {
                     }
                 });
         return foundOne != null;
+    }
+
+    /**
+     * Returns the extension Id. Removes the plug-in name if the extension id prefixed with it.
+     * 
+     * @param extension
+     * @param project
+     * @return
+     */
+    private static String getExtensionId(IPluginExtension extension, IProject project) {
+        String id = extension.getId();
+        if (id != null && id.startsWith(project.getName())) {
+            int beginIndex = project.getName().length() + 1;
+            if (beginIndex >= 0) {
+                id = id.substring(beginIndex);
+            }
+        }
+        return id;
     }
 
     /**
