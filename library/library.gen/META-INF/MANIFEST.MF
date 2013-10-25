@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: library.gen
+Bundle-SymbolicName: library.gen;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Export-Package: library.gen,
+ library.gen.util
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.emf.transaction,
+ org.eclipse.incquery.runtime,
+ org.eclipse.xtext.xbase.lib,
+ library.domain.base,
+ org.eclipse.incquery.runtime.evm;bundle-version="0.8.0",
+ org.eclipse.viatra2.emf.runtime;bundle-version="0.7.0",
+ org.junit;bundle-version="4.11.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

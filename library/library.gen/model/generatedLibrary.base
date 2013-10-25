@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ASCII"?>
+<base:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:base="library.base" baseName="Random generated library">
+  <writers firstName="Stephen Marie" lastName="Asimov" books="//@books.5 //@books.39 //@books.38"/>
+  <writers firstName="Leo F." lastName="Smith" books="//@books.26 //@books.24 //@books.36 //@books.15 //@books.32"/>
+  <writers firstName="Aldous K." lastName="Tolkien" books="//@books.22"/>
+  <writers firstName="Leo Maynard" lastName="Tolstoy" books="//@books.14"/>
+  <writers firstName="Aldous Loius" lastName="Smith" books="//@books.5"/>
+  <writers firstName="Aldous" lastName="King" books="//@books.14 //@books.8 //@books.26"/>
+  <writers firstName="Isaac R.R." lastName="Asimov" books="//@books.12"/>
+  <writers firstName="Mary Loius" lastName="Martin" books="//@books.34"/>
+  <writers firstName="John R.R." lastName="Shelley" books="//@books.34"/>
+  <writers firstName="Agatha R.R." lastName="King" books="//@books.11 //@books.10 //@books.6"/>
+  <writers firstName="Jack K." lastName="Tolkien" books="//@books.21"/>
+  <writers firstName="Stephen" lastName="Smith" books="//@books.19"/>
+  <writers firstName="George Marie" lastName="Smith" books="//@books.8 //@books.27"/>
+  <writers firstName="Stephen R.R." lastName="Asimov" books="//@books.25"/>
+  <writers firstName="Stephen Marie" lastName="Doe" books="//@books.3"/>
+  <writers firstName="George K." lastName="Martin"/>
+  <writers firstName="Martha Leonard" lastName="Tolstoy" books="//@books.18"/>
+  <writers firstName="Agatha Maynard" lastName="King" books="//@books.5"/>
+  <writers firstName="Mary Marie" lastName="Martin" books="//@books.5"/>
+  <writers firstName="Agatha F." lastName="Smith" books="//@books.9 //@books.31 //@books.13"/>
+  <writers firstName="Martha Y." lastName="Tolstoy" books="//@books.23 //@books.0"/>
+  <writers firstName="Mary F." lastName="Shelley" books="//@books.24 //@books.2"/>
+  <writers firstName="Stephen" lastName="Huxley" books="//@books.14 //@books.16"/>
+  <writers firstName="Stephen" lastName="Christie" books="//@books.20"/>
+  <writers firstName="Isaac Leonard" lastName="Martin" books="//@books.1"/>
+  <writers firstName="John Marie" lastName="King" books="//@books.35 //@books.29"/>
+  <writers firstName="Leo Maynard" lastName="Asimov" books="//@books.17 //@books.7"/>
+  <writers firstName="Mary Loius" lastName="Tolstoy" books="//@books.4 //@books.33 //@books.14"/>
+  <writers firstName="Agatha F." lastName="King" books="//@books.28 //@books.37"/>
+  <writers firstName="Jack" lastName="Asimov" books="//@books.28 //@books.12"/>
+  <books title="One in Northwest" pages="162" bookCategory="Biography" writers="//@writers.20"/>
+  <books title="Lord or all Titans" pages="584" bookCategory="Biography" writers="//@writers.24"/>
+  <books title="Of Mice and the Stone" pages="122" bookCategory="Biography" writers="//@writers.21"/>
+  <books title="One for all Titans" pages="308" writers="//@writers.14"/>
+  <books title="Game or Titans" pages="145" writers="//@writers.27"/>
+  <books title="Of Mice by Stone" pages="215" citations="//@books.39" writers="//@writers.17 //@writers.0 //@writers.18 //@writers.4"/>
+  <books title="Clash for Sweet Kings" pages="123" bookCategory="Biography" writers="//@writers.9"/>
+  <books title="Lord for the Mind" pages="230" bookCategory="Biography" citations="//@books.31" writers="//@writers.26"/>
+  <books title="Dance or my Men" pages="414" bookCategory="Biography" writers="//@writers.5 //@writers.12"/>
+  <books title="Flowers for my Men" pages="255" bookCategory="ScienceFiction" writers="//@writers.19"/>
+  <books title="Doors of all Thrones" pages="373" bookCategory="ScienceFiction" citations="//@books.31" writers="//@writers.9"/>
+  <books title="Of Mice by Sweet Mind" pages="443" bookCategory="Biography" writers="//@writers.9"/>
+  <books title="Doors for Sweet Mind" pages="653" bookCategory="ScienceFiction" citations="//@books.24" writers="//@writers.29 //@writers.6"/>
+  <books title="North and my Thrones" pages="407" bookCategory="Biography" citations="//@books.18" writers="//@writers.19"/>
+  <books title="Clash and Men" pages="635" writers="//@writers.22 //@writers.3 //@writers.5 //@writers.27"/>
+  <books title="Of Mice for the Dragons" pages="504" bookCategory="ScienceFiction" writers="//@writers.1"/>
+  <books title="North by Sweet Dragons" pages="623" bookCategory="Biography" citations="//@books.31" writers="//@writers.22"/>
+  <books title="Lord with the Dragons" pages="624" bookCategory="ScienceFiction" writers="//@writers.26"/>
+  <books title="Dance by Sweet Northwest" pages="378" bookCategory="Biography" citations="//@books.25" writers="//@writers.16"/>
+  <books title="Of Mice and the Thrones" pages="129" writers="//@writers.11"/>
+  <books title="Flowers of my Men" pages="135" bookCategory="Biography" writers="//@writers.23"/>
+  <books title="Lord and my Stone" pages="173" bookCategory="ScienceFiction" writers="//@writers.10"/>
+  <books title="Of Mice in the Kings" pages="617" bookCategory="ScienceFiction" writers="//@writers.2"/>
+  <books title="Of Mice or the Dragons" pages="600" bookCategory="Biography" citations="//@books.28" writers="//@writers.20"/>
+  <books title="Of Mice with Money" pages="665" bookCategory="Biography" writers="//@writers.1 //@writers.21"/>
+  <books title="Children in the Titans" pages="451" bookCategory="Biography" writers="//@writers.13"/>
+  <books title="Children and all Mind" pages="290" bookCategory="ScienceFiction" writers="//@writers.5 //@writers.1"/>
+  <books title="North in Sweet Stone" pages="661" citations="//@books.14" writers="//@writers.12"/>
+  <books title="Clash with my Men" pages="380" bookCategory="Biography" writers="//@writers.28 //@writers.29"/>
+  <books title="Flowers for Men" pages="447" bookCategory="ScienceFiction" citations="//@books.24" writers="//@writers.25"/>
+  <books title="One of Money" pages="536" bookCategory="ScienceFiction"/>
+  <books title="Flowers and Money" pages="229" bookCategory="ScienceFiction" writers="//@writers.19"/>
+  <books title="Lord in my Stone" pages="134" bookCategory="Biography" writers="//@writers.1"/>
+  <books title="Dance of my Mind" pages="580" writers="//@writers.27"/>
+  <books title="One with all Mind" pages="305" writers="//@writers.8 //@writers.7"/>
+  <books title="Flowers or Sweet Mind" pages="476" bookCategory="ScienceFiction" writers="//@writers.25"/>
+  <books title="Doors or Thrones" pages="484" bookCategory="Biography" writers="//@writers.1"/>
+  <books title="Children by all Titans" pages="276" writers="//@writers.28"/>
+  <books title="Of Mice of all Mind" pages="684" writers="//@writers.0"/>
+  <books title="Children and my Dragons" pages="197" bookCategory="Biography" writers="//@writers.0"/>
+</base:Library>
