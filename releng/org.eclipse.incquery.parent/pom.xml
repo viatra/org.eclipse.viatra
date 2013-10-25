@@ -68,6 +68,7 @@
 		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
+		<module>../../releng/org.eclipse.incquery.target</module>
 		<module>../../releng/org.eclipse.incquery.update</module>
 		<module>../../releng/org.eclipse.incquery.update.extras</module>
 	</modules>
@@ -107,9 +108,9 @@
 					<target>
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
-							<artifactId>org.eclipse.incquery.update</artifactId>
+							<artifactId>org.eclipse.incquery.target</artifactId>
 							<version>${project.version}</version>
-							<classifier>emfpattern</classifier>
+							<classifier>default</classifier>
 						</artifact>
 					</target>
 					<ignoreTychoRepositories>true</ignoreTychoRepositories>
