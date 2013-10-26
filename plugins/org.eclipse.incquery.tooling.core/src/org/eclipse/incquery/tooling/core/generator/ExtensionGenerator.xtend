@@ -20,6 +20,12 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.pde.internal.core.project.PDEProject
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel
 import org.eclipse.pde.core.plugin.IPluginParent
+import org.eclipse.ui.texteditor.IDocumentProvider
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant
+import org.eclipse.jface.text.IDocument
+import org.eclipse.pde.internal.core.text.plugin.PluginModel
+import org.eclipse.ui.editors.text.TextFileDocumentProvider
 
 class ExtensionGenerator {
 	
@@ -27,8 +33,13 @@ class ExtensionGenerator {
 	
 	def setProject(IProject project) {
 		val IFile plugin = PDEProject::getPluginXml(project)
-		val fModel = new WorkspacePluginModel(plugin, true)
-		factory = fModel.factory
+        //___plugin_partition comes from PDE PluginInputContext#getPartitionName()
+        val IDocumentProvider p = new ForwardingDocumentProvider("___plugin_partition", [], new TextFileDocumentProvider());
+        p.connect(plugin);
+		val IDocument document = p.getDocument(plugin);
+        val PluginModel pluginModel = new PluginModel(document, true);
+//		val fModel = new WorkspacePluginModel(plugin, true)
+		factory = pluginModel.factory
 	}
 	
 	def contribExtension(String id, String point, (IPluginExtension) => void initializer) {

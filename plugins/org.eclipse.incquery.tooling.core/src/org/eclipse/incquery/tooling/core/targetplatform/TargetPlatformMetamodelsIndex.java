@@ -37,7 +37,9 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 
@@ -212,7 +214,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	    // FIXME we need to ensure that only one caller modifies entries at any given time
 		synchronized (TargetPlatformMetamodelsIndex.class) {
 		    update();
-		    return new ArrayList<TargetPlatformMetamodel>(entries.values());
+		    return Iterables.filter(new ArrayList<TargetPlatformMetamodel>(entries.values()), Predicates.notNull());
         }
 	}
 
