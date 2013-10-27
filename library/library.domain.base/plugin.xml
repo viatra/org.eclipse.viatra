@@ -2,6 +2,7 @@
 <plugin>
 
    <extension
+         name=""
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/base/Library.xcoreiq"
@@ -11,6 +12,7 @@
    </extension>
    <extension
          id="library.base.writerName"
+         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
@@ -19,6 +21,7 @@
    </extension>
    <extension
          id="library.base.writerName"
+         name=""
          point="org.eclipse.incquery.runtime.xexpressionevaluator">
       <evaluator
             evaluatorClass="library.base.util.WriterNameEvaluator1_1"

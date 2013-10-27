@@ -26,7 +26,11 @@ class Writer {
 	// incquery-derived String name spec writerName
 	
 	derived String name get {
-		return firstName + " " + lastName + " (" + books.head.title + ")" 
+		var title = ""
+		if (books.size > 0) {
+			title = books.head.title
+		}
+		return firstName + " " + lastName + " (" + title + ")" 
 	}
 }
 
