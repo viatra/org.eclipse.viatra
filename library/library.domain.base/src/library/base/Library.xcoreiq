@@ -9,44 +9,12 @@
  *   Tamas Szabo - initial API and implementation
  *   Istvan Rath - minor modifications
  *******************************************************************************/
-
-//@Ecore(nsPrefix="library.base", nsURI="http://eclipse.org/incquery/xcore/library.base")
-//@GenModel(editDirectory="/library.domain.base.edit/src")
-//@GenModel(editorDirectory="/library.domain.base.editor/src")
 package library.base
 
 class Library {  
-	String baseName
+	String name
 	contains Writer[] writers opposite library
 	contains Book[] books opposite library
-	
-	incquery-derived String name spec libraryName
- 
-	/*derived String name get {
-		return baseName + " (" + mostPopularBookCategory + ")"
-	}
-	
-	derived String mostPopularBookCategory get {
-		var com.google.common.collect.Multiset<BookCategory> map = com.google.common.collect.HashMultiset.create;
-		
-		for (b : this.books) {
-			map.add(b.bookCategory);
-		}
-		
-		var BookCategory category;
-		var int max = 0;
-		for (e : map.entrySet) {
-			if (e.count > max) {
-				max = e.count;
-				category = e.element;
-			}
-			else if (e.count == max) {
-				return "None";
-			}
-		}
-		
-		return "" + category;
-	}*/
 }
 
 class Writer {
@@ -55,10 +23,10 @@ class Writer {
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	
-//	incquery-derived String name spec writerName
+	// incquery-derived String name spec writerName
 	
 	derived String name get {
-		return firstName + " (" + books.size + ")"
+		return firstName + " " + lastName + " (" + books.head.title + ")" 
 	}
 }
 
@@ -69,12 +37,6 @@ class Book {
 	refers Book[] citations
 	refers Writer[] writers opposite books
 	container Library library opposite books
-	
-//	incquery-derived String name spec bookTitle
-	
-	derived String name get {
-		return title + " (" + writers.size + ")"
-	}
 }
 
 enum BookCategory {
