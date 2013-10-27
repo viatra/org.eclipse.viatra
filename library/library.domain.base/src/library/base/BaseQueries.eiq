@@ -18,52 +18,7 @@ import "library.base"
 pattern writerName(W : Writer, N) {
 	Writer.firstName(W, FN);
 	Writer.lastName(W, LN);
-	find numberOfBooksOfWriter(W, C);
-	N == eval(FN + " " + LN + " (" + C + ")");
-}
-
-pattern numberOfBooksOfWriter(W : Writer, N) {
-	N == count find bookOfWriter(W, _B);
-}
-
-pattern bookOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
-}
-
-pattern bookTitle(B : Book, N) {
 	Book.title(B, T);
-	find numberOfWritersOfBook(B, C);
-	N == eval(T + " (" + C + ")");
-}
-
-pattern numberOfWritersOfBook(B : Book, C) {
-	C == count find bookOfWriter(_W, B);
-}
-
-pattern libraryName(L : Library, N) {
-	Library.books.bookCategory(L, C);
-	Library.baseName(L, BN);
-	1 == count find mostPopularBookCategory(L, C);
-	N == eval(BN + " (" + C + ")");
-} or {
-	Library.baseName(L, BN);
-	V == count find mostPopularBookCategory(L, _C);
-	check( V == 0 || V > 1);
-	N == eval(BN + " (None)");
-}
-
-pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
-	Library.books.bookCategory(L, C);
-	neg find moreBooksInCategoryThan(_BC, C);
-}
- 
-pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
-	N == count find categoryOfBook(C1, _B1);
-	M == count find categoryOfBook(C2, _B2);
-	check(N >= M);
-	C1 != C2;
-} 
-
-pattern categoryOfBook(c : BookCategory, b : Book) {
-	Book.bookCategory(b, c);
+	N == eval(FN + " " + LN + " (" + T + ")");
 }
