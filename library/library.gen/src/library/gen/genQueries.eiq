@@ -1,6 +1,6 @@
 package library.gen
 
-import "library.base"
+import "library"
 
 
 // 10x10x10 = 1000 person names

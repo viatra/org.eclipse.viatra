@@ -10,11 +10,11 @@ import org.apache.log4j.Level
 import com.google.common.base.Preconditions
 import java.util.Random
 import org.eclipse.incquery.runtime.evm.specific.resolver.FairRandomConflictResolver
-import library.base.BasePackage
-import library.base.Library
-import library.base.Book
-import library.base.BookCategory
-import library.base.Writer
+import library.LibraryPackage
+import library.Library
+import library.Book
+import library.BookCategory
+import library.Writer
 
 class LibraryGenerator {
 	extension BatchTransformationRuleFactory factory = new BatchTransformationRuleFactory
@@ -22,7 +22,7 @@ class LibraryGenerator {
     extension BatchTransformationStatements statements
     extension IModelManipulations manipulation
     
-    extension BasePackage libPackage = BasePackage::eINSTANCE   
+    extension LibraryPackage libPackage = LibraryPackage::eINSTANCE   
     extension GenQueriesMatchers genMatchers
     
     val Resource trgResource
@@ -52,19 +52,19 @@ class LibraryGenerator {
             
             // check arguments
     		Preconditions::checkArgument(numAuthors <= writerCandidateMatcher.countMatches,
-    			'''Can generate at most «writerCandidateMatcher.countMatches» Writers''')
+    			'''Can generate at most Â«writerCandidateMatcher.countMatchesÂ» Writers''')
     		Preconditions::checkArgument(numBooks <= titleCandidateMatcher.countMatches,
-    			'''Can generate at most «titleCandidateMatcher.countMatches» Books''')
+    			'''Can generate at most Â«titleCandidateMatcher.countMatchesÂ» Books''')
     		val maxCitations = numBooks * (numBooks - 1) /2
     		Preconditions::checkArgument(numCitations <= maxCitations,
-    			'''Can generate at most «maxCitations» citations''')
+    			'''Can generate at most Â«maxCitationsÂ» citations''')
     		val maxAuthorships = numBooks * numAuthors
     		Preconditions::checkArgument(numAuthorships <= maxAuthorships,
-    			'''Can generate at most «maxAuthorships» authorships''')
+    			'''Can generate at most Â«maxAuthorshipsÂ» authorships''')
     			
             //Initialize library root
             libraryInstance = trgResource.create(library) as Library
-            libraryInstance.baseName = "Random generated library"
+            libraryInstance.name = "Random generated library"
             
             // Set random resolver
             ruleEngine.conflictResolver = new FairRandomConflictResolver
@@ -84,18 +84,22 @@ class LibraryGenerator {
         book.bookCategory = 
         	bookCategory.getEEnumLiteral(rnd.nextInt(bookCategory.ELiterals.size)).instance as BookCategory
     ].build
+    
     val createWriterRule = createRule.precondition(WriterCandidateMatcher::querySpecification).action [
     	val writer = libraryInstance.createChild(library_Writers, writer) as Writer
     	writer.firstName = first as String
     	writer.lastName = last  	
     ].build
+    
     val createPriorityAuthorshipRule = createRule.precondition(AuthorshipPriorityCandidateMatcher::querySpecification).action [
-    	book.writers += author	
+    	(book as Book).writers += author as Writer	// why is this necessary?
     ].build
+    
     val createAuthorshipRule = createRule.precondition(AuthorshipCandidateMatcher::querySpecification).action [
-    	book.writers += author	
+    	(book as Book).writers += author as Writer	// why is this necessary?
     ].build
+    
     val createCitationRule = createRule.precondition(CitationCandidateMatcher::querySpecification).action [
-    	source.citations += target	
+    	(source as Book).citations += target as Book // why is this necessary?	
     ].build
 }
