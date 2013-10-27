@@ -12,7 +12,6 @@ Export-Package: library,
  library.validation,
  library.validation.util,
  library.viewers,
- library.viewers.livedemo,
  library.viewers.livedemo.util,
  library.viewers.util
 Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
