@@ -16,9 +16,16 @@ import java.util.Collections
 import java.util.HashSet
 import java.util.List
 import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.IWorkspace
+import org.eclipse.core.resources.ProjectScope
 import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.Platform
+import org.eclipse.core.runtime.preferences.IScopeContext
+import org.eclipse.core.runtime.preferences.InstanceScope
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
+import org.eclipse.emf.common.EMFPlugin
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.Resource
@@ -38,17 +45,20 @@ import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
+import org.eclipse.jdt.core.JavaCore
+import org.eclipse.jdt.core.IJavaProject
+import org.eclipse.jdt.core.IClasspathEntry
 
 class IncQueryXcoreGenerator extends XcoreGenerator {
-	
+
 	@Inject
 	XbaseCompiler compiler
 
 	@Inject
- 	private extension IncQueryXcoreMapper mappings
+	private extension IncQueryXcoreMapper mappings
 
 	public static String queryBasedFeatureFactory = "org.eclipse.incquery.querybasedfeature"
-	
+
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		val pack = resource.contents.head as XPackage
 
@@ -58,7 +68,7 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 		val IProject project = ResourcesPlugin.workspace.root.getProject(genModel.modelPluginID);
 		val ExtensionGenerator exGen = new ExtensionGenerator
 		exGen.setProject(project)
-		
+
 		//Set annotation for the query based feature factory
 		EcoreUtil::setAnnotation(
 			ePackage,
@@ -114,8 +124,9 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 									"patternFQN",
 									(feature.pattern.eContainer as PatternModel).packageName + "." +
 										feature.pattern.name)
-										
-								extensions.add(WellBehavingFeatureDefinitionGenerator.generateExtension(eStructuralFeature, exGen))
+
+								extensions.add(
+									WellBehavingFeatureDefinitionGenerator.generateExtension(eStructuralFeature, exGen))
 							}
 						}
 					}
@@ -144,7 +155,40 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 			}
 		}
 
+		// ensure model directory
+		genModel.setModelDirectory(getModelDirectory(resource.URI))
 		generateGenModel(genModel, fsa)
-		ProjectGenerationHelper.ensureExtensions(project, extensions, WellBehavingFeatureDefinitionGenerator.removableExtensionIdentifiers)
+		ProjectGenerationHelper.ensureExtensions(project, extensions,
+			WellBehavingFeatureDefinitionGenerator.removableExtensionIdentifiers)
+	}
+
+	// Copied from GenModelImpl$EclipseHelper.getModelDirectory
+	def String getModelDirectory(URI uri) {
+		if (EMFPlugin.IS_RESOURCES_BUNDLE_AVAILABLE && uri.segmentCount() >= 2) {
+			try {
+				val IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				val IProject project = workspace.getRoot().getProject(uri.segment(1));
+				val IJavaProject javaProject = JavaCore.create(project);
+				val IClasspathEntry[] classpath = javaProject.getRawClasspath();
+				var IClasspathEntry bestEntry = null;
+				for (IClasspathEntry classpathEntry : classpath) {
+					if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+						if (bestEntry == null) {
+							bestEntry = classpathEntry;
+						}
+						else if (classpathEntry.getPath().toString().endsWith("src-gen") || 
+							classpathEntry.getPath().toString().endsWith("src-gen/")
+						) {
+							bestEntry = classpathEntry;
+						}
+					}
+				}
+				return if(bestEntry == null) project.getFullPath() + "/src" else bestEntry.getPath().toString();
+
+			} catch (Exception exception) {
+				// Ignore
+			}
+		}
+		return null;
 	}
 }
