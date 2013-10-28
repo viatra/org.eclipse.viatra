@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.xcore.ui.labeling;
 
-import java.net.URL;
-
-import org.eclipse.emf.ecore.provider.EcoreEditPlugin;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
 import org.eclipse.incquery.xcore.ui.IncQueryXcoreActivator;
@@ -32,11 +29,12 @@ public class IncQueryXcoreLabelProvider extends XbaseLabelProvider {
     public IncQueryXcoreLabelProvider(AdapterFactoryLabelProvider delegate) {
         super(delegate);
         this.attributeImageDescriptor = new OverlayImageDescriptor(IncQueryXcoreActivator.getInstance()
-                .getImageRegistry().getDescriptor("underlay").createImage(),
-                ImageDescriptor.createFromURL((URL) EcoreEditPlugin.INSTANCE.getImage("full/obj16/EAttribute")));
+                .getImageRegistry().getDescriptor("Underlay").createImage(),
+                IncQueryXcoreActivator.getInstance().getImageRegistry().getDescriptor("EAttribute"));
         this.referenceImageDescriptor = new OverlayImageDescriptor(IncQueryXcoreActivator.getInstance()
-                .getImageRegistry().getDescriptor("underlay").createImage(),
-                ImageDescriptor.createFromURL((URL) EcoreEditPlugin.INSTANCE.getImage("full/obj16/EReference")));
+                .getImageRegistry().getDescriptor("Underlay").createImage(),
+                IncQueryXcoreActivator.getInstance()
+                .getImageRegistry().getDescriptor("EReference"));
     }
 
     @Override

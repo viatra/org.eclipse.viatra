@@ -23,7 +23,9 @@ public class IncQueryXcoreActivator extends org.eclipse.incquery.xcore.ui.intern
         super.initializeImageRegistry(reg);
         @SuppressWarnings("unused")
         Bundle bundle = Platform.getBundle(PLUGIN_ID);
-        reg.put("underlay", imageDescriptorFromPlugin(PLUGIN_ID, "icons/Underlay.gif"));
+        reg.put("Underlay", imageDescriptorFromPlugin(PLUGIN_ID, "icons/Underlay.gif"));
+        reg.put("EAttribute", imageDescriptorFromPlugin(PLUGIN_ID, "icons/EAttribute.gif"));
+        reg.put("EReference", imageDescriptorFromPlugin(PLUGIN_ID, "icons/EReference.gif"));
     }
     
 }
