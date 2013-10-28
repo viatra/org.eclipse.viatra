@@ -8,8 +8,7 @@
       license-feature-version="0.8.0.qualifier">
 
    <description>
-      EMF-IncQuery Graphiti extensions. Validator and query browser support
-for various Graphiti editors.
+      EMF-IncQuery &amp; Xcore integration project.
    </description>
 
    <copyright url="http://www.example.com/copyright">

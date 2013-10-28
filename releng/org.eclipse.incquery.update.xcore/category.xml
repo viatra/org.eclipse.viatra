@@ -9,6 +9,9 @@
    <feature url="features/org.eclipse.incquery.testing.sdk.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.testing.sdk.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
+   <feature url="features/org.eclipse.incquery.xcore.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.xcore.feature" version="0.8.0.qualifier">
+      <category name="org.eclipse.incquery"/>
+   </feature>
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
@@ -16,10 +19,10 @@
       <category name="org.eclipse.incquery.sources"/>
    </feature>
    <feature url="features/org.eclipse.incquery.sdk.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="0.8.0.qualifier">
-      <category name="org.eclipse.incquery"/>
+      <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.xcore.feature_0.8.0.qualifier.jar" id="org.eclipse.incquery.xcore.feature" version="0.8.0.qualifier">
-      <category name="org.eclipse.incquery"/>
+   <feature url="features/org.eclipse.incquery.xcore.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.xcore.feature.source" version="0.8.0.qualifier">
+      <category name="org.eclipse.incquery.sources"/>
    </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
    <category-def name="org.eclipse.incquery.sources" label="EMF-IncQuery Sources"/>
