@@ -14,8 +14,6 @@ package library
 import "library"
 
 // ***** relationships ********
-
-
 /*
  * CW is the coauthor of W (they share the same book and CW != W) 
  */
@@ -36,10 +34,26 @@ pattern writerName(W : Writer, N) {
 }
 
 /*
+ * N represents the most popular book category of Library L, if that can be defined uniquely:
+ * - if there is only one most popular book then that one is returned
+ * - if there are two or more categories with the same number of books then 'None' is returned
+ */
+pattern mostPopularBookCategory(L : Library, N) {
+	V == count find mostPopularBookCategory0(L, _CX);
+	check(V == 1);
+	find mostPopularBookCategory0(L, C);
+	N == eval(C.toString);
+} or {
+	V == count find mostPopularBookCategory0(L, _CX);
+	check(V > 1 || V == 0);
+	N == "None";
+}
+
+/*
  * Category C has the most books in the Library L.
  */
-pattern mostPopularBookCategory(L : Library, C : BookCategory) = {
-	Library(L);
+pattern mostPopularBookCategory0(L : Library, C) = {
+	Library.books.bookCategory(L, C);
 	neg find moreBooksInCategoryThan(_Cx, C);
 }
  
@@ -50,10 +64,14 @@ pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	N == count find categoryOfBook(C1, _B1);
 	M == count find categoryOfBook(C2, _B2);
 	check(N > M);
+	check(C1 != C2);
 } 
 
-pattern categoryOfBook(c : BookCategory, b : Book) {
-	Book.bookCategory(b, c);
+/*
+ * The book category of Book B is BookCategory C
+ */
+pattern categoryOfBook(C : BookCategory, B : Book) {
+	Book.bookCategory(B, C);
 }
 
 /*
@@ -61,7 +79,7 @@ pattern categoryOfBook(c : BookCategory, b : Book) {
  */
 pattern ownBooksOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
-	find numberOfWriters(B, 1);
+	find numberOfWritersOfBook(B, 1);
 } 
 
 /*
@@ -85,6 +103,12 @@ pattern bookCitation(B1 : Book, B2 : Book) {
 	Book.citations(B1, B2);
 }
 
+/*
+ * Writer W is the writer of Book B.
+ */
+pattern bookOfWriter(W : Writer, B : Book) {
+	Writer.books(W, B);
+}
 
 // ************* numbers **********
 
@@ -93,7 +117,7 @@ pattern bookCitation(B1 : Book, B2 : Book) {
  * the number of coauthors divided by the number of books.  
  */
 pattern averageNumberOfCoauthorsPerBook(W : Writer, A) {
-	NumOfBooks == count find writerOfBook(_B, W);
+	find numberOfBooksOfWriter(W, NumOfBooks);
 	NumOfCoAuthors == count find coAuthorsOfWriter(W, _CW);
 	A == eval(if (NumOfBooks == 0) 0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
 }
@@ -112,14 +136,9 @@ pattern numberOfBooksOfWriter(W : Writer, N) {
 	N == count find bookOfWriter(W, _B);
 }
 
-pattern numberOfWriters(B : Book, N) {
-	N == count find writerOfBook(B, _W);
-}
-
-pattern writerOfBook(B : Book, W : Writer) {
-	Book.writers(B, W);
-}
-
-pattern bookOfWriter(W : Writer, B : Book) {
-	Writer.books(W, B);
+/*
+ * The number of writers of Book B is N. 
+ */
+pattern numberOfWritersOfBook(B : Book, N) {
+	N == count find bookOfWriter(B, _W);
 }

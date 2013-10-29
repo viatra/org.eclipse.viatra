@@ -22,7 +22,7 @@ class Library {
 	
 	// derived features
 	incquery-derived refers Book[] suspiciousBooks spec validation.suspiciousBook
-	incquery-derived BookCategory mostPopularBookCategory spec mostPopularBookCategory
+	incquery-derived String mostPopularBookCategory spec mostPopularBookCategory
 }
 
 class Writer {
@@ -49,7 +49,7 @@ class Book {
 	// derived features
 	incquery-derived Integer numberOfCitations spec numberOfCitations 
 	incquery-derived refers Book[] allCitations spec allBookCitations 
-	incquery-derived Integer numberOfWriters spec numberOfWriters
+	incquery-derived Integer numberOfWriters spec numberOfWritersOfBook
 }
 
 enum BookCategory {

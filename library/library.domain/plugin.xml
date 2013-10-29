@@ -2,103 +2,12 @@
 <plugin>
 
    <extension
-         name=""
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/Library.xcoreiq"
             uri="library"
             class="library.LibraryPackage">
       </package>
-   </extension>
-   <extension
-         id="extension.derived.suspiciousBooks"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Library"
-            feature-name="suspiciousBooks"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.mostPopularBookCategory"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Library"
-            feature-name="mostPopularBookCategory"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.name"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Writer"
-            feature-name="name"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.averageNumberOfCoauthorsPerBook"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Writer"
-            feature-name="averageNumberOfCoauthorsPerBook"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.coAuthors"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Writer"
-            feature-name="coAuthors"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.ownBooks"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Writer"
-            feature-name="ownBooks"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.numberOfCitations"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Book"
-            feature-name="numberOfCitations"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.allCitations"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Book"
-            feature-name="allCitations"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="extension.derived.numberOfWriters"
-         name=""
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="Book"
-            feature-name="numberOfWriters"
-            package-nsUri="library">
-      </wellbehaving-derived-feature>
    </extension>
    <extension
          id="library.viewers.library"
@@ -165,19 +74,35 @@
       </matcher>
    </extension>
    <extension
-         id="library.viewers.livedemo.writer"
+         id="library.validation.suspiciousBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.viewers.livedemo.util.WriterQuerySpecification$Provider"
-            id="library.viewers.livedemo.writer">
+            querySpecificationProvider="library.validation.util.SuspiciousBookQuerySpecification$Provider"
+            id="library.validation.suspiciousBook">
       </matcher>
    </extension>
    <extension
-         id="library.viewers.livedemo.influencedBy"
+         id="library.validation.emptyBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.viewers.livedemo.util.InfluencedByQuerySpecification$Provider"
-            id="library.viewers.livedemo.influencedBy">
+            querySpecificationProvider="library.validation.util.EmptyBookQuerySpecification$Provider"
+            id="library.validation.emptyBook">
+      </matcher>
+   </extension>
+   <extension
+         id="library.validation.emptyBook"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.validation.util.EmptyBookEvaluator1_1"
+            id="library.validation.emptyBook_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.validation.weirdBook"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.validation.util.WeirdBookQuerySpecification$Provider"
+            id="library.validation.weirdBook">
       </matcher>
    </extension>
    <extension
@@ -213,6 +138,38 @@
       </matcher>
    </extension>
    <extension
+         id="library.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.MostPopularBookCategoryEvaluator1_1"
+            id="library.mostPopularBookCategory_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.MostPopularBookCategoryEvaluator1_2"
+            id="library.mostPopularBookCategory_1_2">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.MostPopularBookCategoryEvaluator2_1"
+            id="library.mostPopularBookCategory_2_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.mostPopularBookCategory0"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.MostPopularBookCategory0QuerySpecification$Provider"
+            id="library.mostPopularBookCategory0">
+      </matcher>
+   </extension>
+   <extension
          id="library.moreBooksInCategoryThan"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
@@ -226,6 +183,14 @@
       <evaluator
             evaluatorClass="library.util.MoreBooksInCategoryThanEvaluator1_1"
             id="library.moreBooksInCategoryThan_1_1">
+      </evaluator>
+   </extension>
+   <extension
+         id="library.moreBooksInCategoryThan"
+         point="org.eclipse.incquery.runtime.xexpressionevaluator">
+      <evaluator
+            evaluatorClass="library.util.MoreBooksInCategoryThanEvaluator1_2"
+            id="library.moreBooksInCategoryThan_1_2">
       </evaluator>
    </extension>
    <extension
@@ -269,6 +234,14 @@
       </matcher>
    </extension>
    <extension
+         id="library.bookOfWriter"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.util.BookOfWriterQuerySpecification$Provider"
+            id="library.bookOfWriter">
+      </matcher>
+   </extension>
+   <extension
          id="library.averageNumberOfCoauthorsPerBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
@@ -301,60 +274,93 @@
       </matcher>
    </extension>
    <extension
-         id="library.numberOfWriters"
+         id="library.numberOfWritersOfBook"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
-            querySpecificationProvider="library.util.NumberOfWritersQuerySpecification$Provider"
-            id="library.numberOfWriters">
+            querySpecificationProvider="library.util.NumberOfWritersOfBookQuerySpecification$Provider"
+            id="library.numberOfWritersOfBook">
       </matcher>
    </extension>
    <extension
-         id="library.writerOfBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.WriterOfBookQuerySpecification$Provider"
-            id="library.writerOfBook">
-      </matcher>
+         id="extension.derived.suspiciousBooks"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="suspiciousBooks"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.bookOfWriter"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.util.BookOfWriterQuerySpecification$Provider"
-            id="library.bookOfWriter">
-      </matcher>
+         id="extension.derived.mostPopularBookCategory"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Library"
+            feature-name="mostPopularBookCategory"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.validation.suspiciousBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.validation.util.SuspiciousBookQuerySpecification$Provider"
-            id="library.validation.suspiciousBook">
-      </matcher>
+         id="extension.derived.name"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="name"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.validation.emptyBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.validation.util.EmptyBookQuerySpecification$Provider"
-            id="library.validation.emptyBook">
-      </matcher>
+         id="extension.derived.averageNumberOfCoauthorsPerBook"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="averageNumberOfCoauthorsPerBook"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.validation.emptyBook"
-         point="org.eclipse.incquery.runtime.xexpressionevaluator">
-      <evaluator
-            evaluatorClass="library.validation.util.EmptyBookEvaluator1_1"
-            id="library.validation.emptyBook_1_1">
-      </evaluator>
+         id="extension.derived.coAuthors"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="coAuthors"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
    <extension
-         id="library.validation.weirdBook"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.validation.util.WeirdBookQuerySpecification$Provider"
-            id="library.validation.weirdBook">
-      </matcher>
+         id="extension.derived.ownBooks"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="ownBooks"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="extension.derived.numberOfCitations"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="numberOfCitations"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="extension.derived.allCitations"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="allCitations"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
+         id="extension.derived.numberOfWriters"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Book"
+            feature-name="numberOfWriters"
+            package-nsUri="library">
+      </wellbehaving-derived-feature>
    </extension>
 
 </plugin>
