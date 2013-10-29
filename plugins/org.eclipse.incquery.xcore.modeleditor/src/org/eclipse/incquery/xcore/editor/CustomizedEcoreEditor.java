@@ -11,16 +11,15 @@
 package org.eclipse.incquery.xcore.editor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.ui.viewer.ColumnViewerInformationControlToolTipSupport;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.presentation.EcoreEditor;
@@ -45,6 +44,7 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -58,10 +58,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -79,7 +81,8 @@ import com.google.inject.Inject;
  * 
  * Based on verbatim copy of sections of {@link EcoreEditor}.
  * 
- * @author istvanrath
+ * @author Istvan Rath
+ * @author Tamas Szabo (itemis AG)
  * 
  */
 public class CustomizedEcoreEditor extends EcoreEditor {
@@ -93,11 +96,6 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 		EcoreEditorPlugin.INSTANCE.log(msg);
 	}
 	
-	private void log(Exception e) {
-		//e.printStackTrace();
-		EcoreEditorPlugin.INSTANCE.log(e);
-	}
-	
     private Set<String> specs = new HashSet<String>();
 
     @Override
@@ -105,15 +103,6 @@ public class CustomizedEcoreEditor extends EcoreEditor {
     	//initializeRegistryFromSeparateResourceSet_WorkspaceTraversal(editorInput);
         super.init(site, editorInput);
         site.getPage().addSelectionListener(revealSelectionListener);
-    }
-    
-    // doesn't work, as the classpath for the "main" resourceset is not set up properly
-	private void initializeRegistryFromMainResourceSet() {
-        for (Resource resource : editingDomain.getResourceSet().getResources()) {
-            if (resource.getURI().toString().endsWith(".eiq")) {
-                    initReg(resource);
-            }
-        }
     }
 	
 	private void initializeRegistryFromSeparateResourceSet_MainResourceTraversal(IEditorInput input) {
@@ -132,33 +121,78 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 		}
 	}
 	 
-	private void initializeRegistryFromSeparateResourceSet_WorkspaceTraversal(IEditorInput input) {
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput finput = (IFileEditorInput)input;
-			// this is where the Xtext magic happens :-)
-			final ResourceSet resourceSet = provider.get(finput.getFile().getProject());
-			// load all EIQs from this project
-			try {
-				finput.getFile().getProject().accept(new IResourceVisitor() {
-					@Override
-					public boolean visit(IResource resource) throws CoreException {
-						if (resource instanceof IFile) {
-							if ( ((IFile)resource).getFileExtension().equalsIgnoreCase("eiq") ) {
-								URI fileURI = URI.createPlatformResourceURI(((IFile)resource).getFullPath().toString(),true);
-								Resource patternResource = resourceSet.getResource(fileURI, true);
-								if (patternResource!=null) {
-									initReg(patternResource);
-								}
-							}
-							return false;
-						}
-						return true;
-					}
-				});
-			} catch (CoreException e) {
-				log(e);
-			}
-		}
+	// Copied from EcoreEditor.doSave but modified the looping over the Resources to avoid the ConcurrentModificationException
+	@Override
+	public void doSave(IProgressMonitor progressMonitor) {
+	 // Save only resources that have actually changed.
+	    //
+	    final Map<Object, Object> saveOptions = new HashMap<Object, Object>();
+	    saveOptions.put(Resource.OPTION_SAVE_ONLY_IF_CHANGED, Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER);
+	    saveOptions.put(Resource.OPTION_LINE_DELIMITER, Resource.OPTION_LINE_DELIMITER_UNSPECIFIED);
+
+	    // Do the work within an operation because this is a long running activity that modifies the workbench.
+	    //
+	    WorkspaceModifyOperation operation =
+	      new WorkspaceModifyOperation()
+	      {
+	        // This is the method that gets invoked when the operation runs.
+	        //
+	        @Override
+	        public void execute(IProgressMonitor monitor)
+	        {
+	          // Save the resources to the file system.
+	          //
+	          boolean first = true;
+	          
+	          // modified looping to avoid the ConcurrentModificationException
+	          Set<Resource> processedResources = new HashSet<Resource>(); 
+	          while (processedResources.size() != editingDomain.getResourceSet().getResources().size()) {
+	              Set<Resource> resources = new HashSet<Resource>(editingDomain.getResourceSet().getResources());
+	              resources.removeAll(processedResources);
+	              for (Resource resource : resources) {
+	                  if ((first || !resource.getContents().isEmpty() || isPersisted(resource)) && !editingDomain.isReadOnly(resource))
+	                  {
+	                    try
+	                    {
+	                      long timeStamp = resource.getTimeStamp();
+	                      resource.save(saveOptions);
+	                      if (resource.getTimeStamp() != timeStamp)
+	                      {
+	                        savedResources.add(resource);
+	                      }
+	                    }
+	                    catch (Exception exception)
+	                    {
+	                      resourceToDiagnosticMap.put(resource, analyzeResourceProblems(resource, exception));
+	                    }
+	                    first = false;
+	                  }
+	                  processedResources.add(resource);
+	              }
+	          }
+	        }
+	      };
+
+	    updateProblemIndication = false;
+	    try
+	    {
+	      // This runs the options, and shows progress.
+	      //
+	      new ProgressMonitorDialog(getSite().getShell()).run(true, false, operation);
+
+	      // Refresh the necessary state.
+	      //
+	      ((BasicCommandStack)editingDomain.getCommandStack()).saveIsDone();
+	      firePropertyChange(IEditorPart.PROP_DIRTY);
+	    }
+	    catch (Exception exception)
+	    {
+	      // Something went wrong that shouldn't.
+	      //
+	      EcoreEditorPlugin.INSTANCE.log(exception);
+	    }
+	    updateProblemIndication = true;
+	    updateProblemIndication();
 	}
 	
 	private void initReg(Resource patternResource) {
