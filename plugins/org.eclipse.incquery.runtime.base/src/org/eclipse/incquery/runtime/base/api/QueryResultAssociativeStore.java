@@ -149,14 +149,13 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
             } else {
                 listener.notifyRemove(key, value);
             }
-        } catch (Error e) { // NOPMD
-            throw e;
-        } catch (Throwable e) { // NOPMD
+        } catch (Exception e) { // NOPMD
             logger.warn(
                     String.format(
                             "The query result associative store encountered an error during executing a callback on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
                             direction == Direction.INSERT ? "insertion" : "removal", key, value, e.getMessage(), e
                                     .getClass().getSimpleName(), listener), e);
+            throw new IllegalStateException("The query result associative store encountered an error during invoking setter",e);
         }
     }
     
@@ -291,14 +290,13 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
                                             : "no changed results", setter));
                 }
             }
-        } catch (Error e) { // NOPMD
-            throw e;
-        } catch (Throwable e) { // NOPMD
+        } catch (Exception e) { // NOPMD
             logger.warn(
                     String.format(
                             "The query result associative store encountered an error during invoking setter on %s of key %s and value %s. Error message: %s. (Developer note: %s in %s called from QueryResultMultimap)",
                             direction == Direction.INSERT ? "insertion" : "removal", key, value, e.getMessage(), e
                                     .getClass().getSimpleName(), setter), e);
+            throw new IllegalStateException("The query result associative store encountered an error during invoking setter",e);
         }
 
         return false;
@@ -320,7 +318,8 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
      */
     protected boolean checkModificationThroughQueryResultSetter(KeyType key, ValueType value, Direction direction,
             final int expectedChange, final int size) {
-        if ((direction == Direction.INSERT) == internalCacheContainsEntry(key, value)
+        boolean isInsertion = direction == Direction.INSERT;
+        if (isInsertion == internalCacheContainsEntry(key, value)
                 && (internalCacheSize() - expectedChange) == size) {
             return true;
         }

@@ -84,7 +84,7 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
      */
     @Override
     protected boolean internalCacheContainsEntry(KeyType key, ValueType value) {
-        return cache.get(key).equals(value);
+        return cache.containsKey(key) && cache.get(key).equals(value);
     }
     
     /**
