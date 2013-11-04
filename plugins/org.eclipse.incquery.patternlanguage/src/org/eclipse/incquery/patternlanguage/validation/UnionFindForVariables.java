@@ -11,6 +11,7 @@
 package org.eclipse.incquery.patternlanguage.validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,11 +141,11 @@ public class UnionFindForVariables {
         }
     }
 
-    private List<Set<Variable>> getPartitions() {
+    public Collection<Set<Variable>> getPartitions() {
         List<Set<Variable>> resultList = new ArrayList<Set<Variable>>();
         Set<Integer> previousKeys = new HashSet<Integer>();
-        for (Variable variableOuter : inputVariables) {
-            int currentID = unionIdArray[inputVariables.indexOf(variableOuter)];
+        for (int i = 0; i < inputVariables.size(); i++) {
+            int currentID = unionIdArray[i];
             if (!previousKeys.contains(currentID)) {
                 previousKeys.add(currentID);
                 Set<Variable> currentSet = new HashSet<Variable>();

@@ -12,6 +12,7 @@ package org.eclipse.incquery.patternlanguage.validation;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -28,7 +29,7 @@ class VariableReferenceCount {
         POSITIVE, NEGATIVE, READ_ONLY
     }
 
-    private Variable variable;
+    private Set<Variable> variables;
     private Map<ReferenceType, Integer> counters = new Hashtable<ReferenceType, Integer>();
     private int size = 0;
     private boolean parameter;
@@ -36,22 +37,25 @@ class VariableReferenceCount {
     /**
      * @param variable
      */
-    public VariableReferenceCount(Variable variable, boolean parameter) {
-        this.variable = variable;
+    public VariableReferenceCount(Set<Variable> variables, boolean parameter) {
+        this.variables = variables;
         this.parameter = parameter;
         for (ReferenceType type : ReferenceType.values()) {
             counters.put(type, 0);
         }
-        if (variable instanceof ParameterRef && ((ParameterRef) variable).getReferredParam().getType() != null) {
-            counters.put(ReferenceType.POSITIVE, 1);
+        
+        for (Variable variable : variables) {
+        	if (variable instanceof ParameterRef && ((ParameterRef) variable).getReferredParam().getType() != null) {
+        		counters.put(ReferenceType.POSITIVE, 1);
+        	}
         }
     }
 
     /**
      * @return the variable
      */
-    public Variable getVariable() {
-        return variable;
+    public Set<Variable> getVariables() {
+        return variables;
     }
 
     /**
