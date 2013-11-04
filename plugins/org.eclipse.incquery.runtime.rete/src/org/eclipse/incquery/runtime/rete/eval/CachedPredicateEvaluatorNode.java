@@ -31,7 +31,7 @@ public class CachedPredicateEvaluatorNode extends OutputCachingEvaluatorNode {
 	 */
 	@Override
 	protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
-		return (evaluationresult == Boolean.TRUE) ? incoming : null;
+		return Boolean.TRUE.equals(evaluationresult) ? incoming : null;
 	}
 
 	/* (non-Javadoc)

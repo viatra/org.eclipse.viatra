@@ -608,19 +608,15 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 } else if (leftIsVariable && !rightIsVariable) {
                     if (ref.equals(((VariableValue) constraint.getLeftOperand()).getValue())) { // this should always be true
                         return ReferenceType.POSITIVE;
-                    } else throw new IllegalStateException( // this should never come up
-	            			"Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
+                    } else reportStrangeVariableRef(ref, constraint);
                 } else if (rightIsVariable && !leftIsVariable) {
                     if (ref.equals(((VariableValue) constraint.getRightOperand()).getValue())) { // this should always be true
                         return ReferenceType.POSITIVE;
-                    } else throw new IllegalStateException( // this should never come up
-    	            			"Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
-	            } else throw new IllegalStateException( // this should never come up
-	            			"Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
+                    } else reportStrangeVariableRef(ref, constraint);
+	            } else reportStrangeVariableRef(ref, constraint);
             } else if (constraint.getFeature() == CompareFeature.INEQUALITY) {
             	return ReferenceType.READ_ONLY;
-            } else throw new IllegalStateException( // this should never come up
-        			"Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
+            } else reportStrangeVariableRef(ref, constraint);
         } else if (parent instanceof PatternCompositionConstraint
                 && ((PatternCompositionConstraint) parent).isNegative()) {
             return ReferenceType.NEGATIVE;
@@ -630,6 +626,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         // Other constraints use positive references
         return ReferenceType.POSITIVE;
     }
+
+	private void reportStrangeVariableRef(VariableReference ref,
+			CompareConstraint constraint) {
+		throw new IllegalStateException( // this should never come up
+				"Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
+	}
 
     /**
      * @return true if the variable is single-use a named variable
