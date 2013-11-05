@@ -105,10 +105,11 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
     private void removeFromManyRefMemory(InternalEObject source, Object removed) {
         if (isCached()) {
             List<Object> values = manyRefMemory.get(source);
-            if (values == null) {
-                engineForMatcher()
-                        .getLogger()
-                        .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): removing from list that doesn't exist");
+            if (values == null || !values.contains(removed)) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): removing value from list that doesn't contains it!");
+                sb.append("\n >> Non-existing value: ").append(source).append(" -> ").append(removed);
+                engineForMatcher().getLogger().error(sb.toString());
             }
             values.remove(removed);
         }

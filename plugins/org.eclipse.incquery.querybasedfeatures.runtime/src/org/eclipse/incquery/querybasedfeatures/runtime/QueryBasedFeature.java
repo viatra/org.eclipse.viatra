@@ -77,7 +77,7 @@ public abstract class QueryBasedFeature {
                         .getQuerySpecification(patternName).getMatcher(engineForMatcher());
             } catch (IncQueryException e) {
                 engineForMatcher().getLogger().error(
-                        "[IncqueryFeatureHandler] Exception during wipe callback: " + e.getMessage(), e);
+                        "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);
             }
             dm = matcher.newDeltaMonitor(false);
         }
@@ -108,7 +108,7 @@ public abstract class QueryBasedFeature {
     protected void initialize(final IncQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
         if (initialized) {
-            IncQueryLoggingUtil.getDefaultLogger().error("[IncqueryFeatureHandler] Feature already initialized!");
+            IncQueryLoggingUtil.getDefaultLogger().error("[QueryBasedFeature] Feature already initialized!");
             return;
         }
         initialized = true;
@@ -117,15 +117,15 @@ public abstract class QueryBasedFeature {
         this.targetParamName = targetParamName;
         if (matcher.getPositionOfParameter(sourceParamName) == null) {
             engineForMatcher().getLogger().error(
-                    "[IncqueryFeatureHandler] Source parameter " + sourceParamName + " not found!");
+                    "[QueryBasedFeature] Source parameter " + sourceParamName + " not found!");
         }
         if (targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
             engineForMatcher().getLogger().error(
-                    "[IncqueryFeatureHandler] Target parameter " + targetParamName + " not found!");
+                    "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
         if ((targetParamName == null) != (getKind() == QueryBasedFeatureKind.COUNTER)) {
             engineForMatcher().getLogger().error(
-                    "[IncqueryFeatureHandler] Invalid configuration (no targetParamName needed for Counter)!");
+                    "[QueryBasedFeature] Invalid configuration (no targetParamName needed for Counter)!");
         }
         // IPatternMatch partialMatch = matcher.newEmptyMatch();
         // partialMatch.set(sourceParamName, source);
@@ -217,19 +217,6 @@ public abstract class QueryBasedFeature {
     }
 
     public abstract Object getValue(Object source);
-
-    // switch (kind) {
-    // case SUM: // fall-through
-    // case COUNTER:
-    // return getIntValue(source);
-    // case SINGLE_REFERENCE:
-    // return getSingleReferenceValue(source);
-    // case MANY_REFERENCE:
-    // return getManyReferenceValue(source);
-    // case ITERATION:
-    // return getValueIteration(source);
-    // }
-    // return null;
 
     private Collection<IPatternMatch> processNewMatches(Collection<IPatternMatch> signatures) {
         List<IPatternMatch> processed = new ArrayList<IPatternMatch>();

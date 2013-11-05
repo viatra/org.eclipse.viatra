@@ -49,9 +49,8 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
             IPatternMatch match = getMatcher().newEmptyMatch();
             match.set(getSourceParamName(), source);
             if (getMatcher().countMatches(match) > 1) {
-                engineForMatcher()
-                        .getLogger()
-                        .warn("[IncqueryFeatureHandler] Single reference derived feature has multiple possible values, returning one arbitrary value");
+                String message = "[QueryBasedFeature] Single reference derived feature has multiple possible values, returning one arbitrary value";
+                engineForMatcher().getLogger().warn(message);
             }
             IPatternMatch patternMatch = getMatcher().getOneArbitraryMatch(match);
             if (patternMatch != null) {
@@ -67,9 +66,11 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
         InternalEObject source = getSourceValue(signature);
         if (target != null) {
             if (updateMemory.get(source) != null) {
-                engineForMatcher()
-                        .getLogger()
-                        .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source");
+                StringBuilder sb = new StringBuilder();
+                sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): multiple values for single feature!\n");
+                sb.append("\n >> First value: ").append(source).append(" -> ").append(updateMemory.get(source));
+                sb.append("\n >> Second value: ").append(source).append(" -> ").append(target);
+                engineForMatcher().getLogger().error(sb.toString());
             } else {
                 // must handle later (either in lost matches or after that)
                 updateMemory.put(source, target);
@@ -81,16 +82,16 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
         Object target = getTargetValue(signature);
         InternalEObject source = (InternalEObject) getSourceValue(signature);
         if (target != null) {
-                Object updateValue = updateMemory.get(source);
-                if (updateValue != null) {
-                    appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), target,
-                            updateValue));
-                    setSingleRefMemory(source, updateValue);
-                    updateMemory.remove(source);
-                } else {
-                    appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), target, null));
-                    setSingleRefMemory(source, null);
-                }
+            Object updateValue = updateMemory.get(source);
+            if (updateValue != null) {
+                appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), target,
+                        updateValue));
+                setSingleRefMemory(source, updateValue);
+                updateMemory.remove(source);
+            } else {
+                appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), target, null));
+                setSingleRefMemory(source, null);
+            }
         }
     }
     
@@ -107,8 +108,8 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
     protected void afterUpdate() {
         if (!updateMemory.isEmpty()) {
             for (InternalEObject source : updateMemory.keySet()) {
-                appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), null, updateMemory
-                        .get(source)));
+                appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), null,
+                        updateMemory.get(source)));
                 setSingleRefMemory(source, updateMemory.get(source));
             }
             updateMemory.clear();
