@@ -1,40 +1,31 @@
 package org.eclipse.incquery.examples.bpm.tests
 
-import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.incquery.testing.core.injector.EMFPatternLanguageInjectorProvider
 import com.google.inject.Inject
-import org.eclipse.incquery.testing.core.TestExecutor
-import org.eclipse.incquery.testing.core.ModelLoadHelper
-import org.eclipse.incquery.testing.core.SnapshotHelper
-import org.junit.Test
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager
-import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine
-import static org.junit.Assert.*
-import org.eclipse.incquery.runtime.api.IncQueryEngine
-import system.Job
-import system.Data
-import process.Task
-import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher
 import operation.Checklist
-import org.apache.log4j.Appender
-import org.eclipse.incquery.examples.bpm.queries.JobTasksMatcher
-import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import operation.OperationPackage
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.incquery.examples.bpm.queries.JobTasksMatcher
+import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureHelper
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
-import org.junit.Before
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine
+import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
-import system.queries.util.JobTaskCorrespondenceQuerySpecification
-import system.queries.JobTaskCorrespondenceMatcher
-import system.queries.DataTaskReadCorrespondenceMatcher
-import system.queries.DataTaskWriteCorrespondenceMatcher
-import system.queries.JobInfoCorrespondenceMatcher
-import operation.queries.ChecklistEntryJobCorrespondenceMatcher
-import operation.queries.ChecklistEntryTaskCorrespondenceMatcher
-import operation.queries.ChecklistProcessCorrespondenceMatcher
+import org.eclipse.incquery.testing.core.ModelLoadHelper
+import org.eclipse.incquery.testing.core.TestExecutor
+import org.eclipse.incquery.testing.core.injector.EMFPatternLanguageInjectorProvider
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import process.Process
+import process.Task
+import system.Data
+import system.Job
+import system.System
+
+import static org.junit.Assert.*
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -42,7 +33,6 @@ class QueryBasedFeatureTest {
  
   @Inject extension TestExecutor
   @Inject extension ModelLoadHelper
-  @Inject extension SnapshotHelper
 
   @Before
   def prepareQueries(){
@@ -55,13 +45,6 @@ class QueryBasedFeatureTest {
     assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistEntryTaskCorrespondence"))
     assertNotNull(QuerySpecificationRegistry::getQuerySpecification("operation.queries.ChecklistProcessCorrespondence"))
     
-//    QuerySpecificationRegistry::registerQuerySpecification(JobTaskCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(DataTaskReadCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(DataTaskWriteCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(JobInfoCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryJobCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistEntryTaskCorrespondenceMatcher::querySpecification)
-//    QuerySpecificationRegistry::registerQuerySpecification(ChecklistProcessCorrespondenceMatcher::querySpecification)
   }
 
   @Test
@@ -70,7 +53,7 @@ class QueryBasedFeatureTest {
     val rs = new ResourceSetImpl
     val resource = loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.system")
     
-    val sys = resource.contents.get(0) as system.System
+    val sys = resource.contents.get(0) as System
     sys.contains.forEach[
       assertTrue(it.tasks.empty)
     ]
@@ -79,7 +62,7 @@ class QueryBasedFeatureTest {
         assertTrue(it.writingTask.empty)
     ]
 
-    val resource2 = loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
+    loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
     sys.contains.forEach[
       val job = it as Job
       assertTrue(job.taskIds.size == job.tasks.size)
@@ -119,7 +102,7 @@ class QueryBasedFeatureTest {
     val resource = loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.system")
     loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
     
-    val sys = resource.contents.get(0) as system.System
+    val sys = resource.contents.get(0) as System
     sys.contains.forEach[
       assertTrue(it.tasks.size == it.taskIds.size)
     ]
@@ -151,7 +134,7 @@ class QueryBasedFeatureTest {
       assertNull(it.task)
     ]
     
-    val resource2 = loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
+    loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
     val engine = AdvancedIncQueryEngine::on(rs)
     val procMatcher = ProcessTasksMatcher::on(engine)
     
@@ -186,7 +169,7 @@ class QueryBasedFeatureTest {
     val resource2 = loadAdditionalResourceFromUri(rs,"org.eclipse.incquery.examples.bpm.tests/model/Simple.process")
     
     val checklist = resource.contents.get(0) as Checklist
-    val proc = resource2.contents.get(0) as process.Process
+    val proc = resource2.contents.get(0) as Process
     val entry  =  checklist.entries.get(0)
     val tid = entry.taskId
     proc.contents.forEach[
@@ -196,10 +179,10 @@ class QueryBasedFeatureTest {
     val engine = IncQueryEngine::on(rs)
     engine.registerLogger
     
-    val task = entry.task
+    entry.task
     
     val logOut = engine.retrieveLoggerOutput
-    assertTrue(logOut.contains("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): update memory already set for given source"));
+    assertTrue(logOut.contains("[QueryBasedFeature] Space-time continuum breached (should never happen): multiple values for single feature!"));
   }
   
   @Test
