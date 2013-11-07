@@ -40,7 +40,7 @@ public class TransformationRuleGroup/*<Rule extends ITransformationRule>*/ exten
 		}
 	}
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7057984500208333710L;
 	
 	public TransformationRuleGroup() {
 		super();
