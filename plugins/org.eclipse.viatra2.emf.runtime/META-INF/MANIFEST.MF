@@ -13,4 +13,6 @@ Export-Package: org.eclipse.viatra2.emf.runtime.filters,
  org.eclipse.viatra2.emf.runtime.modelmanipulation,
  org.eclipse.viatra2.emf.runtime.rules,
  org.eclipse.viatra2.emf.runtime.rules.batch,
- org.eclipse.viatra2.emf.runtime.transformation.batch
+ org.eclipse.viatra2.emf.runtime.rules.eventdriven,
+ org.eclipse.viatra2.emf.runtime.transformation.batch,
+ org.eclipse.viatra2.emf.runtime.transformation.eventdriven
