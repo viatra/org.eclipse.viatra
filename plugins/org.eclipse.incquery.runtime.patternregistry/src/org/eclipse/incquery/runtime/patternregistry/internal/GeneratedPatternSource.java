@@ -55,8 +55,9 @@ public class GeneratedPatternSource {
     }
 
     private static IPatternInfo intializeFromConfigurationElement(IConfigurationElement configurationElement) {
+        String idAttributeInExtension = null;
         try {
-            String idAttributeInExtension = configurationElement.getAttribute("id");
+            idAttributeInExtension = configurationElement.getAttribute("id");
             IQuerySpecificationProvider<?> querySpecificationProvider = (IQuerySpecificationProvider<?>) configurationElement
                     .createExecutableExtension("querySpecificationProvider");
             IQuerySpecification<?> querySpecification = querySpecificationProvider.get();
@@ -75,8 +76,12 @@ public class GeneratedPatternSource {
                                 + configurationElement.getDeclaringExtension().getUniqueIdentifier());
             }
         } catch (Exception exception) {
+            if(idAttributeInExtension == null) {
+                idAttributeInExtension = "undefined in plugin.xml";
+            }
         	IncQueryLoggingUtil.getDefaultLogger().error(
-                    "[Pattern Registry] Exception during query specification registry initialization", exception);
+                    "[Pattern Registry] Exception during query specification registry initialization when preparing ID: "
+                            + idAttributeInExtension + "! " + exception.getMessage(), exception);
         }
 
         return null;
