@@ -94,11 +94,11 @@ public class Executor {
      */
     protected synchronized boolean startScheduling() {
         if(scheduling) {
-            ruleBase.getLogger().debug(reentrantMessage);
+            ruleBase.getLogger().trace(reentrantMessage);
             return false;
         } else {
             scheduling = true;
-            ruleBase.getLogger().debug(startMessage);
+            ruleBase.getLogger().trace(startMessage);
             return true;
         }
     }
@@ -109,7 +109,7 @@ public class Executor {
      * state is set to false.
      */
     protected synchronized void endScheduling() {
-        ruleBase.getLogger().debug(endMessage);
+        ruleBase.getLogger().trace(endMessage);
         scheduling = false;
     }
 
