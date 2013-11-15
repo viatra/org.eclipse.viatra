@@ -17,11 +17,7 @@ import java.util.HashSet
 import java.util.List
 import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IWorkspace
-import org.eclipse.core.resources.ProjectScope
 import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.Platform
-import org.eclipse.core.runtime.preferences.IScopeContext
-import org.eclipse.core.runtime.preferences.InstanceScope
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.common.EMFPlugin
@@ -38,16 +34,16 @@ import org.eclipse.emf.ecore.xcore.generator.XcoreGenerator
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature
 import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature
+import org.eclipse.jdt.core.IClasspathEntry
+import org.eclipse.jdt.core.IJavaProject
+import org.eclipse.jdt.core.JavaCore
 import org.eclipse.pde.core.plugin.IPluginExtension
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
-import org.eclipse.jdt.core.JavaCore
-import org.eclipse.jdt.core.IJavaProject
-import org.eclipse.jdt.core.IClasspathEntry
 
 class IncQueryXcoreGenerator extends XcoreGenerator {
 

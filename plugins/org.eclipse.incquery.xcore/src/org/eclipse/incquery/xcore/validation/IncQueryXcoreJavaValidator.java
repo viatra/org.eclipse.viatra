@@ -13,8 +13,8 @@ package org.eclipse.incquery.xcore.validation;
 import org.eclipse.
 incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
-import org.eclipse.incquery.xcore.XcorePackage;
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature;
+import org.eclipse.incquery.xcore.model.XcorePackage;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.validation.Check;

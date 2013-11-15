@@ -11,7 +11,7 @@
 package org.eclipse.incquery.xcore.ui.labeling;
 
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature;
 import org.eclipse.incquery.xcore.ui.IncQueryXcoreActivator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;

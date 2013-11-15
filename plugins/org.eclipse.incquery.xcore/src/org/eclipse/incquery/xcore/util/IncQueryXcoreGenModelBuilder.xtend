@@ -37,7 +37,7 @@ import org.eclipse.emf.ecore.xcore.XTypeParameter
 import org.eclipse.emf.ecore.xcore.XcoreExtensions
 import org.eclipse.emf.ecore.xcore.util.XcoreGenModelBuilder
 import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature
 
 class IncQueryXcoreGenModelBuilder extends XcoreGenModelBuilder {
 

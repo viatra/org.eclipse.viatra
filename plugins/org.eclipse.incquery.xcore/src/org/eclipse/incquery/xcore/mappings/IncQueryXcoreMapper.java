@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.xcore.XClassifier;
 import org.eclipse.emf.ecore.xcore.XMember;
 import org.eclipse.emf.ecore.xcore.XPackage;
 import org.eclipse.emf.ecore.xcore.mappings.XcoreMapper;
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature;
 
 public class IncQueryXcoreMapper extends XcoreMapper {
 

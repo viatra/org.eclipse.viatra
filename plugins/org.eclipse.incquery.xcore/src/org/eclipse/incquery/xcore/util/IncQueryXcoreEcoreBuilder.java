@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.xcore.XTypeParameter;
 import org.eclipse.emf.ecore.xcore.util.XcoreEcoreBuilder;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
-import org.eclipse.incquery.xcore.XIncQueryDerivedFeature;
+import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature;
 import org.eclipse.incquery.xcore.generator.IncQueryXcoreGenerator;
 import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper;
 

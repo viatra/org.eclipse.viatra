@@ -321,6 +321,7 @@
 				</property>
 			</activation>
 			<modules>
+				<module>../../plugins/org.eclipse.incquery.xcore.model</module>
 				<module>../../plugins/org.eclipse.incquery.xcore</module>
 				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
 				<module>../../plugins/org.eclipse.incquery.xcore.ui</module>

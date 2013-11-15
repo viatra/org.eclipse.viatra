@@ -9,11 +9,10 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.xcore,
- org.eclipse.incquery.xcore.impl,
- org.eclipse.incquery.xcore.util,
- org.eclipse.incquery.xcore.services,
  org.eclipse.incquery.xcore.parser.antlr,
  org.eclipse.incquery.xcore.parser.antlr.internal,
+ org.eclipse.incquery.xcore.services,
+ org.eclipse.incquery.xcore.util,
  org.eclipse.incquery.xcore.validation
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
@@ -25,20 +24,21 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.common.types;visibility:=reexport,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
- org.eclipse.incquery.patternlanguage;bundle-version="0.7.0",
+ org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",
  org.eclipse.xtext.util,
  org.eclipse.emf.common,
  org.antlr.runtime,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.incquery.runtime;bundle-version="0.7.0",
+ org.eclipse.incquery.runtime;bundle-version="0.8.0",
  org.eclipse.core.resources;bundle-version="3.8.1",
  org.eclipse.xtext.ui;bundle-version="2.4.2",
  org.eclipse.incquery.querybasedfeatures.runtime;bundle-version="0.7.0",
  org.eclipse.emf.ecore.xcore;visibility:=reexport,
  org.eclipse.emf.ecore.xcore.lib;visibility:=reexport,
- org.eclipse.incquery.tooling.core;bundle-version="0.7.1",
+ org.eclipse.incquery.tooling.core;bundle-version="0.8.0",
  org.eclipse.pde.core,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ org.eclipse.incquery.xcore.model;bundle-version="0.8.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
