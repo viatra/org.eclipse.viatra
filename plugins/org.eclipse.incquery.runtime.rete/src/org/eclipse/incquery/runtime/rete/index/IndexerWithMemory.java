@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public abstract class IndexerWithMemory extends StandardIndexer implements Receiver {

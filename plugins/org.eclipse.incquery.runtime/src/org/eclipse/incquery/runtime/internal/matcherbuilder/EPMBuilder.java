@@ -12,11 +12,12 @@
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.runtime.rete.construction.Buildable;
+import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
@@ -25,22 +26,22 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
  * @author Bergmann Gábor
  * 
  */
-public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pattern, StubHandle, Collector> {
-    protected Buildable<Pattern, StubHandle, Collector> baseBuildable;
-    protected IPatternMatcherContext<Pattern> context;
+public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Collector> {
+    protected IOperationCompiler<Pattern, Collector> baseBuildable;
+    protected IPatternMatcherContext context;
 
     /**
      * @param baseBuildable
      * @param context
      */
-    public EPMBuilder(Buildable<Pattern, StubHandle, Collector> baseBuildable, IPatternMatcherContext<Pattern> context) {
+    public EPMBuilder(IOperationCompiler<Pattern, Collector> baseBuildable, IPatternMatcherContext context) {
         super();
         this.baseBuildable = baseBuildable;
         this.context = context;
     }
 
     @Override
-    public IPatternMatcherContext<Pattern> getContext() {
+    public IPatternMatcherContext getContext() {
         return context;
     }
 
@@ -52,7 +53,7 @@ public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pa
     @Override
     public Collector construct(Pattern pattern) throws RetePatternBuildException {
         try {
-            EPMBuildScaffold<StubHandle, Collector> epmBuildScaffold = new EPMBuildScaffold<StubHandle, Collector>(
+            EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
                     baseBuildable, context);
             return epmBuildScaffold.construct(pattern);
         } catch (RuntimeException ex) {
@@ -63,7 +64,7 @@ public class EPMBuilder<StubHandle, Collector> implements IRetePatternBuilder<Pa
     }
 
     @Override
-    public HashMap<Object, Integer> getPosMapping(Pattern gtPattern) {
+    public Map<Object, Integer> getPosMapping(Pattern gtPattern) {
         HashMap<Object, Integer> result = new HashMap<Object, Integer>();
         EList<Variable> parameters = gtPattern.getParameters();
         for (int i = 0; i < parameters.size(); ++i)

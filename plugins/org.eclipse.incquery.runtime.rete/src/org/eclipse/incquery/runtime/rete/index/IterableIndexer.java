@@ -18,7 +18,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 /**
  * An indexer that allows the iteration of all retrievable tuple groups (or reduced groups).
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public interface IterableIndexer extends Indexer, Iterable<Tuple> {

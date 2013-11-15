@@ -13,41 +13,20 @@ package org.eclipse.incquery.runtime.rete.construction.psystem;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 
 /**
- * Any constraint that can only be checked on certain stubs (e.g. those stubs that already contain some variables).
+ * Any constraint that can only be checked on certain SubPlans (e.g. those plans that already contain some variables).
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public abstract class DeferredPConstraint<PatternDescription, StubHandle> extends
-        BasePConstraint<PatternDescription, StubHandle> {
+public abstract class DeferredPConstraint extends BasePConstraint {
 
-    public DeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Set<PVariable> affectedVariables) {
+    public DeferredPConstraint(PSystem pSystem, Set<PVariable> affectedVariables) {
         super(pSystem, affectedVariables);
     }
 
-    public abstract boolean isReadyAt(Stub<StubHandle> stub);
+    public abstract boolean isReadyAt(SubPlan plan);
 
-    /**
-     * @pre this.isReadyAt(stub);
-     */
-    public Stub<StubHandle> checkOn(Stub<StubHandle> stub) throws RetePatternBuildException {
-        Stub<StubHandle> newStub = doCheckOn(stub);
-        newStub.addConstraint(this);
-        return newStub;
-    }
-
-    protected abstract Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException;
-
-    /**
-     * Called when the constraint is not ready, but cannot be deferred further.
-     * 
-     * @param stub
-     * @throws RetePatternBuildException
-     *             to indicate the error in detail. PRE: !isReady(stub)
-     */
-    public abstract void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException;
 }

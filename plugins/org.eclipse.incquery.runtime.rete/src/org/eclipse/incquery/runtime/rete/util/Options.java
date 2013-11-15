@@ -51,12 +51,12 @@ public class Options {
     public enum BuilderMethod {
         LEGACY, // ONLY with GTASM
         PSYSTEM_BASIC_LINEAR, PSYSTEM_QUASITREE;
-        public <PatternDescription, StubHandle, Collector> IReteLayoutStrategy<PatternDescription, StubHandle, Collector> layoutStrategy() {
+        public IReteLayoutStrategy layoutStrategy() {
             switch (this) {
             case PSYSTEM_BASIC_LINEAR:
-                return new BasicLinearLayout<PatternDescription, StubHandle, Collector>();
+                return new BasicLinearLayout();
             case PSYSTEM_QUASITREE:
-                return new QuasiTreeLayout<PatternDescription, StubHandle, Collector>();
+                return new QuasiTreeLayout();
             default:
                 return null;
             }
@@ -74,12 +74,12 @@ public class Options {
     public static FunctionalDependencyOption functionalDependencyOption = 
     		FunctionalDependencyOption.OPPORTUNISTIC;
     
-    public enum StubTrimOption {
+    public enum PlanTrimOption {
     	OFF,
     	OPPORTUNISTIC
     }
-    public static StubTrimOption stubTrimOption = 
-    		StubTrimOption.OPPORTUNISTIC;
+    public static PlanTrimOption planTrimOption = 
+    		PlanTrimOption.OPPORTUNISTIC;
 
 
 }

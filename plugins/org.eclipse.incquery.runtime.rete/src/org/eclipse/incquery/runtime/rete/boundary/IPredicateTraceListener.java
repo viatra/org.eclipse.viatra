@@ -18,7 +18,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * Collects traces of predicate evaluation, and notifies the predicate evaluator node to re-evaluate predicates when
  * these traces are influenced by changes.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public interface IPredicateTraceListener extends Disconnectable {

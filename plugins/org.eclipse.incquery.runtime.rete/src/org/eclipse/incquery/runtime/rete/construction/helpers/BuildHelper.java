@@ -20,28 +20,27 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper;
-import org.eclipse.incquery.runtime.rete.construction.Buildable;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class BuildHelper {
 
     /**
-     * If two or more variables are the same in the variablesTuple of the stub, then a checker node is built to enforce
+     * If two or more variables are the same in the variablesTuple of the subplan, then a checker node is built to enforce
      * their equality.
      * 
-     * @return the derived stub that contains the additional checkers, or the original if no action was neccessary.
+     * @return the derived subplan that contains the additional checkers, or the original if no action was necessary.
      */
-    public static <StubHandle> Stub<StubHandle> enforceVariableCoincidences(Buildable<?, StubHandle, ?> buildable,
-            Stub<StubHandle> stub) {
-        Map<Object, List<Integer>> indexWithMupliplicity = stub.getVariablesTuple().invertIndexWithMupliplicity();
+    public static SubPlan enforceVariableCoincidences(IOperationCompiler<?,?> buildable, SubPlan plan) {
+        Map<Object, List<Integer>> indexWithMupliplicity = plan.getVariablesTuple().invertIndexWithMupliplicity();
         for (Map.Entry<Object, List<Integer>> pVariableIndices : indexWithMupliplicity.entrySet()) {
             List<Integer> indices = pVariableIndices.getValue();
             if (indices.size() > 1) {
@@ -49,80 +48,78 @@ public class BuildHelper {
                 int m = 0;
                 for (Integer index : indices)
                     indexArray[m++] = index;
-                stub = buildable.buildEqualityChecker(stub, indexArray);
+                plan = buildable.buildEqualityChecker(plan, indexArray);
                 // TODO also trim here?
             }
         }
-        return stub;
+        return plan;
 
     }
 
     /**
-     * Trims the results in the stub into a collector, by selecting exported variables in a particular order.
+     * Trims the results in the subplan into a collector, by selecting exported variables in a particular order.
      */
-    public static <StubHandle, Collector> void projectIntoCollector(Buildable<?, StubHandle, Collector> buildable,
-            Stub<StubHandle> stub, Collector collector, PVariable[] selectedVariables) {
-        Stub<StubHandle> trimmer = project(buildable, stub, selectedVariables, false);
+    public static <Collector> void projectIntoCollector(IOperationCompiler<?, Collector> buildable,
+            SubPlan plan, Collector collector, PVariable[] selectedVariables) {
+        SubPlan trimmer = project(buildable, plan, selectedVariables, false);
         buildable.buildConnection(trimmer, collector);
     }
 
     /**
-     * Trims the results in the stub by selecting exported variables in a particular order.
+     * Trims the results in the subplan by selecting exported variables in a particular order.
      * 
-     * @return the derived stub.
+     * @return the derived subplan.
      * @param enforceUniqueness if true, uniqueness after projection will be enforced
      */
-	public static <StubHandle, Collector> Stub<StubHandle> project(
-			Buildable<?, StubHandle, Collector> buildable,
-			Stub<StubHandle> stub, PVariable[] selectedVariables,
+	public static <Collector> SubPlan project(
+			IOperationCompiler<?, Collector> buildable,
+			SubPlan plan, PVariable[] selectedVariables,
 			boolean enforceUniqueness) {
 		int paramNum = selectedVariables.length;
         int[] tI = new int[paramNum];
         for (int i = 0; i < paramNum; i++) {
-            tI[i] = stub.getVariablesIndex().get(selectedVariables[i]);
+            tI[i] = plan.getVariablesIndex().get(selectedVariables[i]);
         }
-        int tiW = stub.getVariablesTuple().getSize();
+        int tiW = plan.getVariablesTuple().getSize();
         TupleMask trim = new TupleMask(tI, tiW);
-        Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim, enforceUniqueness);
+        SubPlan trimmer = buildable.buildTrimmer(plan, trim, enforceUniqueness);
 		return trimmer;
 	}
 
     /**
-     * Calculated index mappings for a join, based on the common variables of the two parent stubs.
+     * Calculated index mappings for a join, based on the common variables of the two parent subplans.
      * 
-     * @author Bergmann Gábor
+     * @author Gabor Bergmann
      * 
      */
-    public static class JoinHelper<StubHandle> {
+    public static class JoinHelper {
         private TupleMask primaryMask;
         private TupleMask secondaryMask;
         private TupleMask complementerMask;
 
         /**
          * @pre enforceVariableCoincidences() has been called on both sides.
-         * @param primaryStub
-         * @param secondaryStub
          */
-        public JoinHelper(Stub<StubHandle> primaryStub, Stub<StubHandle> secondaryStub) {
+        public JoinHelper(SubPlan primaryPlan, SubPlan secondaryPlan) {
             super();
 
-            Set<PVariable> primaryVariables = primaryStub.getVariablesTuple().getDistinctElements();
-            Set<PVariable> secondaryVariables = secondaryStub.getVariablesTuple().getDistinctElements();
+            Set<PVariable> primaryVariables = primaryPlan.getVariablesTuple().getDistinctElements();
+            Set<PVariable> secondaryVariables = secondaryPlan.getVariablesTuple().getDistinctElements();
             int oldNodes = 0;
             Set<Integer> introducingSecondaryIndices = new TreeSet<Integer>();
             for (PVariable var : secondaryVariables) {
                 if (primaryVariables.contains(var))
                     oldNodes++;
                 else
-                    introducingSecondaryIndices.add(secondaryStub.getVariablesIndex().get(var));
+                    introducingSecondaryIndices.add(secondaryPlan.getVariablesIndex().get(var));
             }
             int[] primaryIndices = new int[oldNodes];
             final int[] secondaryIndices = new int[oldNodes];
             int k = 0;
             for (PVariable var : secondaryVariables) {
                 if (primaryVariables.contains(var)) {
-                    primaryIndices[k] = primaryStub.getVariablesIndex().get(var);
-                    secondaryIndices[k] = secondaryStub.getVariablesIndex().get(var);
+                    primaryIndices[k] = primaryPlan.getVariablesIndex().get(var);
+                    secondaryIndices[k] = secondaryPlan.getVariablesIndex().get(var);
                     k++;
                 }
             }
@@ -131,9 +128,9 @@ public class BuildHelper {
             for (Integer integer : introducingSecondaryIndices) {
                 complementerIndices[l++] = integer;
             }
-            primaryMask = new TupleMask(primaryIndices, primaryStub.getVariablesTuple().getSize());
-            secondaryMask = new TupleMask(secondaryIndices, secondaryStub.getVariablesTuple().getSize());
-            complementerMask = new TupleMask(complementerIndices, secondaryStub.getVariablesTuple().getSize());
+            primaryMask = new TupleMask(primaryIndices, primaryPlan.getVariablesTuple().getSize());
+            secondaryMask = new TupleMask(secondaryIndices, secondaryPlan.getVariablesTuple().getSize());
+            complementerMask = new TupleMask(complementerIndices, secondaryPlan.getVariablesTuple().getSize());
 
         }
 
@@ -160,10 +157,10 @@ public class BuildHelper {
 
     }
 
-    public static <StubHandle> Stub<StubHandle> naturalJoin(Buildable<?, StubHandle, ?> buildable,
-            Stub<StubHandle> primaryStub, Stub<StubHandle> secondaryStub) {
-        JoinHelper<StubHandle> joinHelper = new JoinHelper<StubHandle>(primaryStub, secondaryStub);
-        return buildable.buildBetaNode(primaryStub, secondaryStub, joinHelper.getPrimaryMask(),
+    public static SubPlan naturalJoin(IOperationCompiler<?, ?> buildable,
+            SubPlan primaryPlan, SubPlan secondaryPlan) {
+        JoinHelper joinHelper = new JoinHelper(primaryPlan, secondaryPlan);
+        return buildable.buildBetaNode(primaryPlan, secondaryPlan, joinHelper.getPrimaryMask(),
                 joinHelper.getSecondaryMask(), joinHelper.getComplementerMask(), false);
     }
     
@@ -176,34 +173,34 @@ public class BuildHelper {
      * </ul> and thus will not be needed anymore.
      * 
      * @param onlyIfNotDetermined if true, no trimming performed unless there is at least one such variable  
-     * @return the stub after the trimming (possibly the original)
+     * @return the plan after the trimming (possibly the original)
      */
-    public static <StubHandle> Stub<StubHandle> trimUnneccessaryVariables(Buildable<?, StubHandle, ?> buildable,
-            Stub<StubHandle> stub, boolean onlyIfNotDetermined) {
+    public static SubPlan trimUnneccessaryVariables(IOperationCompiler<?, ?> buildable,
+            SubPlan plan, boolean onlyIfNotDetermined) {
     	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
-    	Set<PVariable> variablesInTuple = stub.getVariablesTuple().getDistinctElements();
+    	Set<PVariable> variablesInTuple = plan.getVariablesTuple().getDistinctElements();
     	for (PVariable trimCandidate : variablesInTuple) {
     		if (trimCandidate.getReferringConstraintsOfType(ExportedParameter.class).isEmpty()) {
-    			if (stub.getAllEnforcedConstraints().containsAll(trimCandidate.getReferringConstraints()))
+    			if (plan.getAllEnforcedConstraints().containsAll(trimCandidate.getReferringConstraints()))
     				canBeTrimmed.add(trimCandidate);
     		}
     	}
 		final Set<PVariable> retainedVars = setMinus(variablesInTuple, canBeTrimmed);   	
-    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(stub, retainedVars, canBeTrimmed))) {
+    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed))) {
     		// TODO add ordering? 
     		final PVariable[] selectedVariablesArray = new ArrayList<PVariable>(retainedVars).toArray(new PVariable[retainedVars.size()]);
-    		stub = project(buildable, stub, selectedVariablesArray, true);
+    		plan = project(buildable, plan, selectedVariablesArray, true);
     	}
-    	return stub;
+    	return plan;
     }
     
     
     /**
-     * @return true iff one set of given variables functionally determine the other set according to the stub's constraints
+     * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
      */
-    public static <StubHandle> boolean areVariablesDetermined(Stub<StubHandle> stub, Set<PVariable> determining, Set<PVariable> determined) {
+    public static boolean areVariablesDetermined(SubPlan plan, Set<PVariable> determining, Set<PVariable> determined) {
         Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
-        for (PConstraint pConstraint : stub.getAllEnforcedConstraints())
+        for (PConstraint pConstraint : plan.getAllEnforcedConstraints())
             dependencies.putAll(pConstraint.getFunctionalDependencies());
 		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
 		final boolean isDetermined = closure.containsAll(determined);

@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class TypeHelper {
@@ -52,7 +52,7 @@ public class TypeHelper {
      * 
      * @return the set of all types in typesToClose and all their direct and indirect supertypes
      */
-    public static Set<Object> typeClosure(Set<Object> typesToClose, IPatternMatcherContext<?> context) {
+    public static Set<Object> typeClosure(Set<Object> typesToClose, IPatternMatcherContext context) {
         Set<Object> closure = CollectionsFactory.getSet(typesToClose);//new HashSet<Object>(typesToClose);
         Set<Object> delta = closure;
         while (!delta.isEmpty()) {
@@ -87,7 +87,7 @@ public class TypeHelper {
      *         subsumingTypes.
      */
     public static Set<Object> subsumeTypes(Set<Object> subsumableTypes, Set<Object> subsumingTypes,
-            IPatternMatcherContext<?> context) {
+            IPatternMatcherContext context) {
         Set<Object> closure = typeClosure(subsumingTypes, context);
         Set<Object> subsumed = CollectionsFactory.getSet(subsumableTypes);//new HashSet<Object>(subsumableTypes);
         subsumed.removeAll(closure);

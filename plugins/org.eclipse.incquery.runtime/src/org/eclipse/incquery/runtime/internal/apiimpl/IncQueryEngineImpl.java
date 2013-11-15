@@ -312,11 +312,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 
     
 
-    private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext<Pattern> context) {
+    private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
         ReteEngine<Pattern> engine;
         engine = new ReteEngine<Pattern>(context, reteThreads);
         ReteContainerBuildable<Pattern> buildable = new ReteContainerBuildable<Pattern>(engine);
-        EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Supplier>, Address<? extends Receiver>>(
+        EPMBuilder<Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Receiver>>(
                 buildable, context);
         engine.setBuilder(builder);
         return engine;

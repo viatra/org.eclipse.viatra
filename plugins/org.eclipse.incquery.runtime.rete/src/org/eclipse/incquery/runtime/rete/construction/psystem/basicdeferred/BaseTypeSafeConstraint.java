@@ -17,30 +17,33 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPConstraint;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, StubHandle> extends
-        VariableDeferredPConstraint<PatternDescription, StubHandle> {
+public abstract class BaseTypeSafeConstraint extends
+        VariableDeferredPConstraint {
     private Map<PVariable, Set<Object>> allTypeRestrictions;
     
     protected Set<PVariable> inputVariables;
     protected PVariable outputVariable;
+
+    public PVariable getOutputVariable() {
+        return outputVariable;
+    }
 
     /**
      * @param buildable
      * @param inputVariables
      * @param outputVariable null iff no output (check-only)
      */
-    public BaseTypeSafeCheckOrEvalConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem,
+    public BaseTypeSafeConstraint(PSystem pSystem,
             Set<PVariable> inputVariables, final PVariable outputVariable) {
         super(pSystem, 
         		(outputVariable == null) ? 
@@ -59,14 +62,14 @@ public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, Stub
     }
 
     @Override
-    protected Set<PVariable> getDeferringVariables() {
+    public Set<PVariable> getDeferringVariables() {
         return inputVariables;
     }
 
     @Override
-    public boolean isReadyAt(Stub<StubHandle> stub) {
-        if (super.isReadyAt(stub)) {
-            return checkTypeSafety(stub) == null;
+    public boolean isReadyAt(SubPlan plan) {
+        if (super.isReadyAt(plan)) {
+            return checkTypeSafety(plan) == null;
         }
         return false;
     }
@@ -74,13 +77,13 @@ public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, Stub
     /**
      * Checks whether all type restrictions are already enforced on affected variables.
      * 
-     * @param stub
-     * @return a variable whose type safety is not enforced yet, or null if the stub is typesafe
+     * @param plan
+     * @return a variable whose type safety is not enforced yet, or null if the plan is typesafe
      */
-    protected PVariable checkTypeSafety(Stub<StubHandle> stub) {
+    public PVariable checkTypeSafety(SubPlan plan) {
         for (PVariable pVariable : inputVariables) {
             Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
-            Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, stub.getAllEnforcedConstraints());
+            Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, plan.getAllEnforcedConstraints());
             Set<Object> uncheckedTypeRestrictions = TypeHelper.subsumeTypes(allTypeRestrictionsForVariable,
                     checkedTypeRestrictions, this.pSystem.getContext());
             if (!uncheckedTypeRestrictions.isEmpty())
@@ -89,9 +92,6 @@ public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, Stub
         return null;
     }
 
-    /**
-     * @return the allTypeRestrictions
-     */
     public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
         if (allTypeRestrictions == null) {
             allTypeRestrictions = CollectionsFactory.getMap();//new HashMap<PVariable, Set<Object>>();
@@ -102,24 +102,7 @@ public abstract class BaseTypeSafeCheckOrEvalConstraint<PatternDescription, Stub
         }
         return allTypeRestrictions;
     }
-
-    @Override
-    public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
-        if (!super.isReadyAt(stub)) {
-            super.raiseForeverDeferredError(stub);
-        } else {
-            String[] args = { toString(), checkTypeSafety(stub).toString() };
-            String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. "
-                    + "HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
-            String shortMsg = "Could not check all constraints due to undeducible type restrictions";
-            throw new RetePatternBuildException(msg, args, shortMsg, null);
-        }
-
-    }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#doReplaceVariable(org.eclipse.incquery.runtime.rete.construction.psystem.PVariable, org.eclipse.incquery.runtime.rete.construction.psystem.PVariable)
-     */
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
     	if (inputVariables.remove(obsolete)) 

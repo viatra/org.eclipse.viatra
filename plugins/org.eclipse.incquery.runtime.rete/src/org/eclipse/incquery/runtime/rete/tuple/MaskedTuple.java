@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.rete.tuple;
 /**
  * A tuple that transparently provides a masked (transformed) view of another tuple.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class MaskedTuple extends Tuple {

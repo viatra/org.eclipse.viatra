@@ -14,33 +14,25 @@ package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class PositivePatternCall<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
+public class PositivePatternCall extends KeyedEnumerablePConstraint<Object> {
 
     /**
      * @param buildable
      * @param variablesTuple
      * @param pattern
      */
-    public PositivePatternCall(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple,
-            PatternDescription pattern) {
+    public PositivePatternCall(PSystem pSystem, Tuple variablesTuple,
+            Object pattern) {
         super(pSystem, variablesTuple, pattern);
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-        return buildable.patternCallStub(variablesTuple, supplierKey);
     }
 
     @Override

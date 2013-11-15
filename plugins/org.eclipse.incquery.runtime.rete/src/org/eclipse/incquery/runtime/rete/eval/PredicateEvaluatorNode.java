@@ -45,7 +45,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 
 public class PredicateEvaluatorNode extends SingleInputNode {
 
-    protected ReteEngine<?> engine;
+    protected ReteEngine engine;
     protected ReteBoundary<?> boundary;
     protected Integer rhsIndex;
     protected int[] affectedIndices;
@@ -70,7 +70,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
      * @param variableIndices
      *            maps variable names to values.
      */
-    public PredicateEvaluatorNode(ReteEngine<?> engine, ReteContainer container, Integer rhsIndex,
+    public PredicateEvaluatorNode(ReteEngine engine, ReteContainer container, Integer rhsIndex,
             int[] affectedIndices, int tupleWidth, AbstractEvaluator evaluator) {
         super(container);
         this.engine = engine;
@@ -298,7 +298,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     /**
      * @return the engine
      */
-    public ReteEngine<?> getEngine() {
+    public ReteEngine getEngine() {
         return engine;
     }
 

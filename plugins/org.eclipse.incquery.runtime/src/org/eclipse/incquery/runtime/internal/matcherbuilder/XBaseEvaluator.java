@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,14 +19,20 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.ExpressionUtil;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.xbase.XExpression;
@@ -33,6 +40,8 @@ import org.eclipse.xtext.xbase.interpreter.IEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -40,13 +49,12 @@ import com.google.inject.Provider;
  * Evaluates an XBase XExpression inside Rete.
  */
 @SuppressWarnings("restriction")
-public class XBaseEvaluator extends AbstractEvaluator {
+public class XBaseEvaluator implements IExpressionEvaluator{
     
     @Inject
     private Logger logger;
     
     private final XExpression xExpression;
-    private final Map<String, Integer> tupleNameMap;
     private final Pattern pattern;
 
     private IMatchChecker matchChecker;
@@ -58,6 +66,8 @@ public class XBaseEvaluator extends AbstractEvaluator {
     @Inject
     private IQualifiedNameConverter nameConverter;
 
+    private Iterable<String> usedNames;
+
     /**
      * @param xExpression
      *            the expression to evaluate
@@ -65,13 +75,19 @@ public class XBaseEvaluator extends AbstractEvaluator {
      *            maps variable qualified names to positions.
      * @param pattern
      */
-    public XBaseEvaluator(XExpression xExpression, Map<String, Integer> tupleNameMapping, Pattern pattern) {
+    public XBaseEvaluator(XExpression xExpression, Pattern pattern) {
         super();
         this.xExpression = xExpression;
-        this.tupleNameMap = tupleNameMapping;
         this.pattern = pattern;
-        
-        // code moved to init function, to make sure it is invoked post-injection
+
+        PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
+        List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
+        usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
+           @Override
+           public String apply(Variable var) {
+               return var.getName();
+           }
+        });
         
     }
 
@@ -111,30 +127,46 @@ public class XBaseEvaluator extends AbstractEvaluator {
             }
         }
     }
-    
+
     @Override
-    public Object evaluate(Tuple tuple) throws Throwable {
-        
+    public Iterable<String> getInputParameterNames() {
+        return usedNames;
+    }
+
+    @Override
+    public Object evaluateExpression(IValueProvider provider) throws Exception {
         init();
         
         // First option: try to evalute with the generated code
         if (matchChecker != null) {
-            return matchChecker.evaluateXExpression(tuple, tupleNameMap);
+            return matchChecker.evaluateExpression(provider);
         }
 
         // Second option: try to evaluate with the interpreted approach
         IEvaluationContext context = contextProvider.get();
-        for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
-            context.newValue(nameConverter.toQualifiedName(entry.getKey()), tuple.get(entry.getValue()));
+        for (String name : getInputParameterNames()) {
+            context.newValue(nameConverter.toQualifiedName(name), provider.getValue(name));
         }
         IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
         if (result == null)
             throw new IncQueryException(String.format(
                     "XBase expression interpreter returned no result while evaluating expression %s in pattern %s.",
                     xExpression, pattern), "XBase expression interpreter returned no result.");
-        if (result.getException() != null)
-            throw result.getException();
+        Throwable throwable = result.getException();
+        if (throwable instanceof Error) {
+            throw (Error) throwable;
+        } else if (throwable instanceof Exception) {
+            throw (Exception) throwable;
+        } else if (throwable != null) {
+            throw new IncQueryException(String.format("Strange throwable (%s) encountered: %s", throwable.getClass()
+                    .getCanonicalName(), throwable.getMessage()), "Strange throwable encountered", throwable);
+        }
         return result.getResult();
+    }
+
+    @Override
+    public String getShortDescription() {
+        return xExpression.toString();
     }
 
 }

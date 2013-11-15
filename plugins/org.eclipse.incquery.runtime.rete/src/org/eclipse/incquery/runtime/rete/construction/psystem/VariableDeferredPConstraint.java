@@ -11,47 +11,33 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
-import java.util.Arrays;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 
 /**
- * A kind of deferred constraint that can only be checked when a set of deferring variables are all present in a stub.
+ * A kind of deferred constraint that can only be checked when a set of deferring variables are all present in a plan.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public abstract class VariableDeferredPConstraint<PatternDescription, StubHandle> extends
-        DeferredPConstraint<PatternDescription, StubHandle> {
+public abstract class VariableDeferredPConstraint extends DeferredPConstraint {
     /**
      * @param affectedVariables
      */
-    public VariableDeferredPConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem,
+    public VariableDeferredPConstraint(PSystem pSystem,
             Set<PVariable> affectedVariables) {
         super(pSystem, affectedVariables);
     }
 
-    protected abstract Set<PVariable> getDeferringVariables();
+    public abstract Set<PVariable> getDeferringVariables();
 
     /**
      * Refine further if needed
      */
     @Override
-    public boolean isReadyAt(Stub<StubHandle> stub) {
-        return stub.getVariablesIndex().keySet().containsAll(getDeferringVariables());
+    public boolean isReadyAt(SubPlan plan) {
+        return plan.getVariablesIndex().keySet().containsAll(getDeferringVariables());
     }
 
-    @Override
-    public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
-        Set<PVariable> missing = CollectionsFactory.getSet(getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
-        missing.removeAll(stub.getVariablesIndex().keySet());
-        String[] args = { toString(), Arrays.toString(missing.toArray()) };
-        String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. "
-                + "HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";
-        String shortMsg = "Could not check all constraints due to undeducible variables";
-        throw new RetePatternBuildException(msg, args, shortMsg, null);
-    }
 }

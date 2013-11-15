@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 /**
  * An aggregation node that simply counts the number of tuples conforming to the signature.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class CountNode extends AggregatorNode {

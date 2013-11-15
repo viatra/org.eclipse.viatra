@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 /**
  * Performs a left outer join.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class OuterJoinNode extends DualInputNode {

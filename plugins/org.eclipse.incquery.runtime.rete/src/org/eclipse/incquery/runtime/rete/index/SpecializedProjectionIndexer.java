@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 /**
  * A specialized projection indexer that can be memory-less (relying on an external source of information).
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public abstract class SpecializedProjectionIndexer extends StandardIndexer implements ProjectionIndexer {

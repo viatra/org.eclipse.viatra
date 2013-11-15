@@ -18,7 +18,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 /**
  * A listener for update events concerning an Indexer.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public interface IndexerListener {

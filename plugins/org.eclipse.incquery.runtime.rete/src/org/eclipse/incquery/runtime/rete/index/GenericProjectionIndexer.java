@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * A generic Indexer capable of indexing along any valid TupleMask. Does not keep track of parents, because will not
  * ever pull parents.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class GenericProjectionIndexer extends IndexerWithMemory implements ProjectionIndexer {

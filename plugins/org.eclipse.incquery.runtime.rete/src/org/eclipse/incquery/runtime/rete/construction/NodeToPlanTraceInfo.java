@@ -17,28 +17,23 @@ import org.eclipse.incquery.runtime.rete.network.Node;
  * @author Bergmann Gabor
  *
  */
-public class NodeToStubTraceInfo<PatternDescription> implements Node.TraceInfo.PatternTraceInfo {
+public class NodeToPlanTraceInfo implements Node.TraceInfo.PatternTraceInfo {
 	
-    Stub<?> stub;
-    PatternDescription pattern;
-    IPatternMatcherContext<PatternDescription> context;
+    SubPlan plan;
+    Object pattern;
+    IPatternMatcherContext context;
 
-	/**
-	 * @param stub
-	 * @param pattern
-	 * @param context
-	 */
-	public NodeToStubTraceInfo(Stub<?> stub, PatternDescription pattern,
-			IPatternMatcherContext<PatternDescription> context) {
+	public NodeToPlanTraceInfo(SubPlan plan, Object pattern,
+			IPatternMatcherContext context) {
 		super();
-		this.stub = stub;
+		this.plan = plan;
 		this.pattern = pattern;
 		this.context = context;
 	}
 
 	@Override
 	public String toString() {
-		return "->" + getPatternName() + "~" + stub.toString();
+		return "->" + getPatternName() + "~" + plan.toString();
 	}
 	
 	@Override
@@ -58,16 +53,10 @@ public class NodeToStubTraceInfo<PatternDescription> implements Node.TraceInfo.P
 		return false;
 	}
 
-	/**
-	 * @return the stub
-	 */
-	public Stub<?> getStub() {
-		return stub;
+	public SubPlan getPlan() {
+		return plan;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo#getPatternName()
-	 */
 	@Override
 	public String getPatternName() {
 		if (pattern != null)

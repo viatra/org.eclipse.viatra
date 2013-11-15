@@ -18,7 +18,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 /**
  * Default configuration for DeltaMonitor.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class DefaultDeltaMonitor extends DeltaMonitor<Tuple> {

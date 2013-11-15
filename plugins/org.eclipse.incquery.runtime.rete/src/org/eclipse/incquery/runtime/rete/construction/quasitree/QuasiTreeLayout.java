@@ -17,10 +17,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.Buildable;
+import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
+import org.eclipse.incquery.runtime.rete.construction.SubPlanProcessor;
 import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.rete.construction.helpers.LayoutHelper;
 import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
@@ -32,39 +33,40 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 /**
  * Layout ideas: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398763
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implements
-        IReteLayoutStrategy<PatternDescription, StubHandle, Collector> {
+public class QuasiTreeLayout implements IReteLayoutStrategy {
 
     @Override
-    public Stub<StubHandle> layout(PSystem<PatternDescription, StubHandle, Collector> pSystem)
+    public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler)
             throws RetePatternBuildException {
-        return new Scaffold(pSystem).run();
+        return new Scaffold(pSystem, compiler).run();
     }
 
 	public class Scaffold {
-        PSystem<PatternDescription, StubHandle, Collector> pSystem;
-        PatternDescription pattern;
-        IPatternMatcherContext<PatternDescription> context;
-        Buildable<PatternDescription, StubHandle, Collector> buildable;
+        PSystem pSystem;
+        Object pattern;
+        IPatternMatcherContext context;
+        IOperationCompiler<?, ?> buildable;
+        SubPlanProcessor planProcessor = new SubPlanProcessor();
 
         Set<DeferredPConstraint> deferredConstraints = null;
         Set<EnumerablePConstraint> enumerableConstraints = null;
-        Set<Stub<StubHandle>> forefront = new LinkedHashSet<Stub<StubHandle>>();
+        Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
 
-        Scaffold(PSystem<PatternDescription, StubHandle, Collector> pSystem) {
+        Scaffold(PSystem pSystem, IOperationCompiler<?, ?> compiler) {
             this.pSystem = pSystem;
             pattern = pSystem.getPattern();
             context = pSystem.getContext();
-            buildable = pSystem.getBuildable();
+            buildable = compiler;
+            planProcessor.setCompiler(compiler);
         }
 
         /**
          * @return
          */
-        public Stub<StubHandle> run() throws RetePatternBuildException {
+        public SubPlan run() throws RetePatternBuildException {
             try {
                 context.logDebug(String.format(
                 		"%s: patternbody build started for %s",
@@ -86,83 +88,83 @@ public class QuasiTreeLayout<PatternDescription, StubHandle, Collector> implemen
                 // PROCESS CONSTRAINTS
                 deferredConstraints = pSystem.getConstraintsOfType(DeferredPConstraint.class);
                 enumerableConstraints = pSystem.getConstraintsOfType(EnumerablePConstraint.class);
-                for (EnumerablePConstraint<PatternDescription, StubHandle> enumerable : enumerableConstraints) {
-                    Stub<StubHandle> stub = enumerable.getStub();
-                    admitStub(stub);
+                for (EnumerablePConstraint enumerable : enumerableConstraints) {
+                    SubPlan plan = planProcessor.processEnumerableConstraint(enumerable);
+                    admitSubPlan(plan);
                 }
                 if (enumerableConstraints.isEmpty()) { // EXTREME CASE
-                    Stub<StubHandle> stub = buildable.buildStartStub(new Object[] {}, new Object[] {});
-                    admitStub(stub);
+                    SubPlan plan = buildable.buildStartingPlan(new Object[] {}, new Object[] {});
+                    admitSubPlan(plan);
                 }
 
-                // JOIN FOREFRONT STUBS WHILE POSSIBLE
+                // JOIN FOREFRONT PLANS WHILE POSSIBLE
                 while (forefront.size() > 1) {
                     // TODO QUASI-TREE TRIVIAL JOINS?
 
-                    List<JoinCandidate<StubHandle>> candidates = generateJoinCandidates();
-                    JoinOrderingHeuristics<PatternDescription, StubHandle, Collector> ordering = new JoinOrderingHeuristics<PatternDescription, StubHandle, Collector>();
-                    JoinCandidate<StubHandle> selectedJoin = Collections.min(candidates, ordering);
+                    List<JoinCandidate> candidates = generateJoinCandidates();
+                    JoinOrderingHeuristics ordering = new JoinOrderingHeuristics();
+                    JoinCandidate selectedJoin = Collections.min(candidates, ordering);
                     doJoin(selectedJoin.getPrimary(), selectedJoin.getSecondary());
                 }
 
                 // FINAL CHECK, whether all exported variables are present
                 assert (forefront.size() == 1);
-                Stub<StubHandle> finalStub = forefront.iterator().next();
-                LayoutHelper.finalCheck(pSystem, finalStub);
+                SubPlan finalPlan = forefront.iterator().next();
+                LayoutHelper.finalCheck(pSystem, finalPlan);
 
                 context.logDebug(String.format(
                 		"%s: patternbody build concluded for %s",
                 		getClass().getSimpleName(), 
                 		context.printPattern(pattern)));
-               return finalStub;
+               return finalPlan;
             } catch (RetePatternBuildException ex) {
                 ex.setPatternDescription(pattern);
                 throw ex;
             }
         }
 
-        public List<JoinCandidate<StubHandle>> generateJoinCandidates() {
-            List<JoinCandidate<StubHandle>> candidates = new ArrayList<JoinCandidate<StubHandle>>();
+        public List<JoinCandidate> generateJoinCandidates() {
+            List<JoinCandidate> candidates = new ArrayList<JoinCandidate>();
             int bIndex = 0;
-            for (Stub<StubHandle> b : forefront) {
+            for (SubPlan b : forefront) {
                 int aIndex = 0;
-                for (Stub<StubHandle> a : forefront) {
+                for (SubPlan a : forefront) {
                     if (aIndex++ >= bIndex)
                         break;
-                    candidates.add(new JoinCandidate<StubHandle>(a, b));
+                    candidates.add(new JoinCandidate(a, b));
                 }
                 bIndex++;
             }
             return candidates;
         }
 
-        private void admitStub(Stub<StubHandle> stub) throws RetePatternBuildException {
+        private void admitSubPlan(SubPlan plan) throws RetePatternBuildException {
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
-        	if (Options.stubTrimOption != Options.StubTrimOption.OFF &&
-        			!stub.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
-        		final Stub<StubHandle> trimmed = BuildHelper.trimUnneccessaryVariables(buildable, stub, true);
-				stub = trimmed;
+        	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
+        			!plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
+        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(buildable, plan, true);
+				plan = trimmed;
         	}        	
         	// are there any checkable constraints?
-            for (DeferredPConstraint<PatternDescription, StubHandle> deferred : deferredConstraints) {
-                if (!stub.getAllEnforcedConstraints().contains(deferred)) {
-                    if (deferred.isReadyAt(stub)) {
-                        admitStub(deferred.checkOn(stub));
+            for (DeferredPConstraint deferred : deferredConstraints) {
+                if (!plan.getAllEnforcedConstraints().contains(deferred)) {
+                    if (deferred.isReadyAt(plan)) {
+                        admitSubPlan(planProcessor.processDeferredConstraint(deferred, plan));
                         return;
                     }
                 }
             }
             // if no checkable constraints and no unused variables
-            forefront.add(stub);
+            forefront.add(plan);
         }
 
-        private void doJoin(Stub<StubHandle> primaryStub, Stub<StubHandle> secondaryStub)
+        private void doJoin(SubPlan primaryPlan, SubPlan secondaryPlan)
                 throws RetePatternBuildException {
-            Stub<StubHandle> joinedStub = BuildHelper.naturalJoin(buildable, primaryStub, secondaryStub);
-            forefront.remove(primaryStub);
-            forefront.remove(secondaryStub);
-            admitStub(joinedStub);
+            SubPlan joinedPlan = BuildHelper.naturalJoin(buildable, primaryPlan, secondaryPlan);
+            forefront.remove(primaryPlan);
+            forefront.remove(secondaryPlan);
+            admitSubPlan(joinedPlan);
         }
 
     }

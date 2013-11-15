@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.index.JoinNode;
@@ -44,13 +44,13 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * Responsible for the storage, maintenance and communication of the nodes of the network that are accessible form the
  * outside for various reasons.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  * @param <PatternDescription>
  */
 public class ReteBoundary<PatternDescription> {
 
-    protected ReteEngine<PatternDescription> engine;
+    protected ReteEngine engine;
     protected Network network;
     protected ReteContainer headContainer;
 
@@ -58,7 +58,7 @@ public class ReteBoundary<PatternDescription> {
         return headContainer;
     }
 
-    protected IPatternMatcherRuntimeContext<PatternDescription> context;
+    protected IPatternMatcherRuntimeContext context;
     IPatternMatcherContext.GeneralizationQueryDirection generalizationQueryDirection;
 
     /*
@@ -80,6 +80,8 @@ public class ReteBoundary<PatternDescription> {
     protected Map<PatternDescription, Address<? extends Production>> productions;
     // protected Map<PatternDescription, Map<Map<Integer, Scope>, Address<? extends Production>>> productionsScoped; //
     // (pattern, scopemap) -> production
+    
+    protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
 
     protected Address<? extends Tunnel> containmentRoot;
     protected Address<? extends Supplier> containmentTransitiveRoot;
@@ -89,10 +91,10 @@ public class ReteBoundary<PatternDescription> {
     protected Address<? extends Supplier> generalizationTransitiveRoot;
 
     /**
-     * Stubs of parent nodes that have the key node as their child. For RETE --> Stub traceability, mainly at production
+     * SubPlans of parent nodes that have the key node as their child. For RETE --> SubPlan traceability, mainly at production
      * nodes.
      */
-    protected Map<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>> parentStubsOfReceiver;
+    protected Map<Address<? extends Receiver>, Set<SubPlan>> parentPlansOfReceiver;
 
     /**
      * Prerequisite: engine has its network and framework fields initialized
@@ -107,7 +109,7 @@ public class ReteBoundary<PatternDescription> {
 
         this.context = engine.getContext();
         this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
-        this.parentStubsOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<Stub<Address<? extends Supplier>>>>();
+        this.parentPlansOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<SubPlan<Address<? extends Supplier>>>>();
 
         unaryRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
         ternaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
@@ -115,6 +117,7 @@ public class ReteBoundary<PatternDescription> {
 
         productions = CollectionsFactory.getMap();//new HashMap<PatternDescription, Address<? extends Production>>();
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
+        subplanToAddressMapping = CollectionsFactory.getMap();
 
         containmentRoot = null;
         containmentTransitiveRoot = null;
@@ -636,24 +639,32 @@ public class ReteBoundary<PatternDescription> {
      * @deprecated Use {@link Node#assignTraceInfo(org.eclipse.incquery.runtime.rete.network.Node.TraceInfo)}
      */
     @Deprecated
-    public void registerParentStubForReceiver(Address<? extends Receiver> receiver,
-            Stub<Address<? extends Supplier>> parentStub) {
-        Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
+    public void registerParentPlanForReceiver(Address<? extends Receiver> receiver,
+            SubPlan parentPlan) {
+        Set<SubPlan> parents = parentPlansOfReceiver.get(receiver);
         if (parents == null) {
-            parents = CollectionsFactory.getSet();//new HashSet<Stub<Address<? extends Supplier>>>();
-            parentStubsOfReceiver.put(receiver, parents);
+            parents = CollectionsFactory.getSet();//new HashSet<SubPlan<Address<? extends Supplier>>>();
+            parentPlansOfReceiver.put(receiver, parents);
         }
-        parents.add(parentStub);
+        parents.add(parentPlan);
     }
 
     /**
      * @deprecated Use {@link Node#getTraceInfos()}
      */
     @Deprecated
-    public Set<Stub<Address<? extends Supplier>>> getParentStubsOfReceiver(Address<? extends Receiver> receiver) {
-        Set<Stub<Address<? extends Supplier>>> parents = parentStubsOfReceiver.get(receiver);
+    public Set<SubPlan> getParentPlansOfReceiver(Address<? extends Receiver> receiver) {
+        Set<SubPlan> parents = parentPlansOfReceiver.get(receiver);
         if (parents == null)
             parents = Collections.emptySet();
         return parents;
+    }
+    
+    public void mapPlanToAddress(SubPlan plan, Address<? extends Supplier> handle) {
+        subplanToAddressMapping.put(plan, handle);
+    }
+    
+    public Address<? extends Supplier> getAddress(SubPlan plan) {
+        return subplanToAddressMapping.get(plan);
     }
 }

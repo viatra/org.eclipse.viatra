@@ -39,7 +39,7 @@ public class IncQueryException extends Exception {
         this.shortMessage = e.getShortMessage();
     }
 
-    public IncQueryException(String s, String shortMessage, Exception e) {
+    public IncQueryException(String s, String shortMessage, Throwable e) {
         super(s + ": " + e.getMessage(), e);
         this.shortMessage = shortMessage;
     }

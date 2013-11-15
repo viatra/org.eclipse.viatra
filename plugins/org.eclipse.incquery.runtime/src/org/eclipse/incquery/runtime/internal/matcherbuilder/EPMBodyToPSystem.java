@@ -45,12 +45,13 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.incquery.runtime.rete.construction.Buildable;
+import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.PatternMatchCounter;
@@ -66,17 +67,17 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.xtext.xbase.XExpression;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class EPMBodyToPSystem<StubHandle, Collector> {
+public class EPMBodyToPSystem<Collector> {
 
     protected Pattern pattern;
     protected PatternBody body;
-    protected IPatternMatcherContext<Pattern> context;
-    protected Buildable<Pattern, StubHandle, Collector> buildable;
+    protected IPatternMatcherContext context;
+    protected IOperationCompiler<Pattern, Collector> buildable;
 
-    protected PSystem<Pattern, StubHandle, Collector> pSystem;
+    protected PSystem pSystem;
 
     String patternFQN;
 
@@ -86,8 +87,8 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
      * @param builder
      * @param buildable
      */
-    public EPMBodyToPSystem(Pattern pattern, PatternBody body, IPatternMatcherContext<Pattern> context,
-            Buildable<Pattern, StubHandle, Collector> buildable) {
+    public EPMBodyToPSystem(Pattern pattern, PatternBody body, IPatternMatcherContext context,
+            IOperationCompiler<Pattern, Collector> buildable) {
         super();
         this.pattern = pattern;
         this.body = body;
@@ -97,10 +98,10 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
     }
 
-    public PSystem<Pattern, StubHandle, Collector> toPSystem() throws RetePatternBuildException {
+    public PSystem toPSystem() throws RetePatternBuildException {
         try {
             if (this.pSystem == null) {
-                this.pSystem = new PSystem<Pattern, StubHandle, Collector>(context, buildable, pattern);
+                this.pSystem = new PSystem(context, pattern);
 
                 // TODO
                 // preProcessAssignments();
@@ -133,7 +134,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         if (variable instanceof ParameterRef) // handle referenced parameter variables
             return getPNode(((ParameterRef) variable).getReferredParam()); // assumed to be non-null
         else
-            return pSystem.getOrCreateVariableByName(variable);
+            return pSystem.getOrCreateVariableByName(variable.getName() /* now this is unique again! */);
     }
 
     protected PVariable getPNode(VariableReference variable) {
@@ -201,11 +202,11 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
     private void preProcessParameters() {
         EList<Variable> parameters = pattern.getParameters();
         for (Variable variable : parameters) {
-            new ExportedParameter<Pattern, StubHandle>(pSystem, getPNode(variable), variable.getName());
+            new ExportedParameter(pSystem, getPNode(variable), variable.getName());
             if (variable.getType() != null && variable.getType() instanceof ClassType) {
                 EClassifier classname = ((ClassType) variable.getType()).getClassname();
                 PVariable pNode = getPNode(variable);
-                new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+                new TypeUnary(pSystem, pNode, classname);
             }
         }
 
@@ -267,7 +268,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         Type headType = head.getType();
         if (headType instanceof ClassType) {
             EClassifier headClassname = ((ClassType) headType).getClassname();
-            new TypeUnary<Pattern, StubHandle>(pSystem, currentSrc, headClassname);
+            new TypeUnary(pSystem, currentSrc, headClassname);
         } else {
             throw new RetePatternBuildException("Unsupported path expression head type {1} in pattern {2}: {3}",
                     new String[] { headType.eClass().getName(), patternFQN, typeStr(headType) },
@@ -285,7 +286,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
             currentSrc = intermediate;
         }
         // link the final step to the overall destination
-        new Equality<Pattern, StubHandle>(pSystem, currentSrc, finalDst);
+        new Equality(pSystem, currentSrc, finalDst);
     }
 
     /**
@@ -297,10 +298,10 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         PVariable right = getPNode(compare.getRightOperand());
         switch (compare.getFeature()) {
         case EQUALITY:
-            new Equality<Pattern, StubHandle>(pSystem, left, right);
+            new Equality(pSystem, left, right);
             break;
         case INEQUALITY:
-            new Inequality<Pattern, StubHandle>(pSystem, left, right, false);
+            new Inequality(pSystem, left, right, false);
         }
     }
 
@@ -315,9 +316,9 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
         Tuple pNodeTuple = getPNodeTuple(call.getParameters());
         if (!call.isTransitive()) {
             if (constraint.isNegative())
-                new NegativePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+                new NegativePatternCall(pSystem, pNodeTuple, patternRef);
             else
-                new PositivePatternCall<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+                new PositivePatternCall(pSystem, pNodeTuple, patternRef);
         } else {
             if (pNodeTuple.getSize() != 2)
                 throw new RetePatternBuildException(
@@ -329,7 +330,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
                         new String[] { CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN },
                         "Unsupported negated transitive closure", pattern);
             else
-                new BinaryTransitiveClosure<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef);
+                new BinaryTransitiveClosure(pSystem, pNodeTuple, patternRef);
             // throw new RetePatternBuildException(
             // "Unsupported positive transitive closure of {1} in pattern {2}",
             // new String[]{CorePatternLanguageHelper.getFullyQualifiedName(patternRef), patternFQN},
@@ -343,16 +344,16 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
     protected void gatherClassifierConstraint(EClassifierConstraint constraint) {
         EClassifier classname = ((ClassType) constraint.getType()).getClassname();
         PVariable pNode = getPNode(constraint.getVar());
-        new TypeUnary<Pattern, StubHandle>(pSystem, pNode, classname);
+        new TypeUnary(pSystem, pNode, classname);
     }
 
     protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg) throws RetePatternBuildException {
         if (segmentType instanceof ReferenceType) { // EMF-specific
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
             if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
-                new TypeTernary<Pattern, StubHandle>(pSystem, context, newVirtual(), src, trg, typeObject);
+                new TypeTernary(pSystem, context, newVirtual(), src, trg, typeObject);
             } else {
-                new TypeBinary<Pattern, StubHandle>(pSystem, context, src, trg, typeObject);
+                new TypeBinary(pSystem, context, src, trg, typeObject);
             }
         } else
             throw new RetePatternBuildException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
@@ -362,14 +363,14 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 
     protected void gatherCheckConstraint(final CheckConstraint check) {
         XExpression expression = check.getExpression();
-        new XBaseCheckOrEval<StubHandle>(this, expression, pattern, null);
+        new ExpressionEvaluation(this.pSystem, new XBaseEvaluator(expression, pattern), null);
     }
 
     protected PVariable eval(FunctionEvaluationValue eval) {
         PVariable result = newVirtual();
 
         XExpression expression = eval.getExpression();
-        new XBaseCheckOrEval<StubHandle>(this, expression, pattern, result);
+        new ExpressionEvaluation(this.pSystem, new XBaseEvaluator(expression, pattern), result);
         
         return result;
 	}
@@ -383,7 +384,7 @@ public class EPMBodyToPSystem<StubHandle, Collector> {
 
         AggregatorExpression aggregator = reference.getAggregator();
         if (aggregator instanceof CountAggregator) {
-            new PatternMatchCounter<Pattern, StubHandle>(pSystem, pNodeTuple, patternRef, result);
+            new PatternMatchCounter(pSystem, pNodeTuple, patternRef, result);
         } else
             throw new RetePatternBuildException("Unsupported aggregator expression type {1} in pattern {2}.",
                     new String[] { aggregator.eClass().getName(), patternFQN }, "Unsupported aggregator expression",

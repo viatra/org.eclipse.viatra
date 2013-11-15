@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public interface PConstraint {

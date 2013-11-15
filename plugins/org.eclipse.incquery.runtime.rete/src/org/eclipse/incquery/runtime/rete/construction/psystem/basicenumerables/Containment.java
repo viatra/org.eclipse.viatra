@@ -16,42 +16,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class Containment<PatternDescription, StubHandle> extends CoreModelRelationship<PatternDescription, StubHandle> {
+public class Containment extends CoreModelRelationship {
 
 	PVariable parent; 
 	PVariable child;
     /**
      * @param variablesTuple
      */
-    public Containment(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+    public Containment(PSystem pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
         this.parent = parent;
         this.child = child;
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    protected Stub<StubHandle> doCreateDirectStub() {
-        return buildable.containmentDirectStub(variablesTuple);
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    protected Stub<StubHandle> doCreateTransitiveStub() {
-        return buildable.containmentTransitiveStub(variablesTuple);
     }
     
     /* (non-Javadoc)

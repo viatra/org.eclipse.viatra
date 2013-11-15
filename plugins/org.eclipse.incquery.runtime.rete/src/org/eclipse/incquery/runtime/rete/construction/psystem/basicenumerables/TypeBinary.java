@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -25,12 +24,12 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class TypeBinary<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
-    private final IPatternMatcherContext<PatternDescription> context;
+public class TypeBinary extends
+        KeyedEnumerablePConstraint<Object> implements ITypeInfoProviderConstraint {
+    private final IPatternMatcherContext context;
     private PVariable source; private PVariable target;
 
     /**
@@ -38,17 +37,12 @@ public class TypeBinary<PatternDescription, StubHandle> extends
      * @param variablesTuple
      * @param typeKey
      */
-    public TypeBinary(PSystem<PatternDescription, StubHandle, ?> pSystem,
-            IPatternMatcherContext<PatternDescription> context, PVariable source, PVariable target, Object typeKey) {
+    public TypeBinary(PSystem pSystem,
+            IPatternMatcherContext context, PVariable source, PVariable target, Object typeKey) {
         super(pSystem, new FlatTuple(source, target), typeKey);
         this.source = source;
         this.target = target;
         this.context = context;
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() {
-        return buildable.binaryEdgeTypeStub(variablesTuple, supplierKey);
     }
 
     @Override

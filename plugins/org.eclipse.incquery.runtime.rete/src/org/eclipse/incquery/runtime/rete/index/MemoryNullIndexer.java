@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * save space. Can only exist in connection with a memory, and must be operated by another node. Do not attach parents
  * directly!
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  */
 public class MemoryNullIndexer extends NullIndexer {
 

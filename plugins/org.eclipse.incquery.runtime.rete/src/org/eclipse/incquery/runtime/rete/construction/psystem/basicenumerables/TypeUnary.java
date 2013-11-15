@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -19,23 +18,18 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class TypeUnary<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
+public class TypeUnary extends
+        KeyedEnumerablePConstraint<Object> implements ITypeInfoProviderConstraint {
     /**
      * @param buildable
      * @param variable
      * @param typeKey
      */
-    public TypeUnary(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable variable, Object typeKey) {
+    public TypeUnary(PSystem pSystem, PVariable variable, Object typeKey) {
         super(pSystem, new FlatTuple(variable), typeKey);
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() {
-        return buildable.unaryTypeStub(variablesTuple, supplierKey);
     }
 
     @Override

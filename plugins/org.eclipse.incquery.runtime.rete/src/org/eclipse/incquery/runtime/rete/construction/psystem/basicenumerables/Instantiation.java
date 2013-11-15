@@ -11,16 +11,14 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class Instantiation<PatternDescription, StubHandle> extends
-        CoreModelRelationship<PatternDescription, StubHandle> {
+public class Instantiation extends CoreModelRelationship {
 
     /**
      * @param buildable
@@ -28,19 +26,9 @@ public class Instantiation<PatternDescription, StubHandle> extends
      * @param child
      * @param transitive
      */
-    public Instantiation(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parent, PVariable child,
+    public Instantiation(PSystem pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
-    }
-
-    @Override
-    protected Stub<StubHandle> doCreateTransitiveStub() {
-        return buildable.instantiationTransitiveStub(variablesTuple);
-    }
-
-    @Override
-    protected Stub<StubHandle> doCreateDirectStub() {
-        return buildable.instantiationDirectStub(variablesTuple);
     }
 
 }

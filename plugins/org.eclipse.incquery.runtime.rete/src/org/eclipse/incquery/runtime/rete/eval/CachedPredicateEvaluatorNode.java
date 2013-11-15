@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.eval;
 
+import java.util.Map;
+
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
@@ -21,9 +24,10 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 public class CachedPredicateEvaluatorNode extends OutputCachingEvaluatorNode {
 
 	public CachedPredicateEvaluatorNode(ReteContainer reteContainer,
-			ReteEngine<?> engine, AbstractEvaluator evaluator,
+			ReteEngine engine, IExpressionEvaluator evaluator,
+            Map<String, Integer> parameterPositions,
 			int sourceTupleWidth) {
-		super(reteContainer, engine, evaluator, sourceTupleWidth);
+		super(reteContainer, engine, evaluator, parameterPositions, sourceTupleWidth);
 	}
 
 	/* (non-Javadoc)

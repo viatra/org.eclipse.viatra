@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.rete.construction;
 /**
  * A problem has occured during the construction of the RETE net.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class RetePatternBuildException extends Exception {

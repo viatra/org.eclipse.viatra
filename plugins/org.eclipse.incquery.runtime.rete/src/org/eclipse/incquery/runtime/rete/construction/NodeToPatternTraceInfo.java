@@ -15,19 +15,17 @@ import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo
 
 /**
  * @author Bergmann Gabor
- * @param <PatternDescription>
  *
  */
-public class NodeToPatternTraceInfo<PatternDescription> implements PatternTraceInfo {
-    PatternDescription pattern;
-    IPatternMatcherContext<PatternDescription> context;
+public class NodeToPatternTraceInfo implements PatternTraceInfo {
+    Object pattern;
+    IPatternMatcherContext context;
     
 	/**
 	 * @param pattern
 	 * @param context
 	 */
-	public NodeToPatternTraceInfo(PatternDescription pattern,
-			IPatternMatcherContext<PatternDescription> context) {
+	public NodeToPatternTraceInfo(Object pattern, IPatternMatcherContext context) {
 		super();
 		this.pattern = pattern;
 		this.context = context;

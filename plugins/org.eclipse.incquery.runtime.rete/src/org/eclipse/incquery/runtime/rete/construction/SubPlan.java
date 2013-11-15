@@ -21,27 +21,25 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
+ * A plan representing a subset of (or possibly all the) constraints evaluated. A SubPlan instance is responsible for
+ * maintaining a state of the plan; but after it is initialized it is expected be immutable.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
- * @param <HandleType>
- *            the buildable-specific representation of RETE node handle this stub type will augment
  */
-public class Stub<HandleType> {
-    private HandleType handle;
+public class SubPlan {
     private Tuple variablesTuple;
     private Map<Object, Integer> variablesIndex;
     private Set<PConstraint> constraints;
-    private Stub<HandleType> primaryParentStub;
-    private Stub<HandleType> secondaryParentStub;
+    private SubPlan primaryParentPlan;
+    private SubPlan secondaryParentPlan;
     /** TODO may contain variables that have been trimmed and are no longer in the tuple */
 	private final Set<PVariable> variablesSet; 
 
-    private Stub(Map<Object, Integer> variablesIndex, Tuple variablesTuple, HandleType handle) {
+    private SubPlan(Map<Object, Integer> variablesIndex, Tuple variablesTuple) {
         super();
         this.variablesIndex = variablesIndex;
         this.variablesTuple = variablesTuple;
-        this.handle = handle;
         this.constraints = CollectionsFactory.getSet();//new HashSet<PConstraint>();
 		variablesSet = new HashSet<PVariable>();
 		for (Object pVar : variablesIndex.keySet()) {
@@ -49,42 +47,33 @@ public class Stub<HandleType> {
 		}
     }
 
-    public Stub(Tuple variablesTuple, HandleType handle) {
-        this(variablesTuple.invertIndex(), variablesTuple, handle);
+    public SubPlan(Tuple variablesTuple) {
+        this(variablesTuple.invertIndex(), variablesTuple);
     }
 
-    // public Stub(Stub<HandleType> template) {
-    // this(template.variablesIndex, template.variablesTuple, template.getHandle());
-    // }
-    public Stub(Stub<HandleType> primaryParent, HandleType handle) {
-        this(primaryParent.variablesIndex, primaryParent.variablesTuple, handle);
-        this.primaryParentStub = primaryParent;
+    public SubPlan(SubPlan primaryParent) {
+        this(primaryParent.variablesIndex, primaryParent.variablesTuple);
+        this.primaryParentPlan = primaryParent;
         constraints.addAll(primaryParent.getAllEnforcedConstraints());
     }
 
-    public Stub(Stub<HandleType> primaryParent, Tuple variablesTuple, HandleType handle) {
-        this(variablesTuple.invertIndex(), variablesTuple, handle);
-        this.primaryParentStub = primaryParent;
+    public SubPlan(SubPlan primaryParent, Tuple variablesTuple) {
+        this(variablesTuple.invertIndex(), variablesTuple);
+        this.primaryParentPlan = primaryParent;
         constraints.addAll(primaryParent.getAllEnforcedConstraints());
     }
 
-    public Stub(Stub<HandleType> primaryParent, Stub<HandleType> secondaryParent, Tuple variablesTuple,
-            HandleType handle) {
-        this(variablesTuple.invertIndex(), variablesTuple, handle);
-        this.primaryParentStub = primaryParent;
-        this.secondaryParentStub = secondaryParent;
+    public SubPlan(SubPlan primaryParent, SubPlan secondaryParent, Tuple variablesTuple) {
+        this(variablesTuple.invertIndex(), variablesTuple);
+        this.primaryParentPlan = primaryParent;
+        this.secondaryParentPlan = secondaryParent;
         constraints.addAll(primaryParent.getAllEnforcedConstraints());
         constraints.addAll(secondaryParent.getAllEnforcedConstraints());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Stub(" + getVariablesTuple() + "@" + getHandle() + "|");
+        StringBuilder sb = new StringBuilder("SubPlan(" + getVariablesTuple() + "@" + "|");
         for (PConstraint constraint : constraints)
             sb.append(constraint.toString() + "&");
         sb.append(")");
@@ -92,17 +81,10 @@ public class Stub<HandleType> {
     }
 
     /**
-     * @return the tuple of variables that define the schame emanating from the handle
+     * @return the tuple of variables that define the schema emanating from the handle
      */
     public Tuple getVariablesTuple() {
         return variablesTuple;
-    }
-
-    /**
-     * @return the handle of a RETE supplier node that hosts a certain relation (set of tuples)
-     */
-    public HandleType getHandle() {
-        return handle;
     }
 
     /**
@@ -131,32 +113,23 @@ public class Stub<HandleType> {
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
         Set<PConstraint> result = CollectionsFactory.getSet(constraints);//new HashSet<PConstraint>(constraints);
-        if (primaryParentStub != null)
-            result.removeAll(primaryParentStub.getAllEnforcedConstraints());
-        if (secondaryParentStub != null)
-            result.removeAll(secondaryParentStub.getAllEnforcedConstraints());
+        if (primaryParentPlan != null)
+            result.removeAll(primaryParentPlan.getAllEnforcedConstraints());
+        if (secondaryParentPlan != null)
+            result.removeAll(secondaryParentPlan.getAllEnforcedConstraints());
         return result;
     }
 
-    /**
-     * @return the constraints
-     */
     public void addConstraint(PConstraint constraint) {
         constraints.add(constraint);
     }
 
-    /**
-     * @return the primaryParentStub
-     */
-    public Stub<HandleType> getPrimaryParentStub() {
-        return primaryParentStub;
+    public SubPlan getPrimaryParentPlan() {
+        return primaryParentPlan;
     }
 
-    /**
-     * @return the secondaryParentStub
-     */
-    public Stub<HandleType> getSecondaryParentStub() {
-        return secondaryParentStub;
+    public SubPlan getSecondaryParentPlan() {
+        return secondaryParentPlan;
     }
 
 }

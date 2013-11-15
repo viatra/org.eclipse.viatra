@@ -51,7 +51,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     protected IncQueryEngine engine;
     protected RetePatternMatcher patternMatcher;
-    protected ReteEngine<Pattern> reteEngine;
+    protected ReteEngine reteEngine;
     protected NavigationHelper baseIndex;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 

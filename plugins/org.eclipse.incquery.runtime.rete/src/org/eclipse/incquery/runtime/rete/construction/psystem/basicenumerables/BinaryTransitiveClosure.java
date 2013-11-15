@@ -11,8 +11,6 @@
 
 package org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
@@ -22,23 +20,16 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
  * 
  *         For a binary base pattern, computes the irreflexive transitive closure (base)+
  */
-public class BinaryTransitiveClosure<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<PatternDescription, PatternDescription, StubHandle> {
+public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<Object> {
 
     /**
      * @param pSystem
      * @param variablesTuple
      * @param pattern
      */
-    public BinaryTransitiveClosure(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple,
-            PatternDescription pattern) {
+    public BinaryTransitiveClosure(PSystem pSystem, Tuple variablesTuple,
+            Object pattern) {
         super(pSystem, variablesTuple, pattern);
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-        Stub<StubHandle> patternProduction = buildable.patternCallStub(variablesTuple, supplierKey);
-        return buildable.buildTransitiveClosure(patternProduction);
     }
 
     @Override

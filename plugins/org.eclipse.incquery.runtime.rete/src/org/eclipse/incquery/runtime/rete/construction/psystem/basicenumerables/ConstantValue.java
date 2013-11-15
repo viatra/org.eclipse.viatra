@@ -16,32 +16,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class ConstantValue<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> {
+public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
 
     /**
      * @param buildable
      * @param variablesTuple
      * @param supplierKey
      */
-    public ConstantValue(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable variable, Object value) {
+    public ConstantValue(PSystem pSystem, PVariable variable, Object value) {
         super(pSystem, new FlatTuple(variable), value);
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() throws RetePatternBuildException {
-        return buildable.buildStartStub(new Object[] { supplierKey }, this.variablesTuple.getElements());
     }
 
     @Override

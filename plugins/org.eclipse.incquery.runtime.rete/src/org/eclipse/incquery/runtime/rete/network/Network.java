@@ -44,14 +44,14 @@ public class Network {
     protected Lock structuralChangeLock = null; // grab if the network structure is to
     // be changed
 
-    protected IPatternMatcherRuntimeContext<?> context;
+    protected IPatternMatcherRuntimeContext context;
 
     /**
      * @param threads
      *            the number of threads to operate the network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public Network(int threads, IPatternMatcherRuntimeContext<?> context) {
+    public Network(int threads, IPatternMatcherRuntimeContext context) {
         super();
         this.threads = threads;
         this.context = context;
@@ -347,7 +347,7 @@ public class Network {
         return structuralChangeLock;
     }
 
-    public IPatternMatcherRuntimeContext<?> getContext() {
+    public IPatternMatcherRuntimeContext getContext() {
         return context;
     }
 

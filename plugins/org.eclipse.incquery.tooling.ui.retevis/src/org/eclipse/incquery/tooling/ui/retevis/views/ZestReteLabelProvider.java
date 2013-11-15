@@ -27,7 +27,7 @@ import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
@@ -117,7 +117,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
                 sb.append("\n");
-                for (Stub st : getStubsForNode(n)) {
+                for (SubPlan st : getStubsForNode(n)) {
                     sb.append("<");
                     Tuple variablesTuple = st.getVariablesTuple();
                     for (Object obj : variablesTuple.getElements()) {
@@ -147,7 +147,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             Node n = (Node) entity;
 //            String s = "";
             StringBuilder infoBuilder = new StringBuilder("Stubs:\n");
-            for (Stub st : getStubsForNode(n)) {
+            for (SubPlan st : getStubsForNode(n)) {
                 infoBuilder.append(getEnforcedConstraints(st));
             }
 
@@ -184,7 +184,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
     }
 
     // useful only for production nodes
-    private static String getEnforcedConstraints(Stub st) {
+    private static String getEnforcedConstraints(SubPlan st) {
         StringBuilder sb = new StringBuilder();
         for (Object _pc : st.getAllEnforcedConstraints()) {
             PConstraint pc = (PConstraint) _pc;
@@ -197,30 +197,30 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
         return sb.toString();
     }
 
-    private Collection<Stub<Address<?>>> getStubsForNode(Node n) {
+    private Collection<SubPlan> getStubsForNode(Node n) {
         if (n!=null) {
-        Collection<Stub<Address<?>>> r = reverseMap.get(n);
+        Collection<SubPlan> r = reverseMap.get(n);
         if (r != null)
             return r;
         }
         return Collections.emptySet();
     }
 
-    private Map<Node, Collection<Stub<Address<?>>>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
+    private Map<Node, Collection<SubPlan>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
 
     private void resetReverseMap() {
-        reverseMap = new HashMap<Node, Collection<Stub<Address<?>>>>();
+        reverseMap = new HashMap<Node, Collection<SubPlan>>();
     }
 
     private void initalizeReverseMap(Production prod) {
-        for (Object _stubOfProd : rb.getParentStubsOfReceiver(new Address<Node>(prod))) {
-            Stub stubOfProd = (Stub) _stubOfProd;
-            for (Stub<Address<?>> s : getAllParentStubs(stubOfProd)) {
-                Address<Node> address = (Address<Node>) s.getHandle();
+        for (Object _stubOfProd : rb.getParentPlansOfReceiver(new Address<Node>(prod))) {
+            SubPlan stubOfProd = (SubPlan) _stubOfProd;
+            for (SubPlan s : getAllParentStubs(stubOfProd)) {
+                Address<Node> address = rb.getAddress(s);
                 Node n = rb.getHeadContainer().resolveLocal(address);
-                Collection<Stub<Address<?>>> t = reverseMap.get(n);
+                Collection<SubPlan> t = reverseMap.get(n);
                 if (t == null) {
-                    t = new HashSet<Stub<Address<?>>>();
+                    t = new HashSet<SubPlan>();
                 }
                 t.add(s);
                 reverseMap.put(n, t);
@@ -228,12 +228,12 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
         }
     }
 
-    private static Collection<Stub<Address<?>>> getAllParentStubs(Stub<Address<?>> st) {
+    private static Collection<SubPlan> getAllParentStubs(SubPlan st) {
         if (st != null) {
-            List<Stub<Address<?>>> v = new ArrayList<Stub<Address<?>>>();
+            List<SubPlan> v = new ArrayList<SubPlan>();
             v.add(st);
-            v.addAll(getAllParentStubs(st.getPrimaryParentStub()));
-            v.addAll(getAllParentStubs(st.getSecondaryParentStub()));
+            v.addAll(getAllParentStubs(st.getPrimaryParentPlan()));
+            v.addAll(getAllParentStubs(st.getSecondaryParentPlan()));
             return v;
         } else
             return Collections.emptyList();

@@ -32,7 +32,7 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
  * 
  * @author Bergmann Gábor
  */
-public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern> {
+public class EMFPatternMatcherContext implements IPatternMatcherContext {
 
     protected IncQueryEngineImpl iqEngine;
 
@@ -192,7 +192,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
     }
 
     @Override
-    public void reportPatternDependency(Pattern pattern) {
+    public void reportPatternDependency(Object pattern) {
         // Ignore, because we don't support changing machines here
     }
 
@@ -243,11 +243,11 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext<Pattern>
     }
 
     @Override
-    public String printPattern(Pattern pattern) {
+    public String printPattern(Object pattern) {
         if (pattern == null) {
             return "(null)";
         }
-        return CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        return CorePatternLanguageHelper.getFullyQualifiedName((Pattern)pattern);
     }
 
     @Override

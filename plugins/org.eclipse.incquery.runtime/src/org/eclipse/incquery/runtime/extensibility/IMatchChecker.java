@@ -13,12 +13,14 @@ package org.eclipse.incquery.runtime.extensibility;
 
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * An interface for the xexpressionevaluator extension point schema}
  */
-public interface IMatchChecker {
+@Deprecated
+public interface IMatchChecker extends IExpressionEvaluator {
 
     /**
      * The implementation should return the result value of the xexpression.
@@ -28,6 +30,7 @@ public interface IMatchChecker {
      * @param tupleNameMap
      *            which holds the used name-integer pairs, to be able to get out the attributes from the tuple
      */
+    @Deprecated
     public Object evaluateXExpression(final Tuple tuple, final Map<String, Integer> tupleNameMap);
 
 }

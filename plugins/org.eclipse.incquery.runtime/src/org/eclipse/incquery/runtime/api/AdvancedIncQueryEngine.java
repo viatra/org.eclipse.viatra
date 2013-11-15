@@ -269,6 +269,6 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	 * Access the internal Rete pattern matching network (for advanced debugging purposes only).
 	 * @noreference for internal use only
 	 */
-	public abstract ReteEngine<Pattern> getReteEngine() throws IncQueryException;
+	public abstract ReteEngine getReteEngine() throws IncQueryException;
 	
 }

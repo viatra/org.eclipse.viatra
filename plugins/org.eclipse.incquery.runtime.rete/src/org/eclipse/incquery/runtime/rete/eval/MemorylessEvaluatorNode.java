@@ -12,7 +12,9 @@ package org.eclipse.incquery.runtime.rete.eval;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -25,8 +27,9 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 
 	public MemorylessEvaluatorNode(ReteContainer reteContainer,
-			ReteEngine<?> engine, AbstractEvaluator evaluator, int tupleWidth) {
-		super(reteContainer, engine, evaluator, tupleWidth);
+			ReteEngine engine, IExpressionEvaluator evaluator,
+            Map<String, Integer> parameterPositions, int tupleWidth) {
+		super(reteContainer, engine, evaluator, parameterPositions, tupleWidth);
 	}
 
 	/* (non-Javadoc)

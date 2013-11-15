@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.rete.util;
 /**
  * Comparing agent for an ordering. Terminology: the "preferred" item will register as LESS.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public abstract class OrderingCompareAgent<T> {

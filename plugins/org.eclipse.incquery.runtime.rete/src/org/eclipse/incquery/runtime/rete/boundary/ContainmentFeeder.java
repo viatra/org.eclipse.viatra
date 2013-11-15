@@ -18,16 +18,9 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
 
 public class ContainmentFeeder extends Feeder {
 
-    /**
-     * @param receiver
-     * @param context
-     * @param network
-     * @param boundary
-     */
-    public ContainmentFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext<?> context,
+    public ContainmentFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
             Network network, ReteBoundary<?> boundary) {
         super(receiver, context, network, boundary);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

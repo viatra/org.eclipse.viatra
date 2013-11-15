@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
@@ -24,18 +24,18 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables.C
 import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class OrderingHeuristics<PatternDescription, StubHandle, Collector> implements Comparator<PConstraint> {
-    private Stub<StubHandle> stub;
+public class OrderingHeuristics implements Comparator<PConstraint> {
+    private SubPlan plan;
 
     /**
-     * @param stub
+     * @param plan
      */
-    public OrderingHeuristics(Stub<StubHandle> stub) {
+    public OrderingHeuristics(SubPlan plan) {
         super();
-        this.stub = stub;
+        this.plan = plan;
     }
 
     /*
@@ -65,18 +65,18 @@ public class OrderingHeuristics<PatternDescription, StubHandle, Collector> imple
     }
 
     boolean isConstant(PConstraint o) {
-        return (o instanceof ConstantValue<?, ?>);
+        return (o instanceof ConstantValue);
     }
 
     boolean isReady(PConstraint o) {
-        return (o instanceof EnumerablePConstraint<?, ?>)
-                || (o instanceof DeferredPConstraint<?, ?> && ((DeferredPConstraint<PatternDescription, StubHandle>) o)
-                        .isReadyAt(stub));
+        return (o instanceof EnumerablePConstraint)
+                || (o instanceof DeferredPConstraint && ((DeferredPConstraint) o)
+                        .isReadyAt(plan));
     }
 
     Set<PVariable> boundVariables(PConstraint o) {
         Set<PVariable> boundVariables = CollectionsFactory.getSet(o.getAffectedVariables());//new HashSet<PVariable>(o.getAffectedVariables());
-        boundVariables.retainAll(stub.getVariablesIndex().keySet());
+        boundVariables.retainAll(plan.getVariablesIndex().keySet());
         return boundVariables;
     }
 

@@ -24,15 +24,9 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  */
 public class JoinNode extends DualInputNode {
 
-    /**
-     * @param reteContainer
-     * @param primarySlot
-     * @param secondarySlot
-     */
     public JoinNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
             TupleMask complementerSecondaryMask) {
         super(reteContainer, primarySlot, secondarySlot, complementerSecondaryMask);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

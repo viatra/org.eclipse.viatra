@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class CodegenRecordingCoordinator<PatternDescription> {
@@ -30,20 +30,20 @@ public class CodegenRecordingCoordinator<PatternDescription> {
     protected static final String collectorPrefix = "production";
 
     public Long nextIdentifier; /**/
-    public String stubType; /**/
+    public String planType; /**/
     public String collectorType; /**/
     public String buildableType; /**/
     Map<PatternDescription, StringBuilder> builderCode; /**/
     // HashMap<PatternDescription, String> collectors; /**/
     // LinkedHashSet<PatternDescription> unbuilt; /**/
-    public IPatternMatcherContext<PatternDescription> targetContext; /**/
+    public IPatternMatcherContext targetContext; /**/
 
-    public CodegenRecordingCoordinator(IPatternMatcherContext<PatternDescription> targetContext, String stubType,
+    public CodegenRecordingCoordinator(IPatternMatcherContext targetContext, String planType,
             String collectorType, String buildableType) {
         super();
         this.targetContext = targetContext;
         this.nextIdentifier = 0L;
-        this.stubType = stubType;
+        this.planType = planType;
         this.collectorType = collectorType;
         this.buildableType = buildableType;
 

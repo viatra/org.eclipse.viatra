@@ -28,7 +28,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * A special node depending on a projection indexer to aggregate tuple groups with the same projection. Only propagates
  * the aggregates of non-empty groups. Use the outer indexers to circumvent.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public abstract class AggregatorNode extends StandardNode {
@@ -167,7 +167,7 @@ public abstract class AggregatorNode extends StandardNode {
      * A special non-iterable index that retrieves the aggregated, packed result (signature+aggregate) for the original
      * signature.
      * 
-     * @author Bergmann Gábor
+     * @author Gabor Bergmann
      */
     class AggregatorOuterIndexer extends StandardIndexer {
         // private Map<Tuple,Tuple> localAggregates;
@@ -225,7 +225,7 @@ public abstract class AggregatorNode extends StandardNode {
      * this index is the original signature of the projection index, with the suspected result inserted at position
      * resultPositionInSignature.
      * 
-     * @author Bergmann Gábor
+     * @author Gabor Bergmann
      */
 
     class AggregatorOuterIdentityIndexer extends StandardIndexer /* implements Receiver */{

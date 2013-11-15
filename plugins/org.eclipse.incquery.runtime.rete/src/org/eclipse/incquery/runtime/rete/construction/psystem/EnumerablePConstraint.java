@@ -13,39 +13,21 @@ package org.eclipse.incquery.runtime.rete.construction.psystem;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
-import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * A constraint for which all satisfying tuples of variable values can be enumerated at any point during run-time.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public abstract class EnumerablePConstraint<PatternDescription, StubHandle> extends
-        BasePConstraint<PatternDescription, StubHandle> {
+public abstract class EnumerablePConstraint extends BasePConstraint {
     protected Tuple variablesTuple;
-    private Stub<StubHandle> stub;
 
-    protected EnumerablePConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple) {
+    protected EnumerablePConstraint(PSystem pSystem, Tuple variablesTuple) {
         super(pSystem, variablesTuple.<PVariable> getDistinctElements());
         this.variablesTuple = variablesTuple;
     }
-
-    public Stub<StubHandle> getStub() throws RetePatternBuildException {
-        if (stub == null) {
-            stub = doCreateStub();
-            stub.addConstraint(this);
-
-            // check for any variable coincidences and enforce them
-            stub = BuildHelper.enforceVariableCoincidences(buildable, stub);
-        }
-        return stub;
-    }
-
-    public abstract Stub<StubHandle> doCreateStub() throws RetePatternBuildException;
 
     @Override
     public void doReplaceVariable(PVariable obsolete, PVariable replacement) {

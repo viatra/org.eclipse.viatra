@@ -17,12 +17,12 @@ import java.util.Collection;
  * Represents all knowledge of the outside world towards the pattern matcher, but without specific run-time or
  * build-time information.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  * @param <PatternDescription>
  *            the type describing a pattern
  */
-public interface IPatternMatcherContext<PatternDescription> {
+public interface IPatternMatcherContext {
 
     /**
      * @return TERNARY if edges have their own identity, BINARY if they are only pairs of source and target
@@ -94,7 +94,7 @@ public interface IPatternMatcherContext<PatternDescription> {
     // boolean checkBelowContainer(Object container, Object contained);
     // boolean checkInContainer(Object container, Object contained);
 
-    void reportPatternDependency(PatternDescription pattern);
+    void reportPatternDependency(Object pattern);
 
     // Logger getLogger();
     void logFatal(String message);
@@ -111,7 +111,7 @@ public interface IPatternMatcherContext<PatternDescription> {
 
     void logDebug(String message);
 
-    String printPattern(PatternDescription pattern);
+    String printPattern(Object pattern);
 
     String printType(Object typeObject);
 

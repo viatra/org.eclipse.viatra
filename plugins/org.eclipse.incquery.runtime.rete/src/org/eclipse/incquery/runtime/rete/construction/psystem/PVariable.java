@@ -16,11 +16,11 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class PVariable {
-    private PSystem<?, ?, ?> pSystem;
+    private PSystem pSystem;
     /**
      * The name of the pattern variable. This is the unique key of the pattern node.
      */
@@ -51,11 +51,11 @@ public class PVariable {
      */
     private PVariable unifiedInto;
 
-    PVariable(PSystem<?, ?, ?> pSystem, Object name) {
+    PVariable(PSystem pSystem, Object name) {
         this(pSystem, name, false);
     }
 
-    PVariable(PSystem<?, ?, ?> pSystem, Object name, boolean virtual) {
+    PVariable(PSystem pSystem, Object name, boolean virtual) {
         super();
         this.pSystem = pSystem;
         this.name = name;

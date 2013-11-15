@@ -15,17 +15,15 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPConstraint;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class ExportedParameter<PatternDescription, StubHandle> extends
-        VariableDeferredPConstraint<PatternDescription, StubHandle> {
+public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
     Object parameterName;
 
@@ -33,7 +31,7 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
      * @param buildable
      * @param parameterVariable
      */
-    public ExportedParameter(PSystem<PatternDescription, StubHandle, ?> pSystem, PVariable parameterVariable,
+    public ExportedParameter(PSystem pSystem, PVariable parameterVariable,
             String parameterName) {
         super(pSystem, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
@@ -73,13 +71,8 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
     }
 
     @Override
-    protected Set<PVariable> getDeferringVariables() {
+    public Set<PVariable> getDeferringVariables() {
         return Collections.singleton(parameterVariable);
-    }
-
-    @Override
-    protected Stub<StubHandle> doCheckOn(Stub<StubHandle> stub) throws RetePatternBuildException {
-        return stub;
     }
 
     @Override
@@ -94,16 +87,6 @@ public class ExportedParameter<PatternDescription, StubHandle> extends
             throw new RetePatternBuildException(msg, args, shortMsg, null);
         }
 
-    }
-
-    @Override
-    public void raiseForeverDeferredError(Stub<StubHandle> stub) throws RetePatternBuildException {
-        String[] args = { parameterName.toString() };
-        String msg = "Pattern Graph Search terminated incompletely: "
-                + "exported pattern variable {1} could not be determined based on the pattern constraints. "
-                + "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
-        String shortMsg = "Could not deduce value of parameter";
-        throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
 
 }

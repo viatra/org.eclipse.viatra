@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.eval;
 
+import java.util.Map;
+
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.rete.tuple.TupleValueProvider;
 
 /**
  * @author Bergmann Gabor
@@ -31,15 +35,17 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 
 	
     protected ReteEngine<?> engine;
-    protected AbstractEvaluator evaluator;    
+    protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
+    private Map<String, Integer> parameterPositions;
     
     
-	public AbstractEvaluatorNode(ReteContainer reteContainer,
-			ReteEngine<?> engine, AbstractEvaluator evaluator, int sourceTupleWidth) {
+    public AbstractEvaluatorNode(ReteContainer reteContainer, ReteEngine<?> engine, IExpressionEvaluator evaluator,
+            Map<String, Integer> parameterPositions, int sourceTupleWidth) {
 		super(reteContainer);
 		this.engine = engine;
 		this.evaluator = evaluator;
+        this.parameterPositions = parameterPositions;
 		this.sourceTupleWidth = sourceTupleWidth;
 	}
 //    protected Map<Tuple, Object> cachedResults = CollectionsFactory.getMap(); 
@@ -61,10 +67,9 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
         // actual evaluation
         Object result = null;
         try {
-            result = evaluator.evaluate(ps);
-        } catch (Throwable e) { // NOPMD
-            if (e instanceof Error)
-                throw (Error) e;
+            TupleValueProvider tupleParameters = new TupleValueProvider(ps, parameterPositions);
+            result = evaluator.evaluateExpression(tupleParameters);
+        } catch (Exception e) {
             engine.getContext()
                     .logWarning(
                             String.format(

@@ -31,6 +31,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider
+import com.google.common.collect.ImmutableList
 
 /**
  * {@link IMatchChecker} implementation inferer.
@@ -98,7 +100,16 @@ class PatternMatchEvaluatorClassInferrer {
 					toList
 				body.variables.filter[valNames.contains(it.name)].sortBy[name]
 			}
-  		checkerClass.members += xExpression.toMethod("evaluateXExpressionGenerated", asWrapperTypeIfPrimitive(type)) [
+		checkerClass.members += xExpression.toField("parameterNames", xExpression.newTypeRef(typeof(ImmutableList), xExpression.newTypeRef(typeof(String)))) [
+			it.setInitializer[append('''
+				ImmutableList.of(
+				«FOR variable : variables SEPARATOR ', '»
+					"«variable.name»"	
+				«ENDFOR»
+				);
+			''')]
+		]
+  		checkerClass.members += xExpression.toMethod("evaluateGeneratedExpression", asWrapperTypeIfPrimitive(type)) [
   			it.visibility = JvmVisibility::PRIVATE
 			for (variable : variables){
 				val parameter = variable.toParameter(variable.name, variable.calculateType)
@@ -110,6 +121,7 @@ class PatternMatchEvaluatorClassInferrer {
 
 		checkerClass.members += xExpression.toMethod("evaluateXExpression", asWrapperTypeIfPrimitive(type)) [
 			it.annotations += pattern.toAnnotation(typeof(Override))
+			it.annotations += pattern.toAnnotation(typeof(Deprecated))
 			it.parameters += pattern.toParameter("tuple", pattern.newTypeRef(typeof (Tuple)))
 			it.parameters += pattern.toParameter("tupleNameMap", pattern.newTypeRef(typeof (Map), pattern.newTypeRef(typeof (String)), pattern.newTypeRef(typeof (Integer))))
 			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
@@ -117,8 +129,40 @@ class PatternMatchEvaluatorClassInferrer {
 				«FOR variable : variables»int «variable.name»Position = tupleNameMap.get("«variable.name»");
 				«variable.calculateType.qualifiedName» «variable.name» = («variable.calculateType.qualifiedName») tuple.get(«variable.name»Position);
 				«ENDFOR»
-				return evaluateXExpressionGenerated(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
+				return evaluateGeneratedExpression(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
 	   		])
+		]
+		
+		checkerClass.members += xExpression.toMethod("evaluateExpression", asWrapperTypeIfPrimitive(type)) [
+			it.annotations += pattern.toAnnotation(typeof(Override))
+			it.parameters += pattern.toParameter("provider", pattern.newTypeRef(typeof (IValueProvider)))
+			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
+			it.setBody([append('''
+				«FOR variable : variables»
+				«variable.calculateType.qualifiedName» «variable.name» = («variable.calculateType.qualifiedName») provider.getValue("«variable.name»");
+				«ENDFOR»
+				return evaluateGeneratedExpression(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);
+			''')
+	   		])
+		]
+		checkerClass.members += xExpression.toMethod("getInputParameterNames", pattern.newTypeRef(typeof(Iterable), pattern.newTypeRef(typeof(String)))) [
+			it.annotations += pattern.toAnnotation(typeof(Override))
+			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
+			it.setBody([append('''
+				return parameterNames;
+			''')
+	   		])
+		]
+		checkerClass.members += xExpression.toMethod("getShortDescription", pattern.newTypeRef(typeof(String))) [
+			it.annotations += pattern.toAnnotation(typeof(Override))
+			it.documentation = pattern.javadocEvaluatorClassWrapperMethod.toString
+			
+			val identifier = checkerClass.identifier
+			
+			it.setBody([append('''
+				return "XExpression «identifier.substring(identifier.length-3, identifier.length)» from Pattern «pattern.name»";
+			''')
+			])
 		]
   	}
 	

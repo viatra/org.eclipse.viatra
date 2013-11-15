@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  * save space. Can only exist in connection with a stateful store, and must be operated by another node (the active
  * node). Do not attach parents directly!
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  */
 public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
 

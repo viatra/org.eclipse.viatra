@@ -14,11 +14,10 @@ package org.eclipse.incquery.runtime.rete.construction.psystem;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, StubHandle> extends
-        EnumerablePConstraint<PatternDescription, StubHandle> {
+public abstract class KeyedEnumerablePConstraint<KeyType> extends EnumerablePConstraint {
 
     protected KeyType supplierKey;
 
@@ -27,7 +26,7 @@ public abstract class KeyedEnumerablePConstraint<KeyType, PatternDescription, St
      * @param buildable
      * @param supplierKey
      */
-    public KeyedEnumerablePConstraint(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple variablesTuple,
+    public KeyedEnumerablePConstraint(PSystem pSystem, Tuple variablesTuple,
             KeyType supplierKey) {
         super(pSystem, variablesTuple);
         this.supplierKey = supplierKey;

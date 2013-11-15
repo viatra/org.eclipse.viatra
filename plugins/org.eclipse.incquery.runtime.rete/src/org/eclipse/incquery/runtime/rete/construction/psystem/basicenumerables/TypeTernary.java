@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.Stub;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -27,12 +26,12 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
-public class TypeTernary<PatternDescription, StubHandle> extends
-        KeyedEnumerablePConstraint<Object, PatternDescription, StubHandle> implements ITypeInfoProviderConstraint {
-    private final IPatternMatcherContext<PatternDescription> context;
+public class TypeTernary extends
+        KeyedEnumerablePConstraint<Object> implements ITypeInfoProviderConstraint {
+    private final IPatternMatcherContext context;
     private PVariable edge; private PVariable source; private PVariable target;
     /**
      * @param buildable
@@ -40,19 +39,14 @@ public class TypeTernary<PatternDescription, StubHandle> extends
      * @param supplierKey
      *            type info
      */
-    public TypeTernary(PSystem<PatternDescription, StubHandle, ?> pSystem,
-            IPatternMatcherContext<PatternDescription> context, PVariable edge, PVariable source, PVariable target,
+    public TypeTernary(PSystem pSystem,
+            IPatternMatcherContext context, PVariable edge, PVariable source, PVariable target,
             Object supplierKey) {
         super(pSystem, new FlatTuple(edge, source, target), supplierKey);
         this.edge = edge;
         this.source = source;
         this.target = target;
         this.context = context;
-    }
-
-    @Override
-    public Stub<StubHandle> doCreateStub() {
-        return buildable.ternaryEdgeTypeStub(variablesTuple, supplierKey);
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -27,8 +28,9 @@ import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {
 	
 	public OutputCachingEvaluatorNode(ReteContainer reteContainer,
-			ReteEngine<?> engine, AbstractEvaluator evaluator, int sourceTupleWidth) {
-		super(reteContainer, engine, evaluator, sourceTupleWidth);
+			ReteEngine engine, IExpressionEvaluator evaluator,
+            Map<String, Integer> parameterPositions, int sourceTupleWidth) {
+		super(reteContainer, engine, evaluator, parameterPositions, sourceTupleWidth);
 		reteContainer.registerClearable(this);
 	}
 

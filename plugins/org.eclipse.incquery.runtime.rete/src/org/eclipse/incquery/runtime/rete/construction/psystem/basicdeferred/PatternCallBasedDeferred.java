@@ -15,8 +15,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -25,13 +26,10 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPC
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
- * @param <PatternDescription>
- * @param <StubHandle>
  */
-public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> extends
-        VariableDeferredPConstraint<PatternDescription, StubHandle> {
+public abstract class PatternCallBasedDeferred extends VariableDeferredPConstraint {
 
     protected Tuple actualParametersTuple;
 
@@ -39,22 +37,18 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
 
     protected abstract Set<PVariable> getCandidateQuantifiedVariables();
 
-    protected PatternDescription pattern;
+    protected Object pattern;
     private Set<PVariable> deferringVariables;
 
-    /**
-     * @param buildable
-     * @param additionalAffectedVariables
-     */
-    public PatternCallBasedDeferred(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple actualParametersTuple,
-            PatternDescription pattern, Set<PVariable> additionalAffectedVariables) {
+    public PatternCallBasedDeferred(PSystem pSystem, Tuple actualParametersTuple,
+            Object pattern, Set<PVariable> additionalAffectedVariables) {
         super(pSystem, union(actualParametersTuple.<PVariable> getDistinctElements(), additionalAffectedVariables));
         this.actualParametersTuple = actualParametersTuple;
         this.pattern = pattern;
     }
 
-    public PatternCallBasedDeferred(PSystem<PatternDescription, StubHandle, ?> pSystem, Tuple actualParametersTuple,
-            PatternDescription pattern) {
+    public PatternCallBasedDeferred(PSystem pSystem, Tuple actualParametersTuple,
+            Object pattern) {
         this(pSystem, actualParametersTuple, pattern, Collections.<PVariable> emptySet());
     }
 
@@ -66,7 +60,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
     }
 
     @Override
-    protected Set<PVariable> getDeferringVariables() {
+    public Set<PVariable> getDeferringVariables() {
         if (deferringVariables == null) {
             deferringVariables = CollectionsFactory.getSet();//new HashSet<PVariable>();
             for (PVariable var : getCandidateQuantifiedVariables()) {
@@ -86,7 +80,7 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
                 // so this is a free variable of the NAC / aggregation?
                 for (PConstraint pConstraint : var.getReferringConstraints()) {
                     if (pConstraint != this
-                            && !(pConstraint instanceof Equality<?, ?> && ((Equality<?, ?>) pConstraint).isMoot()))
+                            && !(pConstraint instanceof Equality && ((Equality) pConstraint).isMoot()))
                         throw new RetePatternBuildException(
                                 "Variable {1} of constraint {2} is not a positively determined part of the pattern, yet it is also affected by {3}.",
                                 new String[] { var.toString(), this.toString(), pConstraint.toString() },
@@ -97,24 +91,10 @@ public abstract class PatternCallBasedDeferred<PatternDescription, StubHandle> e
 
     }
 
-    /**
-     * @param stub
-     * @param sideStub
-     * @return
-     */
-    protected BuildHelper.JoinHelper<StubHandle> getJoinHelper(Stub<StubHandle> stub, Stub<StubHandle> sideStub) {
-        BuildHelper.JoinHelper<StubHandle> joinHelper = new BuildHelper.JoinHelper<StubHandle>(stub, sideStub);
-        return joinHelper;
-    }
-
-    /**
-     * @return
-     * @throws RetePatternBuildException
-     */
-    protected Stub<StubHandle> getSideStub() throws RetePatternBuildException {
-        Stub<StubHandle> sideStub = buildable.patternCallStub(actualParametersTuple, pattern);
-        sideStub = BuildHelper.enforceVariableCoincidences(buildable, sideStub);
-        return sideStub;
+    public SubPlan getSidePlan(IOperationCompiler<?, ?> compiler) throws RetePatternBuildException {
+        SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, pattern);
+        sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
+        return sidePlan;
     }
 
     @Override

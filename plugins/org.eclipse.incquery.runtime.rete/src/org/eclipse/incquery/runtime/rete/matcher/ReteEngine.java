@@ -29,7 +29,6 @@ import org.eclipse.incquery.runtime.rete.network.Library;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
@@ -43,7 +42,7 @@ public class ReteEngine<PatternDescription> {
     protected final int reteThreads;
     protected ReteBoundary<PatternDescription> boundary;
 
-    protected IPatternMatcherRuntimeContext<PatternDescription> context;
+    protected IPatternMatcherRuntimeContext context;
 
     protected Collection<Disconnectable> disconnectables;
     protected IManipulationListener manipulationListener;
@@ -54,7 +53,7 @@ public class ReteEngine<PatternDescription> {
     // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
     // matcher
 
-    protected IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder;
+    protected IRetePatternBuilder<PatternDescription, Address<? extends Receiver>> builder;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
     
@@ -71,7 +70,7 @@ public class ReteEngine<PatternDescription> {
      *            the number of threads to operate the RETE network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public ReteEngine(IPatternMatcherRuntimeContext<PatternDescription> context, int reteThreads) {
+    public ReteEngine(IPatternMatcherRuntimeContext context, int reteThreads) {
         super();
         this.context = context;
         this.reteThreads = reteThreads;
@@ -92,7 +91,7 @@ public class ReteEngine<PatternDescription> {
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
         this.reteNet = new Network(reteThreads, context);
-        this.boundary = new ReteBoundary<PatternDescription>(this); // prerequisite: network
+        this.boundary = new ReteBoundary(this); // prerequisite: network
 
         this.matchers = //new HashMap<PatternDescription, RetePatternMatcher>();
                 CollectionsFactory.getMap();
@@ -386,7 +385,7 @@ public class ReteEngine<PatternDescription> {
     /**
      * @return the boundary
      */
-    public ReteBoundary<PatternDescription> getBoundary() {
+    public ReteBoundary getBoundary() {
     	ensureInitialized();
         return boundary;
     }
@@ -403,7 +402,7 @@ public class ReteEngine<PatternDescription> {
      *            the pattern matcher builder to set
      */
     public void setBuilder(
-            IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> builder) {
+            IRetePatternBuilder<PatternDescription, Address<? extends Receiver>> builder) {
     	ensureInitialized();
         this.builder = builder;
     }
@@ -443,12 +442,12 @@ public class ReteEngine<PatternDescription> {
     /**
      * @return the context
      */
-    public IPatternMatcherRuntimeContext<PatternDescription> getContext() {
+    public IPatternMatcherRuntimeContext getContext() {
     	ensureInitialized();
         return context;
     }
 
-    public IRetePatternBuilder<PatternDescription, Address<? extends Supplier>, Address<? extends Receiver>> getBuilder() {
+    public IRetePatternBuilder<?, Address<? extends Receiver>> getBuilder() {
     	ensureInitialized();
        return builder;
     }

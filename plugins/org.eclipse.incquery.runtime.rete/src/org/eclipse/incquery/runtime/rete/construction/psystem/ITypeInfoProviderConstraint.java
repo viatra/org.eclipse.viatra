@@ -12,7 +12,7 @@
 package org.eclipse.incquery.runtime.rete.construction.psystem;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public interface ITypeInfoProviderConstraint {

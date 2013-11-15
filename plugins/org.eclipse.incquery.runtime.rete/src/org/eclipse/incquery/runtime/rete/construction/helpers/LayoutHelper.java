@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.Stub;
+import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
 import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables.T
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class LayoutHelper {
@@ -37,10 +37,9 @@ public class LayoutHelper {
      * 
      * @param pSystem
      */
-    public static <PatternDescription, StubHandle, Collector> void unifyVariablesAlongEqualities(
-            PSystem<PatternDescription, StubHandle, Collector> pSystem) {
+	public static void unifyVariablesAlongEqualities(PSystem pSystem) {
         Set<Equality> equals = pSystem.getConstraintsOfType(Equality.class);
-        for (Equality<PatternDescription, StubHandle> equality : equals) {
+        for (Equality equality : equals) {
             if (!equality.isMoot()) {
                 equality.getWho().unifyInto(equality.getWithWhom());
             }
@@ -53,8 +52,7 @@ public class LayoutHelper {
      * 
      * @param pSystem
      */
-    public static <PatternDescription, StubHandle, Collector> void eliminateWeakInequalities(
-            PSystem<PatternDescription, StubHandle, Collector> pSystem) {
+	public static void eliminateWeakInequalities(PSystem pSystem) {
         for (Inequality inequality : pSystem.getConstraintsOfType(Inequality.class))
             inequality.eliminateWeak();
     }
@@ -62,11 +60,10 @@ public class LayoutHelper {
     /**
      * Eliminates all unary type constraints that are inferrable from other constraints.
      */
-    public static <PatternDescription, StubHandle, Collector> void eliminateInferrableUnaryTypes(
-            final PSystem<PatternDescription, StubHandle, Collector> pSystem,
-            IPatternMatcherContext<PatternDescription> context) {
+	public static void eliminateInferrableUnaryTypes(final PSystem pSystem,
+			IPatternMatcherContext context) {
         Set<TypeUnary> constraintsOfType = pSystem.getConstraintsOfType(TypeUnary.class);
-        for (TypeUnary<PatternDescription, StubHandle> typeUnary : constraintsOfType) {
+        for (TypeUnary typeUnary : constraintsOfType) {
             PVariable var = (PVariable) typeUnary.getVariablesTuple().get(0);
             Object expressedType = typeUnary.getTypeInfo(var);
             Set<ITypeInfoProviderConstraint> typeRestrictors = var
@@ -91,25 +88,22 @@ public class LayoutHelper {
      * @param pSystem
      * @throws RetePatternBuildException
      */
-    public static <PatternDescription, StubHandle, Collector> void checkSanity(
-            PSystem<PatternDescription, StubHandle, Collector> pSystem) throws RetePatternBuildException {
+	public static void checkSanity(PSystem pSystem)
+			throws RetePatternBuildException {
         for (PConstraint pConstraint : pSystem.getConstraints())
             pConstraint.checkSanity();
     }
 
     /**
-     * Finds an arbitrary constraint that is not enforced at the given stub.
+     * Finds an arbitrary constraint that is not enforced at the given plan.
      * 
-     * @param <PatternDescription>
-     * @param <StubHandle>
-     * @param <Collector>
      * @param pSystem
-     * @param stub
+     * @param plan
      * @return a PConstraint that is not enforced, if any, or null if all are enforced
      */
-    public static <PatternDescription, StubHandle, Collector> PConstraint getAnyUnenforcedConstraint(
-            PSystem<PatternDescription, StubHandle, Collector> pSystem, Stub<StubHandle> stub) {
-        Set<PConstraint> allEnforcedConstraints = stub.getAllEnforcedConstraints();
+	public static PConstraint getAnyUnenforcedConstraint(PSystem pSystem,
+			SubPlan plan) {
+        Set<PConstraint> allEnforcedConstraints = plan.getAllEnforcedConstraints();
         Set<PConstraint> constraints = pSystem.getConstraints();
         for (PConstraint pConstraint : constraints) {
             if (!allEnforcedConstraints.contains(pConstraint))
@@ -122,22 +116,21 @@ public class LayoutHelper {
      * Verifies whether all constraints are enforced and exported parameters are present.
      * 
      * @param pSystem
-     * @param stub
+     * @param plan
      * @throws RetePatternBuildException
      */
-    public static <PatternDescription, StubHandle, Collector> void finalCheck(
-            final PSystem<PatternDescription, StubHandle, Collector> pSystem, Stub<StubHandle> stub)
-            throws RetePatternBuildException {
-        PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, stub);
+	public static void finalCheck(final PSystem pSystem, SubPlan plan)
+			throws RetePatternBuildException {
+        PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, plan);
         if (unenforcedConstraint != null) {
             throw new RetePatternBuildException(
                     "Pattern matcher construction terminated without successfully enforcing constraint {1}."
                             + " Could be caused if the value of some variables can not be deduced, e.g. by circularity of pattern constraints.",
                     new String[] { unenforcedConstraint.toString() }, "Could not enforce a pattern constraint", null);
         }
-        for (ExportedParameter<PatternDescription, StubHandle> export : pSystem
+        for (ExportedParameter export : pSystem
                 .getConstraintsOfType(ExportedParameter.class)) {
-            if (!export.isReadyAt(stub)) {
+            if (!export.isReadyAt(plan)) {
                 throw new RetePatternBuildException(
                         "Exported pattern parameter {1} could not be deduced during pattern matcher construction."
                                 + " A pattern constraint is required to positively deduce its value.",

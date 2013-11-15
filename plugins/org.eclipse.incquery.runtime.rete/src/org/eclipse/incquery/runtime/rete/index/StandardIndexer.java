@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 /**
  * An abstract standard implementation of the Indexer interface, providing common bookkeeping functionality.
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public abstract class StandardIndexer extends BaseNode implements Indexer {
