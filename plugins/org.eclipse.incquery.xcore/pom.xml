@@ -49,6 +49,12 @@
 				<configuration>
 					<workflowEngine>mwe2</workflowEngine>
 					<workflowDescriptor>src/org/eclipse/incquery/xcore/GenerateIncQueryXcore.mwe2</workflowDescriptor>
+					<jvmSettings>
+						<fork>true</fork>
+						<jvmArgs>
+							<jvmArg>-Xmx1024m</jvmArg>
+						</jvmArgs>
+					</jvmSettings>
 				</configuration>
 				<executions>
 					<execution>

@@ -26,7 +26,7 @@ Workflow {
     	registerGeneratedEPackage = "org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage"
     	registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/src-gen/org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel"
     	registerGeneratedEPackage = "org.eclipse.incquery.xcore.model.XcorePackage"
-		registerGenModelFile = "platform:/resource/org.eclipse.incquery.xcore/model/IncQueryXcore.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.incquery.xcore.model/model/IncQueryXcore.genmodel"
     	registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"

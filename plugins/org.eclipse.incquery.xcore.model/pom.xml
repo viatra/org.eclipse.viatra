@@ -11,7 +11,7 @@
 	</parent>
 	<artifactId>org.eclipse.incquery.xcore.model</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<build>
+	<!--<build>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
@@ -20,7 +20,6 @@
 				<configuration>
 					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile generate-emf.xml</appArgLine>
 					<dependencies>
-						<!-- list of bundles that we need -->
 						<dependency>
 							<artifactId>org.eclipse.ant.core</artifactId>
 							<type>eclipse-plugin</type>
@@ -61,5 +60,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 </project>
