@@ -14,7 +14,8 @@ package org.eclipse.incquery.runtime.rete.tuple;
 import java.util.Arrays;
 
 /**
- * @author Gabor Bergmann Default Tuple implementation
+ * Default Tuple implementation
+ * @author Gabor Bergmann 
  */
 public class FlatTuple extends Tuple {
 
@@ -29,47 +30,8 @@ public class FlatTuple extends Tuple {
      * @param elements
      *            array of substitution values
      */
-    public FlatTuple(Object[] elements) {
-        this.elements = elements;
-        calcHash();
-    }
-
-    /**
-     * Creates a Tuple instance of size one, fills it with the given object.
-     * 
-     * @pre: o!=null
-     * 
-     * @param o
-     *            the single substitution
-     */
-    public FlatTuple(Object o) {
-        elements = new Object[1];
-        elements[0] = o;
-        calcHash();
-    }
-
-    /**
-     * Creates a Tuple instance of size two, fills it with the given objects.
-     * 
-     * @pre: o1!=null, o2!=null
-     */
-    public FlatTuple(Object o1, Object o2) {
-        elements = new Object[2];
-        elements[0] = o1;
-        elements[1] = o2;
-        calcHash();
-    }
-
-    /**
-     * Creates a Tuple instance of size three, fills it with the given objects.
-     * 
-     * @pre: o1!=null, o2!=null, o3!=null
-     */
-    public FlatTuple(Object o1, Object o2, Object o3) {
-        elements = new Object[3];
-        elements[0] = o1;
-        elements[1] = o2;
-        elements[2] = o3;
+    public FlatTuple(Object... elements) {
+        this.elements = Arrays.copyOf(elements, elements.length);
         calcHash();
     }
 
