@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 
 /**
  * @author Bergmann Gábor
@@ -39,11 +40,38 @@ import org.eclipse.emf.ecore.util.FeatureMap.Entry;
  */
 public class EMFModelComprehension {
 
+    private BaseIndexOptions options;
+    
+    /**
+     * Creates a model comprehension with the specified options. The options are copied, therefore subsequent changes
+     * will not affect the comprehension.
+     */
+    public EMFModelComprehension(BaseIndexOptions options) {
+        this.options = options.copy();
+    }
+    
     /**
      * Should not traverse this feature directly. It is still possible that it can be represented in IQBase if
      * {@link #representable(EStructuralFeature)} is true.
      */
-    public static boolean untraversableDirectly(EStructuralFeature feature) {
+    public boolean untraversableDirectly(EStructuralFeature feature) {
+        boolean suspect = onlySamplingFeature(feature);
+        if(!suspect) {
+            // even if the feature can only be sampled, it may be used if the proper base index option is set
+            suspect = options.isTraverseOnlyWellBehavingDerivedFeatures();
+        }
+        return suspect;
+    }
+
+    /**
+     * Decides whether a feature can only be sampled as there is no guarantee that proper notifications will be
+     * delivered by their implementation.
+     * 
+     * <p/> Such features are derived (and/or volatile) features that are not well-behaving and container references.
+     * 
+     * TODO should we always ignore container references? 
+     */
+    public boolean onlySamplingFeature(EStructuralFeature feature) {
         boolean suspect = 
         		feature.isDerived() || 
         		feature.isVolatile() || 
@@ -62,7 +90,7 @@ public class EMFModelComprehension {
     /**
      * This feature can be represented in IQBase.
      */
-    public static boolean representable(EStructuralFeature feature) {
+    public boolean representable(EStructuralFeature feature) {
         if (!untraversableDirectly(feature))
             return true;
 
@@ -88,7 +116,7 @@ public class EMFModelComprehension {
         return false;
     }
 
-    public static void traverseModel(EMFVisitor visitor, Notifier source) {
+    public void traverseModel(EMFVisitor visitor, Notifier source) {
         if (source == null)
             return;
         if (source instanceof EObject) {
@@ -100,7 +128,7 @@ public class EMFModelComprehension {
         }
     }
 
-    public static void traverseResourceSet(EMFVisitor visitor, ResourceSet source) {
+    public void traverseResourceSet(EMFVisitor visitor, ResourceSet source) {
         if (source == null)
             return;
         final List<Resource> resources = new ArrayList<Resource>(source.getResources());
@@ -109,7 +137,7 @@ public class EMFModelComprehension {
         }
     }
 
-    public static void traverseResource(EMFVisitor visitor, Resource source) {
+    public void traverseResource(EMFVisitor visitor, Resource source) {
         if (source == null)
             return;
         if (visitor.pruneSubtrees(source))
@@ -120,7 +148,7 @@ public class EMFModelComprehension {
         }
     }
 
-    public static void traverseObject(EMFVisitor visitor, EObject source) {
+    public void traverseObject(EMFVisitor visitor, EObject source) {
         if (source == null)
             return;
         if (source.eIsProxy()) {
@@ -154,14 +182,14 @@ public class EMFModelComprehension {
         if (!visitor.preOrder()) visitor.visitElement(source);
     }
 
-    private static boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {
+    private boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {
         return (feature instanceof EAttribute && EcorePackage.eINSTANCE.getEFeatureMapEntry().equals(
                 ((EAttribute) feature).getEAttributeType()))
                 || (feature instanceof EReference && ((EReference) feature).isContainment() && (!visitor
                         .pruneSubtrees(source) || ((EReference) feature).getEOpposite() != null));
     }
 
-    public static void traverseFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) {
+    public void traverseFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) {
         if (target == null)
             return;
         if (untraversableDirectly(feature))
@@ -169,7 +197,7 @@ public class EMFModelComprehension {
         traverseFeatureInternalSimple(visitor, source, feature, target);
     }
 
-    private static void traverseFeatureInternalSimple(EMFVisitor visitor, EObject source, EStructuralFeature feature,
+    private void traverseFeatureInternalSimple(EMFVisitor visitor, EObject source, EStructuralFeature feature,
             Object target) {
         final boolean visitorPrunes = visitor.pruneFeature(feature);
         if (visitorPrunes && !unprunableFeature(visitor, source, feature))
@@ -181,7 +209,7 @@ public class EMFModelComprehension {
     /**
      * @pre target != null
      */
-    private static void traverseFeatureInternal(EMFVisitor visitor, EObject source, EStructuralFeature feature,
+    private void traverseFeatureInternal(EMFVisitor visitor, EObject source, EStructuralFeature feature,
             Object target, boolean visitorPrunes) {
         if (feature instanceof EAttribute) {
             if (!visitorPrunes)
@@ -230,7 +258,7 @@ public class EMFModelComprehension {
      * 
      * @pre target != null
      */
-    private static void emulateUntraversableFeature(EMFVisitor visitor, EObject source,
+    private void emulateUntraversableFeature(EMFVisitor visitor, EObject source,
             final EStructuralFeature emulated, final Object target) {
         if (untraversableDirectly(emulated))
             traverseFeatureInternalSimple(visitor, source, emulated, target);

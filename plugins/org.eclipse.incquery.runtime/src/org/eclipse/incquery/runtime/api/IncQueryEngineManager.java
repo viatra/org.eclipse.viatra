@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
@@ -89,7 +90,7 @@ public class IncQueryEngineManager {
     public IncQueryEngine getIncQueryEngine(Notifier emfRoot) throws IncQueryException {
     	IncQueryEngineImpl engine = getEngineInternal(emfRoot);
         if (engine == null) {
-            engine = new IncQueryEngineImpl(this, emfRoot, IncQueryEngine.WILDCARD_MODE_DEFAULT, IncQueryEngine.DYNAMIC_EMF_MODE_DEFAULT);
+            engine = new IncQueryEngineImpl(this, emfRoot, new BaseIndexOptions());
             engines.put(emfRoot, new WeakReference<IncQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }

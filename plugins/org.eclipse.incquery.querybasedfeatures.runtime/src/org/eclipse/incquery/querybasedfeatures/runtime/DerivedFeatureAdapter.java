@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
@@ -50,6 +51,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     private Object currentValue;
     private Object oldValue;
     private EClassifier type;
+    private EMFModelComprehension comprehension;
 
     private final List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
     private final List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();
@@ -60,6 +62,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
             EStructuralFeature navigationFeature, EStructuralFeature dependantFeature, EStructuralFeature localFeature) {
         this(source, derivedFeature);
+        comprehension = new EMFModelComprehension(new BaseIndexOptions());
         addNavigatedDependencyInternal(navigationFeature, dependantFeature);
         addLocalDependencyInternal(localFeature);
     }
@@ -206,7 +209,8 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     // }
                     Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
                     for (Object target : targets) {
-                        EMFModelComprehension.traverseFeature(visitor, source, derivedFeature, target);
+                        
+                        comprehension.traverseFeature(visitor, source, derivedFeature, target);
                     }
                     if (currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
                         ((Collection<?>) oldValue).removeAll((Collection<?>) currentValue);
@@ -216,7 +220,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     }
                 } else {
                     Object target = source.eGet(derivedFeature);
-                    EMFModelComprehension.traverseFeature(visitor, source, derivedFeature, target);
+                    comprehension.traverseFeature(visitor, source, derivedFeature, target);
                 }
             }
         } catch (Exception ex) {

@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
@@ -107,6 +108,10 @@ public class NavigationHelperImpl implements NavigationHelper {
     private Table<Object, FeatureListener, Set<EStructuralFeature>> featureListeners;
     private Table<Object, DataTypeListener, Set<EDataType>> dataTypeListeners;
 
+    private final BaseIndexOptions baseIndexOptions;
+
+    private EMFModelComprehension comprehension;
+
     <T> Set<T> setMinus(Collection<T> a, Collection<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
@@ -145,40 +150,52 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public boolean isInWildcardMode() {
-        return inWildcardMode;
-    }
-    @Override
-    public boolean isInDynamicEMFMode() {
-    	return contentAdapter.isDynamicModel();
+        return baseIndexOptions.isWildcardMode();
     }
     
-    public NavigationHelperImpl(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger) throws IncQueryBaseException {
+    @Override
+    public boolean isInDynamicEMFMode() {
+    	return baseIndexOptions.isDynamicEMFMode();
+    }
+    
+    /**
+     * @return the baseIndexOptions
+     */
+    public BaseIndexOptions getBaseIndexOptions() {
+        return baseIndexOptions.copy();
+    }
+    
+    /**
+     * @return the comprehension
+     */
+    public EMFModelComprehension getComprehension() {
+        return comprehension;
+    }
+    
+    public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) throws IncQueryBaseException {
+        this.baseIndexOptions = options.copy();
         this.logger = logger;
         assert (logger != null);
-
+        
+        this.comprehension = new EMFModelComprehension(baseIndexOptions);
         this.subscribedInstanceListeners = new HashMap<InstanceListener, Set<EClass>>();
         this.subscribedFeatureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
         this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
         this.observedFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashSet<Object>();
-        this.contentAdapter = new NavigationHelperContentAdapter(this, dynamicModel);
-        // this.visitor = new NavigationHelperVisitor(this);
-        //this.afterUpdateCallbacks = new HashSet<Runnable>();
+        this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
 
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
-        this.inWildcardMode = wildcardMode;
         
-        // if (this.navigationHelperType == NavigationHelperType.ALL) {
-        // visitor.visitModel(notifier, observedFeatures, observedClasses, observedDataTypes);
-        // }
         if (emfRoot != null) {
             addRootInternal(emfRoot);
         }
     }
+    
 
     public NavigationHelperContentAdapter getContentAdapter() {
         return contentAdapter;
@@ -187,10 +204,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Set<Object> getObservedFeaturesInternal() {
         return observedFeatures;
     }
-
-    // public NavigationHelperVisitor getVisitor() {
-    // return visitor;
-    // }
 
     @Override
     public void dispose() {
@@ -218,16 +231,22 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         for (Entry<Object, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject holder : entry.getValue()) {
-                if (contentAdapter.isDynamicModel()) {
-                    retSet.add(new NavigationHelperSetting(contentAdapter.getKnownFeature((String) entry.getKey()), holder, value));
-                }
-                else {
-                    retSet.add(new NavigationHelperSetting((EStructuralFeature) entry.getKey(), holder, value));
-                }
+                EStructuralFeature feature = getKnownFeature(entry.getKey());
+                retSet.add(new NavigationHelperSetting(feature, holder, value));
             }
         }
 
         return retSet;
+    }
+
+    private EStructuralFeature getKnownFeature(Object featureKey) {
+        EStructuralFeature feature;
+        if (contentAdapter.isDynamicModel()) {
+            feature = contentAdapter.getKnownFeature((String) featureKey);
+        } else {
+            feature = (EStructuralFeature) featureKey;
+        }
+        return feature;
     }
 
     @Override
@@ -268,23 +287,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    // @Override
-    // public Collection<Setting> findAllAttributeValuesByType(Class<?> clazz) {
-    // Set<Setting> retSet = new HashSet<Setting>();
-    //
-    // for (Object value : contentAdapter.featureMap.keySet()) {
-    // if (value.getClass().equals(clazz)) {
-    // for (EStructuralFeature attr : contentAdapter.featureMap.get(value).keySet()) {
-    // for (EObject holder : contentAdapter.featureMap.get(value).get(attr)) {
-    // retSet.add(new NavigationHelperSetting(attr, holder, value));
-    // }
-    // }
-    // }
-    // }
-    //
-    // return retSet;
-    // }
-
     @Override
     public Set<Setting> getInverseReferences(EObject target) {
         Set<Setting> retSet = new HashSet<Setting>();
@@ -292,12 +294,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         for (Entry<Object, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject source : entry.getValue()) {
-                if (contentAdapter.isDynamicModel()) {
-                    retSet.add(new NavigationHelperSetting(contentAdapter.getKnownFeature((String) entry.getKey()), source, target));
-                }
-                else {
-                    retSet.add(new NavigationHelperSetting((EStructuralFeature) entry.getKey(), source, target));
-                }
+                EStructuralFeature feature = getKnownFeature(entry.getKey());
+                retSet.add(new NavigationHelperSetting(feature, source, target));
             }
         }
 
@@ -554,17 +552,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     /**
-     * These runnables will be called after updates by the manipulationListener at its own discretion. Can be used e.g.
-     * to check delta monitors.
-     * 
-     * @deprecated use {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)} instead! 
-     */
-//    @Override
-//    public Set<Runnable> getAfterUpdateCallbacks() {
-//        return afterUpdateCallbacks;
-//    }
-
-    /**
      * This will run after updates.
      */
     protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
@@ -627,9 +614,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         return directlyObservedClasses;
     }
 
-//    public boolean isObserved(EClass clazz) {
-//  return inWildcardMode || getAllObservedClassesInternal().contains(clazz);
-//}
     boolean isObservedInternal(Object clazzKey) {      
     	return inWildcardMode || getAllObservedClassesInternal().contains(clazzKey);
     }  
@@ -650,9 +634,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return allObservedClasses;
     }
-    
-    
-    
     
     /**
 	 * @return the instanceListeners
@@ -687,7 +668,6 @@ public class NavigationHelperImpl implements NavigationHelper {
 		}
 		subscriptionTypes.add(subscriptionType);
 	}
-
 
 	/**
 	 * @return the featureListeners
@@ -991,7 +971,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     private void traverse(final NavigationHelperVisitor visitor) {
         for (Notifier root : modelRoots) {
-            EMFModelComprehension.traverseModel(visitor, root);
+            comprehension.traverseModel(visitor, root);
         }
         contentAdapter.notifyBaseIndexChangeListeners();
     }
@@ -1088,6 +1068,5 @@ public class NavigationHelperImpl implements NavigationHelper {
     	if (!(baseIndexChangeListeners.isEmpty() && subscribedFeatureListeners.isEmpty() && subscribedDataTypeListeners.isEmpty() && subscribedInstanceListeners.isEmpty()))
     		throw new IllegalStateException("Cannot dispose while there are active listeners");
     }
-
 
 }

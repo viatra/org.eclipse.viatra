@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
  */
 public abstract class GenericPatternMatch extends BasePatternMatch {
 
+    // TODO should not have reference to matcher, use query specification instead (see #423279)
     private final GenericPatternMatcher matcher;
     private final Object[] array;
 

@@ -56,6 +56,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.Strings;
@@ -691,7 +692,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 .getAllFeaturesFromPathExpressionTail(pathExpressionHead.getTail());
         for (Entry<PathExpressionTail, EStructuralFeature> tail : tailFeatureMap.entrySet()) {
             EStructuralFeature feature = tail.getValue();
-            if (!EMFModelComprehension.representable(feature)) {
+            EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
+            if (!comprehension.representable(feature)) {
                 warning("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
                         + " used in the path expression is not representable in EMF-IncQuery."

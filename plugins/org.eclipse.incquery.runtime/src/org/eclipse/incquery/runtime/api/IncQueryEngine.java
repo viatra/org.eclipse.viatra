@@ -136,16 +136,4 @@ public abstract class IncQueryEngine {
      */
 	public abstract Logger getLogger();
 
-
-	/**
-	 * By default, engines will be constructed with wildcard mode set as false. 
-	 * Use {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier, boolean, boolean))} to override.
-	 */
-    protected static final boolean WILDCARD_MODE_DEFAULT = false; 
-	/**
-	 * By default, engines will be constructed with dynamic EMF mode set as false. 
-	 * Use {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier, boolean, boolean))} to override.
-	 */
-    protected static final boolean DYNAMIC_EMF_MODE_DEFAULT = false; 
-
 }

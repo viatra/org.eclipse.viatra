@@ -79,9 +79,8 @@ public class IncQueryBaseFactory {
      */
     public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, Logger logger)
             throws IncQueryBaseException {
-        if (logger == null)
-            logger = Logger.getLogger(NavigationHelper.class);
-        return new NavigationHelperImpl(emfRoot, wildcardMode, false, logger);
+        BaseIndexOptions options = new BaseIndexOptions(false, wildcardMode);
+        return createNavigationHelper(emfRoot, options, logger);
     }
     
     /**
@@ -114,10 +113,36 @@ public class IncQueryBaseFactory {
      */
     public NavigationHelper createNavigationHelper(Notifier emfRoot, boolean wildcardMode, boolean dynamicModel, Logger logger)
             throws IncQueryBaseException {
-        if (logger == null)
-            logger = Logger.getLogger(NavigationHelper.class);
-        return new NavigationHelperImpl(emfRoot, wildcardMode, dynamicModel, logger);
+        BaseIndexOptions options = new BaseIndexOptions(dynamicModel, wildcardMode);
+        return createNavigationHelper(emfRoot, options, logger);
     }
+    
+    /**
+     * The method creates a {@link NavigationHelper} index for the given EMF model root.
+     * A new instance will be created on every call.
+     * <p>
+     * For details of base index options including wildcard and dynamic EMF mode, see {@link BaseIndexOptions}.
+     *
+     * @see NavigationHelper
+     * 
+     * @param emfRoot
+     *            the root of the EMF tree to be indexed. Recommended: Resource or ResourceSet. Can be null - you can
+     *            add a root later using {@link NavigationHelper#addRoot(Notifier)}
+     * @param options the options used by the index 
+     * @param logger
+     *            the log output where errors will be logged if encountered during the operation of the
+     *            NavigationHelper; if null, the default logger for {@link NavigationHelper} is used.
+     * @return the NavigationHelper instance
+     */
+    public NavigationHelper createNavigationHelper(Notifier emfRoot, BaseIndexOptions options, Logger logger)
+            throws IncQueryBaseException {
+        Logger l = logger;
+        if (l == null)
+            l = Logger.getLogger(NavigationHelper.class);
+        return new NavigationHelperImpl(emfRoot, options, l);
+    }
+    
+    
 
     /**
      * The method creates a TransitiveClosureHelper instance for the given EMF model root.

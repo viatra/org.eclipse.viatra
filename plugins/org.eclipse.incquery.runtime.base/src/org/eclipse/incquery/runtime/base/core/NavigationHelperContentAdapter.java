@@ -114,11 +114,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // Set<EObject> ignoreRootInsertion = new HashSet<EObject>();
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
+    private final EMFModelComprehension comprehension;
     private final boolean isDynamicModel;
 
-    public NavigationHelperContentAdapter(final NavigationHelperImpl navigationHelper, final boolean isDynamicModel) {
+    public NavigationHelperContentAdapter(final NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
-        this.isDynamicModel = isDynamicModel;
+        this.comprehension = navigationHelper.getComprehension();
+        this.isDynamicModel = navigationHelper.getBaseIndexOptions().isDynamicEMFMode();
         this.unresolvableProxyFeaturesMap = HashBasedTable.create();
         this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
         this.valueToFeatureToHolderMap = HashBasedTable.create();
@@ -178,11 +180,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
 
-    @SuppressWarnings("deprecation")
     @Override
     public void notifyChanged(final Notification notification) {
         try {
-            // baseHandleNotification(notification);
             super.notifyChanged(notification);
 
             final Object oFeature = notification.getFeature();
@@ -190,46 +190,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             if (oNotifier instanceof EObject && oFeature instanceof EStructuralFeature) {
                 final EObject notifier = (EObject) oNotifier;
                 final EStructuralFeature feature = (EStructuralFeature) oFeature;
-                final Object oldValue = notification.getOldValue();
-                final Object newValue = notification.getNewValue();
-                final int eventType = notification.getEventType();
-                switch (eventType) {
-                case Notification.ADD:
-                    featureUpdate(true, notifier, feature, newValue);
+                final boolean notifyLightweightObservers = handleNotification(notification, notifier, feature);
+                if(notifyLightweightObservers) {
                     notifyLightweightObservers(notifier, feature, notification);
-                    break;
-                case Notification.ADD_MANY:
-                    for (final Object newElement : (Collection<?>) newValue) {
-                        featureUpdate(true, notifier, feature, newElement);
-                    }
-                    notifyLightweightObservers(notifier, feature, notification);
-                    break;
-                case Notification.CREATE:
-                    break;
-                case Notification.MOVE:
-                    break; // currently no support for ordering
-                case Notification.REMOVE:
-                    featureUpdate(false, notifier, feature, oldValue);
-                    notifyLightweightObservers(notifier, feature, notification);
-                    break;
-                case Notification.REMOVE_MANY:
-                    for (final Object oldElement : (Collection<?>) oldValue) {
-                        featureUpdate(false, notifier, feature, oldElement);
-                    }
-                    notifyLightweightObservers(notifier, feature, notification);
-                    break;
-                case Notification.REMOVING_ADAPTER:
-                    break;
-                case Notification.RESOLVE:
-                    featureResolve(notifier, feature, oldValue, newValue);
-                    break;
-                case Notification.UNSET:
-                case Notification.SET:
-                    featureUpdate(false, notifier, feature, oldValue);
-                    notifyLightweightObservers(notifier, feature, notification);
-                    featureUpdate(true, notifier, feature, newValue);
-                    notifyLightweightObservers(notifier, feature, notification);
-                    break;
                 }
             }
         } catch (final Exception ex) {
@@ -238,6 +201,55 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         notifyBaseIndexChangeListeners();
 
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean handleNotification(final Notification notification, final EObject notifier,
+            final EStructuralFeature feature) {
+        final Object oldValue = notification.getOldValue();
+        final Object newValue = notification.getNewValue();
+        final int eventType = notification.getEventType();
+        boolean notifyLightweightObservers = false;
+        switch (eventType) {
+        case Notification.ADD:
+            featureUpdate(true, notifier, feature, newValue);
+            notifyLightweightObservers = true;
+            break;
+        case Notification.ADD_MANY:
+            for (final Object newElement : (Collection<?>) newValue) {
+                featureUpdate(true, notifier, feature, newElement);
+            }
+            notifyLightweightObservers = true;
+            break;
+        case Notification.CREATE:
+            break;
+        case Notification.MOVE:
+            break; // currently no support for ordering
+        case Notification.REMOVE:
+            featureUpdate(false, notifier, feature, oldValue);
+            notifyLightweightObservers = true;
+            break;
+        case Notification.REMOVE_MANY:
+            for (final Object oldElement : (Collection<?>) oldValue) {
+                featureUpdate(false, notifier, feature, oldElement);
+            }
+            notifyLightweightObservers = true;
+            break;
+        case Notification.REMOVING_ADAPTER:
+            break;
+        case Notification.RESOLVE:
+            featureResolve(notifier, feature, oldValue, newValue);
+            break;
+        case Notification.UNSET:
+        case Notification.SET:
+            featureUpdate(false, notifier, feature, oldValue);
+            featureUpdate(true, notifier, feature, newValue);
+            notifyLightweightObservers = true;
+            break;
+        default:
+            break;
+        }
+        return notifyLightweightObservers;
     }
 
     protected void notifyBaseIndexChangeListeners() {
@@ -254,18 +266,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
         final List<EMFVisitor> objectVisitors = popVisitorsSuspendedOnObject(proxy);
         for (final EMFVisitor visitor : objectVisitors) {
-            EMFModelComprehension.traverseObject(visitor, resolved);
+            comprehension.traverseObject(visitor, resolved);
         }
 
         final List<EMFVisitor> featureVisitors = popVisitorsSuspendedOnFeature(source, reference, proxy);
         for (final EMFVisitor visitor : featureVisitors) {
-            EMFModelComprehension.traverseFeature(visitor, source, reference, resolved);
+            comprehension.traverseFeature(visitor, source, reference, resolved);
         }
     }
 
     private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature, final Object value) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
-        EMFModelComprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
+        comprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
     }
 
     @Override
@@ -278,7 +290,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 @Override
                 public Void call() throws Exception {
                     if (notifier instanceof EObject) {
-                        EMFModelComprehension.traverseObject(visitor(true), (EObject) notifier);
+                        comprehension.traverseObject(visitor(true), (EObject) notifier);
                     }
                     NavigationHelperContentAdapter.super.addAdapter(notifier);
                     return null;
@@ -301,7 +313,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 @Override
                 public Void call() throws Exception {
                     if (notifier instanceof EObject) {
-                        EMFModelComprehension.traverseObject(visitor(false), (EObject) notifier);
+                        comprehension.traverseObject(visitor(false), (EObject) notifier);
                     }
                     NavigationHelperContentAdapter.super.removeAdapter(notifier);
                     return null;
@@ -522,23 +534,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	        isDirty = true;
 	        notifyDataTypeListeners(keyType, value, false, lastOccurrence);
         }
-        // else: inconsstent deletion? log error?
+        // else: inconsistent deletion? log error?
     }
 
     // END ********* DataTypeMap *********
-
-//    /**
-//     * Checks the {@link EPackage}s of the given {@link EClassifier}s for NsURI collision
-//     * by calling the <code>checkEPackage(EClassifier classifier)</code> for all of the
-//     * elements in the passed {@link Collection}.
-//     *
-//     * @param classifiers the collection of classifiers
-//     */
-//    protected <T extends EClassifier> void maintainMetamodel(Collection<T> classifiers) {
-//        for (T classifier : classifiers) {
-//            maintainMetamodel(classifier);
-//        }
-//    }
 
     /**
      * Checks the {@link EStructuralFeature}'s source and target {@link EPackage} for NsURI collision.
@@ -746,7 +745,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             if (!feature.isContainment()) {
                 continue;
             }
-            if (!EMFModelComprehension.representable(feature)) {
+            if (!comprehension.representable(feature)) {
                 continue;
             }
             if (feature.isMany()) {

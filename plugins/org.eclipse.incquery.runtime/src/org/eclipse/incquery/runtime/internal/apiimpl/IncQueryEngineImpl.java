@@ -33,6 +33,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -83,12 +84,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     private NavigationHelper baseIndex;
     /**
      * Whether to initialize the base index in wildcard mode.
-     */
-	private boolean wildcardMode;
-    /**
      * Whether to initialize the base index in dynamic EMF mode.
      */
-	private boolean dynamicEMFmode;
+	private final BaseIndexOptions options;
 	/**
      * The RETE pattern matcher component of the EMF-IncQuery engine.
      */
@@ -115,12 +113,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, boolean wildcardMode, boolean dynamicEMFmode) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, BaseIndexOptions options) throws IncQueryException {
         super();
-        this.wildcardMode = wildcardMode;
-        this.dynamicEMFmode = dynamicEMFmode;
         this.manager = manager;
         this.emfRoot = emfRoot;
+        this.options = options.copy();
         this.matchers = Maps.newHashMap();
         this.lifecycleProvider = new LifecycleProvider(this);
         this.modelUpdateProvider = new ModelUpdateProvider(this);
@@ -204,7 +201,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
                 // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this
                 // reentrantly
                 synchronized (this) {
-                    baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, wildcardMode, dynamicEMFmode,
+                    baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, options,
                             getLogger());
                 }
             } catch (IncQueryBaseException e) {

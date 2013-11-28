@@ -321,25 +321,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // with input binding as pattern-specific parameters: not declared in interface
 
- //   @Override
-    // TODO investigate whether this can be removed from here
-//    public void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow) {
-//        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-//                engine, listener) {
-//            @Override
-//            public Match statelessConvert(Tuple t) {
-//                return tupleToMatch(t);
-//            }
-//        };
-//        patternMatcher.connect(callbackNode, listener, fireNow);
-//    }
-
-//    @Override
-    // TODO investigate whether this can be removed from here
-//    public void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener) {
-//        patternMatcher.disconnectByTag(listener);
-//    }
-
     /**
      * @deprecated use {@link IMatchUpdateListener} or EVM instead!
      */

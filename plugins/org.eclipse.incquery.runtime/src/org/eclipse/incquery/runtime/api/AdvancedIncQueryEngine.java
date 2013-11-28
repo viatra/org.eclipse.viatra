@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.api;
 import org.apache.log4j.Appender;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
@@ -67,7 +68,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @see {@link #createUnmanagedEngine(Notifier, boolean, boolean)} for performance tuning and dynamic EMF options.
      */
 	public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
-        return createUnmanagedEngine(emfScopeRoot, IncQueryEngine.WILDCARD_MODE_DEFAULT);
+        return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions());
 	}
 	
     /**
@@ -94,7 +95,9 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @throws IncQueryException
      */
 	public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode) throws IncQueryException {
-        return createUnmanagedEngine(emfScopeRoot, wildcardMode, IncQueryEngine.DYNAMIC_EMF_MODE_DEFAULT);
+	    BaseIndexOptions baseIndexOptions = new BaseIndexOptions();
+	    baseIndexOptions.setWildcardMode(wildcardMode);
+	    return createUnmanagedEngine(emfScopeRoot, baseIndexOptions);
 	}	
 	
     /**
@@ -124,8 +127,37 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @throws IncQueryException
      */
 	public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode, boolean dynamicEMFMode) throws IncQueryException {
-        return new IncQueryEngineImpl(null, emfScopeRoot, wildcardMode, dynamicEMFMode);
+        return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions(dynamicEMFMode, wildcardMode));
 	}	
+	
+    /**
+     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * invocations will return different instances, so other clients are unable to independently access and influence
+     * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
+     * sharing incrementally maintained indices and caches between multiple clients using the same managed engine
+     * instance.
+     * 
+     * <p>
+     * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
+     * {@link AdvancedIncQueryEngine}.
+     * 
+     * <p>
+     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
+     * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+     * 
+     * @param emfScopeRoot
+     *            the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or
+     *            ResourceSet.
+     * @param options
+     *            specifies how the base index is built, including wildcard mode (defaults to false) and dynamic EMF
+     *            mode (defaults to false). See {@link NavigationHelper} for the explanation of wildcard mode and
+     *            dynamic EMF mode.
+     * @return the advanced interface to a newly created unmanaged engine
+     */
+    public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, BaseIndexOptions options)
+            throws IncQueryException {
+        return new IncQueryEngineImpl(null, emfScopeRoot, options);
+    }
 	
 	/**
 	 * Provides access to a given existing engine through the advanced interface.
