@@ -45,6 +45,15 @@ import system.queries.util.TransitiveAffectedTasksThroughDataQuerySpecification;
 @SuppressWarnings("all")
 public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<TransitiveAffectedTasksThroughDataMatch> {
   /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<TransitiveAffectedTasksThroughDataMatcher> querySpecification() throws IncQueryException {
+    return TransitiveAffectedTasksThroughDataQuerySpecification.instance();
+  }
+  
+  /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
@@ -303,14 +312,5 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
     	return null;
     }
     
-  }
-  
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<TransitiveAffectedTasksThroughDataMatcher> querySpecification() throws IncQueryException {
-    return TransitiveAffectedTasksThroughDataQuerySpecification.instance();
   }
 }

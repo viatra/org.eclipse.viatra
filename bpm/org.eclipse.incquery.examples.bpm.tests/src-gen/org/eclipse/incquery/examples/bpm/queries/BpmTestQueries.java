@@ -45,9 +45,9 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   
   private BpmTestQueries() throws IncQueryException {
     querySpecifications.add(EntryTaskMatcher.querySpecification());
-    querySpecifications.add(ProcessTasksMatcher.querySpecification());
-    querySpecifications.add(NextActivityMatcher.querySpecification());
     querySpecifications.add(JobTasksMatcher.querySpecification());
+    querySpecifications.add(NextActivityMatcher.querySpecification());
+    querySpecifications.add(ProcessTasksMatcher.querySpecification());
     
   }
 }
