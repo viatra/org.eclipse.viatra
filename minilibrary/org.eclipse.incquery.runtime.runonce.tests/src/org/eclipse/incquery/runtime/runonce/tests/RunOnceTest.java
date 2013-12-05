@@ -30,16 +30,37 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.RunOnceQueryEngine;
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.internal.apiimpl.GenericPatternMatch;
+import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
+ * Test cases that run different kind of derived features in run-once engine.
+ * 
  * @author Abel Hegedus
  *
  */
 public class RunOnceTest {
     
     private ResourceSet rs;
+    
+    /**
+     * Prepares a resource set and loads the example model.
+     * 
+     * @return the library that is the root of the example model 
+     */
+    private Library prepareModel() {
+        String modelPath = "/org.eclipse.incquery.runtime.runonce.tests/model/test.eiqlibrary";
+        rs = new ResourceSetImpl();
+        URI modelUri = URI.createPlatformPluginURI(modelPath, true);
+        Resource resource = rs.getResource(modelUri, true);
+        return (Library) resource.getContents().get(0);
+    }
 
+    /**
+     * Test whether a run-once engine returns matches for regular queries.
+     */
     @Test
     public void testRegularQuery() {
         Library library = prepareModel();
@@ -52,25 +73,30 @@ public class RunOnceTest {
             e.printStackTrace();
         }
     }
-
-    private Library prepareModel() {
-        String modelPath = "/org.eclipse.incquery.runtime.runonce.tests/model/test.eiqlibrary";
-        rs = new ResourceSetImpl();
-        URI modelUri = URI.createPlatformPluginURI(modelPath, true);
-        Resource resource = rs.getResource(modelUri, true);
-        return (Library) resource.getContents().get(0);
-    }
-
+    
+    /**
+     * Shows an example of using generic queries in a run-once engine.
+     */
     @Test
-    public void testSimpleAttribute() {
-        // TODO this should work only after WellBehavingFeatureRegistry is filled
-        // TODO after adding base options, must work without touching WellBehavingRegistry
-
+    public void testGenericQuery() {
         Library library = prepareModel();
         
         try {
             RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-//            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
+            GenericQuerySpecification specification = new GenericQuerySpecification(BooksWithMultipleAuthorsMatcher.querySpecification().getPattern());
+            Collection<GenericPatternMatch> allMatches = engine.getAllMatches(specification);
+            assertTrue(allMatches.size() == 2);
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testSimpleAttribute() {
+        Library library = prepareModel();
+        
+        try {
+            RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
             Collection<SumOfPagesInLibraryMatch> allMatches = engine.getAllMatches(SumOfPagesInLibraryMatcher.querySpecification());
             assertTrue(allMatches.size() == 1);
             SumOfPagesInLibraryMatch match = allMatches.iterator().next();
@@ -83,13 +109,10 @@ public class RunOnceTest {
     
     @Test
     public void testSingleReference() {
-        // TODO this should work only after WellBehavingFeatureRegistry is filled
-        // TODO after adding base options, must work without touching WellBehavingRegistry
         Library library = prepareModel();
         
         try {
             RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-//            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             Collection<SingleAuthoredFirstBooksMatch> allMatches = engine.getAllMatches(SingleAuthoredFirstBooksMatcher.querySpecification());
             assertTrue(allMatches.size() == 1);
             SingleAuthoredFirstBooksMatch match = allMatches.iterator().next();
@@ -102,13 +125,10 @@ public class RunOnceTest {
     
     @Test
     public void testManyReference() {
-        // TODO this should work only after WellBehavingFeatureRegistry is filled
-        // TODO after adding base options, must work without touching WellBehavingRegistry
         Library library = prepareModel();
         
         try {
             RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-//            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             Collection<LongSciFiBooksOfAuthorMatch> allMatches = engine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
             assertTrue(allMatches.size() == 1);
             LongSciFiBooksOfAuthorMatch match = allMatches.iterator().next();
@@ -119,14 +139,16 @@ public class RunOnceTest {
         }
     }
     
+    /**
+     * This test uses a derived feature that returns different values on subsequent requests.
+     * We could use this to test how the engine responds in such cases (e.g. during disposal).
+     */
     @Test
     public void testNonDeterministicAttribute() {
-        // TODO this should fail when dispose traverses the model again
         Library library = prepareModel();
         
         try {
             RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-//            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             Collection<RequestCountOfLibraryMatch> allMatches = engine.getAllMatches(RequestCountOfLibraryMatcher.querySpecification());
             assertTrue(allMatches.size() == 1);
             RequestCountOfLibraryMatch match = allMatches.iterator().next();
@@ -137,14 +159,15 @@ public class RunOnceTest {
         }
     }
     
+    /**
+     * Similar to {@link #testNonDeterministicAttribute()} but with a many reference.
+     */
     @Test
     public void testNonDeterministicFeature() {
-        // TODO this should fail when dispose traverses the model again
         Library library = prepareModel();
         
         try {
             RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-//            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             Collection<SomeBooksWithTwoAuthorsMatch> allMatches = engine.getAllMatches(SomeBooksWithTwoAuthorsMatcher.querySpecification());
             assertTrue(allMatches.size() == 1);
             SomeBooksWithTwoAuthorsMatch match = allMatches.iterator().next();
@@ -159,10 +182,13 @@ public class RunOnceTest {
         }
     }
     
+    /**
+     * The test shows that using an incremental engine with not well-behaving derived features will return 
+     * incorrect values if the model changes.
+     */
     @Test
     public void testModelModification() {
-        // TODO the results of incremental engine will not be correct
-        
+        // the results of incremental engine will not be correct
         Library library = prepareModel();
         
         try {
@@ -206,6 +232,7 @@ public class RunOnceTest {
         }
     }
 
+    @Ignore
     @Test
     public void testSamplingModelModification() {
         // TODO the results of incremental engine will be correct if sampling is invoked by the client after changes
