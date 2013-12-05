@@ -56,7 +56,7 @@ public class EMFModelComprehension {
      */
     public boolean untraversableDirectly(EStructuralFeature feature) {
         boolean suspect = onlySamplingFeature(feature);
-        if(!suspect) {
+        if(suspect) {
             // even if the feature can only be sampled, it may be used if the proper base index option is set
             suspect = options.isTraverseOnlyWellBehavingDerivedFeatures();
         }
