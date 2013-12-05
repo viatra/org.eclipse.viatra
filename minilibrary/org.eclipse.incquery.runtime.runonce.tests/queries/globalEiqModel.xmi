@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" xmlns:types="http://www.eclipse.org/xtext/common/JavaVMTypes" xmlns:xbase="http://www.eclipse.org/xtext/xbase/Xbase">
+  <eMFPatternLanguage:PatternModel>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.bookAuthors" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="book"/>
+      <parameters name="author"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Book"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http:///org/incquery/examples/library/1.0#//Book/authors"/>
+              </type>
+            </tail>
+            <src var="book"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="author"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.booksWithMultipleAuthors" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="book"/>
+      <bodies>
+        <constraints xsi:type="eMFPatternLanguage:EClassifierConstraint">
+          <type xsi:type="eMFPatternLanguage:ClassType">
+            <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Book"/>
+          </type>
+          <var var="book"/>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:VariableValue">
+            <value var="numberOfBooks"/>
+          </leftOperand>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.0">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="book"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_author"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CheckConstraint">
+          <expression xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_greaterThan(int,int)"/>
+            <leftOperand xsi:type="xbase:XFeatureCall" feature="/1"/>
+            <rightOperand xsi:type="xbase:XNumberLiteral" value="1"/>
+          </expression>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.sumOfPagesInLibrary" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="library"/>
+      <parameters name="sumOfPages"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http:///org/incquery/examples/library/1.0#//Library/sumOfPages"/>
+              </type>
+            </tail>
+            <src var="library"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="sumOfPages"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.singleAuthoredFirstBooks" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="library"/>
+      <parameters name="firstBook"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http:///org/incquery/examples/library/1.0#//Library/writers"/>
+              </type>
+              <tail>
+                <type xsi:type="eMFPatternLanguage:ReferenceType">
+                  <refname xsi:type="ecore:EReference" href="http:///org/incquery/examples/library/1.0#//Writer/firstBook"/>
+                </type>
+              </tail>
+            </tail>
+            <src var="library"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="firstBook"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:IntValue" value="1"/>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.0">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="firstBook"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_author"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.longSciFiBooksOfAuthor" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="author"/>
+      <parameters name="book"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Writer"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http:///org/incquery/examples/library/1.0#//Writer/scifiBooks"/>
+              </type>
+            </tail>
+            <src var="author"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="book"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Book"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http:///org/incquery/examples/library/1.0#//Book/pages"/>
+              </type>
+            </tail>
+            <src var="book"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="pages"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CheckConstraint">
+          <expression xsi:type="xbase:XBinaryOperation">
+            <feature xsi:type="types:JvmOperation" href="java:/Objects/org.eclipse.xtext.xbase.lib.IntegerExtensions#org.eclipse.xtext.xbase.lib.IntegerExtensions.operator_greaterThan(int,int)"/>
+            <leftOperand xsi:type="xbase:XFeatureCall" feature="/2"/>
+            <rightOperand xsi:type="xbase:XNumberLiteral" value="100"/>
+          </expression>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.requestCountOfLibrary" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="library"/>
+      <parameters name="reqCount"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http:///org/incquery/examples/library/1.0#//Library/requestCount"/>
+              </type>
+            </tail>
+            <src var="library"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="reqCount"/>
+            </dst>
+          </head>
+        </constraints>
+      </bodies>
+    </patterns>
+    <patterns name="org.eclipse.incquery.runtime.runonce.tests.someBooksWithTwoAuthors" fileName="platform:/resource/org.eclipse.incquery.runtime.runonce.tests/src/org/eclipse/incquery/runtime/runonce/tests/eiqlibrary.eiq">
+      <parameters name="library"/>
+      <parameters name="book"/>
+      <bodies>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EAttribute" href="http:///org/incquery/examples/library/1.0#//Library/requestCount"/>
+              </type>
+            </tail>
+            <src var="library"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="_c"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:PathExpressionConstraint">
+          <head>
+            <type xsi:type="eMFPatternLanguage:ClassType">
+              <classname xsi:type="ecore:EClass" href="http:///org/incquery/examples/library/1.0#//Library"/>
+            </type>
+            <tail>
+              <type xsi:type="eMFPatternLanguage:ReferenceType">
+                <refname xsi:type="ecore:EReference" href="http:///org/incquery/examples/library/1.0#//Library/someBooks"/>
+              </type>
+            </tail>
+            <src var="library"/>
+            <dst xsi:type="patternLanguage:VariableValue">
+              <value var="book"/>
+            </dst>
+          </head>
+        </constraints>
+        <constraints xsi:type="patternLanguage:CompareConstraint">
+          <leftOperand xsi:type="patternLanguage:IntValue" value="2"/>
+          <rightOperand xsi:type="patternLanguage:AggregatedValue">
+            <aggregator xsi:type="patternLanguage:CountAggregator"/>
+            <call patternRef="/0/@patterns.0">
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="book"/>
+              </parameters>
+              <parameters xsi:type="patternLanguage:VariableValue">
+                <value var="_author"/>
+              </parameters>
+            </call>
+          </rightOperand>
+        </constraints>
+      </bodies>
+    </patterns>
+    <importPackages>
+      <packageImport>
+        <ePackage href="http:///org/incquery/examples/library/1.0#/"/>
+      </packageImport>
+    </importPackages>
+  </eMFPatternLanguage:PatternModel>
+  <types:JvmFormalParameter name="numberOfBooks">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+  <types:JvmFormalParameter name="pages">
+    <parameterType xsi:type="types:JvmParameterizedTypeReference"/>
+  </types:JvmFormalParameter>
+</xmi:XMI>
