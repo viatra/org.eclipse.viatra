@@ -19,6 +19,10 @@ public final class EiqlibraryMatchers {
     
   }
   
+  public SumOfPagesInLibraryMatcher getSumOfPagesInLibraryMatcher() throws IncQueryException {
+    return SumOfPagesInLibraryMatcher.on(engine);
+  }
+  
   public SomeBooksWithTwoAuthorsMatcher getSomeBooksWithTwoAuthorsMatcher() throws IncQueryException {
     return SomeBooksWithTwoAuthorsMatcher.on(engine);
   }
@@ -27,23 +31,19 @@ public final class EiqlibraryMatchers {
     return LongSciFiBooksOfAuthorMatcher.on(engine);
   }
   
-  public SumOfPagesInLibraryMatcher getSumOfPagesInLibraryMatcher() throws IncQueryException {
-    return SumOfPagesInLibraryMatcher.on(engine);
-  }
-  
-  public SingleAuthoredFirstBooksMatcher getSingleAuthoredFirstBooksMatcher() throws IncQueryException {
-    return SingleAuthoredFirstBooksMatcher.on(engine);
-  }
-  
   public RequestCountOfLibraryMatcher getRequestCountOfLibraryMatcher() throws IncQueryException {
     return RequestCountOfLibraryMatcher.on(engine);
+  }
+  
+  public BooksWithMultipleAuthorsMatcher getBooksWithMultipleAuthorsMatcher() throws IncQueryException {
+    return BooksWithMultipleAuthorsMatcher.on(engine);
   }
   
   public BookAuthorsMatcher getBookAuthorsMatcher() throws IncQueryException {
     return BookAuthorsMatcher.on(engine);
   }
   
-  public BooksWithMultipleAuthorsMatcher getBooksWithMultipleAuthorsMatcher() throws IncQueryException {
-    return BooksWithMultipleAuthorsMatcher.on(engine);
+  public SingleAuthoredFirstBooksMatcher getSingleAuthoredFirstBooksMatcher() throws IncQueryException {
+    return SingleAuthoredFirstBooksMatcher.on(engine);
   }
 }

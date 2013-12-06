@@ -26,15 +26,16 @@ import org.eclipse.incquery.examples.eiqlibrary.BookCategory;
 import org.eclipse.incquery.examples.eiqlibrary.EIQLibraryFactory;
 import org.eclipse.incquery.examples.eiqlibrary.EIQLibraryPackage;
 import org.eclipse.incquery.examples.eiqlibrary.Library;
+import org.eclipse.incquery.examples.eiqlibrary.Writer;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.RunOnceQueryEngine;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -73,6 +74,7 @@ public class RunOnceTest {
             assertTrue(allMatches.size() == 2);
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -91,6 +93,7 @@ public class RunOnceTest {
             assertTrue(allMatches.size() == 2);
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
 
@@ -107,6 +110,7 @@ public class RunOnceTest {
             assertTrue(match.getSumOfPages() == 222);
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -123,6 +127,7 @@ public class RunOnceTest {
             assertTrue(match.getFirstBook().getTitle().equals("Other SciFi"));
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -139,6 +144,7 @@ public class RunOnceTest {
             assertTrue(match.getBook().getTitle().equals("Other SciFi"));
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -159,6 +165,7 @@ public class RunOnceTest {
             assertTrue(match.getReqCount() == 2);
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -182,6 +189,7 @@ public class RunOnceTest {
             
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
     
@@ -232,17 +240,176 @@ public class RunOnceTest {
             
         } catch (IncQueryException e) {
             e.printStackTrace();
+            fail(e.getShortMessage());
         }
     }
 
-    @Ignore
     @Test
     public void testSamplingModelModification() {
-        // TODO the results of incremental engine will be correct if sampling is invoked by the client after changes
+     // the results of incremental engine will be correct after resampling
+        Library library = prepareModel();
         
-        fail("Not yet implemented");
+        try {
+            RunOnceQueryEngine roengine = new RunOnceQueryEngine(rs);
+            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(rs,roengine.getBaseIndexOptions());
+            // TODO remove this once such EClasses are automatically identified
+            //engine.getBaseIndex().registerEClasses(Sets.newHashSet(EIQLibraryPackage.eINSTANCE.getBook(), EIQLibraryPackage.eINSTANCE.getWriter()));
+            runModelModification(library, roengine, engine);
+            
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+            fail(e.getShortMessage());
+        }
     }
     
+    @Test
+    public void testSamplingModelModificationInWildCardMode() {
+        // the results of incremental engine will be correct after resampling
+        Library library = prepareModel();
+        
+        try {
+            RunOnceQueryEngine roengine = new RunOnceQueryEngine(rs);
+            BaseIndexOptions baseIndexOptions = roengine.getBaseIndexOptions();
+            baseIndexOptions.setWildcardMode(true); // ensure all types are indexed
+            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(rs,baseIndexOptions);
+            runModelModification(library, roengine, engine);
+            
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+            fail(e.getShortMessage());
+        }
+    }
+
+    private void runModelModification(Library library, RunOnceQueryEngine roengine, AdvancedIncQueryEngine engine)
+            throws IncQueryException {
+        LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
+        Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();
+        
+        Collection<LongSciFiBooksOfAuthorMatch> allROMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
+        
+        assertTrue(allMatches.size() == allROMatches.size());
+        LongSciFiBooksOfAuthorMatch match = allMatches.iterator().next();
+        LongSciFiBooksOfAuthorMatch romatch = allROMatches.iterator().next();
+        assertTrue(match.getAuthor() == romatch.getAuthor());
+        Book longBook = romatch.getBook();
+        assertTrue(match.getBook() == longBook);
+
+        Book b = EIQLibraryFactory.eINSTANCE.createBook();
+        b.setTitle("Long book");
+        b.setPages(120);
+        b.getCategory().add(BookCategory.SCI_FI);
+        b.getAuthors().add(library.getWriters().get(0));
+        library.getBooks().add(b);
+        
+        allROMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
+        allMatches = matcher.getAllMatches();
+        assertTrue(allMatches.size() != allROMatches.size());
+
+        // manually resample values
+        engine.getBaseIndex().resampleDerivedFeatures();
+        
+        allMatches = matcher.getAllMatches();
+        assertTrue(allMatches.size() == allROMatches.size());
+        assertTrue(allROMatches.size() == 2);
+        
+        Set<Book> longScifiBooks = new HashSet<Book>();
+        for (LongSciFiBooksOfAuthorMatch m : allROMatches) {
+            longScifiBooks.add(m.getBook());
+        }
+        assertTrue(longScifiBooks.contains(b));
+        assertTrue(longScifiBooks.contains(longBook));
+    }
     
+    @Test
+    public void testSamplingModelModificationChangeVisitor() {
+     // the results of incremental engine will be correct after resampling
+        String address = "test";
+        Library library = createLibrary(address);
+        String title = "test";
+        Book book = createBook(library, title, 150, BookCategory.SCI_FI);
+        
+        try {
+            RunOnceQueryEngine roengine = new RunOnceQueryEngine(library);
+            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(library,roengine.getBaseIndexOptions());
+
+            LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
+            Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();
+            assertTrue(allMatches.isEmpty());
+            
+            Writer writer = createWriter(library, "test");
+            book.getAuthors().add(writer);
+            
+            engine.getBaseIndex().resampleDerivedFeatures();
+            
+            allMatches = matcher.getAllMatches();
+            assertTrue(!allMatches.isEmpty());
+            LongSciFiBooksOfAuthorMatch match = allMatches.iterator().next();
+            assertTrue(match.getAuthor().equals(writer));
+            assertTrue(match.getBook().equals(book));
+            
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+            fail(e.getShortMessage());
+        }
+    
+    }
+    
+    @Test
+    public void testAutomaticSamplingModelModification() {
+        // the results of run-once engine will be correct after automatic resampling
+        String address = "test";
+        Library library = createLibrary(address);
+        String title = "test";
+        Book book = createBook(library, title, 150, BookCategory.SCI_FI);
+        
+        try {
+            RunOnceQueryEngine roengine = new RunOnceQueryEngine(library);
+            roengine.setAutomaticResampling(true);
+            Collection<LongSciFiBooksOfAuthorMatch> allMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
+            assertTrue(allMatches.isEmpty());
+            
+            Writer writer = createWriter(library, "test");
+            book.getAuthors().add(writer);
+            
+            allMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
+            assertTrue(!allMatches.isEmpty());
+            LongSciFiBooksOfAuthorMatch match = allMatches.iterator().next();
+            assertTrue(match.getAuthor().equals(writer));
+            assertTrue(match.getBook().equals(book));
+            
+            roengine.setAutomaticResampling(false);
+            
+            Writer writer2 = createWriter(library, "test2");
+            allMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
+            assertTrue(!allMatches.isEmpty());
+            
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+            fail(e.getShortMessage());
+        }
+        
+    }
+
+    private Writer createWriter(Library library, String name) {
+        Writer writer = EIQLibraryFactory.eINSTANCE.createWriter();
+        writer.setName(name);
+        library.getWriters().add(writer);
+        return writer;
+    }
+
+    private Book createBook(Library library, String title, int pages, BookCategory cat) {
+        Book book = EIQLibraryFactory.eINSTANCE.createBook();
+        book.setTitle(title);
+        book.setPages(pages);
+        book.getCategory().add(cat);
+        library.getBooks().add(book);
+        return book;
+    }
+
+    private Library createLibrary(String address) {
+        Library library = EIQLibraryFactory.eINSTANCE.createLibrary();
+        library.setAddress(address);
+        return library;
+    }
     
 }

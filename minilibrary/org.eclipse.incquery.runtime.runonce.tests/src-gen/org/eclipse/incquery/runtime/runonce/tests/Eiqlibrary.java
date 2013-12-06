@@ -50,13 +50,13 @@ public final class Eiqlibrary extends BaseGeneratedPatternGroup {
   private static Eiqlibrary INSTANCE;
   
   private Eiqlibrary() throws IncQueryException {
-    querySpecifications.add(SumOfPagesInLibraryMatcher.querySpecification());
-    querySpecifications.add(LongSciFiBooksOfAuthorMatcher.querySpecification());
     querySpecifications.add(BooksWithMultipleAuthorsMatcher.querySpecification());
-    querySpecifications.add(SingleAuthoredFirstBooksMatcher.querySpecification());
     querySpecifications.add(RequestCountOfLibraryMatcher.querySpecification());
+    querySpecifications.add(SumOfPagesInLibraryMatcher.querySpecification());
     querySpecifications.add(SomeBooksWithTwoAuthorsMatcher.querySpecification());
+    querySpecifications.add(SingleAuthoredFirstBooksMatcher.querySpecification());
     querySpecifications.add(BookAuthorsMatcher.querySpecification());
+    querySpecifications.add(LongSciFiBooksOfAuthorMatcher.querySpecification());
     
   }
 }
