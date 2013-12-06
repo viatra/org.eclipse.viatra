@@ -48,7 +48,8 @@ public class BaseIndexOptions {
      * By default, base indices will be constructed with dynamic EMF mode set as false.
      */
     protected static final boolean DYNAMIC_EMF_MODE_DEFAULT = false;
-
+    
+    
     protected boolean dynamicEMFMode = DYNAMIC_EMF_MODE_DEFAULT;
     protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
     protected boolean wildcardMode = WILDCARD_MODE_DEFAULT;

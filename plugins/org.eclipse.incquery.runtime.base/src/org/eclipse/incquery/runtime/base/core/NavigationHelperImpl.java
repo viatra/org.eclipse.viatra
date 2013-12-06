@@ -41,16 +41,19 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
+import org.eclipse.incquery.runtime.base.api.IEClassProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
+import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 public class NavigationHelperImpl implements NavigationHelper {
@@ -231,22 +234,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         for (Entry<Object, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject holder : entry.getValue()) {
-                EStructuralFeature feature = getKnownFeature(entry.getKey());
+                EStructuralFeature feature = contentAdapter.getKnownFeatureForKey(entry.getKey());
                 retSet.add(new NavigationHelperSetting(feature, holder, value));
             }
         }
 
         return retSet;
-    }
-
-    private EStructuralFeature getKnownFeature(Object featureKey) {
-        EStructuralFeature feature;
-        if (contentAdapter.isDynamicModel()) {
-            feature = contentAdapter.getKnownFeature((String) featureKey);
-        } else {
-            feature = (EStructuralFeature) featureKey;
-        }
-        return feature;
     }
 
     @Override
@@ -286,6 +279,31 @@ public class NavigationHelperImpl implements NavigationHelper {
             }
         }
     }
+    
+    public void processDirectInstances(EClass type, IEClassProcessor processor) {
+        Object typeKey = toKey(type);
+        processDirectInstancesInternal(type, processor, typeKey);
+    }
+
+    public void processAllInstances(EClass type, IEClassProcessor processor) {
+        Object typeKey = toKey(type);
+        Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
+        if (subTypes != null) {
+            for (Object subTypeKey : subTypes) {
+                processDirectInstancesInternal(type, processor, subTypeKey);
+            }
+        } 
+        processDirectInstancesInternal(type, processor, typeKey);
+    }
+
+    private void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {
+        final Set<EObject> instances = contentAdapter.getInstanceSet(typeKey);
+        if (instances != null) {
+            for (EObject eObject : instances) {
+                processor.process(type, eObject);
+            }
+        }
+    }
 
     @Override
     public Set<Setting> getInverseReferences(EObject target) {
@@ -294,7 +312,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         for (Entry<Object, Set<EObject>> entry : valMap.entrySet()) {
             for (EObject source : entry.getValue()) {
-                EStructuralFeature feature = getKnownFeature(entry.getKey());
+                EStructuralFeature feature = contentAdapter.getKnownFeatureForKey(entry.getKey());
                 retSet.add(new NavigationHelperSetting(feature, source, target));
             }
         }
@@ -379,9 +397,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> getAllInstances(EClass type) {
-    	Object typeKey = toKey(type);
         Set<EObject> retSet = new HashSet<EObject>();
 
+        Object typeKey = toKey(type);
         Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
         if (subTypes != null) {
             for (Object subTypeKey : subTypes) {
@@ -1069,4 +1087,41 @@ public class NavigationHelperImpl implements NavigationHelper {
     		throw new IllegalStateException("Cannot dispose while there are active listeners");
     }
 
+
+    /**
+     * Resamples the values of not well-behaving derived features if those features are also indexed.
+     */
+    public void resampleDerivedFeatures() {
+        // otherwise notifications are delivered anyway
+        if(!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
+            // get all required classes
+            Set<EClass> allCurrentClasses = contentAdapter.getAllCurrentClasses();
+            Set<EStructuralFeature> featuresToSample = Sets.newHashSet();
+            // collect features to sample
+            for (EClass cls : allCurrentClasses) {
+                EList<EStructuralFeature> features = cls.getEAllStructuralFeatures();
+                for (EStructuralFeature f : features) {
+                    // is feature only sampled?
+                    if(comprehension.onlySamplingFeature(f)) {
+                        featuresToSample.add(f);
+                    }
+                }
+            }
+            
+            final EMFVisitor removalVisitor = contentAdapter.visitor(false);
+            final EMFVisitor insertionVisitor = contentAdapter.visitor(true);
+            
+            // iterate on instances
+            for (final EStructuralFeature f : featuresToSample) {
+                EClass containingClass = f.getEContainingClass();
+                processAllInstances(containingClass, new IEClassProcessor() {
+                    @Override
+                    public void process(EClass type, EObject instance) {
+                        contentAdapter.resampleFeatureValueForHolder(instance, f, insertionVisitor, removalVisitor);
+                    }
+                });
+            }
+            contentAdapter.notifyBaseIndexChangeListeners();
+        }
+    }
 }

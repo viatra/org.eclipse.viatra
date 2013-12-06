@@ -23,7 +23,10 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
+
+import com.google.common.collect.ImmutableSet;
 
 public abstract class NavigationHelperVisitor extends EMFVisitor {
 
@@ -36,6 +39,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         private final Set<Object> allObservedClasses;
         private final Set<Object> observedDataTypes;
         private final Set<Object> observedFeatures;
+        private final Map<Object, Boolean> sampledClasses;
 
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
             super(navigationHelper, isInsertion, false);
@@ -43,11 +47,22 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             allObservedClasses = navigationHelper.getAllObservedClassesInternal(); //new HashSet<EClass>();
             observedDataTypes = navigationHelper.getObservedDataTypesInternal(); //new HashSet<EDataType>();
             observedFeatures = navigationHelper.getObservedFeaturesInternal(); //new HashSet<EStructuralFeature>();
+            sampledClasses = new HashMap<Object,Boolean>();
         }
 
         @Override
         protected boolean observesClass(Object eClass) {
-            return wildcardMode || allObservedClasses.contains(eClass);
+            return wildcardMode || allObservedClasses.contains(eClass) || isSampledClassInternal(eClass);
+        }
+
+        private boolean isSampledClassInternal(Object eClass) {
+            Boolean classAlreadyChecked = sampledClasses.get(eClass);
+            if(classAlreadyChecked != null) {
+                return classAlreadyChecked;
+            }
+            boolean isSampledClass = isSampledClass(eClass);
+            sampledClasses.put(eClass,isSampledClass);
+            return isSampledClass;
         }
 
         @Override
@@ -85,7 +100,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesClass(Object eClass) {
-            if (navigationHelper.isInWildcardMode()) {
+            if (wildcardMode) {
                 return true;
             }
             Boolean observed = classObservationMap.get(eClass);
@@ -98,6 +113,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 observed = overApprox && !oldClasses.contains(eClass)
                         && !oldClasses.contains(super.store.getEObjectClassKey())
                         && Collections.disjoint(theSuperTypes, oldClasses);
+                if(!observed) {
+                    observed = isSampledClass(eClass);
+                }
                 classObservationMap.put(eClass, observed);
             }
             return observed;
@@ -119,6 +137,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     private final NavigationHelperContentAdapter store;
     boolean isInsertion;
     boolean descendHierarchy;
+    boolean traverseOnlyWellBehavingDerivedFeatures;
 
     NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion, boolean descendHierarchy) {
         super(isInsertion /* preOrder iff insertion */);
@@ -126,6 +145,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         this.store = navigationHelper.getContentAdapter();
         this.isInsertion = isInsertion;
         this.descendHierarchy = descendHierarchy;
+        this.traverseOnlyWellBehavingDerivedFeatures = navigationHelper.getBaseIndexOptions().isTraverseOnlyWellBehavingDerivedFeatures();
     }
 
     @Override
@@ -252,4 +272,33 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 	protected Object toKey(EClassifier eClassifier) {
 		return store.toKey(eClassifier);
 	}
+	
+    /**
+     * Decides whether the type must be observed in order to allow re-sampling of any of its features. If not
+     * well-behaving features are traversed and there is such a feature for this class, the class will be registered
+     * into the navigation helper, which may cause a re-traversal.
+     * 
+     */
+	protected boolean isSampledClass(Object eClass) {
+	    if (!traverseOnlyWellBehavingDerivedFeatures) {
+	        // TODO we could save this reverse lookup if the calling method would have the EClass, not just the key
+	        EClass knownClass = (EClass) store.getKnownClassifierForKey(eClass);
+            // check features that are traversed, and whether there is any that must be sampled
+	        for (EStructuralFeature feature : knownClass.getEAllStructuralFeatures()) {
+	            EMFModelComprehension comprehension = navigationHelper.getComprehension();
+                if (comprehension.untraversableDirectly(feature))
+	                continue;
+	            final boolean visitorPrunes = pruneFeature(feature);
+	            if (visitorPrunes)
+	                continue;
+	            // we found a feature to be visited
+	            if (comprehension.onlySamplingFeature(feature)) {
+	                // we found a feature that must be sampled
+	                navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()));	                
+	                return true;
+	            }
+	        }
+        }
+	    return false;
+    }
 }

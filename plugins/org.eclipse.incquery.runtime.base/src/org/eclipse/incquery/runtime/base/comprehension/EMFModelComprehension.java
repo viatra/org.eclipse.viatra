@@ -55,6 +55,11 @@ public class EMFModelComprehension {
      * {@link #representable(EStructuralFeature)} is true.
      */
     public boolean untraversableDirectly(EStructuralFeature feature) {
+        if((feature instanceof EReference && ((EReference)feature).isContainer())) {
+            // container features are always represented through their opposite
+            return true;
+        }
+        
         boolean suspect = onlySamplingFeature(feature);
         if(suspect) {
             // even if the feature can only be sampled, it may be used if the proper base index option is set
@@ -67,15 +72,12 @@ public class EMFModelComprehension {
      * Decides whether a feature can only be sampled as there is no guarantee that proper notifications will be
      * delivered by their implementation.
      * 
-     * <p/> Such features are derived (and/or volatile) features that are not well-behaving and container references.
-     * 
-     * TODO should we always ignore container references? 
+     * <p/> Such features are derived (and/or volatile) features that are not well-behaving.
      */
     public boolean onlySamplingFeature(EStructuralFeature feature) {
         boolean suspect = 
         		feature.isDerived() || 
-        		feature.isVolatile() || 
-        		(feature instanceof EReference && ((EReference)feature).isContainer());
+        		feature.isVolatile();
         if (suspect) {
             // override support here
             // (e.g. if manual notifications available, or no changes expected afterwards)

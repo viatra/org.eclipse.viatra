@@ -641,5 +641,10 @@ public interface NavigationHelper {
      */
     public Set<EClass> getAllCurrentClasses();
 
+    /**
+     * Updates the value of indexed derived features that are not well-behaving.
+     */
+    void resampleDerivedFeatures();
+
 
 }

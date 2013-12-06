@@ -33,6 +33,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
@@ -44,11 +46,13 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
@@ -62,46 +66,72 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     private final NavigationHelperImpl navigationHelper;
 
-    // since last run of after-update callbacks
+    /**
+     *  since last run of after-update callbacks
+     */
     private boolean isDirty = false;
 
-    // value -> feature (EAttribute or EReference) -> holder(s)
+    /**
+     *  value -> feature (EAttribute or EReference) -> holder(s)
+     */
     private final Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
 
-    // feature ((String id or EStructuralFeature) -> holder(s)
-    // constructed on-demand
+    /** feature ((String id or EStructuralFeature) -> holder(s)
+     *  constructed on-demand
+     */
     private Map<Object, Multiset<EObject>> featureToHolderMap;
 
-    // holder -> feature (String id or EStructuralFeature) -> value(s)
-    // constructed on-demand
+    /** holder -> feature (String id or EStructuralFeature) -> value(s)
+     *  constructed on-demand
+     */
     private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap;
 
-    // key (String id or EClass instance) -> instance(s)
+    /**
+     *  key (String id or EClass instance) -> instance(s)
+     */
     private final Map<Object, Set<EObject>> instanceMap;
 
-    // key (String id or EDataType instance) -> multiset of value(s)
+    /**
+     *  key (String id or EDataType instance) -> multiset of value(s)
+     */
     private final Map<Object, Map<Object, Integer>> dataTypeMap;
 
-    // source -> feature (EReference) -> proxy target -> delayed visitors
+    /**
+     *  source -> feature (EReference) -> proxy target -> delayed visitors
+     */
     private final Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
 
-    // proxy source -> delayed visitors
+    /**
+     *  proxy source -> delayed visitors
+     */
     private final ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
-    // Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
+    /**
+     *  Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
+     */
     private final Set<EClassifier> knownClassifiers = new HashSet<EClassifier>();
-    // Field variable because it is needed for collision detection. Used for all EStructuralFeatures whose instances were encountered at least once.
+    /**
+     *  Field variable because it is needed for collision detection. Used for all EStructuralFeatures whose instances were encountered at least once.
+     */
     private final Set<EStructuralFeature> knownFeatures = new HashSet<EStructuralFeature>();
 
-    // (EClass or String ID) -> all subtypes in knownClasses
+    /**
+     *  (EClass or String ID) -> all subtypes in knownClasses
+     */
     private final Map<Object, Set<Object>> subTypeMap = new HashMap<Object, Set<Object>>();
-    // (EClass or String ID) -> all supertypes in knownClasses
+    /**
+     *  (EClass or String ID) -> all supertypes in knownClasses
+     */
     private final Map<Object, Set<Object>> superTypeMap = new HashMap<Object, Set<Object>>();
 
-    // EPacakge NsURI -> EPackage instances; this is instance-level to detect collisions
+    /**
+     *  EPacakge NsURI -> EPackage instances; this is instance-level to detect collisions
+     */
     private final Multimap<String, EPackage> uniqueIDToPackage = HashMultimap.create();
 
-    // static maps between metamodel elements and their unique IDs
+    /**
+     *  static maps between metamodel elements and their unique IDs
+     */
     private final Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private final Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
     private final Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
@@ -835,6 +865,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     /**
+     * Calling this method will construct the map for all holders and features,
+     * consuming significant memory!
+     * 
      * @return the holderToFeatureToValeMap
      */
     protected Table<EObject, Object, Set<Object>> getHolderToFeatureToValueMap() {
@@ -890,6 +923,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return null;
 
     }
+    
+    public EStructuralFeature getKnownFeatureForKey(Object featureKey) {
+        EStructuralFeature feature;
+        if (isDynamicModel()) {
+            feature = getKnownFeature((String) featureKey);
+        } else {
+            feature = (EStructuralFeature) featureKey;
+        }
+        return feature;
+    }
 
     /**
      * Returns the corresponding {@link EClassifier} instance for the id.
@@ -903,6 +946,16 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
+    public EClassifier getKnownClassifierForKey(Object classifierKey) {
+        EClassifier cls;
+        if (isDynamicModel()) {
+            cls = getKnownClassifier((String) classifierKey);
+        } else {
+            cls = (EClassifier) classifierKey;
+        }
+        return cls;
+    }
+    
     /**
      * Returns all EClasses that currently have direct instances cached by the index.
      * <p>Supertypes will not be returned, unless they have direct instances in the model as well. If not in <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.
@@ -930,4 +983,66 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return isDynamicModel;
     }
 
+    
+    protected void resampleFeatureValueForHolder(EObject source, EStructuralFeature feature, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        // traverse features and update value
+        Object newValue = source.eGet(feature);
+        Set<Object> oldValues = getOldValuesForHolderAndFeature(source, feature);
+        if(feature.isMany()) {
+            resampleManyFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
+        } else {
+            resampleSingleFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
+        }
+        
+    }
+
+    private Set<Object> getOldValuesForHolderAndFeature(EObject source, EStructuralFeature feature) {
+        // while this is slower than using the holderToFeatureToValueMap, we do not want to construct that to avoid
+        // memory overhead
+        Map<Object, Set<EObject>> oldValuesToHolders = valueToFeatureToHolderMap.column(feature);
+        Set<Object> oldValues = new HashSet<Object>();
+        for (Entry<Object, Set<EObject>> entry : oldValuesToHolders.entrySet()) {
+            if(entry.getValue().contains(source)) {
+                oldValues.add(entry.getKey());
+            }
+        }
+        return oldValues;
+    }
+
+    private void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue, Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        InternalEObject internalEObject = (InternalEObject) source;
+        Collection<?> newValues = (Collection<?>) newValue;
+        // add those that are in new but not in old
+        Set<Object> newValueSet = new HashSet<Object>(newValues);
+        newValueSet.removeAll(oldValues);
+        // remove those that are in old but not in new
+        oldValues.removeAll(newValues);
+        if(!oldValues.isEmpty()) {
+            for (Object ov : oldValues) {
+                comprehension.traverseFeature(removalVisitor, source, feature, ov);
+            }
+            ENotificationImpl removeNotification = new ENotificationImpl(internalEObject, Notification.REMOVE_MANY, feature, oldValues, null);
+            notifyLightweightObservers(source, feature, removeNotification);
+        }
+        if(!newValueSet.isEmpty()) {
+            for (Object nv : newValueSet) {
+                comprehension.traverseFeature(insertionVisitor, source, feature, nv);
+            }
+            ENotificationImpl addNotification = new ENotificationImpl(internalEObject, Notification.ADD_MANY, feature, null, newValueSet);
+            notifyLightweightObservers(source, feature, addNotification);
+        }
+    }
+
+    private void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue, Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        InternalEObject internalEObject = (InternalEObject) source;
+        Object oldValue = Iterables.getFirst(oldValues, null);
+        if(!Objects.equal(oldValue,newValue)) {
+            // value changed
+            comprehension.traverseFeature(removalVisitor, source, feature, oldValue);
+            comprehension.traverseFeature(insertionVisitor, source, feature, newValue);
+            ENotificationImpl notification = new ENotificationImpl(internalEObject, Notification.SET, feature, oldValue, newValue);
+            notifyLightweightObservers(source, feature, notification);
+        }
+    }
+    
 }

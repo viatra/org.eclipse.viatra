@@ -51,4 +51,21 @@ public interface IRunOnceQueryEngine {
      * @return the base index options used by the engine. 
      */
     BaseIndexOptions getBaseIndexOptions(); 
+    
+    /**
+     * When set to true, the run-once query engine will not dispose it's engine and will resample the values of derived
+     * features before returning matches if the model changed since the last call.
+     * 
+     * If the values of derived features may change without any model modification, call {@link #resampleOnNextCall()}
+     * before subsequent calls of {@link #getAllMatches}.
+     * 
+     * @param automaticResampling
+     */
+    void setAutomaticResampling(boolean automaticResampling);
+    
+    /**
+     * If automatic resampling is enabled and the value of derived features may change without model modifications,
+     * calling this method will make sure that re-sampling will occur before returning match results.
+     */
+    void resampleOnNextCall();
 }
