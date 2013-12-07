@@ -196,16 +196,17 @@ public class RunOnceTest {
     /**
      * The test shows that using an incremental engine with not well-behaving derived features will return 
      * incorrect values if the model changes.
+     * @throws IncQueryException 
      */
     @Test
-    public void testModelModification() {
+    public void testModelModification() throws IncQueryException {
         // the results of incremental engine will not be correct
         Library library = prepareModel();
         
         try {
+            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(rs);
             // this is to allow the normal engine to traverse feature
-            WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(EIQLibraryPackage.eINSTANCE);
             LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
             Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();
             
@@ -218,7 +219,7 @@ public class RunOnceTest {
             assertTrue(match.getAuthor() == romatch.getAuthor());
             Book longBook = romatch.getBook();
             assertTrue(match.getBook() == longBook);
-
+            
             Book b = EIQLibraryFactory.eINSTANCE.createBook();
             b.setTitle("Long book");
             b.setPages(120);
@@ -237,11 +238,11 @@ public class RunOnceTest {
             }
             assertTrue(longScifiBooks.contains(b));
             assertTrue(longScifiBooks.contains(longBook));
-            
-        } catch (IncQueryException e) {
-            e.printStackTrace();
-            fail(e.getShortMessage());
+        } finally {
+            WellbehavingDerivedFeatureRegistry.initRegistry();
         }
+        
+            
     }
 
     @Test
