@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.base.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,12 +47,10 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
@@ -95,16 +92,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      *  key (String id or EDataType instance) -> multiset of value(s)
      */
     private final Map<Object, Map<Object, Integer>> dataTypeMap;
-
-    /**
-     *  source -> feature (EReference) -> proxy target -> delayed visitors
-     */
-    private final Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> unresolvableProxyFeaturesMap;
-
-    /**
-     *  proxy source -> delayed visitors
-     */
-    private final ListMultimap<EObject, EMFVisitor> unresolvableProxyObjectsMap;
 
     /**
      *  Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
@@ -151,8 +138,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         this.navigationHelper = navigationHelper;
         this.comprehension = navigationHelper.getComprehension();
         this.isDynamicModel = navigationHelper.getBaseIndexOptions().isDynamicEMFMode();
-        this.unresolvableProxyFeaturesMap = HashBasedTable.create();
-        this.unresolvableProxyObjectsMap = ArrayListMultimap.create();
         this.valueToFeatureToHolderMap = HashBasedTable.create();
         this.instanceMap = new HashMap<Object, Set<EObject>>();
         this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
@@ -220,7 +205,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             if (oNotifier instanceof EObject && oFeature instanceof EStructuralFeature) {
                 final EObject notifier = (EObject) oNotifier;
                 final EStructuralFeature feature = (EStructuralFeature) oFeature;
+                
                 final boolean notifyLightweightObservers = handleNotification(notification, notifier, feature);
+                
                 if(notifyLightweightObservers) {
                     notifyLightweightObservers(notifier, feature, notification);
                 }
@@ -268,8 +255,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         case Notification.REMOVING_ADAPTER:
             break;
         case Notification.RESOLVE:
-            featureResolve(notifier, feature, oldValue, newValue);
-            break;
         case Notification.UNSET:
         case Notification.SET:
             featureUpdate(false, notifier, feature, oldValue);
@@ -286,22 +271,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         navigationHelper.notifyBaseIndexChangeListeners(isDirty);
         if (isDirty) {
             isDirty = false;
-        }
-    }
-
-    private void featureResolve(final EObject source, final EStructuralFeature feature, final Object oldValue, final Object newValue) {
-        final EReference reference = (EReference) feature;
-        final EObject proxy = (EObject) oldValue;
-        final EObject resolved = (EObject) newValue;
-
-        final List<EMFVisitor> objectVisitors = popVisitorsSuspendedOnObject(proxy);
-        for (final EMFVisitor visitor : objectVisitors) {
-            comprehension.traverseObject(visitor, resolved);
-        }
-
-        final List<EMFVisitor> featureVisitors = popVisitorsSuspendedOnFeature(source, reference, proxy);
-        for (final EMFVisitor visitor : featureVisitors) {
-            comprehension.traverseFeature(visitor, source, reference, resolved);
         }
     }
 
@@ -802,47 +771,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    public void suspendVisitorOnUnresolvableFeature(final EMFVisitor visitor, final EObject source, final EReference reference,
-            final EObject target, final boolean isInsertion) {
-        ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
-        if (targetToVisitor == null) {
-            targetToVisitor = ArrayListMultimap.create();
-            unresolvableProxyFeaturesMap.put(source, reference, targetToVisitor);
-        }
-        if (isInsertion) {
-            targetToVisitor.put(target, visitor);
-        } else {
-            targetToVisitor.remove(target, visitor);
-        }
-        if (targetToVisitor.isEmpty()) {
-            unresolvableProxyFeaturesMap.remove(source, reference);
-        }
-    }
-
-    public void suspendVisitorOnUnresolvableObject(final EMFVisitor visitor, final EObject source, final boolean isInsertion) {
-        if (isInsertion) {
-            unresolvableProxyObjectsMap.put(source, visitor);
-        } else {
-            unresolvableProxyObjectsMap.remove(source, visitor);
-        }
-    }
-
-    private List<EMFVisitor> popVisitorsSuspendedOnFeature(final EObject source, final EReference reference, final EObject target) {
-        final ListMultimap<EObject, EMFVisitor> targetToVisitor = unresolvableProxyFeaturesMap.get(source, reference);
-        if (targetToVisitor == null) {
-            return Collections.emptyList();
-        }
-        final List<EMFVisitor> result = targetToVisitor.removeAll(target);
-        if (targetToVisitor.isEmpty()) {
-            unresolvableProxyFeaturesMap.remove(source, reference);
-        }
-        return result;
-    }
-
-    private List<EMFVisitor> popVisitorsSuspendedOnObject(final EObject source) {
-        return unresolvableProxyObjectsMap.removeAll(source);
-    }
-
     /**
      * @return the valueToFeatureToHolderMap
      */
@@ -879,20 +807,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
     protected Table<EObject, Object, Set<Object>> peekHolderToFeatureToValueMap() {
         return holderToFeatureToValueMap;
-    }
-
-    /**
-     * @return the unresolvableProxyFeaturesMap
-     */
-    protected Table<EObject, EReference, ListMultimap<EObject, EMFVisitor>> getUnresolvableProxyFeaturesMap() {
-        return unresolvableProxyFeaturesMap;
-    }
-
-    /**
-     * @return the unresolvableProxyObjectsMap
-     */
-    protected ListMultimap<EObject, EMFVisitor> getUnresolvableProxyObjectsMap() {
-        return unresolvableProxyObjectsMap;
     }
 
     /**

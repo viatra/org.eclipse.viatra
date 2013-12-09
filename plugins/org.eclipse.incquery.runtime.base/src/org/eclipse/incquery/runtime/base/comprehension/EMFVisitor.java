@@ -55,13 +55,6 @@ public class EMFVisitor {
     public void visitElement(EObject source) {
     }
 
-    // /**
-    // * @param source
-    // * @param feature
-    // * @param target
-    // */
-    // public void visitExternalReference(EObject source, EReference feature, EObject target) {}
-
     /**
      * @param source
      * @param feature
@@ -105,12 +98,6 @@ public class EMFVisitor {
      */
     public boolean pruneSubtrees(Resource source) {
         return false;
-    }
-
-    public void visitUnresolvableProxyObject(EObject source) {
-    }
-
-    public void visitUnresolvableProxyFeature(EObject source, EReference feature, EObject target) {
     }
 
     /**

@@ -122,7 +122,10 @@ public class EMFModelComprehension {
         if (source == null)
             return;
         if (source instanceof EObject) {
-            traverseObject(visitor, (EObject) source);
+            final EObject sourceObject = (EObject) source;
+            if (sourceObject.eIsProxy()) 
+            	throw new IllegalArgumentException("Proxy EObject cannot act as model roots for EMF-IncQuery: " + source);
+			traverseObject(visitor, sourceObject);
         } else if (source instanceof Resource) {
             traverseResource(visitor, (Resource) source);
         } else if (source instanceof ResourceSet) {
@@ -153,14 +156,6 @@ public class EMFModelComprehension {
     public void traverseObject(EMFVisitor visitor, EObject source) {
         if (source == null)
             return;
-        if (source.eIsProxy()) {
-            if (visitor.forceProxyResolution())
-                source = EcoreUtil.resolve(source, source);
-            if (source.eIsProxy()) {
-                visitor.visitUnresolvableProxyObject(source);
-                return;
-            }
-        }
 
         if (visitor.preOrder()) visitor.visitElement(source);
         for (EStructuralFeature feature : source.eClass().getEAllStructuralFeatures()) {
@@ -226,14 +221,6 @@ public class EMFModelComprehension {
         } else if (feature instanceof EReference) {
             EReference reference = (EReference) feature;
             EObject targetObject = (EObject) target;
-            if (targetObject.eIsProxy()) {
-                if (visitor.forceProxyResolution())
-                    targetObject = EcoreUtil.resolve(targetObject, source);
-                if (targetObject.eIsProxy()) {
-                    visitor.visitUnresolvableProxyFeature(source, reference, targetObject);
-                    return;
-                }
-            }
             if (reference.isContainment()) {
                 if (!visitorPrunes)
                     visitor.visitInternalContainment(source, reference, targetObject);
@@ -249,8 +236,10 @@ public class EMFModelComprehension {
                 if (!visitorPrunes)
                     visitor.visitNonContainmentReference(source, reference, targetObject);
             }
-            // else
-            // visitor.visitExternalReference(source, reference, targetObject);
+            if (targetObject.eIsProxy()) {
+            	if (visitor.forceProxyResolution())
+            		source.eGet(feature, /*resolve*/ true); // TODO delay?
+            }
         }
 
     }
