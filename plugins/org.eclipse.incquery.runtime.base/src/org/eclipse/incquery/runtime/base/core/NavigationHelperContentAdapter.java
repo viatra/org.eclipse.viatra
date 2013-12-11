@@ -291,6 +291,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     if (notifier instanceof EObject) {
                         comprehension.traverseObject(visitor(true), (EObject) notifier);
                     }
+                    // the notification listener is really added AFTER traversing the object, 
+                    // so that if a proxy is resolved due to the traversal, we do not get about it   
                     NavigationHelperContentAdapter.super.addAdapter(notifier);
                     return null;
                 }
