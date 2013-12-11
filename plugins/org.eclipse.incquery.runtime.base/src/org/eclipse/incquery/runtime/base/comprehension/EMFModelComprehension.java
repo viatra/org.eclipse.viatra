@@ -239,7 +239,7 @@ public class EMFModelComprehension {
             if (targetObject.eIsProxy()) {
             	if (!reference.isResolveProxies()) {
             		throw new IllegalStateException(String.format(
-            				"Reference '%s' of EClass %s is set as proxy-non-resolving (i.e. it should never point to a proxy, and never lead cross-resource), " +
+            				"EReference '%s' of EClass %s is set as proxy-non-resolving (i.e. it should never point to a proxy, and never lead cross-resource), " +
             						"yet EMF-IncQuery Base encountered a proxy object %s referenced from %s.",
             						reference.getName(), reference.getEContainingClass().getInstanceTypeName(),
             						targetObject, source));
