@@ -14,7 +14,6 @@ package org.eclipse.incquery.runtime.rete.construction;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
-import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
@@ -82,14 +81,8 @@ public interface IOperationCompiler<PatternDescription, Collector> {
     public SubPlan buildCountCheckBetaNode(SubPlan primaryPlan, SubPlan sidePlan,
             TupleMask primaryMask, TupleMask originalSideMask, int resultPositionInSignature);
 
-    @Deprecated
-    public SubPlan buildPredicateChecker(AbstractEvaluator evaluator, Integer rhsIndex, int[] affectedIndices,
-            SubPlan parentPlan);
     public SubPlan buildPredicateChecker(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
             SubPlan parentPlan);
-    @Deprecated
-	public SubPlan buildFunctionEvaluator(AbstractEvaluator evaluator, SubPlan parentPlan, 
-			Object computedResultCalibrationElement);
     public SubPlan buildFunctionEvaluator(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
             SubPlan parentPlan, Object computedResultCalibrationElement);
     

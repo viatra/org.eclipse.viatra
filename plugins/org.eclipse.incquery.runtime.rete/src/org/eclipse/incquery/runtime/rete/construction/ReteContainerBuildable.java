@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
-import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
 import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.DualInputNode;
@@ -243,24 +242,6 @@ public class ReteContainerBuildable<PatternDescription>
 
         return trace(result, checker);
     }
-
-    public SubPlan buildPredicateChecker(AbstractEvaluator evaluator, Integer rhsIndex,
-            int[] affectedIndices, SubPlan parentPlan) {
-        throw new UnsupportedOperationException();
-//        PredicateEvaluatorNode ten = new PredicateEvaluatorNode(engine, targetContainer, rhsIndex, affectedIndices,
-//                stub.getVariablesTuple().getSize(), evaluator);
-//        Address<PredicateEvaluatorNode> checker = Address.of(ten);
-//    	
-////    	// TODO - eventually replace with newer version
-////    	CachedPredicateEvaluatorNode cpen = new CachedPredicateEvaluatorNode(targetContainer, engine, evaluator, stub.getVariablesTuple().getSize());
-////        Address<CachedPredicateEvaluatorNode> checker = Address.of(cpen);
-//
-//        reteNet.connectRemoteNodes(getHandle(stub), checker, true);
-//
-//        SubPlan result = new SubPlan(stub);
-//
-//        return trace(result, checker);
-    }
     
     @Override
     public SubPlan buildPredicateChecker(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
@@ -275,23 +256,7 @@ public class ReteContainerBuildable<PatternDescription>
         return trace(result, checker);
 
     }
-    @Override
-	public SubPlan buildFunctionEvaluator(AbstractEvaluator evaluator, 
-            SubPlan parentPlan, Object computedResultCalibrationElement) {
-        throw new UnsupportedOperationException();
-//    	CachedFunctionEvaluatorNode cfen = new CachedFunctionEvaluatorNode(targetContainer, engine, evaluator, stub.getVariablesTuple().getSize());
-//        Address<CachedFunctionEvaluatorNode> computer = Address.of(cfen);
-//
-//        reteNet.connectRemoteNodes(getHandle(stub), computer, true);
-//
-//        Object[] newCalibrationElement = { computedResultCalibrationElement };
-//        Tuple newCalibrationPattern = new LeftInheritanceTuple(stub.getVariablesTuple(), newCalibrationElement);
-//
-//        SubPlan result = new SubPlan(stub,
-//                newCalibrationPattern);
-//
-//        return trace(result, computer);
-    }
+
     @Override
     public SubPlan buildFunctionEvaluator(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
             SubPlan parentPlan, Object computedResultCalibrationElement) {
