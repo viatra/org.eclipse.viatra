@@ -12,8 +12,6 @@ package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
@@ -28,10 +26,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
 import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider;
-import org.eclipse.incquery.runtime.rete.eval.AbstractEvaluator;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.util.ExpressionUtil;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
+import org.eclipse.incquery.runtime.util.ExpressionUtil;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.util.CancelIndicator;
