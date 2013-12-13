@@ -20,5 +20,5 @@ import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
  * 
  */
 public interface IReteLayoutStrategy {
-    public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler) throws RetePatternBuildException;
+    public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler) throws OperationCompilerException;
 }

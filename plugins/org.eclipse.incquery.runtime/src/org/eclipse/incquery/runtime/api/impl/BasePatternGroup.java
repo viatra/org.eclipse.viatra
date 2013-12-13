@@ -20,7 +20,7 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 
 /**
  * Base implementation of {@link IPatternGroup}.
@@ -42,7 +42,7 @@ public abstract class BasePatternGroup implements IPatternGroup {
             final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
 			engineImpl.getSanitizer().admit(patterns);
 			engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
-        } catch (RetePatternBuildException e) {
+        } catch (OperationCompilerException e) {
             throw new IncQueryException(e);
         }
     }

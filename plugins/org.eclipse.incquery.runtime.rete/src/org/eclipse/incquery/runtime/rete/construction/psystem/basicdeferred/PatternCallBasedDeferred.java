@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
@@ -91,7 +92,7 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     }
 
-    public SubPlan getSidePlan(IOperationCompiler<?, ?> compiler) throws RetePatternBuildException {
+    public SubPlan getSidePlan(IOperationCompiler<?, ?> compiler) throws OperationCompilerException {
         SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, pattern);
         sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
         return sidePlan;

@@ -19,6 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
@@ -51,7 +52,7 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Colle
     }
 
     @Override
-    public Collector construct(Pattern pattern) throws RetePatternBuildException {
+    public Collector construct(Pattern pattern) throws OperationCompilerException {
         try {
             EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
                     baseBuildable, context);

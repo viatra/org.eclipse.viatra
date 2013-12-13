@@ -34,14 +34,14 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
  */
 public interface IOperationCompiler<PatternDescription, Collector> {
 
-    public Collector patternCollector(PatternDescription pattern) throws RetePatternBuildException;
+    public Collector patternCollector(PatternDescription pattern) throws OperationCompilerException;
  
     public void buildConnection(SubPlan parentPlan, Collector collector);
     
     public void patternFinished(PatternDescription pattern, IPatternMatcherContext context, Collector collector);
     
     public SubPlan patternCallPlan(Tuple nodes, Object supplierKey)
-            throws RetePatternBuildException;
+            throws OperationCompilerException;
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes);
 
@@ -87,12 +87,12 @@ public interface IOperationCompiler<PatternDescription, Collector> {
             SubPlan parentPlan, Object computedResultCalibrationElement);
     
     /**
-     * @return a buildable that potentially acts on a separate container
+     * @return an operation compiler that potentially acts on a separate container
      */
     public IOperationCompiler<PatternDescription, Collector> getNextContainer();
 
     /**
-     * @return a buildable that puts build actions on the tab of the given pattern
+     * @return an operation compiler that puts build actions on the tab of the given pattern
      */
     public IOperationCompiler<PatternDescription, Collector> putOnTab(PatternDescription effort, IPatternMatcherContext context);
 

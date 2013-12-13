@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
@@ -452,7 +453,7 @@ public class ReteBoundary<PatternDescription> {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
     public synchronized Address<? extends Production> accessProduction(PatternDescription gtPattern)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
         Address<? extends Production> pn;
         pn = productions.get(gtPattern);
         if (pn == null) {
@@ -475,7 +476,7 @@ public class ReteBoundary<PatternDescription> {
      *             if production node is already created
      */
     public synchronized Address<? extends Production> createProductionInternal(PatternDescription gtPattern)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
         if (productions.containsKey(gtPattern)) {
             String[] args = { gtPattern.toString() };
             throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args,
@@ -522,7 +523,7 @@ public class ReteBoundary<PatternDescription> {
     /**
      * @pre: builder is set
      */
-    protected void construct(PatternDescription gtPattern) throws RetePatternBuildException {
+    protected void construct(PatternDescription gtPattern) throws OperationCompilerException {
         engine.getReteNet().waitForReteTermination();
         engine.getBuilder().construct(gtPattern);
         // production.setDirty(false);

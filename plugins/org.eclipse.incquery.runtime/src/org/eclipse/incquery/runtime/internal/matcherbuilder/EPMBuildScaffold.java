@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.internal.matcherbuilder;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
@@ -41,7 +41,7 @@ public class EPMBuildScaffold<Collector> {
         this.context = context;
     }
 
-    public Collector construct(Pattern pattern) throws RetePatternBuildException {
+    public Collector construct(Pattern pattern) throws OperationCompilerException {
         Collector production = baseBuildable.putOnTab(pattern, context).patternCollector(pattern);
         // TODO check annotations for reinterpret
 

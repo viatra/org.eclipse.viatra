@@ -28,10 +28,10 @@ public interface IRetePatternBuilder<PatternDefinition, Collector> {
      * @param gtPattern
      *            the pattern whose matcher subnet has to be built.
      * @return production. the Production node that should store matchings of the given pattern.
-     * @throws RetePatternBuildException
+     * @throws OperationCompilerException 
      *             if construction fails.
      */
-    Collector construct(PatternDefinition gtPattern) throws RetePatternBuildException;
+    Collector construct(PatternDefinition gtPattern) throws OperationCompilerException;
 
     /**
      * Extract the position mapping of the graph pattern.

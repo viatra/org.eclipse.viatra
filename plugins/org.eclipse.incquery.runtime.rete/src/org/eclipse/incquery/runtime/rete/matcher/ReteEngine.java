@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Library;
@@ -161,7 +162,7 @@ public class ReteEngine<PatternDescription> {
      *             if construction fails.
      */
     public synchronized RetePatternMatcher accessMatcher(final PatternDescription gtPattern)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
     	ensureInitialized();
     	RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
@@ -171,7 +172,7 @@ public class ReteEngine<PatternDescription> {
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
         		@Override
-        		public Void call() throws RetePatternBuildException {
+        		public Void call() throws OperationCompilerException {
         			Address<? extends Production> prodNode;
         			prodNode = boundary.accessProduction(gtPattern);
         			
@@ -200,11 +201,11 @@ public class ReteEngine<PatternDescription> {
      *             if construction fails.
      */
     public synchronized void buildMatchersCoalesced(final Collection<PatternDescription> patterns)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
     	ensureInitialized();
     	constructionWrapper(new Callable<Void>() {
     		@Override
-    		public Void call() throws RetePatternBuildException {
+    		public Void call() throws OperationCompilerException {
     			for (PatternDescription gtPattern : patterns) {
     				boundary.accessProduction(gtPattern);
     			}

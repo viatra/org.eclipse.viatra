@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.exception;
 
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 
 public class IncQueryException extends Exception {
 
@@ -34,7 +34,7 @@ public class IncQueryException extends Exception {
         this.shortMessage = shortMessage;
     }
 
-    public IncQueryException(RetePatternBuildException e) {
+    public IncQueryException(OperationCompilerException e) {
         super(PATTERN_MATCHER_PROBLEM + ": " + e.getMessage(), e);
         this.shortMessage = e.getShortMessage();
     }

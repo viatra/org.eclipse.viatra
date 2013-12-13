@@ -12,22 +12,14 @@
 package org.eclipse.incquery.runtime.rete.construction;
 
 /**
- * A problem has occured during the construction of the RETE net.
+ * A problem has occurred during the construction of the RETE net.
  * 
  * @author Gabor Bergmann
  * 
  */
-public class RetePatternBuildException extends Exception {
+public class RetePatternBuildException extends OperationCompilerException {
 
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = -2424538150959407887L;
-
-    private Object patternDescription;
-    private String templateMessage;
-    private String[] templateContext;
-    private String shortMessage;
+    private static final long serialVersionUID = 6966585498204577548L;
 
     /**
      * @param message
@@ -39,11 +31,7 @@ public class RetePatternBuildException extends Exception {
      *            the PatternDescription where the exception occurred
      */
     public RetePatternBuildException(String message, String[] context, String shortMessage, Object patternDescription) {
-        super(bind(message, context));
-        this.patternDescription = patternDescription;
-        this.templateMessage = message;
-        this.templateContext = context;
-        this.shortMessage = shortMessage;
+        super(message, context, shortMessage, patternDescription);
     }
 
     /**
@@ -57,54 +45,6 @@ public class RetePatternBuildException extends Exception {
      */
     public RetePatternBuildException(String message, String[] context, String shortMessage, Object patternDescription,
             Throwable cause) {
-        super(bind(message, context), cause);
-        this.patternDescription = patternDescription;
-        this.templateMessage = message;
-        this.templateContext = context;
-        this.shortMessage = shortMessage;
-    }
-
-    public Object getPatternDescription() {
-        return patternDescription;
-    }
-
-    public void setPatternDescription(Object patternDescription) {
-        this.patternDescription = patternDescription;
-    }
-
-    public String getTemplateMessage() {
-        return templateMessage;
-    }
-
-    public String[] getTemplateContext() {
-        return templateContext;
-    }
-
-    /**
-     * Binding the '{n}' (n = 1..N) strings to contextual conditions in 'context'
-     * 
-     * @param context
-     *            : array of context-sensitive Strings
-     */
-    private static String bind(String message, String[] context) {
-        String additionalError = "";
-
-        if (context == null)
-            return message;
-
-        for (int i = 0; i < context.length; i++) {
-            message = message.replace("{" + (i + 1) + "}", context[i] != null ? context[i] : "<<null>>");
-            // //error handling in case there is a null value in the context array
-            // if(context[i] == null)
-            // additionalError = "[INTERNAL ERROR] A name value in the GTASM model is null. \n\n";
-        }
-        return additionalError + message;
-    }
-
-    /**
-     * @return the shortMessage
-     */
-    public String getShortMessage() {
-        return shortMessage;
+        super(message, context, shortMessage, patternDescription, cause);
     }
 }

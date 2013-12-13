@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.SubPlanProcessor;
@@ -46,7 +47,7 @@ public class BasicLinearLayout implements IReteLayoutStrategy {
 	SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan layout(final PSystem pSystem, final IOperationCompiler<?, ?> compiler) throws RetePatternBuildException {
+    public SubPlan layout(final PSystem pSystem, final IOperationCompiler<?, ?> compiler) throws OperationCompilerException {
         Object pattern = pSystem.getPattern();
         IPatternMatcherContext context = pSystem.getContext();
         planProcessor.setCompiler(compiler);

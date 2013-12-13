@@ -39,12 +39,12 @@ import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
- * The buildable interface of a rete container.
+ * An operation compiler implementation for a Rete container.
  * 
  * @author Gabor Bergmann
  * 
  */
-public class ReteContainerBuildable<PatternDescription>
+public class ReteContainerCompiler<PatternDescription>
 		implements IOperationCompiler<PatternDescription, Address<? extends Receiver>>, Cloneable {
 
     protected Library library;
@@ -72,7 +72,7 @@ public class ReteContainerBuildable<PatternDescription>
      * 
      * @param targetContainer
      */
-    public ReteContainerBuildable(ReteEngine<PatternDescription> engine, ReteContainer targetContainer) {
+    public ReteContainerCompiler(ReteEngine<PatternDescription> engine, ReteContainer targetContainer) {
         super();
         this.engine = engine;
         this.reteNet = engine.getReteNet();
@@ -86,7 +86,7 @@ public class ReteContainerBuildable<PatternDescription>
      * Constructs the builder attached to the head container. Prerequisite: engine has its network and boundary fields
      * initialized
      */
-    public ReteContainerBuildable(ReteEngine engine) {
+    public ReteContainerCompiler(ReteEngine engine) {
         super();
         this.engine = engine;
         this.reteNet = engine.getReteNet();
@@ -149,7 +149,7 @@ public class ReteContainerBuildable<PatternDescription>
 
     @Override
     public SubPlan patternCallPlan(Tuple nodes, Object supplierKey)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
         return trace(new SubPlan(nodes), boundary.accessProduction((PatternDescription)supplierKey));
     }
 
@@ -278,10 +278,10 @@ public class ReteContainerBuildable<PatternDescription>
      * @return trace(a buildable that potentially acts on a separate container
      */
     public IOperationCompiler<PatternDescription, Address<? extends Receiver>> getNextContainer() {
-        return new ReteContainerBuildable<PatternDescription>(engine, reteNet.getNextContainer());
+        return new ReteContainerCompiler<PatternDescription>(engine, reteNet.getNextContainer());
     }
 
-    public Address<? extends Receiver> patternCollector(Object pattern) throws RetePatternBuildException {
+    public Address<? extends Receiver> patternCollector(Object pattern) throws OperationCompilerException {
         return engine.getBoundary().createProductionInternal(pattern);
     }
 
@@ -289,9 +289,9 @@ public class ReteContainerBuildable<PatternDescription>
      * No need to distinguish
      */
     public IOperationCompiler<PatternDescription, Address<? extends Receiver>> putOnTab(Object effort, IPatternMatcherContext effortContext) {
-    	final ReteContainerBuildable<PatternDescription> patternSpecific;
+    	final ReteContainerCompiler<PatternDescription> patternSpecific;
     	try {
-    		patternSpecific = (ReteContainerBuildable<PatternDescription>) this.clone();
+    		patternSpecific = (ReteContainerCompiler<PatternDescription>) this.clone();
 		} catch (CloneNotSupportedException e) {
 			return this;
 		}

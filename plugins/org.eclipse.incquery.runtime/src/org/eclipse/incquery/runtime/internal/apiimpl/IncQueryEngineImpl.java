@@ -46,13 +46,12 @@ import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
-import org.eclipse.incquery.runtime.rete.construction.ReteContainerBuildable;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
+import org.eclipse.incquery.runtime.rete.construction.ReteContainerCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
@@ -312,7 +311,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
         ReteEngine<Pattern> engine;
         engine = new ReteEngine<Pattern>(context, reteThreads);
-        ReteContainerBuildable<Pattern> buildable = new ReteContainerBuildable<Pattern>(engine);
+        ReteContainerCompiler<Pattern> buildable = new ReteContainerCompiler<Pattern>(engine);
         EPMBuilder<Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Receiver>>(
                 buildable, context);
         engine.setBuilder(builder);
@@ -426,7 +425,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         try {
             RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getPattern());
             patternMatcher.connect(callbackNode, listener, fireNow);
-        } catch (RetePatternBuildException e) {
+        } catch (OperationCompilerException e) {
             logger.error("Could not access matcher " + matcher.getPatternName(), e);
         }
     }

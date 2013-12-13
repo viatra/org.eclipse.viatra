@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
 import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
+import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.construction.SubPlanProcessor;
@@ -40,7 +41,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
 
     @Override
     public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler)
-            throws RetePatternBuildException {
+            throws OperationCompilerException {
         return new Scaffold(pSystem, compiler).run();
     }
 
@@ -66,7 +67,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
         /**
          * @return
          */
-        public SubPlan run() throws RetePatternBuildException {
+        public SubPlan run() throws OperationCompilerException {
             try {
                 context.logDebug(String.format(
                 		"%s: patternbody build started for %s",
@@ -138,7 +139,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
             return candidates;
         }
 
-        private void admitSubPlan(SubPlan plan) throws RetePatternBuildException {
+        private void admitSubPlan(SubPlan plan) throws OperationCompilerException {
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
@@ -160,7 +161,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
         }
 
         private void doJoin(SubPlan primaryPlan, SubPlan secondaryPlan)
-                throws RetePatternBuildException {
+                throws OperationCompilerException {
             SubPlan joinedPlan = BuildHelper.naturalJoin(buildable, primaryPlan, secondaryPlan);
             forefront.remove(primaryPlan);
             forefront.remove(secondaryPlan);

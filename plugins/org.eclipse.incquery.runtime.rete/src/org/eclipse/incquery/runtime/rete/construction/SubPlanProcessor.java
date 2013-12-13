@@ -54,7 +54,7 @@ public class SubPlanProcessor {
      * @return the initialized plan
      * @throws RetePatternBuildException
      */
-    public SubPlan processEnumerableConstraint(EnumerablePConstraint constraint) throws RetePatternBuildException {
+    public SubPlan processEnumerableConstraint(EnumerablePConstraint constraint) throws OperationCompilerException {
         SubPlan plan = dispatchConstraint(constraint);
         plan.addConstraint(constraint);
 
@@ -63,13 +63,13 @@ public class SubPlanProcessor {
         return plan;
     }
     
-    public SubPlan processDeferredConstraint(DeferredPConstraint constraint, SubPlan parentPlan) throws RetePatternBuildException {
+    public SubPlan processDeferredConstraint(DeferredPConstraint constraint, SubPlan parentPlan) throws OperationCompilerException {
         SubPlan plan = dispatchConstraint(constraint, parentPlan);
         plan.addConstraint(constraint);
         return plan;
     }
 
-    private SubPlan dispatchConstraint(EnumerablePConstraint constraint) throws RetePatternBuildException {
+    private SubPlan dispatchConstraint(EnumerablePConstraint constraint) throws OperationCompilerException {
         if (constraint instanceof BinaryTransitiveClosure) {
             return processConstraint((BinaryTransitiveClosure) constraint);
         } else if (constraint instanceof ConstantValue) {
@@ -92,7 +92,7 @@ public class SubPlanProcessor {
         throw new UnsupportedOperationException("Unknown enumerable constraint");
     }
 
-    private SubPlan processConstraint(BinaryTransitiveClosure constraint) throws RetePatternBuildException {
+    private SubPlan processConstraint(BinaryTransitiveClosure constraint) throws OperationCompilerException {
         SubPlan patternProduction = compiler.patternCallPlan(constraint.getVariablesTuple(),
                 constraint.getSupplierKey());
         return compiler.buildTransitiveClosure(patternProduction);
@@ -127,7 +127,7 @@ public class SubPlanProcessor {
         }
     }
 
-    private SubPlan processConstraint(PositivePatternCall constraint) throws RetePatternBuildException {
+    private SubPlan processConstraint(PositivePatternCall constraint) throws OperationCompilerException {
         return compiler.patternCallPlan(constraint.getVariablesTuple(), constraint.getSupplierKey());
     }
 
@@ -143,7 +143,7 @@ public class SubPlanProcessor {
         return compiler.unaryTypePlan(constraint.getVariablesTuple(), constraint.getSupplierKey());
     }
 
-    private SubPlan dispatchConstraint(DeferredPConstraint constraint, SubPlan parentPlan) throws RetePatternBuildException {
+    private SubPlan dispatchConstraint(DeferredPConstraint constraint, SubPlan parentPlan) throws OperationCompilerException {
         if (constraint instanceof Equality) {
             return processConstraint((Equality)constraint, parentPlan);
         } else if (constraint instanceof ExportedParameter) {
@@ -186,13 +186,13 @@ public class SubPlanProcessor {
         return compiler.buildInjectivityChecker(parentPlan, variablesIndex.get(constraint.getWho()),
                 new int[] { variablesIndex.get(constraint.getWithWhom()) });
     }
-    private SubPlan processConstraint(NegativePatternCall constraint, SubPlan parentPlan) throws RetePatternBuildException {
+    private SubPlan processConstraint(NegativePatternCall constraint, SubPlan parentPlan) throws OperationCompilerException {
         SubPlan sidePlan = constraint.getSidePlan(compiler);
         BuildHelper.JoinHelper joinHelper = new BuildHelper.JoinHelper(parentPlan, sidePlan);
         return compiler.buildBetaNode(parentPlan, sidePlan, joinHelper.getPrimaryMask(), joinHelper.getSecondaryMask(),
                 joinHelper.getComplementerMask(), true);
     }
-    private SubPlan processConstraint(PatternMatchCounter constraint, SubPlan parentPlan) throws RetePatternBuildException {
+    private SubPlan processConstraint(PatternMatchCounter constraint, SubPlan parentPlan) throws OperationCompilerException {
         SubPlan sidePlan = constraint.getSidePlan(compiler);
         BuildHelper.JoinHelper joinHelper = new BuildHelper.JoinHelper(parentPlan, sidePlan);
         Integer resultPositionLeft = parentPlan.getVariablesIndex().get(constraint.getResultVariable());
