@@ -84,11 +84,6 @@ public class OperationCompilerException extends Exception {
         return templateContext;
     }
 
-    public OperationCompilerException(String message, Throwable cause, boolean enableSuppression,
-            boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
     /**
      * @param message
      *            The template of the exception message
