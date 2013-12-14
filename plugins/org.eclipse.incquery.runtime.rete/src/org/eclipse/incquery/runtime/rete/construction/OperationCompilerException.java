@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.construction;
 
+import java.util.Arrays;
+
 /**
  * @author Zoltan Ujhelyi
  *
@@ -17,11 +19,6 @@ package org.eclipse.incquery.runtime.rete.construction;
 public class OperationCompilerException extends Exception {
 
     private static final long serialVersionUID = -8272290113656867086L;
-    protected Object patternDescription;
-    protected String templateMessage;
-    protected String[] templateContext;
-    protected String shortMessage;
-
     /**
      * Binding the '{n}' (n = 1..N) strings to contextual conditions in 'context'
      * 
@@ -38,52 +35,13 @@ public class OperationCompilerException extends Exception {
         }
         return internal;
     }
-
-    /**
-     * 
-     */
-    public OperationCompilerException() {
-        super();
-    }
-
-    /**
-     * @param message
-     */
-    public OperationCompilerException(String message) {
-        super(message);
-    }
-
-    /**
-     * @param cause
-     */
-    public OperationCompilerException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public OperationCompilerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public Object getPatternDescription() {
-        return patternDescription;
-    }
-
-    public void setPatternDescription(Object patternDescription) {
-        this.patternDescription = patternDescription;
-    }
-
-    public String getTemplateMessage() {
-        return templateMessage;
-    }
-
-    public String[] getTemplateContext() {
-        return templateContext;
-    }
-
+    
+    protected Object patternDescription;
+    protected String templateMessage;
+    protected String[] templateContext;
+    
+    protected String shortMessage;
+    
     /**
      * @param message
      *            The template of the exception message
@@ -95,10 +53,7 @@ public class OperationCompilerException extends Exception {
      */
     public OperationCompilerException(String message, String[] context, String shortMessage, Object patternDescription) {
         super(bind(message, context));
-        this.patternDescription = patternDescription;
-        this.templateMessage = message;
-        this.templateContext = context;
-        this.shortMessage = shortMessage;
+        initializeFields(message, context, shortMessage, patternDescription);
     }
 
     /**
@@ -113,14 +68,35 @@ public class OperationCompilerException extends Exception {
     public OperationCompilerException(String message, String[] context, String shortMessage, Object patternDescription,
             Throwable cause) {
         super(bind(message, context), cause);
-        this.patternDescription = patternDescription;
-        this.templateMessage = message;
-        this.templateContext = context;
-        this.shortMessage = shortMessage;
+        initializeFields(message, context, shortMessage, patternDescription);
     }
     
+    public Object getPatternDescription() {
+        return patternDescription;
+    }
+
     public String getShortMessage() {
         return shortMessage;
+    }
+
+    public String[] getTemplateContext() {
+        return Arrays.copyOf(templateContext, templateContext.length);
+    }
+
+    public String getTemplateMessage() {
+        return templateMessage;
+    }
+
+    private void initializeFields(String message, String[] context, String shortMessage, Object patternDescription) {
+        this.patternDescription = patternDescription;
+        this.templateMessage = message;
+        this.templateContext = Arrays.copyOf(context, context.length);
+        this.shortMessage = shortMessage;
+    }
+
+    
+    public void setPatternDescription(Object patternDescription) {
+        this.patternDescription = patternDescription;
     }
 
 }
