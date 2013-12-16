@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.localsearch;
 
 import java.util.Arrays;
 
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
 

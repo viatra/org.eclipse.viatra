@@ -16,14 +16,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.rete.tuple.MaskedTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 public class TransitiveClosureNodeIndexer extends StandardIndexer implements IterableIndexer {
     private TransitiveClosureNode tcNode;

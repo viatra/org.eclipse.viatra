@@ -15,10 +15,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
  * Base implementation for a supplier node.

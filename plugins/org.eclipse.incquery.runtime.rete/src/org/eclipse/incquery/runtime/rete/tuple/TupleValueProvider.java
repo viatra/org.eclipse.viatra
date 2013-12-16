@@ -12,7 +12,8 @@ package org.eclipse.incquery.runtime.rete.tuple;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * @author Zoltan Ujhelyi

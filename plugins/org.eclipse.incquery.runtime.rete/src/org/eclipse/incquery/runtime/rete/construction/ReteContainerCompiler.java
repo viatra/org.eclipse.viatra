@@ -13,14 +13,21 @@ package org.eclipse.incquery.runtime.rete.construction;
 
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.LeftInheritanceTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.DualInputNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Library;
 import org.eclipse.incquery.runtime.rete.network.Network;
@@ -32,10 +39,6 @@ import org.eclipse.incquery.runtime.rete.single.EqualityFilterNode;
 import org.eclipse.incquery.runtime.rete.single.InequalityFilterNode;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
-import org.eclipse.incquery.runtime.rete.tuple.LeftInheritanceTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -149,7 +152,7 @@ public class ReteContainerCompiler<PatternDescription>
 
     @Override
     public SubPlan patternCallPlan(Tuple nodes, Object supplierKey)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
         return trace(new SubPlan(nodes), boundary.accessProduction((PatternDescription)supplierKey));
     }
 
@@ -281,7 +284,7 @@ public class ReteContainerCompiler<PatternDescription>
         return new ReteContainerCompiler<PatternDescription>(engine, reteNet.getNextContainer());
     }
 
-    public Address<? extends Receiver> patternCollector(Object pattern) throws OperationCompilerException {
+    public Address<? extends Receiver> patternCollector(Object pattern) throws QueryPlannerException {
         return engine.getBoundary().createProductionInternal(pattern);
     }
 

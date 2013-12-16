@@ -12,11 +12,11 @@ package org.eclipse.incquery.runtime.rete.eval;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.tuple.LeftInheritanceTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.LeftInheritanceTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Bergmann Gabor

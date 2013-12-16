@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;

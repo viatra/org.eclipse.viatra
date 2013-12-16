@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * Interface intended for nodes containing complete matches.

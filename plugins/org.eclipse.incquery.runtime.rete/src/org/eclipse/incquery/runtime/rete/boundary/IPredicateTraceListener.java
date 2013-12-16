@@ -11,8 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Collects traces of predicate evaluation, and notifies the predicate evaluator node to re-evaluate predicates when

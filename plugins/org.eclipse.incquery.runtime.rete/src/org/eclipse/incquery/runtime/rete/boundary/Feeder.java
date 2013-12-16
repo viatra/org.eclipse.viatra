@@ -11,13 +11,13 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann

@@ -18,6 +18,7 @@
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.model</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
 		<module>../../plugins/org.eclipse.incquery.runtime</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.matchers</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>

@@ -16,15 +16,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.SubPlan;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.index.JoinNode;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
@@ -37,9 +40,6 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.network.Tunnel;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
  * Responsible for the storage, maintenance and communication of the nodes of the network that are accessible form the
@@ -453,7 +453,7 @@ public class ReteBoundary<PatternDescription> {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
     public synchronized Address<? extends Production> accessProduction(PatternDescription gtPattern)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
         Address<? extends Production> pn;
         pn = productions.get(gtPattern);
         if (pn == null) {
@@ -476,7 +476,7 @@ public class ReteBoundary<PatternDescription> {
      *             if production node is already created
      */
     public synchronized Address<? extends Production> createProductionInternal(PatternDescription gtPattern)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
         if (productions.containsKey(gtPattern)) {
             String[] args = { gtPattern.toString() };
             throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args,
@@ -523,7 +523,7 @@ public class ReteBoundary<PatternDescription> {
     /**
      * @pre: builder is set
      */
-    protected void construct(PatternDescription gtPattern) throws OperationCompilerException {
+    protected void construct(PatternDescription gtPattern) throws QueryPlannerException {
         engine.getReteNet().waitForReteTermination();
         engine.getBuilder().construct(gtPattern);
         // production.setDirty(false);

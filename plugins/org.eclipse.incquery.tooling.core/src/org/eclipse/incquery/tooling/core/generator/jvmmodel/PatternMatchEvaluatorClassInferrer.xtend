@@ -16,7 +16,7 @@ import java.util.List
 import java.util.Map
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.incquery.runtime.rete.tuple.Tuple
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
@@ -31,7 +31,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider
+import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
 import com.google.common.collect.ImmutableList
 
 /**

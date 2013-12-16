@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.CountNode;
 import org.eclipse.incquery.runtime.rete.index.ExistenceNode;
@@ -35,9 +38,6 @@ import org.eclipse.incquery.runtime.rete.single.TransparentNode;
 import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
 import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.incquery.runtime.rete.single.ValueBinderFilterNode;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**

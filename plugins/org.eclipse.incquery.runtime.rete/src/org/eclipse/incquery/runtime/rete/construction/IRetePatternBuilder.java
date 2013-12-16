@@ -13,7 +13,8 @@ package org.eclipse.incquery.runtime.rete.construction;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 
 /**
  * Exchangeable component of ReteEngine, responsible for building pattern matcher rete subnets.
@@ -31,7 +32,7 @@ public interface IRetePatternBuilder<PatternDefinition, Collector> {
      * @throws OperationCompilerException 
      *             if construction fails.
      */
-    Collector construct(PatternDefinition gtPattern) throws OperationCompilerException;
+    Collector construct(PatternDefinition gtPattern) throws QueryPlannerException;
 
     /**
      * Extract the position mapping of the graph pattern.

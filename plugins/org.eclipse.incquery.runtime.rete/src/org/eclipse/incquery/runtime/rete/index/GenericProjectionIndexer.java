@@ -14,11 +14,11 @@ package org.eclipse.incquery.runtime.rete.index;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
  * A generic Indexer capable of indexing along any valid TupleMask. Does not keep track of parents, because will not

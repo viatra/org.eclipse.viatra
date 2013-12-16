@@ -13,9 +13,9 @@ package org.eclipse.incquery.runtime.rete.misc;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Node that always contains a single constant Tuple

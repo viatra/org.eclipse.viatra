@@ -13,10 +13,10 @@ package org.eclipse.incquery.runtime.rete.index;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Defines a trivial indexer that projects the contents of a memory-equipped node to the empty tuple, and can therefore

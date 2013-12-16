@@ -11,8 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.single;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * A filter node that keeps only those tuples that contain a certain value at a certain position.

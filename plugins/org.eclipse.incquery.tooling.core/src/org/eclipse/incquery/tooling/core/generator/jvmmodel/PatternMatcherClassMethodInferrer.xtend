@@ -19,12 +19,12 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.incquery.tooling.core.generator.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor
-import org.eclipse.incquery.runtime.rete.tuple.Tuple
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple
 
 class PatternMatcherClassMethodInferrer {
 	

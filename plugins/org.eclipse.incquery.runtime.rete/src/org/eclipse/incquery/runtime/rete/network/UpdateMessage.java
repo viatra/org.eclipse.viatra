@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.rete.network;
 
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 class UpdateMessage {
     public Receiver receiver;

@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.rete.index;
 
 import java.util.Collection;
 
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * An indexer that allows the iteration of all retrievable tuple groups (or reduced groups).

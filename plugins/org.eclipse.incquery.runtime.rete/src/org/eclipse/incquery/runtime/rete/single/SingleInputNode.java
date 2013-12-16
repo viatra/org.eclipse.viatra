@@ -14,11 +14,11 @@ package org.eclipse.incquery.runtime.rete.single;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.network.Tunnel;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann

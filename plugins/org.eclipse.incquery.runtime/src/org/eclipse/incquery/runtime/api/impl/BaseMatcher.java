@@ -32,11 +32,11 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Base implementation of IncQueryMatcher.
@@ -74,7 +74,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         checkPattern(engine, pattern);
         try {
             return engine.getReteEngine().accessMatcher(pattern);
-        } catch (OperationCompilerException e) {
+        } catch (QueryPlannerException e) {
             throw new IncQueryException(e);
         }
     }

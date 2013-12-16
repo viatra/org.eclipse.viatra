@@ -19,8 +19,6 @@ import java.util.Collection;
  * 
  * @author Gabor Bergmann
  * 
- * @param <PatternDescription>
- *            the type describing a pattern
  */
 public interface IPatternMatcherContext {
 

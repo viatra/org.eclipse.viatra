@@ -17,18 +17,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
-import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlanProcessor;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.LayoutHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.SubPlan;
-import org.eclipse.incquery.runtime.rete.construction.SubPlanProcessor;
-import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
-import org.eclipse.incquery.runtime.rete.construction.helpers.LayoutHelper;
-import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -37,11 +37,11 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  * @author Gabor Bergmann
  * 
  */
-public class QuasiTreeLayout implements IReteLayoutStrategy {
+public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
     public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
         return new Scaffold(pSystem, compiler).run();
     }
 
@@ -67,7 +67,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
         /**
          * @return
          */
-        public SubPlan run() throws OperationCompilerException {
+        public SubPlan run() throws QueryPlannerException {
             try {
                 context.logDebug(String.format(
                 		"%s: patternbody build started for %s",
@@ -139,7 +139,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
             return candidates;
         }
 
-        private void admitSubPlan(SubPlan plan) throws OperationCompilerException {
+        private void admitSubPlan(SubPlan plan) throws QueryPlannerException {
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
@@ -161,7 +161,7 @@ public class QuasiTreeLayout implements IReteLayoutStrategy {
         }
 
         private void doJoin(SubPlan primaryPlan, SubPlan secondaryPlan)
-                throws OperationCompilerException {
+                throws QueryPlannerException {
             SubPlan joinedPlan = BuildHelper.naturalJoin(buildable, primaryPlan, secondaryPlan);
             forefront.remove(primaryPlan);
             forefront.remove(secondaryPlan);

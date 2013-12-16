@@ -13,10 +13,10 @@ package org.eclipse.incquery.runtime.rete.remote;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * This node receives updates from a remote supplier; no local updates are expected.

@@ -14,9 +14,9 @@ package org.eclipse.incquery.runtime.rete.misc;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann

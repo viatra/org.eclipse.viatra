@@ -11,9 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.eval;
 
-import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
-import org.eclipse.incquery.runtime.rete.construction.psystem.IValueProvider;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * Depicts an abstract evaluator that evaluates tuples to Objects. Used inside evaluator nodes.

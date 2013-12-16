@@ -17,13 +17,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Library;
@@ -31,7 +32,6 @@ import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
-import org.eclipse.incquery.runtime.rete.tuple.TupleMask;
 
 /**
  * @author Gabor Bergmann
@@ -162,7 +162,7 @@ public class ReteEngine<PatternDescription> {
      *             if construction fails.
      */
     public synchronized RetePatternMatcher accessMatcher(final PatternDescription gtPattern)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
     	ensureInitialized();
     	RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
@@ -172,7 +172,7 @@ public class ReteEngine<PatternDescription> {
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
         		@Override
-        		public Void call() throws OperationCompilerException {
+        		public Void call() throws QueryPlannerException {
         			Address<? extends Production> prodNode;
         			prodNode = boundary.accessProduction(gtPattern);
         			
@@ -201,11 +201,11 @@ public class ReteEngine<PatternDescription> {
      *             if construction fails.
      */
     public synchronized void buildMatchersCoalesced(final Collection<PatternDescription> patterns)
-            throws OperationCompilerException {
+            throws QueryPlannerException {
     	ensureInitialized();
     	constructionWrapper(new Callable<Void>() {
     		@Override
-    		public Void call() throws OperationCompilerException {
+    		public Void call() throws QueryPlannerException {
     			for (PatternDescription gtPattern : patterns) {
     				boundary.accessProduction(gtPattern);
     			}

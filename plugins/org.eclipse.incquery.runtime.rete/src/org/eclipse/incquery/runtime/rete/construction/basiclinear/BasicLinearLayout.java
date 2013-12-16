@@ -15,25 +15,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlanProcessor;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.LayoutHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
-import org.eclipse.incquery.runtime.rete.construction.IReteLayoutStrategy;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.SubPlan;
-import org.eclipse.incquery.runtime.rete.construction.SubPlanProcessor;
-import org.eclipse.incquery.runtime.rete.construction.helpers.BuildHelper;
-import org.eclipse.incquery.runtime.rete.construction.helpers.LayoutHelper;
-import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PSystem;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
-import org.eclipse.incquery.runtime.rete.construction.psystem.VariableDeferredPConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.Equality;
-import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.incquery.runtime.rete.construction.psystem.basicdeferred.ExpressionEvaluation;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -42,12 +42,12 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  * @author Gabor Bergmann
  * 
  */
-public class BasicLinearLayout implements IReteLayoutStrategy {
+public class BasicLinearLayout implements IQueryPlannerStrategy {
 
 	SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan layout(final PSystem pSystem, final IOperationCompiler<?, ?> compiler) throws OperationCompilerException {
+    public SubPlan layout(final PSystem pSystem, final IOperationCompiler<?, ?> compiler) throws QueryPlannerException {
         Object pattern = pSystem.getPattern();
         IPatternMatcherContext context = pSystem.getContext();
         planProcessor.setCompiler(compiler);

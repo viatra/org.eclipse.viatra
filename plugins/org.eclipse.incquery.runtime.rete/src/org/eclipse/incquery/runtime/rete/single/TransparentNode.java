@@ -13,9 +13,9 @@ package org.eclipse.incquery.runtime.rete.single;
 
 import java.util.Collection;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Simply propagates everything. Might be used to join or fork.

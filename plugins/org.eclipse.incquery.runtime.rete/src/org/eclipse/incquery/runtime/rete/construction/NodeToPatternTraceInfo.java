@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.construction;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo;
 
 /**

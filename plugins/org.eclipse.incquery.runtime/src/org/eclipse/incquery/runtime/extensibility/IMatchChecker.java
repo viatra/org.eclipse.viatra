@@ -13,8 +13,8 @@ package org.eclipse.incquery.runtime.extensibility;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.rete.construction.psystem.IExpressionEvaluator;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * An interface for the xexpressionevaluator extension point schema}

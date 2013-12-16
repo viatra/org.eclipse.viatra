@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 
 /**
  * TODO generics? TODO TODO no subtyping between EDataTypes? no EDataTypes metainfo at all?

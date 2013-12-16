@@ -17,10 +17,10 @@ import org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple;
 import org.eclipse.incquery.runtime.base.itc.graphimpl.Graph;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.tuple.Clearable;
-import org.eclipse.incquery.runtime.rete.tuple.FlatTuple;
 
 // TODO egyelore (i,j) elek, majd helyette mask megoldas
 // TODO bemeneti index
@@ -44,11 +44,11 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
      *            the initial collection of tuples
      */
     public TransitiveClosureNode(ReteContainer reteContainer,
-            Collection<org.eclipse.incquery.runtime.rete.tuple.Tuple> tuples) {
+            Collection<org.eclipse.incquery.runtime.matchers.tuple.Tuple> tuples) {
         super(reteContainer);
         graphDataSource = new Graph<Object>();
 
-        for (org.eclipse.incquery.runtime.rete.tuple.Tuple t : tuples) {
+        for (org.eclipse.incquery.runtime.matchers.tuple.Tuple t : tuples) {
             graphDataSource.insertNode(t.get(0));
             graphDataSource.insertNode(t.get(1));
             graphDataSource.insertEdge(t.get(0), t.get(1));
@@ -67,14 +67,14 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
     }
 
     @Override
-    public void pullInto(Collection<org.eclipse.incquery.runtime.rete.tuple.Tuple> collector) {
+    public void pullInto(Collection<org.eclipse.incquery.runtime.matchers.tuple.Tuple> collector) {
         for (Tuple<Object> tuple : ((IncSCCAlg<Object>) transitiveClosureAlgorithm).getTcRelation()) {
             collector.add(new FlatTuple(tuple.getSource(), tuple.getTarget()));
         }
     }
 
     @Override
-    public void update(Direction direction, org.eclipse.incquery.runtime.rete.tuple.Tuple updateElement) {
+    public void update(Direction direction, org.eclipse.incquery.runtime.matchers.tuple.Tuple updateElement) {
         if (updateElement.getSize() == 2) {
             Object source = updateElement.get(0);
             Object target = updateElement.get(1);
@@ -106,18 +106,18 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
 
     @Override
     public void tupleInserted(Object source, Object target) {
-        org.eclipse.incquery.runtime.rete.tuple.Tuple tuple = new FlatTuple(source, target);
+        org.eclipse.incquery.runtime.matchers.tuple.Tuple tuple = new FlatTuple(source, target);
         propagateUpdate(Direction.INSERT, tuple);
     }
 
     @Override
     public void tupleDeleted(Object source, Object target) {
-        org.eclipse.incquery.runtime.rete.tuple.Tuple tuple = new FlatTuple(source, target);
+        org.eclipse.incquery.runtime.matchers.tuple.Tuple tuple = new FlatTuple(source, target);
         propagateUpdate(Direction.REVOKE, tuple);
     }
 
     @Override
-    protected void propagateUpdate(Direction direction, org.eclipse.incquery.runtime.rete.tuple.Tuple updateElement) {
+    protected void propagateUpdate(Direction direction, org.eclipse.incquery.runtime.matchers.tuple.Tuple updateElement) {
         super.propagateUpdate(direction, updateElement);
     }
 }

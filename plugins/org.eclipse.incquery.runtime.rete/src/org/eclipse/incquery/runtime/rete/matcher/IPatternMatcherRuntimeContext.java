@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.rete.matcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 

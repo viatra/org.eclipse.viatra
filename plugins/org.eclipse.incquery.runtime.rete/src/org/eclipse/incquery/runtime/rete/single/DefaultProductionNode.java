@@ -14,9 +14,9 @@ package org.eclipse.incquery.runtime.rete.single;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * Default implementation of the Production node, based on UniquenessEnforcerNode

@@ -14,13 +14,13 @@ package org.eclipse.incquery.runtime.rete.construction.basiclinear;
 import java.util.Comparator;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.SubPlan;
-import org.eclipse.incquery.runtime.rete.construction.psystem.DeferredPConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.EnumerablePConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint;
-import org.eclipse.incquery.runtime.rete.construction.psystem.PVariable;
-import org.eclipse.incquery.runtime.rete.construction.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
 
 /**

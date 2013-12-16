@@ -17,11 +17,11 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.runtime.rete.construction.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
-import org.eclipse.incquery.runtime.rete.construction.OperationCompilerException;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherContext;
 
 /**
  * @author Bergmann Gábor
@@ -52,7 +52,7 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Colle
     }
 
     @Override
-    public Collector construct(Pattern pattern) throws OperationCompilerException {
+    public Collector construct(Pattern pattern) throws QueryPlannerException {
         try {
             EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
                     baseBuildable, context);

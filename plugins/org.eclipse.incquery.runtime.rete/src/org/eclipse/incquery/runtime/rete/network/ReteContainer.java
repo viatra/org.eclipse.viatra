@@ -17,11 +17,11 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.Clearable;
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann

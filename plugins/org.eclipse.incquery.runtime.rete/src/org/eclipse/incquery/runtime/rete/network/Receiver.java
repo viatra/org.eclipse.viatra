@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.Collection;
 
-import org.eclipse.incquery.runtime.rete.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * ALL METHODS: FOR INTERNAL USE ONLY; ONLY INVOKE FROM {@link ReteContainer}

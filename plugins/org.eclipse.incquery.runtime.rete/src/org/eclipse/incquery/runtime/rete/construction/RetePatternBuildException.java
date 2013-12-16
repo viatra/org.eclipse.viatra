@@ -11,13 +11,15 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+
 /**
  * A problem has occurred during the construction of the RETE net.
  * 
  * @author Gabor Bergmann
  * 
  */
-public class RetePatternBuildException extends OperationCompilerException {
+public class RetePatternBuildException extends QueryPlannerException {
 
     private static final long serialVersionUID = 6966585498204577548L;
 

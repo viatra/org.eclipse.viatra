@@ -11,6 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.tuple;
 
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
+
 /**
  * A tuple that transparently provides a masked (transformed) view of another tuple.
  * 
