@@ -27,40 +27,35 @@ import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
  */
 public class EPMBuildScaffold<Collector> {
 
-    protected IOperationCompiler<Pattern, Collector> baseBuildable;
+    protected IOperationCompiler<Pattern, Collector> operationCompiler;
     protected IPatternMatcherContext context;
 
-    /**
-     * @param baseBuildable
-     * @param context
-     */
-    public EPMBuildScaffold(IOperationCompiler<Pattern, Collector> baseBuildable,
+    public EPMBuildScaffold(IOperationCompiler<Pattern, Collector> operationCompiler,
             IPatternMatcherContext context) {
         super();
-        this.baseBuildable = baseBuildable;
+        this.operationCompiler = operationCompiler;
         this.context = context;
     }
 
     public Collector construct(Pattern pattern) throws QueryPlannerException {
-        Collector production = baseBuildable.putOnTab(pattern, context).patternCollector(pattern);
+        Collector production = operationCompiler.putOnTab(pattern, context).patternCollector(pattern);
         // TODO check annotations for reinterpret
 
         context.logDebug("EPMBuilder starts construction of: " + pattern.getName());
         for (PatternBody body : pattern.getBodies()) {
-            IOperationCompiler<Pattern, Collector> currentBuildable = baseBuildable.getNextContainer().putOnTab(
+            IOperationCompiler<Pattern, Collector> currentBuildable = operationCompiler.getNextContainer().putOnTab(
                     pattern, context);
             if (Options.builderMethod == BuilderMethod.LEGACY) {
                 throw new UnsupportedOperationException();
             } else {
-                EPMBodyToPSystem<Collector> converter = new EPMBodyToPSystem<Collector>(
-                        pattern, body, context, currentBuildable);
+                EPMBodyToPSystem converter = new EPMBodyToPSystem(pattern, body, context);
                 SubPlan bodyFinal = Options.builderMethod.layoutStrategy()
                         .layout(converter.toPSystem(), currentBuildable);
                 BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production,
                         converter.symbolicParameterArray());
             }
         }
-        baseBuildable.patternFinished(pattern, context, production);
+        operationCompiler.patternFinished(pattern, context, production);
 
         return null;
     }

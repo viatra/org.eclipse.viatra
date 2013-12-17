@@ -47,7 +47,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.EdgeInterpretation;
-import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
@@ -70,30 +69,21 @@ import org.eclipse.xtext.xbase.XExpression;
  * @author Gabor Bergmann
  * 
  */
-public class EPMBodyToPSystem<Collector> {
+public class EPMBodyToPSystem {
 
     protected Pattern pattern;
     protected PatternBody body;
     protected IPatternMatcherContext context;
-    protected IOperationCompiler<Pattern, Collector> buildable;
 
     protected PSystem pSystem;
 
     String patternFQN;
 
-    /**
-     * @param pattern
-     * @param body
-     * @param builder
-     * @param buildable
-     */
-    public EPMBodyToPSystem(Pattern pattern, PatternBody body, IPatternMatcherContext context,
-            IOperationCompiler<Pattern, Collector> buildable) {
+    public EPMBodyToPSystem(Pattern pattern, PatternBody body, IPatternMatcherContext context) {
         super();
         this.pattern = pattern;
         this.body = body;
         this.context = context;
-        this.buildable = buildable;
 
         patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
     }

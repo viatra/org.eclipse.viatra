@@ -28,16 +28,12 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
  * 
  */
 public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Collector> {
-    protected IOperationCompiler<Pattern, Collector> baseBuildable;
+    protected IOperationCompiler<Pattern, Collector> operationCompiler;
     protected IPatternMatcherContext context;
 
-    /**
-     * @param baseBuildable
-     * @param context
-     */
-    public EPMBuilder(IOperationCompiler<Pattern, Collector> baseBuildable, IPatternMatcherContext context) {
+    public EPMBuilder(IOperationCompiler<Pattern, Collector> operationCompiler, IPatternMatcherContext context) {
         super();
-        this.baseBuildable = baseBuildable;
+        this.operationCompiler = operationCompiler;
         this.context = context;
     }
 
@@ -48,14 +44,14 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Colle
 
     @Override
     public void refresh() {
-        baseBuildable.reinitialize();
+        operationCompiler.reinitialize();
     }
 
     @Override
     public Collector construct(Pattern pattern) throws QueryPlannerException {
         try {
             EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
-                    baseBuildable, context);
+                    operationCompiler, context);
             return epmBuildScaffold.construct(pattern);
         } catch (RuntimeException ex) {
             throw new RetePatternBuildException(
