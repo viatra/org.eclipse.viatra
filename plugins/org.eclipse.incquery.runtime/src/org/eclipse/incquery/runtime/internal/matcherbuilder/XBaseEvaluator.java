@@ -64,6 +64,8 @@ public class XBaseEvaluator implements IExpressionEvaluator{
 
     private Iterable<String> usedNames;
 
+    private boolean initialized = false;
+
     /**
      * @param xExpression
      *            the expression to evaluate
@@ -91,36 +93,47 @@ public class XBaseEvaluator implements IExpressionEvaluator{
      * make sure to call this after members have been injected.
      */
     public void init() {
-     // First try to setup the generated code from the extension point
-        IConfigurationElement[] configurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
-        for (IConfigurationElement configurationElement : configurationElements) {
-            String id = configurationElement.getAttribute("id");
-            if (id.equals(ExpressionUtil.getExpressionUniqueID(pattern, xExpression))) {
-                Object object = null;
+        /* 
+         * EMF-IncQuery is single-threaded, however re-entrant calls to init should not cause problems,
+         *  only minor performance decrease.
+         */
+        if (!initialized) {
+            // First try to setup the generated code from the extension point
+            IConfigurationElement[] configurationElements = Platform.getExtensionRegistry()
+                    .getConfigurationElementsFor(IExtensions.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
+            for (IConfigurationElement configurationElement : configurationElements) {
+                String id = configurationElement.getAttribute("id");
+                if (id.equals(ExpressionUtil.getExpressionUniqueID(pattern, xExpression))) {
+                    Object object = null;
+                    try {
+                        object = configurationElement.createExecutableExtension("evaluatorClass");
+                    } catch (CoreException coreException) {
+                        logger.error("XBase Java evaluator extension point initialization failed.", coreException);
+                    }
+                    if (object instanceof IMatchChecker) {
+                        matchChecker = (IMatchChecker) object;
+                    }
+                }
+            }
+
+            // Second option, setup the attributes for the interpreted approach
+            if (matchChecker == null) {
                 try {
-                    object = configurationElement.createExecutableExtension("evaluatorClass");
+                    ClassLoader classLoader = ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern));
+                    if (classLoader != null) {
+                        interpreter.setClassLoader(ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern)));
+                    }
+                } catch (MalformedURLException malformedURLException) {
+                    logger.error("XBase Java evaluator extension point initialization failed.", malformedURLException);
                 } catch (CoreException coreException) {
                     logger.error("XBase Java evaluator extension point initialization failed.", coreException);
                 }
-                if (object instanceof IMatchChecker) {
-                    matchChecker = (IMatchChecker) object;
-                }
             }
-        }
 
-        // Second option, setup the attributes for the interpreted approach
-        if (matchChecker == null) {
-            try {
-                ClassLoader classLoader = ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern));
-                if (classLoader != null) {
-                    interpreter.setClassLoader(ClassLoaderUtil.getClassLoader(ExpressionUtil.getIFile(pattern)));
-                }
-            } catch (MalformedURLException malformedURLException) {
-                logger.error("XBase Java evaluator extension point initialization failed.", malformedURLException);
-            } catch (CoreException coreException) {
-                logger.error("XBase Java evaluator extension point initialization failed.", coreException);
+            if (initialized) {
+                logger.warn("Re-entrant call to XBase Java evaluator initialization!");
             }
+            initialized = true;
         }
     }
 
@@ -131,6 +144,8 @@ public class XBaseEvaluator implements IExpressionEvaluator{
 
     @Override
     public Object evaluateExpression(IValueProvider provider) throws Exception {
+        
+        
         init();
         
         // First option: try to evalute with the generated code
