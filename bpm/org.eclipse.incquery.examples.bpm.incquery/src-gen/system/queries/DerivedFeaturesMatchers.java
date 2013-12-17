@@ -19,31 +19,31 @@ public final class DerivedFeaturesMatchers {
     
   }
   
-  public TransitiveAffectedTasksThroughDataMatcher getTransitiveAffectedTasksThroughDataMatcher() throws IncQueryException {
-    return TransitiveAffectedTasksThroughDataMatcher.on(engine);
-  }
-  
-  public TasksAffectedThroughDataMatcher getTasksAffectedThroughDataMatcher() throws IncQueryException {
-    return TasksAffectedThroughDataMatcher.on(engine);
-  }
-  
   public DataTaskWriteCorrespondenceMatcher getDataTaskWriteCorrespondenceMatcher() throws IncQueryException {
     return DataTaskWriteCorrespondenceMatcher.on(engine);
   }
   
-  public UndefinedServiceTasksMatcher getUndefinedServiceTasksMatcher() throws IncQueryException {
-    return UndefinedServiceTasksMatcher.on(engine);
-  }
-  
-  public JobInfoCorrespondenceMatcher getJobInfoCorrespondenceMatcher() throws IncQueryException {
-    return JobInfoCorrespondenceMatcher.on(engine);
+  public JobTaskCorrespondenceMatcher getJobTaskCorrespondenceMatcher() throws IncQueryException {
+    return JobTaskCorrespondenceMatcher.on(engine);
   }
   
   public DataTaskReadCorrespondenceMatcher getDataTaskReadCorrespondenceMatcher() throws IncQueryException {
     return DataTaskReadCorrespondenceMatcher.on(engine);
   }
   
-  public JobTaskCorrespondenceMatcher getJobTaskCorrespondenceMatcher() throws IncQueryException {
-    return JobTaskCorrespondenceMatcher.on(engine);
+  public TransitiveAffectedTasksThroughDataMatcher getTransitiveAffectedTasksThroughDataMatcher() throws IncQueryException {
+    return TransitiveAffectedTasksThroughDataMatcher.on(engine);
+  }
+  
+  public JobInfoCorrespondenceMatcher getJobInfoCorrespondenceMatcher() throws IncQueryException {
+    return JobInfoCorrespondenceMatcher.on(engine);
+  }
+  
+  public TasksAffectedThroughDataMatcher getTasksAffectedThroughDataMatcher() throws IncQueryException {
+    return TasksAffectedThroughDataMatcher.on(engine);
+  }
+  
+  public UndefinedServiceTasksMatcher getUndefinedServiceTasksMatcher() throws IncQueryException {
+    return UndefinedServiceTasksMatcher.on(engine);
   }
 }

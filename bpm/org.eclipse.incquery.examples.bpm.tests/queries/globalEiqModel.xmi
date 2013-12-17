@@ -920,16 +920,16 @@
     </patterns>
     <importPackages>
       <packageImport>
-        <ePackage href="http://process/1.0#/"/>
-      </packageImport>
-      <packageImport>
         <ePackage href="http://system/1.0#/"/>
       </packageImport>
       <packageImport>
-        <ePackage href="http://operation/1.0#/"/>
+        <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
       </packageImport>
       <packageImport>
-        <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+        <ePackage href="http://process/1.0#/"/>
+      </packageImport>
+      <packageImport>
+        <ePackage href="http://operation/1.0#/"/>
       </packageImport>
     </importPackages>
   </eMFPatternLanguage:PatternModel>

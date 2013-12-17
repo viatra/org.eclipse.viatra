@@ -2,6 +2,26 @@
 <plugin>
 
    <extension
+         id="validation.constraint.system.queries.UndefinedServiceTasks"
+         point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint
+            name="system.queries.UndefinedServiceTasks"
+            class="system.queries.UndefinedServiceTasksConstraint0">
+         <enabledForEditor
+               editorId="process.presentation.ProcessEditorID">
+         </enabledForEditor>
+         <enabledForEditor
+               editorId="system.presentation.SystemEditorID">
+         </enabledForEditor>
+         <enabledForEditor
+               editorId="operation.presentation.OperationEditorID">
+         </enabledForEditor>
+         <enabledForEditor
+               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         </enabledForEditor>
+      </constraint>
+   </extension>
+   <extension
          id="validation.constraint.operation.queries.IncorrectEntryInChecklist"
          point="org.eclipse.incquery.validation.runtime.constraint">
       <constraint
@@ -47,26 +67,6 @@
       <constraint
             name="operation.queries.DataReadByChecklistEntry"
             class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         </enabledForEditor>
-      </constraint>
-   </extension>
-   <extension
-         id="validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
          <enabledForEditor
                editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
