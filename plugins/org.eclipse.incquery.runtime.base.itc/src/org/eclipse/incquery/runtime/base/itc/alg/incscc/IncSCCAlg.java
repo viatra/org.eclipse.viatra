@@ -19,7 +19,9 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.alg.counting.CountingAlg;
 import org.eclipse.incquery.runtime.base.itc.alg.dred.DRedTcRelation;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.DFSPathFinder;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.GraphHelper;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.IGraphPathFinder;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.bfs.BFS;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.scc.SCC;
@@ -565,6 +567,11 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> targets = gds.getTargetNodes(node);
         List<V> sources = gds.getSourceNodes(node);
         return ((targets == null) || (targets.isEmpty())) && ((sources == null) || (sources.isEmpty()));
+    }
+
+    @Override
+    public IGraphPathFinder<V> getPathFinder() {
+        return new DFSPathFinder<V>(gds, this);
     }
     
 }

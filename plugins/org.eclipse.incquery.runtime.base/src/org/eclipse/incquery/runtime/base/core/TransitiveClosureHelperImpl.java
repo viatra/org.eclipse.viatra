@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.api.TransitiveClosureHelper;
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.IGraphPathFinder;
 import org.eclipse.incquery.runtime.base.itc.igraph.ITcObserver;
 
 /**
@@ -150,4 +151,9 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
 	public List<EObject> getReachabilityPath(EObject source, EObject target) {
 		return this.sccAlg.getReachabilityPath(source, target);
 	}
+	
+	@Override
+	public IGraphPathFinder<EObject> getPathFinder() {
+	    return this.sccAlg.getPathFinder();
+    }
 }

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.base.itc.alg.misc.DFSPathFinder;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.IGraphPathFinder;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.Tuple;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.dfs.DFSAlg;
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
@@ -356,5 +358,10 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     public void dispose() {
         tc = null;
         dtc = null;
+    }
+
+    @Override
+    public IGraphPathFinder<V> getPathFinder() {
+        return new DFSPathFinder<V>(graphDataSource, this);
     }
 }

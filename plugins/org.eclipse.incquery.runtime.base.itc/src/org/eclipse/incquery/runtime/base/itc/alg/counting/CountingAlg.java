@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.base.itc.alg.incscc.CollectionHelper;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.DFSPathFinder;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.GraphHelper;
+import org.eclipse.incquery.runtime.base.itc.alg.misc.IGraphPathFinder;
 import org.eclipse.incquery.runtime.base.itc.alg.misc.ITcRelation;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalWrapper;
@@ -244,5 +246,10 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         tc.clear();
         dtc.clear();
         this.gds.detachObserver(this);
+    }
+
+    @Override
+    public IGraphPathFinder<V> getPathFinder() {
+        return new DFSPathFinder<V>(gds, this);
     }
 }

@@ -14,6 +14,8 @@ package org.eclipse.incquery.runtime.base.itc.igraph;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.base.itc.alg.misc.IGraphPathFinder;
+
 /**
  * This interface defines those methods that a transitive reachability data source should provide. 
  * 
@@ -81,8 +83,17 @@ public interface ITcDataSource<V> {
      * @param source the source node
      * @param target the target node
      * @return a path between the nodes, or null if target is not reachable from source
+     * @deprecated Use {@link #getPathFinder()} instead
      */
+    @Deprecated
     public List<V> getReachabilityPath(V source, V target);    
+    
+    /**
+     * The returned {@link IGraphPathFinder} can be used to retrieve paths between nodes using transitive reachability.
+     * 
+     * @return a path finder for the graph.
+     */
+    public IGraphPathFinder<V> getPathFinder();
     
     /**
      * Call this method to properly dispose the data structures of a transitive closure algorithm.
