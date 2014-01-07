@@ -11,11 +11,9 @@
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.Item.HierarchyPolicy;
@@ -40,17 +38,14 @@ public class ItemConverter implements IConverter {
      * @param itemAnnotation
      *            an Item annotation to initialize the converter with.
      */
-    public ItemConverter(Annotation itemAnnotation, Annotation formatAnnotation) {
+    public ItemConverter(PAnnotation itemAnnotation, PAnnotation formatAnnotation) {
         Preconditions.checkArgument(Item.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Item.ANNOTATION_ID + " annotation.");
-        parameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation, "item"))
-                .getValue().getVar();
-        StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "label");
-        labelParameterName = labelParam == null ? "" : labelParam.getValue();
-        StringValue hierarchyParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "hierarchy");
-        policy = hierarchyParam == null ? HierarchyPolicy.ALWAYS : HierarchyPolicy.valueOf(hierarchyParam.getValue().toUpperCase());
+        parameterName = ((ParameterReference)itemAnnotation.getFirstValue("item")).getName();
+        Object labelParam = itemAnnotation.getFirstValue("label"); 
+        labelParameterName = labelParam == null ? "" : (String)labelParam;
+        Object hierarchyParam = itemAnnotation.getFirstValue("hierarchy"); 
+        policy = hierarchyParam == null ? HierarchyPolicy.ALWAYS : HierarchyPolicy.valueOf(((String)hierarchyParam).toUpperCase());
         
         if (formatAnnotation != null) {
             format = FormatParser.parseFormatAnnotation(formatAnnotation);

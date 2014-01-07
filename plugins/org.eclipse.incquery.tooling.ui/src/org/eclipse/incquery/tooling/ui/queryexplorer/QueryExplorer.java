@@ -298,8 +298,8 @@ public class QueryExplorer extends ViewPart {
                 ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;
                 if (observableMatcher.getMatcher() != null) {
                     tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
-                    String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(observableMatcher.getMatcher()
-                            .getPattern());
+                    String patternFqn = observableMatcher.getMatcher()
+                            .getSpecification().getFullyQualifiedName();
                     Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
                     List<PatternComponent> components = null;
                     if (QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {

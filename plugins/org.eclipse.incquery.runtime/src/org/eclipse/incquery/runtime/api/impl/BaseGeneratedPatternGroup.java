@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.api.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 
 /**
@@ -23,8 +22,8 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
 
     @Override
-    public Set<Pattern> getPatterns() {
-        return patterns(querySpecifications);
+    public Set<IQuerySpecification<?>> getSpecifications() {
+        return querySpecifications;
     }
 
     /**

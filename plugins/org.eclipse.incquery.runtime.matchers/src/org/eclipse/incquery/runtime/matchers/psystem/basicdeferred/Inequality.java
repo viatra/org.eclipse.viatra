@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
 
@@ -24,13 +24,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint
  * @author Gabor Bergmann
  * 
  */
-public class Inequality extends VariableDeferredPConstraint
-// implements IFoldablePConstraint
-{
+public class Inequality extends VariableDeferredPConstraint {
 
     private PVariable who;
     private PVariable withWhom;
-    // private IFoldablePConstraint incorporator;
 
     /**
      * The inequality constraint is weak if it can be ignored when who is the same as withWhom, or if any if them is
@@ -38,11 +35,11 @@ public class Inequality extends VariableDeferredPConstraint
      */
     private boolean weak;
 
-    public Inequality(PSystem pSystem, PVariable who, PVariable withWhom) {
+    public Inequality(PBody pSystem, PVariable who, PVariable withWhom) {
         this(pSystem, who, withWhom, false);
     }
 
-    public Inequality(PSystem pSystem, PVariable who, PVariable withWhom,
+    public Inequality(PBody pSystem, PVariable who, PVariable withWhom,
             boolean weak) {
         super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[] { who, withWhom }) ));
         // this(pSystem, who, Collections.singleton(withWhom));
@@ -146,16 +143,10 @@ public class Inequality extends VariableDeferredPConstraint
             delete();
     }
 
-    /**
-     * @return the who
-     */
     public PVariable getWho() {
         return who;
     }
 
-    /**
-     * @return the withWhom
-     */
     public PVariable getWithWhom() {
         return withWhom;
     }

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 
@@ -32,15 +33,15 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  *            connected
  * @author Gabor Bergmann
  */
-public interface IOperationCompiler<PatternDescription, Collector> {
+public interface IOperationCompiler<Collector> {
 
-    public Collector patternCollector(PatternDescription pattern) throws QueryPlannerException;
+    public Collector patternCollector(PQuery pattern) throws QueryPlannerException;
  
     public void buildConnection(SubPlan parentPlan, Collector collector);
     
-    public void patternFinished(PatternDescription pattern, IPatternMatcherContext context, Collector collector);
+    public void patternFinished(PQuery pattern, IPatternMatcherContext context, Collector collector);
     
-    public SubPlan patternCallPlan(Tuple nodes, Object supplierKey)
+    public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
             throws QueryPlannerException;
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes);
@@ -89,12 +90,12 @@ public interface IOperationCompiler<PatternDescription, Collector> {
     /**
      * @return an operation compiler that potentially acts on a separate container
      */
-    public IOperationCompiler<PatternDescription, Collector> getNextContainer();
+    public IOperationCompiler<Collector> getNextContainer();
 
     /**
      * @return an operation compiler that puts build actions on the tab of the given pattern
      */
-    public IOperationCompiler<PatternDescription, Collector> putOnTab(PatternDescription effort, IPatternMatcherContext context);
+    public IOperationCompiler<Collector> putOnTab(PQuery effort, IPatternMatcherContext context);
 
     public void reinitialize();
 

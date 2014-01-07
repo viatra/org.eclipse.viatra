@@ -19,8 +19,12 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.patternregistry.IPatternInfo;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
+import org.eclipse.incquery.tooling.ui.patternregistry.Activator;
 import org.eclipse.incquery.tooling.ui.patternregistry.handlers.RegisterHandlersUtil;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
@@ -49,7 +53,11 @@ public class ResourceChangeListener implements IResourceChangeListener {
                                 for (IPatternInfo patternInfo : relatedIPatternInfoList) {
                                     PatternRegistry.INSTANCE.removePatternFromRegistry(patternInfo);
                                 }
-                                RegisterHandlersUtil.registerSingleFile(file, resourceSetProvider);
+                                try {
+                                    RegisterHandlersUtil.registerSingleFile(file, resourceSetProvider);
+                                } catch (IncQueryException e) {
+                                    throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error loading query specifications from file " + file.getFullPath().toString(), e));
+                                }
                             } else if (delta.getKind() == IResourceDelta.REMOVED) {
                                 for (IPatternInfo patternInfo : relatedIPatternInfoList) {
                                     PatternRegistry.INSTANCE.removePatternFromRegistry(patternInfo);

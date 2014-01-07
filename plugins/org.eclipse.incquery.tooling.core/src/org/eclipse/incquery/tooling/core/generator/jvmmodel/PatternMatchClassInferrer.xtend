@@ -26,6 +26,8 @@ import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -135,7 +137,7 @@ class PatternMatchClassInferrer {
 	/**
    	 * Infers methods for Match class based on the input 'pattern'.
    	 */
-   	def inferMatchClassMethods(JvmDeclaredType matchClass, Pattern pattern) {
+   	def inferMatchClassMethods(JvmDeclaredType matchClass, Pattern pattern, JvmParameterizedTypeReference querySpecificationClassRef) {
    		matchClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
    			it.annotations += pattern.toAnnotation(typeof (Override))
    			it.setBody([append('''
@@ -201,7 +203,7 @@ class PatternMatchClassInferrer {
 				referClass(pattern, typeof(IPatternMatch))
 				append('''
 				) obj;
-					if (!pattern().equals(otherSig.pattern()))
+					if (!specification().equals(otherSig.specification()))
 						return false;
 					return ''')
 				referClass(pattern, typeof(Arrays))
@@ -217,12 +219,12 @@ class PatternMatchClassInferrer {
 				«ENDIF»
 				return true;''')])
 		]
-		matchClass.members += pattern.toMethod("pattern", pattern.newTypeRef(typeof (Pattern))) [
+		matchClass.members += pattern.toMethod("specification", querySpecificationClassRef) [
 			it.annotations += pattern.toAnnotation(typeof (Override))
 			it.setBody([
 				append('''
 				try {
-					return «pattern.matcherClassName».querySpecification().getPattern();
+					return «querySpecificationClassRef.type.simpleName».instance();
 				} catch (''') 
 				referClass(pattern, typeof (IncQueryException)) 
 				append(" ")

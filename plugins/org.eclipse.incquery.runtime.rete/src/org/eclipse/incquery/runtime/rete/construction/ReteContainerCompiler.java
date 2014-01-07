@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
@@ -47,18 +48,18 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  * @author Gabor Bergmann
  * 
  */
-public class ReteContainerCompiler<PatternDescription>
-		implements IOperationCompiler<PatternDescription, Address<? extends Receiver>>, Cloneable {
+public class ReteContainerCompiler
+		implements IOperationCompiler<Address<? extends Receiver>>, Cloneable {
 
     protected Library library;
     protected ReteContainer targetContainer;
     protected Network reteNet;
-    protected ReteBoundary<PatternDescription> boundary;
-    protected ReteEngine<PatternDescription> engine;
+    protected ReteBoundary boundary;
+    protected ReteEngine engine;
     protected boolean headAttached = false;
     
     // only if provided by putOnTab
-    protected PatternDescription pattern = null;
+    protected PQuery pattern = null;
     protected IPatternMatcherContext context = null;
 
     protected void mapPlan(SubPlan plan, Address<? extends Supplier> handle) {
@@ -75,7 +76,7 @@ public class ReteContainerCompiler<PatternDescription>
      * 
      * @param targetContainer
      */
-    public ReteContainerCompiler(ReteEngine<PatternDescription> engine, ReteContainer targetContainer) {
+    public ReteContainerCompiler(ReteEngine engine, ReteContainer targetContainer) {
         super();
         this.engine = engine;
         this.reteNet = engine.getReteNet();
@@ -106,8 +107,8 @@ public class ReteContainerCompiler<PatternDescription>
         this.library = targetContainer.getLibrary();
     }
     
-    public void patternFinished(PatternDescription pattern, IPatternMatcherContext context, Address<? extends Receiver> collector) {
-    	final NodeToPatternTraceInfo traceInfo = new NodeToPatternTraceInfo(pattern, context);
+    public void patternFinished(PQuery pattern, IPatternMatcherContext context, Address<? extends Receiver> collector) {
+    	final NodeToPatternTraceInfo traceInfo = new NodeToPatternTraceInfo(pattern);
 		collector.getContainer().resolveLocal(collector).assignTraceInfo(traceInfo);
     };
 
@@ -151,9 +152,9 @@ public class ReteContainerCompiler<PatternDescription>
     }
 
     @Override
-    public SubPlan patternCallPlan(Tuple nodes, Object supplierKey)
+    public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
             throws QueryPlannerException {
-        return trace(new SubPlan(nodes), boundary.accessProduction((PatternDescription)supplierKey));
+        return trace(new SubPlan(nodes), boundary.accessProduction(supplierKey));
     }
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes) {
@@ -280,25 +281,25 @@ public class ReteContainerCompiler<PatternDescription>
     /**
      * @return trace(a buildable that potentially acts on a separate container
      */
-    public IOperationCompiler<PatternDescription, Address<? extends Receiver>> getNextContainer() {
-        return new ReteContainerCompiler<PatternDescription>(engine, reteNet.getNextContainer());
+    public IOperationCompiler<Address<? extends Receiver>> getNextContainer() {
+        return new ReteContainerCompiler(engine, reteNet.getNextContainer());
     }
 
-    public Address<? extends Receiver> patternCollector(Object pattern) throws QueryPlannerException {
+    public Address<? extends Receiver> patternCollector(PQuery pattern) throws QueryPlannerException {
         return engine.getBoundary().createProductionInternal(pattern);
     }
 
     /**
      * No need to distinguish
      */
-    public IOperationCompiler<PatternDescription, Address<? extends Receiver>> putOnTab(Object effort, IPatternMatcherContext effortContext) {
-    	final ReteContainerCompiler<PatternDescription> patternSpecific;
+    public IOperationCompiler<Address<? extends Receiver>> putOnTab(PQuery effort, IPatternMatcherContext effortContext) {
+    	final ReteContainerCompiler patternSpecific;
     	try {
-    		patternSpecific = (ReteContainerCompiler<PatternDescription>) this.clone();
+    		patternSpecific = (ReteContainerCompiler) this.clone();
 		} catch (CloneNotSupportedException e) {
 			return this;
 		}
-    	patternSpecific.pattern = (PatternDescription) effort;
+    	patternSpecific.pattern = effort;
     	patternSpecific.context = effortContext;
         return patternSpecific;
     }

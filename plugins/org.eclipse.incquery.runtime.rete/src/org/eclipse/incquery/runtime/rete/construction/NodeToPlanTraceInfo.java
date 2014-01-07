@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.rete.construction;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.rete.network.Node;
 
 /**
@@ -19,12 +20,12 @@ import org.eclipse.incquery.runtime.rete.network.Node;
  *
  */
 public class NodeToPlanTraceInfo implements Node.TraceInfo.PatternTraceInfo {
-	
+
     SubPlan plan;
-    Object pattern;
+    PQuery pattern;
     IPatternMatcherContext context;
 
-	public NodeToPlanTraceInfo(SubPlan plan, Object pattern,
+	public NodeToPlanTraceInfo(SubPlan plan, PQuery pattern,
 			IPatternMatcherContext context) {
 		super();
 		this.plan = plan;
@@ -36,7 +37,7 @@ public class NodeToPlanTraceInfo implements Node.TraceInfo.PatternTraceInfo {
 	public String toString() {
 		return "->" + getPatternName() + "~" + plan.toString();
 	}
-	
+
 	@Override
 	public boolean propagateToIndexerParent() {
 		return true;
@@ -61,10 +62,10 @@ public class NodeToPlanTraceInfo implements Node.TraceInfo.PatternTraceInfo {
 	@Override
 	public String getPatternName() {
 		if (pattern != null)
-			return context.printPattern(pattern);
-		else 
+			return pattern.getFullyQualifiedName();
+		else
 			return "";
 	}
-	
+
 
 }

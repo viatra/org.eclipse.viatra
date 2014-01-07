@@ -29,7 +29,7 @@ public class RelationFeeder extends Feeder {
      * @param typeObject
      */
     public RelationFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary<?> boundary, Object typeObject) {
+            Network network, ReteBoundary boundary, Object typeObject) {
         super(receiver, context, network, boundary);
         this.typeObject = typeObject;
     }

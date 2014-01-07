@@ -17,7 +17,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * Interface intended for nodes containing complete matches.
- * 
+ *
  * @author Gabor Bergmann
  */
 public interface Production extends Tunnel, Iterable<Tuple> {
@@ -25,7 +25,7 @@ public interface Production extends Tunnel, Iterable<Tuple> {
     /**
      * @return the position mapping of this particular pattern that maps members of the tuple type to their positions
      */
-    Map<Object, Integer> getPosMapping();
+    Map<String, Integer> getPosMapping();
 
     // /**
     // * Removes all parents of the production node,

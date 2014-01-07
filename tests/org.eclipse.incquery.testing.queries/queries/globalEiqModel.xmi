@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <eMFPatternLanguage:PatternModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eMFPatternLanguage="http://www.eclipse.org/incquery/patternlanguage/emf/EMFPatternLanguage" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:patternLanguage="http://www.eclipse.org/incquery/patternlanguage/PatternLanguage">
   <patterns name="org.eclipse.incquery.testing.queries.IncorrectSubstitution" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
-    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/incquery/snapshot#//MatchRecord"/>
@@ -120,7 +119,6 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecords" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
-    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/incquery/snapshot#//MatchRecord"/>
@@ -153,7 +151,6 @@
     </bodies>
   </patterns>
   <patterns name="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord" fileName="platform:/resource/org.eclipse.incquery.testing.queries/src/org/eclipse/incquery/testing/queries/matchRecordQueries.eiq">
-    <modifiers private="true"/>
     <parameters name="Record">
       <type xsi:type="eMFPatternLanguage:ClassType">
         <classname xsi:type="ecore:EClass" href="http://www.eclipse.org/incquery/snapshot#//MatchRecord"/>
@@ -571,10 +568,10 @@
   </patterns>
   <importPackages>
     <packageImport>
-      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+      <ePackage href="http://www.eclipse.org/incquery/snapshot#/"/>
     </packageImport>
     <packageImport>
-      <ePackage href="http://www.eclipse.org/incquery/snapshot#/"/>
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
     </packageImport>
   </importPackages>
 </eMFPatternLanguage:PatternModel>

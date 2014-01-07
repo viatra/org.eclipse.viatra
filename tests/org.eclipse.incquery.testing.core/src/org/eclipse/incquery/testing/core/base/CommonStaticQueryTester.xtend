@@ -34,7 +34,7 @@ abstract class CommonStaticQueryTester {
 
 	def testQuery(IncQueryEngine engine, IncQuerySnapshot sns, IQuerySpecification queryMF){
 		val IncQueryMatcher matcher = engine.getMatcher(queryMF)//queryInputXMI.initializeMatcherFromModel(sns.EMFRootForSnapshot, queryFQN)
-		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryMF.patternFullyQualifiedName))
+		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryMF.fullyQualifiedName))
 		assertArrayEquals(results.logDifference,newHashSet,results)
 	}
 	

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 import com.google.common.base.Predicate;
 
@@ -21,10 +21,10 @@ import com.google.common.base.Predicate;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ViewersAnnotatedPatternTester implements Predicate<Annotation> {
+public class ViewersAnnotatedPatternTester implements Predicate<PAnnotation> {
 
     @Override
-    public boolean apply(Annotation annotation) {
+    public boolean apply(PAnnotation annotation) {
         String name = annotation.getName();
         if (name == null) {
             return false;

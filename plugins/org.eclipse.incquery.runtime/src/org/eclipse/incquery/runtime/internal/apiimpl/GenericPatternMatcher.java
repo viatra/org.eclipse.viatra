@@ -138,5 +138,9 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     protected GenericPatternMatch tupleToMatch(Tuple t) {
         return new GenericPatternMatch.Immutable(this, t.getElements());
     }
-
+    
+    @Override
+    public GenericQuerySpecification getSpecification() {
+        return (GenericQuerySpecification)querySpecification;
+    }
 }

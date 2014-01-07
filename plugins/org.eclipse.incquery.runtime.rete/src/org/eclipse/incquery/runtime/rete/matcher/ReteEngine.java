@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
@@ -35,13 +37,13 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
-public class ReteEngine<PatternDescription> {
+public class ReteEngine {
 
     protected Network reteNet;
     protected final int reteThreads;
-    protected ReteBoundary<PatternDescription> boundary;
+    protected ReteBoundary boundary;
 
     protected IPatternMatcherRuntimeContext context;
 
@@ -50,14 +52,14 @@ public class ReteEngine<PatternDescription> {
     protected IPredicateTraceListener traceListener;
     // protected MachineListener machineListener;
 
-    protected Map<PatternDescription, RetePatternMatcher> matchers;
+    protected Map<PQuery, RetePatternMatcher> matchers;
     // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
     // matcher
 
-    protected IRetePatternBuilder<PatternDescription, Address<? extends Receiver>> builder;
+    protected IRetePatternBuilder<Address<? extends Receiver>> builder;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
-    
+
     private boolean disposedOrUninitialized = true;
 
     // while RETE does its job.
@@ -141,7 +143,7 @@ public class ReteEngine<PatternDescription> {
 
     /**
      * Resets the engine to an after-initialization phase
-     * 
+     *
      */
     public void reset() {
         deconstructEngine();
@@ -153,7 +155,7 @@ public class ReteEngine<PatternDescription> {
 
     /**
      * Accesses the patternmatcher for a given pattern, constructs one if a matcher is not available yet.
-     * 
+     *
      * @pre: builder is set.
      * @param gtPattern
      *            the pattern to be matched.
@@ -161,7 +163,7 @@ public class ReteEngine<PatternDescription> {
      * @throws RetePatternBuildException
      *             if construction fails.
      */
-    public synchronized RetePatternMatcher accessMatcher(final PatternDescription gtPattern)
+    public synchronized RetePatternMatcher accessMatcher(final PQuery gtPattern)
             throws QueryPlannerException {
     	ensureInitialized();
     	RetePatternMatcher matcher;
@@ -175,7 +177,7 @@ public class ReteEngine<PatternDescription> {
         		public Void call() throws QueryPlannerException {
         			Address<? extends Production> prodNode;
         			prodNode = boundary.accessProduction(gtPattern);
-        			
+
         			RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
         					prodNode);
         			retePatternMatcher.setTag(gtPattern);
@@ -193,21 +195,21 @@ public class ReteEngine<PatternDescription> {
      * Constructs RETE pattern matchers for a collection of patterns, if they are not available yet. Model traversal
      * during the whole construction period is coalesced (which may have an effect on performance, depending on the
      * matcher context).
-     * 
+     *
      * @pre: builder is set.
-     * @param patterns
+     * @param specifications
      *            the patterns to be matched.
      * @throws RetePatternBuildException
      *             if construction fails.
      */
-    public synchronized void buildMatchersCoalesced(final Collection<PatternDescription> patterns)
+    public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications)
             throws QueryPlannerException {
     	ensureInitialized();
     	constructionWrapper(new Callable<Void>() {
     		@Override
     		public Void call() throws QueryPlannerException {
-    			for (PatternDescription gtPattern : patterns) {
-    				boundary.accessProduction(gtPattern);
+    			for (PQuery specification : specifications) {
+    			    boundary.accessProduction(specification);
     			}
     			return null;
     		}
@@ -296,7 +298,7 @@ public class ReteEngine<PatternDescription> {
     /**
      * Returns an indexer that groups the contents of this Production node by their projections to a given mask.
      * Designed to be called by a RetePatternMatcher.
-     * 
+     *
      * @param production
      *            the production node to be indexed.
      * @param mask
@@ -359,7 +361,7 @@ public class ReteEngine<PatternDescription> {
     /**
      * Waits until the pattern matcher is in a steady state and output can be retrieved. When steady state is reached, a
      * retrieval action is executed before the steady state ceases.
-     * 
+     *
      * @param action
      *            the action to be run when reaching the steady-state.
      */
@@ -403,7 +405,7 @@ public class ReteEngine<PatternDescription> {
      *            the pattern matcher builder to set
      */
     public void setBuilder(
-            IRetePatternBuilder<PatternDescription, Address<? extends Receiver>> builder) {
+            IRetePatternBuilder<Address<? extends Receiver>> builder) {
     	ensureInitialized();
         this.builder = builder;
     }
@@ -448,7 +450,7 @@ public class ReteEngine<PatternDescription> {
         return context;
     }
 
-    public IRetePatternBuilder<?, Address<? extends Receiver>> getBuilder() {
+    public IRetePatternBuilder<Address<? extends Receiver>> getBuilder() {
     	ensureInitialized();
        return builder;
     }
@@ -473,11 +475,11 @@ public class ReteEngine<PatternDescription> {
     // public Throwable getNextLoggedEvaluatorException() {
     // return caughtExceptions.poll();
     // }
-    
+
     void ensureInitialized() {
     	if (disposedOrUninitialized)
     		throw new IllegalStateException("Trying to use a Rete engine that has been disposed or has not yet been initialized.");
-    	
+
     }
 
 }

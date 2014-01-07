@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
@@ -23,26 +24,18 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * @author Gabor Bergmann
  * 
  */
-public class PositivePatternCall extends KeyedEnumerablePConstraint<Object> {
+public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> {
 
-    /**
-     * @param buildable
-     * @param variablesTuple
-     * @param pattern
-     */
-    public PositivePatternCall(PSystem pSystem, Tuple variablesTuple,
-            Object pattern) {
+    public PositivePatternCall(PBody pSystem, Tuple variablesTuple,
+            PQuery pattern) {
         super(pSystem, variablesTuple, pattern);
     }
 
     @Override
     protected String keyToString() {
-        return pSystem.getContext().printPattern(supplierKey);
+        return supplierKey.getFullyQualifiedName();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	// TODO insert inferred functional dependencies here

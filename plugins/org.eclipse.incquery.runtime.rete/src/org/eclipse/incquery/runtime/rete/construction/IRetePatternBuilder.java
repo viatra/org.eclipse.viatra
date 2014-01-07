@@ -15,29 +15,30 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 
 /**
  * Exchangeable component of ReteEngine, responsible for building pattern matcher rete subnets.
- * 
+ *
  * @author Gabor Bergmann
  */
-public interface IRetePatternBuilder<PatternDefinition, Collector> {
+public interface IRetePatternBuilder<Collector> {
 
     /**
      * Builds a part of the rete network that will match occurences of a given pattern.
-     * 
+     *
      * @param gtPattern
      *            the pattern whose matcher subnet has to be built.
      * @return production. the Production node that should store matchings of the given pattern.
-     * @throws OperationCompilerException 
+     * @throws OperationCompilerException
      *             if construction fails.
      */
-    Collector construct(PatternDefinition gtPattern) throws QueryPlannerException;
+    Collector construct(PQuery gtPattern) throws QueryPlannerException;
 
     /**
      * Extract the position mapping of the graph pattern.
      */
-    Map<Object, Integer> getPosMapping(PatternDefinition gtPattern);
+    Map<String, Integer> getPosMapping(PQuery gtPattern);
 
     // /**
     // * Extends the rete network beyond a production node to

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 /**
@@ -27,19 +27,14 @@ public class Containment extends CoreModelRelationship {
 
 	PVariable parent; 
 	PVariable child;
-    /**
-     * @param variablesTuple
-     */
-    public Containment(PSystem pSystem, PVariable parent, PVariable child,
+
+	public Containment(PBody pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
         this.parent = parent;
         this.child = child;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();

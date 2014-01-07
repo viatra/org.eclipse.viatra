@@ -24,10 +24,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
+import org.eclipse.incquery.runtime.SpecificationBuilder;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.internal.apiimpl.GenericQuerySpecification;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -101,7 +102,7 @@ public final class QuerySpecificationRegistry {
             IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> provider = (IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>) el
                     .createExecutableExtension("querySpecificationProvider");
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = provider.get();
-            String fullyQualifiedName = querySpecification.getPatternFullyQualifiedName();
+            String fullyQualifiedName = querySpecification.getFullyQualifiedName();
             if (id.equals(fullyQualifiedName)) {
                 if (specifications.containsKey(fullyQualifiedName)) {
                     duplicates.add(fullyQualifiedName);
@@ -129,7 +130,7 @@ public final class QuerySpecificationRegistry {
      * @param specification
      */
     public static void registerQuerySpecification(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification) {
-        String qualifiedName = specification.getPatternFullyQualifiedName();
+        String qualifiedName = specification.getFullyQualifiedName();
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
         } else {
@@ -182,13 +183,15 @@ public final class QuerySpecificationRegistry {
 
     /**
      * Returns a generic pattern query specification if a generated query specification is not registered
+     * @throws IncQueryException 
      */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateQuerySpecification(Pattern pattern) {
+    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateQuerySpecification(Pattern pattern) throws IncQueryException {
     	IQuerySpecification<?> specification = getQuerySpecification(pattern);
-        if (specification != null) 
-        	return specification;
-        else 
-        	return new GenericQuerySpecification(pattern);
+        if (specification == null) { 
+            SpecificationBuilder builder = new SpecificationBuilder(QUERY_SPECIFICATIONS.values());
+            specification = builder.getOrCreateSpecification(pattern);
+        }
+        return specification;
     }
 
     /**

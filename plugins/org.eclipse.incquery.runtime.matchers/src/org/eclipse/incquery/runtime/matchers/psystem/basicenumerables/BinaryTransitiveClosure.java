@@ -12,29 +12,26 @@
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
- * @author Bergmann GĂˇbor
+ * For a binary base pattern, computes the irreflexive transitive closure (base)+
  * 
- *         For a binary base pattern, computes the irreflexive transitive closure (base)+
+ * @author Gabor Bergmann
+ * 
  */
-public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<Object> {
+public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> {
 
-    /**
-     * @param pSystem
-     * @param variablesTuple
-     * @param pattern
-     */
-    public BinaryTransitiveClosure(PSystem pSystem, Tuple variablesTuple,
-            Object pattern) {
+    public BinaryTransitiveClosure(PBody pSystem, Tuple variablesTuple,
+            PQuery pattern) {
         super(pSystem, variablesTuple, pattern);
     }
 
     @Override
     protected String keyToString() {
-        return pSystem.getContext().printType(supplierKey) + "+";
+        return supplierKey.getFullyQualifiedName() + "+";
     }
     
     

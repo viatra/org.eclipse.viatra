@@ -11,7 +11,8 @@
 
 package org.eclipse.incquery.runtime.matchers.planning;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 /**
  * An algorithm that builds a matcher based on a PSystem.
@@ -19,5 +20,5 @@ import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
  * @author Gabor Bergmann
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan layout(PSystem pSystem, IOperationCompiler<?, ?> compiler) throws QueryPlannerException;
+    public SubPlan layout(PBody pSystem, IOperationCompiler<?> compiler, IPatternMatcherContext context) throws QueryPlannerException;
 }

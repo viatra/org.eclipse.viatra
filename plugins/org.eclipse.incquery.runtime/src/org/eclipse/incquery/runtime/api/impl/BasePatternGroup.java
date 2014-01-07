@@ -10,25 +10,31 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.api.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.api.IPatternGroup;
-import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IQueryGroup;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQueries;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 
 /**
- * Base implementation of {@link IPatternGroup}.
- * 
+ * Base implementation of {@link IQueryGroup}.
+ *
  * @author Mark Czotter
- * 
+ *
  */
-public abstract class BasePatternGroup implements IPatternGroup {
+public abstract class BasePatternGroup implements IQueryGroup {
 
     @Override
     public void prepare(Notifier emfRoot) throws IncQueryException {
@@ -38,28 +44,22 @@ public abstract class BasePatternGroup implements IPatternGroup {
     @Override
     public void prepare(IncQueryEngine engine) throws IncQueryException {
         try {
-            final Set<Pattern> patterns = getPatterns();
+            final Set<PQuery> patterns = new HashSet<PQuery>(getSpecifications());
+            Collection<String> uninitializedPatterns = Collections2.transform(
+                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
+                    PQueries.queryNameFunction());
+            Preconditions.checkState(!uninitializedPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
+                    .join(uninitializedPatterns));
+            Collection<String> erroneousPatterns = Collections2.transform(
+                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
+                    PQueries.queryNameFunction());
+            Preconditions.checkState(!erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
+                    .join(erroneousPatterns));
             final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
-			engineImpl.getSanitizer().admit(patterns);
-			engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
+            engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
         } catch (QueryPlannerException e) {
             throw new IncQueryException(e);
         }
-    }
-
-    /**
-     * Returns a set of {@link Pattern} objects, accessible from the {@link IQuerySpecification} objects.
-     * 
-     * @see IQuerySpecification#getPattern()
-     * @param querySpecifications
-     * @return
-     */
-    public static Set<Pattern> patterns(Set<IQuerySpecification<?>> querySpecifications) {
-        Set<Pattern> result = new HashSet<Pattern>();
-        for (IQuerySpecification<?> querySpecification : querySpecifications) {
-            result.add(querySpecification.getPattern());
-        }
-        return result;
     }
 
 }

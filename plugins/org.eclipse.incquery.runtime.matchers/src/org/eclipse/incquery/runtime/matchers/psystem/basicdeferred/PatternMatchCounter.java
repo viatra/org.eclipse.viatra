@@ -16,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
@@ -28,13 +29,9 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
 
     private PVariable resultVariable;
 
-    /**
-     * @param buildable
-     * @param affectedVariables
-     */
-    public PatternMatchCounter(PSystem pSystem, Tuple actualParametersTuple,
-            Object pattern, PVariable resultVariable) {
-        super(pSystem, actualParametersTuple, pattern, Collections.singleton(resultVariable));
+    public PatternMatchCounter(PBody pSystem, Tuple actualParametersTuple,
+            PQuery query, PVariable resultVariable) {
+        super(pSystem, actualParametersTuple, query, Collections.singleton(resultVariable));
         this.resultVariable = resultVariable;
     }
 
@@ -43,9 +40,6 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
         return Collections.singleton(resultVariable);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
@@ -67,13 +61,10 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
 
     @Override
     protected String toStringRest() {
-        return pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString() + "->"
+        return query.getFullyQualifiedName() + "@" + actualParametersTuple.toString() + "->"
                 + resultVariable.toString();
     }
 
-    /**
-     * @return the resultVariable
-     */
     public PVariable getResultVariable() {
         return resultVariable;
     }

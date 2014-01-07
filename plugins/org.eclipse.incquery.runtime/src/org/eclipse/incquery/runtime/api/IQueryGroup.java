@@ -13,11 +13,10 @@ package org.eclipse.incquery.runtime.api;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Generic interface for group of patterns.
+ * Generic interface for group of query specifications.
  * 
  * <p>It handles more than one patterns as a group, and provides functionality to initialize the matchers together (which
  * has performance benefits).
@@ -25,7 +24,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @author Mark Czotter
  * 
  */
-public interface IPatternGroup {
+public interface IQueryGroup {
 
     /**
      * Initializes matchers for the group of patterns within an {@link IncQueryEngine}. If some of the pattern matchers are already
@@ -62,10 +61,10 @@ public interface IPatternGroup {
     public void prepare(Notifier emfRoot) throws IncQueryException;
 
     /**
-     * Returns the currently assigned {@link Pattern}s.
+     * Returns the currently assigned {@link IQuerySpecification}s.
      * 
      * @return
      */
-    public Set<Pattern> getPatterns();
+    public Set<IQuerySpecification<?>> getSpecifications();
 
 }

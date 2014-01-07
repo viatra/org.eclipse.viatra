@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.rete.tuple.Clearable;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  *         Mutexes: externalMessageLock - enlisting messages into and retrieving from the external message queue
  */
 public final class ReteContainer {
@@ -82,7 +82,7 @@ public final class ReteContainer {
     /**
      * Establishes connection between a supplier and a receiver node, regardless which container they are in. Assumption
      * is that this container is the home of the receiver, but it is not strictly necessary.
-     * 
+     *
      * @param synchronise
      *            indicates whether the receiver should be synchronised to the current contents of the supplier
      */
@@ -99,7 +99,7 @@ public final class ReteContainer {
     /**
      * Severs connection between a supplier and a receiver node, regardless which container they are in. Assumption is
      * that this container is the home of the receiver, but it is not strictly necessary.
-     * 
+     *
      * @param desynchronise
      *            indicates whether the current contents of the supplier should be subtracted from the receiver
      */
@@ -115,7 +115,7 @@ public final class ReteContainer {
 
     /**
      * Establishes connection between a remote supplier and a local receiver node.
-     * 
+     *
      * @param synchronise
      *            indicates whether the receiver should be synchronised to the current contents of the supplier
      */
@@ -129,7 +129,7 @@ public final class ReteContainer {
 
     /**
      * Severs connection between a remote supplier and a local receiver node.
-     * 
+     *
      * @param desynchronise
      *            indicates whether the current contents of the supplier should be subtracted from the receiver
      */
@@ -238,7 +238,7 @@ public final class ReteContainer {
      * Sends an update message to the receiver node, indicating a newly found or lost partial matching. The receiver is
      * indicated by the Address. Designed to be called by the Network, DO NOT use in any other way. @pre:
      * address.container == this, e.g. address MUST be local
-     * 
+     *
      * @return the value of the container's clock at the time when the message was accepted into the local message queue
      */
     long sendUpdateToLocalAddress(Address<? extends Receiver> address, Direction direction, Tuple updateElement) {
@@ -263,7 +263,7 @@ public final class ReteContainer {
      * Sends multiple update messages atomically to the receiver node, indicating a newly found or lost partial
      * matching. The receiver is indicated by the Address. Designed to be called by the Network, DO NOT use in any other
      * way. @pre: address.container == this, e.g. address MUST be local @pre: updateElements is nonempty!
-     * 
+     *
      * @return the value of the container's clock at the time when the message was accepted into the local message queue
      */
     long sendUpdatesToLocalAddress(Address<? extends Receiver> address, Direction direction,
@@ -303,7 +303,7 @@ public final class ReteContainer {
      * Sends multiple update messages to the receiver node, indicating a newly found or lost partial matching. The
      * receiver is indicated by the Address. Designed to be called by the Network in single-threaded operation, DO NOT
      * use in any other way.
-     * 
+     *
      * @pre: address.container == this, e.g. address MUST be local
      */
     void sendUpdatesToLocalAddressSingleThreaded(Address<? extends Receiver> address, Direction direction,
@@ -316,7 +316,7 @@ public final class ReteContainer {
     /**
      * Sends an update message to a node in a different container. The receiver is indicated by the Address. Designed to
      * be called by RemoteReceivers, DO NOT use in any other way.
-     * 
+     *
      * @return the value of the container's clock at the time when the message was accepted into the local message queue
      */
     public void sendUpdateToRemoteAddress(Address<? extends Receiver> address, Direction direction, Tuple updateElement) {
@@ -367,7 +367,7 @@ public final class ReteContainer {
     /**
      * Retrieves the contents of a supplier for a remote caller. Assumption is that this container is the home of the
      * supplier, but it is not strictly necessary.
-     * 
+     *
      * @param supplier
      *            the address of the supplier to be pulled.
      */
@@ -381,7 +381,7 @@ public final class ReteContainer {
      * Proxies for the getPosMapping() of Production nodes. Retrieves the posmapping of a remote or local Production to
      * a remote or local caller.
      */
-    public Map<Object, Integer> remotePosMapping(Address<? extends Production> production) {
+    public Map<String, Integer> remotePosMapping(Address<? extends Production> production) {
         if (!isLocal(production))
             return production.getContainer().remotePosMapping(production);
         return resolveLocal(production).getPosMapping();
@@ -479,7 +479,7 @@ public final class ReteContainer {
 
     /**
      * Provides an external address for the selected node.
-     * 
+     *
      * @pre node belongs to this container.
      */
     public <N extends Node> Address<N> makeAddress(N node) {
@@ -512,7 +512,7 @@ public final class ReteContainer {
     /**
      * Registers a node into the rete network (should be called by constructor). Every node MUST be registered by its
      * constructor.
-     * 
+     *
      * @return the unique nodeId issued to the node.
      */
     public long registerNode(Node n) {
@@ -565,7 +565,7 @@ public final class ReteContainer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -584,7 +584,7 @@ public final class ReteContainer {
 
     /**
      * Access all the Rete nodes inside this container.
-     * 
+     *
      * @return the collection of {@link Node} instances
      */
     public Collection<Node> getAllNodes() {

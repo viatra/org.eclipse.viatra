@@ -28,14 +28,14 @@ import org.eclipse.incquery.runtime.rete.single.TransformerNode;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
 public class RetePatternMatcher extends TransformerNode {
 
-    protected ReteEngine<?> engine;
-    protected ReteBoundary<?> boundary;
+    protected ReteEngine engine;
+    protected ReteBoundary boundary;
     protected Production productionNode;
-    protected Map<Object, Integer> posMapping;
+    protected Map<String, Integer> posMapping;
     protected Map<Object, Receiver> taggedChildren = //new HashMap<Object, Receiver>();
             CollectionsFactory.getMap();
     protected boolean connected = false; // is rete-wise connected to the
@@ -46,7 +46,7 @@ public class RetePatternMatcher extends TransformerNode {
      *            a production node that matches this pattern without any parameter bindings
      * @pre: Production must be local to the head container
      */
-    public RetePatternMatcher(ReteEngine<?> engine, Address<? extends Production> productionNode) {
+    public RetePatternMatcher(ReteEngine engine, Address<? extends Production> productionNode) {
         super(engine.getReteNet().getHeadContainer());
         this.engine = engine;
         this.boundary = engine.getBoundary();
@@ -102,7 +102,7 @@ public class RetePatternMatcher extends TransformerNode {
 
     /**
      * Counts the number of occurrences of the pattern that match inputMapping on positions where fixed is true.
-     * 
+     *
      * @return the number of occurrences
      */
     public int count(Object[] inputMapping, boolean[] fixed) {
@@ -119,7 +119,7 @@ public class RetePatternMatcher extends TransformerNode {
     /**
      * Connects a new external receiver that will receive update notifications from now on. The receiver will
      * practically connect to the production node, the added value is unwrapping the updates for external use.
-     * 
+     *
      * @param synchronize
      *            if true, the contents of the production node will be inserted into the receiver after the connection
      *            is established.
@@ -138,16 +138,16 @@ public class RetePatternMatcher extends TransformerNode {
     /**
      * Connects a new external receiver that will receive update notifications from now on. The receiver will
      * practically connect to the production node, the added value is unwrapping the updates for external use.
-     * 
+     *
      * The external receiver will be disconnectable later based on its tag.
-     * 
+     *
      * @param tag
      *            an identifier to recognize the child node by.
-     * 
+     *
      * @param synchronize
      *            if true, the contents of the production node will be inserted into the receiver after the connection
      *            is established.
-     * 
+     *
      */
     public synchronized void connect(Receiver receiver, Object tag, boolean synchronize) {
         taggedChildren.put(tag, receiver);
@@ -163,7 +163,7 @@ public class RetePatternMatcher extends TransformerNode {
 
     /**
      * Disconnects the child node that was connected by specifying the given tag.
-     * 
+     *
      * @return if a child node was found registered with this tag.
      */
     public synchronized boolean disconnectByTag(Object tag) {
@@ -172,13 +172,6 @@ public class RetePatternMatcher extends TransformerNode {
         if (found)
             disconnect(receiver);
         return found;
-    }
-
-    /**
-     * @return the posMapping
-     */
-    public Map<Object, Integer> getPosMapping() {
-        return posMapping;
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
@@ -222,7 +223,7 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
         }
     }
 
-    public void setContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
+    public void setContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
         	if (state!=null) {
@@ -245,10 +246,10 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
         return engine;
     }
 
-    private static Collection<Pattern> getPatternsWithProperAnnotations(Collection<Pattern> input) {
-        ArrayList<Pattern> res = new ArrayList<Pattern>();
-        for (Pattern p : input) {
-            if (Iterables.any(p.getAnnotations(), new ViewersAnnotatedPatternTester())) {
+    private static Collection<IQuerySpecification<?>> getPatternsWithProperAnnotations(Collection<IQuerySpecification<?>> input) {
+        ArrayList<IQuerySpecification<?>> res = new ArrayList<IQuerySpecification<?>>();
+        for (IQuerySpecification<?> p : input) {
+            if (Iterables.any(p.getAllAnnotations(), new ViewersAnnotatedPatternTester())) {
                 res.add(p);
             }
         }

@@ -3,6 +3,30 @@
 <plugin>
 
    <extension
+         id="org.eclipse.incquery.testing.queries.IncorrectSubstitution"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.IncorrectSubstitutionQuerySpecification$Provider"
+            id="org.eclipse.incquery.testing.queries.IncorrectSubstitution">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.incquery.testing.queries.CorrespondingRecords"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.CorrespondingRecordsQuerySpecification$Provider"
+            id="org.eclipse.incquery.testing.queries.CorrespondingRecords">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification$Provider"
+            id="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord">
+      </matcher>
+   </extension>
+   <extension
          id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord"
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher

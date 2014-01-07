@@ -46,7 +46,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class PredicateEvaluatorNode extends SingleInputNode {
 
     protected ReteEngine engine;
-    protected ReteBoundary<?> boundary;
+    protected ReteBoundary boundary;
     protected Integer rhsIndex;
     protected int[] affectedIndices;
     protected Set<Tuple> outgoing;

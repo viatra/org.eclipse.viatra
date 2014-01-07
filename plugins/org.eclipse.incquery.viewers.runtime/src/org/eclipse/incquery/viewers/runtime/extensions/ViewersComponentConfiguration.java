@@ -34,7 +34,7 @@ import com.google.common.collect.Sets;
 public class ViewersComponentConfiguration
 {
 	private Notifier model;
-	private Collection<Pattern> patterns;
+	private Collection<IQuerySpecification<?>> patterns;
 	private ViewerDataFilter filter;
 	
 	private ViewersComponentConfiguration() {
@@ -43,7 +43,7 @@ public class ViewersComponentConfiguration
 		this.filter = ViewerDataFilter.UNFILTERED;
 	}
 	
-	public ViewersComponentConfiguration(Notifier _model, Collection<Pattern> _patterns, ViewerDataFilter _filter) {
+	public ViewersComponentConfiguration(Notifier _model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter _filter) {
 		Assert.isNotNull(_model);
 		Assert.isNotNull(_patterns);
 		Assert.isNotNull(_filter);
@@ -52,7 +52,7 @@ public class ViewersComponentConfiguration
 		this.setFilter(_filter);
 	}
 	
-	public ViewersComponentConfiguration(Notifier _model, Collection<Pattern> _patterns) {
+	public ViewersComponentConfiguration(Notifier _model, Collection<IQuerySpecification<?>> _patterns) {
 		this(_model,_patterns,ViewerDataFilter.UNFILTERED);
 	}
 	
@@ -68,7 +68,7 @@ public class ViewersComponentConfiguration
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();
 		for (IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>> spec : specs) {
-			c.patterns.add(spec.getPattern());
+			c.patterns.add(spec);
 		}
 		return c;
 	}
@@ -77,7 +77,7 @@ public class ViewersComponentConfiguration
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();
 		for (String fqn : fqns) {
-			c.patterns.add( QuerySpecificationRegistry.getQuerySpecification(fqn).getPattern() );
+			c.patterns.add( QuerySpecificationRegistry.getQuerySpecification(fqn));
 		}
 		return c;
 	}
@@ -97,13 +97,13 @@ public class ViewersComponentConfiguration
 	/**
 	 * @return the patterns
 	 */
-	public Collection<Pattern> getPatterns() {
+	public Collection<IQuerySpecification<?>> getPatterns() {
 		return patterns;
 	}
 	/**
 	 * @param patterns the patterns to set
 	 */
-	public void setPatterns(Collection<Pattern> patterns) {
+	public void setPatterns(Collection<IQuerySpecification<?>> patterns) {
 		this.patterns = patterns;
 	}
 	/**
@@ -119,7 +119,7 @@ public class ViewersComponentConfiguration
 		this.filter = filter;
 	}
 	public ViewersComponentConfiguration newCopy() {
-		ArrayList<Pattern> r = Lists.newArrayList();
+		ArrayList<IQuerySpecification<?>> r = Lists.newArrayList();
 		r.addAll(getPatterns());
 		// TODO proper copy support for filters
 		return new ViewersComponentConfiguration(getModel(), r, getFilter());

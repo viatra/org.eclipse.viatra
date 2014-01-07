@@ -12,9 +12,7 @@
 package org.eclipse.incquery.runtime.internal.apiimpl;
 
 import java.util.Arrays;
-import java.util.List;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 
@@ -28,30 +26,29 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
  */
 public abstract class GenericPatternMatch extends BasePatternMatch {
 
-    // TODO should not have reference to matcher, use query specification instead (see #423279)
-    private final GenericPatternMatcher matcher;
+    private final GenericQuerySpecification specification;
     private final Object[] array;
 
-    /**
-     * @param posMapping
-     * @param array
-     */
     private GenericPatternMatch(GenericPatternMatcher matcher, Object[] array) {
+        this(matcher.getSpecification(), array);
+    }
+    
+    private GenericPatternMatch(GenericQuerySpecification specification, Object[] array) {
         super();
-        this.matcher = matcher;
+        this.specification = specification;
         this.array = array;
     }
 
     @Override
     public Object get(String parameterName) {
-        Integer index = matcher.getPositionOfParameter(parameterName);
+        Integer index = specification.getPositionOfParameter(parameterName);
         return index == null ? null : array[index];
     }
 
     @Override
     public boolean set(String parameterName, Object newValue) {
     	if (!isMutable()) throw new UnsupportedOperationException();
-        Integer index = matcher.getPositionOfParameter(parameterName);
+        Integer index = specification.getPositionOfParameter(parameterName);
         if (index == null)
             return false;
         array[index] = newValue;
@@ -82,12 +79,12 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
 	        if (!(obj instanceof IPatternMatch))
 	            return false;
 	        IPatternMatch other = (IPatternMatch) obj;
-	        if (!pattern().equals(other.pattern()))
+	        if (!specification().equals(other.specification()))
 	            return false;
 	        return Arrays.deepEquals(array, other.toArray());	     	
         }
     	final GenericPatternMatch other = (GenericPatternMatch) obj;
-		return pattern().equals(other.pattern()) && Arrays.deepEquals(array, other.array);
+		return specification().equals(other.specification()) && Arrays.deepEquals(array, other.array);
     }
 
     @Override
@@ -102,20 +99,9 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     }
 
     @Override
-    public Pattern pattern() {
-        return matcher.getPattern();
+    public GenericQuerySpecification specification() {
+        return specification;
     }
-
-    @Override
-    public String patternName() {
-        return matcher.getPatternName();
-    }
-
-    @Override
-    public List<String> parameterNames() {
-        return matcher.getParameterNames();
-    }
-
     
     static final class Mutable extends GenericPatternMatch {
 

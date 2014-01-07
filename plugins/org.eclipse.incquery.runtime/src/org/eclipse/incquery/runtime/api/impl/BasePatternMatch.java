@@ -91,7 +91,7 @@ public abstract class BasePatternMatch implements IPatternMatch {
             return true;
         }
         // we assume that the pattern is set for this match!
-        if (!pattern().equals(other.pattern())) {
+        if (!specification().equals(other.specification())) {
             return false;
         }
         for (int i = 0; i < parameterNames().size(); i++) {
@@ -102,5 +102,15 @@ public abstract class BasePatternMatch implements IPatternMatch {
             }
         }
         return true;
+    }
+    
+    @Override
+    public String patternName() {
+        return specification().getFullyQualifiedName();
+    }
+
+    @Override
+    public List<String> parameterNames() {
+        return specification().getParameterNames();
     }
 }

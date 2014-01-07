@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 public abstract class EnumerablePConstraint extends BasePConstraint {
     protected Tuple variablesTuple;
 
-    protected EnumerablePConstraint(PSystem pSystem, Tuple variablesTuple) {
+    protected EnumerablePConstraint(PBody pSystem, Tuple variablesTuple) {
         super(pSystem, variablesTuple.<PVariable> getDistinctElements());
         this.variablesTuple = variablesTuple;
     }
@@ -45,9 +45,6 @@ public abstract class EnumerablePConstraint extends BasePConstraint {
         return null;
     }
 
-    /**
-     * @return the variablesTuple
-     */
     public Tuple getVariablesTuple() {
         return variablesTuple;
     }

@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -44,12 +45,11 @@ import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
 /**
  * Responsible for the storage, maintenance and communication of the nodes of the network that are accessible form the
  * outside for various reasons.
- * 
+ *
  * @author Gabor Bergmann
- * 
- * @param <PatternDescription>
+ *
  */
-public class ReteBoundary<PatternDescription> {
+public class ReteBoundary {
 
     protected ReteEngine engine;
     protected Network network;
@@ -78,10 +78,10 @@ public class ReteBoundary<PatternDescription> {
      */
     protected Map<Object, Address<? extends Tunnel>> binaryEdgeRoots;
 
-    protected Map<PatternDescription, Address<? extends Production>> productions;
+    protected Map<PQuery, Address<? extends Production>> productions;
     // protected Map<PatternDescription, Map<Map<Integer, Scope>, Address<? extends Production>>> productionsScoped; //
     // (pattern, scopemap) -> production
-    
+
     protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
 
     protected Address<? extends Tunnel> containmentRoot;
@@ -99,10 +99,10 @@ public class ReteBoundary<PatternDescription> {
 
     /**
      * Prerequisite: engine has its network and framework fields initialized
-     * 
+     *
      * @param headContainer
      */
-    public ReteBoundary(ReteEngine<PatternDescription> engine) {
+    public ReteBoundary(ReteEngine engine) {
         super();
         this.engine = engine;
         this.network = engine.getReteNet();
@@ -452,17 +452,17 @@ public class ReteBoundary<PatternDescription> {
     /**
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
-    public synchronized Address<? extends Production> accessProduction(PatternDescription gtPattern)
+    public synchronized Address<? extends Production> accessProduction(PQuery query)
             throws QueryPlannerException {
         Address<? extends Production> pn;
-        pn = productions.get(gtPattern);
+        pn = productions.get(query);
         if (pn == null) {
-            construct(gtPattern);
-            pn = productions.get(gtPattern);
+            construct(query);
+            pn = productions.get(query);
             if (pn == null) {
-                String[] args = { gtPattern.toString() };
-                throw new RetePatternBuildException("Unsuccessful creation of RETE production node for pattern {1}",
-                        args, "Could not create RETE production node.", gtPattern);
+                String[] args = { query.toString() };
+                throw new RetePatternBuildException("Unsuccessful creation of RETE production node for query {1}",
+                        args, "Could not create RETE production node.", query);
             }
         }
         return pn;
@@ -471,11 +471,11 @@ public class ReteBoundary<PatternDescription> {
     /**
      * creates the production node for the specified pattern Contract: only call from the builder (through Buildable)
      * responsible for building this pattern
-     * 
+     *
      * @throws PatternMatcherCompileTimeException
      *             if production node is already created
      */
-    public synchronized Address<? extends Production> createProductionInternal(PatternDescription gtPattern)
+    public synchronized Address<? extends Production> createProductionInternal(PQuery gtPattern)
             throws QueryPlannerException {
         if (productions.containsKey(gtPattern)) {
             String[] args = { gtPattern.toString() };
@@ -483,7 +483,7 @@ public class ReteBoundary<PatternDescription> {
                     "Duplicate RETE production node.", gtPattern);
         }
 
-        Map<Object, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
+        Map<String, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
         Address<? extends Production> pn = headContainer.getLibrary().newProductionNode(posMapping, gtPattern);
         productions.put(gtPattern, pn);
         context.reportPatternDependency(gtPattern);
@@ -523,9 +523,9 @@ public class ReteBoundary<PatternDescription> {
     /**
      * @pre: builder is set
      */
-    protected void construct(PatternDescription gtPattern) throws QueryPlannerException {
+    protected void construct(PQuery query) throws QueryPlannerException {
         engine.getReteNet().waitForReteTermination();
-        engine.getBuilder().construct(gtPattern);
+        engine.getBuilder().construct(query);
         // production.setDirty(false);
     }
 
@@ -660,11 +660,11 @@ public class ReteBoundary<PatternDescription> {
             parents = Collections.emptySet();
         return parents;
     }
-    
+
     public void mapPlanToAddress(SubPlan plan, Address<? extends Supplier> handle) {
         subplanToAddressMapping.put(plan, handle);
     }
-    
+
     public Address<? extends Supplier> getAddress(SubPlan plan) {
         return subplanToAddressMapping.get(plan);
     }

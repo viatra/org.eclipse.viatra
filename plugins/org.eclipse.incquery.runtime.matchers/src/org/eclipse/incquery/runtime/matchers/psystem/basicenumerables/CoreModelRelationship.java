@@ -12,7 +12,7 @@
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
@@ -24,7 +24,7 @@ public abstract class CoreModelRelationship extends EnumerablePConstraint {
 
     protected boolean transitive;
 
-    public CoreModelRelationship(PSystem pSystem, PVariable parent, PVariable child,
+    public CoreModelRelationship(PBody pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, new FlatTuple(parent, child));
         this.transitive = transitive;

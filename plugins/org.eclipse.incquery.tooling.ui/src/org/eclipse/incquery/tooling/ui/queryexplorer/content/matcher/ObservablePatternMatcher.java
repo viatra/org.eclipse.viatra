@@ -25,6 +25,7 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -59,11 +60,13 @@ public class ObservablePatternMatcher {
     private boolean descendingOrder;
     private final String exceptionMessage;
     private IncQueryModelUpdateListener modelUpdateListener;
+    private Pattern pattern;
 
     public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher,
-            String patternFqn, boolean generated, String exceptionMessage) {
+            Pattern pattern, boolean generated, String exceptionMessage) {
         this.parent = parent;
-        this.patternFqn = patternFqn;
+        this.pattern = pattern;
+        this.patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         this.matches = new ArrayList<ObservablePatternMatch>();
         this.matcher = matcher;
         this.generated = generated;
@@ -117,7 +120,7 @@ public class ObservablePatternMatcher {
      * Initializes the matcher for ordering if the annotation is present.
      */
     private void initOrdering() {
-        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(matcher.getPattern(),
+        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern,
                 DisplayUtil.ORDERBY_ANNOTATION);
         if (annotation != null) {
             for (AnnotationParameter ap : annotation.getParameters()) {
@@ -194,12 +197,12 @@ public class ObservablePatternMatcher {
                     }
                 } else {
                     DisplayUtil.addOrderByPatternWarning(
-                            CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
+                            this.matcher.getPatternName(),
                             KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
                 }
             } else {
                 DisplayUtil.addOrderByPatternWarning(
-                        CorePatternLanguageHelper.getFullyQualifiedName(this.matcher.getPattern()),
+                        this.matcher.getPatternName(),
                         KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
             }
         }
@@ -249,6 +252,10 @@ public class ObservablePatternMatcher {
         return parent;
     }
 
+    public Pattern getPattern() {
+        return pattern;
+    }
+    
     public IncQueryMatcher<IPatternMatch> getMatcher() {
         return matcher;
     }

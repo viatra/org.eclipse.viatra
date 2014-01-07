@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.api;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 
 /**
  * Interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
@@ -22,7 +23,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * @author Bergmann Gábor
  * 
  */
-public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> {
+public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends PQuery {
 
     /**
      * @throws IncQueryException
@@ -30,11 +31,6 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * @returns the pattern for which matchers can be instantiated.
      */
     public Pattern getPattern();
-
-    /**
-     * Identifies the pattern for which matchers can be instantiated.
-     */
-    public String getPatternFullyQualifiedName();
 
     /**
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern

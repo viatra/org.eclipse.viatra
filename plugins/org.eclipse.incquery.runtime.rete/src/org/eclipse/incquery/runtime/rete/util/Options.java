@@ -38,7 +38,6 @@ public class Options {
 
     // public final static boolean useComplementerMask = true;
 
-    public static final boolean calcImpliedTypes = true; // if true, shrinks the net by avoiding unnecessary typechecks
     public static final boolean employTrivialIndexers = true;
 
     // public final static boolean synchronous = false;

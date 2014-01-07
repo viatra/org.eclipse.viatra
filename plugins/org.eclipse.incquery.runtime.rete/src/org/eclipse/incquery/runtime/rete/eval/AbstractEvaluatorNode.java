@@ -34,13 +34,13 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 	
 
 	
-    protected ReteEngine<?> engine;
+    protected ReteEngine engine;
     protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
     private Map<String, Integer> parameterPositions;
     
     
-    public AbstractEvaluatorNode(ReteContainer reteContainer, ReteEngine<?> engine, IExpressionEvaluator evaluator,
+    public AbstractEvaluatorNode(ReteContainer reteContainer, ReteEngine engine, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
 		super(reteContainer);
 		this.engine = engine;

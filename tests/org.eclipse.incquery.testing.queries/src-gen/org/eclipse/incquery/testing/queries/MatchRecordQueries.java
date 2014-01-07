@@ -2,6 +2,9 @@ package org.eclipse.incquery.testing.queries;
 
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecordMatcher;
+import org.eclipse.incquery.testing.queries.CorrespondingRecordsMatcher;
+import org.eclipse.incquery.testing.queries.IncorrectSubstitutionMatcher;
 import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
 import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
@@ -45,9 +48,12 @@ public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   private static MatchRecordQueries INSTANCE;
   
   private MatchRecordQueries() throws IncQueryException {
-    querySpecifications.add(SubstitutionValueMatcher.querySpecification());
+    querySpecifications.add(CorrespondingRecordInMatchSetRecordMatcher.querySpecification());
+    querySpecifications.add(CorrespondingRecordsMatcher.querySpecification());
     querySpecifications.add(RecordRoleValueMatcher.querySpecification());
     querySpecifications.add(UnexpectedMatchRecordMatcher.querySpecification());
+    querySpecifications.add(SubstitutionValueMatcher.querySpecification());
+    querySpecifications.add(IncorrectSubstitutionMatcher.querySpecification());
     
   }
 }

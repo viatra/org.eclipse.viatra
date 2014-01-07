@@ -12,91 +12,71 @@
 package org.eclipse.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Base implementation of IncQueryMatcher.
- * 
+ *
  * @author Bergmann Gábor
- * 
+ *
  * @param <Match>
  */
-public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {	
-	
+public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {
+
     // FIELDS AND CONSTRUCTOR
 
     protected IncQueryEngine engine;
     protected RetePatternMatcher patternMatcher;
     protected ReteEngine reteEngine;
-    protected NavigationHelper baseIndex;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
-    public BaseMatcher(IncQueryEngine engine,  
+    public BaseMatcher(IncQueryEngine engine,
     		IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
             throws IncQueryException {
         super();
         this.engine = engine;
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
-        this.patternMatcher = accessMatcher(engineImpl, querySpecification.getPattern());
+        this.patternMatcher = accessMatcher(engineImpl, querySpecification);
         this.reteEngine = engineImpl.getReteEngine();
-        this.baseIndex = engineImpl.getBaseIndex();
         engineImpl.reportMatcherInitialized(querySpecification, this);
     }
 
     // HELPERS
-    
-    private static RetePatternMatcher accessMatcher(IncQueryEngineImpl engine, Pattern pattern) throws IncQueryException {
-        checkPattern(engine, pattern);
+
+    private RetePatternMatcher accessMatcher(IncQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
+        Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
+        Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
-            return engine.getReteEngine().accessMatcher(pattern);
+            return engine.getReteEngine().accessMatcher(specification);
         } catch (QueryPlannerException e) {
             throw new IncQueryException(e);
         }
     }
 
-    /**
-     * Call this to sanitize the pattern before usage.
-     * 
-     * @throws IncQueryException
-     *             if the pattern has errors
-     */
-    protected static void checkPattern(IncQueryEngineImpl engine, Pattern pattern) throws IncQueryException {
-        final boolean admissible = engine.getSanitizer().admit(pattern);
-        if (!admissible)
-            throw new IncQueryException(
-                    String.format(
-                            "Could not initialize matcher for pattern %s because sanity check failed; see Error Log for details.",
-                            CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "Pattern contains errors");
-    }
 
-    
     // ARRAY-BASED INTERFACE
-    
+
     /** Converts the array representation of a pattern match to an immutable Match object. */
     protected abstract Match arrayToMatch(Object[] parameters);
     /** Converts the array representation of a pattern match to a mutable Match object. */
@@ -113,7 +93,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     protected Object[] emptyArray() {
         if (fEmptyArray == null)
-            fEmptyArray = new Object[getPattern().getParameters().size()];
+            fEmptyArray = new Object[getSpecification().getParameterNames().size()];
         return fEmptyArray;
     }
 
@@ -126,35 +106,16 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     // REFLECTION
 
-    private Map<String, Integer> posMapping;
-
-    protected Map<String, Integer> getPosMapping() {
-        if (posMapping == null) {
-            posMapping = CorePatternLanguageHelper.getParameterPositionsByName(getPattern());
-        }
-        return posMapping;
-    }
-
     @Override
     public Integer getPositionOfParameter(String parameterName) {
-        return getPosMapping().get(parameterName);
+        return getSpecification().getPositionOfParameter(parameterName);
     }
-
-    private List<String> parameterNames;
 
     @Override
     public List<String> getParameterNames() {
-        if (parameterNames == null) {
-            Map<String, Integer> rawPosMapping = getPosMapping();
-            String[] parameterNameArray = new String[rawPosMapping.size()];
-            for (Entry<String, Integer> entry : rawPosMapping.entrySet()) {
-            	parameterNameArray[entry.getValue()] = entry.getKey();
-            }
-            parameterNames = Collections.unmodifiableList(Arrays.asList(parameterNameArray));
-        }
-        return parameterNames;
+        return getSpecification().getParameterNames();
     }
-    
+
     // BASE IMPLEMENTATION
 
     @Override
@@ -164,7 +125,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
@@ -194,7 +155,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
      * Neither determinism nor randomness of selection is guaranteed.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
@@ -218,7 +179,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match, under
      * any possible substitution of the unspecified parameters.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @return true if the input is a valid (partial) match of the pattern.
@@ -241,7 +202,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
 
     /**
      * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
@@ -261,7 +222,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
      * parameters.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
@@ -300,7 +261,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
      * values of some parameters. Neither determinism nor randomness of selection is guaranteed.
-     * 
+     *
      * @param parameters
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @pre size of input array must be equal to the number of parameters.
@@ -342,7 +303,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the
      * given fixed values of some parameters. It can also be reset to track changes from a later point in time, and
      * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
-     * 
+     *
      * @param fillAtStart
      *            if true, all current matches are reported as new match events; if false, the delta monitor starts
      *            empty.
@@ -427,7 +388,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed
      * values of some parameters.
-     * 
+     *
      * @param position
      *            position of the parameter for which values are returned
      * @param parameters
@@ -452,7 +413,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     /**
      * Uses an existing set to accumulate all values of the parameter with the given name. Since it is a protected
      * method, no error checking or input validation is performed!
-     * 
+     *
      * @param position
      *            position of the parameter for which values are returned
      * @param parameters
@@ -478,12 +439,12 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
 
 	@Override
-	public Pattern getPattern() {
-	    return querySpecification.getPattern();
+	public IQuerySpecification<? extends BaseMatcher<Match>> getSpecification() {
+	    return querySpecification;
 	}
 
 	@Override
 	public String getPatternName() {
-	    return querySpecification.getPatternFullyQualifiedName();
+	    return querySpecification.getFullyQualifiedName();
 	}
 }

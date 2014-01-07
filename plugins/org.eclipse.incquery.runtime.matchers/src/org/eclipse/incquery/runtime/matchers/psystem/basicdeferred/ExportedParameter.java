@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
 
@@ -27,16 +27,11 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
     Object parameterName;
 
-    /**
-     * @param buildable
-     * @param parameterVariable
-     */
-    public ExportedParameter(PSystem pSystem, PVariable parameterVariable,
+    public ExportedParameter(PBody pSystem, PVariable parameterVariable,
             String parameterName) {
         super(pSystem, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
         this.parameterName = parameterVariable.getName();
-        // parameterVariable.setExportedParameter(true);
     }
 
     @Override
@@ -56,16 +51,10 @@ public class ExportedParameter extends VariableDeferredPConstraint {
         return Collections.emptySet();
     }
 
-    /**
-     * @return the parameterName
-     */
     public Object getParameterName() {
         return parameterName;
     }
 
-    /**
-     * @return the parameterVariable
-     */
     public PVariable getParameterVariable() {
         return parameterVariable;
     }

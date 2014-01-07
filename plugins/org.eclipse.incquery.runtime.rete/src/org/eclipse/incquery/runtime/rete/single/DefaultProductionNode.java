@@ -20,12 +20,12 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 
 /**
  * Default implementation of the Production node, based on UniquenessEnforcerNode
- * 
+ *
  * @author Gabor Bergmann
  */
 public class DefaultProductionNode extends UniquenessEnforcerNode implements Production {
 
-    protected Map<Object, Integer> posMapping;
+    protected Map<String, Integer> posMapping;
 
     // protected HashMap<TupleMask, Indexer> projections;
 
@@ -33,7 +33,7 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
      * @param reteContainer
      * @param posMapping
      */
-    public DefaultProductionNode(ReteContainer reteContainer, Map<Object, Integer> posMapping) {
+    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping) {
         super(reteContainer, posMapping.size());
         this.posMapping = posMapping;
         // this.projections= new HashMap<TupleMask, Indexer>();
@@ -42,14 +42,14 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
     /**
      * @return the posMapping
      */
-    public Map<Object, Integer> getPosMapping() {
+    public Map<String, Integer> getPosMapping() {
         return posMapping;
     }
 
     public Iterator<Tuple> iterator() {
         return memory.iterator();
     }
-    
+
     @Override
     public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
     	if (traceInfo.propagateToProductionNodeParentAlso())

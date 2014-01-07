@@ -14,6 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -57,7 +58,7 @@ public class RegisterAllHandler extends AbstractHandler {
         return null;
     }
 
-    private void handleNonJavaObject(Object nonJavaObject) {
+    private void handleNonJavaObject(Object nonJavaObject) throws IncQueryException {
         if (nonJavaObject instanceof IFile) {
             IFile file = (IFile) nonJavaObject;
             RegisterHandlersUtil.registerSingleFile(file, resourceSetProvider);

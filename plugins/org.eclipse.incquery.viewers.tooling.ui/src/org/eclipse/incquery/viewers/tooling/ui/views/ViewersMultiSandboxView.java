@@ -20,6 +20,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.tooling.ui.Activator;
@@ -91,12 +92,12 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 	private ViewersMultiSandboxViewComponent currentComponent;
 	SashForm container;
 	
-	public void initializeContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter)
+	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
-        	defaultComponent.initializeContents(model, patterns, filter);
+        	defaultComponent.initializeContents(model, queries, filter);
         	for (ViewersMultiSandboxViewComponent c : additionalComponents) {
-        		c.initializeContents(model, patterns, filter);
+        		c.initializeContents(model, queries, filter);
         	}
          }
     }

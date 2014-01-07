@@ -11,11 +11,9 @@
 package org.eclipse.incquery.viewers.runtime.model.converters;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
-import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
-import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.swt.graphics.RGB;
 
@@ -28,34 +26,29 @@ import com.google.common.collect.ImmutableMap;
 public class FormatParser {
 
     private static final Map<String, String> parameterMapping = ImmutableMap.<String, String> builder()
-            .put("color", FormatSpecification.COLOR) 
-            .put("lineColor", FormatSpecification.LINE_COLOR) 
-            .put("textColor", FormatSpecification.TEXT_COLOR) 
+            .put("color", FormatSpecification.COLOR)
+            .put("lineColor", FormatSpecification.LINE_COLOR)
+            .put("textColor", FormatSpecification.TEXT_COLOR)
             .put("lineWidth", FormatSpecification.LINE_WIDTH)
             .put("lineStyle", FormatSpecification.LINE_STYLE)
             .put("arrowSourceEnd", FormatSpecification.ARROW_SOURCE_END)
             .put("arrowTargetEnd", FormatSpecification.ARROW_TARGET_END)
             .build();
-    
-    public static FormatSpecification parseFormatAnnotation(Annotation format) {
+
+    public static FormatSpecification parseFormatAnnotation(PAnnotation format) {
         FormatSpecification specification = new FormatSpecification();
-        for (AnnotationParameter param : format.getParameters()) {
-            parseParameter(param, specification);
+        for (Entry<String, Object> param : format.getAllValues()) {
+            parseParameter(param.getKey(), param.getValue(), specification);
         }
         return specification;
     }
 
-    /**
-     * @param param
-     * @param specification
-     */
-    private static void parseParameter(AnnotationParameter param, FormatSpecification specification) {
-        String name = parameterMapping.get(param.getName());
-        if (param.getValue() instanceof StringValue) {
-            specification.setProperty(name, ((StringValue) param.getValue()).getValue());
-        } else if (param.getValue() instanceof IntValue) {
-            IntValue intValue = (IntValue) param.getValue();
-            specification.setProperty(name, Integer.toString(intValue.getValue()));
+    private static void parseParameter(String name, Object value, FormatSpecification specification) {
+        String key = parameterMapping.get(name);
+        if (value instanceof String) {
+            specification.setProperty(key, (String)value);
+        } else if (value instanceof Integer) {
+            specification.setProperty(key, Integer.toString((Integer)value));
         }
         // Ignoring unsupported input
     }
