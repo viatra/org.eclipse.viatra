@@ -723,7 +723,7 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
-     * Returns the extension Id. Removes the plug-in name if the extension id prefixed with it.
+     * Returns the extension Id. If the extension does not contain the plug-in name, it becomes prefixed with it.
      * 
      * @param extension
      * @param project
@@ -731,12 +731,15 @@ public abstract class ProjectGenerationHelper {
      */
     private static String getExtensionId(IPluginExtension extension, IProject project) {
         String id = extension.getId();
-        if (id != null && id.startsWith(project.getName())) {
+        if (!id.contains(".")) {
+           return project.getName() + "." + id; 
+        }
+        /*if (id != null && id.startsWith(project.getName())) {
             int beginIndex = project.getName().length() + 1;
             if (beginIndex >= 0) {
                 id = id.substring(beginIndex);
             }
-        }
+        }*/
         return id;
     }
 
