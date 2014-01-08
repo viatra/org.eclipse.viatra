@@ -33,6 +33,13 @@
    <feature url="features/org.eclipse.incquery.runtime.localsearch.feature.source_0.8.0.qualifier.jar" id="org.eclipse.incquery.runtime.localsearch.feature.source" version="0.8.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
+      <category name="thirdparty"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.geometry_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.1.0.qualifier">
+      <category name="thirdparty"/>
+   </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
    <category-def name="org.eclipse.incquery.sources" label="EMF-IncQuery Sources"/>
+   <category-def name="thirdparty" label="Third party features"/>
 </site>

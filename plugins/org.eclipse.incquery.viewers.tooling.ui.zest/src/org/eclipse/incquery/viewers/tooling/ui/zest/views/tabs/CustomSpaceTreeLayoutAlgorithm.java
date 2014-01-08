@@ -1,6 +1,6 @@
 package org.eclipse.incquery.viewers.tooling.ui.zest.views.tabs;
 
-import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 
 public class CustomSpaceTreeLayoutAlgorithm extends SpaceTreeLayoutAlgorithm {
 
