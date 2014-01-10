@@ -22,8 +22,11 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.IExtensions;
+import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.IInjectorProvider;
 import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
+import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.util.ClassLoaderUtil;
@@ -75,6 +78,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
      */
     public XBaseEvaluator(XExpression xExpression, Pattern pattern) {
         super();
+        XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
         this.xExpression = xExpression;
         this.pattern = pattern;
 
@@ -86,7 +90,6 @@ public class XBaseEvaluator implements IExpressionEvaluator{
                return var.getName();
            }
         });
-        
     }
 
     /**
