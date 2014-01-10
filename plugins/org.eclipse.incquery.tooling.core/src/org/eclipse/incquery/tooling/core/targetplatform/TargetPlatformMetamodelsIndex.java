@@ -42,11 +42,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * This class is responsible for querying the active target platform data for registered GenModels 
  * and EPackages.
  */
+@Singleton
 public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetamodelLoader{
 
 	private static final String EP_GENPACKAGE = "org.eclipse.emf.ecore.generated_package";
