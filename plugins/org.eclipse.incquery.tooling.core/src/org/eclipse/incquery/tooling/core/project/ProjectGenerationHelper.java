@@ -573,11 +573,13 @@ public abstract class ProjectGenerationHelper {
             IExtensions readExtension = plugin.getExtensions();
             nextExtension: for (final IPluginExtension extension : readExtension.getExtensions()) {
                 String id = getExtensionId(extension, project);
-                boolean extensionToCreateFound = isExtensionInMap(extensionMap, extension, extension.getId());
-                if (!extensionToCreateFound) {
-                    extensionToCreateFound = isExtensionInMap(extensionMap, extension, id);
-                }
+                String prefixedId = project.getName() + "." + id;
+                boolean extensionToCreateFound = 
+                        isExtensionInMap(extensionMap, extension, extension.getId())
+                     || isExtensionInMap(extensionMap, extension, id)
+                     || isExtensionInMap(extensionMap, extension, prefixedId);
                 if (extensionToCreateFound) {
+                    //Replaced with a new instance - do not copy
                     continue nextExtension;
                 }
                 // remove if contained in the removables
@@ -731,15 +733,15 @@ public abstract class ProjectGenerationHelper {
      */
     private static String getExtensionId(IPluginExtension extension, IProject project) {
         String id = extension.getId();
-        if (!id.contains(".")) {
-           return project.getName() + "." + id; 
-        }
-        /*if (id != null && id.startsWith(project.getName())) {
+//        if (!id.contains(".")) {
+//           return project.getName() + "." + id; 
+//        }
+        if (id != null && id.startsWith(project.getName())) {
             int beginIndex = project.getName().length() + 1;
             if (beginIndex >= 0) {
                 id = id.substring(beginIndex);
             }
-        }*/
+        }
         return id;
     }
 
