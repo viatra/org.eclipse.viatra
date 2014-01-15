@@ -35,9 +35,9 @@ import com.google.common.collect.Lists;
 
 /**
  * Utility class for observing EMF-IncQuery related objects, such as match sets, match parameters.
- * 
+ *
  * @author Abel Hegedus
- * 
+ *
  */
 public final class IncQueryObservables {
 
@@ -47,13 +47,13 @@ public final class IncQueryObservables {
     private IncQueryObservables() {
 
     }
-    
+
     /**
      * Create an observable list of the match set of the given {@link IncQueryMatcher}.
-     * 
+     *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
-     * 
+     *
      * @param matcher
      *            the matcher to observe
      * @return an observable list of matches
@@ -65,14 +65,14 @@ public final class IncQueryObservables {
 
     /**
      * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
-     * 
+     *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
-     * 
+     *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
-     * 
+     *
      * @param querySpecification
      *            the matcher querySpecification for the query to observe
      * @param engine
@@ -86,14 +86,14 @@ public final class IncQueryObservables {
 
     /**
      * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
-     * 
+     *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
-     * 
+     *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
-     * 
+     *
      * @param querySpecification
      *            the matcher querySpecification for the query to observe
      * @param engine
@@ -108,7 +108,7 @@ public final class IncQueryObservables {
 
     /**
      * Create an observable set of the match set of the given {@link IncQueryMatcher}.
-     * 
+     *
      * @param matcher
      *            the matcher to observe
      * @return an observable list of matches
@@ -117,14 +117,14 @@ public final class IncQueryObservables {
             Matcher matcher) {
         return new ObservablePatternMatchSet<Match>(matcher);
     }
-    
+
     /**
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
-     * 
+     *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
-     * 
+     *
      * @param querySpecification
      *            the matcher querySpecification for the query to observe
      * @param engine
@@ -138,11 +138,11 @@ public final class IncQueryObservables {
 
     /**
      * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
-     * 
+     *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
      * invocation (or use the Generic classes if you are sure).
-     * 
+     *
      * @param querySpecification
      *            the matcher querySpecification for the query to observe
      * @param engine
@@ -158,11 +158,11 @@ public final class IncQueryObservables {
     /**
      * Registers the given changeListener for the appropriate features of the given signature. The features will be
      * computed based on the message parameter.
-     * 
+     *
      * @param signature
      *            the signature instance
      * @param changeListener
-     *            the changle listener
+     *            the change listener
      * @param message
      *            the message which can be found in the appropriate PatternUI annotation
      * @return the list of IObservableValue instances for which the IValueChangeListener was registered
@@ -172,10 +172,11 @@ public final class IncQueryObservables {
         if (message == null) {
             return Lists.newArrayList();
         }
-        
+
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
         String[] tokens = message.split("\\$");
-        for (int i = 0; i < tokens.length; i = i + 2) { // odd tokens
+        //[425735] If i<1, affectedValues will be empty, thus a constant output is created
+        for (int i = 1; i < tokens.length; i = i + 2) { // odd tokens
             IObservableValue value = IncQueryObservables.getObservableValue(match, tokens[i]);
             if (value != null) {
                 value.addValueChangeListener(changeListener);
@@ -188,9 +189,9 @@ public final class IncQueryObservables {
     /**
      * Registers the given change listener on the given object's all accessible fields. This function uses Java
      * Reflection.
-     * 
+     *
      * @param changeListener
-     *            the changle listener
+     *            the change listener
      * @param object
      *            the observed object
      * @return the list of IObservableValue instances for which the IValueChangeListener was registered
@@ -210,7 +211,7 @@ public final class IncQueryObservables {
     /**
      * Returns an IObservableValue for the given match based on the given expression. If an attribute is not present in
      * the expression than it tries with the 'name' attribute. If it is not present the returned value will be null.
-     * 
+     *
      * @param match
      *            the match object
      * @param expression
