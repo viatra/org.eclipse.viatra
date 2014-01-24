@@ -14,9 +14,8 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
@@ -30,10 +29,10 @@ public class ResetUIHandler extends AbstractHandler {
             for (IModelConnector modelConnector : explorer.getModelConnectorMap().values()) {
                 modelConnector.unloadModel();
             }
-            for (Pattern pattern : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-                QueryExplorerPatternRegistry.getInstance().unregisterPattern(pattern);
-                QueryExplorerPatternRegistry.getInstance().removeActivePattern(pattern);
+            for (IQuerySpecification<?> specification : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
+                String patternFqn = specification.getFullyQualifiedName();
+                QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);
+                QueryExplorerPatternRegistry.getInstance().removeActivePattern(specification);
                 explorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
             }
 

@@ -12,6 +12,8 @@ package org.eclipse.incquery.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator;
+import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
+import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider;
@@ -20,6 +22,10 @@ import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService
 import org.eclipse.incquery.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
+import org.eclipse.incquery.patternlanguage.emf.util.SimpleClassLoaderProvider;
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback.EmptyErrorFeedback;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.incquery.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
@@ -33,6 +39,9 @@ import org.eclipse.xtext.resource.IGlobalServiceProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
+import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 import org.eclipse.xtext.xbase.scoping.XImportSectionNamespaceScopeProvider;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
@@ -112,4 +121,25 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return EMFPatternLanguageJavaValidator.class;
     }
 
+    public Class<? extends IClassLoaderProvider> bindIClassLoaderProvider() {
+        return SimpleClassLoaderProvider.class;
+    }
+
+    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
+    public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
+        return EMFPatternLanguageJvmModelInferrer.class;
+    }
+
+
+    public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
+        return EMFPatternJvmModelAssociator.class;
+    }
+
+    public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
+        return EMFPatternJvmModelAssociator.class;
+    }
+
+    public Class<? extends IErrorFeedback> bindIErrorFeedback() {
+        return EmptyErrorFeedback.class;
+    }
 }

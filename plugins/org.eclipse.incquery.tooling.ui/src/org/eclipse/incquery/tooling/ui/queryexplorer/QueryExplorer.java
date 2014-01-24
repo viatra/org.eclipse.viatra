@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.TableViewerUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
@@ -74,9 +75,9 @@ import com.google.inject.Injector;
 
 /**
  * Query Explorer view implementation.
- * 
+ *
  * @author Tamas Szabo
- * 
+ *
  */
 public class QueryExplorer extends ViewPart {
 
@@ -300,7 +301,7 @@ public class QueryExplorer extends ViewPart {
                     tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
                     String patternFqn = observableMatcher.getMatcher()
                             .getSpecification().getFullyQualifiedName();
-                    Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
+                    IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
                     List<PatternComponent> components = null;
                     if (QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
                         components = patternsViewerInput.getGeneratedPatternsRoot().find(patternFqn);
@@ -324,9 +325,9 @@ public class QueryExplorer extends ViewPart {
     }
 
     private void initPatternsViewerWithGeneratedPatterns() {
-        for (Pattern pattern : QueryExplorerPatternRegistry.getGeneratedPatterns()) {
-            String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-            QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern, patternFqn);
+        for (IQuerySpecification<?> pattern : QueryExplorerPatternRegistry.getGeneratedQuerySpecifications()) {
+            String patternFqn = pattern.getFullyQualifiedName();
+            QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern);
             QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
             patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
         }

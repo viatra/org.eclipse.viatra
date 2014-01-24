@@ -15,16 +15,16 @@ import com.google.inject.Inject
 import org.eclipse.core.runtime.Path
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper
+import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
-import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Strings
@@ -32,33 +32,33 @@ import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
-class ValidationGenerator //extends DatabindingGenerator 
+class ValidationGenerator //extends DatabindingGenerator
 implements IGenerationFragment {
-	
+
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	
+
 	@Inject
 	private IEiqGenmodelProvider eiqGenModelProvider
-	
+
 	@Inject
 	private IErrorFeedback feedback
-	
+
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.incquery.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
 	private static String VALIDATION_ERROR_CODE = "org.eclipse.incquery.validation.error"
-	
+
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		
+
 		for(ann : pattern.annotations){
 		  if(ann.name == annotationLiteral){
   			fsa.generateFile(pattern.constraintClassJavaFile(ann), pattern.patternHandler(ann))
 		  }
 		}
 	}
-	
+
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
 		for(ann : pattern.annotations){
 		  if(ann.name == annotationLiteral){
@@ -66,16 +66,16 @@ implements IGenerationFragment {
   		}
 		}
 	}
-	
+
 	override removeExtension(Pattern pattern) {
 		val p = Pair::of(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT)
 		val extensionList = newArrayList(p)
-		
+
 		val patternModel = pattern.eContainer as PatternModel;
     for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
       val pack = imp.EPackage;
       val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
-      
+
       if (genPackage != null) {
         val editorId = genPackage.qualifiedEditorClassName+"ID";
         if (!editorId.nullOrEmpty) {
@@ -83,7 +83,7 @@ implements IGenerationFragment {
         }
       }
     }
-    
+
     for(ann : pattern.annotations){
       if(ann.name == annotationLiteral){
         val editorIds = ann.getAnnotationParameterValue("targetEditorId")
@@ -95,24 +95,24 @@ implements IGenerationFragment {
     }
 		return extensionList
 	}
-	
+
 	override getRemovableExtensions() {
 		newArrayList(
-			Pair::of(VALIDATIONEXTENSION_PREFIX, VALIDATION_EXTENSION_POINT), 
+			Pair::of(VALIDATIONEXTENSION_PREFIX, VALIDATION_EXTENSION_POINT),
 			Pair::of(UI_VALIDATION_MENUS_PREFIX, ECLIPSE_MENUS_EXTENSION_POINT)
 		)
 	}
-	
+
 	override getProjectDependencies() {
 		newArrayList("org.eclipse.incquery.runtime",
 			"org.eclipse.incquery.validation.runtime"
 		)
 	}
-	
+
 	override getProjectPostfix() {
 		"validation"
 	}
-	
+
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		val extensionList = newArrayList(
       exGen.contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
@@ -121,7 +121,7 @@ implements IGenerationFragment {
             exGen.contribElement(it, "constraint") [
               exGen.contribAttribute(it, "class", pattern.constraintClassName(ann))
               exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
-              
+
               val editorIds = ann.getAnnotationParameterValue("targetEditorId")
               for (id : editorIds){
                 val editorId = (id as StringValue).value
@@ -129,12 +129,12 @@ implements IGenerationFragment {
                   exGen.contribAttribute(it, "editorId", editorId)
                 ]
               }
-              
+
               val patternModel = pattern.eContainer as PatternModel;
               for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
                 val pack = imp.EPackage;
                 val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
-                
+
                 if (genPackage != null) {
                   val editorId = genPackage.qualifiedEditorClassName+"ID";
                   exGen.contribElement(it, "enabledForEditor")[
@@ -147,30 +147,30 @@ implements IGenerationFragment {
         }
       ]
     )
-			
+
 		return extensionList
 	}
-	
+
 	def constraintClassName(Pattern pattern, Annotation annotation) {
 		String::format("%s.%s%s%s", pattern.packageName, pattern.realPatternName.toFirstUpper, annotationLiteral,pattern.annotations.indexOf(annotation))
 	}
-	
+
 	def constraintClassPath(Pattern pattern, Annotation annotation) {
 		String::format("%s/%s%s%s", pattern.packagePath, pattern.realPatternName.toFirstUpper, annotationLiteral,pattern.annotations.indexOf(annotation))
 	}
-	
+
 	def constraintClassJavaFile(Pattern pattern, Annotation annotation) {
 		pattern.constraintClassPath(annotation) + ".java"
 	}
-	
+
 	def constraintContributionId(Pattern pattern) {
 		return VALIDATIONEXTENSION_PREFIX+CorePatternLanguageHelper::getFullyQualifiedName(pattern)
 	}
-	
+
 	def menuContributionId(String editorId) {
 		return String::format("%s%s", UI_VALIDATION_MENUS_PREFIX, editorId)
 	}
-	
+
 	def getElementOfConstraintAnnotation(Annotation annotation, String elementName) {
     	val ap = CorePatternLanguageHelper::getFirstAnnotationParameter(annotation, elementName)
     	return switch(ap) {
@@ -179,7 +179,7 @@ implements IGenerationFragment {
     		default: null
     	}
   	}
-	
+
 	def getAnnotationParameterValue(Annotation annotation, String elementName) {
 	  val values = newArrayList()
     for (ap : annotation.parameters) {
@@ -189,17 +189,17 @@ implements IGenerationFragment {
     }
     return values
 	}
-	
+
 	def patternHandler(Pattern pattern, Annotation annotation) '''
 		package «pattern.packageName»;
-		
+
 		import org.eclipse.emf.ecore.EObject;
 
 		import org.eclipse.incquery.validation.runtime.Constraint;
 		import org.eclipse.incquery.validation.runtime.ValidationUtil;
 		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 		import org.eclipse.incquery.runtime.exception.IncQueryException;
-		
+
 		import «pattern.packageName + "." + pattern.matchClassName»;
 		import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
 		import «pattern.packageName + "." + pattern.matcherClassName»;
@@ -234,21 +234,21 @@ implements IGenerationFragment {
 				}
 				return null;
 			}
-			
+
 			@Override
 			public int getSeverity() {
 				return ValidationUtil.getSeverity("«getElementOfConstraintAnnotation(annotation, "severity")»");
 			}
-			
+
 			@Override
 			public BaseGeneratedQuerySpecification<«pattern.matcherClassName»> getQuerySpecification() {
 				return querySpecification;
 			}
 		}
 	'''
-	
+
 	override getAdditionalBinIncludes() {
 		return newArrayList(new Path("plugin.xml"))
 	}
-	
+
 }

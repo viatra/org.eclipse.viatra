@@ -14,8 +14,8 @@ import org.eclipse.incquery.testing.queries.IncorrectSubstitutionMatch;
 public abstract class IncorrectSubstitutionProcessor implements IMatchProcessor<IncorrectSubstitutionMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pRecord the value of pattern parameter Record in the currently processed match 
-   * @param pCorrespondingRecord the value of pattern parameter CorrespondingRecord in the currently processed match 
+   * @param pRecord the value of pattern parameter Record in the currently processed match
+   * @param pCorrespondingRecord the value of pattern parameter CorrespondingRecord in the currently processed match
    * 
    */
   public abstract void process(final MatchRecord pRecord, final MatchRecord pCorrespondingRecord);

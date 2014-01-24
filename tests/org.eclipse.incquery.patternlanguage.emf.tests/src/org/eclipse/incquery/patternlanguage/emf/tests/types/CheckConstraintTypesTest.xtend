@@ -12,9 +12,12 @@ package org.eclipse.incquery.patternlanguage.emf.tests.types
 
 import com.google.inject.Inject
 import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -23,33 +26,29 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
-import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CheckConstraintTypesTest extends AbstractValidatorTest{
-	
+
 	@Inject
 	ParseHelper<PatternModel> parseHelper
-	
+
 	@Inject
 	EMFPatternLanguageJavaValidator validator
-	
+
 	@Inject
 	Injector injector
-	
+
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
+
 	@Inject extension ValidationTestHelper
-	
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
-	
+
 	@Test
 	def booleanCheck() {
 		val model = parseHelper.parse('
@@ -61,10 +60,11 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 				check(C);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def accessEClassInCheck() {
 		val model = parseHelper.parse('
@@ -81,7 +81,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 		)
 	}
-	
+
 	@Test
 	def booleanBlockExpressionCheck() {
 		val model = parseHelper.parse('
@@ -97,10 +97,11 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 				});
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
-	
+
 	@Test
 	def booleanBlockExpressionWithReturnCheck() {
 		val model = parseHelper.parse('
@@ -112,14 +113,15 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 				EClass.name(C,S);
 				check({
 					val name = S;
-					return name.empty
+					name.empty
 				});
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
-	
+
 	@Test
 	def nonBooleanCheck() {
 		val model = parseHelper.parse('
@@ -147,11 +149,11 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 			pattern andPrecond(n) {
 				n == c1;
 				c1 == count find object(_);
-				check(c1 >= 2);	
+				check(c1 >= 2);
 			}/* or {
 				n == c2;
 				c2 == count find object(_);
-				check(c2 >= 2);	
+				check(c2 >= 2);
 			}*/
 		''')
 		tester.validate(model).assertOK

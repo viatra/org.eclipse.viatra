@@ -21,11 +21,11 @@ import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
 public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
-    Object parameterName;
+    String parameterName;
 
     public ExportedParameter(PBody pSystem, PVariable parameterVariable,
             String parameterName) {
@@ -51,7 +51,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
         return Collections.emptySet();
     }
 
-    public Object getParameterName() {
+    public String getParameterName() {
         return parameterName;
     }
 

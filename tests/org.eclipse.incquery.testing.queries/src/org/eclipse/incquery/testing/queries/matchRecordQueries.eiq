@@ -22,7 +22,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 	MatchRecord.substitutions(Record,Substitution);
 	MatchSubstitutionRecord.parameterName(Substitution, ParameterName);
 }*/
-	
+
 /*private pattern CorrectRecordSubstitutionValue(
 	Record : MatchRecord,
 	ParameterName : EString,
@@ -44,7 +44,7 @@ pattern IncorrectSubstitution(
 	MatchSubstitutionRecord.derivedValue(CorrespondingSubstitution,Value2);
 	Value1 != Value2;
 }
-
+ 
 pattern CorrespondingRecords(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord

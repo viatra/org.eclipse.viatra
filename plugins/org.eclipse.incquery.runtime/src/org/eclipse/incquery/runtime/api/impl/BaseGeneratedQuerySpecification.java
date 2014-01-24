@@ -11,27 +11,18 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.runtime.SpecificationBuilder;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.util.XmiModelUtil;
-import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.base.Preconditions;
 
 /**
  * Provides common functionality of pattern-specific generated query specifications.
@@ -41,105 +32,6 @@ import com.google.common.collect.Lists;
  */
 public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
-
-    private static Map<String, PatternModel> bundleNameToPatternModelMap = new HashMap<String, PatternModel>();
-
-    private static Map<String, Resource> bundleNameToResourceMap = new HashMap<String, Resource>();
-
-    private final Pattern pattern;
-
-    private Set<PBody> bodies;
-
-    public BaseGeneratedQuerySpecification() throws IncQueryException {
-        pattern = parsePattern();
-        setStatus(PQueryStatus.OK);
-        // if (pattern == null)
-        // throw new IncQueryException(
-        // "Unable to parse the definition of generated pattern " + patternName() +
-        // " (see log for any errors that could have caused this)",
-        // "Could not parse pattern definition.");
-    }
-
-    @Override
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    /**
-     * Returns the bundleName (plug-in name).
-     *
-     * @return
-     */
-    protected abstract String getBundleName();
-
-    /**
-     * Returns the fully qualified name of the pattern.
-     *
-     * @return
-     */
-    protected abstract String patternName();
-
-    protected Pattern parsePattern() throws IncQueryException {
-        if (!Platform.isRunning()) {
-            throw new IncQueryException(
-                    "Generated EMF-IncQuery patterns cannot be used in standalone Java applications, for now we need the Eclipse Platform running",
-                    "Eclipse Platform not running");
-        }
-        PatternModel model = getModelRoot(getBundleName());
-        try {
-            return findPattern(model, patternName());
-        } catch (Exception ex) {
-            throw new IncQueryException("Unable to parse the definition of generated pattern " + patternName()
-                    + " (see log for any errors that could have caused this)", "Could not parse pattern definition.",
-                    ex);
-        }
-    }
-
-    /**
-     * Returns the pattern with the given patternName.
-     *
-     * @param model
-     * @param patternName
-     * @return {@link Pattern} instance or null if not found.
-     */
-    private Pattern findPattern(PatternModel model, String patternName) {
-        if (model == null) {
-            return null;
-        }
-        for (Pattern pattern : model.getPatterns()) {
-            if (pattern.getName().equals(patternName)) {
-                return pattern;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the global Xmi model Root from the given bundle.
-     *
-     * @param bundleName
-     * @return
-     * @throws IncQueryException
-     *             if model loading was unsuccessful
-     */
-    public static PatternModel getModelRoot(String bundleName) throws IncQueryException {
-        if (bundleName == null || bundleName.isEmpty()) {
-            return null;
-        }
-        if (bundleNameToPatternModelMap.get(bundleName) == null) {
-            Resource bundleResource = bundleNameToResourceMap.get(bundleName);
-            if (bundleResource == null) {
-                bundleResource = XmiModelUtil.getGlobalXmiResource(XmiModelUtilRunningOptionEnum.JUST_PLUGIN,
-                        bundleName);
-                if (bundleResource == null) {
-                    return null;
-                }
-                bundleNameToResourceMap.put(bundleName, bundleResource);
-            }
-            bundleNameToPatternModelMap.put(bundleName, (PatternModel) bundleResource.getContents().get(0));
-        }
-        return bundleNameToPatternModelMap.get(bundleName);
-    }
 
     protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
         Throwable cause1 = err.getCause();
@@ -151,44 +43,27 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
         }
     }
 
-    //TODO temporary implementation
-    @Override
-    public List<String> getParameterNames() {
-        return Lists.transform(pattern.getParameters(), new Function<Variable, String>() {
-
-            @Override
-            public String apply(Variable var) {
-                if (var == null) {
-                    return "";
-                } else {
-                    return var.getName();
-                }
-            }
-
-        });
+    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
+        EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
+        Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
+        EClassifier literal = ePackage.getEClassifier(classifierName);
+        Preconditions.checkState(literal != null, "Classifier %s not found in EPackage %s", classifierName, packageUri);
+        return literal;
     }
 
-    @Override
-    public void checkMutability() throws IllegalStateException {
-        if (bodies != null) {
-            super.checkMutability();
-        }
+    protected EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) {
+        EClassifier container = getClassifierLiteral(packageUri, className);
+        Preconditions.checkState(container instanceof EClass, "Classifier %s in EPackage %s does not refer to an EClass.", className, packageUri);
+        EStructuralFeature feature = ((EClass)container).getEStructuralFeature(featureName);
+        Preconditions.checkState(feature != null, "Feature %s not found in EClass %s", featureName, className);
+        return feature;
     }
 
-    //TODO temporary implementation
-    @Override
-    protected Set<PBody> doGetContainedBodies() {
-        if (bodies == null) {
-            SpecificationBuilder converter = new SpecificationBuilder(
-                    QuerySpecificationRegistry.getContributedQuerySpecifications());
-            try {
-                bodies = converter.getBodies(pattern, this);
-                setStatus(PQueryStatus.OK);
-            } catch (IncQueryException e) {
-                setStatus(PQueryStatus.ERROR);
-                throw new RuntimeException("Error initializing generated pattern " + getFullyQualifiedName(), e);
-            }
-        }
-        return bodies;
+    protected EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) {
+        EClassifier enumContainer = getClassifierLiteral(packageUri, enumName);
+        Preconditions.checkState(enumContainer instanceof EEnum, "Classifier %s in EPackage %s is not an EEnum.", enumName, packageUri);
+        EEnumLiteral literal = ((EEnum)enumContainer).getEEnumLiteral(literalName);
+        Preconditions.checkState(literal != null, "Unknown literal %s in enum %s", literalName, enumName);
+        return literal;
     }
 }

@@ -11,9 +11,8 @@
 package org.eclipse.incquery.runtime.util;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.internal.XtextInjectorProvider;
 
-import com.google.inject.Injector;
+import com.google.common.base.Preconditions;
 
 /**
  * Centralized logger of the EMF-IncQuery runtime.
@@ -23,26 +22,29 @@ import com.google.inject.Injector;
 public class IncQueryLoggingUtil {
 
 
+    private static Logger externalLogger;
+
+    public static void setExternalLogger(Logger externalLogger) {
+        Preconditions.checkArgument(externalLogger != null, "Must not set up null logger");
+        IncQueryLoggingUtil.externalLogger = externalLogger;
+    }
 	/**
 	 * Provides a static default logger.
 	 */
 	public static Logger getDefaultLogger() {
 	    if (defaultRuntimeLogger == null) {
-	        final Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-	        if (injector == null)
-	            throw new AssertionError("Configuration error: EMF-IncQuery injector not initialized.");
-	        Logger parentLogger = injector.getInstance(Logger.class);
+	        Logger parentLogger = externalLogger;
 	        if (parentLogger == null)
 	            throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
-	
+
 	        defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
 	        if (defaultRuntimeLogger == null)
 	            throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
 	    }
-	
+
 	    return defaultRuntimeLogger;
 	}
-	
+
 	private static Logger defaultRuntimeLogger;
 
 }

@@ -13,23 +13,15 @@ package org.eclipse.incquery.tooling.ui.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.incquery.tooling.core.project.IncQueryNature;
-import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
-import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * @author Zoltan Ujhelyi
@@ -37,52 +29,14 @@ import com.google.common.collect.ImmutableList;
  */
 public class ProjectNatureUpdater extends AbstractHandler {
 
-    private class NatureUpdaterJob extends Job {
+    static final String INCORRECT_BUILDER_ID = "org.eclipse.incquery.tooling.ui.projectbuilder"; //$NON-NLS-1
+    static final String OLD_NATURE_ID = "org.eclipse.viatra2.emf.incquery.projectnature"; //$NON-NLS-1
+    static final String GLOBAL_EIQ_PATH = "queries/globalEiqModel.xmi"; //$NON-NLS-1
+    static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID
+            + ".xexpressionevaluator";
 
-        private IProject project;
-        private static final String incorrectBuilderID = "org.eclipse.incquery.tooling.ui.projectbuilder"; //$NON-NLS-1
-        private static final String oldNatureID = "org.eclipse.viatra2.emf.incquery.projectnature"; //$NON-NLS-1
-
-        public NatureUpdaterJob(IProject project) {
-            super(String.format("Updating project %s", project.getName()));
-            this.project = project;
-        }
-
-        /**
-         * This method checks for an earlier IncQuery builder entry, and updates it to the current version. See bug
-         * https://bugs.eclipse.org/bugs/show_bug.cgi?id=404952 for details.
-         */
-        private void repairErroneousBuilderEntry(IProject project) throws CoreException {
-            IProjectDescription desc = project.getDescription();
-            ICommand[] commands = desc.getBuildSpec();
-            for (int i = 0; i < commands.length; i++) {
-                if (commands[i].getBuilderName().equals(incorrectBuilderID)) {
-                    commands[i].setBuilderName(IncQueryNature.BUILDER_ID);
-                }
-            }
-            desc.setBuildSpec(commands);
-            project.setDescription(desc, null);
-        }
-
-        @Override
-        protected IStatus run(IProgressMonitor monitor) {
-            try {
-                repairErroneousBuilderEntry(project);
-
-                final ImmutableList<String> newIDs = project.hasNature(IncQueryNature.NATURE_ID) ? ImmutableList
-                        .<String> of() : ImmutableList.of(IncQueryNature.NATURE_ID);
-                final ImmutableList<String> oldIDs = project.hasNature(oldNatureID) ? ImmutableList.of(oldNatureID)
-                        : ImmutableList.<String> of();
-                if (newIDs.size() + oldIDs.size() > 0) {
-                    ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
-                }
-            } catch (CoreException e) {
-                return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
-            }
-            return Status.OK_STATUS;
-        }
-
-    }
+    @Inject
+    private Injector injector;
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -97,7 +51,9 @@ public class ProjectNatureUpdater extends AbstractHandler {
                     project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
                 }
                 if (project != null) {
-                    new NatureUpdaterJob(project).schedule();
+                    final NatureUpdaterJob job = new NatureUpdaterJob(project);
+                    injector.injectMembers(job);
+                    job.schedule();
                 }
             }
         }

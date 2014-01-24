@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback;
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
@@ -38,6 +38,17 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
     private ILocationInFileProvider locationProvider;
     @Inject
     private Logger logger;
+
+    private IFile getIFile(Resource resource) {
+        if (!resource.getURI().isEmpty() && resource.getURI().isPlatformResource()) {
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+            IFile file = root.getFile(new Path(resource.getURI().toPlatformString(true)));
+            if (file.exists()) {
+                return file;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void reportError(EObject ctx, String message, String errorCode, Severity severity, String markerType) {
@@ -71,7 +82,14 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
     }
 
     @Override
-    public void reportError(IFile file, String message, String errorCode, Severity severity, String markerType) {
+    public void reportError(Resource resource, String message, String errorCode, Severity severity, String markerType) {
+        IFile file = getIFile(resource);
+        if (file != null) {
+            reportError(file, message, errorCode, severity, markerType);
+        }
+    }
+
+    private void reportError(IFile file, String message, String errorCode, Severity severity, String markerType) {
         try {
             ITextRegion region = ITextRegion.EMPTY_REGION;
             createMarker(message, errorCode, markerType, file, region, severity);
@@ -93,6 +111,13 @@ public class GeneratorMarkerFeedback implements IErrorFeedback {
     }
 
     @Override
+    public void clearMarkers(Resource resource, String markerType) {
+        IFile file = getIFile(resource);
+        if (file != null) {
+            clearMarkers(file, markerType);
+        }
+    }
+
     public void clearMarkers(IResource resource, String markerType) {
         try {
             resource.deleteMarkers(markerType, true, IResource.DEPTH_INFINITE);

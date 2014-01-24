@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
@@ -22,9 +23,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
-public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> {
+public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference {
 
     public PositivePatternCall(PBody pSystem, Tuple variablesTuple,
             PQuery pattern) {
@@ -35,11 +36,16 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> {
     protected String keyToString() {
         return supplierKey.getFullyQualifiedName();
     }
-    
+
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	// TODO insert inferred functional dependencies here
 		return super.getFunctionalDependencies();
     }
-    
+
+    @Override
+    public PQuery getReferredQuery() {
+        return supplierKey;
+    }
+
 }

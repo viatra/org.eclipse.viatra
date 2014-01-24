@@ -22,12 +22,10 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>
-		<module>../../plugins/org.eclipse.incquery.runtime.patternregistry</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.ui.patternregistry</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
 		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
@@ -57,14 +55,12 @@
 		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.sdk.feature</module>
-		<module>../../features/org.eclipse.incquery.tooling.ui.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
 		<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
 		<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
 		<module>../../features/org.eclipse.incquery.runtime.gmf.feature</module>
 		<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
-		<module>../../features/org.eclipse.incquery.runtime.patternregistry.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
@@ -169,9 +165,9 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
-						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
-						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
+					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals>
+						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile>
+						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory>
 						</configuration> </execution> -->
 				</executions>
 			</plugin>

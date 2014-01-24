@@ -13,11 +13,11 @@ package org.eclipse.incquery.tooling.generator.sampleui
 
 import com.google.inject.Inject
 import org.eclipse.core.runtime.Path
+import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.pde.core.plugin.IPluginExtension
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
@@ -25,7 +25,7 @@ import org.eclipse.xtext.xbase.lib.Pair
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
 class SampleUIGenerator implements IGenerationFragment {
-	
+
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	private static val String ECLIPSE_UI_COMMANDS_EXTENSION_POINT = "org.eclipse.ui.commands"
 	private static val String ECLIPSE_UI_HANDLERS_EXTENSION_POINT = "org.eclipse.ui.handlers"
@@ -37,11 +37,11 @@ class SampleUIGenerator implements IGenerationFragment {
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.handlerClassJavaFile, pattern.patternHandler)
 	}
-	
+
 	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.deleteFile(pattern.handlerClassJavaFile)
 	}
-	
+
 	override removeExtension(Pattern pattern) {
 		newArrayList(
 			Pair::of(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT),
@@ -49,30 +49,30 @@ class SampleUIGenerator implements IGenerationFragment {
 			Pair::of(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT)
 		)
 	}
-	
+
 	override getRemovableExtensions() {
 		newArrayList(
 			Pair::of(UI_COMMANDS_PREFIX, ECLIPSE_UI_COMMANDS_EXTENSION_POINT),
-			Pair::of(UI_HANDLERS_PREFIX, ECLIPSE_UI_HANDLERS_EXTENSION_POINT), 
+			Pair::of(UI_HANDLERS_PREFIX, ECLIPSE_UI_HANDLERS_EXTENSION_POINT),
 			Pair::of(UI_MENUS_PREFIX, ECLIPSE_UI_MENUS_EXTENSION_POINT)
 		)
 	}
-	
+
 	override getProjectDependencies() {
 		newArrayList(
-			"org.eclipse.core.runtime", 
+			"org.eclipse.core.runtime",
 			"org.eclipse.ui",
-		 	"org.eclipse.emf.ecore", 
-		 	"org.eclipse.pde.core", 
-		 	"org.eclipse.core.resources", 
+		 	"org.eclipse.emf.ecore",
+		 	"org.eclipse.pde.core",
+		 	"org.eclipse.core.resources",
 		 	"org.eclipse.incquery.runtime",
 		 	"org.eclipse.incquery.tooling.ui")
 	}
-	
+
 	override getProjectPostfix() {
 		"ui"
 	}
-	
+
 	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		val menuContribution = pattern.menuContribution(exGen)
 		newArrayList(
@@ -92,7 +92,7 @@ class SampleUIGenerator implements IGenerationFragment {
 		menuContribution
 		)
 	}
-	
+
 	def IPluginExtension menuContribution(Pattern pattern, ExtensionGenerator exGen) {
 		val fileExtension = pattern.handlerFileExtension
 		if (fileExtension.nullOrEmpty) {
@@ -118,7 +118,7 @@ class SampleUIGenerator implements IGenerationFragment {
 											exGen.contribAttribute(it, "property", "org.eclipse.core.resources.name")
 											exGen.contribAttribute(it, "value", String::format("*.%s", fileExtension))
 										]
-									]	
+									]
 								]
 							]
 						]
@@ -127,7 +127,7 @@ class SampleUIGenerator implements IGenerationFragment {
 			]
 		]
 	}
-	
+
 	def handlerFileExtension(Pattern pattern) {
 		for (annotation : pattern.annotations) {
 			if ("Handler".equals(annotation.name)) {
@@ -142,19 +142,19 @@ class SampleUIGenerator implements IGenerationFragment {
 		}
 		return null
 	}
-	
+
 	def handlerClassName(Pattern pattern) {
 		String::format("%s.handlers.%sHandler", pattern.packageName, pattern.realPatternName.toFirstUpper)
 	}
-	
+
 	def handlerClassPath(Pattern pattern) {
-		String::format("%s/handlers/%sHandler", pattern.packagePath, pattern.realPatternName.toFirstUpper) 
+		String::format("%s/handlers/%sHandler", pattern.packagePath, pattern.realPatternName.toFirstUpper)
 	}
-	
+
 	def handlerClassJavaFile(Pattern pattern) {
 		pattern.handlerClassPath + ".java"
 	}
-	
+
 	def handlerExtensionId(Pattern pattern) {
 		UI_HANDLERS_PREFIX + pattern.getFullyQualifiedName + "Handler"
 	}
@@ -167,7 +167,7 @@ class SampleUIGenerator implements IGenerationFragment {
 	def commandId(Pattern pattern) {
 		pattern.getFullyQualifiedName + "CommandId"
 	}
-	
+
 	def patternHandler(Pattern pattern) '''
 		package «pattern.packageName».handlers;
 
@@ -203,7 +203,7 @@ class SampleUIGenerator implements IGenerationFragment {
 				Object firstElement = selection.getFirstElement();
 				//the filter is set in the command declaration no need for type checking
 				IFile file = (IFile)firstElement;
-		
+
 				//Loads the resource
 				ResourceSet resourceSet = new ResourceSetImpl();
 				URI fileURI = URI.createPlatformResourceURI(file.getFullPath()
@@ -218,8 +218,8 @@ class SampleUIGenerator implements IGenerationFragment {
 				}
 				SampleUIDialogCreator.createDialog(matcher).open();
 «««				String matches = getMatches(resource);
-«««				//prints the match set to a dialog window 
-«««				MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"«pattern.name»\" pattern", 
+«««				//prints the match set to a dialog window
+«««				MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Match set of the \"«pattern.name»\" pattern",
 «««						matches);
 				return null;
 			}
@@ -232,8 +232,8 @@ class SampleUIGenerator implements IGenerationFragment {
 «««			private String getMatches(Notifier emfRoot){
 «««				//the match set will be serialized into a string builder
 «««				StringBuilder builder = new StringBuilder();
-«««		
-«««				if(emfRoot != null) {	
+«««
+«««				if(emfRoot != null) {
 «««					//get all matches of the pattern
 «««					«pattern.matcherClassName» matcher = «pattern.matcherClassName».querySpecification().getMatcher(IncQueryEngine.on(emfRoot));
 «««					Collection<«pattern.matchClassName»> matches = matcher.getAllMatches();
@@ -244,16 +244,16 @@ class SampleUIGenerator implements IGenerationFragment {
 «««					 		builder.append("\n");
 «««						}
 «««					else
-«««						builder.append("The «pattern.name» pattern has an empty match set.");	
+«««						builder.append("The «pattern.name» pattern has an empty match set.");
 «««				}
 «««				//returns the match set in a serialized form
 «««				return builder.toString();
 «««			}
-		}	
+		}
 	'''
-	
+
 	override getAdditionalBinIncludes() {
 		return newArrayList(new Path("plugin.xml"))
 	}
-	
+
 }

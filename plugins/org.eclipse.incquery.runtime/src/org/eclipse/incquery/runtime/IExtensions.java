@@ -13,17 +13,13 @@ package org.eclipse.incquery.runtime;
 
 /**
  * Interface for storing string constants related to IncQuery's extension points.
- * 
+ *
  * @author Istvan Rath
- * 
+ *
  */
 public interface IExtensions {
 
     public static final String QUERY_SPECIFICATION_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + ".queryspecification";
-
-    // Extension point for registering the generated java codes from the xbase xexpressions
-    public static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID
-            + ".xexpressionevaluator";
 
     public static final String INJECTOREXTENSIONID = IncQueryRuntimePlugin.PLUGIN_ID + ".injectorprovider";
 

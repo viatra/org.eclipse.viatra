@@ -60,6 +60,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @SuppressWarnings("restriction")
 public final class CorePatternLanguageHelper {
@@ -110,7 +112,7 @@ public final class CorePatternLanguageHelper {
     	}
         return false;
     }
-    
+
     /**
      * @return all xbase check() or eval() expressions in the pattern
      */
@@ -121,7 +123,7 @@ public final class CorePatternLanguageHelper {
     		final EObject content = eAllContents.next();
 			if (content instanceof XExpression) {
 				result.add((XExpression) content);
-    			eAllContents.prune(); // do not include subexpressions 
+    			eAllContents.prune(); // do not include subexpressions
     		}
     	}
         return result;
@@ -129,7 +131,7 @@ public final class CorePatternLanguageHelper {
 
     /**
      * Returns the parameter of a pattern by name
-     * 
+     *
      * @param pattern
      * @param name
      * @return the requested parameter of the pattern, or null if none exists
@@ -182,34 +184,27 @@ public final class CorePatternLanguageHelper {
         }
         return result;
     }
-    
+
     public static List<Variable> getUsedVariables(XExpression xExpression, Iterable<Variable> allVariables){
-    	TreeIterator<EObject> _eAllContents = xExpression.eAllContents();
-        Iterator<XFeatureCall> _filter = Iterators.<XFeatureCall>filter(_eAllContents, XFeatureCall.class);
-//        XFeatureCall[] _filter2 = Iterators.toArray(_filter, XFeatureCall.class);
-        final Function1<XFeatureCall,String> _function = new Function1<XFeatureCall,String>() {
-            public String apply(final XFeatureCall it) {
-              String _concreteSyntaxFeatureName = it.getFeature().getSimpleName();
-              return _concreteSyntaxFeatureName;
+        List<EObject> contents = Lists.newArrayList(xExpression.eAllContents());
+    	Iterable<XFeatureCall> featuredCalls = Iterables.filter(contents, XFeatureCall.class);
+        final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, new Function<XFeatureCall,String>() {
+            @Override
+            public String apply(final XFeatureCall call) {
+              return call.getConcreteSyntaxFeatureName();
             }
-          };
-        Iterator<String> _map = IteratorExtensions.<XFeatureCall, String>map(_filter, _function);
-        final List<String> valNames = IteratorExtensions.<String>toList(_map);
-        final Function1<Variable,Boolean> _function_1 = new Function1<Variable,Boolean>() {
-            public Boolean apply(final Variable it) {
-              String _name = it.getName();
-              boolean _contains = valNames.contains(_name);
-              return Boolean.valueOf(_contains);
+          }));
+        Iterable<Variable> calledVariables = Iterables.filter(allVariables, new Predicate<Variable>() {
+            @Override
+            public boolean apply(final Variable var) {
+              return valNames.contains(var.getName());
             }
-          };
-        Iterable<Variable> _filter_1 = IterableExtensions.<Variable>filter(allVariables, _function_1);
-        final Function1<Variable,String> _function_2 = new Function1<Variable,String>() {
-            public String apply(final Variable it) {
-              String _name = it.getName();
-              return _name;
+          });
+        return IterableExtensions.sortBy(calledVariables, new Function1<Variable,String>() {
+            public String apply(final Variable var) {
+              return var.getName();
             }
-          };
-        return IterableExtensions.<Variable, String>sortBy(_filter_1, _function_2);
+          });
     }
 
     public static EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {
@@ -330,7 +325,7 @@ public final class CorePatternLanguageHelper {
      * Returns the first annotation of a given name from a pattern. This method ignores multiple defined annotations by
      * the same name. For getting a filtered collections of annotations, see
      * {@link #getAnnotationsByName(Pattern, String)}
-     * 
+     *
      * @param pattern
      *            the pattern instance
      * @param name
@@ -345,7 +340,7 @@ public final class CorePatternLanguageHelper {
     /**
      * Returns the collection of annotations of a pattern by a name. For getting the first annotations by name, see
      * {@link #getAnnotationByName(Pattern, String)}
-     * 
+     *
      * @param pattern
      *            the pattern instance
      * @param name
@@ -367,7 +362,7 @@ public final class CorePatternLanguageHelper {
 
     /**
      * Returns all annotation parameters with a selected name
-     * 
+     *
      * @param annotation
      * @param parameterName
      * @return a lazy collection of annotation parameters with the selected name. May be empty, but is never null.
@@ -392,7 +387,7 @@ public final class CorePatternLanguageHelper {
 
     /**
      * Returns the first annotation parameter with a selected name.
-     * 
+     *
      * @param annotation
      * @param parameterName
      * @return the annotation with the selected name, or null if no such annotation exists.
@@ -421,7 +416,7 @@ public final class CorePatternLanguageHelper {
                 }
             } else if (valueReference instanceof FunctionEvaluationValue) {
             	FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
-            	final List<Variable> usedVariables = 
+            	final List<Variable> usedVariables =
             			CorePatternLanguageHelper.getUsedVariables(eval.getExpression(), containerPatternBody(eval).getVariables());
             	resultSet.addAll(usedVariables);
             }
@@ -434,12 +429,12 @@ public final class CorePatternLanguageHelper {
      */
 	public static PatternBody containerPatternBody(ValueReference val) {
 		for (EObject cursor = val; cursor!=null; cursor = cursor.eContainer())
-			if (cursor instanceof PatternBody) 
+			if (cursor instanceof PatternBody)
 				return (PatternBody) cursor;
 		// cursor == null --> not contained in PatternBody
 		throw new IllegalArgumentException(
 				String.format(
-						"Misplaced value reference %s not contained in any pattern body", 
+						"Misplaced value reference %s not contained in any pattern body",
 						val));
 	}
 
@@ -496,8 +491,8 @@ public final class CorePatternLanguageHelper {
             } else if (valueReference instanceof FunctionEvaluationValue) {
             	// TODO this is constant empty?
             	FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
-            	final List<Variable> usedVariables = 
-            			CorePatternLanguageHelper.getUsedVariables(eval.getExpression(), 
+            	final List<Variable> usedVariables =
+            			CorePatternLanguageHelper.getUsedVariables(eval.getExpression(),
             					containerPatternBody(eval).getVariables());
                 if (!onlyFromAggregatedValues) {
                 	for (Variable variable : usedVariables) {

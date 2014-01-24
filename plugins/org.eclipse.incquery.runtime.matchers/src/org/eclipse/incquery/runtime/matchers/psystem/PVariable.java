@@ -16,14 +16,14 @@ import java.util.Set;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
 public class PVariable {
     private PBody pSystem;
     /**
      * The name of the pattern variable. This is the unique key of the pattern node.
      */
-    private Object name;
+    private String name;
     /**
      * virtual pVariables are nodes that do not correspond to actual pattern variables; they represent constants or Term
      * substitutes
@@ -46,11 +46,11 @@ public class PVariable {
      */
     private PVariable unifiedInto;
 
-    PVariable(PBody pSystem, Object name) {
+    PVariable(PBody pSystem, String name) {
         this(pSystem, name, false);
     }
 
-    PVariable(PBody pSystem, Object name, boolean virtual) {
+    PVariable(PBody pSystem, String name, boolean virtual) {
         super();
         this.pSystem = pSystem;
         this.name = name;
@@ -64,7 +64,7 @@ public class PVariable {
     /**
      * Replaces this variable with a given other, resulting in their unification. This variable will no longer be
      * unique.
-     * 
+     *
      * @param constraint
      */
     public void unifyInto(PVariable replacement) {
@@ -98,7 +98,7 @@ public class PVariable {
 
     /**
      * Determines whether there are any constraints that can deduce this variable
-     * 
+     *
      * @return
      */
     public boolean isDeducable() {
@@ -117,7 +117,7 @@ public class PVariable {
 
     /**
      * Register that this variable is referred by the given constraint.
-     * 
+     *
      * @param constraint
      */
     public void refer(PConstraint constraint) {
@@ -129,7 +129,7 @@ public class PVariable {
 
     /**
      * Register that this variable is no longer referred by the given constraint.
-     * 
+     *
      * @param constraint
      */
     public void unrefer(PConstraint constraint) {
@@ -142,7 +142,7 @@ public class PVariable {
     /**
      * @return the name of the pattern variable. This is the unique key of the pattern node.
      */
-    public Object getName() {
+    public String getName() {
         replacementCheck();
         return name;
     }

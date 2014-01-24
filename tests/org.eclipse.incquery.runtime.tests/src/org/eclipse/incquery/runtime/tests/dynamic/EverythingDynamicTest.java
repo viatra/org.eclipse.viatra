@@ -3,7 +3,6 @@ package org.eclipse.incquery.runtime.tests.dynamic;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
@@ -13,19 +12,21 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguagePlugin;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
-import org.eclipse.incquery.runtime.SpecificationBuilder;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -33,16 +34,13 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.inject.Inject;
-
 public class EverythingDynamicTest {
-
-    @Inject
-    private Logger logger;
 
     @SuppressWarnings("unchecked")
     @Test
-    public void everythingDynamic() {
+    public void everythingDynamic() throws IncQueryException {
+        EMFPatternLanguagePlugin.getInstance().addCompoundInjector(new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration(), EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+
         // Create the dynamic metamodel
         EcoreFactory theCoreFactory = EcoreFactory.eINSTANCE;
         EcorePackage theCorePackage = EcorePackage.eINSTANCE;
@@ -122,13 +120,10 @@ public class EverythingDynamicTest {
 
         // Matching
         Collection<? extends IPatternMatch> matches = null;
-        try {
-            SpecificationBuilder builder = new SpecificationBuilder();
-            IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(builder.getOrCreateSpecification(pattern));
-            matches = matcher.getAllMatches();
-        } catch (IncQueryException incQueryException) {
-            logger.error("Matcher initialization and matching failed in the testcase.", incQueryException);
-        }
+
+        SpecificationBuilder builder = new SpecificationBuilder();
+        IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(builder.getOrCreateSpecification(pattern));
+        matches = matcher.getAllMatches();
 
         Assert.assertNotNull(matches);
         Assert.assertSame(1, matches.size());

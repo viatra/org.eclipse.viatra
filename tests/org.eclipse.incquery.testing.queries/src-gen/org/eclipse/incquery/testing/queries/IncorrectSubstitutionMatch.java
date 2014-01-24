@@ -9,12 +9,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.testing.queries.util.IncorrectSubstitutionQuerySpecification;
 
 /**
- * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.IncorrectSubstitution pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.IncorrectSubstitution pattern,
  * to be used in conjunction with {@link IncorrectSubstitutionMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see IncorrectSubstitutionMatcher
@@ -111,9 +111,9 @@ public abstract class IncorrectSubstitutionMatch extends BasePatternMatch {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode()); 
-    result = prime * result + ((fCorrespondingRecord == null) ? 0 : fCorrespondingRecord.hashCode()); 
-    return result; 
+    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode());
+    result = prime * result + ((fCorrespondingRecord == null) ? 0 : fCorrespondingRecord.hashCode());
+    return result;
     
   }
   
@@ -121,7 +121,7 @@ public abstract class IncorrectSubstitutionMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof IncorrectSubstitutionMatch)) { // this should be infrequent				
+    if (!(obj instanceof IncorrectSubstitutionMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))

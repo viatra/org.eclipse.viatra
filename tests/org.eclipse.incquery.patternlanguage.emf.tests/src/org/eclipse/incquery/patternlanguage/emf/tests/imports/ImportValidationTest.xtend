@@ -11,44 +11,43 @@
 
 package org.eclipse.incquery.patternlanguage.emf.tests.imports
 
+import com.google.inject.Inject
+import com.google.inject.Injector
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
-import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
-import com.google.inject.Inject
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.junit.Test
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.validation.ValidatorTester
-import com.google.inject.Injector
 import org.junit.Before
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ImportValidationTest extends AbstractValidatorTest {
-	
+
 	@Inject
 	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject
 	Injector injector
-	
+
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
+
 	@Inject extension ValidationTestHelper
-	
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
-	
+
 	@Test
 	def duplicateImport() {
 		val model = parseHelper.parse('
@@ -60,25 +59,27 @@ class ImportValidationTest extends AbstractValidatorTest {
 				Pattern(Name);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
 	}
-	
+
 	@Test
 	def implicitJavaImport() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {			
+			pattern name(D) = {
 				EDouble(D);
 				check(Math::abs(D) > 10.5);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def javaClassImport() {
 		val model = parseHelper.parse('
@@ -91,10 +92,11 @@ class ImportValidationTest extends AbstractValidatorTest {
 				check(Calendar::getInstance().getTime().getTime() > L);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
-	
+
 	@Test
 	def javaPackageImport() {
 		val model = parseHelper.parse('
@@ -108,7 +110,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 			}
 		')
 		tester.validate(model).assertAll(
-			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), 
+			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
 			getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED)
 		)
 	}

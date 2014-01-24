@@ -13,22 +13,33 @@ package org.eclipse.incquery.patternlanguage.emf.ui;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
+import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.incquery.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
+import org.eclipse.incquery.patternlanguage.emf.ui.types.GenModelBasedTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
+import org.eclipse.incquery.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
+import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
-import org.eclipse.incquery.tooling.core.generator.builder.EMFPatternLanguageBuilderParticipant;
-import org.eclipse.incquery.tooling.core.generator.builder.IErrorFeedback;
+import org.eclipse.incquery.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
+import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
-import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternJvmModelAssociator;
-import org.eclipse.incquery.tooling.core.generator.jvmmodel.EMFPatternLanguageJvmModelInferrer;
-import org.eclipse.incquery.tooling.core.generator.types.GenModelBasedTypeProvider;
+import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
+import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
@@ -110,7 +121,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     public Class<? extends ITypeProvider> bindITypeProvider() {
         return GenModelBasedTypeProvider.class;
     }
-    
+
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
     	return GenModelBasedTypeProvider.class;
     }
@@ -122,14 +133,6 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     public Class<? extends IErrorFeedback> bindIErrorFeedback() {
         return GeneratorMarkerFeedback.class;
-    }
-
-    public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
-        return EMFPatternJvmModelAssociator.class;
-    }
-
-    public Class<? extends JvmModelAssociator> bindJvmModelAssociator() {
-        return EMFPatternJvmModelAssociator.class;
     }
 
     @SingletonBinding(eager = true)
@@ -145,9 +148,34 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
         return EMFPatternLanguageEditorCallback.class;
     }
-    
+
     @Override
     public Class<? extends IJavaProjectProvider> bindIJavaProjectProvider() {
         return IncQueryJavaProjectProvider.class;
+    }
+
+    public Class<? extends IClassLoaderProvider> bindIClassLoaderProvider() {
+        return JavaProjectClassLoaderProvider.class;
+    }
+
+    public Class<? extends IWorkspaceUtilities> bindIWorkspaceUtilities() {
+        return JavaProjectClassLoaderProvider.class;
+    }
+
+    public Class<? extends IGenerationFragmentProvider> bindIGenerationFragmentProvider() {
+        return ExtensionBasedGenerationFragmentProvider.class;
+    }
+
+    // contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
+    public IWorkspaceRoot bindIWorkspaceRootToInstance() {
+        return ResourcesPlugin.getWorkspace().getRoot();
+    }
+
+    public IExtensionRegistry bindIExtensionRegistry() {
+        return Platform.getExtensionRegistry();
+    }
+
+    public Class<? extends ITargetPlatformMetamodelLoader> bindTargetPlatformMetamodelLoader(){
+        return TargetPlatformMetamodelsIndex.class;
     }
 }

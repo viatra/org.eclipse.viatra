@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILog;
@@ -25,34 +26,49 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
+import org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
+import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.impl.BoolValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.inject.Injector;
+
 /**
  * Utility class used by the Query Explorer for the maintenance of registered patterns.
- * 
+ *
  * @author Tamas Szabo
- * 
+ *
  */
 public class QueryExplorerPatternRegistry {
 
     private static QueryExplorerPatternRegistry instance;
 
     // maps the eiq files to the list of patterns which were registered from that file
-    private final Map<IFile, List<Pattern>> registeredPatterModels;
-    private final List<Pattern> activePatterns;
-    private final Map<String, Pattern> patternNameMap;
+    private final ListMultimap<IFile, IQuerySpecification<?>> registeredPatterModels;
+    private final List<IQuerySpecification<?>> activePatterns;
+    private final Map<String, IQuerySpecification<?>> patternNameMap;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
+    private SpecificationBuilder builder;
+    private IWorkspaceUtilities workspaceUtil;
 
     public static synchronized QueryExplorerPatternRegistry getInstance() {
         if (instance == null) {
@@ -62,52 +78,69 @@ public class QueryExplorerPatternRegistry {
     }
 
     protected QueryExplorerPatternRegistry() {
-        registeredPatterModels = new HashMap<IFile, List<Pattern>>();
-        patternNameMap = new HashMap<String, Pattern>();
-        activePatterns = new ArrayList<Pattern>();
+        registeredPatterModels = Multimaps.newListMultimap(Maps.<IFile, Collection<IQuerySpecification<?>>>newHashMap(),
+                new Supplier<List<IQuerySpecification<?>>>() {
+
+                    @Override
+                    public ArrayList<IQuerySpecification<?>> get() {
+                        return Lists.newArrayList();
+                    }
+                });
+        patternNameMap = new HashMap<String, IQuerySpecification<?>>();
+        activePatterns = new ArrayList<IQuerySpecification<?>>();
+        builder = new SpecificationBuilder();
+        Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(
+                EMFPatternLanguageActivator.ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
+        workspaceUtil = injector.getInstance(IWorkspaceUtilities.class);
     }
 
-    public void addGeneratedPattern(Pattern pattern, String patternFqn) {
-        this.patternNameMap.put(patternFqn, pattern);
+    public void addGeneratedPattern(IQuerySpecification<?> specification) {
+        this.patternNameMap.put(specification.getFullyQualifiedName(), specification);
     }
 
-    public boolean isGenerated(Pattern pattern) {
-        return getGeneratedPatterns().contains(pattern);
+    public boolean isGenerated(IQuerySpecification<?> query) {
+        return getGeneratedQuerySpecifications().contains(query);
     }
 
     /**
      * Unregisters the given pattern from the registry.
-     * 
-     * @param pattern
+     *
+     * @param specification
      *            the pattern instance to be unregistered
      */
-    public void unregisterPattern(Pattern pattern) {
-        String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        patternNameMap.remove(patternFqn);
+    public void unregisterPattern(IQuerySpecification<?> specification) {
+        patternNameMap.remove(specification.getFullyQualifiedName());
+        Set<IQuerySpecification<?>> forgottenSpecifications = builder.forgetSpecificationTransitively(specification);
+        for (IQuerySpecification<?> other : Iterables.filter(forgottenSpecifications, Predicates.not(Predicates.<IQuerySpecification<?>>equalTo(specification)))) {
+            unregisterPattern(other);
+        }
+
     }
 
     /**
      * Registers the patterns within the given (parsed) pattern model.
-     * 
+     *
      * @param file
      *            the eiq file instance
      * @param patternModel
      *            the parsed pattern model
      * @return the list of patterns registered
+     * @throws IncQueryException
      */
-    public List<Pattern> registerPatternModel(IFile file, PatternModel patternModel) {
-        List<Pattern> newPatterns = new ArrayList<Pattern>();
+    public List<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel) throws IncQueryException {
+        List<IQuerySpecification<?>> newPatterns = Lists.newArrayList();
 
         if (patternModel != null) {
             List<IStatus> warnings = new ArrayList<IStatus>();
             for (Pattern pattern : patternModel.getPatterns()) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                IQuerySpecification<?> spec = builder.getOrCreateSpecification(pattern, newPatterns, false);
+                String patternFqn = spec.getFullyQualifiedName();
                 if (!patternNameMap.containsKey(patternFqn)) {
-                    Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
+                    Boolean annotationValue = getValueOfQueryExplorerAnnotation(spec);
                     if (!(annotationValue != null && !annotationValue)) {
-                        patternNameMap.put(patternFqn, pattern);
-                        newPatterns.add(pattern);
-                        activePatterns.add(pattern);
+                        patternNameMap.put(patternFqn, spec);
+                        newPatterns.add(spec);
+                        activePatterns.add(spec);
                     }
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
@@ -138,7 +171,7 @@ public class QueryExplorerPatternRegistry {
         }
 
         if (!newPatterns.isEmpty()) {
-            this.registeredPatterModels.put(file, newPatterns);
+            this.registeredPatterModels.putAll(file, newPatterns);
         }
 
         return Collections.unmodifiableList(newPatterns);
@@ -146,11 +179,11 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Sets the given pattern as active.
-     * 
+     *
      * @param p
      *            the pattern instance
      */
-    public void addActivePattern(Pattern p) {
+    public void addActivePattern(IQuerySpecification<?> p) {
         // list must be used to retain ordering but duplicate elements are not allowed
         if (!activePatterns.contains(p)) {
             activePatterns.add(p);
@@ -159,19 +192,19 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Returns the (unmodifiable) list of registered patterns from the given file.
-     * 
+     *
      * @param file
      *            the eiq file instance
      * @return the list of patterns registered
      */
-    public List<Pattern> getRegisteredPatternsForFile(IFile file) {
-        final List<Pattern> list = registeredPatterModels.get(file);
-        return list == null ? Collections.<Pattern> emptyList() : Collections.unmodifiableList(list);
+    public List<IQuerySpecification<?>> getRegisteredPatternsForFile(IFile file) {
+        final List<IQuerySpecification<?>> list = registeredPatterModels.get(file);
+        return list == null ? Collections.<IQuerySpecification<?>>emptyList() : Collections.unmodifiableList(list);
     }
 
     /**
      * Returns true if there are no (generic) patterns registered, false otherwise.
-     * 
+     *
      * @return
      */
     public boolean isEmpty() {
@@ -181,69 +214,73 @@ public class QueryExplorerPatternRegistry {
     /**
      * Unregisters the patterns within the given eiq file and returns the list of those patterns that were currently
      * active from the given file.
-     * 
+     *
      * @param file
      *            the eiq file instance
      * @return the list of removed patterns
      */
-    public List<Pattern> unregisterPatternModel(IFile file) {
-        List<Pattern> removedPatterns = new ArrayList<Pattern>();
-        List<Pattern> patterns = this.registeredPatterModels.remove(file);
+    public List<IQuerySpecification<?>> unregisterPatternModel(IFile file) {
+        List<IQuerySpecification<?>> removedPatterns = Lists.newArrayList();
+        List<IQuerySpecification<?>> patterns = this.registeredPatterModels.get(file);
 
         if (patterns != null) {
-            for (Pattern p : patterns) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(p);
+            for (IQuerySpecification<?> p : patterns) {
+                String patternFqn = p.getFullyQualifiedName();
                 if (activePatterns.remove(p)) {
                     removedPatterns.add(p);
                 }
                 patternNameMap.remove(patternFqn);
+                builder.forgetSpecificationTransitively(p);
             }
         }
 
-        return Collections.unmodifiableList(removedPatterns);
+        return removedPatterns;
     }
 
     /**
      * Sets the given pattern as passive.
-     * 
+     *
      * @param p
      *            the pattern instance
      */
-    public void removeActivePattern(Pattern p) {
+    public void removeActivePattern(IQuerySpecification<?> p) {
         activePatterns.remove(p);
     }
 
+    public void removeActivePattern(String patternFqn) {
+        removeActivePattern(getPatternByFqn(patternFqn));
+    }
     /**
      * Returns the pattern associated with the given fully qualified name.
-     * 
+     *
      * @param patternFqn
      *            the fqn of the pattern
      * @return the pattern instance
      */
-    public Pattern getPatternByFqn(String patternFqn) {
+    public IQuerySpecification<?> getPatternByFqn(String patternFqn) {
         return patternNameMap.get(patternFqn);
     }
 
     /**
      * Returns the list of active patterns.
-     * 
+     *
      * @return the list of active patterns
      */
-    public List<Pattern> getActivePatterns() {
+    public List<IQuerySpecification<?>> getActivePatterns() {
         // Must return a new copy of the active patterns list
-        return new ArrayList<Pattern>(activePatterns);
+        return Lists.newArrayList(activePatterns);
     }
 
     /**
      * Returns true if the given pattern is currently active, false otherwise.
-     * 
+     *
      * @param patternFqn
      *            the fqn of the pattern
      * @return true if the pattern is active, false otherwise
      */
     public boolean isActive(String patternFqn) {
-        for (Pattern p : activePatterns) {
-            if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternFqn)) {
+        for (IQuerySpecification<?> p : activePatterns) {
+            if (p.getFullyQualifiedName().matches(patternFqn)) {
                 return true;
             }
         }
@@ -252,7 +289,7 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Returns the names of the patterns registered in the registry.
-     * 
+     *
      * @return the list of names of the patterns
      */
     public Collection<String> getPatternNames() {
@@ -261,31 +298,27 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Returns the list of (generic) patterns registered in the registry.
-     * 
+     *
      * @return the list of (generic) patterns registered
      */
-    public List<Pattern> getGenericPatterns() {
-        List<Pattern> patterns = new ArrayList<Pattern>();
-        for (List<Pattern> pm : registeredPatterModels.values()) {
-            patterns.addAll(pm);
-        }
-        return Collections.unmodifiableList(patterns);
+    public Collection<IQuerySpecification<?>> getGenericQuerySpecifications() {
+        return Collections.unmodifiableCollection(registeredPatterModels.values());
     }
-    
+
     /**
      * Return a list of all known patterns.
      * @return a union of getGeneratedPatterns and getGenericPatterns
      */
-    public List<Pattern> getAllPatterns() {
-        ArrayList<Pattern> r = new ArrayList<Pattern>();
-        r.addAll(getGeneratedPatterns());
-        r.addAll(getGenericPatterns());
-        return Collections.unmodifiableList(r);
+    public List<IQuerySpecification<?>> getAllPatterns() {
+        return ImmutableList.<IQuerySpecification<?>>builder().
+                addAll(getGeneratedQuerySpecifications()).
+                addAll(getGenericQuerySpecifications()).
+                build();
     }
 
     /**
      * Returns the list of eiq files from which patterns are registered.
-     * 
+     *
      * @return the list of eiq files
      */
     public Collection<IFile> getFiles() {
@@ -294,89 +327,43 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Returns the eiq file instance that the given pattern can be found in.
-     * 
+     *
      * @param pattern
      *            the pattern instance
      * @return the eiq file
      */
-    public IFile getFileForPattern(Pattern pattern) {
+    public IFile getFileForPattern(IQuerySpecification<?> pattern) {
         if (pattern != null && patternNameMap.containsValue(pattern)) {
-            for (Entry<IFile, List<Pattern>> entry : registeredPatterModels.entrySet()) {
-                List<Pattern> patterns = entry.getValue();
-                if (patterns.size() > 0 && patterns.contains(pattern)) {
+            for (Entry<IFile, IQuerySpecification<?>> entry : registeredPatterModels.entries()) {
+                if (pattern.equals(entry.getValue())) {
                     return entry.getKey();
                 }
             }
         }
         return null;
     }
-    
-    public static Boolean getValueOfQueryExplorerAnnotation(Pattern pattern) {
-        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern,
-                IExtensions.QUERY_EXPLORER_ANNOTATION);
+
+    public static Boolean getValueOfQueryExplorerAnnotation(IQuerySpecification<?> query) {
+        PAnnotation annotation = query.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
         if (annotation == null) {
             return null;
         } else {
-            for (AnnotationParameter ap : annotation.getParameters()) {
-                if (ap.getName().equalsIgnoreCase("display")) {
-                    return Boolean.valueOf(((BoolValueImpl) ap.getValue()).isValue());
-                }
+            Object displayValue = annotation.getFirstValue("display");
+            return displayValue != null && (Boolean)displayValue;
+        }
+    }
+
+
+    public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
+        return ImmutableList.<IQuerySpecification<?>>builder().
+                addAll(Iterables.filter(QuerySpecificationRegistry.getContributedQuerySpecifications(), new Predicate<IQuerySpecification<?>>() {
+
+            @Override
+            public boolean apply(IQuerySpecification<?> query) {
+                Boolean annotationValue = getValueOfQueryExplorerAnnotation(query);
+                return annotationValue != null && annotationValue;
             }
-            return Boolean.TRUE;
-        }
-    }
-    
-    
-    private static List<Pattern> generatedPatterns;
-    private static Map<Pattern, IQuerySpecification<?>> generatedQuerySpecifications;
-    
-    
-    private static Map<Pattern, IQuerySpecification<?>> collectGeneratedQuerySpecifications() {
-        Map<Pattern, IQuerySpecification<?>> querySpecifications = new HashMap<Pattern, IQuerySpecification<?>>();
-        for (IQuerySpecification<?> querySpecification : QuerySpecificationRegistry.getContributedQuerySpecifications()) {
-            Pattern pattern = querySpecification.getPattern();
-            Boolean annotationValue = getValueOfQueryExplorerAnnotation(pattern);
-            if (annotationValue != null && annotationValue) {
-                querySpecifications.put(pattern, querySpecification);
-            }
-        }
-        return querySpecifications;
+        })).build();
     }
 
-    
-
-    private static synchronized Collection<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
-        if (generatedQuerySpecifications == null) {
-            generatedQuerySpecifications = collectGeneratedQuerySpecifications();
-        }
-        return Collections.unmodifiableCollection(generatedQuerySpecifications.values());
-    }
-
-    public static synchronized List<Pattern> getGeneratedPatterns() {
-        if (generatedPatterns == null) {
-            generatedPatterns = collectGeneratedPatterns();
-        }
-        return Collections.unmodifiableList(generatedPatterns);
-    }
-
-    private static List<Pattern> collectGeneratedPatterns() {
-        List<Pattern> patterns = new ArrayList<Pattern>();
-        for (IQuerySpecification<?> querySpecification : getGeneratedQuerySpecifications()) {
-            patterns.add(querySpecification.getPattern());
-        }
-        return patterns;
-    }
-
-    /**
-     * Returns the generated query specification for the given generated pattern.
-     * 
-     * @param pattern
-     *            the pattern instance
-     * @return the query specification for the given pattern
-     */
-    public static IQuerySpecification<?> getQuerySpecificationForGeneratedPattern(Pattern pattern) {
-        return generatedQuerySpecifications.get(pattern);
-    }
-    
-    
 }

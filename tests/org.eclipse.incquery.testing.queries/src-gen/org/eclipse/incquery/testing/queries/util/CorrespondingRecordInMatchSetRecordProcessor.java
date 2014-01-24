@@ -15,9 +15,9 @@ import org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecordM
 public abstract class CorrespondingRecordInMatchSetRecordProcessor implements IMatchProcessor<CorrespondingRecordInMatchSetRecordMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pRecord the value of pattern parameter Record in the currently processed match 
-   * @param pCorrespodingRecord the value of pattern parameter CorrespodingRecord in the currently processed match 
-   * @param pExpectedSet the value of pattern parameter ExpectedSet in the currently processed match 
+   * @param pRecord the value of pattern parameter Record in the currently processed match
+   * @param pCorrespodingRecord the value of pattern parameter CorrespodingRecord in the currently processed match
+   * @param pExpectedSet the value of pattern parameter ExpectedSet in the currently processed match
    * 
    */
   public abstract void process(final MatchRecord pRecord, final MatchRecord pCorrespodingRecord, final MatchSetRecord pExpectedSet);

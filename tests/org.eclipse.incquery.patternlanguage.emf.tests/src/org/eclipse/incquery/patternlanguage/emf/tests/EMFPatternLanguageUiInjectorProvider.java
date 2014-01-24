@@ -3,14 +3,20 @@
 */
 package org.eclipse.incquery.patternlanguage.emf.tests;
 
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguagePlugin;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.xtext.junit4.IInjectorProvider;
 
 import com.google.inject.Injector;
 
 public class EMFPatternLanguageUiInjectorProvider implements IInjectorProvider {
-	
+
 	public Injector getInjector() {
-		return org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage");
+		Injector injector = org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator.getInstance().getInjector("org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage");
+	    IncQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
+	    EMFPatternLanguagePlugin.getInstance().addCompoundInjector(injector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+        return injector;
 	}
-	
+
 }

@@ -41,16 +41,14 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
-import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -70,12 +68,12 @@ public class DisplayUtil {
     private static Map<URI, IConfigurationElement> uriConfElementMap = null;
     private static ILog logger = IncQueryGUIPlugin.getDefault().getLog();
     private static Map<String, IMarker> orderByPatternMarkers = Maps.newHashMap();
-    
+
 
     public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
 
-    
+
     @Inject
     private IResourceSetProvider resSetProvider;
     private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
@@ -83,7 +81,7 @@ public class DisplayUtil {
     /**
      * Creates a marker with a warning for the given pattern. The marker's message will be set to the given message
      * parameter.
-     * 
+     *
      * @param patternFqn
      *            the fully qualified name of the pattern
      * @param message
@@ -91,29 +89,32 @@ public class DisplayUtil {
      */
     public static void addOrderByPatternWarning(String patternFqn, String message) {
         if (orderByPatternMarkers.get(patternFqn) == null) {
-            Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
-            URI uri = pattern.eResource().getURI();
-            String platformString = uri.toPlatformString(true);
-            IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
-            try {
-                IMarker marker = markerLoc.createMarker(EValidator.MARKER);
-                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                marker.setAttribute(IMarker.TRANSIENT, true);
-                marker.setAttribute(IMarker.LOCATION, pattern.getName());
-                marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(pattern).toString());
-                marker.setAttribute(IMarker.MESSAGE, message);
-                orderByPatternMarkers.put(patternFqn, marker);
-            } catch (CoreException e) {
-                logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                        "Marker could not be created for pattern: " + patternFqn, e));
+            IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
+            if (specification instanceof GenericQuerySpecification) {
+                Pattern pattern = ((GenericQuerySpecification) specification).getPattern();
+                URI uri = pattern.eResource().getURI();
+                String platformString = uri.toPlatformString(true);
+                IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+                try {
+                    IMarker marker = markerLoc.createMarker(EValidator.MARKER);
+                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                    marker.setAttribute(IMarker.TRANSIENT, true);
+                    marker.setAttribute(IMarker.LOCATION, pattern.getName());
+                    marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(pattern).toString());
+                    marker.setAttribute(IMarker.MESSAGE, message);
+                    orderByPatternMarkers.put(patternFqn, marker);
+                } catch (CoreException e) {
+                    logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                            "Marker could not be created for pattern: " + patternFqn, e));
+                }
             }
         }
     }
 
-    
+
     /**
      * Removes the marker for the given pattern if it is present.
-     * 
+     *
      * @param patternFqn
      *            the fully qualified name of the pattern
      */
@@ -131,7 +132,7 @@ public class DisplayUtil {
 
     /**
      * Returns the {@link AdapterFactoryLabelProvider} instance for the given uri.
-     * 
+     *
      * @param uri
      *            the uri
      * @return the {@link AdapterFactoryLabelProvider} instance
@@ -181,7 +182,7 @@ public class DisplayUtil {
 
     /**
      * Returns a text message for a generated, not filtered matcher about the current match size.
-     * 
+     *
      * @param matcher
      * @param matchesSize
      * @param patternFqn
@@ -193,7 +194,7 @@ public class DisplayUtil {
 
     /**
      * Returns a text message about the matches size for the given matcher.
-     * 
+     *
      * @param matcher
      *            the {@link IncQueryMatcher} instance
      * @param matchesSize
@@ -232,12 +233,12 @@ public class DisplayUtil {
 
     /**
      * Get the value of the PatternUI annotation's message attribute for the pattern which name is patternName.
-     * 
+     *
      * @param patternName
      *            the name of the pattern
      * @return the content of the message attribute
      */
-    public static String getMessage(IPatternMatch match)//, boolean generatedMatcher) 
+    public static String getMessage(IPatternMatch match)//, boolean generatedMatcher)
     {
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
@@ -246,49 +247,41 @@ public class DisplayUtil {
 //      }
     }
 
-    
+
 
     private static String getMessageForMatch(IPatternMatch match) {
         String patternName = match.patternName();
-        Pattern pattern = null;
+        IQuerySpecification<?> pattern = null;
 
         // find PatternUI annotation
-        for (Pattern p : QueryExplorerPatternRegistry.getInstance().getAllPatterns()) {
-            if (CorePatternLanguageHelper.getFullyQualifiedName(p).matches(patternName)) {
+        for (IQuerySpecification<?> p : QueryExplorerPatternRegistry.getInstance().getAllPatterns()) {
+            if (p.getFullyQualifiedName().matches(patternName)) {
                 pattern = p;
 
-                Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p,
-                        IExtensions.QUERY_EXPLORER_ANNOTATION);
+                PAnnotation annotation = p.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
                 if (annotation == null) {
                     // Try with deprecated PatternUI annotation
-                    annotation = CorePatternLanguageHelper.getFirstAnnotationByName(p, PATTERNUI_ANNOTATION);
+                    annotation = p.getFirstAnnotationByName(PATTERNUI_ANNOTATION);
                 }
                 if (annotation != null) {
-                    for (AnnotationParameter ap : annotation.getParameters()) {
-                        if (ap.getName().matches("message")) {
-                            ValueReference valRef = ap.getValue();
-                            if (valRef instanceof StringValueImpl) {
-                                return ((StringValueImpl) valRef).getValue();
-                            }
-                        }
-                    }
+                    return (String)annotation.getFirstValue("message");
                 }
             }
         }
 
-        // PatternUI annotation was not found
+        // No formatting annotation found
         if (pattern != null) {
             StringBuilder message = new StringBuilder();
-            if (pattern.getParameters().size() == 0) {
+            if (pattern.getParameterNames().size() == 0) {
                 message.append("(Match)");
             } else {
                 int i = 0;
-                for (Variable v : pattern.getParameters()) {
+                for (String v : pattern.getParameterNames()) {
                     if (i > 0) {
                         message.append(", ");
                     }
                     // message += v.getName()+"=$"+v.getName()+"$";
-                    message.append(String.format("%s=$%s$", v.getName(), v.getName()));
+                    message.append(String.format("%s=$%s$", v, v));
                     i++;
                 }
             }
@@ -300,7 +293,7 @@ public class DisplayUtil {
 
     /**
      * Get the DatabindingAdapter generated for the pattern whose name is patternName
-     * 
+     *
      * @param patternName
      *            the name of the pattern
      * @return an instance of the DatabindingAdapter class generated for the pattern
@@ -308,7 +301,7 @@ public class DisplayUtil {
      */
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName)//, boolean generatedMatcher)
     {
-        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
+        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
 //        } else {
@@ -320,11 +313,11 @@ public class DisplayUtil {
 
 
 
-    
+
 
     /**
      * Parses the given .eiq file into a {@link PatternModel}.
-     * 
+     *
      * @param file
      *            the .eiq file instance
      * @return the parsed pattern model or null in case of error
@@ -348,25 +341,26 @@ public class DisplayUtil {
         		resource = resourceSet.createResource(fileURI);
         	} else if (resource.isLoaded()) {
         		TreeIterator<EObject> it = resource.getAllContents();
-        		
+
         		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
-        		
+
         		while (it.hasNext()) {
         			EObject next = it.next();
         			if (next instanceof Pattern) {
 						Pattern oldPattern = (Pattern) next;
-        				
+
 						QueryExplorer queryExplorer = QueryExplorer.getInstance();
-						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(oldPattern));
+						String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
+                        queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(fqn);
 						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().purge();
 						queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
-						
-						queryRegistry.removeActivePattern(oldPattern);
+
+						queryRegistry.removeActivePattern(fqn);
 						it.prune();
         			}
         		}
-        		
-        		resource.unload();        		
+
+        		resource.unload();
         	}
 			resource.load(null);
 		} catch (IOException e) {

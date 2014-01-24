@@ -3,7 +3,10 @@
 */
 package org.eclipse.incquery.patternlanguage.emf.tests;
 
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguagePlugin;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.xtext.junit4.GlobalRegistries;
 import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.junit4.IInjectorProvider;
@@ -12,7 +15,7 @@ import org.eclipse.xtext.junit4.IRegistryConfigurator;
 import com.google.inject.Injector;
 
 public class EMFPatternLanguageInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
-	
+
     protected GlobalStateMemento stateBeforeInjectorCreation;
 	protected GlobalStateMemento stateAfterInjectorCreation;
 	protected Injector injector;
@@ -30,9 +33,12 @@ public class EMFPatternLanguageInjectorProvider implements IInjectorProvider, IR
 		}
 		return injector;
 	}
-	
+
 	protected Injector internalCreateInjector() {
-	    return new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+	    Injector newInjector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+	    IncQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));
+	    EMFPatternLanguagePlugin.getInstance().addCompoundInjector(newInjector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
+        return newInjector;
 	}
 
 	public void restoreRegistry() {

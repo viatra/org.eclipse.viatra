@@ -13,9 +13,11 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -23,35 +25,33 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class UnusedVariableValidationTest extends AbstractValidatorTest {
-	
+
 	@Inject
 	ParseHelper parseHelper
-	
+
 	@Inject
 	EMFPatternLanguageJavaValidator validator
-	
+
 	@Inject
 	Injector injector
-	
+
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
-	
+
 	@Test
 	def testSymbolicVariableNoReference() {
 		val model = parseHelper.parse(
 			'package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			
+
 			pattern testPattern(p) = {
 				Pattern(h);
 				Pattern.name(h, "");
@@ -59,7 +59,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testSymbolicVariableOnePositiveReference() {
 		val model = parseHelper.parse(
@@ -72,7 +72,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def testParametersEqualityError() {
 		val model = parseHelper.parse(
@@ -88,7 +88,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 		)
 	}
-	
+
 	@Test
 	def testSymbolicVariableOneNegativeReference() {
 		val model = parseHelper.parse(
@@ -104,7 +104,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertError(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
-	
+
 	@Test
 	def testSymbolicVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
@@ -124,7 +124,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertError(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
 	}
-	
+
 	@Test
 	def testSymbolicVariableNoPositiveReference() {
 		val model = parseHelper.parse(
@@ -144,7 +144,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING))
 	}
-	
+
 	@Test
 	def testSymbolicVariablePositiveReferenceAsParameter() {
 		val model = parseHelper.parse(
@@ -163,7 +163,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING))
 	}
-	
+
 	@Test
 	def testSymbolicVariableAllReferences() {
 		val model = parseHelper.parse(
@@ -184,7 +184,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR))
 	}
-	
+
 	@Test
 	def testLocalVariableOnePositiveReference() {
 		val model = parseHelper.parse(
@@ -198,7 +198,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableOneNegativeReference() {
 		val model = parseHelper.parse(
@@ -215,7 +215,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableOneReadOnlyReference() {
 		val model = parseHelper.parse(
@@ -235,7 +235,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableMultiplePositiveReferences() {
 		val model = parseHelper.parse(
@@ -250,7 +250,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
-	
+
 	@Test
 	def testLocalVariableOnePositiveOneNegativeReference() {
 		val model = parseHelper.parse(
@@ -268,7 +268,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
-	
+
 	@Test
 	def testLocalVariableOnePositiveOneReadOnlyReference() {
 		val model = parseHelper.parse(
@@ -317,7 +317,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_READONLY), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableMultipleNegativeReferences() {
 		val model = parseHelper.parse(
@@ -340,7 +340,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableOneNegativeOneReadOnlyReference() {
 		val model = parseHelper.parse(
@@ -361,11 +361,11 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
-	
+
 	@Test
 	def testLocalVariableMultipleReadOnlyReferences() {
-		val model = parseHelper.parse(
-			'package org.eclipse.incquery.patternlanguage.emf.tests
+		val model = parseHelper.parse('''
+			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
@@ -379,8 +379,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				EInt(i);
 				h == count find helper(p);
 				i == count find helper(p);
-			}'
-		)
+			}
+		''')
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
 	}
 }

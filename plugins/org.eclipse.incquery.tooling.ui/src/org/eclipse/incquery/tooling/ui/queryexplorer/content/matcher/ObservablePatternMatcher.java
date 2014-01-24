@@ -17,19 +17,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.impl.StringValueImpl;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
@@ -38,9 +36,9 @@ import org.eclipse.swt.widgets.Display;
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation. These elements
  * will be the children of the top level elements in the treeviewer.
- * 
+ *
  * @author Tamas Szabo
- * 
+ *
  */
 public class ObservablePatternMatcher {
 
@@ -60,13 +58,13 @@ public class ObservablePatternMatcher {
     private boolean descendingOrder;
     private final String exceptionMessage;
     private IncQueryModelUpdateListener modelUpdateListener;
-    private Pattern pattern;
+    private IQuerySpecification<?> specification;
 
     public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher,
-            Pattern pattern, boolean generated, String exceptionMessage) {
+            boolean generated, String exceptionMessage) {
         this.parent = parent;
-        this.pattern = pattern;
-        this.patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        this.specification = matcher.getSpecification();
+        this.patternFqn = specification.getFullyQualifiedName();
         this.matches = new ArrayList<ObservablePatternMatch>();
         this.matcher = matcher;
         this.generated = generated;
@@ -99,12 +97,12 @@ public class ObservablePatternMatcher {
             };
 
             modelUpdateListener = new IncQueryModelUpdateListener() {
-                
+
                 @Override
                 public void notifyChanged(ChangeLevel changeLevel) {
                     processMatchesRunnable.run();
                 }
-                
+
                 @Override
                 public ChangeLevel getLevel() {
                     return ChangeLevel.MATCHSET;
@@ -120,15 +118,14 @@ public class ObservablePatternMatcher {
      * Initializes the matcher for ordering if the annotation is present.
      */
     private void initOrdering() {
-        Annotation annotation = CorePatternLanguageHelper.getFirstAnnotationByName(pattern,
-                DisplayUtil.ORDERBY_ANNOTATION);
+        PAnnotation annotation = specification.getFirstAnnotationByName(DisplayUtil.ORDERBY_ANNOTATION);
         if (annotation != null) {
-            for (AnnotationParameter ap : annotation.getParameters()) {
-                if (ap.getName().matches("key")) {
-                    orderParameter = ((StringValueImpl) ap.getValue()).getValue();
+            for (Entry<String, Object> ap : annotation.getAllValues()) {
+                if (ap.getKey().matches("key")) {
+                    orderParameter = (String)ap.getValue();
                 }
-                if (ap.getName().matches("direction")) {
-                    String direction = ((StringValueImpl) ap.getValue()).getValue();
+                if (ap.getKey().matches("direction")) {
+                    String direction = ((String) ap.getValue());
                     if (direction.matches("desc")) {
                         descendingOrder = true;
                     } else {
@@ -155,7 +152,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the index of the new match in the list based on the ordering set on the matcher.
-     * 
+     *
      * @param match
      *            the match that will be inserted
      * @return -1 if the match should be inserted at the end of the list, else the actual index
@@ -252,10 +249,10 @@ public class ObservablePatternMatcher {
         return parent;
     }
 
-    public Pattern getPattern() {
-        return pattern;
+    public IQuerySpecification<?> getSpecification() {
+        return specification;
     }
-    
+
     public IncQueryMatcher<IPatternMatch> getMatcher() {
         return matcher;
     }
@@ -309,7 +306,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the current filter used on the corresponding matcher.
-     * 
+     *
      * @return the filter as an array of objects
      */
     public Object[] getFilter() {
@@ -318,7 +315,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the label for the observable pattern matcher that will be used in the {@link QueryExplorer}.
-     * 
+     *
      * @return the label
      */
     public String getText() {
@@ -330,7 +327,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the list of observable pattern matches under this matcher.
-     * 
+     *
      * @return the list of matches
      */
     public List<ObservablePatternMatch> getMatches() {
@@ -339,7 +336,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns true if the matcher is generated, false if it is generic.
-     * 
+     *
      * @return true for generated, false for generic matcher
      */
     public boolean isGenerated() {
@@ -348,7 +345,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns true if the RETE matcher was created for this observable matcher, false otherwise.
-     * 
+     *
      * @return true if matcher could be created
      */
     public boolean isCreated() {

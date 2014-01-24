@@ -16,9 +16,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPreferences;
@@ -55,25 +55,30 @@ public class RuntimeMatcherRegistrator implements Runnable {
     public void run() {
         final QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
         if (queryExplorerInstance != null) {
-            final MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
-            final PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot();
-            openPatternsViewerIfNoPreviousPatterns(queryExplorerInstance);
-            // UNREGISTERING PATTERNS
-            unregisterPatternsFromMatcherTreeViewer(vr);
-            // remove labels from pattern registry for the corresponding pattern model
-            removeLabelsFromPatternRegistry(queryExplorerInstance, viewerInput);
-            // REGISTERING PATTERNS
-            final List<Pattern> newPatterns = registerPatternsFromPatternModel(vr);
-            setCheckedStatesOnNewPatterns(queryExplorerInstance, viewerInput, newPatterns);
+            try {
+                final MatcherTreeViewerRoot vr = queryExplorerInstance.getMatcherTreeViewerRoot();
+                final PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput()
+                        .getGenericPatternsRoot();
+                openPatternsViewerIfNoPreviousPatterns(queryExplorerInstance);
+                // UNREGISTERING PATTERNS
+                unregisterPatternsFromMatcherTreeViewer(vr);
+                // remove labels from pattern registry for the corresponding pattern model
+                removeLabelsFromPatternRegistry(queryExplorerInstance, viewerInput);
+                // REGISTERING PATTERNS
+                List<IQuerySpecification<?>> newPatterns;
+                newPatterns = registerPatternsFromPatternModel(vr);
+                setCheckedStatesOnNewPatterns(queryExplorerInstance, viewerInput, newPatterns);
+            } catch (IncQueryException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     private void setCheckedStatesOnNewPatterns(final QueryExplorer queryExplorerInstance, final PatternComposite viewerInput,
-            final List<Pattern> newPatterns) {
+            final List<IQuerySpecification<?>> newSpecifications) {
         final List<PatternComponent> components = new ArrayList<PatternComponent>();
-        for (final Pattern pattern : newPatterns) {
-            final PatternComponent component = viewerInput.addComponent(CorePatternLanguageHelper
-                    .getFullyQualifiedName(pattern));
+        for (final IQuerySpecification<?> specification : newSpecifications) {
+            final PatternComponent component = viewerInput.addComponent(specification.getFullyQualifiedName());
             components.add(component);
         }
         // note that after insertion a refresh is necessary otherwise setting check state will not work
@@ -90,10 +95,10 @@ public class RuntimeMatcherRegistrator implements Runnable {
     }
 
     private void removeLabelsFromPatternRegistry(final QueryExplorer queryExplorerInstance, final PatternComposite viewerInput) {
-        final List<Pattern> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
+        final List<IQuerySpecification<?>> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
         if (oldParsedModel != null) {
-            for (final Pattern pattern : oldParsedModel) {
-                viewerInput.removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+            for (final IQuerySpecification<?> pattern : oldParsedModel) {
+                viewerInput.removeComponent(pattern.getFullyQualifiedName());
             }
         }
 
@@ -101,25 +106,25 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.getPatternsViewer().refresh();
     }
 
-    private List<Pattern> registerPatternsFromPatternModel(final MatcherTreeViewerRoot vr) {
+    private List<IQuerySpecification<?>> registerPatternsFromPatternModel(final MatcherTreeViewerRoot vr) throws IncQueryException {
         final PatternModel newParsedModel = dbUtil.parseEPM(file);
-        final List<Pattern> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
-        final List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        final List<IQuerySpecification<?>> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
         // now the active patterns also contain of the new patterns
         for (final ObservablePatternMatcherRoot root : vr.getRoots()) {
-            root.registerPattern(allActivePatterns.toArray(new Pattern[allActivePatterns.size()]));
+            root.registerPattern(allActivePatterns.toArray(new IQuerySpecification<?>[allActivePatterns.size()]));
         }
         return newPatterns;
     }
 
     private void unregisterPatternsFromMatcherTreeViewer(final MatcherTreeViewerRoot vr) {
-        final List<Pattern> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
+        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
         // deactivate patterns within the given file
         QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
 
         // unregister all active patterns from the roots and wipe the appropriate iq engine
         for (final ObservablePatternMatcherRoot root : vr.getRoots()) {
-            for (final Pattern pattern : allActivePatterns) {
+            for (final IQuerySpecification<?> pattern : allActivePatterns) {
                 root.unregisterPattern(pattern);
             }
             // final IncQueryEngine engine =

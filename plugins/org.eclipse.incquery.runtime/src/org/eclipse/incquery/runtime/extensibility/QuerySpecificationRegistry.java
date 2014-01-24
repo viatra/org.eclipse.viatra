@@ -21,22 +21,18 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
-import org.eclipse.incquery.runtime.SpecificationBuilder;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
- * Registry for generated query specifications contributed via the plug-in mechanism. 
+ * Registry for generated query specifications contributed via the plug-in mechanism.
  * Allows accessing query specification instances based on the Pattern object or the fully qualified name of the pattern.
- * 
+ *
  * @author Abel Hegedus
- * 
+ *
  */
 public final class QuerySpecificationRegistry {
     private static final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> QUERY_SPECIFICATIONS = createQuerySpecificationRegistry();
@@ -126,7 +122,7 @@ public final class QuerySpecificationRegistry {
 
     /**
      * Puts the specification in the registry, unless it already contains a specification for the given pattern FQN
-     * 
+     *
      * @param specification
      */
     public static void registerQuerySpecification(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification) {
@@ -141,10 +137,10 @@ public final class QuerySpecificationRegistry {
                                     qualifiedName));
         }
     }
-    
+
     /**
-     * Removes the query specification from the registry which belongs to the given fully qualified pattern name.  
-     * 
+     * Removes the query specification from the registry which belongs to the given fully qualified pattern name.
+     *
      * @param patternFQN the fully qualified name of the pattern
      */
     public static void unregisterQuerySpecification(String patternFQN) {
@@ -170,34 +166,9 @@ public final class QuerySpecificationRegistry {
     }
 
     /**
-     * @return the generated query specification for the pattern, if it is registered, null otherwise
-     */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(Pattern pattern) {
-        String fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        final IQuerySpecification<?> contributedSpecification = QUERY_SPECIFICATIONS.get(fullyQualifiedName);
-        if (contributedSpecification != null && pattern.equals(contributedSpecification.getPattern())) 
-        	return contributedSpecification;
-        else 
-        	return null;
-    }
-
-    /**
-     * Returns a generic pattern query specification if a generated query specification is not registered
-     * @throws IncQueryException 
-     */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateQuerySpecification(Pattern pattern) throws IncQueryException {
-    	IQuerySpecification<?> specification = getQuerySpecification(pattern);
-        if (specification == null) { 
-            SpecificationBuilder builder = new SpecificationBuilder(QUERY_SPECIFICATIONS.values());
-            specification = builder.getOrCreateSpecification(pattern);
-        }
-        return specification;
-    }
-
-    /**
      * Returns the set of query specifications in a given package. Only query specifications with the exact package fully
      * qualified name are returned.
-     * 
+     *
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications inside the given package, empty set otherwise.
@@ -209,7 +180,7 @@ public final class QuerySpecificationRegistry {
     /**
      * Returns the set of query specifications in a given package. query specifications with package names starting with the
      * given package are returned.
-     * 
+     *
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications in the given package subtree, empty set otherwise.
@@ -220,7 +191,7 @@ public final class QuerySpecificationRegistry {
 
     /**
      * Returns a pattern group for the given package
-     * 
+     *
      * @param packageFQN
      *            the fully qualified name of the package
      * @param includeSubPackages
@@ -246,7 +217,7 @@ public final class QuerySpecificationRegistry {
 
     /**
      * Adds the query specification to an existing group if the package of the query specification's pattern matches the given package name.
-     * 
+     *
      * @param packageFQN
      *            the fully qualified name of the package
      * @param group

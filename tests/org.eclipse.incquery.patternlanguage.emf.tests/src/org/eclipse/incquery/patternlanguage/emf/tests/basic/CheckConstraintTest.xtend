@@ -13,7 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
@@ -24,45 +24,45 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CheckConstraintTest {
-	
+
 	@Inject
 	ParseHelper<PatternModel> parseHelper
-	
+
 	@Inject
 	EMFPatternLanguageJavaValidator validator
-	
+
 	@Inject
 	Injector injector
-	
+
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
+
 	@Inject extension ValidationTestHelper
-	
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
-	
+
 	@Test
 	def whitelistedCheck() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(D) = {			
+			pattern name(D) = {
 				EDouble(D);
 				check(java::lang::Math::abs(D) > 10.5);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def nonWhitelistedCheck() {
 		val model = parseHelper.parse('
@@ -74,8 +74,9 @@ class CheckConstraintTest {
 				check(java::util::Calendar::getInstance().getTime().getTime() > L);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
-	
+
 }

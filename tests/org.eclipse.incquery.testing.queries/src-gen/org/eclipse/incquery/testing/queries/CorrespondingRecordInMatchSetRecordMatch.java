@@ -10,12 +10,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification;
 
 /**
- * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord pattern,
  * to be used in conjunction with {@link CorrespondingRecordInMatchSetRecordMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see CorrespondingRecordInMatchSetRecordMatcher
@@ -132,10 +132,10 @@ public abstract class CorrespondingRecordInMatchSetRecordMatch extends BasePatte
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode()); 
-    result = prime * result + ((fCorrespodingRecord == null) ? 0 : fCorrespodingRecord.hashCode()); 
-    result = prime * result + ((fExpectedSet == null) ? 0 : fExpectedSet.hashCode()); 
-    return result; 
+    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode());
+    result = prime * result + ((fCorrespodingRecord == null) ? 0 : fCorrespodingRecord.hashCode());
+    result = prime * result + ((fExpectedSet == null) ? 0 : fExpectedSet.hashCode());
+    return result;
     
   }
   
@@ -143,7 +143,7 @@ public abstract class CorrespondingRecordInMatchSetRecordMatch extends BasePatte
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof CorrespondingRecordInMatchSetRecordMatch)) { // this should be infrequent				
+    if (!(obj instanceof CorrespondingRecordInMatchSetRecordMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))

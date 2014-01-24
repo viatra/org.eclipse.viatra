@@ -6,16 +6,15 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
-import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
 import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification;
 
 /**
- * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern,
  * to be used in conjunction with {@link RecordRoleValueMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see RecordRoleValueMatcher
@@ -26,11 +25,11 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
 public abstract class RecordRoleValueMatch extends BasePatternMatch {
   private MatchRecord fRecord;
   
-  private RecordRole fRole;
+  private Object fRole;
   
   private static List<String> parameterNames = makeImmutableList("Record", "Role");
   
-  private RecordRoleValueMatch(final MatchRecord pRecord, final RecordRole pRole) {
+  private RecordRoleValueMatch(final MatchRecord pRecord, final Object pRole) {
     this.fRecord = pRecord;
     this.fRole = pRole;
     
@@ -49,7 +48,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     
   }
   
-  public RecordRole getRole() {
+  public Object getRole() {
     return this.fRole;
     
   }
@@ -61,8 +60,8 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     	this.fRecord = (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) newValue;
     	return true;
     }
-    if ("Role".equals(parameterName) ) {
-    	this.fRole = (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) newValue;
+    if ("Role".equals(parameterName) && newValue instanceof java.lang.Object) {
+    	this.fRole = (java.lang.Object) newValue;
     	return true;
     }
     return false;
@@ -75,7 +74,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     
   }
   
-  public void setRole(final RecordRole pRole) {
+  public void setRole(final Object pRole) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fRole = pRole;
     
@@ -112,9 +111,9 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode()); 
-    result = prime * result + ((fRole == null) ? 0 : fRole.hashCode()); 
-    return result; 
+    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode());
+    result = prime * result + ((fRole == null) ? 0 : fRole.hashCode());
+    return result;
     
   }
   
@@ -122,7 +121,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof RecordRoleValueMatch)) { // this should be infrequent				
+    if (!(obj instanceof RecordRoleValueMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))
@@ -153,7 +152,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   
   @SuppressWarnings("all")
   static final class Mutable extends RecordRoleValueMatch {
-    Mutable(final MatchRecord pRecord, final RecordRole pRole) {
+    Mutable(final MatchRecord pRecord, final Object pRole) {
       super(pRecord, pRole);
       
     }
@@ -167,7 +166,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   
   @SuppressWarnings("all")
   static final class Immutable extends RecordRoleValueMatch {
-    Immutable(final MatchRecord pRecord, final RecordRole pRole) {
+    Immutable(final MatchRecord pRecord, final Object pRole) {
       super(pRecord, pRole);
       
     }

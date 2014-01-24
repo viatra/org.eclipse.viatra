@@ -18,27 +18,27 @@ public final class MatchRecordQueriesMatchers {
     
   }
   
-  public RecordRoleValueMatcher getRecordRoleValueMatcher() throws IncQueryException {
-    return RecordRoleValueMatcher.on(engine);
-  }
-  
   public SubstitutionValueMatcher getSubstitutionValueMatcher() throws IncQueryException {
     return SubstitutionValueMatcher.on(engine);
+  }
+  
+  public IncorrectSubstitutionMatcher getIncorrectSubstitutionMatcher() throws IncQueryException {
+    return IncorrectSubstitutionMatcher.on(engine);
   }
   
   public UnexpectedMatchRecordMatcher getUnexpectedMatchRecordMatcher() throws IncQueryException {
     return UnexpectedMatchRecordMatcher.on(engine);
   }
   
-  public CorrespondingRecordInMatchSetRecordMatcher getCorrespondingRecordInMatchSetRecordMatcher() throws IncQueryException {
-    return CorrespondingRecordInMatchSetRecordMatcher.on(engine);
-  }
-  
   public CorrespondingRecordsMatcher getCorrespondingRecordsMatcher() throws IncQueryException {
     return CorrespondingRecordsMatcher.on(engine);
   }
   
-  public IncorrectSubstitutionMatcher getIncorrectSubstitutionMatcher() throws IncQueryException {
-    return IncorrectSubstitutionMatcher.on(engine);
+  public RecordRoleValueMatcher getRecordRoleValueMatcher() throws IncQueryException {
+    return RecordRoleValueMatcher.on(engine);
+  }
+  
+  public CorrespondingRecordInMatchSetRecordMatcher getCorrespondingRecordInMatchSetRecordMatcher() throws IncQueryException {
+    return CorrespondingRecordInMatchSetRecordMatcher.on(engine);
   }
 }

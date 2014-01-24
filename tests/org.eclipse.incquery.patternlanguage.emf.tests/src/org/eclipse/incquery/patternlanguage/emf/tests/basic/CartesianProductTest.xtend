@@ -14,6 +14,7 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -23,33 +24,30 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageGeneratorInjectorProvider
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(EMFPatternLanguageGeneratorInjectorProvider))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CartesianProductTest {
-	
+
 	@Inject
 	ParseHelper<PatternModel> parseHelper
-	
+
 	@Inject
 	EMFPatternLanguageJavaValidator validator
-	
+
 	@Inject
 	Injector injector
-	
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
+
 	@Inject extension ValidationTestHelper
-	
+
+	extension ValidatorTester<EMFPatternLanguageJavaValidator> tester
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
-	
+
 	@Test
 	def testGood1() {
 		val model = parseHelper.parse('
@@ -62,10 +60,10 @@ class CartesianProductTest {
 				X == Y;
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		tester.validate(model).assertOK
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 	}
-	
+
 	@Test
 	def testGood2() {
 		val model = parseHelper.parse('
@@ -84,10 +82,10 @@ class CartesianProductTest {
 				find Good1(X,Y);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		tester.validate(model).assertOK
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 	}
-	
+
 	@Test
 	def testGood3() {
 		val model = parseHelper.parse('
@@ -105,13 +103,13 @@ class CartesianProductTest {
 				EClass(Y);
 				X == Y;
 				Z == count find Good1(X,Y);
-				check(Z > 10); 
+				check(Z > 10);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		tester.validate(model).assertOK
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 	}
-	
+
 	@Test
 	def testGood4() {
 		val model = parseHelper.parse('
@@ -138,10 +136,10 @@ class CartesianProductTest {
 				find IntAndClassPattern(count find Good1(X,Y), Z);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		tester.validate(model).assertOK
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 	}
-	
+
 	@Test
 	def testGood5() {
 		val model = parseHelper.parse('
@@ -162,10 +160,10 @@ class CartesianProductTest {
 				EClass.eStructuralFeatures.upperBound(Z,count find Good1(X,Y));
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		tester.validate(model).assertOK
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 	}
-	
+
 	@Test
 	def testGood6() {
 		val model = parseHelper.parse('
@@ -183,10 +181,11 @@ class CartesianProductTest {
 				neg find Good1(X,_A);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def testGood7() {
 		val model = parseHelper.parse('
@@ -204,10 +203,11 @@ class CartesianProductTest {
 				neg find Good1(_A,_B);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def testGood8() {
 		val model = parseHelper.parse('
@@ -226,10 +226,11 @@ class CartesianProductTest {
 				check(M>10);
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def testGood9() {
 		val model = parseHelper.parse('
@@ -242,17 +243,18 @@ class CartesianProductTest {
 				Y == 10;
 			}
 		')
-		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
-	
-	
+
+
 	@Test
 	def testSoft1() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Soft1(X, Y) {
 				EInt(X);
 				EInt(Y);
@@ -261,13 +263,13 @@ class CartesianProductTest {
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
-	
+
 	@Test
 	def testSoft2() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Good1(X, Y) {
 				EClass(X);
 				EClass(Y);
@@ -282,13 +284,13 @@ class CartesianProductTest {
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
-	
+
 	@Test
 	def testSoft3() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Good1(X, Y) {
 				EClass(X);
 				EClass(Y);
@@ -303,13 +305,13 @@ class CartesianProductTest {
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
-	
+
 	@Test
 	def testSoft4() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Soft4(X, Y) {
 				EClass(X);
 				EClass(Y);
@@ -324,7 +326,7 @@ class CartesianProductTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Strict1(X, Y) {
 				EClass(X);
 				EClass(Y);
@@ -332,13 +334,13 @@ class CartesianProductTest {
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
-	
+
 	@Test
 	def testStrict2() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern Strict1(X) {
 				EClass(X);
 				EClass(_Y);
@@ -346,5 +348,5 @@ class CartesianProductTest {
 		')
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
-		
+
 }
