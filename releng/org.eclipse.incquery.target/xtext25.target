@@ -22,8 +22,8 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.3"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtend.sdk.feature.group" version="2.5.0.v201310010713"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.5.0.v201310010713"/>
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.5.0.v201311121244"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.5.0.v201311121244"/>
 <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
