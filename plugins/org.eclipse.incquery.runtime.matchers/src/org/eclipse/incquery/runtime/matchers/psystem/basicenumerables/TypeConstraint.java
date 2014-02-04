@@ -35,4 +35,8 @@ public abstract class TypeConstraint extends KeyedEnumerablePConstraint<Object> 
         return typeString;
     }
 
+    public String getTypeString() {
+        return typeString;
+    }
+
 }

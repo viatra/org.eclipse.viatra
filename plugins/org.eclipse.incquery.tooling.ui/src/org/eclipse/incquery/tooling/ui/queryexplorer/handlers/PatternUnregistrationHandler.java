@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
@@ -26,9 +26,9 @@ import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Handler used for pattern unregistration (called from Pattern Registry).
- * 
+ *
  * @author Tamas Szabo
- * 
+ *
  */
 public class PatternUnregistrationHandler extends AbstractHandler {
 
@@ -56,12 +56,12 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 
     /**
      * Unregisters the given pattern both from the QueryExplorer and the Pattern Registry.
-     * 
+     *
      * @param patternFqn
      *            the fully qualified name of the pattern
      */
     private void unregisterPattern(String patternFqn) {
-        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
+        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
         if (!QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
             QueryExplorerPatternRegistry.getInstance().unregisterPattern(pattern);
             QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);

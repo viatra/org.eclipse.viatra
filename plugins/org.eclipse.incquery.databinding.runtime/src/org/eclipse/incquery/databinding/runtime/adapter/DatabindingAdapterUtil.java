@@ -26,6 +26,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -40,7 +42,7 @@ public final class DatabindingAdapterUtil {
     /**
      * Returns an IObservableValue for the given match based on the given expression. If an attribute is not present in
      * the expression than it tries with the 'name' attribute. If it is not present the returned value will be null.
-     * 
+     *
      * @param match
      *            the match object
      * @param expression
@@ -56,7 +58,7 @@ public final class DatabindingAdapterUtil {
     /**
      * Registers the given changeListener for the appropriate features of the given signature. The features will be
      * computed based on the message parameter.
-     * 
+     *
      * @param signature
      *            the signature instance
      * @param changeListener
@@ -75,7 +77,7 @@ public final class DatabindingAdapterUtil {
     /**
      * Registers the given change listener on the given object's all accessible fields. This function uses Java
      * Reflection.
-     * 
+     *
      * @param changeListener
      *            the changle listener
      * @param object
@@ -90,7 +92,7 @@ public final class DatabindingAdapterUtil {
 
     /**
      * Get the structural feature with the given name of the given object.
-     * 
+     *
      * @param o
      *            the object (must be an EObject)
      * @param featureName
@@ -150,40 +152,34 @@ public final class DatabindingAdapterUtil {
      * @param pattern
      * @return
      */
-    public static Map<String, ObservableDefinition> calculateObservableValues(Pattern pattern) {
+    public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
         Map<String, ObservableDefinition> propertyMap = Maps.newHashMap();
-        for (Variable v : pattern.getParameters()) {
-            ObservableDefinition def = new ObservableDefinition(v.getName(), v.getName(),
+        for (String v : query.getParameterNames()) {
+            ObservableDefinition def = new ObservableDefinition(v, v,
                     ObservableType.OBSERVABLE_FEATURE);
-            propertyMap.put(v.getName(), def);
+            propertyMap.put(v, def);
         }
-        for (Annotation annotation : CorePatternLanguageHelper
-                .getAnnotationsByName(pattern, OBSERVABLEVALUE_ANNOTATION)) {
-
-            StringValue nameRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
-                    "name");
-            StringValue exprRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
-                    "expression");
-            StringValue labelRef = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(annotation,
-                    "labelExpression");
-            if (nameRef == null) {
-                Preconditions.checkArgument(exprRef == null && labelRef == null,
+        for (PAnnotation annotation : query.getAnnotationsByName(OBSERVABLEVALUE_ANNOTATION)) {
+            String name = (String) annotation.getFirstValue("name");
+            String expr = (String) annotation.getFirstValue("expression");
+            String label = (String) annotation.getFirstValue("labelExpression");
+            if (name == null) {
+                Preconditions.checkArgument(expr == null && label == null,
                         "Name attribute must not be empty");
                 continue;
             }
-            String name = nameRef.getValue();
-            Preconditions.checkArgument(exprRef != null ^ labelRef != null,
+            Preconditions.checkArgument(expr != null ^ label != null,
                     "Either expression or label expression attribute must not be empty.");
-            String expr;
+            String obsExpr = null;
             ObservableType type;
-            if (exprRef != null) {
-                expr = exprRef.getValue();
+            if (expr != null) {
+                obsExpr = expr;
                 type = ObservableType.OBSERVABLE_FEATURE;
             } else {// if (labelRef != null)
-                expr = labelRef.getValue();
+                obsExpr = label;
                 type = ObservableType.OBSERVABLE_LABEL;
             }
-            ObservableDefinition def = new ObservableDefinition(name, expr, type);
+            ObservableDefinition def = new ObservableDefinition(name, obsExpr, type);
 
             propertyMap.put(name, def);
         }

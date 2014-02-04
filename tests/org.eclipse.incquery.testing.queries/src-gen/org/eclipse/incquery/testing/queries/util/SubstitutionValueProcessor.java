@@ -14,8 +14,8 @@ import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
 public abstract class SubstitutionValueProcessor implements IMatchProcessor<SubstitutionValueMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pSubstitution the value of pattern parameter Substitution in the currently processed match 
-   * @param pValue the value of pattern parameter Value in the currently processed match 
+   * @param pSubstitution the value of pattern parameter Substitution in the currently processed match
+   * @param pValue the value of pattern parameter Value in the currently processed match
    * 
    */
   public abstract void process(final MatchSubstitutionRecord pSubstitution, final Object pValue);

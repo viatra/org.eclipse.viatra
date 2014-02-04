@@ -9,12 +9,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification;
 
 /**
- * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.SubstitutionValue pattern,
  * to be used in conjunction with {@link SubstitutionValueMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see SubstitutionValueMatcher
@@ -111,9 +111,9 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fSubstitution == null) ? 0 : fSubstitution.hashCode()); 
-    result = prime * result + ((fValue == null) ? 0 : fValue.hashCode()); 
-    return result; 
+    result = prime * result + ((fSubstitution == null) ? 0 : fSubstitution.hashCode());
+    result = prime * result + ((fValue == null) ? 0 : fValue.hashCode());
+    return result;
     
   }
   
@@ -121,7 +121,7 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof SubstitutionValueMatch)) { // this should be infrequent				
+    if (!(obj instanceof SubstitutionValueMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))

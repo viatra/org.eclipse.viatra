@@ -259,7 +259,7 @@
             commandId="org.eclipse.incquery.tooling.ui.resetui">
       </handler>
       <handler
-            class="org.eclipse.incquery.tooling.ui.handlers.ProjectNatureUpdater"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.handlers.ProjectNatureUpdater"
             commandId="org.eclipse.incquery.tooling.ui.addnature">
       </handler>
    </extension>
@@ -456,12 +456,11 @@
                         type="org.eclipse.core.resources.IProject">
                      <and>
                         <test
-                              property="org.eclipse.core.resources.projectNature"
-                              value="org.eclipse.incquery.projectnature">
-                        </test>
-                        <test
                               property="org.eclipse.core.resources.open"
                               value="true">
+                        </test>
+                        <test
+                              property="org.eclipse.incquery.tooling.ui.project.current">
                         </test>
                      </and>
                   </adapt>
@@ -568,39 +567,6 @@
       </command>
    </extension>
    <extension
-         id="org.eclipse.incquery.tooling.ui.extensions"
-         name="EMF-IncQuery Content Extensions"
-         point="org.eclipse.ui.navigator.navigatorContent">
-      <commonFilter
-            activeByDefault="true"
-            class="org.eclipse.incquery.tooling.ui.content.QueryFolderFilter"
-            description="Hides EMF-IncQuery queries folder"
-            id="org.eclipse.incquery.tooling.ui.queriesFolderFilter"
-            name="EMF-IncQuery output folder"
-            visibleInUI="true">
-      </commonFilter>
-   </extension>
-   <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewerContentBinding
-            viewerId="org.eclipse.ui.navigator.ProjectExplorer">
-         <includes>
-            <contentExtension
-                  pattern="org.eclipse.incquery.tooling.ui.queriesFolderFilter">
-            </contentExtension>
-         </includes>
-      </viewerContentBinding>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.ui.javaElementFilters">
-      <filter
-            class="org.eclipse.incquery.tooling.ui.content.QueryFolderFilter"
-            description="Hides EMF-IncQuery queries folder"
-            enabled="true"
-            id="org.eclipse.incquery.tooling.ui.queriesFolderFilter"
-            name="EMF-IncQuery output folder"></filter>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguage"
@@ -671,5 +637,15 @@
                class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory">
                <parameter name="guicekey" value="org.eclipse.incquery.tooling.ui.builder.IncQueryProjectBuilder"/>
          </run></builder>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.incquery.tooling.ui.handlers.IncQueryProjectVersionTester"
+            id="org.eclipse.incquery.tooling.ui.projectPropertyTester"
+            namespace="org.eclipse.incquery.tooling.ui.project"
+            properties="current"
+            type="org.eclipse.core.resources.IProject">
+      </propertyTester>
    </extension>
 </plugin>

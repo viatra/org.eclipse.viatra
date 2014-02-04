@@ -15,9 +15,6 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-
 /**
  * A definition of queries usable inside pattern descriptions. Such description always has (a non-null) name. The query
  * itself is defined as a (non-empty) set of {@link PBody} instances, the result is the disjunction of the single
@@ -66,10 +63,27 @@ public interface PQuery {
     Set<PBody> getContainedBodies();
 
     /**
+     * Returns all queries directly referred in the constraints. They are all required to evaluate this query
+     * @return a non-null, but possibly empty list of query definitions
+     */
+    Set<PQuery> getDirectReferredQueries();
+
+    /**
+     * Returns all queries required to evaluate this query (transitively).
+     * @return a non-null, but possibly empty list of query definitions
+     */
+    Set<PQuery> getAllReferredQueries();
+    /**
      * Return the list of parameter names
      * @return a non-null, but possibly empty list of parameter names
      */
     List<String> getParameterNames();
+
+    /**
+     * Returns a list of parameter descriptions
+     * @return a non-null, but possibly empty list of parameter descriptions
+     */
+    List<PParameter> getParameters();
 
     /**
      * Returns the index of a named parameter

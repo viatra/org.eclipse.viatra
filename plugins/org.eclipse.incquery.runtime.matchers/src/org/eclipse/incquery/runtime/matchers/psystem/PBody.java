@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 /**
  * A set of constraints representing a pattern body
  * @author Gabor Bergmann
- * 
+ *
  */
 public class PBody {
     private PQuery query;
@@ -37,10 +38,10 @@ public class PBody {
     public PBody(PQuery query) {
         super();
         this.query = query;
-        allVariables = new HashSet<PVariable>();
-        uniqueVariables = new HashSet<PVariable>();
+        allVariables = new LinkedHashSet<PVariable>();
+        uniqueVariables = new LinkedHashSet<PVariable>();
         variablesByName = new HashMap<Object, PVariable>();
-        constraints = new HashSet<PConstraint>();
+        constraints = new LinkedHashSet<PConstraint>();
     }
 
     /**
@@ -62,7 +63,7 @@ public class PBody {
 
     /**
      * Use this method to add a newly created constraint to the pSystem.
-     * 
+     *
      * @return whether the submission of the new constraint was successful
      */
     boolean registerConstraint(PConstraint constraint) {
@@ -72,7 +73,7 @@ public class PBody {
 
     /**
      * Use this method to remove an obsolete constraint from the pSystem.
-     * 
+     *
      * @return whether the removal of the constraint was successful
      */
     boolean unregisterConstraint(PConstraint constraint) {
@@ -94,7 +95,7 @@ public class PBody {
         checkMutability();
         String name;
         do {
-            name = ".virtual{" + nextVirtualNodeID++ + "}";
+            name = String.format(".virtual{%d}", nextVirtualNodeID++);
         } while (variablesByName.containsKey(name));
         PVariable var = new PVariable(this, name, true);
         addVariable(var);
@@ -131,8 +132,8 @@ public class PBody {
             throw new IllegalArgumentException(String.format("Cannot find PVariable %s", name));
         return getVariableByName(name);
     }
-    
-    public PVariable getOrCreateVariableByName(Object name) {
+
+    public PVariable getOrCreateVariableByName(String name) {
         checkMutability();
         if (!variablesByName.containsKey(name))
             addVariable(new PVariable(this, name));

@@ -1,9 +1,21 @@
 package org.eclipse.incquery.testing.queries.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.testing.queries.IncorrectSubstitutionMatcher;
 
 /**
@@ -33,24 +45,57 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
   @Override
   protected IncorrectSubstitutionMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return IncorrectSubstitutionMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.testing.queries";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "org.eclipse.incquery.testing.queries.IncorrectSubstitution";
     
   }
   
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("Record","CorrespondingRecord");
+  }
+  
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"),new PParameter("CorrespondingRecord", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() {
+    return bodies;
+  }
+  
   private IncorrectSubstitutionQuerySpecification() throws IncQueryException {
     super();
+    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    {
+      PBody body = new PBody(this);
+      PVariable var_Record = body.getOrCreateVariableByName("Record");
+      PVariable var_CorrespondingRecord = body.getOrCreateVariableByName("CorrespondingRecord");
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Name = body.getOrCreateVariableByName("Name");
+      PVariable var_CorrespondingSubstitution = body.getOrCreateVariableByName("CorrespondingSubstitution");
+      PVariable var_Value1 = body.getOrCreateVariableByName("Value1");
+      PVariable var_Value2 = body.getOrCreateVariableByName("Value2");
+      new ExportedParameter(body, var_Record, "Record");
+      new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord");
+      new TypeBinary(body, context, var_Record, var_Substitution, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord", "substitutions"), "http://www.eclipse.org/incquery/snapshot/MatchRecord.substitutions");
+      new TypeBinary(body, context, var_Substitution, var_Name, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "parameterName"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.parameterName");
+      new TypeBinary(body, context, var_CorrespondingRecord, var_CorrespondingSubstitution, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord", "substitutions"), "http://www.eclipse.org/incquery/snapshot/MatchRecord.substitutions");
+      new TypeBinary(body, context, var_CorrespondingSubstitution, var_Name, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "parameterName"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.parameterName");
+      new TypeBinary(body, context, var_Substitution, var_Value1, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
+      new TypeBinary(body, context, var_CorrespondingSubstitution, var_Value2, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
+      new Inequality(body, var_Value1, var_Value2);
+      body.setSymbolicParameters(Arrays.asList(var_Record, var_CorrespondingRecord));
+      bodies.add(body);
+    }
+    setStatus(PQueryStatus.OK);
   }
+  
+  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<IncorrectSubstitutionQuerySpecification> {

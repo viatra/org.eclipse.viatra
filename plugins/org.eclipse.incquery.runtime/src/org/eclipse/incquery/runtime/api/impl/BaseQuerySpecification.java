@@ -12,27 +12,28 @@
 package org.eclipse.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQueries;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Base implementation of IQuerySpecification.
@@ -69,35 +70,13 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         return instantiate(engine);
     }
 
-    private String fullyQualifiedName;
-    private Map<String, Integer> indexMap;
-    private List<String> parameterNames;
     private PQueryStatus status = PQueryStatus.UNINITIALIZED;
     private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
-
-    @Override
-    public String getFullyQualifiedName() {
-        if (fullyQualifiedName == null)
-            fullyQualifiedName = CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
-        return fullyQualifiedName;
-    }
 
     @Override
     public Integer getPositionOfParameter(String parameterName) {
         int index = getParameterNames().indexOf(parameterName);
         return index != -1 ? index : null;
-    }
-
-    public List<String> getParameterNames() {
-        if (parameterNames == null) {
-            Map<String, Integer> rawPosMapping = indexMap;
-            String[] parameterNameArray = new String[rawPosMapping.size()];
-            for (Entry<String, Integer> entry : rawPosMapping.entrySet()) {
-                parameterNameArray[entry.getValue()] = entry.getKey();
-            }
-            parameterNames = Collections.unmodifiableList(Arrays.asList(parameterNameArray));
-        }
-        return parameterNames;
     }
 
     protected void setStatus(PQueryStatus newStatus) {
@@ -141,6 +120,36 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     @Override
     public PAnnotation getFirstAnnotationByName(String annotationName) {
         return Iterables.find(annotations, new AnnotationNameTester(annotationName), null);
+    }
+
+    @Override
+    public List<String> getParameterNames() {
+        return Lists.transform(getParameters(), PQueries.parameterNameFunction());
+    }
+
+    @Override
+    public Set<PQuery> getDirectReferredQueries() {
+        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(getContainedBodies(),
+                PQueries.directlyReferencedQueriesFunction()));
+        return Sets.newHashSet(queries);
+    }
+
+    @Override
+    public Set<PQuery> getAllReferredQueries() {
+        Set<PQuery> processedQueries = Sets.newHashSet((PQuery)this);
+        Set<PQuery> foundQueries = getDirectReferredQueries();
+        Set<PQuery> newQueries = Sets.newHashSet(foundQueries);
+
+        while(!processedQueries.containsAll(newQueries)) {
+            PQuery query = newQueries.iterator().next();
+            processedQueries.add(query);
+            newQueries.remove(query);
+            Set<PQuery> referred = query.getDirectReferredQueries();
+            referred.removeAll(processedQueries);
+            foundQueries.addAll(referred);
+            newQueries.addAll(referred);
+        }
+        return foundQueries;
     }
 
 

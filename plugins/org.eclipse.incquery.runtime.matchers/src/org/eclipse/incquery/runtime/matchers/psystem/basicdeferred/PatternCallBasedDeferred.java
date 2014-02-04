@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
@@ -28,9 +29,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
-public abstract class PatternCallBasedDeferred extends VariableDeferredPConstraint {
+public abstract class PatternCallBasedDeferred extends VariableDeferredPConstraint implements IQueryReference {
 
     protected Tuple actualParametersTuple;
 
@@ -101,13 +102,22 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
     	if (deferringVariables != null) {
-    		// FAIL instead of hopeless attempt to fix 
+    		// FAIL instead of hopeless attempt to fix
     		// if (deferringVariables.remove(obsolete)) deferringVariables.add(replacement);
     		throw new IllegalStateException("Cannot replace variables on " + this
     				+ " when deferring variables have already been identified.");
     	}
     	actualParametersTuple = actualParametersTuple.replaceAll(obsolete, replacement);
         doDoReplaceVariables(obsolete, replacement);
+    }
+
+    public Tuple getActualParametersTuple() {
+        return actualParametersTuple;
+    }
+
+    @Override
+    public PQuery getReferredQuery() {
+        return query;
     }
 
 }

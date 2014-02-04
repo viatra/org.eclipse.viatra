@@ -22,12 +22,13 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 import static org.junit.Assert.*
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher
+import com.google.inject.Injector
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
  */
 class TestExecutor {
-	
+
 	public static val String CORRECTRESULTS = "Correct result set"
 	public static val String CORRECT_SINGLE = "Correct single match for parameterless pattern"
 	public static val String CORRECT_EMPTY = "Correct empty match set"
@@ -36,24 +37,25 @@ class TestExecutor {
 	public static val String MULTIPLE_FOR_EXPECTED = "Multiple matches found for expected match"
 	public static val String MATCHSETRECORD_NOT_IN_SNAPSHOT = "Expected match set record is not part of snapshot"
 	public static val String PATTERNNAME_DIFFERENT = "Expected pattern qualified name different from actual"
-	
+
 	@Inject extension ModelLoadHelper
 	@Inject extension SnapshotHelper
-	
+	@Inject var Injector injector;
+
 	/**
 	 * Checks the pattern name of the matcher against the one stored in
 	 *  the record and checks parameterless patterns as well.
-	 * 
+	 *
 	 * Returns true if further comparison is allowed, false otherwise.
 	 */
 	def validateMatcherBeforeCompare(IncQueryMatcher matcher, MatchSetRecord expected, Set diff){
-		
+
 		// 1. Check match set record pattern name against matcher pattern name
 		if(!matcher.patternName.equals(expected.patternQualifiedName)){
 			diff.add(PATTERNNAME_DIFFERENT + " ("+expected.patternQualifiedName+"!="+matcher.patternName+")")
 			return false
 		}
-			
+
 		// 2. Parameter-less patterns have either zero or one matches
 		if(matcher.parameterNames.size == 0){
 			if(expected.matches.size == 1){
@@ -63,13 +65,13 @@ class TestExecutor {
 				} else if(matcher.countMatches == 0){
 					diff.add(CORRECT_EMPTY)
 					return true
-				}	
+				}
 			}
 		}
 		return true
-		
+
 	}
-	
+
 	/**
 	 * Compares the match set of a given matcher with the given match record
 	 *  using EMF-IncQuery as a compare tool.
@@ -78,27 +80,27 @@ class TestExecutor {
 	 */
 	def compareResultSetsAsRecords(IncQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
-		
+
 		// 1. Validate match set record against matcher
 		var correctResults = matcher.validateMatcherBeforeCompare(expected, diff)
 		if(!correctResults){
 			return diff
 		}
-		
+
 		if(!(expected.eContainer instanceof IncQuerySnapshot)){
 			diff.add(MATCHSETRECORD_NOT_IN_SNAPSHOT)
 			return diff
 		}
 		val snapshot = expected.eContainer as IncQuerySnapshot
-		
+
 		// 2. Initialize matcher for comparison
 		val engine = IncQueryEngine::on(snapshot.EMFRootForSnapshot)
 		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
-		
+
 		// 3. Save match results into snapshot
 		val partialMatch = matcher.createMatchForMachRecord(expected.filter)
 		val actual = matcher.saveMatchesToSnapshot(partialMatch,snapshot)
-		
+
 		// 4. run matchers
 		unexpectedMatcher.forEachMatch(actual, expected, null) [
 			diff.add(UNEXPECTED_MATCH + " ("+it.prettyPrint+")")
@@ -109,8 +111,8 @@ class TestExecutor {
 		return diff
 	}
 
-	
-	
+
+
 	/**
 	 * Compares the match set of a given matcher with the given match record using the
 	 *  records as partial matches on the matcher.
@@ -118,15 +120,15 @@ class TestExecutor {
 	 */
 	def compareResultSets(IncQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
-		
+
 		// 1. Validate match set record against matcher
 		var correctResults = matcher.validateMatcherBeforeCompare(expected, diff)
 		if(!correctResults){
 			return diff
 		}
-		
+
 		// 2. Matches of patterns with at least one parameter are handled in two phases
-		// 2/a. expected match records are used as partial matches 
+		// 2/a. expected match records are used as partial matches
 		val foundMatches = newArrayList()
 		for(MatchRecord matchRecord : expected.matches){
 			val partialMatch = 	matcher.createMatchForMachRecord(matchRecord)
@@ -142,7 +144,7 @@ class TestExecutor {
 				correctResults = false
 			}
 		}
-		
+
 		// 2/b. check for unexpected matches
 		//val notFoundMatches = newArrayList()
 		matcher.forEachMatch(matcher.createMatchForMachRecord(expected.filter)) [
@@ -152,9 +154,9 @@ class TestExecutor {
 			}
 		]
 		return diff
-		
+
 	}
-	
+
   def printMatchRecord(MatchRecord record){
     val sb = new StringBuilder
     val matchSet = record.eContainer as MatchSetRecord
@@ -166,8 +168,8 @@ class TestExecutor {
     ]
     sb.insert(0,matchSet.patternQualifiedName+"(")
     sb.append(")")
-  } 
-	
+  }
+
 	/**
 	 * Compares match set of each matcher initialized from the given pattern model
 	 *  based on the input specification of the snapshot.
@@ -190,12 +192,12 @@ class TestExecutor {
 				}
 			}
 		]
-		
+
 		//assertArrayEquals(diff.logDifference,newHashSet,diff)
 		//assertSame(CORRECTRESULTS,if(diff.empty){CORRECTRESULTS}else{diff.logDifference})
 		assertTrue(diff.logDifference(engine),diff.empty)
 	}
-	
+
 	/**
 	 * Compares match set of each matcher initialized from the given pattern model
 	 *  based on the input specification of the snapshot (specified as a platform URI).
@@ -205,47 +207,47 @@ class TestExecutor {
 		val snapshot = snapshotUri.loadExpectedResultsFromUri
 		patternModel.assertMatchResults(snapshot)
 	}
-	
+
 	/**
 	 * Compares match set of each matcher initialized from the given pattern model (specified as a platform URI)
 	 *  based on the input specification of the snapshot (specified as a platform URI).
 	 * If any of the matchers return incorrect results, the assert fails.
 	 */
 	def assertMatchResults(String patternUri, String snapshotUri){
-		val patternModel = patternUri.loadPatternModelFromUri
+		val patternModel = patternUri.loadPatternModelFromUri(injector)
 		patternModel.assertMatchResults(snapshotUri)
 	}
-	
+
 	def registerLogger(IncQueryEngine engine){
 		engine.logger.addAppender(new TestingLogAppender)
 	}
-	
+
 	def retrieveLoggerOutput(IncQueryEngine engine){
 		val logger = engine.getLogger
-		
+
 		val appers = logger.allAppenders
 		while (appers.hasMoreElements) {
 			val apper = appers.nextElement
 			if(apper instanceof TestingLogAppender){
 				return (apper as TestingLogAppender).getOutput.toString
-			} 
+			}
 		}
 		return "Logger output not recorded"
 	}
-	
+
 	def logDifference(Set<? extends Object> diff){
 		val stringBuilder = new StringBuilder()
 		diff.logDifference(stringBuilder)
 		stringBuilder.toString
 	}
-	
+
 	def logDifference(Set<Object> diff, IncQueryEngine engine){
 		val stringBuilder = new StringBuilder()
 		diff.logDifference(stringBuilder)
 		stringBuilder.append(engine.retrieveLoggerOutput)
 		stringBuilder.toString
 	}
-	
+
 	def private logDifference(Set<? extends Object> diff, StringBuilder stringBuilder){
 		diff.forEach()[
 			stringBuilder.append("\n" + it)

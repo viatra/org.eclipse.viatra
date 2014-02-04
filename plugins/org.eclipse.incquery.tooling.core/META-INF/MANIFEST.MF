@@ -6,15 +6,16 @@ Bundle-Version: 0.8.0.qualifier
 Bundle-Activator: org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin
 Require-Bundle: org.eclipse.core.resources;bundle-version="3.7.0",
  org.eclipse.core.runtime,
- org.eclipse.incquery.runtime;bundle-version="0.7.0",
- org.eclipse.incquery.patternlanguage.emf;bundle-version="0.7.0",
+ org.eclipse.incquery.runtime;bundle-version="0.8.0",
+ org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",
+ org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0",
  org.eclipse.xtext.common.types;bundle-version="[2.4.2,2.6.0)",
  org.eclipse.xtext.xbase;bundle-version="[2.4.2,2.6.0)",
  org.eclipse.xtext.builder;bundle-version="[2.4.2,2.6.0)",
  org.eclipse.xtext.xbase.lib;bundle-version="[2.4.2,2.6.0)",
  org.eclipse.pde.core;bundle-version="3.7.0",
  org.eclipse.xtext.common.types.ui;bundle-version="[2.4.2,2.6.0)",
- org.eclipse.incquery.tooling.generator.model;bundle-version="0.7.0",
+ org.eclipse.incquery.tooling.generator.model;bundle-version="0.8.0",
  org.eclipse.jdt.core,
  org.eclipse.emf.codegen.ecore,
  org.eclipse.xtext.util;bundle-version="[2.4.2,2.6.0)",
@@ -23,12 +24,9 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.7.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.tooling.core.generator,
- org.eclipse.incquery.tooling.core.generator.builder,
  org.eclipse.incquery.tooling.core.generator.fragments,
  org.eclipse.incquery.tooling.core.generator.genmodel,
- org.eclipse.incquery.tooling.core.generator.jvmmodel,
- org.eclipse.incquery.tooling.core.generator.types,
- org.eclipse.incquery.tooling.core.generator.util,
- org.eclipse.incquery.tooling.core.project
+ org.eclipse.incquery.tooling.core.project,
+ org.eclipse.incquery.tooling.core.targetplatform
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

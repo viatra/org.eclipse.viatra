@@ -13,20 +13,19 @@ package org.eclipse.incquery.tooling.core.generator.fragments;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
 
 /**
  * An interface for collecting code generation fragments for specific patterns. The concrete value is injected using the
- * {@link GeneratorModule}-based injectors.
- * 
+ * pattern language UI injectors.
+ *
  * @author Zoltan Ujhelyi
- * 
+ *
  */
 public interface IGenerationFragmentProvider {
 
     /**
      * Collects the generation fragments applicable for a selected pattern.
-     * 
+     *
      * @param pattern
      * @return a non-null collection of code generation fragments. May be empty.
      */
@@ -34,14 +33,14 @@ public interface IGenerationFragmentProvider {
 
     /**
      * Collects all {@link IGenerationFragment}.
-     * 
+     *
      * @return a non-null collection of code generation fragments.
      */
     Iterable<IGenerationFragment> getAllFragments();
 
     /**
      * Returns the fragment project for the {@link IGenerationFragment} based on the modelProject.
-     * 
+     *
      * @param modelProject
      * @param fragment
      * @return

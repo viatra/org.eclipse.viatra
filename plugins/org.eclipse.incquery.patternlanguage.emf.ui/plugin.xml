@@ -401,11 +401,5 @@
             extensions="eiq">
     </provider>
   </extension>
-  <extension
-        point="org.eclipse.incquery.runtime.injectorprovider">
-     <injector
-           injector="org.eclipse.incquery.patternlanguage.emf.ui.UiPluginInjectorProvider">
-     </injector>
-  </extension>
 
 </plugin>

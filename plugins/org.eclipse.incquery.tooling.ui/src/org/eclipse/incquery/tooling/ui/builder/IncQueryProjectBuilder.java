@@ -10,52 +10,44 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.builder;
 
+import java.util.Map;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.incquery.tooling.core.project.IncQueryNature;
-import org.eclipse.xtext.builder.IXtextBuilderParticipant;
-import org.eclipse.xtext.builder.IXtextBuilderParticipant.BuildType;
-import org.eclipse.xtext.builder.builderState.IBuilderState;
-import org.eclipse.xtext.builder.impl.BuildContext;
-import org.eclipse.xtext.builder.impl.BuildData;
-import org.eclipse.xtext.builder.impl.QueuedBuildData;
-import org.eclipse.xtext.builder.impl.ToBeBuilt;
 import org.eclipse.xtext.builder.impl.XtextBuilder;
-import org.eclipse.xtext.resource.IResourceDescription.Delta;
-import org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 /**
  * An incremental project builder for IncQuery projects. Based on the {@link XtextBuilder} class, but simplified for
  * IncQuery generation.
- * 
+ *
  * @author Zoltan Ujhelyi
- * 
+ *
  */
 @SuppressWarnings("restriction")
-public class IncQueryProjectBuilder extends XtextBuilder {
+public class IncQueryProjectBuilder extends IncrementalProjectBuilder {
 
     /**
      * Visitor to check for specific resources (by path) in a resource delta.
-     * 
+     *
      * @author Zoltan Ujhelyi
-     * 
+     *
      */
     private static final class ChangeDetector implements IResourceDeltaVisitor {
         /**
-         * Sets the path to look for genmodel 
+         * Sets the path to look for genmodel
+         *
          * @param path
          */
         public ChangeDetector(IPath path) {
@@ -83,76 +75,25 @@ public class IncQueryProjectBuilder extends XtextBuilder {
     @Inject
     private IEiqGenmodelProvider genmodelProvider;
 
-    @Inject
-    private IXtextBuilderParticipant participant;
-
-    @Inject
-    private QueuedBuildData queuedBuildData;
-
-    @Inject
-    private IBuilderState builderState;
-
-    /**
-     * @param monitor
-     *            the progress monitor to use for reporting progress to the user. It is the caller's responsibility to
-     *            call done() on the given monitor. Accepts null, indicating that no progress should be reported and
-     *            that the operation cannot be cancelled.
-     */
     @Override
-    protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
-        ChangeDetector visitor = new ChangeDetector(
-                genmodelProvider.getGeneratorModelPath(getProject()));
-        delta.accept(visitor);
-        if (visitor.isChangeFound()) {
-            super.fullBuild(monitor, false);
-        } else {
-            super.incrementalBuild(delta, monitor);
-        }
+    protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+        if (kind == AUTO_BUILD || kind == INCREMENTAL_BUILD) {
+            ChangeDetector visitor = new ChangeDetector(genmodelProvider.getGeneratorModelPath(getProject()));
+            getDelta(getProject()).accept(visitor);
+            if (visitor.isChangeFound()) {
+                getProject().accept(new IResourceVisitor() {
 
-    }
-
-    /**
-     * Overridden to not search for @link{IXtextBuilderParticipant} but use only the IncQuery-specified one.
-     */
-    @Override
-    protected void doBuild(ToBeBuilt toBeBuilt, IProgressMonitor monitor, BuildType type) throws CoreException {
-        SubMonitor progress = SubMonitor.convert(monitor, 2);
-
-        ResourceSet resourceSet = getResourceSetProvider().get(getProject());
-        resourceSet.getLoadOptions().put(ResourceDescriptionsProvider.NAMED_BUILDER_SCOPE, Boolean.TRUE);
-        if (resourceSet instanceof ResourceSetImpl) {
-            ((ResourceSetImpl) resourceSet).setURIResourceMap(Maps.<URI, Resource> newHashMap());
-        }
-        BuildData buildData = new BuildData(getProject().getName(), resourceSet, toBeBuilt, queuedBuildData);
-        if (!buildData.isEmpty()) {
-            ImmutableList<Delta> deltas = builderState.update(buildData, progress.newChild(1));
-            if (participant != null) {
-                participant.build(new BuildContext(this, resourceSet, deltas, type), progress.newChild(1));
-                getProject().getWorkspace().checkpoint(false);
-            } else {
-                progress.worked(1);
+                    @Override
+                    public boolean visit(IResource resource) throws CoreException {
+                        final String extension = resource.getFileExtension();
+                        if ("eiq".equals(extension)) {
+                            resource.touch(new NullProgressMonitor());
+                        }
+                        return false;
+                    }
+                });
             }
-        } else {
-            progress.worked(2);
         }
-        resourceSet.eSetDeliver(false);
-        resourceSet.getResources().clear();
-        resourceSet.eAdapters().clear();
-    }
-
-    /**
-     * Overridden to not search for @link{IXtextBuilderParticipant} but use only the IncQuery-specified one.
-     * 
-     */
-    @Override
-    protected void doClean(ToBeBuilt toBeBuilt, IProgressMonitor monitor) throws CoreException {
-        SubMonitor progress = SubMonitor.convert(monitor, 2);
-        ImmutableList<Delta> deltas = builderState.clean(toBeBuilt.getToBeDeleted(), progress.newChild(1));
-        if (participant != null) {
-            participant.build(new BuildContext(this, getResourceSetProvider().get(getProject()), deltas,
-                    BuildType.CLEAN), progress.newChild(1));
-        } else {
-            progress.worked(1);
-        }
+        return null;
     }
 }

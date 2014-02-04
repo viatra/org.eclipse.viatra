@@ -28,32 +28,33 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 
 /**
  * Helper methods for dealing with snapshots and match set records.
  */
 class SnapshotHelper {
-	
+
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	/**
 	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
 	 *  based on the input specification and the model roots.
 	 */
 	def getEMFRootForSnapshot(IncQuerySnapshot snapshot){
 		if(snapshot.inputSpecification == InputSpecification::EOBJECT){
-			if(snapshot.modelRoots.size > 0){				
+			if(snapshot.modelRoots.size > 0){
 				snapshot.modelRoots.get(0)
 			}
 		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE){
-			if(snapshot.modelRoots.size > 0){				
+			if(snapshot.modelRoots.size > 0){
 				snapshot.modelRoots.get(0).eResource
 			}
 		} else if(snapshot.inputSpecification == InputSpecification::RESOURCE_SET){
 			snapshot.eResource.resourceSet
 		}
 	}
-	
+
 	/**
 	 * Returns the model root that was used by the given matcher.
 	 */
@@ -73,7 +74,7 @@ class SnapshotHelper {
 			return roots
 		}
 	}
-	
+
 	/**
 	 * Returns the input specification for the given matcher.
 	 */
@@ -89,7 +90,7 @@ class SnapshotHelper {
 	}
 
 	/**
-	 * Saves the matches of the given matcher (using the partial match) into the given snapshot. 
+	 * Saves the matches of the given matcher (using the partial match) into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
 	def saveMatchesToSnapshot(IncQueryMatcher matcher, IPatternMatch partialMatch, IncQuerySnapshot snapshot){
@@ -105,28 +106,28 @@ class SnapshotHelper {
 			snapshot.inputSpecification = matcher.inputspecificationForMatcher
 		}
 		actualRecord.filter = partialMatch.createMatchRecordForMatch
-		
+
 		// 3. create match set records
-		matcher.forEachMatch(partialMatch)[match | 
+		matcher.forEachMatch(partialMatch)[match |
 			actualRecord.matches.add(match.createMatchRecordForMatch)
 		]
 		return actualRecord
 	}
-	
+
 	/**
 	 * Creates a match record that corresponds to the given match.
 	 *  Each parameter with a value is saved as a substitution.
 	 */
 	def createMatchRecordForMatch(IPatternMatch match){
 		val matchRecord = EIQSnapshotFactory::eINSTANCE.createMatchRecord
-		match.parameterNames.forEach()[param | 
+		match.parameterNames.forEach()[param |
 			if(match.get(param) != null){
 				matchRecord.substitutions.add(param.createSubstitution(match.get(param)))
 			}
 		]
 		return matchRecord
 	}
-	
+
 	/**
 	 * Creates a partial match that corresponds to the given match record.
 	 *  Each substitution is used as a value for the parameter with the same name.
@@ -145,15 +146,15 @@ class SnapshotHelper {
 		]
 		return match
 	}
-	
+
 	/**
-	 * Saves all matches of the given matcher into the given snapshot. 
+	 * Saves all matches of the given matcher into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
 	def saveMatchesToSnapshot(IncQueryMatcher matcher, IncQuerySnapshot snapshot){
 		matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
 	}
-	
+
 	/**
 	 * Returns the match set record for the given pattern FQN from the snapshot,
 	 *  if there is only one such record.
@@ -173,12 +174,12 @@ class SnapshotHelper {
 		matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
 		return matchSetRecords
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Creates a substitution for the given parameter name using the given value.
-	 *  The type of the substitution is decided based on the type of the value. 
+	 *  The type of the substitution is decided based on the type of the value.
 	 */
 	def createSubstitution(String parameterName, Object value){
 		if(value instanceof EObject){
@@ -234,9 +235,9 @@ class SnapshotHelper {
 			return sub
 		}
 	}
-	
+
 	/**
-	 * Registers the matcher factories used by the derived features of snapshot models into the EMF-IncQuery 
+	 * Registers the matcher factories used by the derived features of snapshot models into the EMF-IncQuery
 	 * matcher factory registry. This is useful when running tests without extension registry.
 	 */
 	def prepareSnapshotMatcherFactories() {
@@ -245,7 +246,7 @@ class SnapshotHelper {
 
 			import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			
+
 			pattern RecordRoleValue(
 				Record : MatchRecord,
 				Role
@@ -256,7 +257,7 @@ class SnapshotHelper {
 				MatchSetRecord.matches(MS,Record);
 				RecordRole::Match == Role;
 			}
-			
+
 			pattern SubstitutionValue(
 				Substitution : MatchSubstitutionRecord,
 				Value
@@ -281,9 +282,10 @@ class SnapshotHelper {
 			} or {
 				EnumSubstitution.valueLiteral(Substitution,Value);
 			}
-		') as PatternModel
+		')
 		patternModel.patterns.forEach()[
-			val factory = QuerySpecificationRegistry::getOrCreateQuerySpecification(it)
+			val builder = new SpecificationBuilder(QuerySpecificationRegistry.contributedQuerySpecifications)
+			val factory = builder.getOrCreateSpecification(it)
 			QuerySpecificationRegistry::registerQuerySpecification(factory);
 		]
 	}

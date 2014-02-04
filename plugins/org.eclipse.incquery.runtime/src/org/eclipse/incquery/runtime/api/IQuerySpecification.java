@@ -12,42 +12,34 @@
 package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 
 /**
  * Interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
- * 
+ *
  * @author Bergmann Gábor
- * 
+ *
  */
 public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends PQuery {
 
     /**
-     * @throws IncQueryException
-     *             if there was an error loading the pattern definition
-     * @returns the pattern for which matchers can be instantiated.
-     */
-    public Pattern getPattern();
-
-    /**
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
      * matcher is already constructed with the same root, only a lightweight reference is created.
-     * 
-     * 
+     *
+     *
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
      * <p>
      * The match set will be incrementally refreshed upon updates from this scope.
-     * 
+     *
      * <p>
      * The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so
      * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
-     * 
+     *
      * @deprecated use {@link #getMatcher(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
-     *  
+     *
      * @param emfRoot
      *            the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
      * @throws IncQueryException
@@ -61,7 +53,7 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * constructed in the engine, only a lightweight reference is created.
      * <p>
      * The match set will be incrementally refreshed upon updates.
-     * 
+     *
      * @param engine
      *            the existing EMF-IncQuery engine in which this matcher will be created.
      * @throws IncQueryException

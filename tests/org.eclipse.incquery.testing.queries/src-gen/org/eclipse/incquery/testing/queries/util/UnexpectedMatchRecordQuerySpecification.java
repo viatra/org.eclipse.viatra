@@ -1,10 +1,26 @@
 package org.eclipse.incquery.testing.queries.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
+import org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification;
 
 /**
  * A pattern-specific query specification that can instantiate UnexpectedMatchRecordMatcher in a type-safe way.
@@ -33,24 +49,59 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   @Override
   protected UnexpectedMatchRecordMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return UnexpectedMatchRecordMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.testing.queries";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "org.eclipse.incquery.testing.queries.UnexpectedMatchRecord";
     
   }
   
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("ActualSet","ExpectedSet","Record");
+  }
+  
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("ActualSet", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord"),new PParameter("ExpectedSet", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord"),new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() {
+    return bodies;
+  }
+  
   private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
     super();
+    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    {
+      PBody body = new PBody(this);
+      PVariable var_ActualSet = body.getOrCreateVariableByName("ActualSet");
+      PVariable var_ExpectedSet = body.getOrCreateVariableByName("ExpectedSet");
+      PVariable var_Record = body.getOrCreateVariableByName("Record");
+      PVariable var_PatternName = body.getOrCreateVariableByName("PatternName");
+      PVariable var__CorrespodingRecord = body.getOrCreateVariableByName("_CorrespodingRecord");
+      new ExportedParameter(body, var_ActualSet, "ActualSet");
+      new ExportedParameter(body, var_ExpectedSet, "ExpectedSet");
+      new ExportedParameter(body, var_Record, "Record");
+      new TypeBinary(body, context, var_ActualSet, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
+      new TypeBinary(body, context, var_ActualSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
+      new TypeBinary(body, context, var_ExpectedSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
+      new Inequality(body, var_ActualSet, var_ExpectedSet);
+      new NegativePatternCall(body, new FlatTuple(var_Record, var__CorrespodingRecord, var_ExpectedSet), CorrespondingRecordInMatchSetRecordQuerySpecification.instance());
+      body.setSymbolicParameters(Arrays.asList(var_ActualSet, var_ExpectedSet, var_Record));
+      bodies.add(body);
+    }
+    {
+      PAnnotation annotation = new PAnnotation("QueryExplorer");
+      annotation.addAttribute("display",false);
+      addAnnotation(annotation);
+    }
+    setStatus(PQueryStatus.OK);
   }
+  
+  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<UnexpectedMatchRecordQuerySpecification> {

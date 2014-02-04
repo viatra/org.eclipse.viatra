@@ -15,7 +15,9 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
@@ -54,15 +56,19 @@ public class ShowLocationHandler extends AbstractHandler {
             } else if (obj instanceof ObservablePatternMatcher) {
                 ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
                 if (matcher.getMatcher() != null) {
-                    setSelectionToXTextEditor(matcher.getPattern());
+                    setSelectionToXTextEditor(matcher.getSpecification());
                 }
             }
         }
         return null;
     }
 
-    protected void setSelectionToXTextEditor(Pattern pattern) {
-        IFile file = QueryExplorerPatternRegistry.getInstance().getFileForPattern(pattern);
+    protected void setSelectionToXTextEditor(IQuerySpecification<?> specification) {
+        if (!(specification instanceof GenericQuerySpecification)) {
+            return;
+        }
+        Pattern pattern = ((GenericQuerySpecification)specification).getPattern();
+        IFile file = QueryExplorerPatternRegistry.getInstance().getFileForPattern(specification);
 
         for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                 .getEditorReferences()) {

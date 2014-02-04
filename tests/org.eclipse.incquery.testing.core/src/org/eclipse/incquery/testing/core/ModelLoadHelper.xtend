@@ -17,12 +17,13 @@ import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.incquery.runtime.SpecificationBuilder
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
-import org.eclipse.incquery.runtime.util.XmiModelUtil
-import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
+import org.eclipse.incquery.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
+import com.google.inject.Injector
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -79,15 +80,15 @@ class ModelLoadHelper {
 	/**
 	 * Load a pattern model from the given file into a new resource set.
 	 */
-	def loadPatternModelFromFile(IFile file){
-		file.fullPath.toString.loadPatternModelFromUri
+	def loadPatternModelFromFile(IFile file, Injector injector){
+		file.fullPath.toString.loadPatternModelFromUri(injector)
 	}
 
 	/**
 	 * Load a pattern model from the given platform URI into a new resource set.
 	 */
-	def loadPatternModelFromUri(String platformUri){
-		val resource = XmiModelUtil::prepareXtextResource.loadAdditionalResourceFromUri(platformUri)
+	def loadPatternModelFromUri(String platformUri, Injector injector){
+		val resource = XmiModelUtil.prepareXtextResource(injector).loadAdditionalResourceFromUri(platformUri)
 		if(resource.contents.size > 0){
 			if(resource.contents.get(0) instanceof PatternModel){
 				resource.contents.get(0) as PatternModel
@@ -100,11 +101,7 @@ class ModelLoadHelper {
 	 */
 	def initializeMatcherFromModel(PatternModel model, IncQueryEngine engine, String patternName){
 		val patterns = model.patterns.filter[
-			if(model.packageName == null){
-				name.equals(patternName)
-			} else {
-				(model.packageName+'.'+name).equals(patternName)
-			}
+			patternName == CorePatternLanguageHelper.getFullyQualifiedName(it)
 		]
 		Preconditions.checkState(patterns.size == 1, "No pattern found with name " + patternName)
 		val builder = new SpecificationBuilder(engine.registeredQuerySpecifications)

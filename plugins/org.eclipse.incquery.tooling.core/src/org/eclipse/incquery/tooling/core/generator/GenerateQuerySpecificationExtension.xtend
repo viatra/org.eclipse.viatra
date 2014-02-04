@@ -12,39 +12,39 @@
 package org.eclipse.incquery.tooling.core.generator
 
 import com.google.inject.Inject
-import org.eclipse.incquery.runtime.IExtensions
-import org.eclipse.incquery.tooling.core.generator.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.runtime.IExtensions
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmIdentifiableElement
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.lib.Pair
-import org.eclipse.xtext.common.types.JvmType
-import org.eclipse.xtext.common.types.JvmIdentifiableElement
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
 class GenerateQuerySpecificationExtension {
-	
+
 	@Inject	IJvmModelAssociations associations
-	@Inject extension EMFPatternLanguageJvmModelInferrerUtil 
-	
+	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
 		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
 			exGen.contribElement(it, "matcher") [
 				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
-				
+
 				val querySpecificationClass = associations.getJvmElements(pattern).
-				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType 
+				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType
 				val providerClass = querySpecificationClass.members.
 				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.querySpecificationProviderClassName)]) as JvmIdentifiableElement
-				  
+
 				exGen.contribAttribute(it, "querySpecificationProvider", providerClass.qualifiedName)
 			]
 		]
 		)
 	}
-	
+
 	def static getRemovableExtensionIdentifiers() {
 		newArrayList(
 			Pair::of("", IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID)

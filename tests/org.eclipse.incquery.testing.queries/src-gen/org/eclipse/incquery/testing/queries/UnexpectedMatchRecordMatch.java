@@ -10,12 +10,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpecification;
 
 /**
- * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern, 
+ * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.UnexpectedMatchRecord pattern,
  * to be used in conjunction with {@link UnexpectedMatchRecordMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see UnexpectedMatchRecordMatcher
@@ -132,10 +132,10 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fActualSet == null) ? 0 : fActualSet.hashCode()); 
-    result = prime * result + ((fExpectedSet == null) ? 0 : fExpectedSet.hashCode()); 
-    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode()); 
-    return result; 
+    result = prime * result + ((fActualSet == null) ? 0 : fActualSet.hashCode());
+    result = prime * result + ((fExpectedSet == null) ? 0 : fExpectedSet.hashCode());
+    result = prime * result + ((fRecord == null) ? 0 : fRecord.hashCode());
+    return result;
     
   }
   
@@ -143,7 +143,7 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof UnexpectedMatchRecordMatch)) { // this should be infrequent				
+    if (!(obj instanceof UnexpectedMatchRecordMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))

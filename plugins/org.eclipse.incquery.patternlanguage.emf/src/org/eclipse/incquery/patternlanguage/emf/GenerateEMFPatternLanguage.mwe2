@@ -67,7 +67,7 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
-            	
+
             //  options = {
             //      backtrack = true
             //  }
@@ -120,7 +120,7 @@ Workflow {
 
 			// rename refactoring
 			fragment = refactoring.RefactorElementNameFragment {}
-			
+
             // provides the necessary bindings for java types integration
             fragment = types.TypesGeneratorFragment {}
 
@@ -128,7 +128,7 @@ Workflow {
             fragment = xbase.XbaseGeneratorFragment {
             	generateXtendInferrer = false
             }
-            
+
             // Code generator
 			fragment = generator.GeneratorFragment {
 			}
@@ -143,10 +143,5 @@ Workflow {
             }
         }
     }
-    
-    //XXX Overriding UI activator - removing old activator; assuming no other file is generated into the specified package
-    component = DirectoryCleaner {
-        directory = "${runtimeProject}.ui/src-gen/org/eclipse/incquery/patternlanguage/emf/ui/internal"
-        
-    }
+
 }

@@ -77,9 +77,9 @@ import com.google.inject.Inject;
  * <li>Pattern call parameter checking (only the number of the parameters, types not supported yet)</li>
  * <li>Empty PatternBody check</li>
  * </ul>
- * 
+ *
  * @author Mark Czotter
- * 
+ *
  */
 @SuppressWarnings("restriction")
 public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
@@ -383,11 +383,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check
     public void checkPackageDeclaration(PatternModel model) {
         String packageName = model.getPackageName();
-        
+
         if (packageName == null || packageName.isEmpty()) {
             error("The package declaration must not be empty", PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_EMPTY);
         }
-        
+
         if (packageName != null && !packageName.equals(packageName.toLowerCase())) {
             error("Only lowercase package names supported",
                     PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
@@ -517,16 +517,16 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 //    }
 
     private void calculateUsageCounts(
-    		PatternBody body, 
-    		UnionFindForVariables variableUnions, 
-    		Map<Variable, VariableReferenceCount> individualRefCounters, 
-    		Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters) 
+    		PatternBody body,
+    		UnionFindForVariables variableUnions,
+    		Map<Variable, VariableReferenceCount> individualRefCounters,
+    		Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters)
     {
         for (Variable var : body.getVariables()) {
         	boolean isParameter = var instanceof ParameterRef;
 			individualRefCounters.put(var, new VariableReferenceCount(Collections.singleton(var), isParameter));
 		}
-        for (Set<Variable> partition : variableUnions.getPartitions()) {	
+        for (Set<Variable> partition : variableUnions.getPartitions()) {
         	boolean isParameter = false;
 			for (Variable var : partition) {
 				if (var instanceof ParameterRef) {
@@ -536,7 +536,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 			}
 			unifiedRefCounters.put(partition, new VariableReferenceCount(partition, isParameter));
 		}
-        
+
         TreeIterator<EObject> it = body.eAllContents();
         while (it.hasNext()) {
         	EObject obj = it.next();
@@ -601,8 +601,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (constraint.getFeature() == CompareFeature.EQUALITY) {
                 final boolean leftIsVariable = constraint.getLeftOperand() instanceof VariableValue;
 				final boolean rightIsVariable = constraint.getRightOperand() instanceof VariableValue;
-				if (leftIsVariable && rightIsVariable) { 
-					// A==A equivalence between unified variables... 
+				if (leftIsVariable && rightIsVariable) {
+					// A==A equivalence between unified variables...
 					// should be ignored in reference counting, except that it spoils quantification
 					return ReferenceType.READ_ONLY;
                 } else if (leftIsVariable && !rightIsVariable) {
@@ -652,13 +652,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
         checkForImpureJavaCallsInternal(
-        		checkConstraint.getExpression(), 
+        		checkConstraint.getExpression(),
         		PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION);
     }
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInEvalExpressions(FunctionEvaluationValue eval) {
         checkForImpureJavaCallsInternal(
-        		eval.getExpression(), 
+        		eval.getExpression(),
         		PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE__EXPRESSION);
     }
 

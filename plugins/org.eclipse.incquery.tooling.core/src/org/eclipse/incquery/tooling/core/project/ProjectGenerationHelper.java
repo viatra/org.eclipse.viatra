@@ -69,7 +69,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * A common helper class for generating IncQuery-related projects.
- * 
+ *
  * @author Zoltan Ujhelyi
  */
 @SuppressWarnings("restriction")
@@ -102,7 +102,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Creates a new IncQuery project: a plug-in project with src and src-gen folders and specific dependencies.
-     * 
+     *
      * @param description
      * @param proj
      * @param monitor
@@ -127,12 +127,12 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(proj);
-            IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml"), new Path("queries/") };
+            IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             // Adding IncQuery-specific natures
             ProjectGenerationHelper.addNatures(proj,
-                    ImmutableList.of(IncQueryNature.NATURE_ID, IncQueryNature.XTEXT_NATURE_ID), monitor);
+                    ImmutableList.of(IncQueryNature.XTEXT_NATURE_ID, IncQueryNature.NATURE_ID), monitor);
         } finally {
             monitor.done();
             if (context != null && ref != null) {
@@ -165,7 +165,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Adds a file to a container.
-     * 
+     *
      * @param container
      *            the container to add the file to
      * @param path
@@ -226,7 +226,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Initializes the plug-in metadata of a newly created project.
-     * 
+     *
      * @param project
      *            the plug-in project to create the metadata for. The plug-in id will be the same as the project name
      * @param dependencies
@@ -255,7 +255,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Checks whether the project depends on a selected bundle ID
-     * 
+     *
      * @param project
      *            an existing, open plug-in project to check
      * @param dependency
@@ -297,7 +297,7 @@ public abstract class ProjectGenerationHelper {
                 LogService ls = IncQueryGeneratorPlugin.getContext().getService(lsref);
                 if (ls!=null) {
                     ls.log(level, msg, t);
-                }  
+                }
             }
             finally {
                 IncQueryGeneratorPlugin.getContext().ungetService(lsref);
@@ -307,11 +307,11 @@ public abstract class ProjectGenerationHelper {
             System.err.println("[IncQuery][ProjectGenerationHelper]["+level+"]["+msg+"]["+t.getMessage()+"]");
         }
     }
-    
+
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -323,7 +323,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param project
      *            an existing, open PDE plug-in project
      * @param dependencies
@@ -356,7 +356,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param dependencies
@@ -393,7 +393,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -405,7 +405,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param project
      *            an existing, open PDE plug-in project
      * @param exports
@@ -439,7 +439,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
-     * 
+     *
      * @param project
      *            an existing, open plug-in project
      * @param dependencies
@@ -472,7 +472,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param exports
@@ -503,7 +503,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param exports
@@ -525,7 +525,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates the selected project to contain the selected extension. The extensions are identified using an identifier
      * and extension point together; old extensions are replaced with the new ones, other extensions are kept intact.
-     * 
+     *
      * @param project
      * @param contributedExtensions
      * @throws CoreException
@@ -539,7 +539,7 @@ public abstract class ProjectGenerationHelper {
      * Updates the selected project to contain the selected extension. The extensions are identified using an identifier
      * and extension point together; old extensions are replaced with the new ones, other extensions are kept intact. An
      * extension will be ignored, if exist in the removedExtensions list.
-     * 
+     *
      * @param project
      *            an existing, open PDE plug-in project
      * @param contributedExtensions
@@ -574,7 +574,7 @@ public abstract class ProjectGenerationHelper {
             nextExtension: for (final IPluginExtension extension : readExtension.getExtensions()) {
                 String id = getExtensionId(extension, project);
                 String prefixedId = project.getName() + "." + id;
-                boolean extensionToCreateFound = 
+                boolean extensionToCreateFound =
                         isExtensionInMap(extensionMap, extension, extension.getId())
                      || isExtensionInMap(extensionMap, extension, id)
                      || isExtensionInMap(extensionMap, extension, prefixedId);
@@ -641,7 +641,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -652,7 +652,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Removes all extensions from the project, if the extension's pointId equals to one of the given pointId.
-     * 
+     *
      * @param project
      *            an existing, open PDE project
      * @param removableExtensionIdentifiers
@@ -703,7 +703,7 @@ public abstract class ProjectGenerationHelper {
      * Returns true if the extension is removable from the plugin.xml. If the extension id is prefixed with one of the
      * identifier prefix and the pointId is equals with the extension's point id, then the extension will be removed. If
      * the prefix is null or empty, only the pointId equality is necessary for the removal.
-     * 
+     *
      * @param extensionId
      * @param pointId
      * @param removableExtensionIdentifiers
@@ -726,7 +726,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Returns the extension Id. If the extension does not contain the plug-in name, it becomes prefixed with it.
-     * 
+     *
      * @param extension
      * @param project
      * @return
@@ -734,7 +734,7 @@ public abstract class ProjectGenerationHelper {
     private static String getExtensionId(IPluginExtension extension, IProject project) {
         String id = extension.getId();
 //        if (!id.contains(".")) {
-//           return project.getName() + "." + id; 
+//           return project.getName() + "." + id;
 //        }
         if (id != null && id.startsWith(project.getName())) {
             int beginIndex = project.getName().length() + 1;
@@ -747,7 +747,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Ensures that the project contains the src and src-gen folders as source folders.
-     * 
+     *
      * @param project
      *            an existing, open plug-in project
      * @param monitor
@@ -774,7 +774,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Returns an updated the classpath entries of a project by ensuring all required source folders are present.
-     * 
+     *
      * @param service
      * @return
      */

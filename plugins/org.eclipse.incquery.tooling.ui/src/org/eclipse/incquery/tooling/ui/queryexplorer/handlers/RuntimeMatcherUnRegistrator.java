@@ -14,8 +14,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRoot;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
@@ -32,13 +31,13 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
     @Override
     public void run() {
         MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
-        List<Pattern> removedPatterns = QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
-        for (Pattern pattern : removedPatterns) {
+        List<IQuerySpecification<?>> removedPatterns = QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
+        for (IQuerySpecification<?> pattern : removedPatterns) {
             for (ObservablePatternMatcherRoot root : vr.getRoots()) {
                 root.unregisterPattern(pattern);
             }
             QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot()
-                    .removeComponent(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+                    .removeComponent(pattern.getFullyQualifiedName());
         }
 
         QueryExplorer.getInstance().getPatternsViewer().refresh();

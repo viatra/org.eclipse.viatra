@@ -21,11 +21,13 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Helper class for creating a normalized version of a PSystem, unifying variables and running basic sanity checks.
- * 
+ *
  * @author Gabor Bergmann
- * 
+ *
  */
 public class PBodyNormalizer {
 
@@ -37,7 +39,7 @@ public class PBodyNormalizer {
     /**
      * Provides a normalized version of the pattern body. May return a different version than the original version if
      * needed.
-     * 
+     *
      * @param body
      * @param context
      * @return
@@ -45,22 +47,32 @@ public class PBodyNormalizer {
      */
     public static PBody normalizeBody(PBody body, IPatternMatcherContext context) throws QueryPlannerException {
         // UNIFICATION AND WEAK INEQUALITY ELMINATION
-        PBodyNormalizer.unifyVariablesAlongEqualities(body);
-        PBodyNormalizer.eliminateWeakInequalities(body);
+        unifyVariablesAlongEqualities(body);
+        eliminateWeakInequalities(body);
+
 
         // UNARY ELIMINATION WITH TYPE INFERENCE
         if (calcImpliedTypes) {
-            PBodyNormalizer.eliminateInferrableUnaryTypes(body, context);
+            eliminateInferrableUnaryTypes(body, context);
         }
-
+        removeMootEqualities(body);
         // PREVENTIVE CHECKS
-        PBodyNormalizer.checkSanity(body);
+        checkSanity(body);
         return body;
+    }
+
+    private static void removeMootEqualities(PBody body) {
+        Set<Equality> equals = body.getConstraintsOfType(Equality.class);
+        for (Equality equality : equals) {
+            if (equality.isMoot()) {
+                equality.delete();
+            }
+        }
     }
 
     /**
      * Unifies allVariables along equalities so that they can be handled as one.
-     * 
+     *
      * @param body
      */
     public static void unifyVariablesAlongEqualities(PBody body) {
@@ -69,13 +81,12 @@ public class PBodyNormalizer {
             if (!equality.isMoot()) {
                 equality.getWho().unifyInto(equality.getWithWhom());
             }
-            // equality.delete();
         }
     }
 
     /**
      * Eliminates weak inequalities if they are not substantiated.
-     * 
+     *
      * @param body
      */
     public static void eliminateWeakInequalities(PBody body) {
@@ -109,7 +120,7 @@ public class PBodyNormalizer {
 
     /**
      * Verifies the sanity of all constraints. Should be issued as a preventive check before layouting.
-     * 
+     *
      * @param body
      * @throws RetePatternBuildException
      */

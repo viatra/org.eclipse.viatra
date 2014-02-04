@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.xtext.ui.XtextProjectHelper;
 
 /**
  * @author Zoltan Ujhelyi
@@ -26,7 +27,7 @@ public class IncQueryNature implements IProjectNature {
      * The project nature identifier used for defining the project nature of an IncQuery project.
      */
     public static final String NATURE_ID = "org.eclipse.incquery.projectnature"; //$NON-NLS-1$
-    public static final String XTEXT_NATURE_ID = "org.eclipse.xtext.ui.shared.xtextNature"; //$NON-NLS-1$
+    public static final String XTEXT_NATURE_ID = XtextProjectHelper.NATURE_ID;
     public static final String BUILDER_ID = "org.eclipse.incquery.tooling.core.projectbuilder";//$NON-NLS-1$
     public static final String SRCGEN_DIR = "src-gen/"; //$NON-NLS-1$
     public static final String SRC_DIR = "src/"; //$NON-NLS-1$
@@ -37,7 +38,7 @@ public class IncQueryNature implements IProjectNature {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.core.resources.IProjectNature#getProject()
      */
     public IProject getProject() {
@@ -46,7 +47,7 @@ public class IncQueryNature implements IProjectNature {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core .resources.IProject)
      */
     public void setProject(IProject project) {

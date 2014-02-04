@@ -27,9 +27,9 @@ import org.junit.Test
 class AggregationTest {
 	@Inject
 	ParseHelper parseHelper
-	
+
 	@Inject extension ValidationTestHelper
-	
+
 	@Test
 	def void testCountNothingPassed() {
 		parseHelper.parse(
@@ -50,7 +50,7 @@ class AggregationTest {
 			}'
 		).assertNoErrors
 	}
-	
+
 	@Test
 	def void testCountSomeStuffPassed() {
 		parseHelper.parse(
@@ -71,7 +71,7 @@ class AggregationTest {
 			}'
 		).assertNoErrors
 	}
-	
+
 	@Test
 	def void testCountSomeStuffPassedNoReturn() {
 		parseHelper.parse(
@@ -90,7 +90,7 @@ class AggregationTest {
 			}'
 		).assertNoErrors
 	}
-	
+
 	@Test
 	def void testCountAllPassed() {
 		parseHelper.parse(
@@ -109,9 +109,9 @@ class AggregationTest {
 				IntValue.value(h, output);	// h should be a single variable, e.g. _h
 				IntValue(h);				// Then this line can be deleted.
 			}'
-		).assertNoErrors			
+		).assertNoErrors
 	}
-	
+
 	@Test
 	def void testMissingComposition() {
 		var parsed = parseHelper.parse(
@@ -124,11 +124,11 @@ class AggregationTest {
 				output == count find calledPatternMissing(p, anyv);	// anyv should be a single variable, e.g. _anyv
 			}'
 		);
-		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
-			Diagnostic::LINKING_DIAGNOSTIC, 
+		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall,
+			Diagnostic::LINKING_DIAGNOSTIC,
 			"Couldn't resolve reference to Pattern 'calledPatternMissing'."
 		)
 
 	}
-		
+
 }

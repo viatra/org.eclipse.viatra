@@ -2,6 +2,4 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension-point id="queryspecification" name="EMF-IncQuery Pattern Matcher" schema="schema/patternmatcher.exsd"/>
-   <extension-point id="xexpressionevaluator" name="EMF-IncQuery XExpression Evaluator" schema="schema/xexpressionevaluator.exsd"/>
-   <extension-point id="injectorprovider" name="EMF-IncQuery Injector provider" schema="schema/injectorprovider.exsd"/>
 </plugin>

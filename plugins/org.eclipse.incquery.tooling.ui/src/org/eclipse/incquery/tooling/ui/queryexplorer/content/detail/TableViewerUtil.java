@@ -18,6 +18,8 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
@@ -114,18 +116,13 @@ public class TableViewerUtil {
 
         viewer.setCellEditors(editors);
 
-        Pattern pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
         Object[] filter = observableMatcher.getFilter();
         MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
         if (filter != null) {
             for (int i = 0; i < pattern.getParameters().size(); i++) {
-                Variable var = pattern.getParameters().get(i);
-                String name = var.getName();
-                JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
-                // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-                String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
-                        .getQualifiedName();
-                input[i] = new MatcherConfiguration(name, clazz, filter[i]);
+                PParameter var = pattern.getParameters().get(i);
+                input[i] = new MatcherConfiguration(var.getName(), var.getTypeName(), filter[i]);
             }
             viewer.setInput(input);
         }
