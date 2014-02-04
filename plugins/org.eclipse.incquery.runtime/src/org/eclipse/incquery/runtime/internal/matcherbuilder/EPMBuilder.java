@@ -12,26 +12,25 @@
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
 /**
  * @author Bergmann Gábor
- * 
+ *
  */
-public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Collector> {
-    protected IOperationCompiler<Pattern, Collector> operationCompiler;
+public class EPMBuilder<Collector> implements IRetePatternBuilder<Collector> {
+    protected IOperationCompiler<Collector> operationCompiler;
     protected IPatternMatcherContext context;
 
-    public EPMBuilder(IOperationCompiler<Pattern, Collector> operationCompiler, IPatternMatcherContext context) {
+    public EPMBuilder(IOperationCompiler<Collector> operationCompiler, IPatternMatcherContext context) {
         super();
         this.operationCompiler = operationCompiler;
         this.context = context;
@@ -48,7 +47,7 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Colle
     }
 
     @Override
-    public Collector construct(Pattern pattern) throws QueryPlannerException {
+    public Collector construct(PQuery pattern) throws QueryPlannerException {
         try {
             EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
                     operationCompiler, context);
@@ -61,9 +60,9 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Pattern, Colle
     }
 
     @Override
-    public Map<Object, Integer> getPosMapping(Pattern gtPattern) {
-        HashMap<Object, Integer> result = new HashMap<Object, Integer>();
-        EList<Variable> parameters = gtPattern.getParameters();
+    public Map<String, Integer> getPosMapping(PQuery query) {
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        List<String> parameters = query.getParameterNames();
         for (int i = 0; i < parameters.size(); ++i)
             result.put(parameters.get(i), i);
         return result;

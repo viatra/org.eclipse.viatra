@@ -43,7 +43,7 @@ public class InitializeRetevisHandler extends AbstractHandler {
             try {
                 ObservablePatternMatcher pm = root.getMatchers().get(0);
                 // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
-                ReteBoundary<Pattern> rb = ((AdvancedIncQueryEngine)pm.getMatcher().getEngine()).getReteEngine().getBoundary();
+                ReteBoundary rb = ((AdvancedIncQueryEngine)pm.getMatcher().getEngine()).getReteEngine().getBoundary();
                 ReteVisView.getInstance().setContent(rb);
             } catch (IncQueryException e) {
                 throw new ExecutionException("Error initializing pattern matcher.", e);

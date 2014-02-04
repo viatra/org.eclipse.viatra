@@ -13,8 +13,6 @@ package org.eclipse.incquery.runtime.api;
 
 import java.util.List;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-
 /**
  * Generic interface for a single match of a pattern. Each instance is a (partial) substitution of pattern parameters,
  * essentially a parameter to value mapping.
@@ -26,7 +24,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
  */
 public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
     /** @return the pattern for which this is a match. */
-    public Pattern pattern();
+    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification();
 
     /** Identifies the name of the pattern for which this is a match. */
     public String patternName();

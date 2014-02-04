@@ -3,7 +3,6 @@ package org.eclipse.incquery.testing.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -62,6 +61,15 @@ import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecifica
  */
 @SuppressWarnings("all")
 public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch> {
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<SubstitutionValueMatcher> querySpecification() throws IncQueryException {
+    return SubstitutionValueQuerySpecification.instance();
+  }
+  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -321,14 +329,5 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
     	return null;
     }
     
-  }
-  
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<SubstitutionValueMatcher> querySpecification() throws IncQueryException {
-    return SubstitutionValueQuerySpecification.instance();
   }
 }

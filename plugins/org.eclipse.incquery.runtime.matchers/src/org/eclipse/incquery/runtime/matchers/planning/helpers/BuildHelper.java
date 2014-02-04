@@ -20,8 +20,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -39,7 +42,7 @@ public class BuildHelper {
      * 
      * @return the derived subplan that contains the additional checkers, or the original if no action was necessary.
      */
-    public static SubPlan enforceVariableCoincidences(IOperationCompiler<?,?> buildable, SubPlan plan) {
+    public static SubPlan enforceVariableCoincidences(IOperationCompiler<?> buildable, SubPlan plan) {
         Map<Object, List<Integer>> indexWithMupliplicity = plan.getVariablesTuple().invertIndexWithMupliplicity();
         for (Map.Entry<Object, List<Integer>> pVariableIndices : indexWithMupliplicity.entrySet()) {
             List<Integer> indices = pVariableIndices.getValue();
@@ -59,7 +62,7 @@ public class BuildHelper {
     /**
      * Trims the results in the subplan into a collector, by selecting exported variables in a particular order.
      */
-    public static <Collector> void projectIntoCollector(IOperationCompiler<?, Collector> buildable,
+    public static <Collector> void projectIntoCollector(IOperationCompiler<Collector> buildable,
             SubPlan plan, Collector collector, PVariable[] selectedVariables) {
         SubPlan trimmer = project(buildable, plan, selectedVariables, false);
         buildable.buildConnection(trimmer, collector);
@@ -72,7 +75,7 @@ public class BuildHelper {
      * @param enforceUniqueness if true, uniqueness after projection will be enforced
      */
 	public static <Collector> SubPlan project(
-			IOperationCompiler<?, Collector> buildable,
+			IOperationCompiler<Collector> buildable,
 			SubPlan plan, PVariable[] selectedVariables,
 			boolean enforceUniqueness) {
 		int paramNum = selectedVariables.length;
@@ -157,7 +160,7 @@ public class BuildHelper {
 
     }
 
-    public static SubPlan naturalJoin(IOperationCompiler<?, ?> buildable,
+    public static SubPlan naturalJoin(IOperationCompiler<?> buildable,
             SubPlan primaryPlan, SubPlan secondaryPlan) {
         JoinHelper joinHelper = new JoinHelper(primaryPlan, secondaryPlan);
         return buildable.buildBetaNode(primaryPlan, secondaryPlan, joinHelper.getPrimaryMask(),
@@ -175,7 +178,7 @@ public class BuildHelper {
      * @param onlyIfNotDetermined if true, no trimming performed unless there is at least one such variable  
      * @return the plan after the trimming (possibly the original)
      */
-    public static SubPlan trimUnneccessaryVariables(IOperationCompiler<?, ?> buildable,
+    public static SubPlan trimUnneccessaryVariables(IOperationCompiler<?> buildable,
             SubPlan plan, boolean onlyIfNotDetermined) {
     	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
     	Set<PVariable> variablesInTuple = plan.getVariablesTuple().getDistinctElements();
@@ -213,6 +216,50 @@ public class BuildHelper {
 		return difference;
 	}
     
-    
+    /**
+     * Finds an arbitrary constraint that is not enforced at the given plan.
+     * 
+     * @param pSystem
+     * @param plan
+     * @return a PConstraint that is not enforced, if any, or null if all are enforced
+     */
+    public static PConstraint getAnyUnenforcedConstraint(PBody pSystem,
+            SubPlan plan) {
+        Set<PConstraint> allEnforcedConstraints = plan.getAllEnforcedConstraints();
+        Set<PConstraint> constraints = pSystem.getConstraints();
+        for (PConstraint pConstraint : constraints) {
+            if (!allEnforcedConstraints.contains(pConstraint))
+                return pConstraint;
+        }
+        return null;
+    }
+
+    /**
+     * Verifies whether all constraints are enforced and exported parameters are present.
+     * 
+     * @param pSystem
+     * @param plan
+     * @throws RetePatternBuildException
+     */
+    public static void finalCheck(final PBody pSystem, SubPlan plan, IPatternMatcherContext context)
+            throws QueryPlannerException {
+        PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, plan);
+        if (unenforcedConstraint != null) {
+            throw new QueryPlannerException(
+                    "Pattern matcher construction terminated without successfully enforcing constraint {1}."
+                            + " Could be caused if the value of some variables can not be deduced, e.g. by circularity of pattern constraints.",
+                    new String[] { unenforcedConstraint.toString() }, "Could not enforce a pattern constraint", null);
+        }
+        for (ExportedParameter export : pSystem
+                .getConstraintsOfType(ExportedParameter.class)) {
+            if (!export.isReadyAt(plan, context)) {
+                throw new QueryPlannerException(
+                        "Exported pattern parameter {1} could not be deduced during pattern matcher construction."
+                                + " A pattern constraint is required to positively deduce its value.",
+                        new String[] { export.getParameterName().toString() }, "Could not calculate pattern parameter",
+                        null);
+            }
+        }
+    }    
 
 }

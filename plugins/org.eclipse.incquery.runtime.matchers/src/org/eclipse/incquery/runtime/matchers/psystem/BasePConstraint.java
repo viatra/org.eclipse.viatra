@@ -23,13 +23,10 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
  * 
  */
 public abstract class BasePConstraint implements PConstraint {
-    protected PSystem pSystem;
+    protected PBody pSystem;
     private final Set<PVariable> affectedVariables;
 
-    /**
-     * @param affectedVariables
-     */
-    public BasePConstraint(PSystem pSystem, Set<PVariable> affectedVariables) {
+    public BasePConstraint(PBody pSystem, Set<PVariable> affectedVariables) {
         super();
         this.pSystem = pSystem;
         this.affectedVariables = new HashSet<PVariable>(affectedVariables);
@@ -52,9 +49,6 @@ public abstract class BasePConstraint implements PConstraint {
         return affectedVariables;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.PConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	return Collections.emptyMap();
@@ -62,6 +56,7 @@ public abstract class BasePConstraint implements PConstraint {
 
     @Override
     public void replaceVariable(PVariable obsolete, PVariable replacement) {
+        pSystem.checkMutability();
         if (affectedVariables.remove(obsolete)) {
             affectedVariables.add(replacement);
             obsolete.unrefer(this);
@@ -74,6 +69,7 @@ public abstract class BasePConstraint implements PConstraint {
 
     @Override
     public void delete() {
+        pSystem.checkMutability();
         for (PVariable pVariable : affectedVariables) {
             pVariable.unrefer(this);
         }
@@ -84,10 +80,7 @@ public abstract class BasePConstraint implements PConstraint {
     public void checkSanity() throws QueryPlannerException {
     }
 
-    /**
-     * @return the pSystem
-     */
-    public PSystem getPSystem() {
+    public PBody getPSystem() {
         return pSystem;
     }
     

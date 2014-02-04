@@ -147,9 +147,10 @@ public final class CorePatternLanguageHelper {
 
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
     public static Map<String, Integer> getParameterPositionsByName(Pattern pattern) {
+        EList<Variable> parameters = pattern.getParameters();
         HashMap<String, Integer> posMapping = new HashMap<String, Integer>();
         int parameterPosition = 0;
-        for (Variable parameter : pattern.getParameters()) {
+        for (Variable parameter : parameters) {
             posMapping.put(parameter.getName(), parameterPosition++);
         }
         return posMapping;

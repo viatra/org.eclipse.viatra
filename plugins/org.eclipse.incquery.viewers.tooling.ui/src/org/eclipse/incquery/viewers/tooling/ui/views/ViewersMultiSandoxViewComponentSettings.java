@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.model.ViewersRuntimeModelUtil;
@@ -56,7 +57,7 @@ public class ViewersMultiSandoxViewComponentSettings {
 	
 	private ViewersMultiSandboxViewComponent owner;
 	
-	private Map<Pattern, Boolean> checkedPatterns = Maps.newHashMap();
+	private Map<IQuerySpecification<?>, Boolean> checkedPatterns = Maps.newHashMap();
 	
 	private ViewersComponentConfiguration currentConfiguration;
 	
@@ -68,7 +69,7 @@ public class ViewersMultiSandoxViewComponentSettings {
 	public void initialConfigurationChanged(ViewersComponentConfiguration c) {
 		this.currentConfiguration = c.newCopy();
 		this.checkedPatterns.clear();
-		for (Pattern p : this.currentConfiguration.getPatterns()) {
+		for (IQuerySpecification<?> p : this.currentConfiguration.getPatterns()) {
 			this.checkedPatterns.put(p,	true);
 		}
 		this.activatedPatternsViewer.setInput(this.checkedPatterns.keySet());
@@ -143,9 +144,9 @@ public class ViewersMultiSandoxViewComponentSettings {
 
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			checkedPatterns.put((Pattern) event.getElement(),event.getChecked());
+			checkedPatterns.put((IQuerySpecification<?>) event.getElement(),event.getChecked());
 			if (event.getChecked()) {
-				currentConfiguration.getPatterns().add( ((Pattern)event.getElement()) );
+				currentConfiguration.getPatterns().add( ((IQuerySpecification<?>)event.getElement()) );
 			}
 			else {
 				currentConfiguration.getPatterns().remove( event.getElement() );

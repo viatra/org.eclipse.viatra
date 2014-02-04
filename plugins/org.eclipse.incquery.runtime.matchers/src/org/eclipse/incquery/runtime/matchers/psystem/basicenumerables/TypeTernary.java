@@ -20,29 +20,22 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
-public class TypeTernary extends
-        KeyedEnumerablePConstraint<Object> implements ITypeInfoProviderConstraint {
+public class TypeTernary extends TypeConstraint implements ITypeInfoProviderConstraint {
     private final IPatternMatcherContext context;
     private PVariable edge; private PVariable source; private PVariable target;
-    /**
-     * @param buildable
-     * @param variablesTuple
-     * @param supplierKey
-     *            type info
-     */
-    public TypeTernary(PSystem pSystem,
+
+    public TypeTernary(PBody pSystem,
             IPatternMatcherContext context, PVariable edge, PVariable source, PVariable target,
-            Object supplierKey) {
-        super(pSystem, new FlatTuple(edge, source, target), supplierKey);
+            Object supplierKey, String typeString) {
+        super(pSystem, new FlatTuple(edge, source, target), supplierKey, typeString);
         this.edge = edge;
         this.source = source;
         this.target = target;
@@ -61,21 +54,13 @@ public class TypeTernary extends
     }
 
     @Override
-    protected String keyToString() {
-        return pSystem.getContext().printType(supplierKey);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
-    @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(edge), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,target})));
     	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
     		result.put(Collections.singleton(source), new HashSet<PVariable>(Arrays.asList(new PVariable[]{edge,target})));
     	if (context.isBinaryEdgeMultiplicityOneTo(supplierKey))
-    		result.put(Collections.singleton(target), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,edge})));    	
+    		result.put(Collections.singleton(target), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,edge})));
 		return result;
     }
 

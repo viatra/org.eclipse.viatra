@@ -13,14 +13,11 @@ package org.eclipse.incquery.viewers.runtime.model.converters;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.FormatSpecification;
 import org.eclipse.incquery.viewers.runtime.model.Item;
@@ -42,18 +39,15 @@ public class EdgeSet extends FixedComputedSet {
     private FormatSpecification format;
     private IObservableSet patternMatchSet;
 
-    public EdgeSet(Annotation itemAnnotation, Annotation formatAnnotation, Multimap<Object, Item> itemMap, IObservableSet patternMatchSet) {
+    public EdgeSet(PAnnotation itemAnnotation, PAnnotation formatAnnotation, Multimap<Object, Item> itemMap, IObservableSet patternMatchSet) {
         Preconditions.checkArgument(Edge.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Edge.ANNOTATION_ID + " annotation.");
         this.itemMap = itemMap;
 
-        sourceParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "source")).getValue().getVar();
-        destParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "target")).getValue().getVar();
-        StringValue labelParam = (StringValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "label");
-        labelParameterName = labelParam == null ? "" : labelParam.getValue();
+        sourceParameterName = ((ParameterReference)itemAnnotation.getFirstValue("source")).getName(); 
+        destParameterName = ((ParameterReference)itemAnnotation.getFirstValue("target")).getName(); 
+        Object labelParam = itemAnnotation.getFirstValue("label"); 
+        labelParameterName = labelParam == null ? "" : (String)labelParam;
 
         if (formatAnnotation != null) {
             format = FormatParser.parseFormatAnnotation(formatAnnotation);

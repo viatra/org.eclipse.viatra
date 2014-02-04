@@ -15,9 +15,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 
 /**
  * A EMF-IncQuery incremental evaluation engine, attached to a model such as an EMF resource. The engine hosts pattern matchers, and
@@ -31,10 +34,10 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  * Pattern matchers within this engine may be instantiated in the following ways:
  * <ul>
  * <li>Recommended: instantiate the specific matcher class generated for the pattern by e.g. MyPatternMatcher.on(engine).
- * <li>Use {@link #getMatcher(Pattern)} if the pattern-specific generated matcher API is not available.
+ * <li>Use {@link #getMatcher(IQuerySpecification)} if the pattern-specific generated matcher API is not available.
  * <li>Advanced: use the query specification associated with the generated matcher class to achieve the same.
  * </ul>
- * Additionally, a group of patterns (see {@link IPatternGroup}) can be initialized together before usage; this improves
+ * Additionally, a group of patterns (see {@link IQueryGroup}) can be initialized together before usage; this improves
  * the performance of pattern matcher construction, unless the engine is specifically constructed in wildcard mode 
  * (see {@link AdvancedIncQueryEngine#createUnmanagedEngine(Notifier, boolean)}).
  * 
@@ -77,15 +80,6 @@ public abstract class IncQueryEngine {
 	public abstract NavigationHelper getBaseIndex() throws IncQueryException;
 
 	/**
-	 * Access a pattern matcher for a given {@link Pattern} specification. 
-	 * Multiple calls will return the same matcher. 
-	 * @param pattern a {@link Pattern} specification (EMF model) that describes an EMF-IncQuery graph pattern
-	 * @return a pattern matcher corresponding to the specification
-	 * @throws IncQueryException if the matcher could not be initialized
-	 */
-	public abstract IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException;
-	
-	/**
 	 * Access a pattern matcher based on a {@link IQuerySpecification}. 
 	 * Multiple calls will return the same matcher.
 	 * @param querySpecification a {@link IQuerySpecification} that describes an EMF-IncQuery query
@@ -119,6 +113,16 @@ public abstract class IncQueryEngine {
      * @return a copy of the set of currently available pattern matchers registered on this engine instance
      */
 	public abstract Set<? extends IncQueryMatcher<? extends IPatternMatch>> getCurrentMatchers();
+	
+	public Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getRegisteredQuerySpecifications() {
+	    return Sets.newHashSet(Collections2.transform(getCurrentMatchers(), new Function<IncQueryMatcher<?>, IQuerySpecification<?>>() {
+
+            @Override
+            public IQuerySpecification<?> apply(IncQueryMatcher<?> arg0) {
+                return arg0.getSpecification();
+            }
+        }));
+	}
 
     /**
      * @return the scope of pattern matching, i.e. the root of the EMF model tree that this engine is attached to.

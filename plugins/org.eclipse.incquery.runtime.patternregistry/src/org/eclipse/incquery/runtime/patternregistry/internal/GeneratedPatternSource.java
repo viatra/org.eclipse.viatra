@@ -61,7 +61,7 @@ public class GeneratedPatternSource {
             IQuerySpecificationProvider<?> querySpecificationProvider = (IQuerySpecificationProvider<?>) configurationElement
                     .createExecutableExtension("querySpecificationProvider");
             IQuerySpecification<?> querySpecification = querySpecificationProvider.get();
-            String patternFullyQualifiedName = querySpecification.getPatternFullyQualifiedName();
+            String patternFullyQualifiedName = querySpecification.getFullyQualifiedName();
             if (idAttributeInExtension.equals(patternFullyQualifiedName)) {
                 Pattern pattern = querySpecification.getPattern();
                 if (hasQueryExplorerAnnotation(pattern)) {

@@ -14,6 +14,8 @@ import java.util.Collection;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 
 /**
@@ -24,7 +26,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
  */
 public class ViewerFilterDefinition {
 
-    Pattern pattern;
+    IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern;
     
     IncQueryFilterSemantics semantics;
     
@@ -38,7 +40,7 @@ public class ViewerFilterDefinition {
      * @param singleFilterMatch mandatory for SINGLE {@link IncQueryFilterSemantics}
      * @param filterMatches mandatory for non-SINGLE {@link IncQueryFilterSemantics}
      */
-    public ViewerFilterDefinition(Pattern pattern, IncQueryFilterSemantics semantics, IPatternMatch singleFilterMatch,
+    public ViewerFilterDefinition(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern, IncQueryFilterSemantics semantics, IPatternMatch singleFilterMatch,
             Collection<IPatternMatch> filterMatches) {
         super();
         this.pattern = pattern;

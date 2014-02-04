@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.databinding;bundle-version="1.5.0",
  org.eclipse.incquery.databinding.runtime;bundle-version="0.7.0",
  org.eclipse.incquery.runtime;bundle-version="0.7.0";visibility:=reexport,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.incquery.runtime.matchers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.viewers.runtime,

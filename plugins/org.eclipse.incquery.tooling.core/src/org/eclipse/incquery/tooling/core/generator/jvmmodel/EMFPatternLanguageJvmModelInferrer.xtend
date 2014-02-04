@@ -85,6 +85,18 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			   			it.packageName = packageName			   			
    						it.superTypes += pattern.newTypeRef(typeof (BasePatternMatch))
 			   		]
+			   		
+			   		//pattern.inferMatchClass(isPrelinkingPhase, packageName)
+			   		val matchClassRef = types.createTypeRef(matchClass)
+			   		val matcherClass =  pattern.toClass(pattern.matcherClassName) [
+   						it.packageName = packageName
+   						it.superTypes += pattern.newTypeRef(typeof(BaseMatcher), cloneWithProxies(matchClassRef))
+			   		]
+			   		val matcherClassRef = types.createTypeRef(matcherClass)
+			   		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName, matchClassRef, matcherClassRef)
+			   		val querySpecificationClassRef = types.createTypeRef(querySpecificationClass)
+			   		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClassRef)
+			   		
 			   		acceptor.accept(matchClass).initializeLater[
    						it.documentation = pattern.javadocMatchClass.toString
    						it.abstract = true
@@ -94,16 +106,11 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    						it.inferMatchClassConstructors(pattern)
    						it.inferMatchClassGetters(pattern)
    						it.inferMatchClassSetters(pattern)
-   						it.inferMatchClassMethods(pattern)
+   						it.inferMatchClassMethods(pattern, querySpecificationClassRef)
    						it.inferCheckBodies(pattern)
   						it.inferMatchInnerClasses(pattern)
 			   		]
-			   		//pattern.inferMatchClass(isPrelinkingPhase, packageName)
-			   		val matchClassRef = types.createTypeRef(matchClass)
-			   		val matcherClass =  pattern.toClass(pattern.matcherClassName) [
-   						it.packageName = packageName
-   						it.superTypes += pattern.newTypeRef(typeof(BaseMatcher), cloneWithProxies(matchClassRef))
-			   		]
+			   		
 			   		acceptor.accept(matcherClass).initializeLater[
    						it.documentation = pattern.javadocMatcherClass.toString
    						it.inferStaticMethods(pattern, matcherClass)
@@ -111,11 +118,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    						it.inferConstructors(pattern)
 			   			it.inferMethods(pattern, matchClassRef)
 			   		]
-			   		
-			   		val matcherClassRef = types.createTypeRef(matcherClass)
-			   		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName, matchClassRef, matcherClassRef)
-			   		val querySpecificationClassRef = types.createTypeRef(querySpecificationClass)
-			   		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClassRef)
 			   	
 			   		// add querySpecification() field to Matcher class
 			   		matcherClass.members += pattern.toMethod("querySpecification", pattern.newTypeRef(typeof(IQuerySpecification), cloneWithProxies(matcherClassRef))) [

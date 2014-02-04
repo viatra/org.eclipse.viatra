@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.construction;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo;
 
 /**
@@ -18,51 +18,47 @@ import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo
  *
  */
 public class NodeToPatternTraceInfo implements PatternTraceInfo {
-    Object pattern;
-    IPatternMatcherContext context;
-    
-	/**
-	 * @param pattern
-	 * @param context
-	 */
-	public NodeToPatternTraceInfo(Object pattern, IPatternMatcherContext context) {
-		super();
-		this.pattern = pattern;
-		this.context = context;
-	}
+    PQuery pattern;
 
-	@Override
-	public boolean propagateToIndexerParent() {
-		return true;
-	}
+    /**
+     * @param pattern
+     */
+    public NodeToPatternTraceInfo(PQuery pattern) {
+        super();
+        this.pattern = pattern;
+    }
 
-	@Override
-	public boolean propagateFromIndexerToSupplierParent() {
-		return true;
-	}
+    @Override
+    public boolean propagateToIndexerParent() {
+        return true;
+    }
 
-	@Override
-	public boolean propagateFromStandardNodeToSupplierParent() {
-		return true;
-	}
+    @Override
+    public boolean propagateFromIndexerToSupplierParent() {
+        return true;
+    }
 
-	@Override
-	public boolean propagateToProductionNodeParentAlso() {
-		return false;
-	}
+    @Override
+    public boolean propagateFromStandardNodeToSupplierParent() {
+        return true;
+    }
 
-	@Override
-	public String getPatternName() {
-		if (pattern != null)
-			return context.printPattern(pattern);
-		else 
-			return "";
-	}
-	
-	@Override
-	public String toString() {
-		return "->" + getPatternName();
-	}
-	
+    @Override
+    public boolean propagateToProductionNodeParentAlso() {
+        return false;
+    }
+
+    @Override
+    public String getPatternName() {
+        if (pattern != null)
+            return pattern.getFullyQualifiedName();
+        else
+            return "";
+    }
+
+    @Override
+    public String toString() {
+        return "->" + getPatternName();
+    }
 
 }

@@ -32,7 +32,7 @@ import "http://www.eclipse.org/emf/2002/Ecore"
 	MatchSubstitutionRecord.derivedValue(Substitution, Value);
 }*/
 
-private pattern IncorrectSubstitution(
+pattern IncorrectSubstitution(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
 ) = {
@@ -45,7 +45,7 @@ private pattern IncorrectSubstitution(
 	Value1 != Value2;
 }
 
-private pattern CorrespondingRecords(
+pattern CorrespondingRecords(
 	Record : MatchRecord,
 	CorrespondingRecord : MatchRecord
 ) = {
@@ -53,7 +53,7 @@ private pattern CorrespondingRecords(
 	neg find IncorrectSubstitution(Record, CorrespondingRecord);
 }
 
-private pattern CorrespondingRecordInMatchSetRecord(
+pattern CorrespondingRecordInMatchSetRecord(
 	Record : MatchRecord,
 	CorrespodingRecord : MatchRecord,
 	ExpectedSet : MatchSetRecord

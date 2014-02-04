@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
@@ -27,12 +27,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
  */
 public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
 
-    /**
-     * @param buildable
-     * @param variablesTuple
-     * @param supplierKey
-     */
-    public ConstantValue(PSystem pSystem, PVariable variable, Object value) {
+    public ConstantValue(PBody pSystem, PVariable variable, Object value) {
         super(pSystem, new FlatTuple(variable), value);
     }
 
@@ -41,9 +36,6 @@ public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
         return supplierKey.toString();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();

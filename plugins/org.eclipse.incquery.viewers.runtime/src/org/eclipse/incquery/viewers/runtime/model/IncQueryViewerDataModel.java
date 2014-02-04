@@ -37,16 +37,16 @@ import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentSet;
@@ -76,7 +76,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     private IncQueryEngine engine;
     private Logger logger;
 //  private ResourceSet model;
-    private Set<Pattern> patterns;
+    private Set<IQuerySpecification<?>> patterns;
     
     RuleEngine ruleEngine;
     FixedPriorityConflictResolver resolver;
@@ -88,7 +88,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
      * @param engine
      * @throws IncQueryException
      */
-    public IncQueryViewerDataModel(Collection<Pattern> patterns, IncQueryEngine engine) {
+    public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, IncQueryEngine engine) {
 //      this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
@@ -109,13 +109,12 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 //        return model;
 //    }
 
-	public Collection<Pattern> getPatterns(final String annotation) {
-		return Collections2.filter(patterns, new Predicate<Pattern>() {
+	public Collection<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatterns(final String annotation) {
+		return Collections2.filter(patterns, new Predicate<IQuerySpecification<?>>() {
 
 			@Override
-			public boolean apply(Pattern pattern) {
-				return CorePatternLanguageHelper.getFirstAnnotationByName(
-						pattern, annotation) != null;
+			public boolean apply(IQuerySpecification<?> pattern) {
+				return !pattern.getAnnotationsByName(annotation).isEmpty();
 			}
 		});
 	}
@@ -156,13 +155,13 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	    */
     	Map<IObservableSet,Void> nodeSetsObservable = new IdentityHashMap<IObservableSet, Void>();
         final String annotationName = Item.ANNOTATION_ID;
-        for (final Pattern nodePattern : getPatterns(annotationName)) {
+        for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> nodePattern : getPatterns(annotationName)) {
             DataBindingContext ctx = new DataBindingContext();
-            ObservablePatternMatchSet<IPatternMatch> nodeSet = filter.getObservableSet(nodePattern, ruleEngine);
+            @SuppressWarnings("unchecked")
+            ObservablePatternMatchSet<? extends IPatternMatch> nodeSet = createObservableSet(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)nodePattern);
             resolver.setPriority(nodeSet.getSpecification(), NODE_PRIORITY);
-            Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
-                    FormatSpecification.FORMAT_ANNOTATION);
-            for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
+            PAnnotation formatAnnotation = nodePattern.getFirstAnnotationByName(FormatSpecification.FORMAT_ANNOTATION);
+            for (PAnnotation annotation : nodePattern.getAnnotationsByName(annotationName)) {
                 ObservableSet resultSet = new WritableSet();
                 nodeSetsObservable.put(resultSet,null);
 
@@ -200,18 +199,30 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 	    });
 	    return Set;
 	}
+
+
+
+    private <Match extends IPatternMatch> ObservablePatternMatchSet<? extends IPatternMatch> createObservableSet(ViewerDataFilter filter,
+            final IQuerySpecification<? extends IncQueryMatcher<Match>> nodePattern) {
+        return filter.getObservableSet(nodePattern, ruleEngine);
+    }
+    
+    private <Match extends IPatternMatch> ObservablePatternMatchList<Match> createObservableList(ViewerDataFilter filter,
+            final IQuerySpecification<? extends IncQueryMatcher<Match>> nodePattern) {
+        return filter.getObservableList(nodePattern, ruleEngine);
+    }
  
     @Override
     public IObservableList initializeObservableItemList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
 	    List<ObservableList> nodeListsObservable = new ArrayList<ObservableList>();
 	    final String annotationName = Item.ANNOTATION_ID;
-	    for (final Pattern nodePattern : getPatterns(annotationName)) {
+	    for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> nodePattern : getPatterns(annotationName)) {
 	        DataBindingContext ctx = new DataBindingContext();
-	        ObservablePatternMatchList<IPatternMatch> nodeList = filter.getObservableList(nodePattern, ruleEngine);
+	        @SuppressWarnings("unchecked")
+            ObservablePatternMatchList<IPatternMatch> nodeList = createObservableList(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)nodePattern); 
 	        resolver.setPriority(nodeList.getSpecification(), NODE_PRIORITY);
-	        Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(nodePattern,
-	                FormatSpecification.FORMAT_ANNOTATION);
-	        for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(nodePattern, annotationName)) {
+	        PAnnotation formatAnnotation = nodePattern.getFirstAnnotationByName(FormatSpecification.FORMAT_ANNOTATION);
+	        for (PAnnotation annotation : nodePattern.getAnnotationsByName(annotationName)) {
 	            ObservableList resultList = new WritableList();
 	            nodeListsObservable.add(resultList);
 	
@@ -257,13 +268,13 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     public IObservableSet initializeObservableEdgeSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
 	    final String annotationName = Edge.ANNOTATION_ID;
 	    Set<IObservableSet> edgeSetsObservable = new HashSet<IObservableSet>();
-	    for (final Pattern edgePattern : getPatterns(annotationName)) {
-	        ObservablePatternMatchSet<IPatternMatch> edgeSet = filter.getObservableSet(edgePattern, ruleEngine);
+	    for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> edgePattern : getPatterns(annotationName)) {
+	        @SuppressWarnings("unchecked")
+            ObservablePatternMatchSet<? extends IPatternMatch> edgeSet = createObservableSet(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)edgePattern); 
 	        resolver.setPriority(edgeSet.getSpecification(), EDGE_PRIORITY);
 	
-	        Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
-	                FormatSpecification.FORMAT_ANNOTATION);
-	        for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
+	        PAnnotation formatAnnotation = edgePattern.getFirstAnnotationByName(FormatSpecification.FORMAT_ANNOTATION);
+	        for (PAnnotation annotation : edgePattern.getAnnotationsByName(annotationName)) {
 	            IObservableSet resultSet = new EdgeSet(annotation, formatAnnotation, itemMap, edgeSet);
 	            edgeSetsObservable.add(resultSet);
 	        }
@@ -276,13 +287,13 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     public MultiList initializeObservableEdgeList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
 	    final String annotationName = Edge.ANNOTATION_ID;
 	    List<IObservableList> edgeListsObservable = new ArrayList<IObservableList>();
-	    for (final Pattern edgePattern : getPatterns(annotationName)) {
-	        ObservablePatternMatchList<IPatternMatch> edgelist = filter.getObservableList(edgePattern, ruleEngine);
+	    for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> edgePattern : getPatterns(annotationName)) {
+	        @SuppressWarnings("unchecked")
+            ObservablePatternMatchList<IPatternMatch> edgelist = createObservableList(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)edgePattern); 
 	        resolver.setPriority(edgelist.getSpecification(), EDGE_PRIORITY);
 	
-	        Annotation formatAnnotation = CorePatternLanguageHelper.getFirstAnnotationByName(edgePattern,
-	                FormatSpecification.FORMAT_ANNOTATION);
-	        for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(edgePattern, annotationName)) {
+	        PAnnotation formatAnnotation = edgePattern.getFirstAnnotationByName(FormatSpecification.FORMAT_ANNOTATION);
+	        for (PAnnotation annotation : edgePattern.getAnnotationsByName(annotationName)) {
 	            IObservableList resultList = new EdgeList(annotation, formatAnnotation, itemMap, edgelist);
 	            edgeListsObservable.add(resultList);
 	        }
@@ -295,11 +306,12 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     public IObservableSet initializeObservableContainmentSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
 	    final String annotationName = Containment.ANNOTATION_ID;
 	    Set<IObservableSet> containmentSetsObservable = new HashSet<IObservableSet>();
-	    for (final Pattern containmentPattern : getPatterns(annotationName)) {
-	        ObservablePatternMatchSet<IPatternMatch> containmentSet = filter.getObservableSet(containmentPattern, ruleEngine);
+	    for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> containmentPattern : getPatterns(annotationName)) {
+	        @SuppressWarnings("unchecked")
+            ObservablePatternMatchSet<? extends IPatternMatch> containmentSet = createObservableSet(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)containmentPattern); 
 	        resolver.setPriority(containmentSet.getSpecification(), CONTAINMENT_PRIORITY);
 	
-	        for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
+	        for (PAnnotation annotation : containmentPattern.getAnnotationsByName(annotationName)) {
 	            IObservableSet resultSet = new ContainmentSet(annotation, itemMap, containmentSet);
 	            containmentSetsObservable.add(resultSet);
 	        }
@@ -312,11 +324,12 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     public MultiList initializeObservableContainmentList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap) {
 	    final String annotationName = Containment.ANNOTATION_ID;
 	    List<IObservableList> containmentListsObservable = new ArrayList<IObservableList>();
-	    for (final Pattern containmentPattern : getPatterns(annotationName)) {
-	        ObservablePatternMatchList<IPatternMatch> containmentList = filter.getObservableList(containmentPattern, ruleEngine);
+	    for (final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> containmentPattern : getPatterns(annotationName)) {
+	        @SuppressWarnings("unchecked")
+            ObservablePatternMatchList<IPatternMatch> containmentList = createObservableList(filter, (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)containmentPattern);
 	        resolver.setPriority(containmentList.getSpecification(), CONTAINMENT_PRIORITY);
 	
-	        for (Annotation annotation : CorePatternLanguageHelper.getAnnotationsByName(containmentPattern, annotationName)) {
+	        for (PAnnotation annotation : containmentPattern.getAnnotationsByName(annotationName)) {
 	            IObservableList resultList = new ContainmentList(annotation, itemMap, containmentList);
 	            containmentListsObservable.add(resultList);
 	        }
@@ -344,7 +357,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	 * @return
  	 */
  	public static ViewerState newViewerState(IncQueryEngine engine,
- 			Collection<Pattern> patterns, ViewerDataFilter filter,
+ 			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features) {
  		IncQueryViewerDataModel m = new IncQueryViewerDataModel(patterns, engine);
   		ViewerState r = newViewerState(m, filter, features);

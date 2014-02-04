@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 /**
@@ -20,13 +20,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
  */
 public class Instantiation extends CoreModelRelationship {
 
-    /**
-     * @param buildable
-     * @param parent
-     * @param child
-     * @param transitive
-     */
-    public Instantiation(PSystem pSystem, PVariable parent, PVariable child,
+    public Instantiation(PBody pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
     }

@@ -2,12 +2,12 @@ package org.eclipse.incquery.testing.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
+import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification;
 
 /**
  * Pattern-specific match representation of the org.eclipse.incquery.testing.queries.RecordRoleValue pattern, 
@@ -128,7 +128,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     	if (!(obj instanceof IPatternMatch))
     		return false;
     	IPatternMatch otherSig  = (IPatternMatch) obj;
-    	if (!pattern().equals(otherSig.pattern()))
+    	if (!specification().equals(otherSig.specification()))
     		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
     }
@@ -141,9 +141,9 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   }
   
   @Override
-  public Pattern pattern() {
+  public RecordRoleValueQuerySpecification specification() {
     try {
-    	return RecordRoleValueMatcher.querySpecification().getPattern();
+    	return RecordRoleValueQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
      	throw new IllegalStateException	(ex);

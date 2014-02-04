@@ -42,7 +42,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
  * Stores the internal parts of a rete network. Nodes are stored according to type and parameters.
- * 
+ *
  * @author Gabor Bergmann
  */
 public class Library {
@@ -238,7 +238,7 @@ public class Library {
     /**
      * If two indexers share their active node, joining them via DualInputNode is error-prone. Exception: coincidence of
      * the two indexers is supported.
-     * 
+     *
      * @return a replacement for the secondary Indexers, if needed
      */
     private Slots avoidActiveNodeConflict(final IterableIndexer primarySlot, final Indexer secondarySlot) {
@@ -265,7 +265,7 @@ public class Library {
      * Returns a copy of the given indexer that is an active node by itself (created if does not exist). (Convention:
      * attached with same mask to a transparent node that is attached to parent node.) Node is created if it does not
      * exist yet.
-     * 
+     *
      * @return an identical but active indexer
      */
     private ProjectionIndexer accessActiveIndexer(IterableIndexer indexer) {
@@ -289,7 +289,7 @@ public class Library {
     /**
      * If two indexers share their active node, joining them via DualInputNode is error-prone. Exception: coincidence of
      * the two indexers is supported.
-     * 
+     *
      * @return true if there is a conflict of active nodes.
      */
     private boolean activeNodeConflict(Indexer primarySlot, Indexer secondarySlot) {
@@ -452,7 +452,7 @@ public class Library {
         return address;
     }
 
-    public synchronized Address<? extends Production> newProductionNode(Map<Object, Integer> posMapping, Object tag) {
+    public synchronized Address<? extends Production> newProductionNode(Map<String, Integer> posMapping, Object tag) {
         DefaultProductionNode node = new DefaultProductionNode(reteContainer, posMapping);
         node.setTag(tag);
         Address<? extends Production> address = reteContainer.makeAddress(node);

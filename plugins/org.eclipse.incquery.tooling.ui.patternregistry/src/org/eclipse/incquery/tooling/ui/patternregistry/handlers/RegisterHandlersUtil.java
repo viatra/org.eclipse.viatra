@@ -14,12 +14,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.patternregistry.PatternRegistry;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 public class RegisterHandlersUtil {
 
-    public static void registerSingleFile(IFile file, IResourceSetProvider resourceSetProvider) {
+    public static void registerSingleFile(IFile file, IResourceSetProvider resourceSetProvider) throws IncQueryException {
         if (file != null && resourceSetProvider != null && file.getName().endsWith(".eiq")) {
             ResourceSet resourceSet = resourceSetProvider.get(file.getProject());
             Resource resource = resourceSet.getResource(

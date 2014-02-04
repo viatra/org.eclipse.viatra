@@ -17,9 +17,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
 
@@ -43,7 +44,7 @@ public abstract class BaseTypeSafeConstraint extends
      * @param inputVariables
      * @param outputVariable null iff no output (check-only)
      */
-    public BaseTypeSafeConstraint(PSystem pSystem,
+    public BaseTypeSafeConstraint(PBody pSystem,
             Set<PVariable> inputVariables, final PVariable outputVariable) {
         super(pSystem, 
         		(outputVariable == null) ? 
@@ -67,9 +68,9 @@ public abstract class BaseTypeSafeConstraint extends
     }
 
     @Override
-    public boolean isReadyAt(SubPlan plan) {
-        if (super.isReadyAt(plan)) {
-            return checkTypeSafety(plan) == null;
+    public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
+        if (super.isReadyAt(plan, context)) {
+            return checkTypeSafety(plan, context) == null;
         }
         return false;
     }
@@ -80,12 +81,12 @@ public abstract class BaseTypeSafeConstraint extends
      * @param plan
      * @return a variable whose type safety is not enforced yet, or null if the plan is typesafe
      */
-    public PVariable checkTypeSafety(SubPlan plan) {
+    public PVariable checkTypeSafety(SubPlan plan, IPatternMatcherContext context) {
         for (PVariable pVariable : inputVariables) {
             Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
             Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, plan.getAllEnforcedConstraints());
             Set<Object> uncheckedTypeRestrictions = TypeHelper.subsumeTypes(allTypeRestrictionsForVariable,
-                    checkedTypeRestrictions, this.pSystem.getContext());
+                    checkedTypeRestrictions, context);
             if (!uncheckedTypeRestrictions.isEmpty())
                 return pVariable;
         }

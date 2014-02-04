@@ -14,11 +14,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.impl.BasePatternGroup;
 
 /**
- * Generic implementation of {@link IPatternGroup}, covering an arbitrarily chosen set of patterns. Use the public
+ * Generic implementation of {@link IQueryGroup}, covering an arbitrarily chosen set of patterns. Use the public
  * constructor or static GenericPatternGroup.of(...) methods to instantiate.
  * 
  * @author Mark Czotter
@@ -26,62 +25,52 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternGroup;
  */
 public class GenericPatternGroup extends BasePatternGroup {
 
-    private final Set<Pattern> patterns;
+    private final Set<IQuerySpecification<?>> patterns;
 
     /**
      * Creates a GenericPatternGroup object with a set of patterns.
      * 
      * @param patterns
      */
-    public GenericPatternGroup(Set<Pattern> patterns) {
+    public GenericPatternGroup(Set<IQuerySpecification<?>> patterns) {
         this.patterns = patterns;
     }
 
     @Override
-    public Set<Pattern> getPatterns() {
+    public Set<IQuerySpecification<?>> getSpecifications() {
         return patterns;
     }
 
     /**
-     * Creates a generic {@link IPatternGroup} instance from {@link IQuerySpecification} objects.
+     * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
      * 
      * @param querySpecifications
      * @return
      */
-    public static IPatternGroup of(Set<IQuerySpecification<?>> querySpecifications) {
-        return new GenericPatternGroup(patterns(querySpecifications));
+    public static IQueryGroup of(Set<IQuerySpecification<?>> querySpecifications) {
+        return new GenericPatternGroup(querySpecifications);
     }
 
     /**
-     * Creates a generic {@link IPatternGroup} instance from {@link Pattern} objects.
+     * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
      * 
      * @param querySpecifications
      * @return
      */
-    public static IPatternGroup of(Pattern... patterns) {
-        return new GenericPatternGroup(new HashSet<Pattern>(Arrays.asList(patterns)));
-    }
-
-    /**
-     * Creates a generic {@link IPatternGroup} instance from {@link IQuerySpecification} objects.
-     * 
-     * @param querySpecifications
-     * @return
-     */
-    public static IPatternGroup of(IQuerySpecification<?>... querySpecifications) {
+    public static IQueryGroup of(IQuerySpecification<?>... querySpecifications) {
         return of(new HashSet<IQuerySpecification<?>>(Arrays.asList(querySpecifications)));
     }
 
     /**
-     * Creates a generic {@link IPatternGroup} instance from other {@link IPatternGroup} objects (subgroups).
+     * Creates a generic {@link IQueryGroup} instance from other {@link IQueryGroup} objects (subgroups).
      * 
      * @param querySpecifications
      * @return
      */
-    public static IPatternGroup of(IPatternGroup... subGroups) {
-        Set<Pattern> patterns = new HashSet<Pattern>();
-        for (IPatternGroup group : subGroups) {
-            patterns.addAll(group.getPatterns());
+    public static IQueryGroup of(IQueryGroup... subGroups) {
+        Set<IQuerySpecification<?>> patterns = new HashSet<IQuerySpecification<?>>();
+        for (IQueryGroup group : subGroups) {
+            patterns.addAll(group.getSpecifications());
         }
         return new GenericPatternGroup(patterns);
     }

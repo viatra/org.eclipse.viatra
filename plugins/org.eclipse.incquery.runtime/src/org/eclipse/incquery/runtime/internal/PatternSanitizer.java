@@ -40,11 +40,12 @@ import com.google.inject.Injector;
  * <li>admitted patterns have unique qualified names.
  * </ul>
  * 
- * @author Bergmann Gábor
+ * @author Gabor Bergmann
  * 
  */
 public class PatternSanitizer {
     Set<Pattern> admittedPatterns = new HashSet<Pattern>();
+    Set<Pattern> rejectedPatterns = new HashSet<Pattern>();
     Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
 
     Logger logger;
@@ -89,12 +90,13 @@ public class PatternSanitizer {
         if (newPatterns.isEmpty())
             return true;
 
+        boolean nullPatternFound = false;
         // TODO validate(toBeValidated) as a group
         Set<Pattern> inadmissible = new HashSet<Pattern>();
         Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
         for (Pattern current : newPatterns) {
             if (current == null) {
-                inadmissible.add(current);
+                nullPatternFound = true;
                 logger.error("Null pattern value");
                 continue;
             }
@@ -110,12 +112,16 @@ public class PatternSanitizer {
                 newPatternsByName.put(fullyQualifiedName, current);
             }
         }
+        //Updating list of rejected patterns
+        rejectedPatterns.removeAll(admittedPatterns);
+        rejectedPatterns.addAll(inadmissible);
+        
         Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
         PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
         PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
         validatorResult.logErrors(logger);
 
-        boolean ok = inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
+        boolean ok = !nullPatternFound && inadmissible.isEmpty() && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
         if (ok) {
             admittedPatterns.addAll(newPatterns);
             patternsByName.putAll(newPatternsByName);
@@ -158,6 +164,15 @@ public class PatternSanitizer {
      */
     public Set<Pattern> getAdmittedPatterns() {
         return Collections.unmodifiableSet(admittedPatterns);
+    }
+    
+    /**
+     * Returns the set of patterns that have been rejected so far.
+     * 
+     * @return the rejected patterns
+     */
+    public Set<Pattern> getRejectedPatterns() {
+        return Collections.unmodifiableSet(rejectedPatterns);
     }
     
     /**

@@ -20,7 +20,8 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
@@ -37,18 +38,18 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     protected abstract Set<PVariable> getCandidateQuantifiedVariables();
 
-    protected Object pattern;
+    protected PQuery query;
     private Set<PVariable> deferringVariables;
 
-    public PatternCallBasedDeferred(PSystem pSystem, Tuple actualParametersTuple,
-            Object pattern, Set<PVariable> additionalAffectedVariables) {
+    public PatternCallBasedDeferred(PBody pSystem, Tuple actualParametersTuple,
+            PQuery pattern, Set<PVariable> additionalAffectedVariables) {
         super(pSystem, union(actualParametersTuple.<PVariable> getDistinctElements(), additionalAffectedVariables));
         this.actualParametersTuple = actualParametersTuple;
-        this.pattern = pattern;
+        this.query = pattern;
     }
 
-    public PatternCallBasedDeferred(PSystem pSystem, Tuple actualParametersTuple,
-            Object pattern) {
+    public PatternCallBasedDeferred(PBody pSystem, Tuple actualParametersTuple,
+            PQuery pattern) {
         this(pSystem, actualParametersTuple, pattern, Collections.<PVariable> emptySet());
     }
 
@@ -91,8 +92,8 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     }
 
-    public SubPlan getSidePlan(IOperationCompiler<?, ?> compiler) throws QueryPlannerException {
-        SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, pattern);
+    public SubPlan getSidePlan(IOperationCompiler<?> compiler) throws QueryPlannerException {
+        SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, query);
         sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
         return sidePlan;
     }

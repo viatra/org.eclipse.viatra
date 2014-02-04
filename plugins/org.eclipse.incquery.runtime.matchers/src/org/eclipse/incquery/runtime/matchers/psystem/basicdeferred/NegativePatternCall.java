@@ -14,7 +14,8 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicdeferred;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
@@ -24,13 +25,8 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  */
 public class NegativePatternCall extends PatternCallBasedDeferred {
 
-    /**
-     * @param buildable
-     * @param affectedVariables
-     */
-    public NegativePatternCall(PSystem pSystem, Tuple actualParametersTuple,
-            Object pattern) {
-        super(pSystem, actualParametersTuple, pattern);
+    public NegativePatternCall(PBody pSystem, Tuple actualParametersTuple, PQuery query) {
+        super(pSystem, actualParametersTuple, query);
     }
 
     @Override
@@ -52,7 +48,7 @@ public class NegativePatternCall extends PatternCallBasedDeferred {
 
     @Override
     protected String toStringRest() {
-        return "!" + pSystem.getContext().printPattern(pattern) + "@" + actualParametersTuple.toString();
+        return "!" + query.getFullyQualifiedName() + "@" + actualParametersTuple.toString();
     }
 
 }

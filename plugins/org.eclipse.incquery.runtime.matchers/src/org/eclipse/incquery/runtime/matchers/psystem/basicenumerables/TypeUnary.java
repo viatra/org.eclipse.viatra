@@ -12,24 +12,18 @@
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
  * @author Gabor Bergmann
- * 
+ *
  */
-public class TypeUnary extends
-        KeyedEnumerablePConstraint<Object> implements ITypeInfoProviderConstraint {
-    /**
-     * @param buildable
-     * @param variable
-     * @param typeKey
-     */
-    public TypeUnary(PSystem pSystem, PVariable variable, Object typeKey) {
-        super(pSystem, new FlatTuple(variable), typeKey);
+public class TypeUnary extends TypeConstraint implements ITypeInfoProviderConstraint {
+
+    public TypeUnary(PBody pSystem, PVariable variable, Object typeKey, String typeString) {
+        super(pSystem, new FlatTuple(variable), typeKey, typeString);
     }
 
     @Override
@@ -37,11 +31,6 @@ public class TypeUnary extends
         if (variable.equals(variablesTuple.get(0)))
             return ITypeInfoProviderConstraint.TypeInfoSpecials.wrapUnary(supplierKey);
         return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
-    }
-
-    @Override
-    protected String keyToString() {
-        return pSystem.getContext().printType(supplierKey);
     }
 
 }

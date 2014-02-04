@@ -19,7 +19,6 @@ import java.util.HashSet;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -51,8 +50,8 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	private EClass clazz;
 	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
-	private ReteEngine<Pattern> reteEngine;
-	private ReteBoundary<Pattern> boundary;
+	private ReteEngine reteEngine;
+	private ReteBoundary boundary;
 	
 	static final TupleMask nullMask = TupleMask.linear(0, 1); 
 	static final TupleMask identityMask = TupleMask.identity(1); 

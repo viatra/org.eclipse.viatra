@@ -22,8 +22,6 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -41,7 +39,6 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.EMFPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.internal.PatternSanitizer;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
@@ -89,12 +86,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	/**
      * The RETE pattern matcher component of the EMF-IncQuery engine.
      */
-    private ReteEngine<Pattern> reteEngine = null;
-    /**
-     * A sanitizer to catch faulty patterns.
-     */
-    private PatternSanitizer sanitizer = null;
-
+    private ReteEngine reteEngine = null;
 
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -148,30 +140,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	}
     
     @Override
-	public IncQueryMatcher<? extends IPatternMatch> getMatcher(Pattern pattern) throws IncQueryException {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = 
-        		QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
-        return getMatcher(querySpecification);
-    }
-        
-    @Override
     public IncQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException {
-    	Pattern pattern = getSanitizer().getAdmittedPatternByName(patternFQN);
-    	if (pattern!=null) {
-    		return getMatcher(pattern);
-    	} else {
-    		IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = 
-    				QuerySpecificationRegistry.getQuerySpecification(patternFQN);
-    		if (querySpecification != null) {
-    			return getMatcher(querySpecification);
-    		} else {
-    			throw new IncQueryException(
-    				String.format(
-    					"No matcher could be constructed for the pattern with FQN %s; if the generated matcher class is not available, please access for the first time using getMatcher(Pattern)", 
-    				patternFQN),  
-    				"No matcher could be constructed for given pattern FQN.");
-    		}
-    	}
+        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = QuerySpecificationRegistry
+                .getQuerySpecification(patternFQN);
+        if (querySpecification != null) {
+            return getMatcher(querySpecification);
+        } else {
+            throw new IncQueryException(
+                    String.format(
+                            "No matcher could be constructed for the pattern with FQN %s; if the generated matcher class is not available, please access for the first time using getMatcher(IQuerySpecification)",
+                            patternFQN), "No matcher could be constructed for given pattern FQN.");
+        }
     }
 
     /**
@@ -263,8 +242,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
         if(matchers.containsKey(querySpecification)) {
             // TODO simply dropping the matcher can cause problems
-            logger.debug("Pattern " + 
-                    CorePatternLanguageHelper.getFullyQualifiedName(querySpecification.getPattern()) + 
+            logger.debug("Query " + 
+                    querySpecification.getFullyQualifiedName() + 
                     " already initialized in IncQueryEngine!");
         } else {
             matchers.put(querySpecification, matcher);
@@ -279,7 +258,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * TODO make it package visible only
      */
     @Override
-	public ReteEngine<Pattern> getReteEngine() throws IncQueryException {
+	public ReteEngine getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
             // if uninitialized, don't initialize yet
             getBaseIndexInternal(false);
@@ -308,27 +287,14 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 
     
 
-    private ReteEngine<Pattern> buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
-        ReteEngine<Pattern> engine;
-        engine = new ReteEngine<Pattern>(context, reteThreads);
-        ReteContainerCompiler<Pattern> buildable = new ReteContainerCompiler<Pattern>(engine);
+    private ReteEngine buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
+        ReteEngine engine;
+        engine = new ReteEngine(context, reteThreads);
+        ReteContainerCompiler buildable = new ReteContainerCompiler(engine);
         EPMBuilder<Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Receiver>>(
                 buildable, context);
         engine.setBuilder(builder);
         return engine;
-    }
-
-    
-    
-    /**
-     * @return the sanitizer
-     * TODO make this package visible only
-     */
-    public PatternSanitizer getSanitizer() {
-        if (sanitizer == null) {
-            sanitizer = new PatternSanitizer(getLogger());
-        }
-        return sanitizer;
     }
     
     ///////////////// advanced stuff /////////////
@@ -366,7 +332,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             reteEngine = null;
         }
         matchers.clear();
-        sanitizer = null;
         lifecycleProvider.engineWiped();
     }
 
@@ -423,7 +388,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             }
         };
         try {
-            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getPattern());
+            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getSpecification());
             patternMatcher.connect(callbackNode, listener, fireNow);
         } catch (QueryPlannerException e) {
             logger.error("Could not access matcher " + matcher.getPatternName(), e);
@@ -438,7 +403,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         checkArgument(reteEngine != null, "Cannot remove listener from matcher of disposed engine!");
         //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
         try {
-            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getPattern());
+            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getSpecification());
             patternMatcher.disconnectByTag(listener);
         } catch (Exception e) {
             logger.error("Could not access matcher " + matcher.getPatternName(), e);

@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
 public class InstantiationFeeder extends Feeder {
 
     public InstantiationFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary<?> boundary) {
+            Network network, ReteBoundary boundary) {
         super(receiver, context, network, boundary);
     }
 

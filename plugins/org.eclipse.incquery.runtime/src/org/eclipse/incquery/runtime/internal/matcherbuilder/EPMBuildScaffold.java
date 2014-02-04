@@ -11,13 +11,14 @@
 
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
 
@@ -27,32 +28,31 @@ import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
  */
 public class EPMBuildScaffold<Collector> {
 
-    protected IOperationCompiler<Pattern, Collector> operationCompiler;
+    protected IOperationCompiler<Collector> operationCompiler;
     protected IPatternMatcherContext context;
 
-    public EPMBuildScaffold(IOperationCompiler<Pattern, Collector> operationCompiler,
+    public EPMBuildScaffold(IOperationCompiler<Collector> operationCompiler,
             IPatternMatcherContext context) {
         super();
         this.operationCompiler = operationCompiler;
         this.context = context;
     }
 
-    public Collector construct(Pattern pattern) throws QueryPlannerException {
+    public Collector construct(PQuery pattern) throws QueryPlannerException {
         Collector production = operationCompiler.putOnTab(pattern, context).patternCollector(pattern);
         // TODO check annotations for reinterpret
 
-        context.logDebug("EPMBuilder starts construction of: " + pattern.getName());
-        for (PatternBody body : pattern.getBodies()) {
-            IOperationCompiler<Pattern, Collector> currentBuildable = operationCompiler.getNextContainer().putOnTab(
+        context.logDebug("EPMBuilder starts construction of: " + pattern.getFullyQualifiedName());
+        for (PBody body : pattern.getContainedBodies()) {
+            IOperationCompiler<Collector> currentBuildable = operationCompiler.getNextContainer().putOnTab(
                     pattern, context);
             if (Options.builderMethod == BuilderMethod.LEGACY) {
                 throw new UnsupportedOperationException();
             } else {
-                EPMBodyToPSystem converter = new EPMBodyToPSystem(pattern, body, context);
                 SubPlan bodyFinal = Options.builderMethod.layoutStrategy()
-                        .layout(converter.toPSystem(), currentBuildable);
+                        .layout(body, currentBuildable, context);
                 BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production,
-                        converter.symbolicParameterArray());
+                        body.getSymbolicParameters().toArray(new PVariable[body.getSymbolicParameters().size()]));
             }
         }
         operationCompiler.patternFinished(pattern, context, production);

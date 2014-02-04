@@ -28,7 +28,6 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryMultiPatternMatch
 import org.eclipse.incquery.runtime.evm.specific.event.IncQuerySinglePatternMatchEventFilter;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
  * 
@@ -75,14 +74,10 @@ public final class Rules {
         private final IncQueryMatcher<Match> matcher;
         
         public FavouredMatcherSourceSpecification(IncQueryMatcher<Match> matcher) {
-            super(getQuerySpecification(matcher));
+            super(matcher.getSpecification());
             this.matcher = matcher;
         }
-        
-        @SuppressWarnings("unchecked")
-        private static <Match extends IPatternMatch> IQuerySpecification<? extends IncQueryMatcher<Match>> getQuerySpecification(IncQueryMatcher<Match> matcher) {
-            return (IQuerySpecification<? extends IncQueryMatcher<Match>>) QuerySpecificationRegistry.getOrCreateQuerySpecification(matcher.getPattern());
-        }
+
         
         @Override
         protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {

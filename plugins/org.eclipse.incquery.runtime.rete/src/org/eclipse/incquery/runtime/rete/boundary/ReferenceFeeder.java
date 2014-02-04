@@ -21,15 +21,8 @@ public class ReferenceFeeder extends Feeder {
 
     protected Object typeObject;
 
-    /**
-     * @param receiver
-     * @param context
-     * @param network
-     * @param boundary
-     * @param typeObject
-     */
     public ReferenceFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary<?> boundary, Object typeObject) {
+            Network network, ReteBoundary boundary, Object typeObject) {
         super(receiver, context, network, boundary);
         this.typeObject = typeObject;
     }

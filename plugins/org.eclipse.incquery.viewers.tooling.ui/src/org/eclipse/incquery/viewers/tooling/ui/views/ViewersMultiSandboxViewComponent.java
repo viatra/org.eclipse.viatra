@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
@@ -273,17 +274,17 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     	}
     }
 
-	public void initializeContents(Notifier model, Collection<Pattern> _patterns, ViewerDataFilter filter)
+	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
             throws IncQueryException {
         if (model != null) {
-        	Collection<Pattern> patterns = getPatternsWithProperAnnotations(_patterns);
+        	Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
         	this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
         	doSetContents(model, patterns, filter);
             settings.initialConfigurationChanged(this.initialConfiguration);
         }
     }
 
-	private void doSetContents(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
+	private void doSetContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws IncQueryException {
 		if (state!=null) {
     		// dispose any previous viewerstate
     		state.dispose();
@@ -310,10 +311,10 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         return engine;
     }
 
-    private static Collection<Pattern> getPatternsWithProperAnnotations(Collection<Pattern> input) {
-        ArrayList<Pattern> res = new ArrayList<Pattern>();
-        for (Pattern p : input) {
-            if (Iterables.any(p.getAnnotations(), new ViewersAnnotatedPatternTester())) {
+    private static Collection<IQuerySpecification<?>> getPatternsWithProperAnnotations(Collection<IQuerySpecification<?>> input) {
+        ArrayList<IQuerySpecification<?>> res = Lists.newArrayList();
+        for (IQuerySpecification<?> p : input) {
+            if (Iterables.any(p.getAllAnnotations(), new ViewersAnnotatedPatternTester())) {
                 res.add(p);
             }
         }

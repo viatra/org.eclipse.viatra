@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
@@ -29,14 +29,11 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
 
     private IExpressionEvaluator evaluator;
 
-    public ExpressionEvaluation(PSystem pSystem, IExpressionEvaluator evaluator, PVariable outputVariable) {
+    public ExpressionEvaluation(PBody pSystem, IExpressionEvaluator evaluator, PVariable outputVariable) {
         super(pSystem, getPVariablesOfExpression(pSystem, evaluator), outputVariable);
         this.evaluator = evaluator;
     }
     
-    /**
-     * @return the evaluator
-     */
     public IExpressionEvaluator getEvaluator() {
         return evaluator;
     }
@@ -55,7 +52,7 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
             return Collections.singletonMap(inputVariables, Collections.singleton(outputVariable));
     }
     
-    private static Set<PVariable> getPVariablesOfExpression(PSystem pSystem,
+    private static Set<PVariable> getPVariablesOfExpression(PBody pSystem,
             IExpressionEvaluator evaluator) {
         Set<PVariable> result = new HashSet<PVariable>();
         for (String name : evaluator.getInputParameterNames()) {

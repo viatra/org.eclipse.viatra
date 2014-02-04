@@ -54,7 +54,7 @@ public class ShowLocationHandler extends AbstractHandler {
             } else if (obj instanceof ObservablePatternMatcher) {
                 ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
                 if (matcher.getMatcher() != null) {
-                    setSelectionToXTextEditor(matcher.getMatcher().getPattern());
+                    setSelectionToXTextEditor(matcher.getPattern());
                 }
             }
         }

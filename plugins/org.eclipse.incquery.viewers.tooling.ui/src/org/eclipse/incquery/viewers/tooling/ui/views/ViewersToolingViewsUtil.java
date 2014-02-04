@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 
@@ -26,10 +27,10 @@ public final class ViewersToolingViewsUtil {
 
 	public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.incquery.viewers.tooling.ui.viewersandboxtab";
 
-	public static void initializeContentsOnView(Notifier model, Collection<Pattern> patterns, ViewerDataFilter filter) throws IncQueryException {
+	public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws IncQueryException {
 		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
 		ViewersMultiSandboxView.ensureOpen();
-		ViewersMultiSandboxView.getInstance().initializeContents(model, patterns, filter);
+		ViewersMultiSandboxView.getInstance().initializeContents(model, queries, filter);
 	}
 	
 	

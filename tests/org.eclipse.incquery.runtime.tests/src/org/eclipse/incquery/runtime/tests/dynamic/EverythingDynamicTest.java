@@ -3,8 +3,6 @@ package org.eclipse.incquery.runtime.tests.dynamic;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -27,11 +25,12 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.incquery.runtime.SpecificationBuilder;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.xtext.xbase.XbasePackage;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.inject.Inject;
@@ -40,7 +39,7 @@ public class EverythingDynamicTest {
 
     @Inject
     private Logger logger;
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void everythingDynamic() {
@@ -124,7 +123,8 @@ public class EverythingDynamicTest {
         // Matching
         Collection<? extends IPatternMatch> matches = null;
         try {
-            IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(pattern);
+            SpecificationBuilder builder = new SpecificationBuilder();
+            IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(builder.getOrCreateSpecification(pattern));
             matches = matcher.getAllMatches();
         } catch (IncQueryException incQueryException) {
             logger.error("Matcher initialization and matching failed in the testcase.", incQueryException);

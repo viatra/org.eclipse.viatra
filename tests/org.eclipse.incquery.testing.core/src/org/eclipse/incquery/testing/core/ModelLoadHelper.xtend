@@ -11,17 +11,18 @@
 
 package org.eclipse.incquery.testing.core
 
+import com.google.common.base.Preconditions
 import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager
-import org.eclipse.incquery.runtime.api.IncQueryEngine
-import org.eclipse.incquery.runtime.util.XmiModelUtil
-import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum
+import org.eclipse.incquery.runtime.SpecificationBuilder
+import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
+import org.eclipse.incquery.runtime.util.XmiModelUtil
+import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum
+import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -33,7 +34,7 @@ class ModelLoadHelper {
 	def loadModelFromFile(IFile file) {
 		loadModelFromUri(file.fullPath.toString);
 	}
-	
+
 	/**
 	 * Load an instance EMF model from the given platform URI to a new resource set.
 	 */
@@ -41,7 +42,7 @@ class ModelLoadHelper {
 		val resourceSet = new ResourceSetImpl()
 		resourceSet.loadAdditionalResourceFromUri(platformUri)
 	}
-	
+
 	/**
 	 * Try to resolve a given platform URI first as a resource than as a plugin URI.
 	 */
@@ -55,7 +56,7 @@ class ModelLoadHelper {
 			return pluginURI
 		}
 	}*/
-	
+
 	/**
 	 * Load an additional resource into the resource set from a given file.
 	 * Works for both pattern and target model resource sets.
@@ -63,7 +64,7 @@ class ModelLoadHelper {
 	def loadAdditionalResourceFromFile(ResourceSet resourceSet, IFile file){
 		resourceSet.loadAdditionalResourceFromUri(file.fullPath.toString)
 	}
-	
+
 	/**
 	 * Load an additional resource into the resource set from a given platform URI.
 	 * Works for both pattern and target model resource sets.
@@ -74,14 +75,14 @@ class ModelLoadHelper {
 			resourceSet.getResource(modelURI, true)
 		}
 	}
-	
+
 	/**
 	 * Load a pattern model from the given file into a new resource set.
 	 */
 	def loadPatternModelFromFile(IFile file){
 		file.fullPath.toString.loadPatternModelFromUri
 	}
-	
+
 	/**
 	 * Load a pattern model from the given platform URI into a new resource set.
 	 */
@@ -91,9 +92,9 @@ class ModelLoadHelper {
 			if(resource.contents.get(0) instanceof PatternModel){
 				resource.contents.get(0) as PatternModel
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * Initialize a matcher for the pattern with the given name from the pattern model on the selected EMF root.
 	 */
@@ -105,11 +106,11 @@ class ModelLoadHelper {
 				(model.packageName+'.'+name).equals(patternName)
 			}
 		]
-		if(patterns.size == 1){
-			engine.getMatcher(patterns.iterator.next)
-		}
+		Preconditions.checkState(patterns.size == 1, "No pattern found with name " + patternName)
+		val builder = new SpecificationBuilder(engine.registeredQuerySpecifications)
+		engine.getMatcher(builder.getOrCreateSpecification(patterns.iterator.next))
 	}
-	
+
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName){
 		val engine = IncQueryEngine::on(emfRoot);
 		model.initializeMatcherFromModel(engine,patternName)
@@ -121,14 +122,14 @@ class ModelLoadHelper {
 		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
 		querySpecification.getMatcher(IncQueryEngine::on(emfRoot))
 	}
-	
+
 	/**
 	 * Load the recorded match set into an existing resource set form the given file.
 	 */
 	def loadExpectedResultsFromFile(ResourceSet resourceSet, IFile file){
 		resourceSet.loadExpectedResultsFromUri(file.fullPath.toString)
 	}
-	
+
 	/**
 	 * Load the recorded match set into an existing resource set form the given platform URI.
 	 */
@@ -139,17 +140,17 @@ class ModelLoadHelper {
 				if(resource.contents.get(0) instanceof IncQuerySnapshot){
 					resource.contents.get(0) as IncQuerySnapshot
 				}
-			}	
+			}
 		}
 	}
-	
+
 	/**
 	 * Load the recorded match set into a new resource set form the given file.
 	 */
 	def loadExpectedResultsFromFile(IFile file){
 		file.fullPath.toString.loadExpectedResultsFromUri
 	}
-	
+
 	/**
 	 * Load the recorded match set into a new resource set form the given platform URI.
 	 */
@@ -160,17 +161,17 @@ class ModelLoadHelper {
 				if(resource.contents.get(0) instanceof IncQuerySnapshot){
 					resource.contents.get(0) as IncQuerySnapshot
 				}
-			}	
+			}
 		}
 	}
-	
+
 	/**
 	 * Returns the match set record for a given pattern name after it loads the snapshot from the given file.
 	 */
 	def loadExpectedResultsForPatternFromFile(ResourceSet resourceSet, IFile file, String patternFQN){
 		resourceSet.loadExpectedResultsForPatternFromUri(file.fullPath.toString,patternFQN)
 	}
-	
+
 	/**
 	 * Returns the match set record for a given pattern name after it loads the snapshot from the given platform URI.
 	 */

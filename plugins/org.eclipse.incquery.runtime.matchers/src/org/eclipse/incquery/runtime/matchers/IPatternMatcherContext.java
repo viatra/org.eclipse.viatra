@@ -109,8 +109,6 @@ public interface IPatternMatcherContext {
 
     void logDebug(String message);
 
-    String printPattern(Object pattern);
-
     String printType(Object typeObject);
 
 }

@@ -27,16 +27,10 @@ public abstract class Feeder {
     protected Address<? extends Receiver> receiver;
     protected IPatternMatcherRuntimeContext context;
     protected Network network;
-    protected ReteBoundary<?> boundary;
+    protected ReteBoundary boundary;
 
-    /**
-     * @param receiver
-     * @param context
-     * @param network
-     * @param boundary
-     */
     public Feeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context, Network network,
-            ReteBoundary<?> boundary) {
+            ReteBoundary boundary) {
         super();
         this.receiver = receiver;
         this.context = context;

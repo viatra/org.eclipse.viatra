@@ -17,9 +17,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PSystem;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 /**
@@ -31,11 +32,7 @@ public class Equality extends DeferredPConstraint {
     private PVariable who;
     private PVariable withWhom;
 
-    /**
-     * @param buildable
-     * @param affectedVariables
-     */
-    public Equality(PSystem pSystem, PVariable who, PVariable withWhom) {
+    public Equality(PBody pSystem, PVariable who, PVariable withWhom) {
         super(pSystem, buildSet(who, withWhom));
         this.who = who;
         this.withWhom = withWhom;
@@ -65,16 +62,10 @@ public class Equality extends DeferredPConstraint {
         return who.getName() + "=" + withWhom.getName();
     }
 
-    /**
-     * @return the who
-     */
     public PVariable getWho() {
         return who;
     }
 
-    /**
-     * @return the withWhom
-     */
     public PVariable getWithWhom() {
         return withWhom;
     }
@@ -84,9 +75,6 @@ public class Equality extends DeferredPConstraint {
         return Collections.emptySet();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.rete.construction.psystem.BasePConstraint#getFunctionalKeys()
-     */
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
@@ -96,7 +84,7 @@ public class Equality extends DeferredPConstraint {
     }
 
     @Override
-    public boolean isReadyAt(SubPlan olan) {
+    public boolean isReadyAt(SubPlan olan, IPatternMatcherContext context) {
         return olan.getVariablesIndex().containsKey(who) && olan.getVariablesIndex().containsKey(withWhom);
         // will be replaced by || if copierNode is available;
         // until then, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is

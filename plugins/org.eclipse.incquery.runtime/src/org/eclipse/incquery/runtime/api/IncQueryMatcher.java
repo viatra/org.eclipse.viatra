@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 
 /**
@@ -28,7 +27,7 @@ import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 public interface IncQueryMatcher<Match extends IPatternMatch> {
     // REFLECTION
     /** The pattern that will be matched. */
-    public abstract Pattern getPattern();
+    public abstract IQuerySpecification<? extends IncQueryMatcher<Match>> getSpecification();
 
     /** Fully qualified name of the pattern. */
     public abstract String getPatternName();

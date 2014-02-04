@@ -20,15 +20,8 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
 public class EntityFeeder extends Feeder {
     protected Object typeObject;
 
-    /**
-     * @param receiver
-     * @param context
-     * @param network
-     * @param boundary
-     * @param typeObject
-     */
     public EntityFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary<?> boundary, Object typeObject) {
+            Network network, ReteBoundary boundary, Object typeObject) {
         super(receiver, context, network, boundary);
         this.typeObject = typeObject;
     }

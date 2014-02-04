@@ -13,13 +13,11 @@ package org.eclipse.incquery.viewers.runtime.model.converters;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
@@ -39,15 +37,13 @@ public class ContainmentSet extends FixedComputedSet {
     private Multimap<Object, Item> itemMap;
     private IObservableSet patternMatchSet;
 
-    public ContainmentSet(Annotation itemAnnotation, Multimap<Object, Item> itemMap2, IObservableSet patternMatchSet) {
+    public ContainmentSet(PAnnotation itemAnnotation, Multimap<Object, Item> itemMap2, IObservableSet patternMatchSet) {
         Preconditions.checkArgument(Containment.ANNOTATION_ID.equals(itemAnnotation.getName()),
                 "The converter should be initialized using a " + Edge.ANNOTATION_ID + " annotation.");
         this.itemMap = itemMap2;
 
-        containerParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "container")).getValue().getVar();
-        destParameterName = ((VariableValue) CorePatternLanguageHelper.getFirstAnnotationParameter(itemAnnotation,
-                "item")).getValue().getVar();
+        containerParameterName = ((ParameterReference)itemAnnotation.getFirstValue("container")).getName();
+        destParameterName = ((ParameterReference)itemAnnotation.getFirstValue("item")).getName();
         this.patternMatchSet = patternMatchSet;
     }
 

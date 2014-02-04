@@ -19,7 +19,7 @@ import java.util.Set;
  * 
  */
 public class PVariable {
-    private PSystem pSystem;
+    private PBody pSystem;
     /**
      * The name of the pattern variable. This is the unique key of the pattern node.
      */
@@ -29,10 +29,6 @@ public class PVariable {
      * substitutes
      */
     private boolean virtual;
-    // /**
-    // * whether this is an exported symbolic parameter
-    // */
-    // private boolean exportedParameter;
 
     /**
      * Set of constraints that mention this variable
@@ -50,11 +46,11 @@ public class PVariable {
      */
     private PVariable unifiedInto;
 
-    PVariable(PSystem pSystem, Object name) {
+    PVariable(PBody pSystem, Object name) {
         this(pSystem, name, false);
     }
 
-    PVariable(PSystem pSystem, Object name, boolean virtual) {
+    PVariable(PBody pSystem, Object name, boolean virtual) {
         super();
         this.pSystem = pSystem;
         this.name = name;
@@ -72,6 +68,7 @@ public class PVariable {
      * @param constraint
      */
     public void unifyInto(PVariable replacement) {
+        pSystem.checkMutability();
         replacementCheck();
         replacement = replacement.getUnifiedIntoRoot();
 
@@ -124,6 +121,7 @@ public class PVariable {
      * @param constraint
      */
     public void refer(PConstraint constraint) {
+        pSystem.checkMutability();
         replacementCheck();
         deducable = null;
         referringConstraints.add(constraint);
@@ -135,6 +133,7 @@ public class PVariable {
      * @param constraint
      */
     public void unrefer(PConstraint constraint) {
+        pSystem.checkMutability();
         replacementCheck();
         deducable = null;
         referringConstraints.remove(constraint);
@@ -155,22 +154,6 @@ public class PVariable {
         replacementCheck();
         return virtual;
     }
-
-    // /**
-    // * @return the exportedParameter
-    // */
-    // public boolean isExportedParameter() {
-    // replacementCheck();
-    // return exportedParameter;
-    // }
-    //
-    // /**
-    // * @param exportedParameter the exportedParameter to set
-    // */
-    // public void setExportedParameter(boolean exportedParameter) {
-    // replacementCheck();
-    // this.exportedParameter = exportedParameter;
-    // }
 
     /**
      * @return the referringConstraints

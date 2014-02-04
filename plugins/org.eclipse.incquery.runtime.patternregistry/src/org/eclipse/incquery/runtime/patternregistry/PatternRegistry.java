@@ -23,6 +23,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.patternregistry.internal.GeneratedPatternSource;
 import org.eclipse.incquery.runtime.patternregistry.internal.PatternInfo;
@@ -105,8 +106,9 @@ public enum PatternRegistry {
      * @param relatedFile
      *            optional, leave null if not available
      * @return FIXME DO IT
+     * @throws IncQueryException 
      */
-    public IPatternInfo addPatternToRegistry(Pattern pattern, IFile relatedFile) {
+    public IPatternInfo addPatternToRegistry(Pattern pattern, IFile relatedFile) throws IncQueryException {
         // Returns the PatterInfo if it is already registered
         String id = PatternRegistryUtil.getUniquePatternIdentifier(pattern);
         if (idToPatternInfoMap.containsKey(id)) {
@@ -126,8 +128,9 @@ public enum PatternRegistry {
      * @param relatedFile
      *            optional, leave null if not available
      * @return FIXME DO IT
+     * @throws IncQueryException 
      */
-    public List<IPatternInfo> addPatternsToRegistry(Resource resource, IFile relatedFile) {
+    public List<IPatternInfo> addPatternsToRegistry(Resource resource, IFile relatedFile) throws IncQueryException {
         List<IPatternInfo> resultList = new ArrayList<IPatternInfo>();
         if (resource != null) {
             EObject eObject = resource.getContents().get(0);

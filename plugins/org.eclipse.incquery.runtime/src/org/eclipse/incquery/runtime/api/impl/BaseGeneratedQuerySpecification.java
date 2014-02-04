@@ -12,21 +12,30 @@
 package org.eclipse.incquery.runtime.api.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
+import org.eclipse.incquery.runtime.SpecificationBuilder;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.util.XmiModelUtil;
 import org.eclipse.incquery.runtime.util.XmiModelUtilRunningOptionEnum;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 /**
  * Provides common functionality of pattern-specific generated query specifications.
- * 
+ *
  * @author Bergmann Gábor
  * @author Mark Czotter
  */
@@ -39,8 +48,11 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
 
     private final Pattern pattern;
 
+    private Set<PBody> bodies;
+
     public BaseGeneratedQuerySpecification() throws IncQueryException {
         pattern = parsePattern();
+        setStatus(PQueryStatus.OK);
         // if (pattern == null)
         // throw new IncQueryException(
         // "Unable to parse the definition of generated pattern " + patternName() +
@@ -55,14 +67,14 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
 
     /**
      * Returns the bundleName (plug-in name).
-     * 
+     *
      * @return
      */
     protected abstract String getBundleName();
 
     /**
      * Returns the fully qualified name of the pattern.
-     * 
+     *
      * @return
      */
     protected abstract String patternName();
@@ -85,7 +97,7 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
 
     /**
      * Returns the pattern with the given patternName.
-     * 
+     *
      * @param model
      * @param patternName
      * @return {@link Pattern} instance or null if not found.
@@ -104,7 +116,7 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
 
     /**
      * Returns the global Xmi model Root from the given bundle.
-     * 
+     *
      * @param bundleName
      * @return
      * @throws IncQueryException
@@ -139,5 +151,44 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
         }
     }
 
+    //TODO temporary implementation
+    @Override
+    public List<String> getParameterNames() {
+        return Lists.transform(pattern.getParameters(), new Function<Variable, String>() {
 
+            @Override
+            public String apply(Variable var) {
+                if (var == null) {
+                    return "";
+                } else {
+                    return var.getName();
+                }
+            }
+
+        });
+    }
+
+    @Override
+    public void checkMutability() throws IllegalStateException {
+        if (bodies != null) {
+            super.checkMutability();
+        }
+    }
+
+    //TODO temporary implementation
+    @Override
+    protected Set<PBody> doGetContainedBodies() {
+        if (bodies == null) {
+            SpecificationBuilder converter = new SpecificationBuilder(
+                    QuerySpecificationRegistry.getContributedQuerySpecifications());
+            try {
+                bodies = converter.getBodies(pattern, this);
+                setStatus(PQueryStatus.OK);
+            } catch (IncQueryException e) {
+                setStatus(PQueryStatus.ERROR);
+                throw new RuntimeException("Error initializing generated pattern " + getFullyQualifiedName(), e);
+            }
+        }
+        return bodies;
+    }
 }

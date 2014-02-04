@@ -21,12 +21,7 @@ public abstract class KeyedEnumerablePConstraint<KeyType> extends EnumerablePCon
 
     protected KeyType supplierKey;
 
-    /**
-     * @param variablesTuple
-     * @param buildable
-     * @param supplierKey
-     */
-    public KeyedEnumerablePConstraint(PSystem pSystem, Tuple variablesTuple,
+    public KeyedEnumerablePConstraint(PBody pSystem, Tuple variablesTuple,
             KeyType supplierKey) {
         super(pSystem, variablesTuple);
         this.supplierKey = supplierKey;
@@ -37,14 +32,8 @@ public abstract class KeyedEnumerablePConstraint<KeyType> extends EnumerablePCon
         return supplierKey == null ? "$any(null)" : keyToString();
     }
 
-    /**
-     * @return
-     */
     protected abstract String keyToString();
 
-    /**
-     * @return the supplierKey
-     */
     public KeyType getSupplierKey() {
         return supplierKey;
     }

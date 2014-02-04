@@ -11,6 +11,7 @@ import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
@@ -24,6 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public abstract class InitializeViewersHandler extends AbstractHandler {
 
@@ -50,10 +52,10 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	                        
 	                        // calculate patterns that need to be passed to the ZestView
 	                        
-	                        ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+	                        ArrayList<IQuerySpecification<?>> patterns = Lists.newArrayList();
 	                        
 	                        for (ObservablePatternMatcher opm: root.getMatchers()) {
-	                            patterns.add( opm.getMatcher().getPattern() );
+	                            patterns.add( opm.getMatcher().getSpecification() );
 	                        }
 	                        
 	                        
@@ -91,7 +93,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	        final Object[] filter = matcher.getFilter();
 	        if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
 	            final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
-	            dataFilter.addSingleFilter(matcher.getMatcher().getPattern(), filterMatch);
+	            dataFilter.addSingleFilter(matcher.getMatcher().getSpecification(), filterMatch);
 	        }
 	    }
 	    return dataFilter;

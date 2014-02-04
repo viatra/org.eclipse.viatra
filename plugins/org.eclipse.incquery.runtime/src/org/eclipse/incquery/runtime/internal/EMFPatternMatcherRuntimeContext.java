@@ -36,145 +36,9 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext implements
         IPatternMatcherRuntimeContext {
 
-    // protected abstract EMFContainmentHierarchyTraversal newTraversal();
-    // protected abstract ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine);
-
-    // protected Collection<EMFVisitor> waitingVisitors;
-    // boolean traversalCoalescing;
-    // protected ExtensibleEMFManipulationListener listener;
     private final NavigationHelper baseIndex;
     private BaseIndexListener listener;
-
-    // protected void traverse(EMFVisitor visitor) {
-    // try {
-    // newTraversal().accept(visitor);
-    // } catch (Exception ex) {
-    // iqEngine.getLogger().logError(
-    // "EMF-IncQuery encountered an error in processing the EMF model. " +
-    // "This happened while traversing the model for the initialization of pattern match caches.", ex);
-    // }
-    // }
-
-    // /**
-    // * @param visitor
-    // */
-    // protected void doVisit(CustomizedEMFVisitor visitor) {
-    // if (traversalCoalescing) waitingVisitors.add(visitor);
-    // else traverse(visitor);
-    // }
-    //
-    //
-    //
-    // class CustomizedEMFVisitor extends EMFVisitor {
-    // @Override
-    // public final void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
-    // if (target == null) return; // null-valued attributes / references are simply not stored
-    // if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
-    // considerForExpansion(target);
-    // doVisitReference(source, feature, target);
-    // }
-    //
-    // @Override
-    // public void visitInternalContainment(EObject source,EReference feature, EObject target) {
-    // if (target == null) return; // null-valued attributes / references are simply not stored
-    // if (feature.getEOpposite() != null) {
-    // doVisitReference(target, feature.getEOpposite(), source);
-    // }
-    // doVisitReference(source, feature, target);
-    // }
-    // // @Override
-    // // public void visitExternalReference(EObject source, EReference feature, EObject target) {
-    // // if (target == null) return; // null-valued attributes / references are simply not stored
-    // // if (feature.getEOpposite() != null && feature.getEOpposite().isContainment()) return;
-    // // doVisitReference(source, feature, target);
-    // // }
-    // void doVisitReference(EObject source, EReference feature, EObject target) {}
-    // }
-
-    // public static class ForResourceSet<PatternDescription> extends
-    // EMFPatternMatcherRuntimeContext<PatternDescription> {
-    // ResourceSet root;
-    // Collection<Resource> additionalResources;
-    // public ForResourceSet(ResourceSet root, IncQueryEngine iqEngine) {
-    // super(iqEngine);
-    // this.root = root;
-    // this.additionalResources = new HashSet<Resource>();
-    // }
-    // @Override
-    // protected EMFContainmentHierarchyTraversal newTraversal() {
-    // return new EMFContainmentHierarchyTraversal(root, additionalResources);
-    // }
-    // @Override
-    // protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-    // ExtensibleEMFManipulationListener emfContentTreeViralListener = new EMFContentTreeViralListener(engine, root,
-    // this, iqEngine.getLogger());
-    // for (Resource resource : additionalResources) {
-    // emfContentTreeViralListener.addRoot(resource);
-    // }
-    // return emfContentTreeViralListener;
-    // }
-    // @Override
-    // public void considerForExpansion(EObject obj) {
-    // Resource eResource = obj.eResource();
-    // if (eResource != null && eResource.getResourceSet() == null && !additionalResources.contains(eResource)) {
-    // additionalResources.add(eResource);
-    // listener.addRoot(eResource);
-    // }
-    // }
-    // }
-    // public static class ForResource<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
-    // Resource root;
-    // public ForResource(Resource root, IncQueryEngine iqEngine) {
-    // super(iqEngine);
-    // this.root = root;
-    // }
-    // @Override
-    // protected EMFContainmentHierarchyTraversal newTraversal() {
-    // return new EMFContainmentHierarchyTraversal(root);
-    // }
-    // @Override
-    // protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-    // return new EMFContentTreeViralListener(engine, root, this, iqEngine.getLogger());
-    // }
-    // @Override
-    // public void considerForExpansion(EObject obj) {}
-    // }
-    // public static class ForEObject<PatternDescription> extends EMFPatternMatcherRuntimeContext<PatternDescription> {
-    // EObject root;
-    // public ForEObject(EObject root, IncQueryEngine iqEngine) {
-    // super(iqEngine);
-    // this.root = root;
-    // }
-    // @Override
-    // protected EMFContainmentHierarchyTraversal newTraversal() {
-    // return new EMFContainmentHierarchyTraversal(root);
-    // }
-    // @Override
-    // protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-    // return new EMFContentTreeViralListener(engine, root, this, iqEngine.getLogger());
-    // }
-    // @Override
-    // public void considerForExpansion(EObject obj) {}
-    // }
-    // public static class ForTransactionalEditingDomain<PatternDescription> extends
-    // EMFPatternMatcherRuntimeContext<PatternDescription> {
-    // TransactionalEditingDomain domain;
-    // public ForTransactionalEditingDomain(TransactionalEditingDomain domain) {
-    // super();
-    // this.domain = domain;
-    // }
-    // @Override
-    // protected EMFContainmentHierarchyTraversal newTraversal() {
-    // return new EMFContainmentHierarchyTraversal(domain.getResourceSet());
-    // }
-    // @Override
-    // protected ExtensibleEMFManipulationListener newListener(ReteEngine<PatternDescription> engine) {
-    // return new EMFTransactionalEditingDomainListener(engine, domain, this);
-    // }
-    // @Override
-    // public void considerForExpansion(EObject obj) {}
-    //
-    // }
+    private IncQueryEngineImpl iqEngine;
 
     /**
      * Notifier must be EObject, Resource or ResourceSet
@@ -182,7 +46,8 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
      * @param notifier
      */
     public EMFPatternMatcherRuntimeContext(IncQueryEngineImpl iqEngine, NavigationHelper baseIndex) {
-        super(iqEngine);
+        super(iqEngine.getLogger());
+        this.iqEngine = iqEngine;
         this.baseIndex = baseIndex;
         // this.waitingVisitors = new ArrayList<EMFVisitor>();
         // this.traversalCoalescing = false;
@@ -193,39 +58,9 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         return baseIndex.coalesceTraversals(callable);
     }
 
-    // @Override
-    // public void startCoalescing() {
-    // assert(!traversalCoalescing);
-    // traversalCoalescing = true;
-    // }
-    // @Override
-    // public void finishCoalescing() {
-    // assert(traversalCoalescing);
-    // traversalCoalescing = false;
-    // if (! waitingVisitors.isEmpty()){
-    // ArrayList<EMFVisitor> visitors = new ArrayList<EMFVisitor>(waitingVisitors);
-    // waitingVisitors.clear();
-    // newTraversal().accept(new MultiplexerVisitor(visitors));
-    // }
-    // }
-
     @Override
     public void enumerateAllBinaryEdges(final ModelElementPairCrawler crawler) {
         throw new UnsupportedOperationException();
-
-        // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-        // @Override
-        // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        // if (target != null) // Exclude NULL attribute values from RETE
-        // crawler.crawl(source, target);
-        // super.visitAttribute(source, feature, target);
-        // }
-        // @Override
-        // public void doVisitReference(EObject source, EReference feature, EObject target) {
-        // crawler.crawl(source, target);
-        // }
-        // };
-        // doVisit(visitor);
     }
 
     @Override
@@ -237,18 +72,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     // Only direct instantiation of unaries is supported now
     public void enumerateAllInstantiations(final ModelElementPairCrawler crawler) {
         throw new UnsupportedOperationException();
-        // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-        // @Override
-        // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        // if (target != null) // Exclude NULL attribute values from RETE
-        // crawler.crawl(feature.getEAttributeType(), target);
-        // }
-        // @Override
-        // public void visitElement(EObject source) {
-        // crawler.crawl(source.eClass(), source);
-        // }
-        // };
-        // doVisit(visitor);
     }
 
     @Override
@@ -259,39 +82,11 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     @Override
     public void enumerateAllUnaries(final ModelElementCrawler crawler) {
         throw new UnsupportedOperationException();
-        // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-        // @Override
-        // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        // if (target != null) // Exclude NULL attribute values from RETE
-        // crawler.crawl(target);
-        // super.visitAttribute(source, feature, target);
-        // }
-        // @Override
-        // public void visitElement(EObject source) {
-        // crawler.crawl(source);
-        // super.visitElement(source);
-        // }
-        // };
-        // doVisit(visitor);
     }
 
     @Override
     public void enumerateAllUnaryContainments(final ModelElementPairCrawler crawler) {
         throw new UnsupportedOperationException();
-        // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-        // // FIXME: containment no longer holds between EObject and its raw attribute values.
-        // // @Override
-        // // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        // // if (target != null) // Exclude NULL attribute values from RETE
-        // // crawler.crawl(source, target);
-        // // super.visitAttribute(source, feature, target);
-        // // }
-        // @Override
-        // public void doVisitReference(EObject source, EReference feature, EObject target) {
-        // if (feature.isContainment()) crawler.crawl(source, target);
-        // }
-        // };
-        // doVisit(visitor);
     }
 
     @Override
@@ -307,19 +102,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
             }
         });
 
-        // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-        // @Override
-        // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-        // if (structural.equals(feature) && target != null) // NULL attribute values excluded from RETE
-        // crawler.crawl(source, target);
-        // super.visitAttribute(source, feature, target);
-        // }
-        // @Override
-        // public void doVisitReference(EObject source, EReference feature, EObject target) {
-        // if (structural.equals(feature)) crawler.crawl(source, target);
-        // }
-        // };
-        // doVisit(visitor);
     }
 
     @Override
@@ -346,14 +128,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
             for (EObject eObject : allInstances) {
                 crawler.crawl(eObject);
             }
-            // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-            // @Override
-            // public void visitElement(EObject source) {
-            // if (source.eClass().equals(typeObject)) crawler.crawl(source);
-            // super.visitElement(source);
-            // }
-            // };
-            // doVisit(visitor);
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
             listener.ensure(eDataType);
@@ -361,16 +135,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
             for (Object value : allInstances) {
                 crawler.crawl(value);
             }
-            // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-            // @Override
-            // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-            // if (target != null && ((EDataType)typeObject).isInstance(target)) // Exclude NULL attribute values from
-            // RETE
-            // crawler.crawl(target);
-            // super.visitAttribute(source, feature, target);
-            // }
-            // };
-            // doVisit(visitor);
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
     }
@@ -384,14 +148,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
             for (EObject eObject : allInstances) {
                 crawler.crawl(eObject);
             }
-            // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-            // @Override
-            // public void visitElement(EObject source) {
-            // if (((EClass)typeObject).isInstance(source)) crawler.crawl(source);
-            // super.visitElement(source);
-            // }
-            // };
-            // doVisit(visitor);
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
             listener.ensure(eDataType);
@@ -399,16 +155,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
             for (Object value : allInstances) {
                 crawler.crawl(value);
             }
-            // CustomizedEMFVisitor visitor = new CustomizedEMFVisitor() {
-            // @Override
-            // public void visitAttribute(EObject source, EAttribute feature, Object target) {
-            // if (target != null && ((EDataType)typeObject).isInstance(target)) // Exclude NULL attribute values from
-            // RETE
-            // crawler.crawl(target);
-            // super.visitAttribute(source, feature, target);
-            // }
-            // };
-            // doVisit(visitor);
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
     }
@@ -424,21 +170,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         // TODO runnable? domain.runExclusive(read)
 
     }
-
-    // @Override
-    // public String retrieveUnaryTypeFQN(Object typeObject) {
-    // return contextMapping.retrieveFQN((EClassifier)typeObject);
-    // }
-    //
-    // @Override
-    // public String retrieveBinaryEdgeTypeFQN(Object typeObject) {
-    // return contextMapping.retrieveFQN((EStructuralFeature)typeObject);
-    // }
-    //
-    // @Override
-    // public String retrieveTernaryEdgeTypeFQN(Object typeObject) {
-    // throw new UnsupportedOperationException();
-    // }
 
     @Override
     // TODO Transactional?

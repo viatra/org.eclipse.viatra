@@ -22,9 +22,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 
 /**
@@ -34,14 +31,11 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
  */
 public class EMFPatternMatcherContext implements IPatternMatcherContext {
 
-    protected IncQueryEngineImpl iqEngine;
+    private Logger logger;
 
-    /**
-     * @param iqEngine
-     */
-    public EMFPatternMatcherContext(IncQueryEngineImpl iqEngine) {
+    public EMFPatternMatcherContext(Logger logger) {
         super();
-        this.iqEngine = iqEngine;
+        this.logger = logger;
     }
 
     @Override
@@ -197,7 +191,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
     }
 
     public Logger getLogger() {
-        return iqEngine.getLogger();
+        return logger;
     }
 
     @Override
@@ -240,14 +234,6 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
     public void logWarning(String message, Throwable cause) {
         if (getLogger() != null)
             getLogger().warn(message, cause);
-    }
-
-    @Override
-    public String printPattern(Object pattern) {
-        if (pattern == null) {
-            return "(null)";
-        }
-        return CorePatternLanguageHelper.getFullyQualifiedName((Pattern)pattern);
     }
 
     @Override

@@ -13,30 +13,30 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
 /**
+ * A set of constraints representing a pattern body
  * @author Gabor Bergmann
  * 
  */
-public class PSystem {
-    private Object pattern;
-    private IPatternMatcherContext context;
+public class PBody {
+    private PQuery query;
 
     private Set<PVariable> allVariables;
     private Set<PVariable> uniqueVariables;
+    private List<PVariable> symbolicParameters;
     private Map<Object, PVariable> variablesByName;
     private Set<PConstraint> constraints;
     private int nextVirtualNodeID;
 
-    public PSystem(IPatternMatcherContext context, Object pattern) {
+    public PBody(PQuery query) {
         super();
-        this.pattern = pattern;
-        this.context = context;
+        this.query = query;
         allVariables = new HashSet<PVariable>();
         uniqueVariables = new HashSet<PVariable>();
         variablesByName = new HashMap<Object, PVariable>();
@@ -47,6 +47,7 @@ public class PSystem {
      * @return whether the submission of the new variable was successful
      */
     private boolean addVariable(PVariable var) {
+        checkMutability();
         Object name = var.getName();
         if (!variablesByName.containsKey(name)) {
             allVariables.add(var);
@@ -65,6 +66,7 @@ public class PSystem {
      * @return whether the submission of the new constraint was successful
      */
     boolean registerConstraint(PConstraint constraint) {
+        checkMutability();
         return constraints.add(constraint);
     }
 
@@ -74,6 +76,7 @@ public class PSystem {
      * @return whether the removal of the constraint was successful
      */
     boolean unregisterConstraint(PConstraint constraint) {
+        checkMutability();
         return constraints.remove(constraint);
     }
 
@@ -88,6 +91,7 @@ public class PSystem {
     }
 
     public PVariable newVirtualVariable() {
+        checkMutability();
         String name;
         do {
             name = ".virtual{" + nextVirtualNodeID++ + "}";
@@ -98,35 +102,20 @@ public class PSystem {
     }
 
     public PVariable newConstantVariable(Object value) {
+        checkMutability();
         PVariable virtual = newVirtualVariable();
         new ConstantValue(this, virtual, value);
         return virtual;
     }
 
-    /**
-     * @return the context
-     */
-    public IPatternMatcherContext getContext() {
-        return context;
-    }
-
-    /**
-     * @return the allVariables
-     */
     public Set<PVariable> getAllVariables() {
         return allVariables;
     }
 
-    /**
-     * @return the uniqueVariables
-     */
     public Set<PVariable> getUniqueVariables() {
         return uniqueVariables;
     }
 
-    /**
-     * @return the variable by name
-     */
     private PVariable getVariableByName(Object name) {
         return variablesByName.get(name).getUnifiedIntoRoot();
     }
@@ -143,35 +132,36 @@ public class PSystem {
         return getVariableByName(name);
     }
     
-    /**
-     * @return the variable by name
-     */
     public PVariable getOrCreateVariableByName(Object name) {
+        checkMutability();
         if (!variablesByName.containsKey(name))
             addVariable(new PVariable(this, name));
         return getVariableByName(name);
     }
 
-    /**
-     * @return the constraints
-     */
     public Set<PConstraint> getConstraints() {
         return constraints;
     }
 
-    /**
-     * @return the pattern
-     */
-    public Object getPattern() {
-        return pattern;
+    public PQuery getPattern() {
+        return query;
     }
 
-    /**
-     * @param pVariable
-     */
     void noLongerUnique(PVariable pVariable) {
         assert (!pVariable.isUnique());
         uniqueVariables.remove(pVariable);
     }
 
+    public List<PVariable> getSymbolicParameters() {
+        return symbolicParameters;
+    }
+
+    public void setSymbolicParameters(List<PVariable> symbolicParameters) {
+        checkMutability();
+        this.symbolicParameters = symbolicParameters;
+    }
+
+    void checkMutability() throws IllegalStateException {
+        query.checkMutability();
+    }
 }
