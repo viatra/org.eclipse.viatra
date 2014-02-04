@@ -8,10 +8,10 @@ Export-Package: operation.queries,
  operation.queries.util,
  system.queries,
  system.queries.util
-Require-Bundle: org.eclipse.pde.core,
- org.eclipse.emf.ecore,
+Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,
  org.eclipse.incquery.runtime,
- org.eclipse.incquery.examples.bpm
+ org.eclipse.incquery.examples.bpm,
+ com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

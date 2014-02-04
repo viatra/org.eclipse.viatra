@@ -32,12 +32,12 @@ public class TaskChecklistEntryJobCorrespondenceConstraint0 extends Constraint<T
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getSeverity() {
 		return ValidationUtil.getSeverity("warning");
 	}
-	
+
 	@Override
 	public BaseGeneratedQuerySpecification<TaskChecklistEntryJobCorrespondenceMatcher> getQuerySpecification() {
 		return querySpecification;

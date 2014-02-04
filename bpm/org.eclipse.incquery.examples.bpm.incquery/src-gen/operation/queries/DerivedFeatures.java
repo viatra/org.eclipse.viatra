@@ -12,7 +12,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 /**
  * A pattern group formed of all patterns defined in derivedFeatures.eiq.
  * 
- * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare 
+ * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare
  * an EMF-IncQuery engine for matching all patterns originally defined in file derivedFeatures.eiq,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
@@ -50,12 +50,12 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   private static DerivedFeatures INSTANCE;
   
   private DerivedFeatures() throws IncQueryException {
-    querySpecifications.add(ChecklistEntryTaskCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(TaskChecklistEntryJobCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(ChecklistEntryJobCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(ChecklistProcessCorrespondenceMatcher.querySpecification());
     querySpecifications.add(DataReadByChecklistEntryMatcher.querySpecification());
+    querySpecifications.add(ChecklistEntryJobCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(TaskChecklistEntryJobCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(ChecklistEntryTaskCorrespondenceMatcher.querySpecification());
     querySpecifications.add(IncorrectEntryInChecklistMatcher.querySpecification());
+    querySpecifications.add(ChecklistProcessCorrespondenceMatcher.querySpecification());
     
   }
 }

@@ -1,9 +1,22 @@
 package system.queries.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import system.queries.DataTaskWriteCorrespondenceMatcher;
 
 /**
@@ -33,24 +46,54 @@ public final class DataTaskWriteCorrespondenceQuerySpecification extends BaseGen
   @Override
   protected DataTaskWriteCorrespondenceMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return DataTaskWriteCorrespondenceMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.examples.bpm.incquery";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "system.queries.DataTaskWriteCorrespondence";
     
   }
   
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("Data","Task");
+  }
+  
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("Data", "system.Data"),new PParameter("Task", "process.Task"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() {
+    return bodies;
+  }
+  
   private DataTaskWriteCorrespondenceQuerySpecification() throws IncQueryException {
     super();
+    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    {
+      PBody body = new PBody(this);
+      PVariable var_Data = body.getOrCreateVariableByName("Data");
+      PVariable var_Task = body.getOrCreateVariableByName("Task");
+      PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
+      new ExportedParameter(body, var_Data, "Data");
+      new ExportedParameter(body, var_Task, "Task");
+      new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+      new TypeBinary(body, context, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "writingTaskIds"), "http://system/1.0/Data.writingTaskIds");
+      new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
+      body.setSymbolicParameters(Arrays.asList(var_Data, var_Task));
+      bodies.add(body);
+    }
+    {
+      PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+      annotation.addAttribute("feature","writingTask");
+      addAnnotation(annotation);
+    }
+    setStatus(PQueryStatus.OK);
   }
+  
+  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<DataTaskWriteCorrespondenceQuerySpecification> {

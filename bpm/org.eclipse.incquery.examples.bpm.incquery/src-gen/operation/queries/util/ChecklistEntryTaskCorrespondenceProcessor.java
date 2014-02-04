@@ -15,8 +15,8 @@ import process.Task;
 public abstract class ChecklistEntryTaskCorrespondenceProcessor implements IMatchProcessor<ChecklistEntryTaskCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pCLE the value of pattern parameter CLE in the currently processed match 
-   * @param pTask the value of pattern parameter Task in the currently processed match 
+   * @param pCLE the value of pattern parameter CLE in the currently processed match
+   * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
   public abstract void process(final ChecklistEntry pCLE, final Task pTask);

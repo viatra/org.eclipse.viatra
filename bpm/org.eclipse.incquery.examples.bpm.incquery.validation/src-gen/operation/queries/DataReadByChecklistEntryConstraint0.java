@@ -32,12 +32,12 @@ public class DataReadByChecklistEntryConstraint0 extends Constraint<DataReadByCh
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getSeverity() {
 		return ValidationUtil.getSeverity("warning");
 	}
-	
+
 	@Override
 	public BaseGeneratedQuerySpecification<DataReadByChecklistEntryMatcher> getQuerySpecification() {
 		return querySpecification;

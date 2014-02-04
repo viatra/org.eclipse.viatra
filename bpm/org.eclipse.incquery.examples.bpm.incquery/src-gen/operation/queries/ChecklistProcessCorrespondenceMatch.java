@@ -3,18 +3,18 @@ package operation.queries;
 import java.util.Arrays;
 import java.util.List;
 import operation.Checklist;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Pattern-specific match representation of the operation.queries.ChecklistProcessCorrespondence pattern, 
+ * Pattern-specific match representation of the operation.queries.ChecklistProcessCorrespondence pattern,
  * to be used in conjunction with {@link ChecklistProcessCorrespondenceMatcher}.
  * 
  * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
- * Each instance is a (possibly partial) substitution of pattern parameters, 
- * usable to represent a match of the pattern in the result of a query, 
+ * Each instance is a (possibly partial) substitution of pattern parameters,
+ * usable to represent a match of the pattern in the result of a query,
  * or to specify the bound (fixed) input parameters when issuing a query.
  * 
  * @see ChecklistProcessCorrespondenceMatcher
@@ -111,9 +111,9 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((fChecklist == null) ? 0 : fChecklist.hashCode()); 
-    result = prime * result + ((fProcess == null) ? 0 : fProcess.hashCode()); 
-    return result; 
+    result = prime * result + ((fChecklist == null) ? 0 : fChecklist.hashCode());
+    result = prime * result + ((fProcess == null) ? 0 : fProcess.hashCode());
+    return result;
     
   }
   
@@ -121,13 +121,13 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
   public boolean equals(final Object obj) {
     if (this == obj)
     	return true;
-    if (!(obj instanceof ChecklistProcessCorrespondenceMatch)) { // this should be infrequent				
+    if (!(obj instanceof ChecklistProcessCorrespondenceMatch)) { // this should be infrequent
     	if (obj == null)
     		return false;
     	if (!(obj instanceof IPatternMatch))
     		return false;
     	IPatternMatch otherSig  = (IPatternMatch) obj;
-    	if (!pattern().equals(otherSig.pattern()))
+    	if (!specification().equals(otherSig.specification()))
     		return false;
     	return Arrays.deepEquals(toArray(), otherSig.toArray());
     }
@@ -140,9 +140,9 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
   }
   
   @Override
-  public Pattern pattern() {
+  public ChecklistProcessCorrespondenceQuerySpecification specification() {
     try {
-    	return ChecklistProcessCorrespondenceMatcher.querySpecification().getPattern();
+    	return ChecklistProcessCorrespondenceQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
      	throw new IllegalStateException	(ex);

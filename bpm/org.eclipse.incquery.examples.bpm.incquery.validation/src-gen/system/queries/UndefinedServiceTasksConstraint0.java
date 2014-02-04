@@ -32,12 +32,12 @@ public class UndefinedServiceTasksConstraint0 extends Constraint<UndefinedServic
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getSeverity() {
 		return ValidationUtil.getSeverity("warning");
 	}
-	
+
 	@Override
 	public BaseGeneratedQuerySpecification<UndefinedServiceTasksMatcher> getQuerySpecification() {
 		return querySpecification;

@@ -32,12 +32,12 @@ public class IncorrectEntryInChecklistConstraint0 extends Constraint<IncorrectEn
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int getSeverity() {
 		return ValidationUtil.getSeverity("error");
 	}
-	
+
 	@Override
 	public BaseGeneratedQuerySpecification<IncorrectEntryInChecklistMatcher> getQuerySpecification() {
 		return querySpecification;

@@ -10,7 +10,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 /**
  * A pattern group formed of all patterns defined in bpmTestQueries.eiq.
  * 
- * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare 
+ * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare
  * an EMF-IncQuery engine for matching all patterns originally defined in file bpmTestQueries.eiq,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
@@ -45,9 +45,9 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   
   private BpmTestQueries() throws IncQueryException {
     querySpecifications.add(JobTasksMatcher.querySpecification());
-    querySpecifications.add(EntryTaskMatcher.querySpecification());
     querySpecifications.add(NextActivityMatcher.querySpecification());
     querySpecifications.add(ProcessTasksMatcher.querySpecification());
+    querySpecifications.add(EntryTaskMatcher.querySpecification());
     
   }
 }

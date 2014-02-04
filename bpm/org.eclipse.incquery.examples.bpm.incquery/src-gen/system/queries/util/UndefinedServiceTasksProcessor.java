@@ -14,7 +14,7 @@ import system.queries.UndefinedServiceTasksMatch;
 public abstract class UndefinedServiceTasksProcessor implements IMatchProcessor<UndefinedServiceTasksMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pTask the value of pattern parameter Task in the currently processed match 
+   * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
   public abstract void process(final Task pTask);

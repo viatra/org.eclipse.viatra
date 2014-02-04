@@ -14,8 +14,8 @@ import process.Activity;
 public abstract class NextActivityProcessor implements IMatchProcessor<NextActivityMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pAct the value of pattern parameter Act in the currently processed match 
-   * @param pNext the value of pattern parameter Next in the currently processed match 
+   * @param pAct the value of pattern parameter Act in the currently processed match
+   * @param pNext the value of pattern parameter Next in the currently processed match
    * 
    */
   public abstract void process(final Activity pAct, final Activity pNext);

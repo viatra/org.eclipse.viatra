@@ -13,7 +13,7 @@ import system.queries.UndefinedServiceTasksMatcher;
 /**
  * A pattern group formed of all patterns defined in derivedFeatures.eiq.
  * 
- * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare 
+ * <p>Use the static instance as any {@link org.eclipse.incquery.runtime.api.IPatternGroup}, to conveniently prepare
  * an EMF-IncQuery engine for matching all patterns originally defined in file derivedFeatures.eiq,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
@@ -52,13 +52,13 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   private static DerivedFeatures INSTANCE;
   
   private DerivedFeatures() throws IncQueryException {
-    querySpecifications.add(DataTaskWriteCorrespondenceMatcher.querySpecification());
     querySpecifications.add(TransitiveAffectedTasksThroughDataMatcher.querySpecification());
+    querySpecifications.add(DataTaskWriteCorrespondenceMatcher.querySpecification());
     querySpecifications.add(JobInfoCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(UndefinedServiceTasksMatcher.querySpecification());
-    querySpecifications.add(JobTaskCorrespondenceMatcher.querySpecification());
     querySpecifications.add(DataTaskReadCorrespondenceMatcher.querySpecification());
+    querySpecifications.add(JobTaskCorrespondenceMatcher.querySpecification());
     querySpecifications.add(TasksAffectedThroughDataMatcher.querySpecification());
+    querySpecifications.add(UndefinedServiceTasksMatcher.querySpecification());
     
   }
 }

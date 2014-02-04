@@ -15,9 +15,9 @@ import process.Task;
 public abstract class IncorrectEntryInChecklistProcessor implements IMatchProcessor<IncorrectEntryInChecklistMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pChecklistEntry the value of pattern parameter ChecklistEntry in the currently processed match 
-   * @param pTask the value of pattern parameter Task in the currently processed match 
-   * @param pProcess the value of pattern parameter Process in the currently processed match 
+   * @param pChecklistEntry the value of pattern parameter ChecklistEntry in the currently processed match
+   * @param pTask the value of pattern parameter Task in the currently processed match
+   * @param pProcess the value of pattern parameter Process in the currently processed match
    * 
    */
   public abstract void process(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess);

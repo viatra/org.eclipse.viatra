@@ -1,9 +1,21 @@
 package system.queries.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import system.queries.JobInfoCorrespondenceMatcher;
 
 /**
@@ -33,24 +45,53 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   @Override
   protected JobInfoCorrespondenceMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return JobInfoCorrespondenceMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.examples.bpm.incquery";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "system.queries.JobInfoCorrespondence";
     
   }
   
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("Job","Info");
+  }
+  
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("Job", "system.Job"),new PParameter("Info", "operation.RuntimeInformation"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() {
+    return bodies;
+  }
+  
   private JobInfoCorrespondenceQuerySpecification() throws IncQueryException {
     super();
+    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    {
+      PBody body = new PBody(this);
+      PVariable var_Job = body.getOrCreateVariableByName("Job");
+      PVariable var_Info = body.getOrCreateVariableByName("Info");
+      PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+      new ExportedParameter(body, var_Job, "Job");
+      new ExportedParameter(body, var_Info, "Info");
+      new TypeBinary(body, context, var_CLE, var_Info, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info"), "http://operation/1.0/ChecklistEntry.info");
+      new TypeBinary(body, context, var_CLE, var_Job, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs"), "http://operation/1.0/ChecklistEntry.jobs");
+      body.setSymbolicParameters(Arrays.asList(var_Job, var_Info));
+      bodies.add(body);
+    }
+    {
+      PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+      annotation.addAttribute("feature","info");
+      addAnnotation(annotation);
+    }
+    setStatus(PQueryStatus.OK);
   }
+  
+  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<JobInfoCorrespondenceQuerySpecification> {

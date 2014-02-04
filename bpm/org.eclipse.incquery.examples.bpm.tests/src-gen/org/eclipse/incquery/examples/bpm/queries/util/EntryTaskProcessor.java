@@ -15,8 +15,8 @@ import process.Task;
 public abstract class EntryTaskProcessor implements IMatchProcessor<EntryTaskMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pEntry the value of pattern parameter Entry in the currently processed match 
-   * @param pTask the value of pattern parameter Task in the currently processed match 
+   * @param pEntry the value of pattern parameter Entry in the currently processed match
+   * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
   public abstract void process(final ChecklistEntry pEntry, final Task pTask);

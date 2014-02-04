@@ -16,9 +16,9 @@ import system.Job;
 public abstract class TaskChecklistEntryJobCorrespondenceProcessor implements IMatchProcessor<TaskChecklistEntryJobCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pTask the value of pattern parameter Task in the currently processed match 
-   * @param pCLE the value of pattern parameter CLE in the currently processed match 
-   * @param pJob the value of pattern parameter Job in the currently processed match 
+   * @param pTask the value of pattern parameter Task in the currently processed match
+   * @param pCLE the value of pattern parameter CLE in the currently processed match
+   * @param pJob the value of pattern parameter Job in the currently processed match
    * 
    */
   public abstract void process(final Task pTask, final ChecklistEntry pCLE, final Job pJob);

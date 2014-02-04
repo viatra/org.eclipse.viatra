@@ -14,8 +14,8 @@ import system.queries.TransitiveAffectedTasksThroughDataMatch;
 public abstract class TransitiveAffectedTasksThroughDataProcessor implements IMatchProcessor<TransitiveAffectedTasksThroughDataMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pSourceTask the value of pattern parameter SourceTask in the currently processed match 
-   * @param pAffectedTask the value of pattern parameter AffectedTask in the currently processed match 
+   * @param pSourceTask the value of pattern parameter SourceTask in the currently processed match
+   * @param pAffectedTask the value of pattern parameter AffectedTask in the currently processed match
    * 
    */
   public abstract void process(final Task pSourceTask, final Task pAffectedTask);

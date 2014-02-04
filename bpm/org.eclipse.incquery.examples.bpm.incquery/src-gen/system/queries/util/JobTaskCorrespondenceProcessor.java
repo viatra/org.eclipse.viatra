@@ -15,8 +15,8 @@ import system.queries.JobTaskCorrespondenceMatch;
 public abstract class JobTaskCorrespondenceProcessor implements IMatchProcessor<JobTaskCorrespondenceMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pJob the value of pattern parameter Job in the currently processed match 
-   * @param pTask the value of pattern parameter Task in the currently processed match 
+   * @param pJob the value of pattern parameter Job in the currently processed match
+   * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
   public abstract void process(final Job pJob, final Task pTask);

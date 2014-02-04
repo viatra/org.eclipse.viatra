@@ -14,8 +14,8 @@ import process.Activity;
 public abstract class ProcessTasksProcessor implements IMatchProcessor<ProcessTasksMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pProc the value of pattern parameter Proc in the currently processed match 
-   * @param pTask the value of pattern parameter Task in the currently processed match 
+   * @param pProc the value of pattern parameter Proc in the currently processed match
+   * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
   public abstract void process(final process.Process pProc, final Activity pTask);
