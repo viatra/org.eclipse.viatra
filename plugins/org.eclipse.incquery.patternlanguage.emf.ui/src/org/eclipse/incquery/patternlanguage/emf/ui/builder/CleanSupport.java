@@ -65,9 +65,6 @@ public class CleanSupport {
     private EnsurePluginSupport ensureSupport;
 
     @Inject
-    private IErrorFeedback errorFeedback;
-
-    @Inject
     private Logger logger;
 
 

@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.patternlanguage.emf.specification.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;

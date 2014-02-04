@@ -19,7 +19,6 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;

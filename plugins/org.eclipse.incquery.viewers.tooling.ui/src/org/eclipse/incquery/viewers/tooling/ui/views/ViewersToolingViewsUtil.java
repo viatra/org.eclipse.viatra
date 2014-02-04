@@ -13,7 +13,6 @@ package org.eclipse.incquery.viewers.tooling.ui.views;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;

@@ -12,6 +12,7 @@ package org.eclipse.incquery.viewers.runtime.model;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.ObservableSet;
 
 import com.google.common.collect.Multimap;
 

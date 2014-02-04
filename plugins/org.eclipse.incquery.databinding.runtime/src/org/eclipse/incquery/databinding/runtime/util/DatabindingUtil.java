@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.util;
 
-import java.lang.annotation.Documented;
-
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.databinding.runtime.adapter.GenericDatabindingAdapter;
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;

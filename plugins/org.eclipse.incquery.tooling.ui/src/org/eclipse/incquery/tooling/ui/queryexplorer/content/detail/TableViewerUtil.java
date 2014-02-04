@@ -15,8 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
@@ -33,8 +31,6 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Inject;
