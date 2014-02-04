@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -168,7 +169,10 @@ public class CleanSupport {
                     }
                     final String fqn = desc.getQualifiedName().toString();
                     if (pattern == null || pattern.eIsProxy()) {
-                        throw new IncQueryException("Cannot remove pattern " + fqn, "Cannot remove pattern");
+                        // Old version cannot be found, executing full clean
+                        context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+                        return;
+                        //throw new IncQueryException("Cannot remove pattern " + fqn, "Cannot remove pattern");
                     }
                     final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
                     Preconditions.checkState(foundFQN.equals(fqn), "Inconsistent pattern declaration found. Expected %s, found %s.", fqn, foundFQN);

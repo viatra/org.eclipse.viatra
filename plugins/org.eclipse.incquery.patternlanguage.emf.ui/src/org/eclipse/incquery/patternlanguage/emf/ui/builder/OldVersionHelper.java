@@ -11,7 +11,6 @@
 package org.eclipse.incquery.patternlanguage.emf.ui.builder;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -90,7 +89,7 @@ public class OldVersionHelper {
                 outputLocation = javaProject.getOutputLocation();
             }
             IPath path = outputLocation.append(relativePath.makeRelativeTo(sourceEntry.getPath()));
-            URI copiedURI = URI.createPlatformResourceURI(path.toString(), true);
+            URI copiedURI = (project.findMember(path) != null) ? URI.createPlatformResourceURI(path.toString(), true) : null;
             copiedURIMap.put(relativePath, copiedURI);
             return copiedURI;
         }
@@ -104,8 +103,11 @@ public class OldVersionHelper {
         ResourceSet set = getResourceSet(project);
 
         URI copiedURI = getCopiedURI(project, relativePath);
-        Resource res = set.getResource(copiedURI, true);
-        String fragment = proxyURI.fragment();
-        return (Pattern) res.getEObject(fragment);
+        if (copiedURI != null) {
+            Resource res = set.getResource(copiedURI, true);
+            String fragment = proxyURI.fragment();
+            return (Pattern) res.getEObject(fragment);
+        }
+        return null;
     }
 }
