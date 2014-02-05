@@ -73,7 +73,7 @@ public class ObservablePatternMatcher {
 
         DisplayUtil.removeOrderByPatternWarning(patternFqn);
 
-        if (matcher != null) {
+        if (specification != null) {
             initOrdering();
             initFilter();
             this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();

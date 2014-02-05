@@ -347,12 +347,12 @@ public class EPMToPBody {
                     pattern);
     }
 
-    protected void gatherCheckConstraint(final CheckConstraint check, final PBody pBody) {
+    protected void gatherCheckConstraint(final CheckConstraint check, final PBody pBody) throws SpecificationBuilderException {
         XExpression expression = check.getExpression();
         new ExpressionEvaluation(pBody, new XBaseEvaluator(expression, pattern), null);
     }
 
-    protected PVariable eval(FunctionEvaluationValue eval, final PBody pBody) {
+    protected PVariable eval(FunctionEvaluationValue eval, final PBody pBody) throws SpecificationBuilderException {
         PVariable result = newVirtual(pBody);
 
         XExpression expression = eval.getExpression();
@@ -372,11 +372,11 @@ public class EPMToPBody {
         AggregatorExpression aggregator = reference.getAggregator();
         if (aggregator instanceof CountAggregator) {
             new PatternMatchCounter(pBody, pNodeTuple, calledSpecification, result);
-        } else
-            new SpecificationBuilderException("Unsupported aggregator expression type {1} in pattern {2}.",
+        } else {
+            throw new SpecificationBuilderException("Unsupported aggregator expression type {1} in pattern {2}.",
                     new String[] { aggregator.eClass().getName(), patternFQN }, "Unsupported aggregator expression",
                     pattern);
-
+        }
         return result;
     }
 

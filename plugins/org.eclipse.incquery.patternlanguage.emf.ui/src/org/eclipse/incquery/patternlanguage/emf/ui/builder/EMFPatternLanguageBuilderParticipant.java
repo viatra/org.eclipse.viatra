@@ -163,6 +163,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         PatternSetValidationDiagnostics validate = validator.validate(deltaResource);
         if (validate.getStatus() == PatternValidationStatus.ERROR) {
             // If there are errors in the resource, do not execute post-build steps
+            return;
         }
         final IProject project = context.getBuiltProject();
         ExtensionGenerator extensionGenerator = new ExtensionGenerator();

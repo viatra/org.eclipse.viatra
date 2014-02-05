@@ -47,7 +47,7 @@ public class OldVersionHelper {
      * Predicate to decide whether a classpath entry is the corresponding source folder for a path
      *
      */
-    public final class SourceFolderFinder implements Predicate<IClasspathEntry> {
+    public static final class SourceFolderFinder implements Predicate<IClasspathEntry> {
         private final IPath relativePath;
 
         private SourceFolderFinder(IPath relativePath) {
@@ -56,6 +56,9 @@ public class OldVersionHelper {
 
         @Override
         public boolean apply(IClasspathEntry entry) {
+            if (entry == null) {
+                return false;
+            }
             boolean isSourceEntry = entry.getContentKind() == IPackageFragmentRoot.K_SOURCE;
             if (isSourceEntry) {
                 return entry.getPath().isPrefixOf(relativePath);

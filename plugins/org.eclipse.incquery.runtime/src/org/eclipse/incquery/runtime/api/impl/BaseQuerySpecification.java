@@ -50,7 +50,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
         @Override
         public boolean apply(PAnnotation annotation) {
-            return annotationName.equals(annotation.getName());
+            return (annotation == null) ? false : annotationName.equals(annotation.getName());
         }
     }
 

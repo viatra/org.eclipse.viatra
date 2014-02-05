@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
-import org.eclipse.incquery.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
-import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -48,7 +46,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
-import com.google.inject.Injector;
 
 /**
  * Utility class used by the Query Explorer for the maintenance of registered patterns.
@@ -66,7 +63,6 @@ public class QueryExplorerPatternRegistry {
     private final Map<String, IQuerySpecification<?>> patternNameMap;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
     private SpecificationBuilder builder;
-    private IWorkspaceUtilities workspaceUtil;
 
     public static synchronized QueryExplorerPatternRegistry getInstance() {
         if (instance == null) {
@@ -80,16 +76,13 @@ public class QueryExplorerPatternRegistry {
                 new Supplier<List<IQuerySpecification<?>>>() {
 
                     @Override
-                    public ArrayList<IQuerySpecification<?>> get() {
+                    public List<IQuerySpecification<?>> get() {
                         return Lists.newArrayList();
                     }
                 });
         patternNameMap = new HashMap<String, IQuerySpecification<?>>();
         activePatterns = new ArrayList<IQuerySpecification<?>>();
         builder = new SpecificationBuilder();
-        Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(
-                EMFPatternLanguageActivator.ORG_ECLIPSE_INCQUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
-        workspaceUtil = injector.getInstance(IWorkspaceUtilities.class);
     }
 
     public void addGeneratedPattern(IQuerySpecification<?> specification) {

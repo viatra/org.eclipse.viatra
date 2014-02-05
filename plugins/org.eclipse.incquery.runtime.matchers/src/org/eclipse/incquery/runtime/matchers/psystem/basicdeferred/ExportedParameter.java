@@ -43,7 +43,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     @Override
     protected String toStringRest() {
         Object varName = parameterVariable.getName();
-        return parameterName.equals(varName) ? parameterName.toString() : parameterName + "(" + varName + ")";
+        return parameterName.equals(varName) ? parameterName : parameterName + "(" + varName + ")";
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     public void checkSanity() throws QueryPlannerException {
         super.checkSanity();
         if (!parameterVariable.isDeducable()) {
-            String[] args = { parameterName.toString() };
+            String[] args = { parameterName };
             String msg = "Impossible to match pattern: "
                     + "exported pattern variable {1} can not be determined based on the pattern constraints. "
                     + "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";

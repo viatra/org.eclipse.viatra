@@ -31,6 +31,10 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
  */
 public class EMFPatternMatcherContext implements IPatternMatcherContext {
 
+    /**
+     * 
+     */
+    private static final String INVALID_TYPE_ERROR = "typeObject has invalid type ";
     private Logger logger = Logger.getLogger(EMFPatternMatcherContext.class);
 
     /**
@@ -64,7 +68,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
         if (typeObject instanceof EStructuralFeature)
             return enumerateDirectBinaryEdgeSupertypes(typeObject);
         else
-            throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
+            throw new IllegalArgumentException(INVALID_TYPE_ERROR + typeObject.getClass().getName());
     }
 
     @Override
@@ -76,7 +80,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
         if (typeObject instanceof EStructuralFeature)
             return enumerateDirectBinaryEdgeSubtypes(typeObject);
         else
-            throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
+            throw new IllegalArgumentException(INVALID_TYPE_ERROR + typeObject.getClass().getName());
     }
 
     @Override
@@ -93,7 +97,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
         else if (typeObject instanceof EDataType) {
             return Collections.emptyList();// no subtyping between EDataTypes?
         } else
-            throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
+            throw new IllegalArgumentException(INVALID_TYPE_ERROR + typeObject.getClass().getName());
     }
 
     @Override
@@ -103,7 +107,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
         else if (typeObject instanceof EDataType) {
             return Collections.emptyList();// no subtyping between EDataTypes?
         } else
-            throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
+            throw new IllegalArgumentException(INVALID_TYPE_ERROR + typeObject.getClass().getName());
     }
 
     @Override
@@ -179,7 +183,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
             EReference reference = (EReference) typeObject;
             return reference.getEReferenceType();
         } else
-            throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
+            throw new IllegalArgumentException(INVALID_TYPE_ERROR + typeObject.getClass().getName());
     }
 
     @Override

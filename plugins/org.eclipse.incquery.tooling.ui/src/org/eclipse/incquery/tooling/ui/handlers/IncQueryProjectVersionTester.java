@@ -52,15 +52,13 @@ public class IncQueryProjectVersionTester extends PropertyTester {
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         try {
-            if (receiver instanceof IProject && ((IProject)receiver).isAccessible()) {
-                if (VERSION_TESTER.equals(property)) {
-                    IProject project = (IProject) receiver;
-                    if (project.hasNature(ProjectNatureUpdater.OLD_NATURE_ID)) {
-                        return true;
-                    } else if (project.hasNature(IncQueryNature.NATURE_ID))
-                         return project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH) != null
-                            || hasIncorrectBuildCommandOrdering(project);
-                }
+            if (VERSION_TESTER.equals(property) && receiver instanceof IProject && ((IProject)receiver).isAccessible()) {
+                IProject project = (IProject) receiver;
+                if (project.hasNature(ProjectNatureUpdater.OLD_NATURE_ID)) {
+                    return true;
+                } else if (project.hasNature(IncQueryNature.NATURE_ID))
+                     return project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH) != null
+                        || hasIncorrectBuildCommandOrdering(project);
             }
         } catch (CoreException e) {
             /*

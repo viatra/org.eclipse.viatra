@@ -47,7 +47,6 @@ import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
 
-@SuppressWarnings("rawtypes")
 public class ZestReteLabelProvider extends LabelProvider implements IEntityStyleProvider {
 
     private static final int INDEXER_ID = 0;
@@ -59,7 +58,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
 
     /**
      * Sets the colors of the indexer and rete matcher nodes
-     * 
+     *
      * @param indexerColor
      * @param reteMatcherColor
      */
@@ -123,10 +122,8 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
                     Tuple variablesTuple = st.getVariablesTuple();
                     for (Object obj : variablesTuple.getElements()) {
                         if (obj instanceof PVariable) {
-                            Object nameObj = ((PVariable) obj).getName();
-                            if (nameObj instanceof Variable) {
-                                sb.append(((Variable) nameObj).getName());
-                            }
+                            String nameObj = ((PVariable) obj).getName();
+                            sb.append(nameObj);
                         }
                         sb.append("; ");
                     }

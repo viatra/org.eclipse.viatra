@@ -177,7 +177,7 @@ public class PVariable {
     @Override
     public String toString() {
         // replacementCheck();
-        return name.toString();// + ":PatternNode";
+        return name;// + ":PatternNode";
     }
 
     public PVariable getDirectUnifiedInto() {

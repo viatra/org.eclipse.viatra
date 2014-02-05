@@ -21,8 +21,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 
-import com.google.common.collect.Iterables;
-
 /**
  * Helper class for creating a normalized version of a PSystem, unifying variables and running basic sanity checks.
  *

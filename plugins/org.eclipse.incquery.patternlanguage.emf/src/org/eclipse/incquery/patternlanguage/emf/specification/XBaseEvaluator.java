@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.incquery.patternlanguage.emf.specification.builder.SpecificationBuilderException;
 import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -67,28 +68,29 @@ public class XBaseEvaluator implements IExpressionEvaluator{
      *            maps variable qualified names to positions.
      * @param pattern
      */
-    public XBaseEvaluator(XExpression xExpression, Pattern pattern) {
+    public XBaseEvaluator(XExpression xExpression, Pattern pattern) throws SpecificationBuilderException{
         super();
-        XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
-        this.xExpression = xExpression;
-        this.pattern = pattern;
         try {
+            XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
+            this.xExpression = xExpression;
+            this.pattern = pattern;
             classLoader = classLoaderProvider.getClassLoader(pattern);
             if (classLoader != null) {
                 interpreter.setClassLoader(classLoader);
             }
+            PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
+            List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
+            usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
+                @Override
+                public String apply(Variable var) {
+                    return var.getName();
+                }
+            });
         } catch (IncQueryException e) {
             logger.error("XBase Java evaluator extension point initialization failed.", e);
+            throw new SpecificationBuilderException("XBase interpreter initialization failed", new String[0], "Failed Xbase interpreter initialization", pattern);
         }
 
-        PatternBody body = EcoreUtil2.getContainerOfType(xExpression, PatternBody.class);
-        List<Variable> usedVariables = CorePatternLanguageHelper.getUsedVariables(xExpression, body.getVariables());
-        usedNames = Iterables.transform(usedVariables, new Function<Variable, String>() {
-           @Override
-           public String apply(Variable var) {
-               return var.getName();
-           }
-        });
     }
 
     @Override

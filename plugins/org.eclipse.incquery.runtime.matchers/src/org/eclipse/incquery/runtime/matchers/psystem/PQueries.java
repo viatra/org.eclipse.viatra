@@ -22,7 +22,7 @@ import com.google.common.collect.Iterables;
  * @author Zoltan Ujhelyi
  *
  */
-public class PQueries {
+public final class PQueries {
 
     /**
      * Hidden constructor for utility class

@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 
 /**
- * 
+ *
  * Data Transfer Class for describing a viewer filter configuration.
  * @author istvanrath
  *
@@ -27,13 +27,13 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 public class ViewerFilterDefinition {
 
     IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern;
-    
+
     IncQueryFilterSemantics semantics;
-    
+
     IPatternMatch singleFilterMatch;
-    
+
     Collection<IPatternMatch> filterMatches;
-    
+
     /**
      * @param pattern the {@link Pattern} this filter configuration is attached to
      * @param semantics {@link IncQueryFilterSemantics} prescribing how this configuration should be interpreted
@@ -50,6 +50,6 @@ public class ViewerFilterDefinition {
     }
 
 
-   
-    
+
+
 }
