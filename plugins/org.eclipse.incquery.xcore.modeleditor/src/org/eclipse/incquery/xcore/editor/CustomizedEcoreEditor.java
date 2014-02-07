@@ -32,6 +32,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.emf.edit.ui.provider.DecoratingColumLabelProvider;
 import org.eclipse.emf.edit.ui.provider.DiagnosticDecorator;
 import org.eclipse.emf.edit.ui.view.ExtendedPropertySheetPage;
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
@@ -40,6 +41,7 @@ import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeature
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -198,12 +200,20 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 	private void initReg(Resource patternResource) {
 		if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
 			log("Registering derived feature patterns from "+patternResource.getURI());
+			SpecificationBuilder builder = new SpecificationBuilder(QuerySpecificationRegistry.getContributedQuerySpecifications());
             EObject topElement = patternResource.getContents().get(0);
             if (topElement instanceof PatternModel) {
                 for (Pattern pattern : ((PatternModel) topElement).getPatterns()) {
                 	String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
                 	if (!specs.contains(fqn)) {
-                		IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> spec = QuerySpecificationRegistry.getOrCreateQuerySpecification(pattern);
+                		IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> spec;
+						try {
+							spec = builder.getOrCreateSpecification(pattern);
+						} catch (IncQueryException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							return;
+						}
                         
                 		QueryBasedFeatureSettingDelegateFactory f = (QueryBasedFeatureSettingDelegateFactory) EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.get(QueryBasedFeatures.ANNOTATION_SOURCE);
                 		if (f!=null)
