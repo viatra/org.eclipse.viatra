@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.testing.core
 
-import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.Date
 import org.eclipse.emf.ecore.EEnumLiteral
@@ -25,18 +24,11 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
-import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 
 /**
  * Helper methods for dealing with snapshots and match set records.
  */
 class SnapshotHelper {
-
-	@Inject
-	ParseHelper<PatternModel> parseHelper
 	/**
 	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
 	 *  based on the input specification and the model roots.
@@ -182,111 +174,69 @@ class SnapshotHelper {
 	 *  The type of the substitution is decided based on the type of the value.
 	 */
 	def createSubstitution(String parameterName, Object value){
-		if(value instanceof EObject){
-			val sub = EIQSnapshotFactory::eINSTANCE.createEMFSubstitution
-			sub.setValue(value as EObject)
-			sub.setParameterName(parameterName)
-			return sub
-		} else if(value instanceof Integer){
-			val sub = EIQSnapshotFactory::eINSTANCE.createIntSubstitution
-			sub.setValue(value as Integer)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof Long){
-			val sub = EIQSnapshotFactory::eINSTANCE.createLongSubstitution
-			sub.setValue(value as Long)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof Double){
-			val sub = EIQSnapshotFactory::eINSTANCE.createDoubleSubstitution
-			sub.setValue(value as Double)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof Float){
-			val sub = EIQSnapshotFactory::eINSTANCE.createFloatSubstitution
-			sub.setValue(value as Float)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof Boolean){
-			val sub = EIQSnapshotFactory::eINSTANCE.createBooleanSubstitution
-			sub.setValue(value as Boolean)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof String){
-			val sub = EIQSnapshotFactory::eINSTANCE.createStringSubstitution
-			sub.setValue(value as String)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof Date){
-			val sub = EIQSnapshotFactory::eINSTANCE.createDateSubstitution
-			sub.setValue(value as Date)
-			sub.setParameterName(parameterName)
-			return sub
-		} else  if(value instanceof EEnumLiteral){
-			val sub = EIQSnapshotFactory::eINSTANCE.createEnumSubstitution
-			sub.setValueLiteral((value as EEnumLiteral).literal)
-			sub.setEnumType((value as EEnumLiteral).EEnum)
-			sub.setParameterName(parameterName)
-			return sub
-		} else {
-			val sub = EIQSnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
-			sub.setValue(value)
-			sub.setParameterName(parameterName)
-			return sub
+		return switch(value) {
+			EEnumLiteral: {
+				val sub = EIQSnapshotFactory::eINSTANCE.createEnumSubstitution
+				sub.setValueLiteral((value as EEnumLiteral).literal)
+				sub.setEnumType((value as EEnumLiteral).EEnum)
+				sub.setParameterName(parameterName)
+				sub
+			}
+			EObject : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createEMFSubstitution
+				sub.setValue(value as EObject)
+				sub.setParameterName(parameterName)
+				sub
+			}
+			Integer : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createIntSubstitution
+				sub.setValue(value as Integer)
+				sub.setParameterName(parameterName)
+				sub
+			}
+			Long : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createLongSubstitution
+				sub.setValue(value as Long)
+				sub.setParameterName(parameterName)
+				sub
+			}
+			Double : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createDoubleSubstitution
+				sub.setValue(value as Double)
+				sub.setParameterName(parameterName)
+				sub				
+			}
+			Float : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createFloatSubstitution
+				sub.setValue(value as Float)
+				sub.setParameterName(parameterName)
+				sub	
+			}
+			Boolean : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createBooleanSubstitution
+				sub.setValue(value as Boolean)
+				sub.setParameterName(parameterName)
+				sub
+			}
+			String : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createStringSubstitution
+				sub.setValue(value as String)
+				sub.setParameterName(parameterName)
+				sub	
+			}
+			Date : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createDateSubstitution
+				sub.setValue(value as Date)
+				sub.setParameterName(parameterName)
+				sub				
+			}
+			default : {
+				val sub = EIQSnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
+				sub.setValue(value)
+				sub.setParameterName(parameterName)
+				sub	
+			}
 		}
 	}
 
-	/**
-	 * Registers the matcher factories used by the derived features of snapshot models into the EMF-IncQuery
-	 * matcher factory registry. This is useful when running tests without extension registry.
-	 */
-	def prepareSnapshotMatcherFactories() {
-		val patternModel = parseHelper.parse('
-			package org.eclipse.viatra2.emf.incquery.testing.queries
-
-			import "http://www.eclipse.org/viatra2/emf/incquery/snapshot"
-			import "http://www.eclipse.org/emf/2002/Ecore"
-
-			pattern RecordRoleValue(
-				Record : MatchRecord,
-				Role
-			) = {
-				MatchSetRecord.filter(MS,Record);
-				RecordRole::Filter == Role;
-			} or {
-				MatchSetRecord.matches(MS,Record);
-				RecordRole::Match == Role;
-			}
-
-			pattern SubstitutionValue(
-				Substitution : MatchSubstitutionRecord,
-				Value
-			) = {
-				MiscellaneousSubstitution.value(Substitution,Value);
-			} or {
-				EMFSubstitution.value(Substitution,Value);
-			} or {
-				IntSubstitution.value(Substitution,Value);
-			} or {
-				LongSubstitution.value(Substitution,Value);
-			} or {
-				DoubleSubstitution.value(Substitution,Value);
-			} or {
-				FloatSubstitution.value(Substitution,Value);
-			} or {
-				BooleanSubstitution.value(Substitution,Value);
-			} or {
-				StringSubstitution.value(Substitution,Value);
-			} or {
-				DateSubstitution.value(Substitution,Value);
-			} or {
-				EnumSubstitution.valueLiteral(Substitution,Value);
-			}
-		')
-		patternModel.patterns.forEach()[
-			val builder = new SpecificationBuilder(QuerySpecificationRegistry.contributedQuerySpecifications)
-			val factory = builder.getOrCreateSpecification(it)
-			QuerySpecificationRegistry::registerQuerySpecification(factory);
-		]
-	}
 }
