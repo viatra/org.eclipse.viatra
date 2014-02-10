@@ -512,7 +512,7 @@ class PatternQuerySpecificationClassInferrer {
 
     def inferExpressions(JvmDeclaredType querySpecificationClass, Pattern pattern) {
     	pattern.bodies.map[CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach[ex |
-    		querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), asWrapperTypeIfPrimitive(getType(ex))) [
+    		querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), inferredType(ex)) [
   				it.visibility = JvmVisibility::PRIVATE
 				for (variable : variables(ex)){
 					val parameter = variable.toParameter(variable.name, variable.calculateType)
