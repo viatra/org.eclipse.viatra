@@ -13,6 +13,7 @@ module org.eclipse.incquery.patternlanguage.emf.GenerateEMFPatternLanguage
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
+import org.eclipse.incquery.patternlanguage.*
 
 var grammarURI = "classpath:/org/eclipse/incquery/patternlanguage/emf/EMFPatternLanguage.xtext"
 var file.extensions = "eiq"
@@ -25,7 +26,7 @@ Workflow {
         platformUri = "${runtimeProject}/.."
         registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
         registerGeneratedEPackage = "org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage"
-		registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/src-gen/org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel"
+		registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
 		registerGenModelFile = "platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel"
     }
@@ -55,7 +56,7 @@ Workflow {
             fragment = grammarAccess.GrammarAccessFragment {}
 
             // generates Java API for the generated EPackages
-            fragment = ecore.EcoreGeneratorFragment {}
+            fragment = generator.CustomizedEMFGeneratorFragment {}
 
             // Serializer 2.0
             fragment = serializer.SerializerFragment {}

@@ -24,7 +24,7 @@ Workflow {
     	scanClassPath = true
     	platformUri = "${runtimeProject}/.."
     	registerGeneratedEPackage = "org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage"
-    	registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/src-gen/org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel"
+    	registerGenModelFile = "platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel"
     	registerGeneratedEPackage = "org.eclipse.incquery.xcore.model.XcorePackage"
 		registerGenModelFile = "platform:/resource/org.eclipse.incquery.xcore.model/model/IncQueryXcore.genmodel"
     	registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"

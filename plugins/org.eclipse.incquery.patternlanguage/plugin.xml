@@ -9,7 +9,7 @@
     <package 
        uri = "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" 
        class = "org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage"
-       genModel = "org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel" /> 
+       genModel = "model/generated/PatternLanguage.genmodel" /> 
 	
   </extension>
   <extension
