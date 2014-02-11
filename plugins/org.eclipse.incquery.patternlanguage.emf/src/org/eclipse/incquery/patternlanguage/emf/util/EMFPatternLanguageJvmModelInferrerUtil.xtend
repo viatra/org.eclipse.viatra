@@ -62,11 +62,19 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		return name
 	}
 
+	def validClassName(String simpleName) {
+		Character.isJavaIdentifierStart(simpleName.charAt(0)) && 
+		  simpleName.split("\\.").tail.forall[ch |Character.isJavaIdentifierPart(ch.charAt(0))]
+	}
+
 	def modelFileName(EObject object) {
 		val name = object.eResource?.URI.trimFileExtension.lastSegment
-		val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
-		if (status.severity == IStatus::ERROR) {
-			throw new IllegalArgumentException("The file name " + name + " is not a valid Java type name. Please, rename the file!")
+		//val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
+		//if (status.severity == IStatus::ERROR) {
+		//	throw new IllegalArgumentException("The file name " + name + " is not a valid Java type name. Please, rename the file!")
+		//}
+		if (!(name.validClassName)) {
+			throw new IllegalAccessError("The file name " + name + " is not a valid Java type name. Please, rename the file!")
 		}
 		name
 	}
