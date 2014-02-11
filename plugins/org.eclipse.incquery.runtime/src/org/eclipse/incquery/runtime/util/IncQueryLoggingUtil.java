@@ -34,10 +34,11 @@ public class IncQueryLoggingUtil {
 	public static Logger getDefaultLogger() {
 	    if (defaultRuntimeLogger == null) {
 	        Logger parentLogger = externalLogger;
-	        if (parentLogger == null)
-	            throw new AssertionError("Configuration error: EMF-IncQuery logger not found.");
-
-	        defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
+	        if (parentLogger == null) {
+	            defaultRuntimeLogger = Logger.getLogger(IncQueryLoggingUtil.class);
+	        } else {
+	            defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
+	        }
 	        if (defaultRuntimeLogger == null)
 	            throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
 	    }
