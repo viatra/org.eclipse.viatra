@@ -22,21 +22,18 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
-import org.eclipse.incquery.tooling.core.generator.GeneratorModule;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * @author Abel Hegedus
@@ -44,93 +41,6 @@ import com.google.inject.Injector;
  *
  */
 public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
-	
-	
-	/**
-	 * Returns the match set for patternFQN over the model in modelPath in pretty printed form
-	 * 
-	 * @param modelPath
-	 * @param patternFQN
-	 * @return
-	 */
-	public String executeDemo_GenericAPI(String modelPath, String patternFQN) {
-		final StringBuilder results = new StringBuilder();
-		Resource resource = loadModel(modelPath);
-		if (resource != null) {
-			try {
-				// get all matches of the pattern
-				// create an *unmanaged* engine to ensure that noone else is going
-				// to use our engine
-				AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(resource);
-				// instantiate a pattern matcher through the registry, by only knowing its FQN
-				// assuming that there is a pattern definition registered matching 'patternFQN'
-				
-				Pattern p = null;
-				// would be nice: IMatcherFactory<IncQueryMatcher<? extends IPatternMatch>> factory
-				IQuerySpecification<?> querySpecification = null;
-				
-				
-				// use a trick to load Pattern models from a file
-				ResourceSet resourceSet = new ResourceSetImpl();
-				// here, we make use of the (undocumented) fact that the Pattern model is stored inside the hidden "queries" directory inside an EMF-IncQuery project
-			    URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/queries/globalEiqModel.xmi", false);
-			    Resource patternResource = resourceSet.getResource(fileURI, true);
-			    // navigate to the pattern definition that we want
-			    if (patternResource != null) {
-		            if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
-		                EObject topElement = patternResource.getContents().get(0);
-		                if (topElement instanceof PatternModel) {
-		                	for (Pattern _p  : ((PatternModel) topElement).getPatterns()) {
-		                		if (_p.getName().equals(patternFQN)) {
-		                			p = _p; break;
-		                		}
-		                	}
-		                }
-		            }
-		        }
-			    
-			    // attempt to retrieve a registered query specification
-			    if (p!=null) {
-			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(p);
-			    }
-			    else {
-			    	// fall back to the registry in case the pattern model extraction didn't work
-			    	querySpecification = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
-			    }
-				
-			    IncQueryMatcher<? extends IPatternMatch> matcher;
-			    
-				if (querySpecification!=null) {
-					// if the query specification could be found
-					matcher = querySpecification.getMatcher(engine);	
-				}
-				else /* if (p!=null) */ {
-					// fall back to using only the pattern object
-					matcher = engine.getMatcher(p);
-				}
-				
-				if (matcher!=null) {
-					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
-					prettyPrintMatches(results, matches);
-				}
-				
-				// wipe the engine
-				engine.wipe();
-				// after a wipe, new patterns can be rebuilt with much less overhead than 
-				// complete traversal (as the base indexes will be kept)
-				
-				// completely dispose of the engine once's it is not needed
-				engine.dispose();
-				resource.unload();
-			} catch (IncQueryException e) {
-				e.printStackTrace();
-				results.append(e.getMessage());
-			}
-		} else {
-			results.append("Resource not found");
-		}
-		return results.toString();
-	}
 
 	/**
 	 * Returns the match set for patternFQN over the model in modelPath in pretty printed form
@@ -153,46 +63,38 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				
 				Pattern p = null;
 				
-				// Xtext resource magic -- this is needed for EIQs that have check expressions;
-				// for more simple EIQs without check expressions, the { ... } part (i.e. GeneratorModule) can be ommitted.
-				new EMFPatternLanguageStandaloneSetup()
-				{
-
-					@Override
-					public Injector createInjector() {
-						
-						return Guice.createInjector(new GeneratorModule());
-					}
-		        	
-		        }
-		        .createInjectorAndDoEMFRegistration();
+				// Initializing Xtext-based resource parser
+				new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 				
-				// use a trick to load Pattern models from a file
+				//Loading pattern resource from file
 		        ResourceSet resourceSet = new ResourceSetImpl();
-				
-				URI fileURI = URI.createPlatformResourceURI("test/src/test/test.eiq", false);
-			    
+				URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/src/headless/headlessQueries.eiq", false);
 			    Resource patternResource = resourceSet.getResource(fileURI, true);
+			    
 			    // navigate to the pattern definition that we want
 			    if (patternResource != null) {
 		            if (patternResource.getErrors().size() == 0 && patternResource.getContents().size() >= 1) {
 		                EObject topElement = patternResource.getContents().get(0);
 		                if (topElement instanceof PatternModel) {
 		                	for (Pattern _p  : ((PatternModel) topElement).getPatterns()) {
-		                		if (_p.getName().equals(patternFQN)) {
+		                		if (patternFQN.equals(CorePatternLanguageHelper.getFullyQualifiedName(_p))) {
 		                			p = _p; break;
 		                		}
 		                	}
 		                }
 		            }
 		        }
+			    if (p == null) {
+			        throw new RuntimeException(String.format("Pattern %s not found", patternFQN));
+			    }
+			    SpecificationBuilder builder = new SpecificationBuilder();
 			    
 			    // attempt to retrieve a registered query specification
 			    
 			    IncQueryMatcher<? extends IPatternMatch> matcher;
 			    
 					// fall back to using only the pattern object
-				matcher = engine.getMatcher(p);
+				matcher = engine.getMatcher(builder.getOrCreateSpecification(p));
 				
 				if (matcher!=null) {
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();

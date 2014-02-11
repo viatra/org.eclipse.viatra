@@ -73,8 +73,8 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 		}
 
 		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
-		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
-		//System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(model, patternFQN));
+//		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
+		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(model, patternFQN));
 		System.out.println(hla.executeTrackChangesDemo_Advanced(model, patternFQN));
 		
 		return IApplication.EXIT_OK;
