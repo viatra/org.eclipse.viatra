@@ -48,12 +48,12 @@ public abstract class BasePatternGroup implements IQueryGroup {
             Collection<String> uninitializedPatterns = Collections2.transform(
                     Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
                     PQueries.queryNameFunction());
-            Preconditions.checkState(!uninitializedPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
+            Preconditions.checkState(uninitializedPatterns.isEmpty(), "Uninitialized query(s) found: %s", Joiner.on(", ")
                     .join(uninitializedPatterns));
             Collection<String> erroneousPatterns = Collections2.transform(
                     Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
                     PQueries.queryNameFunction());
-            Preconditions.checkState(!erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
+            Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
                     .join(erroneousPatterns));
             final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
             engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
