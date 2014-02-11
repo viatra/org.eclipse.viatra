@@ -23,7 +23,7 @@ import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
  * @author Istvan Rath
  * 
  */
-public class PatternSpecificSimpleIncQueryApplication implements IApplication {
+public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 
 	private static String modelParam = "-m";
 

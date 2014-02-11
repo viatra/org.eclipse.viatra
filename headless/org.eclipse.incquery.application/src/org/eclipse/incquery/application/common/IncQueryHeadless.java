@@ -48,10 +48,14 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 public class IncQueryHeadless {
 
-	protected Resource loadModel(String modelPath) {
+    protected Resource loadModel(String modelPath) {
+        URI fileURI = URI.createFileURI(modelPath);
+        return loadModel(fileURI);
+    }
+    
+	protected Resource loadModel(URI fileURI) {
 		// Loads the resource
 		ResourceSet resourceSet = new ResourceSetImpl();
-		URI fileURI = URI.createFileURI(modelPath);
 		Resource resource = resourceSet.getResource(fileURI, true);
 		return resource;
 	}

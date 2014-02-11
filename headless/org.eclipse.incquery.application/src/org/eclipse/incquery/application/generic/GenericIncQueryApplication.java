@@ -10,39 +10,29 @@
  *******************************************************************************/
 package org.eclipse.incquery.application.generic;
 
-import java.util.Map;
-
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
 
 /**
  * @author Abel Hegedus
  * 
  */
-public class GenericSimpleIncQueryApplication implements IApplication {
+public class GenericIncQueryApplication {
 
 	private static String modelParam = "-m";
 	private static String patternParam = "-p";
+	private static String eiqFileParam = "-e";
 
 
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
-	 * IApplicationContext)
-	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
-
-		Map<String, Object> arguments = context.getArguments();
-		String[] args = (String[]) arguments.get("application.args");
+	public static void main(String[] args) {
 		String model = null;
+		String eiqFile = null;
 		String patternFQN = null;
 		if (args == null || args.length == 0) {
 			displayHelp();
-			return IApplication.EXIT_OK;
+			return;
 		}
 		int i = 0;
 		while (i < args.length) {
@@ -50,11 +40,14 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 				model = args[i + 1];
 				i += 2;
 				continue;
-			}
-			if (args[i].equals(patternParam)) {
+			} else if (args[i].equals(patternParam)) {
 				patternFQN = args[i + 1];
 				i += 2;
 				continue;
+			} else if (args[i].equals(eiqFileParam)) {
+			    eiqFile = args[i + 1];
+			    i += 2;
+			    continue;
 			} else {
 				i++;
 				continue;
@@ -64,31 +57,33 @@ public class GenericSimpleIncQueryApplication implements IApplication {
 		if (model == null) {
 		  System.out.println("Model parameter not set");
 			displayHelp();
-			return IApplication.EXIT_OK;
+			return;
 		}
 		if (patternFQN == null) {
 		  System.out.println("PatternFQN parameter not set");
 			displayHelp();
-			return IApplication.EXIT_OK;
+			return;
+		}
+		if (eiqFile == null) {
+		    System.out.println("EIQ file parameter not set");
+		    displayHelp();
+		    return;
 		}
 
 		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
-//		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
-		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(model, patternFQN));
-		System.out.println(hla.executeTrackChangesDemo_Advanced(model, patternFQN));
+		// Initializing metamodel		
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+		URI fileURI = URI.createFileURI(eiqFile);
+	    URI modelURI = URI.createFileURI(model);
+		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(modelURI, fileURI, patternFQN));
+		System.out.println(hla.executeTrackChangesDemo_Advanced(modelURI, patternFQN));
 		
-		return IApplication.EXIT_OK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {}
-
-	private void displayHelp() {
-		System.out.println("Usage:\n<call> -m <modelFilePAth> -p <patternFQN>\n  -m    :  Required, the model to match on.\n  -m    :  Required, the pattern to match");
+	private static void displayHelp() {
+		System.out.println("Usage:\n<call> -m <modelFilePath> -e <eiqFilePath> -p <patternFQN>");
+		System.out.println("  -m    :  Required, the model to match on.");
+		System.out.println("  -e    :  Required, the pattern definition file (.eiq) to match on.");
+		System.out.println("  -p    :  Required, the pattern fqn to match");
 	}
 }

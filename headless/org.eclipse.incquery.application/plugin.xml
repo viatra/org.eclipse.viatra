@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.incquery.application.generic.GenericSimpleIncQueryApplication">
+               class="org.eclipse.incquery.application.generic.GenericEclipseIncQueryApplication">
          </run>
       </application>
    </extension>
@@ -21,7 +21,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.incquery.application.patternspecific.PatternSpecificSimpleIncQueryApplication">
+               class="org.eclipse.incquery.application.patternspecific.PatternSpecificEclipseIncQueryApplication">
          </run>
       </application>
    </extension>

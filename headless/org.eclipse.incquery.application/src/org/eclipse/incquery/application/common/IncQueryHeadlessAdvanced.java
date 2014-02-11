@@ -29,6 +29,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -49,9 +50,9 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 	 * @param patternFQN
 	 * @return
 	 */
-	public String executeDemo_GenericAPI_LoadFromEIQ(String modelPath, String patternFQN) {
+	public String executeDemo_GenericAPI_LoadFromEIQ(URI modelURI, URI fileURI, String patternFQN) {
 		final StringBuilder results = new StringBuilder();
-		Resource resource = loadModel(modelPath);
+		Resource resource = loadModel(modelURI);
 		if (resource != null) {
 			try {
 				// get all matches of the pattern
@@ -63,12 +64,12 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 				
 				Pattern p = null;
 				
-				// Initializing Xtext-based resource parser
-				new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
-				
+		        // Initializing Xtext-based resource parser
+		        new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		        
 				//Loading pattern resource from file
 		        ResourceSet resourceSet = new ResourceSetImpl();
-				URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/src/headless/headlessQueries.eiq", false);
+				
 			    Resource patternResource = resourceSet.getResource(fileURI, true);
 			    
 			    // navigate to the pattern definition that we want
@@ -88,13 +89,11 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 			        throw new RuntimeException(String.format("Pattern %s not found", patternFQN));
 			    }
 			    SpecificationBuilder builder = new SpecificationBuilder();
+			    final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = builder.getOrCreateSpecification(p);
+			    QuerySpecificationRegistry.registerQuerySpecification(specification);
 			    
-			    // attempt to retrieve a registered query specification
-			    
-			    IncQueryMatcher<? extends IPatternMatch> matcher;
-			    
-					// fall back to using only the pattern object
-				matcher = engine.getMatcher(builder.getOrCreateSpecification(p));
+			    // Initialize matcher from specification
+                IncQueryMatcher<? extends IPatternMatch> matcher = engine.getMatcher(specification);
 				
 				if (matcher!=null) {
 					Collection<? extends IPatternMatch> matches = matcher.getAllMatches();
@@ -123,10 +122,10 @@ public class IncQueryHeadlessAdvanced extends IncQueryHeadless {
 	// incrementally track changes
 	
 	
-	public String executeTrackChangesDemo_Advanced(String modelPath, String patternFQN)
+	public String executeTrackChangesDemo_Advanced(URI modelURI, String patternFQN)
 	{
 		final StringBuilder results = new StringBuilder();
-		Resource resource = loadModel(modelPath);
+		Resource resource = loadModel(modelURI);
 		if (resource != null) {
 			try {
 				// initialization
