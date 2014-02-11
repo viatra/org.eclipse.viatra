@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf;
 
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+
+import com.google.inject.Injector;
+
 /**
  * Initialization support for running Xtext languages without equinox extension registry
  */
@@ -18,4 +24,13 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
     public static void doSetup() {
         new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
     }
+
+    @Override
+    public void register(Injector injector) {
+        super.register(injector);
+        IncQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
+        XtextInjectorProvider.INSTANCE.setInjector(injector);
+    }
+    
+    
 }
