@@ -11,4 +11,5 @@ Require-Bundle: org.junit;bundle-version="4.8.0",
  org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0",
  com.google.inject,
  org.eclipse.xtext.common.types;bundle-version="[2.4.2,2.6.0)",
- com.google.guava
+ com.google.guava,
+ org.eclipse.xtext;bundle-version="[2.4.2,2.6.0)"
