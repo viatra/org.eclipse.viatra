@@ -13,7 +13,6 @@ package org.eclipse.incquery.patternlanguage.emf.ui.builder;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -102,12 +101,15 @@ public class OldVersionHelper {
     }
 
     public Pattern findPattern(URI proxyURI) throws JavaModelException {
-        final IPath relativePath = new Path(proxyURI.toPlatformString(true));
-        IResource file = workspaceRoot.findMember(relativePath);
-        IProject project = file.getProject();
+        final IPath absolutePath = new Path(proxyURI.toPlatformString(true));
+        
+        if (absolutePath.segmentCount() == 0) {
+            return null;
+        }
+        IProject project = workspaceRoot.getProject(absolutePath.segment(0).toString());
         ResourceSet set = getResourceSet(project);
 
-        URI copiedURI = getCopiedURI(project, relativePath);
+        URI copiedURI = getCopiedURI(project, absolutePath);
         if (copiedURI != null) {
             Resource res = set.getResource(copiedURI, true);
             String fragment = proxyURI.fragment();
