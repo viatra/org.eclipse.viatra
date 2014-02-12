@@ -33,7 +33,6 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
-import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeUtil;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
@@ -536,9 +535,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
                 || rightValueReference instanceof LiteralValueReference || rightValueReference instanceof ComputationValue)
                 && !(leftValueReference instanceof VariableValue) && !(rightValueReference instanceof VariableValue)) {
-            EClassifier leftClassifier = EMFPatternTypeUtil
+            EClassifier leftClassifier = emfTypeProvider
                     .getClassifierForLiteralComputationEnumValueReference(leftValueReference);
-            EClassifier rightClassifier = EMFPatternTypeUtil
+            EClassifier rightClassifier = emfTypeProvider
                     .getClassifierForLiteralComputationEnumValueReference(rightValueReference);
             if (!isCompatibleClassifiers(leftClassifier, rightClassifier)) {
                 error("The types of the literal/computational values are different: "
@@ -560,9 +559,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
         ValueReference valueReference = pathExpressionHead.getDst();
         if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
-            EClassifier inputClassifier = EMFPatternTypeUtil
+            EClassifier inputClassifier = emfTypeProvider
                     .getClassifierForLiteralComputationEnumValueReference(valueReference);
-            EClassifier typeClassifier = EMFPatternTypeUtil.getClassifierForType(EMFPatternTypeUtil
+            EClassifier typeClassifier = emfTypeProvider.getClassifierForType(emfTypeProvider
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                 String name = typeClassifier == null ? "<unknown>" : typeClassifier.getInstanceClassName();
@@ -591,7 +590,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 Pattern pattern = patternCall.getPatternRef();
                 Variable variable = pattern.getParameters().get(patternCall.getParameters().indexOf(valueReference));
                 EClassifier typeClassifier = emfTypeProvider.getClassifierForVariable(variable);
-                EClassifier inputClassifier = EMFPatternTypeUtil
+                EClassifier inputClassifier = emfTypeProvider
                         .getClassifierForLiteralComputationEnumValueReference(valueReference);
                 if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                     error("The type infered from the called pattern (" + typeClassifier.getInstanceClassName()
@@ -688,7 +687,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     @Check
     public void checkForNotWellbehavingDerivedFeatureInPathExpressions(PathExpressionConstraint pathExpressionConstraint) {
         PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = EMFPatternTypeUtil
+        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = emfTypeProvider
                 .getAllFeaturesFromPathExpressionTail(pathExpressionHead.getTail());
         for (Entry<PathExpressionTail, EStructuralFeature> tail : tailFeatureMap.entrySet()) {
             EStructuralFeature feature = tail.getValue();

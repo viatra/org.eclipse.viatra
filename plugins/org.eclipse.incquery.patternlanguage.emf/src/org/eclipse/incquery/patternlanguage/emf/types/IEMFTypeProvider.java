@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.types;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
@@ -62,4 +68,15 @@ public interface IEMFTypeProvider {
 	 * @return
 	 */
 	JvmTypeReference getVariableType(Variable variable);
+
+	/**
+     * @param valueReference
+     * @return an {@link EClassifier} for the given input {@link ValueReference}. The ValueReference can be a
+     *         {@link LiteralValueReference}, or a {@link ComputationValue}.
+     */
+    EClassifier getClassifierForLiteralComputationEnumValueReference(ValueReference valueReference);
+
+    Map<PathExpressionTail,EStructuralFeature> getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail);
+
+    Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail);
 }

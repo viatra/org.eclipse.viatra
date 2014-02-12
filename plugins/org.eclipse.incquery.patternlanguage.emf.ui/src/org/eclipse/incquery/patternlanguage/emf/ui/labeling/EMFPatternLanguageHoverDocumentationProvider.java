@@ -88,7 +88,8 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         if (emfType == null) {
             emfTypeString = "Not applicable";
         } else {
-            emfTypeString = String.format("%s (<i>%s</i>)", emfType.getName(), emfType.getEPackage().getNsURI());
+            final String packageUri = emfType.getEPackage() != null ? "(<i>" + emfType.getEPackage().getNsURI() + "</i>)" : "";
+            emfTypeString = String.format("%s %s", emfType.getName(), packageUri);
         }
         return String.format("<b>EMF Type</b>: %s<br /><b>Java Type</b>: %s", emfTypeString, javaTypeString);
     }

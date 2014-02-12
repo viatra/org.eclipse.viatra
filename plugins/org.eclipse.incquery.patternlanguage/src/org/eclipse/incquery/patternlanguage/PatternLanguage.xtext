@@ -156,7 +156,7 @@ ListValue returns LiteralValueReference:
 ComputationValue returns ValueReference:
 	AggregatedValue | FunctionEvaluationValue;
 	
-FunctionEvaluationValue returns ValueReference:
+FunctionEvaluationValue returns ComputationValue:
 	{FunctionEvaluationValue} 'eval' '(' expression=XExpression ')';
 	
 AggregatedValue returns ComputationValue:

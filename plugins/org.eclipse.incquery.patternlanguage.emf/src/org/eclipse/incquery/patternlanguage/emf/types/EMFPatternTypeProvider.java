@@ -15,26 +15,44 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.CountAggregator;
+import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -45,8 +63,12 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
+import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.typing.XbaseTypeProvider;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -133,6 +155,18 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                         if (resultList.contains(eClass)) {
                             resultList.remove(eClass);
                         }
+                    }
+                } else if (classifier instanceof EDataType) {
+                    final EDataType eDataType = (EDataType) classifier;
+                    if (Iterables.any(Iterables.filter(resultList, EDataType.class), new Predicate<EDataType>() {
+
+                        @Override
+                        public boolean apply(EDataType dataType) {
+                            return dataType == null ||
+                                    (!dataType.equals(eDataType) && dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()));
+                        }
+                    })) {
+                       resultList.remove(eDataType); 
                     }
                 }
             }
@@ -260,7 +294,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                 if (valueReference instanceof VariableValue) {
                     final VariableReference secondVariableReference = ((VariableValue) valueReference).getValue();
                     if (isEqualVariables(variable, secondVariableReference)) {
-                        Type type = EMFPatternTypeUtil.getTypeFromPathExpressionTail(pathExpressionHead.getTail());
+                        Type type = getTypeFromPathExpressionTail(pathExpressionHead.getTail());
                         classifier = getClassifierForType(type);
                         if (classifier != null) {
                             possibleClassifiersList.add(classifier);
@@ -331,7 +365,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
         if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue
                 || valueReference instanceof EnumValue) {
-            return EMFPatternTypeUtil.getClassifierForLiteralComputationEnumValueReference(valueReference);
+            return getClassifierForLiteralComputationEnumValueReference(valueReference);
         } else if (valueReference instanceof VariableValue) {
             VariableValue variableValue = (VariableValue) valueReference;
             Variable newPossibleInjectPair = variableValue.getValue().getVariable();
@@ -345,7 +379,22 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     @Override
     public EClassifier getClassifierForType(Type type) {
-        return EMFPatternTypeUtil.getClassifierForType(type);
+        EClassifier result = null;
+        if (type != null) {
+            if (type instanceof ClassType) {
+                result = ((ClassType) type).getClassname();
+            } else if (type instanceof ReferenceType) {
+                EStructuralFeature feature = ((ReferenceType) type).getRefname();
+                if (feature instanceof EAttribute) {
+                    EAttribute attribute = (EAttribute) feature;
+                    result = attribute.getEAttributeType();
+                } else if (feature instanceof EReference) {
+                    EReference reference = (EReference) feature;
+                    result = reference.getEReferenceType();
+                }
+            }
+        }
+        return result;
     }
 
     private static boolean isEqualVariables(Variable variable, VariableReference variableReference) {
@@ -357,6 +406,77 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             }
         }
         return false;
+    }
+    
+    @Override
+    public EClassifier getClassifierForLiteralComputationEnumValueReference(ValueReference valueReference) {
+        if (valueReference instanceof LiteralValueReference) {
+            if (valueReference instanceof IntValue) {
+                return EcorePackage.Literals.EINT;
+            } else if (valueReference instanceof StringValue) {
+                return EcorePackage.Literals.ESTRING;
+            } else if (valueReference instanceof BoolValue) {
+                return EcorePackage.Literals.EBOOLEAN;
+            } else if (valueReference instanceof DoubleValue) {
+                return EcorePackage.Literals.EDOUBLE;
+            } else if (valueReference instanceof ListValue) {
+                return null;
+            }
+        } else if (valueReference instanceof AggregatedValue) {
+            AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
+            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
+                return EcorePackage.Literals.EINT;
+            }
+        } else if (valueReference instanceof FunctionEvaluationValue) {
+            FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
+            final XExpression xExpression = eval.getExpression();
+            final EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
+            
+            JvmTypeReference type = getCommonReturnType(xExpression, true);
+            dataType.setName(type.getSimpleName());
+            dataType.setInstanceClassName(type.getQualifiedName());
+            return dataType;
+//          // TODO call type provider for eval() expression
+//            String simpleName = primitives.asPrimitiveIfWrapperType(type).getSimpleName();    
+
+//            return EcorePackage.Literals.EJAVA_OBJECT;
+        } else if (valueReference instanceof EnumValue) {
+            EnumValue enumValue = (EnumValue) valueReference;
+            return enumValue.getEnumeration();
+        }
+        return null;
+    }
+
+    @Override
+    public Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
+        if (pathExpressionTail == null) {
+            return null;
+        }
+        if (pathExpressionTail.getTail() != null) {
+            return getTypeFromPathExpressionTail(pathExpressionTail.getTail());
+        }
+        return pathExpressionTail.getType();
+    }
+    
+    @Override
+    public Map<PathExpressionTail,EStructuralFeature> getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
+        Map<PathExpressionTail,EStructuralFeature> types = Maps.newHashMap();
+        getAllFeaturesFromPathExpressionTail(pathExpressionTail, types);
+        return types;
+    }
+    
+    private void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail, Map<PathExpressionTail,EStructuralFeature> types) {
+        if (pathExpressionTail != null) {
+            Type type = pathExpressionTail.getType();
+            if(type instanceof ReferenceType) {
+                ReferenceType referenceType = (ReferenceType) type;
+                EStructuralFeature refname = referenceType.getRefname();
+                if(refname != null) {
+                    types.put(pathExpressionTail,refname);
+                }
+            }
+            getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
+        }
     }
 
 }
