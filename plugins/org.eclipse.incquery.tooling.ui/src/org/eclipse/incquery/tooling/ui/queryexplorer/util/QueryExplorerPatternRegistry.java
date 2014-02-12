@@ -46,6 +46,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Utility class used by the Query Explorer for the maintenance of registered patterns.
@@ -118,19 +119,21 @@ public class QueryExplorerPatternRegistry {
      * @return the list of patterns registered
      * @throws IncQueryException
      */
-    public List<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel) throws IncQueryException {
-        List<IQuerySpecification<?>> newPatterns = Lists.newArrayList();
+    public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel) throws IncQueryException {
+        List<IQuerySpecification<?>> allCreatedSpecifications = Lists.newArrayList();
+        Set<IQuerySpecification<?>> activeSpecifications = Sets.newLinkedHashSet();
 
         if (patternModel != null) {
             List<IStatus> warnings = new ArrayList<IStatus>();
             for (Pattern pattern : patternModel.getPatterns()) {
-                IQuerySpecification<?> spec = builder.getOrCreateSpecification(pattern, newPatterns, false);
+                IQuerySpecification<?> spec = builder.getOrCreateSpecification(pattern, allCreatedSpecifications, false);
                 String patternFqn = spec.getFullyQualifiedName();
                 if (!patternNameMap.containsKey(patternFqn)) {
                     Boolean annotationValue = getValueOfQueryExplorerAnnotation(spec);
                     if (!(annotationValue != null && !annotationValue)) {
                         patternNameMap.put(patternFqn, spec);
                         activePatterns.add(spec);
+                        activeSpecifications.add(spec);
                     }
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
@@ -160,11 +163,11 @@ public class QueryExplorerPatternRegistry {
             }
         }
 
-        if (!newPatterns.isEmpty()) {
-            this.registeredPatterModels.putAll(file, newPatterns);
+        if (!allCreatedSpecifications.isEmpty()) {
+            this.registeredPatterModels.putAll(file, allCreatedSpecifications);
         }
         
-        return Collections.unmodifiableList(newPatterns);
+        return Collections.unmodifiableSet(activeSpecifications);
     }
 
     /**
