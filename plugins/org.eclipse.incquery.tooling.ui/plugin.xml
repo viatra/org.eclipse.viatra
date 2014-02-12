@@ -251,7 +251,7 @@
             commandId="org.eclipse.incquery.tooling.ui.loadeiqpattern">
       </handler>
       <handler
-            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternRegitryShowLocationHandler"
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternRegistryShowLocationHandler"
             commandId="org.eclipse.incquery.tooling.ui.showlocation_patternreg">
       </handler>
       <handler

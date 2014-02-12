@@ -130,7 +130,6 @@ public class QueryExplorerPatternRegistry {
                     Boolean annotationValue = getValueOfQueryExplorerAnnotation(spec);
                     if (!(annotationValue != null && !annotationValue)) {
                         patternNameMap.put(patternFqn, spec);
-                        newPatterns.add(spec);
                         activePatterns.add(spec);
                     }
                 } else {
@@ -164,7 +163,7 @@ public class QueryExplorerPatternRegistry {
         if (!newPatterns.isEmpty()) {
             this.registeredPatterModels.putAll(file, newPatterns);
         }
-
+        
         return Collections.unmodifiableList(newPatterns);
     }
 
@@ -343,7 +342,6 @@ public class QueryExplorerPatternRegistry {
             return displayValue != null && (Boolean)displayValue;
         }
     }
-
 
     public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
         return ImmutableList.<IQuerySpecification<?>>builder().
