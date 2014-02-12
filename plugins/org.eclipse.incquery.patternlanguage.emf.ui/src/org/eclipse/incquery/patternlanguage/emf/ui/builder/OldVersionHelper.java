@@ -92,8 +92,10 @@ public class OldVersionHelper {
                 outputLocation = javaProject.getOutputLocation();
             }
             IPath path = outputLocation.append(relativePath.makeRelativeTo(sourceEntry.getPath()));
-            URI copiedURI = (project.findMember(path) != null) ? URI.createPlatformResourceURI(path.toString(), true) : null;
-            copiedURIMap.put(relativePath, copiedURI);
+            URI copiedURI = (project.getWorkspace().getRoot().findMember(path) != null) ? URI.createPlatformResourceURI(path.toString(), true) : null;
+            if (copiedURI != null) {
+                copiedURIMap.put(relativePath, copiedURI);
+            }
             return copiedURI;
         }
         return copiedURIMap.get(relativePath);
