@@ -45,6 +45,11 @@ public class Equality extends DeferredPConstraint {
         return set;
     }
 
+    /**
+     * An equality is moot if it compares the a variable with itself.
+     * 
+     * @return true, if the equality is moot
+     */
     public boolean isMoot() {
         return who.equals(withWhom);
     }

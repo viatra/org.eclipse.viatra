@@ -240,7 +240,7 @@ class PatternQuerySpecificationClassInferrer {
   	}
 
 	def inferBodies(ITreeAppendable appender, Pattern pattern, IQuerySpecification<?> genericSpecification, EMFPatternMatcherContext context) {
-		for (pBody : genericSpecification.containedBodies.map[PBodyNormalizer.normalizeBody(it, context)]) {
+		for (pBody : genericSpecification.containedBodies) {
 			appender.increaseIndentation
 			appender.append("{")
 			appender.newLine
@@ -323,7 +323,7 @@ class PatternQuerySpecificationClassInferrer {
 		if (variable == null)
 			"var_"
 		else
-		"var_" + variable.name.replaceAll("[\\.\\{\\}]","_")
+		"var_" + variable.name.replaceAll("[\\.\\{\\}<>]","_")
 	}
 
 	def inferConstraint(PConstraint constraint, PBody body, Pattern pattern, ITreeAppendable appender) {
@@ -559,7 +559,18 @@ class PatternQuerySpecificationClassInferrer {
 
     def outputAnnotationParameter(ITreeAppendable appender, Pattern ctx, Object value) {
 		switch value {
-			ParameterReference : {
+			List<?> : {
+				appender.referClass(ctx, typeof(Arrays))
+				appender.append('''.asList(new Object[] {''')
+				val iterator = value.iterator
+				while (iterator.hasNext) {
+					appender.outputAnnotationParameter(ctx, iterator.next)
+					if (iterator.hasNext) {
+						appender.append(''', ''')
+					}					
+				}
+				appender.append('''})''')
+			} ParameterReference : {
 				appender.append('''new ''')
 				appender.referClass(ctx, typeof(ParameterReference))
 				appender.append('''("«value.name»")''')
