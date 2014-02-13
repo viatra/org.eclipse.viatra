@@ -565,7 +565,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
             if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
                 String name = typeClassifier == null ? "<unknown>" : typeClassifier.getInstanceClassName();
-                error("The type infered from the path expression (" + name
+                error("The type inferred from the path expression (" + name
                         + ") is different from the input literal/computational value ("
                         + inputClassifier.getInstanceClassName() + ").", pathExpressionConstraint, null,
                         EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION);
@@ -593,7 +593,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 EClassifier inputClassifier = emfTypeProvider
                         .getClassifierForLiteralComputationEnumValueReference(valueReference);
                 if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
-                    error("The type infered from the called pattern (" + typeClassifier.getInstanceClassName()
+                    error("The type inferred from the called pattern (" + typeClassifier.getInstanceClassName()
                             + ") is different from the input literal/computational value ("
                             + inputClassifier.getInstanceClassName() + ").", patternCall, null,
                             EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
