@@ -82,8 +82,12 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
       PVariable var_System = body.getOrCreateVariableByName("System");
       PVariable var_SysName = body.getOrCreateVariableByName("SysName");
       PVariable var_JobPath = body.getOrCreateVariableByName("JobPath");
-      new ExportedParameter(body, var_CLE, "CLE");
-      new ExportedParameter(body, var_Job, "Job");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_CLE, "CLE"), 
+        new ExportedParameter(body, var_Job, "Job")
+      ));
+      
+      
       new TypeBinary(body, context, var_Job, var_JobName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
       new TypeBinary(body, context, var_System, var_SysName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
       new TypeBinary(body, context, var_Job, var_System, getFeatureLiteral("http://system/1.0", "Job", "runsOn"), "http://system/1.0/Job.runsOn");
@@ -108,7 +112,6 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
         }
         
         },  null); 
-      body.setSymbolicParameters(Arrays.asList(var_CLE, var_Job));
       bodies.add(body);
     }
     {

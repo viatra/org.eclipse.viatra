@@ -8,7 +8,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import process.Task;
-import system.Data;
 
 /**
  * Pattern-specific match representation of the operation.queries.DataReadByChecklistEntry pattern,
@@ -29,11 +28,11 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   
   private Task fTask;
   
-  private Data fData;
+  private Object fData;
   
   private static List<String> parameterNames = makeImmutableList("CLE", "Task", "Data");
   
-  private DataReadByChecklistEntryMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  private DataReadByChecklistEntryMatch(final ChecklistEntry pCLE, final Task pTask, final Object pData) {
     this.fCLE = pCLE;
     this.fTask = pTask;
     this.fData = pData;
@@ -59,7 +58,7 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     
   }
   
-  public Data getData() {
+  public Object getData() {
     return this.fData;
     
   }
@@ -95,7 +94,7 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     
   }
   
-  public void setData(final Data pData) {
+  public void setData(final Object pData) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fData = pData;
     
@@ -177,7 +176,7 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   
   @SuppressWarnings("all")
   static final class Mutable extends DataReadByChecklistEntryMatch {
-    Mutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    Mutable(final ChecklistEntry pCLE, final Task pTask, final Object pData) {
       super(pCLE, pTask, pData);
       
     }
@@ -191,7 +190,7 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   
   @SuppressWarnings("all")
   static final class Immutable extends DataReadByChecklistEntryMatch {
-    Immutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    Immutable(final ChecklistEntry pCLE, final Task pTask, final Object pData) {
       super(pCLE, pTask, pData);
       
     }

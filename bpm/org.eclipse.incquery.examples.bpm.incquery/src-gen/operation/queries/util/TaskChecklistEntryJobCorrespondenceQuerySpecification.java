@@ -80,12 +80,16 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
       PVariable var_Job = body.getOrCreateVariableByName("Job");
-      new ExportedParameter(body, var_Task, "Task");
-      new ExportedParameter(body, var_CLE, "CLE");
-      new ExportedParameter(body, var_Job, "Job");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Task, "Task"), 
+        new ExportedParameter(body, var_CLE, "CLE"), 
+        new ExportedParameter(body, var_Job, "Job")
+      ));
+      
+      
+      
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Job), ChecklistEntryJobCorrespondenceQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_Task, var_CLE, var_Job));
       bodies.add(body);
     }
     {

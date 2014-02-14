@@ -74,10 +74,13 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
       PBody body = new PBody(this);
       PVariable var_Job = body.getOrCreateVariableByName("Job");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
-      new ExportedParameter(body, var_Job, "Job");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Job, "Job"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeBinary(body, context, var_Job, var_Task, getFeatureLiteral("http://system/1.0", "Job", "tasks"), "http://system/1.0/Job.tasks");
-      body.setSymbolicParameters(Arrays.asList(var_Job, var_Task));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

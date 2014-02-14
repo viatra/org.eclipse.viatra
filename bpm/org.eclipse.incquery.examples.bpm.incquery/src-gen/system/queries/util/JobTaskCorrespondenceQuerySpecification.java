@@ -77,12 +77,15 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
       PVariable var_Job = body.getOrCreateVariableByName("Job");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      new ExportedParameter(body, var_Job, "Job");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Job, "Job"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeBinary(body, context, var_Job, var_TaskId, getFeatureLiteral("http://system/1.0", "Job", "taskIds"), "http://system/1.0/Job.taskIds");
       new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
-      body.setSymbolicParameters(Arrays.asList(var_Job, var_Task));
       bodies.add(body);
     }
     {

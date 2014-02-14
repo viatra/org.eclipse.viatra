@@ -74,10 +74,13 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
       PBody body = new PBody(this);
       PVariable var_Proc = body.getOrCreateVariableByName("Proc");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
-      new ExportedParameter(body, var_Proc, "Proc");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Proc, "Proc"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeBinary(body, context, var_Proc, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
-      body.setSymbolicParameters(Arrays.asList(var_Proc, var_Task));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

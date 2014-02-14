@@ -16,16 +16,16 @@ public final class BpmTestQueriesMatchers {
     
   }
   
-  public EntryTaskMatcher getEntryTaskMatcher() throws IncQueryException {
-    return EntryTaskMatcher.on(engine);
+  public NextActivityMatcher getNextActivityMatcher() throws IncQueryException {
+    return NextActivityMatcher.on(engine);
   }
   
   public ProcessTasksMatcher getProcessTasksMatcher() throws IncQueryException {
     return ProcessTasksMatcher.on(engine);
   }
   
-  public NextActivityMatcher getNextActivityMatcher() throws IncQueryException {
-    return NextActivityMatcher.on(engine);
+  public EntryTaskMatcher getEntryTaskMatcher() throws IncQueryException {
+    return EntryTaskMatcher.on(engine);
   }
   
   public JobTasksMatcher getJobTasksMatcher() throws IncQueryException {

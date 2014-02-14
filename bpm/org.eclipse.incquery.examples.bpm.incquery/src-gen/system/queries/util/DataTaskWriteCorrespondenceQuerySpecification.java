@@ -77,12 +77,15 @@ public final class DataTaskWriteCorrespondenceQuerySpecification extends BaseGen
       PVariable var_Data = body.getOrCreateVariableByName("Data");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      new ExportedParameter(body, var_Data, "Data");
-      new ExportedParameter(body, var_Task, "Task");
-      new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Data, "Data"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeBinary(body, context, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "writingTaskIds"), "http://system/1.0/Data.writingTaskIds");
+      new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
-      body.setSymbolicParameters(Arrays.asList(var_Data, var_Task));
       bodies.add(body);
     }
     {

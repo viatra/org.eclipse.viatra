@@ -80,13 +80,16 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
       PVariable var_Process = body.getOrCreateVariableByName("Process");
-      new ExportedParameter(body, var_CLE, "CLE");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_CLE, "CLE"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance());
       new TypeBinary(body, context, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
       new TypeBinary(body, context, var_Checklist, var_CLE, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
-      body.setSymbolicParameters(Arrays.asList(var_CLE, var_Task));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

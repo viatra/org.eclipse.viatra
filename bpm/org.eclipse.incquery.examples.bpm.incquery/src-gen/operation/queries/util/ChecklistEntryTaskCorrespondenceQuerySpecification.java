@@ -77,12 +77,15 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      new ExportedParameter(body, var_CLE, "CLE");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_CLE, "CLE"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
       new TypeBinary(body, context, var_CLE, var_TaskId, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "taskId"), "http://operation/1.0/ChecklistEntry.taskId");
-      body.setSymbolicParameters(Arrays.asList(var_CLE, var_Task));
       bodies.add(body);
     }
     {

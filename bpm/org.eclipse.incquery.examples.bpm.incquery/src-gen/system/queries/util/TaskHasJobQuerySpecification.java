@@ -77,10 +77,12 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedQuerySpecification
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var__Job = body.getOrCreateVariableByName("_Job");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new PositivePatternCall(body, new FlatTuple(var__Job, var_Task), JobTaskCorrespondenceQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_Task));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

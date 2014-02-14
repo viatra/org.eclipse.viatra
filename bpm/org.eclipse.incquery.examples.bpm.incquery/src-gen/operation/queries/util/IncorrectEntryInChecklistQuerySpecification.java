@@ -84,14 +84,18 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Process = body.getOrCreateVariableByName("Process");
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
-      new ExportedParameter(body, var_ChecklistEntry, "ChecklistEntry");
-      new ExportedParameter(body, var_Task, "Task");
-      new ExportedParameter(body, var_Process, "Process");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_ChecklistEntry, "ChecklistEntry"), 
+        new ExportedParameter(body, var_Task, "Task"), 
+        new ExportedParameter(body, var_Process, "Process")
+      ));
+      
+      
+      
       new TypeBinary(body, context, var_Checklist, var_ChecklistEntry, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
       new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_ChecklistEntry, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_ChecklistEntry, var_Task, var_Process));
       bodies.add(body);
     }
     {

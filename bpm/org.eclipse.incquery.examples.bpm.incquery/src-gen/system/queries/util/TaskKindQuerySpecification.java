@@ -74,10 +74,13 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Kind = body.getOrCreateVariableByName("Kind");
-      new ExportedParameter(body, var_Task, "Task");
-      new ExportedParameter(body, var_Kind, "Kind");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Task, "Task"), 
+        new ExportedParameter(body, var_Kind, "Kind")
+      ));
+      
+      
       new TypeBinary(body, context, var_Task, var_Kind, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
-      body.setSymbolicParameters(Arrays.asList(var_Task, var_Kind));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

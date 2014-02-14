@@ -79,14 +79,17 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
       PVariable var_SourceTask = body.getOrCreateVariableByName("SourceTask");
       PVariable var_AffectedTask = body.getOrCreateVariableByName("AffectedTask");
       PVariable var_Data = body.getOrCreateVariableByName("Data");
-      new ExportedParameter(body, var_SourceTask, "SourceTask");
-      new ExportedParameter(body, var_AffectedTask, "AffectedTask");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_SourceTask, "SourceTask"), 
+        new ExportedParameter(body, var_AffectedTask, "AffectedTask")
+      ));
+      
+      
       new TypeUnary(body, var_SourceTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeUnary(body, var_AffectedTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeUnary(body, var_Data, getClassifierLiteral("http://system/1.0", "Data"), "http://system/1.0/Data");
       new PositivePatternCall(body, new FlatTuple(var_Data, var_SourceTask), DataTaskWriteCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_Data, var_AffectedTask), DataTaskReadCorrespondenceQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_SourceTask, var_AffectedTask));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

@@ -76,11 +76,14 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
       PVariable var_Job = body.getOrCreateVariableByName("Job");
       PVariable var_Info = body.getOrCreateVariableByName("Info");
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      new ExportedParameter(body, var_Job, "Job");
-      new ExportedParameter(body, var_Info, "Info");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Job, "Job"), 
+        new ExportedParameter(body, var_Info, "Info")
+      ));
+      
+      
       new TypeBinary(body, context, var_CLE, var_Info, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info"), "http://operation/1.0/ChecklistEntry.info");
       new TypeBinary(body, context, var_CLE, var_Job, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs"), "http://operation/1.0/ChecklistEntry.jobs");
-      body.setSymbolicParameters(Arrays.asList(var_Job, var_Info));
       bodies.add(body);
     }
     {

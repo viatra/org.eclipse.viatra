@@ -74,10 +74,13 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
       PBody body = new PBody(this);
       PVariable var_Entry = body.getOrCreateVariableByName("Entry");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
-      new ExportedParameter(body, var_Entry, "Entry");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Entry, "Entry"), 
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
+      
       new TypeBinary(body, context, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
-      body.setSymbolicParameters(Arrays.asList(var_Entry, var_Task));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

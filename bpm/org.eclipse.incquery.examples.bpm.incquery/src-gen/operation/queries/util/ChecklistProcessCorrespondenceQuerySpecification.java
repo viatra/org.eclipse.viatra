@@ -77,12 +77,15 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
       PVariable var_Process = body.getOrCreateVariableByName("Process");
       PVariable var_ProcessId = body.getOrCreateVariableByName("ProcessId");
-      new ExportedParameter(body, var_Checklist, "Checklist");
-      new ExportedParameter(body, var_Process, "Process");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Checklist, "Checklist"), 
+        new ExportedParameter(body, var_Process, "Process")
+      ));
+      
+      
       new TypeUnary(body, var_Process, getClassifierLiteral("http://process/1.0", "Process"), "http://process/1.0/Process");
       new TypeBinary(body, context, var_Process, var_ProcessId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
       new TypeBinary(body, context, var_Checklist, var_ProcessId, getFeatureLiteral("http://operation/1.0", "Checklist", "processId"), "http://operation/1.0/Checklist.processId");
-      body.setSymbolicParameters(Arrays.asList(var_Checklist, var_Process));
       bodies.add(body);
     }
     {

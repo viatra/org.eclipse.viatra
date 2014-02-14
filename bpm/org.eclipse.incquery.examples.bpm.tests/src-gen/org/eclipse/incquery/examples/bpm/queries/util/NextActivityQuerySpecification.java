@@ -74,10 +74,13 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
       PBody body = new PBody(this);
       PVariable var_Act = body.getOrCreateVariableByName("Act");
       PVariable var_Next = body.getOrCreateVariableByName("Next");
-      new ExportedParameter(body, var_Act, "Act");
-      new ExportedParameter(body, var_Next, "Next");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Act, "Act"), 
+        new ExportedParameter(body, var_Next, "Next")
+      ));
+      
+      
       new TypeBinary(body, context, var_Act, var_Next, getFeatureLiteral("http://process/1.0", "Activity", "next"), "http://process/1.0/Activity.next");
-      body.setSymbolicParameters(Arrays.asList(var_Act, var_Next));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

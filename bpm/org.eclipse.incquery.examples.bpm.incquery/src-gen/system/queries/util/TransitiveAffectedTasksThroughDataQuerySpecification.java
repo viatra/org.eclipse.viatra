@@ -77,12 +77,15 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
       PBody body = new PBody(this);
       PVariable var_SourceTask = body.getOrCreateVariableByName("SourceTask");
       PVariable var_AffectedTask = body.getOrCreateVariableByName("AffectedTask");
-      new ExportedParameter(body, var_SourceTask, "SourceTask");
-      new ExportedParameter(body, var_AffectedTask, "AffectedTask");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_SourceTask, "SourceTask"), 
+        new ExportedParameter(body, var_AffectedTask, "AffectedTask")
+      ));
+      
+      
       new TypeUnary(body, var_SourceTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new TypeUnary(body, var_AffectedTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new BinaryTransitiveClosure(body, new FlatTuple(var_SourceTask, var_AffectedTask), TasksAffectedThroughDataQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_SourceTask, var_AffectedTask));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

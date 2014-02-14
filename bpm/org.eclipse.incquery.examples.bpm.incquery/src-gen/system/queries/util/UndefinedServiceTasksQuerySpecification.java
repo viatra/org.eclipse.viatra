@@ -80,11 +80,13 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
-      new ExportedParameter(body, var_Task, "Task");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Task, "Task")
+      ));
+      
       new ConstantValue(body, var__virtual_0_, getEnumLiteral("http://process/1.0", "TaskKind", "service").getInstance());
       new TypeBinary(body, context, var_Task, var__virtual_0_, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
       new NegativePatternCall(body, new FlatTuple(var_Task), TaskHasJobQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_Task));
       bodies.add(body);
     }
     {

@@ -18,27 +18,27 @@ public final class DerivedFeaturesMatchers {
     
   }
   
-  public DataReadByChecklistEntryMatcher getDataReadByChecklistEntryMatcher() throws IncQueryException {
-    return DataReadByChecklistEntryMatcher.on(engine);
-  }
-  
-  public ChecklistEntryTaskCorrespondenceMatcher getChecklistEntryTaskCorrespondenceMatcher() throws IncQueryException {
-    return ChecklistEntryTaskCorrespondenceMatcher.on(engine);
-  }
-  
-  public ChecklistProcessCorrespondenceMatcher getChecklistProcessCorrespondenceMatcher() throws IncQueryException {
-    return ChecklistProcessCorrespondenceMatcher.on(engine);
+  public TaskChecklistEntryJobCorrespondenceMatcher getTaskChecklistEntryJobCorrespondenceMatcher() throws IncQueryException {
+    return TaskChecklistEntryJobCorrespondenceMatcher.on(engine);
   }
   
   public IncorrectEntryInChecklistMatcher getIncorrectEntryInChecklistMatcher() throws IncQueryException {
     return IncorrectEntryInChecklistMatcher.on(engine);
   }
   
-  public TaskChecklistEntryJobCorrespondenceMatcher getTaskChecklistEntryJobCorrespondenceMatcher() throws IncQueryException {
-    return TaskChecklistEntryJobCorrespondenceMatcher.on(engine);
-  }
-  
   public ChecklistEntryJobCorrespondenceMatcher getChecklistEntryJobCorrespondenceMatcher() throws IncQueryException {
     return ChecklistEntryJobCorrespondenceMatcher.on(engine);
+  }
+  
+  public ChecklistProcessCorrespondenceMatcher getChecklistProcessCorrespondenceMatcher() throws IncQueryException {
+    return ChecklistProcessCorrespondenceMatcher.on(engine);
+  }
+  
+  public ChecklistEntryTaskCorrespondenceMatcher getChecklistEntryTaskCorrespondenceMatcher() throws IncQueryException {
+    return ChecklistEntryTaskCorrespondenceMatcher.on(engine);
+  }
+  
+  public DataReadByChecklistEntryMatcher getDataReadByChecklistEntryMatcher() throws IncQueryException {
+    return DataReadByChecklistEntryMatcher.on(engine);
   }
 }
