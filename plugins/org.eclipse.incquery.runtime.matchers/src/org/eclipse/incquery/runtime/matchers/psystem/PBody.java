@@ -166,7 +166,7 @@ public class PBody {
      * 
      * @return a non-null, but possibly empty list
      */
-    public List<PVariable> getSymbolicParametersVariables() {
+    public List<PVariable> getSymbolicParameterVariables() {
         return Lists.transform(symbolicParameters, new Function<ExportedParameter, PVariable>() {
 
             @Override

@@ -52,7 +52,7 @@ public class EPMBuildScaffold<Collector> {
                 SubPlan bodyFinal = Options.builderMethod.layoutStrategy()
                         .layout(body, currentBuildable, context);
                 BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production,
-                        body.getSymbolicParameters().toArray(new PVariable[body.getSymbolicParameters().size()]));
+                        body.getSymbolicParameterVariables().toArray(new PVariable[body.getSymbolicParameters().size()]));
             }
         }
         operationCompiler.patternFinished(pattern, context, production);
