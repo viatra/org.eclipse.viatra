@@ -75,9 +75,9 @@ public class PVariable {
         if (this.equals(replacement))
             return;
 
-        if (!this.isVirtual() && replacement.isVirtual())
+        if (!this.isVirtual() && replacement.isVirtual()) {
             replacement.unifyInto(this);
-        else {
+        } else {
             // replacement.referringConstraints.addAll(this.referringConstraints);
             // replacement.exportedParameter |= this.exportedParameter;
             replacement.virtual &= this.virtual;

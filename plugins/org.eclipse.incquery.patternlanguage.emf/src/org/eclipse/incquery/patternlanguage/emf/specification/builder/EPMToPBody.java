@@ -106,7 +106,6 @@ public class EPMToPBody {
 
             preProcessParameters(pBody);
             gatherBodyConstraints(body, pBody);
-            addSymbolicParameters(pBody);
             return pBody;
         } catch (SpecificationBuilderException e) {
             e.setPatternDescription(pattern);
@@ -150,18 +149,6 @@ public class EPMToPBody {
             throw new UnsupportedOperationException("Unknown attribute parameter type");
         }
         return value;
-    }
-
-    protected void addSymbolicParameters(final PBody pBody) throws SpecificationBuilderException {
-        List<PVariable> variables = Lists.newArrayList(Lists.transform(pattern.getParameters(), new Function<Variable, PVariable>() {
-
-            @Override
-            public PVariable apply(Variable parameter) {
-                return getPNode(parameter, pBody);
-            }
-
-        }));
-        pBody.setSymbolicParameters(variables);
     }
 
     protected PVariable getPNode(Variable variable, final PBody pBody) {
@@ -219,14 +206,17 @@ public class EPMToPBody {
 
     private void preProcessParameters(final PBody pBody) {
         EList<Variable> parameters = pattern.getParameters();
+        List<ExportedParameter> exportedParameters = Lists.newArrayList();
         for (Variable variable : parameters) {
-            new ExportedParameter(pBody, getPNode(variable, pBody), variable.getName());
+            final ExportedParameter exportedParameter = new ExportedParameter(pBody, getPNode(variable, pBody), variable.getName());
             if (variable.getType() != null && variable.getType() instanceof ClassType) {
                 EClassifier classname = ((ClassType) variable.getType()).getClassname();
                 PVariable pNode = getPNode(variable, pBody);
                 new TypeUnary(pBody, pNode, classname, context.printType(classname));
             }
+            exportedParameters.add(exportedParameter);
         }
+        pBody.setExportedParameters(exportedParameters);
     }
 
     private void gatherBodyConstraints(PatternBody body, final PBody pBody) throws SpecificationBuilderException, IncQueryException {

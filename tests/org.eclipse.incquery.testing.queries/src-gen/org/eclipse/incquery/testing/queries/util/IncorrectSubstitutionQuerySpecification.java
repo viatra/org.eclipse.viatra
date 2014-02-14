@@ -80,8 +80,12 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
       PVariable var_CorrespondingSubstitution = body.getOrCreateVariableByName("CorrespondingSubstitution");
       PVariable var_Value1 = body.getOrCreateVariableByName("Value1");
       PVariable var_Value2 = body.getOrCreateVariableByName("Value2");
-      new ExportedParameter(body, var_Record, "Record");
-      new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Record, "Record"), 
+        new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord")
+      ));
+      
+      
       new TypeBinary(body, context, var_Record, var_Substitution, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord", "substitutions"), "http://www.eclipse.org/incquery/snapshot/MatchRecord.substitutions");
       new TypeBinary(body, context, var_Substitution, var_Name, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "parameterName"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.parameterName");
       new TypeBinary(body, context, var_CorrespondingRecord, var_CorrespondingSubstitution, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord", "substitutions"), "http://www.eclipse.org/incquery/snapshot/MatchRecord.substitutions");
@@ -89,7 +93,6 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
       new TypeBinary(body, context, var_Substitution, var_Value1, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
       new TypeBinary(body, context, var_CorrespondingSubstitution, var_Value2, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
       new Inequality(body, var_Value1, var_Value2);
-      body.setSymbolicParameters(Arrays.asList(var_Record, var_CorrespondingRecord));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

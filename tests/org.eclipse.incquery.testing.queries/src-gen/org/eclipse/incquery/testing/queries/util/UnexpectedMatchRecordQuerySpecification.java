@@ -82,15 +82,19 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_PatternName = body.getOrCreateVariableByName("PatternName");
       PVariable var__CorrespodingRecord = body.getOrCreateVariableByName("_CorrespodingRecord");
-      new ExportedParameter(body, var_ActualSet, "ActualSet");
-      new ExportedParameter(body, var_ExpectedSet, "ExpectedSet");
-      new ExportedParameter(body, var_Record, "Record");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_ActualSet, "ActualSet"), 
+        new ExportedParameter(body, var_ExpectedSet, "ExpectedSet"), 
+        new ExportedParameter(body, var_Record, "Record")
+      ));
+      
+      
+      
       new TypeBinary(body, context, var_ActualSet, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new TypeBinary(body, context, var_ActualSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
       new TypeBinary(body, context, var_ExpectedSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
       new Inequality(body, var_ActualSet, var_ExpectedSet);
       new NegativePatternCall(body, new FlatTuple(var_Record, var__CorrespodingRecord, var_ExpectedSet), CorrespondingRecordInMatchSetRecordQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_ActualSet, var_ExpectedSet, var_Record));
       bodies.add(body);
     }
     {

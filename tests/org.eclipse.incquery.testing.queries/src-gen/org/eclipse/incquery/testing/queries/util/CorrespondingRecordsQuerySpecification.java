@@ -78,13 +78,16 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_CorrespondingRecord = body.getOrCreateVariableByName("CorrespondingRecord");
-      new ExportedParameter(body, var_Record, "Record");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Record, "Record"), 
+        new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord")
+      ));
+      
       new TypeUnary(body, var_Record, getClassifierLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord"), "http://www.eclipse.org/incquery/snapshot/MatchRecord");
-      new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord");
+      
       new TypeUnary(body, var_CorrespondingRecord, getClassifierLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord"), "http://www.eclipse.org/incquery/snapshot/MatchRecord");
       new Inequality(body, var_Record, var_CorrespondingRecord);
       new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_Record, var_CorrespondingRecord));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);

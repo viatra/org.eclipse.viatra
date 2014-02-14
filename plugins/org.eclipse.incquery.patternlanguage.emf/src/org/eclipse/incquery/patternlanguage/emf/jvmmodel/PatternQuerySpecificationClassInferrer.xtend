@@ -77,6 +77,7 @@ import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException
+import org.eclipse.emf.common.util.Enumerator
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -251,11 +252,24 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append(''' «variable.escapedName» = body.getOrCreateVariableByName("«variable.name»");''')
 				appender.newLine
 			}
-			pBody.constraints.forEach[inferConstraint(pBody, pattern,  appender)]
-			appender.append('''body.setSymbolicParameters(''')
+			appender.append('''body.setExportedParameters(''')
 			appender.referClass(pattern,typeof(Arrays))
-			appender.append('''.asList(«FOR param : pBody.symbolicParameters SEPARATOR ", "»«param.escapedName»«ENDFOR»));''')
+			appender.append('''.asList(''')
+			appender.increaseIndentation
 			appender.newLine
+			val exportIt = pBody.symbolicParameters.iterator
+			while (exportIt.hasNext) {
+				exportIt.next.inferExportedParameterConstraint(pBody, pattern, appender)
+				if (exportIt.hasNext) {
+					appender.append(''', ''')
+					appender.newLine
+				}
+			}
+			appender.decreaseIndentation
+			appender.newLine			
+			appender.append('''));''')
+			appender.newLine
+			pBody.constraints.forEach[inferConstraint(pBody, pattern,  appender)]
 			appender.append('''bodies.add(body);''')
 			appender.decreaseIndentation
 			appender.newLine
@@ -326,12 +340,16 @@ class PatternQuerySpecificationClassInferrer {
 		"var_" + variable.name.replaceAll("[\\.\\{\\}<>]","_")
 	}
 
+	def inferExportedParameterConstraint(ExportedParameter constraint, PBody body, Pattern pattern, ITreeAppendable appender) {
+		appender.append('''new ''')
+		appender.referClass(pattern, typeof(ExportedParameter))
+		appender.append('''(body, «constraint.parameterVariable.escapedName», "«constraint.parameterName»")''')
+	}
+	
 	def inferConstraint(PConstraint constraint, PBody body, Pattern pattern, ITreeAppendable appender) {
 		switch constraint {
 			ExportedParameter : {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(ExportedParameter))
-				appender.append('''(body, «constraint.parameterVariable.escapedName», "«constraint.parameterName»");''')
+				// Exported parameters are already handled in inferExportedParameterConstraints - ignore here
 			}
 			Equality : {
 				appender.append('''new ''')
@@ -463,6 +481,9 @@ class PatternQuerySpecificationClassInferrer {
 				val enumeration = constant.EEnum
 				val ePackage = enumeration.EPackage
 				'''getEnumLiteral("«ePackage.nsURI»", "«enumeration.name»", "«constant.name»").getInstance()'''
+			}
+			Enumerator : {
+				'''«constant.class.canonicalName».get("«constant.literal»")'''
 			}
 			String :
 				'''"«constant»"'''

@@ -61,7 +61,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"),new PParameter("Role", "java.lang.Object"));
+    return Arrays.asList(new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"),new PParameter("Role", "org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole"));
   }
   
   @Override
@@ -77,11 +77,14 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_Role = body.getOrCreateVariableByName("Role");
       PVariable var__MS = body.getOrCreateVariableByName("_MS");
-      new ExportedParameter(body, var_Record, "Record");
-      new ExportedParameter(body, var_Role, "Role");
-      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
-      new ConstantValue(body, var_Role, getEnumLiteral("http://www.eclipse.org/incquery/snapshot", "RecordRole", "Match").getInstance());
-      body.setSymbolicParameters(Arrays.asList(var_Record, var_Role));
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Record, "Record"), 
+        new ExportedParameter(body, var_Role, "Role")
+      ));
+      
+      
+      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
+      new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Filter"));
       bodies.add(body);
     }
     {
@@ -89,11 +92,14 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_Role = body.getOrCreateVariableByName("Role");
       PVariable var__MS = body.getOrCreateVariableByName("_MS");
-      new ExportedParameter(body, var_Record, "Record");
-      new ExportedParameter(body, var_Role, "Role");
-      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
-      new ConstantValue(body, var_Role, getEnumLiteral("http://www.eclipse.org/incquery/snapshot", "RecordRole", "Filter").getInstance());
-      body.setSymbolicParameters(Arrays.asList(var_Record, var_Role));
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Record, "Record"), 
+        new ExportedParameter(body, var_Role, "Role")
+      ));
+      
+      
+      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
+      new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Match"));
       bodies.add(body);
     }
     {

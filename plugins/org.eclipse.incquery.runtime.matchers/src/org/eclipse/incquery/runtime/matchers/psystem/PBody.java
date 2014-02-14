@@ -18,7 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * A set of constraints representing a pattern body
@@ -30,7 +34,7 @@ public class PBody {
 
     private Set<PVariable> allVariables;
     private Set<PVariable> uniqueVariables;
-    private List<PVariable> symbolicParameters;
+    private List<ExportedParameter> symbolicParameters;
     private Map<Object, PVariable> variablesByName;
     private Set<PConstraint> constraints;
     private int nextVirtualNodeID;
@@ -153,13 +157,37 @@ public class PBody {
         uniqueVariables.remove(pVariable);
     }
 
-    public List<PVariable> getSymbolicParameters() {
-        return symbolicParameters;
+    /**
+     * Returns the symbolic parameters of the body. </p>
+     * 
+     * <p>
+     * <strong>Warning</strong>: if two PVariables are unified, the returned list changes. If you want to have a stable
+     * version, consider using {@link #getSymbolicParameters()}.
+     * 
+     * @return a non-null, but possibly empty list
+     */
+    public List<PVariable> getSymbolicParametersVariables() {
+        return Lists.transform(symbolicParameters, new Function<ExportedParameter, PVariable>() {
+
+            @Override
+            public PVariable apply(ExportedParameter constraint) {
+                return constraint.getParameterVariable();
+            }
+        });
+    }
+    
+    /**
+     * Returns the exported parameter constraints of the body
+     * 
+     * @return a non-null, but possibly empty list
+     */
+    public List<ExportedParameter> getSymbolicParameters() {
+        return symbolicParameters == null ? Lists.<ExportedParameter>newArrayList() : symbolicParameters;
     }
 
-    public void setSymbolicParameters(List<PVariable> symbolicParameters) {
+    public void setExportedParameters(List<ExportedParameter> symbolicParameters) {
         checkMutability();
-        this.symbolicParameters = symbolicParameters;
+        this.symbolicParameters = Lists.newArrayList(symbolicParameters);
     }
 
     void checkMutability() throws IllegalStateException {

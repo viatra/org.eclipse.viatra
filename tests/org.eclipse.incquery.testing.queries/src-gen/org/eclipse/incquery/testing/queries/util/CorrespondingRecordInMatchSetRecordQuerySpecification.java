@@ -80,14 +80,18 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_CorrespodingRecord = body.getOrCreateVariableByName("CorrespodingRecord");
       PVariable var_ExpectedSet = body.getOrCreateVariableByName("ExpectedSet");
-      new ExportedParameter(body, var_Record, "Record");
+      body.setExportedParameters(Arrays.asList(
+        new ExportedParameter(body, var_Record, "Record"), 
+        new ExportedParameter(body, var_CorrespodingRecord, "CorrespodingRecord"), 
+        new ExportedParameter(body, var_ExpectedSet, "ExpectedSet")
+      ));
+      
       new TypeUnary(body, var_Record, getClassifierLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord"), "http://www.eclipse.org/incquery/snapshot/MatchRecord");
-      new ExportedParameter(body, var_CorrespodingRecord, "CorrespodingRecord");
-      new ExportedParameter(body, var_ExpectedSet, "ExpectedSet");
+      
+      
       new Inequality(body, var_Record, var_CorrespodingRecord);
       new TypeBinary(body, context, var_ExpectedSet, var_CorrespodingRecord, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new PositivePatternCall(body, new FlatTuple(var_Record, var_CorrespodingRecord), CorrespondingRecordsQuerySpecification.instance());
-      body.setSymbolicParameters(Arrays.asList(var_Record, var_CorrespodingRecord, var_ExpectedSet));
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);
