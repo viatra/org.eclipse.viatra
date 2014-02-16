@@ -342,7 +342,10 @@ public class QueryExplorerPatternRegistry {
             return null;
         } else {
             Object displayValue = annotation.getFirstValue("display");
-            return displayValue != null && (Boolean)displayValue;
+            Object messageValue = annotation.getFirstValue("message");
+            return (displayValue != null && (Boolean)displayValue) ||
+            		(displayValue == null &&  messageValue != null) ||
+            		(annotation.getAllValues().size() == 0);
         }
     }
 
