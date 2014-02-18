@@ -63,9 +63,9 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Entry = body.getOrCreateVariableByName("Entry");
@@ -78,15 +78,14 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
       
       new TypeBinary(body, context, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
   private EntryTaskQuerySpecification() throws IncQueryException {
-    super();setStatus(PQueryStatus.UNINITIALIZED);
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
   }
-  
-  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<EntryTaskQuerySpecification> {

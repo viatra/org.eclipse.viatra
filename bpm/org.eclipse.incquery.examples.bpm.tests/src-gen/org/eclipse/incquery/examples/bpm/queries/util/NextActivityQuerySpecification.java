@@ -63,9 +63,9 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Act = body.getOrCreateVariableByName("Act");
@@ -78,15 +78,14 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
       
       new TypeBinary(body, context, var_Act, var_Next, getFeatureLiteral("http://process/1.0", "Activity", "next"), "http://process/1.0/Activity.next");
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
   private NextActivityQuerySpecification() throws IncQueryException {
-    super();setStatus(PQueryStatus.UNINITIALIZED);
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
   }
-  
-  private Set<PBody> bodies = Sets.newHashSet();;
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<NextActivityQuerySpecification> {
