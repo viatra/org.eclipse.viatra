@@ -67,7 +67,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         return instantiate(engine);
     }
 
-    private PQueryStatus status = PQueryStatus.UNINITIALIZED;
+    protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
     private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
 
     @Override
@@ -87,19 +87,10 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
     @Override
     public void checkMutability() throws IllegalStateException {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot edit query definition " + getFullyQualifiedName());
+        Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED), "Cannot edit query definition " + getFullyQualifiedName());
     }
 
-    @Override
-    public Set<PBody> getContainedBodies() {
-        Preconditions.checkState(!status.equals(PQueryStatus.UNINITIALIZED), "Query " + getFullyQualifiedName() + " is not initialized.");
-        Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
-        return doGetContainedBodies();
-    }
-
-    protected abstract Set<PBody> doGetContainedBodies();
-
-    public void addAnnotation(PAnnotation annotation) {
+    protected void addAnnotation(PAnnotation annotation) {
         checkMutability();
         annotations.add(annotation);
     }

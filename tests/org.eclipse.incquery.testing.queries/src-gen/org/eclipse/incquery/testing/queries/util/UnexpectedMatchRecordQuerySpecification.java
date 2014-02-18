@@ -68,13 +68,9 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_ActualSet = body.getOrCreateVariableByName("ActualSet");
@@ -94,18 +90,21 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       new TypeBinary(body, context, var_ActualSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
       new TypeBinary(body, context, var_ExpectedSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
       new Inequality(body, var_ActualSet, var_ExpectedSet);
-      new NegativePatternCall(body, new FlatTuple(var_Record, var__CorrespodingRecord, var_ExpectedSet), CorrespondingRecordInMatchSetRecordQuerySpecification.instance());
+      new NegativePatternCall(body, new FlatTuple(var_Record, var__CorrespodingRecord, var_ExpectedSet), CorrespondingRecordInMatchSetRecordQuerySpecification.instance().instance());
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("QueryExplorer");
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<UnexpectedMatchRecordQuerySpecification> {

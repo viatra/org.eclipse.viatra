@@ -65,13 +65,9 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private RecordRoleValueQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
@@ -86,8 +82,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
       new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Filter"));
       bodies.add(body);
-    }
-    {
+    }{
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_Role = body.getOrCreateVariableByName("Role");
@@ -101,8 +96,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Match"));
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("QueryExplorer");
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
@@ -113,9 +107,13 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private RecordRoleValueQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<RecordRoleValueQuerySpecification> {

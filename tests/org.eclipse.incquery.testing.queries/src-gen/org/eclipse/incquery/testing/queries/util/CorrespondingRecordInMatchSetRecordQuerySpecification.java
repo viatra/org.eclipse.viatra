@@ -68,13 +68,9 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private CorrespondingRecordInMatchSetRecordQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
@@ -93,11 +89,14 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
       new TypeBinary(body, context, var_ExpectedSet, var_CorrespodingRecord, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new PositivePatternCall(body, new FlatTuple(var_Record, var_CorrespodingRecord), CorrespondingRecordsQuerySpecification.instance());
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private CorrespondingRecordInMatchSetRecordQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<CorrespondingRecordInMatchSetRecordQuerySpecification> {

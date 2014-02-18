@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -20,8 +22,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Provides common functionality of pattern-specific generated query specifications.
@@ -41,6 +45,38 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
             }
         }
     }
+
+    private ImmutableSet<PBody> bodies;
+    
+    @Override
+    public Set<PBody> getContainedBodies() {
+        ensureInitialized();
+        Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
+        return bodies;
+    }
+    
+    @Override
+    public PQueryStatus getStatus() {
+        ensureInitialized();
+        return super.getStatus();
+    }
+
+    protected void ensureInitialized() {
+        try {
+            if (status.equals(PQueryStatus.UNINITIALIZED)) {
+                bodies = ImmutableSet.copyOf(doGetContainedBodies());
+            }
+        } catch (IncQueryException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Creates and returns the bodies of the query. If recalled again, a new instance is created.
+     * 
+     * @return
+     */
+    protected abstract Set<PBody> doGetContainedBodies() throws IncQueryException;
 
     protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);

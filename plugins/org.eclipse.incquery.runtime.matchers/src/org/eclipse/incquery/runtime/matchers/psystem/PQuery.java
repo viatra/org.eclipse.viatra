@@ -56,7 +56,7 @@ public interface PQuery {
     String getFullyQualifiedName();
 
     /**
-     * Returns all bodies associated with the query.
+     * Returns all bodies associated with the query. If called multiple times, the same set with the same contents will be returned.
      *
      * @return
      */

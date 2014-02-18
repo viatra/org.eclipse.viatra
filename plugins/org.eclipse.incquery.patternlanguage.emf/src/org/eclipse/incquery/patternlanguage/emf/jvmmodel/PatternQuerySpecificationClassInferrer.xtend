@@ -19,6 +19,7 @@ import java.util.Arrays
 import java.util.List
 import java.util.Set
 import org.apache.log4j.Logger
+import org.eclipse.emf.common.util.Enumerator
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EStructuralFeature
@@ -27,9 +28,11 @@ import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuild
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.incquery.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
@@ -39,11 +42,13 @@ import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
 import org.eclipse.incquery.runtime.matchers.psystem.PBody
-import org.eclipse.incquery.runtime.matchers.psystem.PBodyNormalizer
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint
+import org.eclipse.incquery.runtime.matchers.psystem.PParameter
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
@@ -61,6 +66,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.common.types.util.TypeReferences
@@ -70,14 +76,6 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.typing.ITypeProvider
-import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
-import org.eclipse.xtext.common.types.JvmUnknownTypeReference
-import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation
-import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException
-import org.eclipse.emf.common.util.Enumerator
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -110,18 +108,16 @@ class PatternQuerySpecificationClassInferrer {
   	}
 
   	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, true)
-  		querySpecificationClass.inferQuerySpecificationConstructor(pattern, builder)
-  		querySpecificationClass.inferQuerySpecificationFields(pattern)
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, true, builder)
+  		querySpecificationClass.inferQuerySpecificationConstructor(pattern)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true)
   		querySpecificationClass.inferExpressions(pattern)
   	}
 
   	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
   		querySpecificationClass.visibility = JvmVisibility::DEFAULT
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, false)
-  		querySpecificationClass.inferQuerySpecificationConstructor(pattern, builder)
-  		querySpecificationClass.inferQuerySpecificationFields(pattern)
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, false, builder)
+  		querySpecificationClass.inferQuerySpecificationConstructor(pattern)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false)
   		querySpecificationClass.inferExpressions(pattern)
   	}
@@ -129,7 +125,8 @@ class PatternQuerySpecificationClassInferrer {
 	/**
    	 * Infers methods for QuerySpecification class based on the input 'pattern'.
    	 */
-  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, boolean isPublic) {
+  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, boolean isPublic, SpecificationBuilder builder) {
+  		val context = new EMFPatternMatcherContext(logger)
    		querySpecificationClass.members += pattern.toMethod("instance", types.createTypeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
@@ -192,22 +189,8 @@ class PatternQuerySpecificationClassInferrer {
 			pattern.newTypeRef(typeof(Set), pattern.newTypeRef(typeof(PBody)))) [
 			visibility = JvmVisibility::PUBLIC
 			annotations += pattern.toAnnotation(typeof(Override))
-			body = [append('''return bodies;''')]
-			]
-  	}
-
- 	/**
-   	 * Infers constructor for QuerySpecification class based on the input 'pattern'.
-   	 */
-  	def inferQuerySpecificationConstructor(JvmDeclaredType querySpecificationClass, Pattern pattern, SpecificationBuilder builder) {
-		val context = new EMFPatternMatcherContext(logger)
-		querySpecificationClass.members += pattern.toConstructor [
-			simpleName = querySpecificationClass.simpleName
-			visibility = JvmVisibility::PRIVATE
 			exceptions += pattern.newTypeRef(typeof(IncQueryException))
 			body = [ appender |
-				appender.append('''super();''')
-				appender.newLine
 				var IQuerySpecification<?> genericSpecification
 				try {
 					genericSpecification = builder.getOrCreateSpecification(pattern, true)
@@ -235,12 +218,37 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append('''setStatus(''')
 				appender.referClass(pattern, typeof(PQueryStatus))
 				appender.append('''.OK);''')
+				appender.newLine
+				appender.append('''return bodies;''')
+			]
+			]
+  	}
+
+ 	/**
+   	 * Infers constructor for QuerySpecification class based on the input 'pattern'.
+   	 */
+  	def inferQuerySpecificationConstructor(JvmDeclaredType querySpecificationClass, Pattern pattern) {
+		querySpecificationClass.members += pattern.toConstructor [
+			simpleName = querySpecificationClass.simpleName
+			visibility = JvmVisibility::PRIVATE
+			exceptions += pattern.newTypeRef(typeof(IncQueryException))
+			body = [
+				append('''super();''')
+				newLine
+				append('''setStatus(''')
+				referClass(pattern, typeof(PQueryStatus))
+				append('''.UNINITIALIZED);''')
 			]
 		]
 
   	}
 
 	def inferBodies(ITreeAppendable appender, Pattern pattern, IQuerySpecification<?> genericSpecification, EMFPatternMatcherContext context) {
+		appender.referClass(pattern, typeof(Set), pattern.newTypeRef(typeof(PBody)))
+		appender.append(''' bodies = ''')
+		appender.referClass(pattern, typeof(Sets))
+		appender.append('''.newHashSet();''')
+		appender.newLine
 		for (pBody : genericSpecification.containedBodies) {
 			appender.increaseIndentation
 			appender.append("{")
@@ -274,22 +282,8 @@ class PatternQuerySpecificationClassInferrer {
 			appender.decreaseIndentation
 			appender.newLine
 			appender.append("}")
-			appender.newLine
 		}
 	}
- 	/**
-   	 * Infers field for QuerySpecification class based on the input 'pattern'.
-   	 */
-  	def inferQuerySpecificationFields(JvmDeclaredType querySpecificationClass, Pattern pattern) {
-		querySpecificationClass.members += pattern.toField("bodies", pattern.newTypeRef(typeof(Set), pattern.newTypeRef(typeof(PBody)))) [
-			it.visibility = JvmVisibility::PRIVATE
-			it.static = false
-			it.initializer = [
-				referClass(pattern, typeof(Sets))
-				append('''.newHashSet();''')
-			]
-		]
-  	}
 
  	/**
    	 * Infers inner class for QuerySpecification class based on the input 'pattern'.
@@ -587,7 +581,7 @@ class PatternQuerySpecificationClassInferrer {
     	]
     }
 
-    def outputAnnotationParameter(ITreeAppendable appender, Pattern ctx, Object value) {
+    def void outputAnnotationParameter(ITreeAppendable appender, Pattern ctx, Object value) {
 		switch value {
 			List<?> : {
 				appender.referClass(ctx, typeof(Arrays))

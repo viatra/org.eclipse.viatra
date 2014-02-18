@@ -67,13 +67,9 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private CorrespondingRecordsQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
@@ -87,13 +83,16 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       
       new TypeUnary(body, var_CorrespondingRecord, getClassifierLiteral("http://www.eclipse.org/incquery/snapshot", "MatchRecord"), "http://www.eclipse.org/incquery/snapshot/MatchRecord");
       new Inequality(body, var_Record, var_CorrespondingRecord);
-      new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance());
+      new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance().instance());
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private CorrespondingRecordsQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<CorrespondingRecordsQuerySpecification> {

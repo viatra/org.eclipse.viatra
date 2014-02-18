@@ -64,13 +64,9 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private IncorrectSubstitutionQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
@@ -94,11 +90,14 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
       new TypeBinary(body, context, var_CorrespondingSubstitution, var_Value2, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
       new Inequality(body, var_Value1, var_Value2);
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private IncorrectSubstitutionQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<IncorrectSubstitutionQuerySpecification> {

@@ -27,6 +27,8 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
@@ -162,9 +164,17 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     }
 
     @Override
-    protected Set<PBody> doGetContainedBodies() {
+    public Set<PBody> getContainedBodies() {
+        Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query " + getFullyQualifiedName() + " is not initialized.");
+        Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
         return containedBodies;
     }
+    
+    @Override
+    public void addAnnotation(PAnnotation annotation) {
+        // Making the upper-level construct visible
+        super.addAnnotation(annotation);
+    }
 
-
+    
 }
