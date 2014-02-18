@@ -169,10 +169,13 @@ public class CleanSupport {
                         // Old version cannot be found, executing full clean
                         context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
                         return;
-                        //throw new IncQueryException("Cannot remove pattern " + fqn, "Cannot remove pattern");
                     }
                     final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-                    Preconditions.checkState(foundFQN.equals(fqn), "Inconsistent pattern declaration found. Expected %s, found %s.", fqn, foundFQN);
+                    if (!foundFQN.equals(fqn)){
+                    	// Incorrect old version found, executing full clean
+                        context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+                        return;
+                    }
                     // clean up code and extensions in the modelProject
                     executeCleanUpOnModelProject(context.getBuiltProject(), fqn);
                     // clean up code and extensions for all fragments
