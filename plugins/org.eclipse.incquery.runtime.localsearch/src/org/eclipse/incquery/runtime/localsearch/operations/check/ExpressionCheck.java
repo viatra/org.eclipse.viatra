@@ -12,9 +12,10 @@ package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.extensibility.IMatchChecker;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.operations.MatchingFrameValueProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 
 /**
  * @author Zoltan Ujhelyi
@@ -22,22 +23,23 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
  */
 public class ExpressionCheck extends CheckOperation {
 
-    IMatchChecker checker;
+    IExpressionEvaluator evaluator;
     Map<String, Integer> nameMap;
 
-    public ExpressionCheck(IMatchChecker checker, Map<String, Integer> nameMap) {
+    public ExpressionCheck(IExpressionEvaluator evaluator, Map<String, Integer> nameMap) {
         super();
-        this.checker = checker;
+        this.evaluator = evaluator;
         this.nameMap = nameMap;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.check.CheckOperation#check(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        boolean result = (Boolean) checker.evaluateXExpression(frame, nameMap);
-        return result;
+        try {
+            boolean result = (Boolean) evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
+            return result;
+        } catch (Exception e) {
+            throw new LocalSearchException("Error while evaluating expression", e);
+        }
     }
 
 }
