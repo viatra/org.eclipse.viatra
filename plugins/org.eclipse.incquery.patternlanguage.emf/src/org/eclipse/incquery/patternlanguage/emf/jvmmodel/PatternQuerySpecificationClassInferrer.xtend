@@ -388,8 +388,8 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append('''(body, new ''')
 				appender.referClass(pattern, FlatTuple)
 				appender.append('''(«constraint.variablesTuple.output»), ''')
-				appender.referClass(pattern, constraint.supplierKey.findGeneratedSpecification)
-				appender.append('''.instance());''')
+				appender.referSpecification(constraint.referredQuery, pattern)
+				appender.append(''');''')
 			}
 			NegativePatternCall : {
 				appender.append('''new ''')
@@ -397,7 +397,7 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append('''(body, new ''')
 				appender.referClass(pattern, FlatTuple)
 				appender.append('''(«constraint.actualParametersTuple.output»), ''')
-				appender.referClass(pattern, constraint.referredQuery.findGeneratedSpecification)
+				appender.referSpecification(constraint.referredQuery, pattern)
 				appender.append('''.instance());''')
 			}
 			BinaryTransitiveClosure: {
@@ -406,7 +406,7 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append('''(body, new ''')
 				appender.referClass(pattern, FlatTuple)
 				appender.append('''(«constraint.variablesTuple.output»), ''')
-				appender.referClass(pattern, constraint.supplierKey.findGeneratedSpecification)
+				appender.referSpecification(constraint.supplierKey, pattern)
 				appender.append('''.instance());''')
 			}
 			PatternMatchCounter: {
@@ -415,7 +415,7 @@ class PatternQuerySpecificationClassInferrer {
 				appender.append('''(body, new ''')
 				appender.referClass(pattern, FlatTuple)
 				appender.append('''(«constraint.actualParametersTuple.output»), ''')
-				appender.referClass(pattern, constraint.referredQuery.findGeneratedSpecification)
+				appender.referSpecification(constraint.referredQuery, pattern)
 				appender.append('''.instance(), «constraint.resultVariable.escapedName»);''')
 			}
 			ExpressionEvaluation : {
@@ -489,6 +489,15 @@ class PatternQuerySpecificationClassInferrer {
 				'''"«constant»"'''
 			default :
 				constant.toString
+		}
+	}
+
+	def referSpecification(ITreeAppendable appender, PQuery referredQuery, Pattern callerPattern) {
+		if ((referredQuery as GenericQuerySpecification).getPattern == callerPattern) {
+			appender.append('''this''')
+		} else {
+			appender.referClass(callerPattern, referredQuery.findGeneratedSpecification)
+			appender.append('''.instance()''')
 		}
 	}
 
