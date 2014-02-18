@@ -69,13 +69,9 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private UndefinedServiceTasksQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
@@ -86,10 +82,9 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
       
       new ConstantValue(body, var__virtual_0_, getEnumLiteral("http://process/1.0", "TaskKind", "service").getInstance());
       new TypeBinary(body, context, var_Task, var__virtual_0_, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
-      new NegativePatternCall(body, new FlatTuple(var_Task), TaskHasJobQuerySpecification.instance());
+      new NegativePatternCall(body, new FlatTuple(var_Task), TaskHasJobQuerySpecification.instance().instance());
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Service Task $Task.name$ has no job");
       annotation.addAttribute("location",new ParameterReference("Task"));
@@ -97,9 +92,13 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private UndefinedServiceTasksQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<UndefinedServiceTasksQuerySpecification> {

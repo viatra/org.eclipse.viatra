@@ -63,13 +63,9 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private TaskKindQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
@@ -82,11 +78,14 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
       
       new TypeBinary(body, context, var_Task, var_Kind, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
       bodies.add(body);
-    }
-    setStatus(PQueryStatus.OK);
+    }setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private TaskKindQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   private static class LazyHolder {

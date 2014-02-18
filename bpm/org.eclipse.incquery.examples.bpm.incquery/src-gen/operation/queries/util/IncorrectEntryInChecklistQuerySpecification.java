@@ -71,13 +71,9 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private IncorrectEntryInChecklistQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_ChecklistEntry = body.getOrCreateVariableByName("ChecklistEntry");
@@ -95,10 +91,9 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
       new TypeBinary(body, context, var_Checklist, var_ChecklistEntry, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
       new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_ChecklistEntry, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
-      new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance());
+      new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance().instance());
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!");
       annotation.addAttribute("location",new ParameterReference("ChecklistEntry"));
@@ -106,9 +101,13 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private IncorrectEntryInChecklistQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<IncorrectEntryInChecklistQuerySpecification> {

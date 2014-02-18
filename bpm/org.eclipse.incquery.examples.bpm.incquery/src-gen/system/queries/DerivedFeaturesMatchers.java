@@ -23,27 +23,27 @@ public final class DerivedFeaturesMatchers {
     return TasksAffectedThroughDataMatcher.on(engine);
   }
   
-  public JobTaskCorrespondenceMatcher getJobTaskCorrespondenceMatcher() throws IncQueryException {
-    return JobTaskCorrespondenceMatcher.on(engine);
-  }
-  
-  public DataTaskReadCorrespondenceMatcher getDataTaskReadCorrespondenceMatcher() throws IncQueryException {
-    return DataTaskReadCorrespondenceMatcher.on(engine);
+  public UndefinedServiceTasksMatcher getUndefinedServiceTasksMatcher() throws IncQueryException {
+    return UndefinedServiceTasksMatcher.on(engine);
   }
   
   public JobInfoCorrespondenceMatcher getJobInfoCorrespondenceMatcher() throws IncQueryException {
     return JobInfoCorrespondenceMatcher.on(engine);
   }
   
-  public UndefinedServiceTasksMatcher getUndefinedServiceTasksMatcher() throws IncQueryException {
-    return UndefinedServiceTasksMatcher.on(engine);
+  public DataTaskWriteCorrespondenceMatcher getDataTaskWriteCorrespondenceMatcher() throws IncQueryException {
+    return DataTaskWriteCorrespondenceMatcher.on(engine);
   }
   
   public TransitiveAffectedTasksThroughDataMatcher getTransitiveAffectedTasksThroughDataMatcher() throws IncQueryException {
     return TransitiveAffectedTasksThroughDataMatcher.on(engine);
   }
   
-  public DataTaskWriteCorrespondenceMatcher getDataTaskWriteCorrespondenceMatcher() throws IncQueryException {
-    return DataTaskWriteCorrespondenceMatcher.on(engine);
+  public DataTaskReadCorrespondenceMatcher getDataTaskReadCorrespondenceMatcher() throws IncQueryException {
+    return DataTaskReadCorrespondenceMatcher.on(engine);
+  }
+  
+  public JobTaskCorrespondenceMatcher getJobTaskCorrespondenceMatcher() throws IncQueryException {
+    return JobTaskCorrespondenceMatcher.on(engine);
   }
 }

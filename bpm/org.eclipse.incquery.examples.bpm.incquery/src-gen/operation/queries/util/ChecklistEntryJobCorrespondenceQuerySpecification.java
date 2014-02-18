@@ -67,13 +67,9 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private ChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
@@ -113,16 +109,19 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
         
         },  null); 
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("QueryBasedFeature");
       annotation.addAttribute("feature","jobs");
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private ChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<ChecklistEntryJobCorrespondenceQuerySpecification> {

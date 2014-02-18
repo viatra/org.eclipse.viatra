@@ -65,13 +65,9 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private ChecklistProcessCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
@@ -87,16 +83,19 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
       new TypeBinary(body, context, var_Process, var_ProcessId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
       new TypeBinary(body, context, var_Checklist, var_ProcessId, getFeatureLiteral("http://operation/1.0", "Checklist", "processId"), "http://operation/1.0/Checklist.processId");
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("QueryBasedFeature");
       annotation.addAttribute("feature","process");
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private ChecklistProcessCorrespondenceQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<ChecklistProcessCorrespondenceQuerySpecification> {

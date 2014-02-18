@@ -64,10 +64,6 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
   
   @Override
   public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private JobTasksQuerySpecification() throws IncQueryException {
     super();
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     {
@@ -84,6 +80,10 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);
+  }
+  
+  private JobTasksQuerySpecification() throws IncQueryException {
+    super();setStatus(PQueryStatus.UNINITIALIZED);
   }
   
   private Set<PBody> bodies = Sets.newHashSet();;

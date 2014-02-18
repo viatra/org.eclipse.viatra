@@ -64,10 +64,6 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
   
   @Override
   public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private NextActivityQuerySpecification() throws IncQueryException {
     super();
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     {
@@ -84,6 +80,10 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
       bodies.add(body);
     }
     setStatus(PQueryStatus.OK);
+  }
+  
+  private NextActivityQuerySpecification() throws IncQueryException {
+    super();setStatus(PQueryStatus.UNINITIALIZED);
   }
   
   private Set<PBody> bodies = Sets.newHashSet();;

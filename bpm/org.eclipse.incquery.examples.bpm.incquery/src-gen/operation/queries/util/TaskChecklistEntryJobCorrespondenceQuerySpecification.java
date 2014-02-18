@@ -68,13 +68,9 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private TaskChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
@@ -91,8 +87,7 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Job), ChecklistEntryJobCorrespondenceQuerySpecification.instance());
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$");
       annotation.addAttribute("location",new ParameterReference("CLE"));
@@ -100,9 +95,13 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private TaskChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<TaskChecklistEntryJobCorrespondenceQuerySpecification> {

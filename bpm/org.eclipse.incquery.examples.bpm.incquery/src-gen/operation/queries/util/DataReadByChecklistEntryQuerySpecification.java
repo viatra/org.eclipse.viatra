@@ -68,13 +68,9 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
   }
   
   @Override
-  public Set<PBody> doGetContainedBodies() {
-    return bodies;
-  }
-  
-  private DataReadByChecklistEntryQuerySpecification() throws IncQueryException {
-    super();
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
+    Set<PBody> bodies = Sets.newHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
@@ -91,8 +87,7 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_Data, var_Task), DataTaskReadCorrespondenceQuerySpecification.instance());
       bodies.add(body);
-    }
-    {
+    }{
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Entry $CLE.name$ connected to $Data.name$ through $Task.name$");
       annotation.addAttribute("location",new ParameterReference("CLE"));
@@ -100,9 +95,13 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
       addAnnotation(annotation);
     }
     setStatus(PQueryStatus.OK);
+    return bodies;
   }
   
-  private Set<PBody> bodies = Sets.newHashSet();;
+  private DataReadByChecklistEntryQuerySpecification() throws IncQueryException {
+    super();
+    setStatus(PQueryStatus.UNINITIALIZED);
+  }
   
   @SuppressWarnings("all")
   public static class Provider implements IQuerySpecificationProvider<DataReadByChecklistEntryQuerySpecification> {
