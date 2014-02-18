@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2011 Abel Hegedus, Istvan Rath and Daniel Varro
+ * Copyright (c) 2004-2011 Abel Hegedus and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,25 +7,27 @@
  *
  * Contributors:
  *    Abel Hegedus - initial API and implementation
- *    Istvan Rath - modifications for pattern-specific API demonstration
  *******************************************************************************/
-package org.eclipse.incquery.application.patternspecific;
+package org.eclipse.incquery.application.generic;
 
 import java.util.Map;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.incquery.application.common.IncQueryHeadless;
+import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
 
 /**
  * @author Abel Hegedus
- * @author Istvan Rath
  * 
  */
-public class PatternSpecificEclipseIncQueryApplication implements IApplication {
+public class GenericEclipseIncQueryApplication implements IApplication {
 
 	private static String modelParam = "-m";
+	private static String patternParam = "-p";
 
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -38,6 +40,7 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 		Map<String, Object> arguments = context.getArguments();
 		String[] args = (String[]) arguments.get("application.args");
 		String model = null;
+		String patternFQN = null;
 		if (args == null || args.length == 0) {
 			displayHelp();
 			return IApplication.EXIT_OK;
@@ -49,7 +52,11 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 				i += 2;
 				continue;
 			}
-			else {
+			if (args[i].equals(patternParam)) {
+				patternFQN = args[i + 1];
+				i += 2;
+				continue;
+			} else {
 				i++;
 				continue;
 			}
@@ -60,13 +67,18 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 			displayHelp();
 			return IApplication.EXIT_OK;
 		}
+		if (patternFQN == null) {
+		  System.out.println("PatternFQN parameter not set");
+			displayHelp();
+			return IApplication.EXIT_OK;
+		}
 
-		IncQueryHeadless hl = new IncQueryHeadless();
-		System.out.println(hl.executeDemo(model));
-		System.out.println(hl.executeDemo_PatternGroups(model));
-		System.out.println(hl.executeTrackChangesDemo(model));
-		
-		
+		IncQueryHeadlessAdvanced hla = new IncQueryHeadlessAdvanced();
+//		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
+		URI fileURI = URI.createPlatformPluginURI("headlessQueries.incquery/src/headless/headlessQueries.eiq", false);
+	    URI modelURI = URI.createFileURI(model);
+		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(modelURI, fileURI, patternFQN));
+		System.out.println(hla.executeTrackChangesDemo_Advanced(modelURI, patternFQN));
 		
 		return IApplication.EXIT_OK;
 	}
@@ -77,11 +89,9 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	@Override
-	public void stop() {
-
-	}
+	public void stop() {}
 
 	private void displayHelp() {
-		System.out.println("Usage:\n<call> -m <modelFilePAth> \n  -m    :  Required, the model to match on.");
+		System.out.println("Usage:\n<call> -m <modelFilePAth> -p <patternFQN>\n  -m    :  Required, the model to match on.\n  -p    :  Required, the pattern fqn to match");
 	}
 }

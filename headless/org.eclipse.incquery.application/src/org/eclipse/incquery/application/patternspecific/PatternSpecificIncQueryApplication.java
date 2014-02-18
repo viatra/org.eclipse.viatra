@@ -13,34 +13,28 @@ package org.eclipse.incquery.application.patternspecific;
 
 import java.util.Map;
 
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.incquery.application.common.IncQueryHeadless;
+import org.eclipse.incquery.application.common.IncQueryHeadlessAdvanced;
 
 /**
  * @author Abel Hegedus
  * @author Istvan Rath
  * 
  */
-public class PatternSpecificEclipseIncQueryApplication implements IApplication {
+public class PatternSpecificIncQueryApplication {
 
 	private static String modelParam = "-m";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.
-	 * IApplicationContext)
-	 */
-	@Override
-	public Object start(IApplicationContext context) throws Exception {
+	public static void main(String[] args) {
 
-		Map<String, Object> arguments = context.getArguments();
-		String[] args = (String[]) arguments.get("application.args");
 		String model = null;
 		if (args == null || args.length == 0) {
 			displayHelp();
-			return IApplication.EXIT_OK;
+			return;
 		}
 		int i = 0;
 		while (i < args.length) {
@@ -58,9 +52,12 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 		if (model == null) {
 		  System.out.println("Model parameter not set");
 			displayHelp();
-			return IApplication.EXIT_OK;
+			return;
 		}
 
+		// Initializing metamodel        
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
+		
 		IncQueryHeadless hl = new IncQueryHeadless();
 		System.out.println(hl.executeDemo(model));
 		System.out.println(hl.executeDemo_PatternGroups(model));
@@ -68,20 +65,9 @@ public class PatternSpecificEclipseIncQueryApplication implements IApplication {
 		
 		
 		
-		return IApplication.EXIT_OK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
-	@Override
-	public void stop() {
-
-	}
-
-	private void displayHelp() {
+	private static void displayHelp() {
 		System.out.println("Usage:\n<call> -m <modelFilePAth> \n  -m    :  Required, the model to match on.");
 	}
 }
