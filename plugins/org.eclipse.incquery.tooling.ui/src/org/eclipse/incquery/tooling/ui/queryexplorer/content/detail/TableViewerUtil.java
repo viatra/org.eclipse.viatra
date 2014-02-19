@@ -112,16 +112,21 @@ public class TableViewerUtil {
 
         viewer.setCellEditors(editors);
 
-        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+        IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
         Object[] filter = observableMatcher.getFilter();
-        MatcherConfiguration[] input = new MatcherConfiguration[pattern.getParameters().size()];
-        if (filter != null) {
-            for (int i = 0; i < pattern.getParameters().size(); i++) {
-                PParameter var = pattern.getParameters().get(i);
-                input[i] = new MatcherConfiguration(var.getName(), var.getTypeName(), filter[i]);
-            }
-            viewer.setInput(input);
+        MatcherConfiguration[] input;
+        if (specification != null) {
+        	input = new MatcherConfiguration[specification.getParameters().size()];
+        	if (filter != null) {
+        		for (int i = 0; i < specification.getParameters().size(); i++) {
+        			PParameter var = specification.getParameters().get(i);
+        			input[i] = new MatcherConfiguration(var.getName(), var.getTypeName(), filter[i]);
+        		}
+        	}
+        } else {
+        	input = new MatcherConfiguration[0];
         }
+        viewer.setInput(input);
     }
 
     public void clearTableViewerColumns(TableViewer viewer) {
