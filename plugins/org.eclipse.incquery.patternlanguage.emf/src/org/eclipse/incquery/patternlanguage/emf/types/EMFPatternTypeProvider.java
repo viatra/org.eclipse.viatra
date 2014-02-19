@@ -145,7 +145,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     }
 
     private Set<EClassifier> minimizeClassifiersList(Set<EClassifier> classifierList) {
-        Set<EClassifier> resultList = new HashSet<EClassifier>(classifierList);
+        final Set<EClassifier> resultList = new HashSet<EClassifier>(classifierList);
         if (resultList.size() > 1) {
             for (EClassifier classifier : classifierList) {
                 if ("EObject".equals(classifier.getName())) {
@@ -162,8 +162,14 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
                         @Override
                         public boolean apply(EDataType dataType) {
-                            return dataType == null ||
-                                    (!dataType.equals(eDataType) && dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()));
+                        	if (dataType == null) {
+                        		return false;
+                        	} else if (dataType.equals(eDataType)){
+                        		return true;
+                        	} else if (dataType.getInstanceClassName() != null && eDataType.getInstanceClassName() != null) {
+                        		return dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()) && resultList.contains(dataType);                        		
+                        	}
+                        	return false;
                         }
                     })) {
                        resultList.remove(eDataType); 
@@ -171,6 +177,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                 }
             }
         }
+
         return resultList;
     }
 
@@ -238,21 +245,19 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     private EClassifier getClassifierForVariableWithPatternBody(PatternBody patternBody, Variable variable,
             int recursionCallingLevel, Variable injectiveVariablePair) {
-        Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable,
+        Set<EClassifier> possibleClassifiers = getClassifiersForVariableWithPatternBody(patternBody, variable,
                 recursionCallingLevel, injectiveVariablePair);
-        if (possibleClassifiersList.isEmpty()) {
+        if (possibleClassifiers.isEmpty()) {
             return null;
+        } else if (possibleClassifiers.size() == 1) {
+            return (EClassifier) possibleClassifiers.toArray()[0];
         } else {
-            if (possibleClassifiersList.size() == 1) {
-                return (EClassifier) possibleClassifiersList.toArray()[0];
+            Set<EClassifier> minimizedClassifiers = minimizeClassifiersList(possibleClassifiers);
+            EClassifier classifier = getClassifierForPatternParameterVariable(variable);
+            if (classifier != null && minimizedClassifiers.contains(classifier)) {
+                return classifier;
             } else {
-                possibleClassifiersList = minimizeClassifiersList(possibleClassifiersList);
-                EClassifier classifier = getClassifierForPatternParameterVariable(variable);
-                if (classifier != null && possibleClassifiersList.contains(classifier)) {
-                    return classifier;
-                } else {
-                    return (EClassifier) possibleClassifiersList.toArray()[0];
-                }
+                return minimizedClassifiers.iterator().next();
             }
         }
     }

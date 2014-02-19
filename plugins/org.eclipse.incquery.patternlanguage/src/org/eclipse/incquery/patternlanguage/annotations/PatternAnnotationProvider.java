@@ -189,7 +189,7 @@ public class PatternAnnotationProvider {
         if (annotationValidators == null) {
             initializeValidators();
         }
-        return annotationValidators.containsKey(annotationName)
+        return annotationName != null && annotationValidators.containsKey(annotationName)
                 && annotationValidators.get(annotationName).isDeprecated();
     }
 
