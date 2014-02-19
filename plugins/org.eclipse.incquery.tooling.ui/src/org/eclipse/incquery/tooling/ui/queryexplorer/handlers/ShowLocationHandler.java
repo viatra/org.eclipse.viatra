@@ -55,7 +55,7 @@ public class ShowLocationHandler extends AbstractHandler {
                 QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
             } else if (obj instanceof ObservablePatternMatcher) {
                 ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
-                if (matcher.getMatcher() != null) {
+                if (matcher.getSpecification() != null) {
                     setSelectionToXTextEditor(matcher.getSpecification());
                 }
             }

@@ -210,7 +210,7 @@ public class DisplayUtil {
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
             String patternFqn, boolean isCropped, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
         if (matcher == null) {
-            return String.format("%s - %s (see Error Log)", patternFqn, exceptionMessage);
+            return String.format("%s - %s", patternFqn, exceptionMessage);
         } else {
             String matchString;
             switch (matchesSize) {

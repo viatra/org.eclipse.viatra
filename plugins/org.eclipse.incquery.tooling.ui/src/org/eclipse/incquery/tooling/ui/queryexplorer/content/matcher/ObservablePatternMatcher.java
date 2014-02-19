@@ -14,7 +14,6 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,12 +24,16 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
+
+import com.google.common.collect.Sets;
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation. These elements
@@ -61,21 +64,34 @@ public class ObservablePatternMatcher {
     private final String exceptionMessage;
     private IncQueryModelUpdateListener modelUpdateListener;
     private IQuerySpecification<?> specification;
-
-    public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryMatcher<IPatternMatch> matcher,
-            boolean generated, String exceptionMessage) {
-        this.parent = parent;
-        this.specification = matcher.getSpecification();
-        this.patternFqn = specification.getFullyQualifiedName();
+    
+	@SuppressWarnings("unchecked")
+	public ObservablePatternMatcher(ObservablePatternMatcherRoot parent, IncQueryEngine engine, IQuerySpecification<?> specification,
+            boolean generated) {
+    	
+    	this.parent = parent;
+    	this.patternFqn = specification.getFullyQualifiedName();
+    	this.specification = specification;
+    	
+    	
+    	String message = "";
+        IncQueryMatcher<? extends IPatternMatch> matcher = null;
+        try {
+            matcher = engine.getMatcher(specification);
+        } catch (Exception e) {
+            message = (e instanceof IncQueryException) ? ((IncQueryException) e).getShortMessage() : e.getMessage();
+        }
+        this.exceptionMessage = message;
+        //Cast required for newFilteredDeltaMonitor
+        this.matcher = (IncQueryMatcher<IPatternMatch>) matcher;
+        
         this.matches = new ArrayList<ObservablePatternMatch>();
-        this.matcher = matcher;
         this.generated = generated;
         this.orderParameter = null;
-        this.exceptionMessage = exceptionMessage;
 
         DisplayUtil.removeOrderByPatternWarning(patternFqn);
 
-        if (specification != null) {
+        if (this.matcher != null) {
             initOrdering();
             initFilter();
             this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
@@ -278,7 +294,7 @@ public class ObservablePatternMatcher {
         this.parameterFilter = parameterFilter.clone();
         this.filter = this.matcher.newMatch(this.parameterFilter);
 
-        Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(sigMap.keySet());
+        Set<IPatternMatch> tmp = Sets.newHashSet(sigMap.keySet()); 
 
         for (IPatternMatch match : tmp) {
             removeMatch(match);

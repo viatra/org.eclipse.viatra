@@ -189,11 +189,15 @@ public class SpecificationBuilder {
             }
             // Updating bodies
             for (Pattern newPattern : newPatterns) {
-                String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
-                GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
-                EPMToPBody converter = new EPMToPBody(newPattern, specification, context, patternMap);
-                buildAnnotations(newPattern, specification, converter);
-                buildBodies(newPattern, specification, converter);
+            	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
+            	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
+            	try {
+                	EPMToPBody converter = new EPMToPBody(newPattern, specification, context, patternMap);
+                	buildAnnotations(newPattern, specification, converter);
+                	buildBodies(newPattern, specification, converter);
+            	} catch (IncQueryException e) {
+            		specification.setStatus(PQueryStatus.ERROR);
+            	}
                 if (!PQueryStatus.ERROR.equals(specification.getStatus())) {
                     for (PQuery query : specification.getDirectReferredQueries()) {
                         dependantQueries.put(query, specification);

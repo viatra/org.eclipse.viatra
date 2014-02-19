@@ -12,8 +12,6 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -23,10 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
@@ -34,6 +30,9 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.ui.IEditorPart;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer. PatterMatcherRoots
@@ -53,8 +52,8 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
     public ObservablePatternMatcherRoot(ModelConnectorTreeViewerKey key) {
-        matchers = new HashMap<String, ObservablePatternMatcher>();
-        sortedMatchers = new LinkedList<ObservablePatternMatcher>();
+        matchers = Maps.newHashMap();
+        sortedMatchers = Lists.newLinkedList();
         this.key = key;
 
         AdvancedIncQueryEngine engine = key.getEngine();
@@ -82,20 +81,19 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         }
     }
 
-    public void addMatcher(IncQueryMatcher<? extends IPatternMatch> matcher, boolean generated, String exceptionMessage) {
-        String patternFqn = matcher.getPatternName();
-        // This cast could not be avoided because later the filtered delta monitor will need the base IPatternMatch
-        @SuppressWarnings("unchecked")
-        ObservablePatternMatcher pm = new ObservablePatternMatcher(this, (IncQueryMatcher<IPatternMatch>) matcher,
-                generated, exceptionMessage);
-        this.matchers.put(patternFqn, pm);
+    public void addMatcher(IncQueryEngine engine, IQuerySpecification<?> specification, boolean generated) {
+    	String fqn = specification.getFullyQualifiedName();
+        
+    	
+        ObservablePatternMatcher pm = new ObservablePatternMatcher(this, engine, specification,
+                generated);
+        this.matchers.put(fqn, pm);
 
-        // generated matchers are inserted in front of the list
         if (generated) {
+        	// generated matchers are inserted in front of the list
             this.sortedMatchers.add(0, pm);
-        }
-        // generic matchers are inserted in the list according to the order in the eiq file
-        else {
+        } else {
+        	// generic matchers are inserted in the list according to the order in the eiq file
             this.sortedMatchers.add(pm);
         }
         if (QueryExplorer.getInstance() != null) {
@@ -189,20 +187,8 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
 
     private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
         for (IQuerySpecification<?> query : queries) {
-            IncQueryMatcher<? extends IPatternMatch> matcher = null;
             boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
-            String message = null;
-            try {
-                matcher = key.getEngine().getMatcher(query);
-            } catch (Exception e) {
-                logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                        "Cannot initialize pattern matcher for pattern "
-                                + query.getFullyQualifiedName(), e));
-                matcher = null;
-                message = (e instanceof IncQueryException) ? ((IncQueryException) e).getShortMessage() : e.getMessage();
-            }
-
-            addMatcher(matcher, isGenerated, message);
+            addMatcher(key.getEngine(), query, isGenerated);
         }
     }
 
