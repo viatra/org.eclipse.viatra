@@ -57,22 +57,24 @@ public class PatternUnregistrationHandler extends AbstractHandler {
     /**
      * Unregisters the given pattern both from the QueryExplorer and the Pattern Registry.
      *
-     * @param patternFqn
+     * @param fqn
      *            the fully qualified name of the pattern
      */
-    private void unregisterPattern(String patternFqn) {
-        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
-        if (!QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
-            QueryExplorerPatternRegistry.getInstance().unregisterPattern(pattern);
-            QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+    private void unregisterPattern(String fqn) {
+        IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(fqn);
+        if (specification != null && !QueryExplorerPatternRegistry.getInstance().isGenerated(specification)) {
+            List<IQuerySpecification<?>> removedSpecifications = QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);
+            for (IQuerySpecification<?> removedSpecification : removedSpecifications) {
+            	QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
 
-            // unregister patterns from observable roots
-            for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
-                root.unregisterPattern(pattern);
+            	//unregister patterns from observable roots
+            	for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+            		root.unregisterPattern(removedSpecification);
+            	}
+
+            	// the pattern is not active anymore
+            	QueryExplorerPatternRegistry.getInstance().removeActivePattern(removedSpecification);
             }
-
-            // the pattern is not active anymore
-            QueryExplorerPatternRegistry.getInstance().removeActivePattern(pattern);
         }
     }
 }

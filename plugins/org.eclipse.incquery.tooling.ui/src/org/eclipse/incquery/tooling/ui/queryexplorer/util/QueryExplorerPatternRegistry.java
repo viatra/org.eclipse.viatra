@@ -100,13 +100,15 @@ public class QueryExplorerPatternRegistry {
      * @param specification
      *            the pattern instance to be unregistered
      */
-    public void unregisterPattern(IQuerySpecification<?> specification) {
+    public List<IQuerySpecification<?>> unregisterPattern(IQuerySpecification<?> specification) {
+    	ArrayList<IQuerySpecification<?>> removedSpecifications = Lists.newArrayList();
+    	removedSpecifications.add(specification);
         patternNameMap.remove(specification.getFullyQualifiedName());
         Set<IQuerySpecification<?>> forgottenSpecifications = builder.forgetSpecificationTransitively(specification);
         for (IQuerySpecification<?> other : Iterables.filter(forgottenSpecifications, Predicates.not(Predicates.<IQuerySpecification<?>>equalTo(specification)))) {
-            unregisterPattern(other);
+            removedSpecifications.addAll(unregisterPattern(other));
         }
-
+        return removedSpecifications;
     }
 
     /**
