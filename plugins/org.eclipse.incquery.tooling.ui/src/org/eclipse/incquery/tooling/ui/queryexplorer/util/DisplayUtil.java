@@ -189,7 +189,7 @@ public class DisplayUtil {
      * @return
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn) {
-        return getMessage(matcher, matchesSize, patternFqn, true, false, null);
+        return getMessage(matcher, matchesSize, patternFqn, false, true, false, null);
     }
 
     /**
@@ -208,8 +208,7 @@ public class DisplayUtil {
      * @return the label associated to the matcher
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
-            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
-        String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
+            String patternFqn, boolean isCropped, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
         if (matcher == null) {
             return String.format("%s - %s (see Error Log)", patternFqn, exceptionMessage);
         } else {
@@ -225,9 +224,11 @@ public class DisplayUtil {
                 matchString = String.format("%d matches", matchesSize);
             }
 
-            String filtered = isFiltered ? " - Filtered" : "";
+            String isCroppedString = isCropped ? " - Cropped" : "";
+            String isFilteredString = isFiltered ? " - Filtered" : "";
+            String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
 
-            return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, filtered, isGeneratedString);
+            return String.format("%s - %s %s %s %s", matcher.getPatternName(), matchString, isCroppedString, isFilteredString, isGeneratedString);
         }
     }
 

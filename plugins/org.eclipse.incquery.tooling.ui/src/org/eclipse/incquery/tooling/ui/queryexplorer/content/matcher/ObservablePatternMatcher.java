@@ -31,17 +31,19 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * A PatternMatcher is associated to every IncQueryMatcher which is annotated with PatternUI annotation. These elements
  * will be the children of the top level elements in the treeviewer.
- *
+ * 
  * @author Tamas Szabo
- *
+ * 
  */
 public class ObservablePatternMatcher {
 
+    private static int maxDisplayMatchSetSize = 100;
+    private int actualMatchSetSize = 0;
+    
     private static final String KEY_ATTRIBUTE_COMPARABLE_INTERFACE = "The key attribute does not implement the Comparable interface!";
     private static final String KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION = "The key attribute of OrderBy annotation must look like \"ClassName.AttributeName\"!";
     private final List<ObservablePatternMatch> matches;
@@ -77,21 +79,15 @@ public class ObservablePatternMatcher {
             initOrdering();
             initFilter();
             this.sigMap = new HashMap<IPatternMatch, ObservablePatternMatch>();
+
             this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
             this.processMatchesRunnable = new Runnable() {
                 @Override
                 public void run() {
                     if (deltaMonitor.matchFoundEvents.size() > 0 || deltaMonitor.matchLostEvents.size() > 0) {
-                        // this is required as both QueryExplorer.getInstance() and Realm.getDefault() work only in a UI
-                        // thread
-                        Display.getDefault().asyncExec(new Runnable() {
-                            @Override
-                            public void run() {
-                                processNewMatches(deltaMonitor.matchFoundEvents);
-                                processLostMatches(deltaMonitor.matchLostEvents);
-                                deltaMonitor.clear();
-                            }
-                        });
+                        processNewMatches(deltaMonitor.matchFoundEvents);
+                        processLostMatches(deltaMonitor.matchLostEvents);
+                        deltaMonitor.clear();
                     }
                 }
             };
@@ -109,7 +105,7 @@ public class ObservablePatternMatcher {
                 }
             };
             parent.getKey().getEngine().addModelUpdateListener(modelUpdateListener);
-//            this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
+            // this.matcher.addCallbackAfterUpdates(processMatchesRunnable);
             this.processMatchesRunnable.run();
         }
     }
@@ -122,7 +118,7 @@ public class ObservablePatternMatcher {
         if (annotation != null) {
             for (Entry<String, Object> ap : annotation.getAllValues()) {
                 if (ap.getKey().matches("key")) {
-                    orderParameter = (String)ap.getValue();
+                    orderParameter = (String) ap.getValue();
                 }
                 if (ap.getKey().matches("direction")) {
                     String direction = ((String) ap.getValue());
@@ -145,14 +141,14 @@ public class ObservablePatternMatcher {
                 pm.dispose();
             }
             parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
-//            this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+            // this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
             processMatchesRunnable = null;
         }
     }
 
     /**
      * Returns the index of the new match in the list based on the ordering set on the matcher.
-     *
+     * 
      * @param match
      *            the match that will be inserted
      * @return -1 if the match should be inserted at the end of the list, else the actual index
@@ -193,13 +189,11 @@ public class ObservablePatternMatcher {
                         }
                     }
                 } else {
-                    DisplayUtil.addOrderByPatternWarning(
-                            this.matcher.getPatternName(),
+                    DisplayUtil.addOrderByPatternWarning(this.matcher.getPatternName(),
                             KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
                 }
             } else {
-                DisplayUtil.addOrderByPatternWarning(
-                        this.matcher.getPatternName(),
+                DisplayUtil.addOrderByPatternWarning(this.matcher.getPatternName(),
                         KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
             }
         }
@@ -208,28 +202,32 @@ public class ObservablePatternMatcher {
 
     private void processNewMatches(Collection<IPatternMatch> matches) {
         for (IPatternMatch s : matches) {
+            actualMatchSetSize++;
             addMatch(s);
         }
     }
 
     private void processLostMatches(Collection<IPatternMatch> matches) {
         for (IPatternMatch s : matches) {
+            actualMatchSetSize--;
             removeMatch(s);
         }
     }
 
     private void addMatch(IPatternMatch match) {
-        ObservablePatternMatch pm = new ObservablePatternMatch(this, match);
-        this.sigMap.put(match, pm);
-        int index = placeOfMatch(match);
+        if (actualMatchSetSize <= maxDisplayMatchSetSize) {
+            ObservablePatternMatch pm = new ObservablePatternMatch(this, match);
+            this.sigMap.put(match, pm);
+            int index = placeOfMatch(match);
 
-        if (index == -1) {
-            this.matches.add(pm);
-        } else {
-            this.matches.add(index, pm);
-        }
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+            if (index == -1) {
+                this.matches.add(pm);
+            } else {
+                this.matches.add(index, pm);
+            }
+            if (QueryExplorer.getInstance() != null) {
+                QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+            }
         }
     }
 
@@ -239,9 +237,10 @@ public class ObservablePatternMatcher {
         if (observableMatch != null) {
             this.matches.remove(observableMatch);
             observableMatch.dispose();
-        }
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+
+            if (QueryExplorer.getInstance() != null) {
+                QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+            }
         }
     }
 
@@ -264,12 +263,12 @@ public class ObservablePatternMatcher {
     private void initFilter() {
         if (matcher != null) {
             final int arity = this.matcher.getParameterNames().size();
-			parameterFilter = new Object[arity];
+            parameterFilter = new Object[arity];
 
-			// WTF was this here?
-//            for (int i = 0; i < arity; i++) {
-//                parameterFilter[i] = null;
-//            }
+            // WTF was this here?
+            // for (int i = 0; i < arity; i++) {
+            // parameterFilter[i] = null;
+            // }
 
             this.filter = this.matcher.newMatch(parameterFilter);
         }
@@ -306,7 +305,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the current filter used on the corresponding matcher.
-     *
+     * 
      * @return the filter as an array of objects
      */
     public Object[] getFilter() {
@@ -315,11 +314,11 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the label for the observable pattern matcher that will be used in the {@link QueryExplorer}.
-     *
+     * 
      * @return the label
      */
     public String getText() {
-        return DisplayUtil.getMessage(matcher, matches.size(), patternFqn, isGenerated(), isFiltered(),
+        return DisplayUtil.getMessage(matcher, actualMatchSetSize, patternFqn, isCropped(), isGenerated(), isFiltered(),
                 exceptionMessage);
     }
 
@@ -327,7 +326,7 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns the list of observable pattern matches under this matcher.
-     *
+     * 
      * @return the list of matches
      */
     public List<ObservablePatternMatch> getMatches() {
@@ -336,16 +335,20 @@ public class ObservablePatternMatcher {
 
     /**
      * Returns true if the matcher is generated, false if it is generic.
-     *
+     * 
      * @return true for generated, false for generic matcher
      */
     public boolean isGenerated() {
         return generated;
     }
+    
+    public boolean isCropped() {
+        return actualMatchSetSize > maxDisplayMatchSetSize;
+    }
 
     /**
      * Returns true if the RETE matcher was created for this observable matcher, false otherwise.
-     *
+     * 
      * @return true if matcher could be created
      */
     public boolean isCreated() {
@@ -357,7 +360,7 @@ public class ObservablePatternMatcher {
      * the user
      */
     public void stopMonitoring() {
-    	parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
-//        this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
+        parent.getKey().getEngine().removeModelUpdateListener(modelUpdateListener);
+        // this.matcher.removeCallbackAfterUpdates(processMatchesRunnable);
     }
 }
