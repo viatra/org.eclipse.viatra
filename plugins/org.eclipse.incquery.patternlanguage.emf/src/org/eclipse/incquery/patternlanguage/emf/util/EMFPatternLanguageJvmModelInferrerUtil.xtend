@@ -33,6 +33,9 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -48,6 +51,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
 	@Inject IErrorFeedback errorFeedback
+	@Inject var IJvmModelAssociations associations
 
 	/**
 	 * This method returns the pattern name.
@@ -319,7 +323,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		split.take(split.size - 1).join("/")
 	}
 
-		/**
+	/**
 	 * This method returns the pattern name.
 	 * If the pattern name contains the package (any dot),
 	 * then removes all segment except the last one.
@@ -348,5 +352,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
 		typeReferenceSerializer.serialize(ref, ctx, appendable)
 	}
-
+	
+	def findInferredSpecification(Pattern pattern) {
+		pattern.findInferredClass(typeof (BaseGeneratedQuerySpecification))
+	}
+	
+	def findInferredClass(Pattern pattern, Class clazz) {
+		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
+			superTypes.exists[type.qualifiedName == clazz.canonicalName]
+		]
+	}
 }

@@ -12,10 +12,8 @@
 package org.eclipse.incquery.patternlanguage.emf.jvmmodel
 
 import com.google.inject.Inject
-import java.util.HashSet
 import org.eclipse.incquery.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.incquery.runtime.exception.IncQueryException
@@ -23,7 +21,6 @@ import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
-import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
@@ -93,35 +90,19 @@ class PatternGroupClassInferrer {
 
 	def JvmConstructor inferConstructor(PatternModel model) {
 		val incQueryException = model.newTypeRef(typeof (IncQueryException))
-		val matcherReferences = gatherMatchers(model)
 		model.toConstructor [
 			visibility = JvmVisibility::PRIVATE
 			simpleName = groupClassName(model)
 			exceptions += incQueryException
 			body = [
-				for (matcherRef : matcherReferences) {
+				for (matcherRef : model.patterns.map[findInferredSpecification.createTypeRef]) {
 					append('''querySpecifications.add(''')
 					serialize(matcherRef, model)
-					append('''.querySpecification());''')
+					append('''.instance());''')
 					newLine
 				}
 			]
 		]
-	}
-
-	def gatherMatchers(PatternModel model) {
-		val result = new HashSet<JvmTypeReference>()
-		for (pattern : model.patterns) {
-			if (!CorePatternLanguageHelper::isPrivate(pattern)) {
-				val jvmElements = pattern.jvmElements
-				val matcherClass = jvmElements.findFirst([e | e instanceof JvmGenericType])
-				if (matcherClass instanceof JvmGenericType) {
-					val sourceElementRef = types.createTypeRef(matcherClass as JvmGenericType)
-					result.add(sourceElementRef)
-				}
-			}
-		}
-		result
 	}
 
 }

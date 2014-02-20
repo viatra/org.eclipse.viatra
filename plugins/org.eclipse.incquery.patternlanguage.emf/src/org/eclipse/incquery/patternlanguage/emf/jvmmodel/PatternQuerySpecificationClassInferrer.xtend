@@ -90,7 +90,6 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension ITypeProvider
 	@Inject extension TypeReferences types
 	@Inject var IErrorFeedback feedback
-	@Inject var IJvmModelAssociations associations
 	@Inject extension Primitives
 	@Inject var Logger logger
 
@@ -496,12 +495,7 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def findGeneratedSpecification(PQuery query) {
-		(query as GenericQuerySpecification).pattern.findGeneratedSpecification
-	}
-	def findGeneratedSpecification(Pattern pattern) {
-		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
-			superTypes.exists[type.qualifiedName == typeof (BaseGeneratedQuerySpecification).canonicalName]
-		]
+		(query as GenericQuerySpecification).pattern.findInferredSpecification
 	}
 
 	def expressionMethodName(XExpression ex) {

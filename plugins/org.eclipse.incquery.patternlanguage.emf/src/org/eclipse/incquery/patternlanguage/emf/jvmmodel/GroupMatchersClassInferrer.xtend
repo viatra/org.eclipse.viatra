@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 
 /**
  * @author Bergmann Gabor
@@ -33,7 +34,6 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 class GroupMatchersClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	@Inject extension IJvmModelAssociations
 	@Inject extension TypeReferences types
 
 	def inferGroupMatchers(PatternModel model) {
@@ -48,7 +48,7 @@ class GroupMatchersClassInferrer {
 		//matchersClass.documentation = model.javadocMatchersClass.toString
 		matchersClass.members += model.toField("engine", model.newTypeRef(typeof (IncQueryEngine)))
 		matchersClass.members += model.inferConstructor
-		for (matcherRef : model.gatherMatchers) {
+		for (matcherRef : model.patterns.map[findInferredClass(typeof(BaseMatcher))]) {
 			matchersClass.members += model.inferMatcherGetter(matcherRef)
 		}
 
@@ -80,21 +80,6 @@ class GroupMatchersClassInferrer {
 				'''
 			)]
 		]
-	}
-	// TODO generalize with PatternGroupInferrer
-	def gatherMatchers(PatternModel model) {
-		val result = new HashSet<JvmGenericType>()
-		for (pattern : model.patterns) {
-			if (!CorePatternLanguageHelper::isPrivate(pattern)) {
-				val jvmElements = pattern.jvmElements
-				val matcherClass = jvmElements.findFirst([e | e instanceof JvmGenericType])
-				if (matcherClass instanceof JvmGenericType) {
-					result.add(matcherClass as JvmGenericType)
-					//val sourceElementRef = types.createTypeRef(matcherClass as JvmGenericType)
-				}
-			}
-		}
-		result
 	}
 
 }
