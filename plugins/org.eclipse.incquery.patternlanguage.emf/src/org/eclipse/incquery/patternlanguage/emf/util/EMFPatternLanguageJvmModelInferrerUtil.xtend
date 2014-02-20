@@ -15,7 +15,6 @@ import com.google.common.base.Splitter
 import com.google.inject.Inject
 import java.util.regex.Matcher
 import org.apache.log4j.Logger
-import org.eclipse.core.runtime.IStatus
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider
@@ -23,19 +22,18 @@ import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
-import org.eclipse.jdt.core.JavaConventions
-import org.eclipse.jdt.core.JavaCore
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.common.types.JvmGenericType
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
+import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -73,10 +71,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
 	def modelFileName(EObject object) {
 		val name = object.eResource?.URI.trimFileExtension.lastSegment
-		//val status = JavaConventions::validateJavaTypeName(name, JavaCore::VERSION_1_6, JavaCore::VERSION_1_6)
-		//if (status.severity == IStatus::ERROR) {
-		//	throw new IllegalArgumentException("The file name " + name + " is not a valid Java type name. Please, rename the file!")
-		//}
 		if (!(name.validClassName)) {
 			throw new IllegalAccessError("The file name " + name + " is not a valid Java type name. Please, rename the file!")
 		}
@@ -361,5 +355,9 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
 			superTypes.exists[type.qualifiedName == clazz.canonicalName]
 		]
+	}
+	
+	def isPublic(Pattern pattern) {
+		!CorePatternLanguageHelper::isPrivate(pattern)
 	}
 }

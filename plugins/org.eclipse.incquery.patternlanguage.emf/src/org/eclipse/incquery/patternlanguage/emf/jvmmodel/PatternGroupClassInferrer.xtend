@@ -14,8 +14,12 @@ package org.eclipse.incquery.patternlanguage.emf.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.incquery.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
+import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
+import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmField
@@ -23,7 +27,6 @@ import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -32,8 +35,7 @@ class PatternGroupClassInferrer {
 
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
-	@Inject extension IJvmModelAssociations
-	@Inject extension TypeReferences types
+	@Inject extension TypeReferences
 	@Inject extension JavadocInferrer
 
 	def inferPatternGroup(PatternModel model) {
@@ -49,12 +51,12 @@ class PatternGroupClassInferrer {
 		groupClass.members += model.inferInstanceMethod(groupClass)
 		groupClass.members += model.inferInstanceField(groupClass)
 		groupClass.members += model.inferConstructor
+		for (pattern : model.patterns.filter[public]) {
+			groupClass.members += pattern.inferSpecificationGetter(pattern.findInferredClass(typeof(BaseGeneratedQuerySpecification)))
+			groupClass.members += pattern.inferMatcherGetter(pattern.findInferredClass(typeof(BaseMatcher)))
+		}
 		groupClass
 	}
-
-
-
-
 
 	def String groupClassName(PatternModel model) {
 		val fileName = model.modelFileName
@@ -62,7 +64,7 @@ class PatternGroupClassInferrer {
 	}
 
 	def JvmField inferInstanceField(PatternModel model, JvmGenericType groupClass) {
-		model.toField("INSTANCE", types.createTypeRef(groupClass)) [
+		model.toField("INSTANCE", groupClass.createTypeRef) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
 		]
@@ -70,7 +72,7 @@ class PatternGroupClassInferrer {
 
 	def JvmOperation inferInstanceMethod(PatternModel model, JvmGenericType groupClass) {
 		val incQueryException = model.newTypeRef(typeof (IncQueryException))
-		model.toMethod("instance", types.createTypeRef(groupClass)) [
+		model.toMethod("instance", groupClass.createTypeRef) [
 			documentation = model.javadocGroupClassInstanceMethod.toString
 			visibility = JvmVisibility::PUBLIC
 			static = true
@@ -95,7 +97,7 @@ class PatternGroupClassInferrer {
 			simpleName = groupClassName(model)
 			exceptions += incQueryException
 			body = [
-				for (matcherRef : model.patterns.map[findInferredSpecification.createTypeRef]) {
+				for (matcherRef : model.patterns.filter[public].map[findInferredSpecification.createTypeRef]) {
 					append('''querySpecifications.add(''')
 					serialize(matcherRef, model)
 					append('''.instance());''')
@@ -105,4 +107,32 @@ class PatternGroupClassInferrer {
 		]
 	}
 
+	
+
+	def JvmOperation inferSpecificationGetter(Pattern model, JvmGenericType specificationClass) {
+		val incQueryException = model.newTypeRef(typeof(IncQueryException))
+		model.toMethod("get" + model.name.toFirstUpper, specificationClass.createTypeRef) [
+			visibility = JvmVisibility::PUBLIC
+			exceptions += incQueryException
+			body = [
+				append('''return ''')
+				serialize(specificationClass.createTypeRef, model)
+				append('''.instance();''')
+			]
+		]
+	}
+	
+	def JvmOperation inferMatcherGetter(Pattern model, JvmGenericType matcherClass) {
+		val incQueryException = model.newTypeRef(typeof(IncQueryException))
+		model.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
+			visibility = JvmVisibility::PUBLIC
+			exceptions += incQueryException
+			parameters += model.toParameter("engine", model.newTypeRef(typeof (IncQueryEngine)))
+			body = [
+				append('''return ''')
+				serialize(matcherClass.createTypeRef, model)
+				append('''.on(engine);''')
+			]
+		]
+	}
 }

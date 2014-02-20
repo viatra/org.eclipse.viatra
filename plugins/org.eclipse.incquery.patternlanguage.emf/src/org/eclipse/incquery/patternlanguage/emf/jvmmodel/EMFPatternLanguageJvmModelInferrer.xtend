@@ -14,14 +14,15 @@ package org.eclipse.incquery.patternlanguage.emf.jvmmodel
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.incquery.patternlanguage.emf.specification.GenericPatternMatcher
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.incquery.runtime.exception.IncQueryException
@@ -31,8 +32,6 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.incquery.runtime.api.IncQueryMatcher
-import org.eclipse.incquery.runtime.api.IPatternMatch
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -62,7 +61,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension PatternQuerySpecificationClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
 	@Inject extension PatternGroupClassInferrer
-	@Inject extension GroupMatchersClassInferrer
 	@Inject extension JavadocInferrer
 	@Inject extension TypeReferences
 	@Inject extension IJvmModelAssociator associator
@@ -196,8 +194,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			val groupClass = model.inferPatternGroup
    			model.associatePrimary(groupClass)
    			acceptor.accept(groupClass)
-   			val matchersClass = model.inferGroupMatchers
-   			acceptor.accept(matchersClass)
    		} catch (IllegalArgumentException e){
    			errorFeedback.reportErrorNoLocation(model, e.message, EMFPatternLanguageJvmModelInferrer::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
    		} catch(Exception e) {
