@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 /**
@@ -618,6 +620,37 @@ public interface NavigationHelper {
      */
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature);
 
+    
+    /**
+	 * Traverses all instances of a selected data type stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+    void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor);
+    
+	/**
+	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+	void processAllInstances(EClass type, IEClassProcessor processor);
+
+	/**
+	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+	void processDirectInstances(EClass type, IEClassProcessor processor);
+    
     /**
      * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
@@ -645,6 +678,5 @@ public interface NavigationHelper {
      * Updates the value of indexed derived features that are not well-behaving.
      */
     void resampleDerivedFeatures();
-
 
 }

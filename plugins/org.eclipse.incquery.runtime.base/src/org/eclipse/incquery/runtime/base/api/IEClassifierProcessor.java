@@ -11,13 +11,17 @@
 package org.eclipse.incquery.runtime.base.api;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 
 /**
  * @author Abel Hegedus
  *
  */
-public interface IEClassProcessor {
+public interface IEClassifierProcessor<ClassType, InstanceType> {
     
-    void process(EClass type, EObject instance);
+    void process(ClassType type, InstanceType instance);
+    
+    public interface IEClassProcessor extends IEClassifierProcessor<EClass, EObject>{}
+    public interface IEDataTypeProcessor extends IEClassifierProcessor<EDataType, Object>{}
 }

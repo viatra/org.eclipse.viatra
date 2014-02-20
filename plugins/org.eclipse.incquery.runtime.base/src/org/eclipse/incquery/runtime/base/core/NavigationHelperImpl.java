@@ -41,7 +41,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
-import org.eclipse.incquery.runtime.base.api.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
@@ -286,11 +287,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
     
+    @Override
     public void processDirectInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
         processDirectInstancesInternal(type, processor, typeKey);
     }
 
+    @Override
     public void processAllInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
         Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
@@ -300,6 +303,18 @@ public class NavigationHelperImpl implements NavigationHelper {
             }
         } 
         processDirectInstancesInternal(type, processor, typeKey);
+    }
+    
+    @Override
+    public void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor) {
+    	Object typeKey = toKey(type);
+        Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(typeKey);
+        if (valMap == null) {
+            return;
+        }
+        for (Object value : valMap.keySet()) {
+        	processor.process(type, value);
+        }
     }
 
     private void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {

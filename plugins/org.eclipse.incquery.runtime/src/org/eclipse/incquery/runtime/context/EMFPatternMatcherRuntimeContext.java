@@ -12,13 +12,14 @@
 package org.eclipse.incquery.runtime.context;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
@@ -37,7 +38,33 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext implements
         IPatternMatcherRuntimeContext {
 
-    private final NavigationHelper baseIndex;
+	private final class ClassCrawler implements IEClassProcessor{
+		private final ModelElementCrawler crawler;
+
+		private ClassCrawler(ModelElementCrawler crawler) {
+			this.crawler = crawler;
+		}
+
+		@Override
+		public void process(EClass type, EObject instance) {
+			crawler.crawl(instance);
+		}
+	}
+	
+	private final class DataTypeCrawler implements IEDataTypeProcessor {
+		private final ModelElementCrawler crawler;
+		
+		private DataTypeCrawler(ModelElementCrawler crawler) {
+			this.crawler = crawler;
+		}
+		
+		@Override
+		public void process(EDataType type, Object instance) {
+			crawler.crawl(instance);
+		}
+	}
+
+	private final NavigationHelper baseIndex;
     private BaseIndexListener listener;
     private IncQueryEngineImpl iqEngine;
 
@@ -125,17 +152,11 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         if (typeObject instanceof EClass) {
             final EClass eClass = (EClass) typeObject;
             listener.ensure(eClass);
-            final Collection<EObject> allInstances = baseIndex.getDirectInstances(eClass);
-            for (EObject eObject : allInstances) {
-                crawler.crawl(eObject);
-            }
+			baseIndex.processDirectInstances(eClass, new ClassCrawler(crawler));
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
             listener.ensure(eDataType);
-            final Collection<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
-            for (Object value : allInstances) {
-                crawler.crawl(value);
-            }
+            baseIndex.processDataTypeInstances(eDataType, new DataTypeCrawler(crawler));
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
     }
@@ -145,17 +166,11 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         if (typeObject instanceof EClass) {
             final EClass eClass = (EClass) typeObject;
             listener.ensure(eClass);
-            final Collection<EObject> allInstances = baseIndex.getAllInstances(eClass);
-            for (EObject eObject : allInstances) {
-                crawler.crawl(eObject);
-            }
+            baseIndex.processAllInstances(eClass, new ClassCrawler(crawler));
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
             listener.ensure(eDataType);
-            final Collection<Object> allInstances = baseIndex.getDataTypeInstances(eDataType);
-            for (Object value : allInstances) {
-                crawler.crawl(value);
-            }
+            baseIndex.processDataTypeInstances(eDataType, new DataTypeCrawler(crawler));
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
     }
