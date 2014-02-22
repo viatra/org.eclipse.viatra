@@ -52,7 +52,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
     private final Set<EStructuralFeature> features = new HashSet<EStructuralFeature>();
 
     /**
-     * @param boundary
+     * @param inputConnector
      */
     public BaseIndexListener(IncQueryEngine iqEngine, ReteEngine engine, NavigationHelper baseIndex) {
         super();

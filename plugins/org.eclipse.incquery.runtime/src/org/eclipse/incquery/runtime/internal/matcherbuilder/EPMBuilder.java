@@ -21,16 +21,17 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * @author Bergmann Gábor
  *
  */
-public class EPMBuilder<Collector> implements IRetePatternBuilder<Collector> {
-    protected IOperationCompiler<Collector> operationCompiler;
+public class EPMBuilder implements IRetePatternBuilder {
+    protected IOperationCompiler operationCompiler;
     protected IPatternMatcherContext context;
 
-    public EPMBuilder(IOperationCompiler<Collector> operationCompiler, IPatternMatcherContext context) {
+    public EPMBuilder(IOperationCompiler operationCompiler, IPatternMatcherContext context) {
         super();
         this.operationCompiler = operationCompiler;
         this.context = context;
@@ -47,10 +48,9 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Collector> {
     }
 
     @Override
-    public Collector construct(PQuery pattern) throws QueryPlannerException {
+    public RecipeTraceInfo construct(PQuery pattern) throws QueryPlannerException {
         try {
-            EPMBuildScaffold<Collector> epmBuildScaffold = new EPMBuildScaffold<Collector>(
-                    operationCompiler, context);
+            EPMBuildScaffold epmBuildScaffold = new EPMBuildScaffold(operationCompiler, context);
             return epmBuildScaffold.construct(pattern);
         } catch (RuntimeException ex) {
             throw new RetePatternBuildException(

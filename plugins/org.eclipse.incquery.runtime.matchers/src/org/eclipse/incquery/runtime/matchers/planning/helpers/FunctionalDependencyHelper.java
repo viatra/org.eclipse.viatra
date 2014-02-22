@@ -8,7 +8,7 @@
  * Contributors:
  *   Adam Dudas - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.base.api;
+package org.eclipse.incquery.runtime.matchers.planning.helpers;
 
 import java.util.HashSet;
 import java.util.Map;

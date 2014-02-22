@@ -49,8 +49,6 @@ import org.eclipse.incquery.runtime.rete.construction.ReteContainerCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
-import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -291,8 +289,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         ReteEngine engine;
         engine = new ReteEngine(context, reteThreads);
         ReteContainerCompiler buildable = new ReteContainerCompiler(engine);
-        EPMBuilder<Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Receiver>>(
-                buildable, context);
+        EPMBuilder builder = new EPMBuilder(buildable, context);
         engine.setBuilder(builder);
         return engine;
     }

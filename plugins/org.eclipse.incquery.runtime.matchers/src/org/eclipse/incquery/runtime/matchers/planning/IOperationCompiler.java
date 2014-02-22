@@ -33,7 +33,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  *            connected
  * @author Gabor Bergmann
  */
-public interface IOperationCompiler<Collector> {
+public interface IOperationCompiler {
 
     public Collector patternCollector(PQuery pattern) throws QueryPlannerException;
  
@@ -90,12 +90,12 @@ public interface IOperationCompiler<Collector> {
     /**
      * @return an operation compiler that potentially acts on a separate container
      */
-    public IOperationCompiler<Collector> getNextContainer();
+    public IOperationCompiler getNextContainer();
 
     /**
      * @return an operation compiler that puts build actions on the tab of the given pattern
      */
-    public IOperationCompiler<Collector> putOnTab(PQuery effort, IPatternMatcherContext context);
+    public IOperationCompiler putOnTab(PQuery effort, IPatternMatcherContext context);
 
     public void reinitialize();
 

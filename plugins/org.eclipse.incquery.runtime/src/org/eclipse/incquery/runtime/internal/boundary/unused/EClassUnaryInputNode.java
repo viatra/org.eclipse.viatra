@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 
@@ -128,17 +129,21 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtime.rete.network.StandardNode#constructIndex(org.eclipse.incquery.runtime.rete.tuple.TupleMask)
-	 */
-	@Override
-	public ProjectionIndexer constructIndex(TupleMask mask) {
-		if (Options.employTrivialIndexers) {
-			if (nullMask.equals(mask)) return getNullIndexer();
-			if (identityMask.equals(mask)) return getIdentityIndexer();
-		}
-		return super.constructIndex(mask);
-	}
+    @Override
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
+        if (Options.employTrivialIndexers) {
+            if (nullMask.equals(mask)) {
+                final ProjectionIndexer indexer = getNullIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            } if (identityMask.equals(mask)) {
+                final ProjectionIndexer indexer = getIdentityIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            }
+        }
+        return super.constructIndex(mask, traces);
+    }
 	
 	/**
 	 * @return the nullIndexer

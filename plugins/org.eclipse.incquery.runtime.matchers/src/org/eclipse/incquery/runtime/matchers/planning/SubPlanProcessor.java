@@ -40,9 +40,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  */
 public class SubPlanProcessor {
 
-    private IOperationCompiler<?> compiler;
+    private IOperationCompiler compiler;
 
-    public void setCompiler(IOperationCompiler<?> compiler) {
+    public void setCompiler(IOperationCompiler compiler) {
         this.compiler = compiler;
     }
 

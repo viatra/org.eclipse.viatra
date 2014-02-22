@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -141,19 +142,31 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtimerete.network.StandardNode#constructIndex(org.eclipse.incquery.runtimerete.tuple.TupleMask)
-	 */
-	@Override
-	public ProjectionIndexer constructIndex(TupleMask mask) {
-		if (Options.employTrivialIndexers) {
-			if (nullMask.equals(mask)) return getNullIndexer();
-			if (identityMask.equals(mask)) return getIdentityIndexer();
-			if (sourceKnown.equals(mask)) return getSourceIndexer();
-			if (targetKnown.equals(mask)) return getTargetIndexer();
-		}
-		return super.constructIndex(mask);
-	}
+    @Override
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
+        if (Options.employTrivialIndexers) {
+            if (nullMask.equals(mask)) {
+                final ProjectionIndexer indexer = getNullIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            } if (identityMask.equals(mask)) {
+                final ProjectionIndexer indexer = getIdentityIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            }
+			if (sourceKnown.equals(mask)) {
+				final ProjectionIndexer indexer = getSourceIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+			}
+			if (targetKnown.equals(mask)) {
+				final ProjectionIndexer indexer = getTargetIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+			}
+        }
+        return super.constructIndex(mask, traces);
+    }
 	
 	/**
 	 * @return the nullIndexer

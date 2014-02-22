@@ -93,7 +93,7 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     }
 
-    public SubPlan getSidePlan(IOperationCompiler<?> compiler) throws QueryPlannerException {
+    public SubPlan getSidePlan(IOperationCompiler compiler) throws QueryPlannerException {
         SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, query);
         sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
         return sidePlan;

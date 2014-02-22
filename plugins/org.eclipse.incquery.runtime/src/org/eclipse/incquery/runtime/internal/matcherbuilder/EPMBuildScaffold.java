@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
 
@@ -26,25 +27,25 @@ import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
  * @author Bergmann Gábor
  * 
  */
-public class EPMBuildScaffold<Collector> {
+public class EPMBuildScaffold {
 
-    protected IOperationCompiler<Collector> operationCompiler;
+    protected IOperationCompiler operationCompiler;
     protected IPatternMatcherContext context;
 
-    public EPMBuildScaffold(IOperationCompiler<Collector> operationCompiler,
+    public EPMBuildScaffold(IOperationCompiler operationCompiler,
             IPatternMatcherContext context) {
         super();
         this.operationCompiler = operationCompiler;
         this.context = context;
     }
 
-    public Collector construct(PQuery pattern) throws QueryPlannerException {
+    public RecipeTraceInfo construct(PQuery pattern) throws QueryPlannerException {
         Collector production = operationCompiler.putOnTab(pattern, context).patternCollector(pattern);
         // TODO check annotations for reinterpret
 
         context.logDebug("EPMBuilder starts construction of: " + pattern.getFullyQualifiedName());
         for (PBody body : pattern.getContainedBodies()) {
-            IOperationCompiler<Collector> currentBuildable = operationCompiler.getNextContainer().putOnTab(
+            IOperationCompiler currentBuildable = operationCompiler.getNextContainer().putOnTab(
                     pattern, context);
             if (Options.builderMethod == BuilderMethod.LEGACY) {
                 throw new UnsupportedOperationException();
