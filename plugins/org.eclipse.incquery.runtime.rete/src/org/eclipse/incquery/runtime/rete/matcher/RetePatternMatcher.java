@@ -18,13 +18,15 @@ import java.util.Map;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
+import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.TransformerNode;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * @author Gabor Bergmann
@@ -33,8 +35,9 @@ import org.eclipse.incquery.runtime.rete.single.TransformerNode;
 public class RetePatternMatcher extends TransformerNode {
 
     protected ReteEngine engine;
-    protected ReteBoundary boundary;
+    protected InputConnector inputConnector;
     protected Production productionNode;
+    protected RecipeTraceInfo productionNodeTrace;
     protected Map<String, Integer> posMapping;
     protected Map<Object, Receiver> taggedChildren = //new HashMap<Object, Receiver>();
             CollectionsFactory.getMap();
@@ -46,13 +49,15 @@ public class RetePatternMatcher extends TransformerNode {
      *            a production node that matches this pattern without any parameter bindings
      * @pre: Production must be local to the head container
      */
-    public RetePatternMatcher(ReteEngine engine, Address<? extends Production> productionNode) {
+    public RetePatternMatcher(ReteEngine engine, RecipeTraceInfo productionNodeTrace) {
         super(engine.getReteNet().getHeadContainer());
         this.engine = engine;
-        this.boundary = engine.getBoundary();
-        if (!engine.getReteNet().getHeadContainer().isLocal(productionNode))
-            throw new IllegalArgumentException("@pre: Production must be local to the head container");
-        this.productionNode = engine.getReteNet().getHeadContainer().resolveLocal(productionNode);
+        this.inputConnector = engine.getReteNet().getInputConnector();
+        this.productionNodeTrace = productionNodeTrace;
+        final Address<? extends Node> productionAddress = reteContainer.getProvisioner().getOrCreateNodeByRecipe(productionNodeTrace);
+        if (!reteContainer.isLocal(productionAddress))
+        	throw new IllegalArgumentException("@pre: Production must be local to the head container");
+		this.productionNode = (Production) reteContainer.resolveLocal(productionAddress);
         this.posMapping = this.productionNode.getPosMapping();
     }
 
@@ -76,8 +81,8 @@ public class RetePatternMatcher extends TransformerNode {
         TupleMask mask = new TupleMask(fixed);
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
-        AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNode, mask),
-                boundary.wrapTuple(inputSignature));
+        AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
+                inputConnector.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         ArrayList<Tuple> unscopedMatches = fetcher.getMatches();
 
@@ -94,8 +99,8 @@ public class RetePatternMatcher extends TransformerNode {
         TupleMask mask = new TupleMask(fixed);
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
-        SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNode, mask),
-                boundary.wrapTuple(inputSignature));
+        SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
+                inputConnector.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         return fetcher.getMatch();
     }
@@ -109,8 +114,8 @@ public class RetePatternMatcher extends TransformerNode {
         TupleMask mask = new TupleMask(fixed);
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
-        CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNode, mask),
-                boundary.wrapTuple(inputSignature));
+        CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
+                inputConnector.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
 
         return fetcher.getCount();
@@ -176,7 +181,7 @@ public class RetePatternMatcher extends TransformerNode {
 
     @Override
     protected Tuple transform(Tuple input) {
-        return boundary.unwrapTuple(input);
+        return inputConnector.unwrapTuple(input);
     }
 
     abstract class AbstractMatchFetcher implements Runnable {
@@ -217,7 +222,7 @@ public class RetePatternMatcher extends TransformerNode {
                 this.matches = new ArrayList<Tuple>(matches.size());
                 int i = 0;
                 for (Tuple t : matches)
-                    this.matches.add(i++, boundary.unwrapTuple(t));
+                    this.matches.add(i++, inputConnector.unwrapTuple(t));
             }
 
         }
@@ -239,7 +244,7 @@ public class RetePatternMatcher extends TransformerNode {
         @Override
         protected void fetch(Collection<Tuple> matches) {
             if (matches != null && !matches.isEmpty())
-                match = boundary.unwrapTuple(matches.iterator().next());
+                match = inputConnector.unwrapTuple(matches.iterator().next());
         }
 
         // public void run() {
@@ -248,10 +253,10 @@ public class RetePatternMatcher extends TransformerNode {
         // // checking scopes
         // if (unscopedMatches != null) {
         // for (Tuple um : /* productionNode */unscopedMatches) {
-        // match = boundary.unwrapTuple(um);
+        // match = inputConnector.unwrapTuple(um);
         // return;
         //
-        // // Tuple ps = boundary.unwrapTuple(um);
+        // // Tuple ps = inputConnector.unwrapTuple(um);
         // // boolean ok = true;
         // // if (!ignoreScope) for (int k = 0; (k < ps.getSize()) && ok; k++) {
         // // if (pcs[k].getParameterMode() == ParameterMode.INPUT) {

@@ -46,7 +46,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 	SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan layout(final PBody pSystem, final IOperationCompiler<?> compiler, IPatternMatcherContext context) throws QueryPlannerException {
+    public SubPlan layout(final PBody pSystem, final IOperationCompiler compiler, IPatternMatcherContext context) throws QueryPlannerException {
         PQuery query = pSystem.getPattern();
         planProcessor.setCompiler(compiler);
         try {
@@ -138,7 +138,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     	} else if (constraint instanceof ExpressionEvaluation) {
     		raiseForeverDeferredError((ExpressionEvaluation)constraint, plan, context);
     	} else if (constraint instanceof VariableDeferredPConstraint) {
-    		raiseForeverDeferredError((VariableDeferredPConstraint)constraint, plan, context);
+    		raiseForeverDeferredError(constraint, plan, context);
     	}
     }
     
@@ -158,7 +158,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     }
     private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
         if (constraint.checkTypeSafety(plan, context) == null) {
-            raiseForeverDeferredError((VariableDeferredPConstraint)constraint, plan);
+            raiseForeverDeferredError(constraint, plan);
         } else {
             String[] args = { toString(), constraint.checkTypeSafety(plan, context).toString() };
             String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. "

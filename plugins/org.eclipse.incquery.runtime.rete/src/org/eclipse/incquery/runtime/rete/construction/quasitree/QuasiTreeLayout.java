@@ -40,7 +40,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
-    public SubPlan layout(PBody pSystem, IOperationCompiler<?> compiler, IPatternMatcherContext context)
+    public SubPlan layout(PBody pSystem, IOperationCompiler compiler, IPatternMatcherContext context)
             throws QueryPlannerException {
         return new Scaffold(pSystem, compiler, context).run();
     }
@@ -49,14 +49,14 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         PBody pSystem;
         PQuery query;
         IPatternMatcherContext context;
-        IOperationCompiler<?> compiler;
+        IOperationCompiler compiler;
         SubPlanProcessor planProcessor = new SubPlanProcessor();
 
         Set<DeferredPConstraint> deferredConstraints = null;
         Set<EnumerablePConstraint> enumerableConstraints = null;
         Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
 
-        Scaffold(PBody pSystem, IOperationCompiler<?> compiler, IPatternMatcherContext context) {
+        Scaffold(PBody pSystem, IOperationCompiler compiler, IPatternMatcherContext context) {
             this.pSystem = pSystem;
             this.context = context;
             query = pSystem.getPattern();

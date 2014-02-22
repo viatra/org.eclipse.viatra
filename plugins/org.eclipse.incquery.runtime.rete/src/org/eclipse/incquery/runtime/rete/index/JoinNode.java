@@ -24,9 +24,9 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
  */
 public class JoinNode extends DualInputNode {
 
-    public JoinNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
+    public JoinNode(ReteContainer reteContainer,
             TupleMask complementerSecondaryMask) {
-        super(reteContainer, primarySlot, secondarySlot, complementerSecondaryMask);
+        super(reteContainer, complementerSecondaryMask);
     }
 
     @Override

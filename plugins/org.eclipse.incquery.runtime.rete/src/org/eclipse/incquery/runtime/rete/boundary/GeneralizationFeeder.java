@@ -11,19 +11,17 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
 public class GeneralizationFeeder extends Feeder {
 
-    public GeneralizationFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary boundary) {
-        super(receiver, context, network, boundary);
-    }
+	public GeneralizationFeeder(Address<? extends Receiver> receiver,
+			InputConnector inputConnector) {
+		super(receiver, inputConnector);
+	}
 
-    @Override
+	@Override
     public void feed() {
         context.enumerateAllGeneralizations(pairCrawler());
     }

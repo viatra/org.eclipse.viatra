@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
@@ -38,7 +39,9 @@ public final class ReteContainer {
     protected LinkedList<Clearable> clearables;
     protected Map<Long, Node> nodesById;
     protected long nextId = 0;
-    protected Library library;
+    
+    protected ConnectionFactory connectionFactory;
+    protected NodeProvisioner nodeProvisioner;
 
     protected Deque<UpdateMessage> internalMessageQueue = new ArrayDeque<UpdateMessage>();
     protected/* volatile */Deque<UpdateMessage> externalMessageQueue = new ArrayDeque<UpdateMessage>();
@@ -56,7 +59,9 @@ public final class ReteContainer {
         this.network = network;
         nodesById = CollectionsFactory.getMap();//new HashMap<Long, Node>();
         clearables = new LinkedList<Clearable>();
-        library = new Library(this);
+        
+        connectionFactory = new ConnectionFactory(this);
+        nodeProvisioner = new NodeProvisioner(this);
 
         if (threaded) {
             terminationCriteria = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
@@ -120,7 +125,7 @@ public final class ReteContainer {
      *            indicates whether the receiver should be synchronised to the current contents of the supplier
      */
     public void connectRemoteSupplier(Address<? extends Supplier> supplier, Receiver receiver, boolean synchronise) {
-        Supplier parent = library.asSupplier(supplier);
+        Supplier parent = nodeProvisioner.asSupplier(supplier);
         if (synchronise)
             connectAndSynchronize(parent, receiver);
         else
@@ -134,7 +139,7 @@ public final class ReteContainer {
      *            indicates whether the current contents of the supplier should be subtracted from the receiver
      */
     public void disconnectRemoteSupplier(Address<? extends Supplier> supplier, Receiver receiver, boolean desynchronise) {
-        Supplier parent = library.asSupplier(supplier);
+        Supplier parent = nodeProvisioner.asSupplier(supplier);
         if (desynchronise)
             disconnectAndDesynchronize(parent, receiver);
         else
@@ -494,11 +499,18 @@ public final class ReteContainer {
     }
 
     /**
-     * Returns an addressed node at this container. @pre: address.container == this, e.g. address MUST be local, no
-     * checks are performed.
+     * Returns an addressed node at this container. 
+     * 
+     * @pre: address.container == this, e.g. address MUST be local
+     * @throws IllegalArgumentException if address is non-local
      */
     @SuppressWarnings("unchecked")
     public <N extends Node> N resolveLocal(Address<N> address) {
+    	if (this != address.getContainer())
+    		throw new IllegalArgumentException(
+    				String.format("Address %s non-local at container %s", 
+    						address, this));
+    	
         N cached = address.getNodeCache();
         if (cached != null)
             return cached;
@@ -552,11 +564,16 @@ public final class ReteContainer {
         }
     }
 
-    /**
-     * @return the library
-     */
-    public Library getLibrary() {
-        return library;
+    public NodeFactory getNodeFactory() {
+		return network.getNodeFactory();
+	}
+
+	public ConnectionFactory getConnectionFactory() {
+		return connectionFactory;
+	}
+
+	public NodeProvisioner getProvisioner() {
+        return nodeProvisioner;
     }
 
     public Network getNetwork() {
@@ -590,5 +607,9 @@ public final class ReteContainer {
     public Collection<Node> getAllNodes() {
         return nodesById.values();
     }
+
+	public InputConnector getInputConnectionFactory() {
+		return network.getInputConnector();
+	}
 
 }

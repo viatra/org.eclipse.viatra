@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -74,16 +75,22 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     /**
      * true if the primary and secondary slots coincide
      */
-    protected final boolean coincidence;
+    protected boolean coincidence;
 
     /**
      * @param reteContainer
      */
-    public DualInputNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
-            TupleMask complementerSecondaryMask) {
+    public DualInputNode(ReteContainer reteContainer, TupleMask complementerSecondaryMask) {
         super(reteContainer);
         this.complementerSecondaryMask = complementerSecondaryMask;
-        this.primarySlot = primarySlot;
+        connectToIndexers(primarySlot, secondarySlot);
+    }
+
+    /**
+     * Should be called only once, when node is initialized
+     */
+	public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
+		this.primarySlot = primarySlot;
         this.secondarySlot = secondarySlot;
         coincidence = primarySlot.equals(secondarySlot);
         final DualInputNode me = this;
@@ -123,7 +130,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
                 }
             });
         }
-    }
+	}
 
     // public Indexer createPrimarySlot(TupleMask mask)
     // {

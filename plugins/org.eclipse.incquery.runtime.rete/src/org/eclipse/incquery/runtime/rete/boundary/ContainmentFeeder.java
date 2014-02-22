@@ -11,16 +11,13 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
 public class ContainmentFeeder extends Feeder {
 
-    public ContainmentFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary boundary) {
-        super(receiver, context, network, boundary);
+    public ContainmentFeeder(Address<? extends Receiver> receiver, InputConnector inputConnector) {
+        super(receiver, inputConnector);
     }
 
     @Override

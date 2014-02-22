@@ -36,34 +36,36 @@ public class TransitiveClosureNode extends SingleInputNode implements Clearable,
     private ITcDataSource<Object> transitiveClosureAlgorithm;
 
     /**
-     * Create a new transitive closure rete node. Initializes the graph data source with the given collection of tuples.
+     * Create a new transitive closure rete node. 
+     * 
+     * Client may optionally call {@link #reinitializeWith(Collection)} before using the node, 
+     * instead of inserting the initial set of tuples one by one.
      * 
      * @param reteContainer
      *            the rete container of the node
-     * @param tuples
-     *            the initial collection of tuples
      */
-    public TransitiveClosureNode(ReteContainer reteContainer,
-            Collection<org.eclipse.incquery.runtime.matchers.tuple.Tuple> tuples) {
-        super(reteContainer);
-        graphDataSource = new Graph<Object>();
-
-        for (org.eclipse.incquery.runtime.matchers.tuple.Tuple t : tuples) {
-            graphDataSource.insertNode(t.get(0));
-            graphDataSource.insertNode(t.get(1));
-            graphDataSource.insertEdge(t.get(0), t.get(1));
-        }
-        transitiveClosureAlgorithm = new IncSCCAlg<Object>(graphDataSource);
-        transitiveClosureAlgorithm.attachObserver(this);
-        reteContainer.registerClearable(this);
-    }
-
     public TransitiveClosureNode(ReteContainer reteContainer) {
         super(reteContainer);
         graphDataSource = new Graph<Object>();
         transitiveClosureAlgorithm = new IncSCCAlg<Object>(graphDataSource);
         transitiveClosureAlgorithm.attachObserver(this);
         reteContainer.registerClearable(this);
+    }
+    
+    /**
+     * Initializes the graph data source with the given collection of tuples.
+     * @param tuples
+     *            the initial collection of tuples
+     */
+    public void reinitializeWith(Collection<org.eclipse.incquery.runtime.matchers.tuple.Tuple> tuples) {
+    	clear();
+    	
+        for (org.eclipse.incquery.runtime.matchers.tuple.Tuple t : tuples) {
+            graphDataSource.insertNode(t.get(0));
+            graphDataSource.insertNode(t.get(1));
+            graphDataSource.insertEdge(t.get(0), t.get(1));
+        }
+        transitiveClosureAlgorithm.attachObserver(this);    	
     }
 
     @Override

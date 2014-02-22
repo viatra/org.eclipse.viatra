@@ -28,11 +28,9 @@ import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
-import org.eclipse.incquery.runtime.rete.network.Library;
 import org.eclipse.incquery.runtime.rete.network.Network;
-import org.eclipse.incquery.runtime.rete.network.Production;
-import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.network.NodeProvisioner;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * @author Gabor Bergmann
@@ -55,7 +53,7 @@ public class ReteEngine {
     // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
     // matcher
 
-    protected IRetePatternBuilder<Address<? extends Receiver>> builder;
+    protected IRetePatternBuilder builder;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
 
@@ -174,8 +172,8 @@ public class ReteEngine {
             constructionWrapper(new Callable<Void>() {
         		@Override
         		public Void call() throws QueryPlannerException {
-        			Address<? extends Production> prodNode;
-        			prodNode = boundary.accessProduction(gtPattern);
+        			RecipeTraceInfo prodNode;
+        			prodNode = boundary.accessProductionTrace(gtPattern);
 
         			RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
         					prodNode);
@@ -208,7 +206,7 @@ public class ReteEngine {
     		@Override
     		public Void call() throws QueryPlannerException {
     			for (PQuery specification : specifications) {
-    			    boundary.accessProduction(specification);
+    			    boundary.accessProductionNode(specification);
     			}
     			return null;
     		}
@@ -304,17 +302,17 @@ public class ReteEngine {
      *            the mask that defines the projection.
      * @return the Indexer.
      */
-    synchronized Indexer accessProjection(Production production, TupleMask mask) {
+    synchronized Indexer accessProjection(RecipeTraceInfo production, TupleMask mask) {
     	ensureInitialized();
-        Library library = reteNet.getHeadContainer().getLibrary();
-        Indexer result = library.peekProjectionIndexer(production, mask);
+        NodeProvisioner nodeProvisioner = reteNet.getHeadContainer().getProvisioner();
+        Indexer result = nodeProvisioner.peekProjectionIndexer(production, mask);
         if (result == null) {
             context.modelReadLock();
             try {
                 if (parallelExecutionEnabled)
                     reteNet.getStructuralChangeLock().lock();
                 try {
-                    result = library.accessProjectionIndexerOnetime(production, mask);
+                    result = nodeProvisioner.accessProjectionIndexerOnetime(production, mask);
                 } finally {
                     if (parallelExecutionEnabled)
                         reteNet.getStructuralChangeLock().unlock();
@@ -404,7 +402,7 @@ public class ReteEngine {
      *            the pattern matcher builder to set
      */
     public void setBuilder(
-            IRetePatternBuilder<Address<? extends Receiver>> builder) {
+            IRetePatternBuilder builder) {
     	ensureInitialized();
         this.builder = builder;
     }
@@ -449,7 +447,7 @@ public class ReteEngine {
         return context;
     }
 
-    public IRetePatternBuilder<Address<? extends Receiver>> getBuilder() {
+    public IRetePatternBuilder getBuilder() {
     	ensureInitialized();
        return builder;
     }

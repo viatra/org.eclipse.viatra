@@ -26,20 +26,15 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
-import org.eclipse.incquery.runtime.rete.index.DualInputNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.network.Library;
 import org.eclipse.incquery.runtime.rete.network.Network;
+import org.eclipse.incquery.runtime.rete.network.NodeProvisioner;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
-import org.eclipse.incquery.runtime.rete.single.EqualityFilterNode;
-import org.eclipse.incquery.runtime.rete.single.InequalityFilterNode;
-import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
-import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -49,9 +44,9 @@ import org.eclipse.incquery.runtime.rete.util.Options;
  * 
  */
 public class ReteContainerCompiler
-		implements IOperationCompiler<Address<? extends Receiver>>, Cloneable {
+		implements IOperationCompiler, Cloneable {
 
-    protected Library library;
+    protected NodeProvisioner nodeProvisioner;
     protected ReteContainer targetContainer;
     protected Network reteNet;
     protected ReteBoundary boundary;
@@ -82,7 +77,7 @@ public class ReteContainerCompiler
         this.reteNet = engine.getReteNet();
         this.boundary = engine.getBoundary();
         this.targetContainer = targetContainer;
-        this.library = targetContainer.getLibrary();
+        this.nodeProvisioner = targetContainer.getProvisioner();
         this.headAttached = false;
     }
 
@@ -96,7 +91,7 @@ public class ReteContainerCompiler
         this.reteNet = engine.getReteNet();
         this.boundary = engine.getBoundary();
         this.targetContainer = reteNet.getHeadContainer();
-        this.library = targetContainer.getLibrary();
+        this.nodeProvisioner = targetContainer.getProvisioner();
         this.headAttached = true;
     }
 
@@ -104,7 +99,7 @@ public class ReteContainerCompiler
         this.reteNet = engine.getReteNet();
         this.boundary = engine.getBoundary();
         this.targetContainer = headAttached ? reteNet.getHeadContainer() : reteNet.getNextContainer();
-        this.library = targetContainer.getLibrary();
+        this.nodeProvisioner = targetContainer.getProvisioner();
     }
     
     public void patternFinished(PQuery pattern, IPatternMatcherContext context, Address<? extends Receiver> collector) {
@@ -113,11 +108,11 @@ public class ReteContainerCompiler
     };
 
     public SubPlan buildTrimmer(SubPlan parentPlan, TupleMask trimMask, boolean enforceUniqueness) {
-        Address<TrimmerNode> trimmer = library.accessTrimmerNode(getHandle(parentPlan), trimMask);
+        Address<? extends Supplier> trimmer = nodeProvisioner.accessTrimmerNode(getHandle(parentPlan), trimMask);
         final Tuple trimmedVariables = trimMask.transform(parentPlan.getVariablesTuple());
         Address<? extends Supplier> resultNode;
         if (enforceUniqueness) {
-        	resultNode = library.accessUniquenessEnforcerNode(trimmer, trimmedVariables.getSize());
+        	resultNode = nodeProvisioner.accessUniquenessEnforcerNode(trimmer, trimmedVariables.getSize());
         } else {
         	resultNode = trimmer;
         }
@@ -130,24 +125,24 @@ public class ReteContainerCompiler
     }
 
     public SubPlan buildStartingPlan(Object[] constantValues, Object[] constantNames) {
-        return trace(new SubPlan(new FlatTuple(constantNames)), library.accessConstantNode(boundary
+        return trace(new SubPlan(new FlatTuple(constantNames)), nodeProvisioner.accessConstantNode(boundary
                 .wrapTuple(new FlatTuple(constantValues))));
     }
 
     public SubPlan buildEqualityChecker(SubPlan parentPlan, int[] indices) {
-        Address<EqualityFilterNode> checker = library.accessEqualityFilterNode(getHandle(parentPlan), indices);
+        Address<? extends Supplier> checker = nodeProvisioner.accessEqualityFilterNode(getHandle(parentPlan), indices);
         return trace(new SubPlan(parentPlan), checker);
     }
 
     public SubPlan buildInjectivityChecker(SubPlan parentPlan, int subject, int[] inequalIndices) {
-        Address<InequalityFilterNode> checker = library.accessInequalityFilterNode(getHandle(parentPlan), subject,
+        Address<? extends Supplier> checker = nodeProvisioner.accessInequalityFilterNode(getHandle(parentPlan), subject,
                 new TupleMask(inequalIndices, parentPlan.getVariablesTuple().getSize()));
         return trace(new SubPlan(parentPlan), checker);
     }
 
     @Override
     public SubPlan buildTransitiveClosure(SubPlan parentPlan) {
-        Address<TransitiveClosureNode> checker = library.accessTransitiveClosureNode(getHandle(parentPlan));
+        Address<? extends Supplier> checker = nodeProvisioner.accessTransitiveClosureNode(getHandle(parentPlan));
         return trace(new SubPlan(parentPlan), checker);
     }
 
@@ -196,15 +191,15 @@ public class ReteContainerCompiler
     public SubPlan buildBetaNode(SubPlan primaryPlan,
             SubPlan sidePlan, TupleMask primaryMask, TupleMask sideMask,
             TupleMask complementer, boolean negative) {
-        Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(getHandle(primaryPlan),
+        Address<? extends IterableIndexer> primarySlot = nodeProvisioner.accessProjectionIndexer(getHandle(primaryPlan),
                 primaryMask);
-        Address<? extends Indexer> sideSlot = library.accessProjectionIndexer(getHandle(sidePlan), sideMask);
+        Address<? extends Indexer> sideSlot = nodeProvisioner.accessProjectionIndexer(getHandle(sidePlan), sideMask);
 
         if (negative) {
-            Address<? extends DualInputNode> checker = library.accessExistenceNode(primarySlot, sideSlot, true);
+            Address<? extends Supplier> checker = nodeProvisioner.accessExistenceNode(primarySlot, sideSlot, true);
             return trace(new SubPlan(primaryPlan), checker);
         } else {
-            Address<? extends DualInputNode> checker = library.accessJoinNode(primarySlot, sideSlot, complementer);
+            Address<? extends Supplier> checker = nodeProvisioner.accessJoinNode(primarySlot, sideSlot, complementer);
             Tuple newCalibrationPattern = complementer.combine(primaryPlan.getVariablesTuple(),
                     sidePlan.getVariablesTuple(), Options.enableInheritance, true);
             return trace(new SubPlan(primaryPlan, sidePlan, newCalibrationPattern), checker);
@@ -214,33 +209,15 @@ public class ReteContainerCompiler
     public SubPlan buildCounterBetaNode(SubPlan primaryPlan,
             SubPlan sidePlan, TupleMask primaryMask, TupleMask originalSideMask,
             TupleMask complementer, Object aggregateResultCalibrationElement) {
-        Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(getHandle(primaryPlan),
+        Address<? extends IterableIndexer> primarySlot = nodeProvisioner.accessProjectionIndexer(getHandle(primaryPlan),
                 primaryMask);
-        Address<? extends Indexer> sideSlot = library.accessCountOuterIndexer(getHandle(sidePlan), originalSideMask);
+        Address<? extends Indexer> sideSlot = nodeProvisioner.accessCountOuterIndexer(getHandle(sidePlan), originalSideMask);
 
-        Address<? extends DualInputNode> checker = library.accessJoinNode(primarySlot, sideSlot,
+        Address<? extends Supplier> checker = nodeProvisioner.accessJoinNode(primarySlot, sideSlot,
                 TupleMask.selectSingle(originalSideMask.indices.length, originalSideMask.indices.length + 1));
 
         Object[] newCalibrationElement = { aggregateResultCalibrationElement };
         Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryPlan.getVariablesTuple(), newCalibrationElement);
-
-        SubPlan result = new SubPlan(primaryPlan, newCalibrationPattern);
-
-        return trace(result, checker);
-    }
-
-    public SubPlan buildCountCheckBetaNode(SubPlan primaryPlan,
-            SubPlan sidePlan, TupleMask primaryMask, TupleMask originalSideMask,
-            int resultPositionInSignature) {
-        Address<? extends IterableIndexer> primarySlot = library.accessProjectionIndexer(getHandle(primaryPlan),
-                primaryMask);
-        Address<? extends Indexer> sideSlot = library.accessCountOuterIdentityIndexer(getHandle(sidePlan),
-                originalSideMask, resultPositionInSignature);
-
-        Address<? extends DualInputNode> checker = library.accessJoinNode(primarySlot, sideSlot,
-                TupleMask.empty(originalSideMask.indices.length + 1));
-
-        Tuple newCalibrationPattern = primaryPlan.getVariablesTuple();
 
         SubPlan result = new SubPlan(primaryPlan, newCalibrationPattern);
 

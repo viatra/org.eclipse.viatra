@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
+import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
 import org.eclipse.incquery.runtime.rete.tuple.TupleValueProvider;
@@ -34,16 +34,16 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 	
 
 	
-    protected ReteEngine engine;
+    protected IPatternMatcherRuntimeContext context;
     protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
     private Map<String, Integer> parameterPositions;
     
     
-    public AbstractEvaluatorNode(ReteContainer reteContainer, ReteEngine engine, IExpressionEvaluator evaluator,
+    public AbstractEvaluatorNode(ReteContainer reteContainer, IPatternMatcherRuntimeContext context, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
 		super(reteContainer);
-		this.engine = engine;
+		this.context = context;
 		this.evaluator = evaluator;
         this.parameterPositions = parameterPositions;
 		this.sourceTupleWidth = sourceTupleWidth;
@@ -70,12 +70,16 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
             TupleValueProvider tupleParameters = new TupleValueProvider(ps, parameterPositions);
             result = evaluator.evaluateExpression(tupleParameters);
         } catch (Exception e) {
-            engine.getContext()
-                    .logWarning(
-                            String.format(
-                                    "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
-                                    logNodeName(), getTraceInfoPatternsEnumerated(), prettyPrintTuple(ps), e.getMessage(), e
-                                            .getClass().getSimpleName(), this), e);
+            context.logWarning(
+            		String.format(
+            				"The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
+            				logNodeName(), 
+            				getTraceInfoPatternsEnumerated(), 
+            				prettyPrintTuple(ps), 
+            				e.getMessage(), e.getClass().getSimpleName(), 
+            				this
+            		), 
+            e);
             // engine.logEvaluatorException(e);
 
             result = errorResult();

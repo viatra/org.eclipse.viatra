@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.network;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.rete.network.Node.TraceInfo.PatternTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.PatternTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * Base implementation for a Rete node.
@@ -28,7 +29,7 @@ public abstract class BaseNode implements Node {
     protected ReteContainer reteContainer;
     protected long nodeId;
     protected Object tag;
-    protected List<TraceInfo> traceInfos; 
+    protected Set<TraceInfo> traceInfos; 
 
     /**
      * @param reteContainer
@@ -38,7 +39,7 @@ public abstract class BaseNode implements Node {
         super();
         this.reteContainer = reteContainer;
         this.nodeId = reteContainer.registerNode(this);
-        this.traceInfos = new ArrayList<Node.TraceInfo>();
+        this.traceInfos = new HashSet<TraceInfo>();
     }
 
     @Override
@@ -77,13 +78,14 @@ public abstract class BaseNode implements Node {
     }
         
     @Override
-	public List<TraceInfo> getTraceInfos() {
-		return Collections.unmodifiableList(traceInfos);
+	public Set<TraceInfo> getTraceInfos() {
+		return Collections.unmodifiableSet(traceInfos);
 	}
     
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
     	traceInfos.add(traceInfo);
+    	traceInfo.assignNode(this);
     }
     
     @Override

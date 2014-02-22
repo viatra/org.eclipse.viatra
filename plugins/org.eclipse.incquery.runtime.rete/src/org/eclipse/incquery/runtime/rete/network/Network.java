@@ -15,14 +15,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -44,7 +49,35 @@ public class Network {
     protected Lock structuralChangeLock = null; // grab if the network structure is to
     // be changed
 
+    // Knowledge of the outside world
     protected IPatternMatcherRuntimeContext context;
+    protected NodeFactory nodeFactory;
+    protected InputConnector inputConnector;
+    
+    // Node and recipe administration
+    // incl. addresses for existing nodes by recipe (where available)
+    // Maintained by NodeProvisioner of each container
+    Map<ReteNodeRecipe, Address<? extends Node>> nodesByRecipe = CollectionsFactory.getMap();
+    /** if EcoreUtil.equals(recipe1, recipe2), only one of them will be included here */
+    Map<EClass, Collection<ReteNodeRecipe>> primaryRecipesByClass = CollectionsFactory.getMap();
+    Set<RecipeTraceInfo> recipeTraces = CollectionsFactory.getSet();
+    /**
+     * @throws IllegalStateException if no node has been constructed for the recipe
+     */
+    public synchronized Address<? extends Node> getExistingNodeByRecipe(ReteNodeRecipe recipe) {
+    	final Address<? extends Node> node = nodesByRecipe.get(recipe);
+    	if (node == null) 
+    		throw new IllegalStateException(String.format("Rete node for recipe %s not constructed yet.", recipe));
+    	return node;
+    }
+    /**
+     * @return null if no node has been constructed for the recipe
+     */
+    public synchronized Address<? extends Node> getNodeByRecipeIfExists(ReteNodeRecipe recipe) {
+    	final Address<? extends Node> node = nodesByRecipe.get(recipe);
+    	return node;
+    }
+    
 
     /**
      * @param threads
@@ -55,6 +88,8 @@ public class Network {
         super();
         this.threads = threads;
         this.context = context;
+        this.nodeFactory = new NodeFactory(context);
+        this.inputConnector = new InputConnector(this);
 
         containers = new ArrayList<ReteContainer>();
         firstContainer = (threads > 1) ? Options.firstFreeContainer : 0; // NOPMD
@@ -350,5 +385,15 @@ public class Network {
     public IPatternMatcherRuntimeContext getContext() {
         return context;
     }
+
+	public NodeFactory getNodeFactory() {
+		return nodeFactory;
+	}
+	/**
+	 * @return
+	 */
+	public InputConnector getInputConnector() {
+		return null;
+	}
 
 }

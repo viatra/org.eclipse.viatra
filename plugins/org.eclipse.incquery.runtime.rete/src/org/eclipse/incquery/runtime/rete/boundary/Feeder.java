@@ -27,15 +27,14 @@ public abstract class Feeder {
     protected Address<? extends Receiver> receiver;
     protected IPatternMatcherRuntimeContext context;
     protected Network network;
-    protected ReteBoundary boundary;
+    protected InputConnector inputConnector;
 
-    public Feeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context, Network network,
-            ReteBoundary boundary) {
+    public Feeder(Address<? extends Receiver> receiver, InputConnector inputConnector) {
         super();
         this.receiver = receiver;
-        this.context = context;
-        this.network = network;
-        this.boundary = boundary;
+        this.inputConnector = inputConnector;
+        this.network = inputConnector.getNetwork();
+        this.context = inputConnector.getNetwork().getContext();
     }
 
     public abstract void feed();
@@ -47,7 +46,7 @@ public abstract class Feeder {
     protected IPatternMatcherRuntimeContext.ModelElementCrawler unaryCrawler() {
         return new IPatternMatcherRuntimeContext.ModelElementCrawler() {
             public void crawl(Object element) {
-                emit(new FlatTuple(boundary.wrapElement(element)));
+                emit(new FlatTuple(inputConnector.wrapElement(element)));
             }
         };
     }
@@ -55,7 +54,7 @@ public abstract class Feeder {
     protected IPatternMatcherRuntimeContext.ModelElementPairCrawler pairCrawler() {
         return new IPatternMatcherRuntimeContext.ModelElementPairCrawler() {
             public void crawl(Object first, Object second) {
-                emit(new FlatTuple(boundary.wrapElement(first), boundary.wrapElement(second)));
+                emit(new FlatTuple(inputConnector.wrapElement(first), inputConnector.wrapElement(second)));
             }
         };
     }
@@ -66,7 +65,7 @@ public abstract class Feeder {
                 Object relation = element;
                 Object from = context.ternaryEdgeSource(relation);
                 Object to = context.ternaryEdgeTarget(relation);
-                emit(new FlatTuple(boundary.wrapElement(relation), boundary.wrapElement(from), boundary.wrapElement(to)));
+                emit(new FlatTuple(inputConnector.wrapElement(relation), inputConnector.wrapElement(from), inputConnector.wrapElement(to)));
             }
         };
     }
