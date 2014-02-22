@@ -10,7 +10,10 @@ import org.eclipse.emf.common.util.EMap;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Abstract base class for Rete nodes that evaluate an expression.
+ * type RuntimeExpressionEvaluator wraps org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
+ * class RuntimeExpressionDefinition extends ExpressionDefinition {
+ * 	RuntimeExpressionEvaluator evaluator
+ * }
  * <!-- end-model-doc -->
  *
  * <p>
@@ -28,29 +31,29 @@ import org.eclipse.emf.common.util.EMap;
 public interface ExpressionEnforcerRecipe extends AlphaRecipe
 {
   /**
-   * Returns the value of the '<em><b>Expression</b></em>' attribute.
+   * Returns the value of the '<em><b>Expression</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * <!-- begin-model-doc -->
    * Provides traceability to expression representation.
    * <!-- end-model-doc -->
-   * @return the value of the '<em>Expression</em>' attribute.
-   * @see #setExpression(Object)
+   * @return the value of the '<em>Expression</em>' containment reference.
+   * @see #setExpression(ExpressionDefinition)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getExpressionEnforcerRecipe_Expression()
-   * @model unique="false"
+   * @model containment="true"
    * @generated
    */
-  Object getExpression();
+  ExpressionDefinition getExpression();
 
   /**
-   * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe#getExpression <em>Expression</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe#getExpression <em>Expression</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Expression</em>' attribute.
+   * @param value the new value of the '<em>Expression</em>' containment reference.
    * @see #getExpression()
    * @generated
    */
-  void setExpression(Object value);
+  void setExpression(ExpressionDefinition value);
 
   /**
    * Returns the value of the '<em><b>Mapped Indices</b></em>' map.

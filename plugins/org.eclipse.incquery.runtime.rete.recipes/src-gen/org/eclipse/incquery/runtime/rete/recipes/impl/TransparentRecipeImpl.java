@@ -4,26 +4,26 @@ package org.eclipse.incquery.runtime.rete.recipes.impl;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.incquery.runtime.rete.recipes.CountAggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
+import org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Count Aggregator Recipe</b></em>'.
+ * An implementation of the model object '<em><b>Transparent Recipe</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class CountAggregatorRecipeImpl extends AggregatorRecipeImpl implements CountAggregatorRecipe
+public class TransparentRecipeImpl extends FilterRecipeImpl implements TransparentRecipe
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected CountAggregatorRecipeImpl()
+  protected TransparentRecipeImpl()
   {
     super();
   }
@@ -36,7 +36,7 @@ public class CountAggregatorRecipeImpl extends AggregatorRecipeImpl implements C
   @Override
   protected EClass eStaticClass()
   {
-    return RecipesPackage.Literals.COUNT_AGGREGATOR_RECIPE;
+    return RecipesPackage.Literals.TRANSPARENT_RECIPE;
   }
 
-} //CountAggregatorRecipeImpl
+} //TransparentRecipeImpl

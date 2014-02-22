@@ -15,45 +15,41 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
-import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 
-import org.eclipse.xtext.xbase.lib.Conversions;
-
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Join Recipe</b></em>'.
+ * An implementation of the model object '<em><b>Indexer Recipe</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.JoinRecipeImpl#getRightParentComplementaryMask <em>Right Parent Complementary Mask</em>}</li>
+ *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.IndexerRecipeImpl#getMask <em>Mask</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
+public abstract class IndexerRecipeImpl extends SingleParentNodeRecipeImpl implements IndexerRecipe
 {
   /**
-   * The cached value of the '{@link #getRightParentComplementaryMask() <em>Right Parent Complementary Mask</em>}' containment reference.
+   * The cached value of the '{@link #getMask() <em>Mask</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getRightParentComplementaryMask()
+   * @see #getMask()
    * @generated
    * @ordered
    */
-  protected Mask rightParentComplementaryMask;
+  protected Mask mask;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected JoinRecipeImpl()
+  protected IndexerRecipeImpl()
   {
     super();
   }
@@ -66,7 +62,7 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   @Override
   protected EClass eStaticClass()
   {
-    return RecipesPackage.Literals.JOIN_RECIPE;
+    return RecipesPackage.Literals.INDEXER_RECIPE;
   }
 
   /**
@@ -74,9 +70,9 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
    * <!-- end-user-doc -->
    * @generated
    */
-  public Mask getRightParentComplementaryMask()
+  public Mask getMask()
   {
-    return rightParentComplementaryMask;
+    return mask;
   }
 
   /**
@@ -84,13 +80,13 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetRightParentComplementaryMask(Mask newRightParentComplementaryMask, NotificationChain msgs)
+  public NotificationChain basicSetMask(Mask newMask, NotificationChain msgs)
   {
-    Mask oldRightParentComplementaryMask = rightParentComplementaryMask;
-    rightParentComplementaryMask = newRightParentComplementaryMask;
+    Mask oldMask = mask;
+    mask = newMask;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK, oldRightParentComplementaryMask, newRightParentComplementaryMask);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RecipesPackage.INDEXER_RECIPE__MASK, oldMask, newMask);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -101,20 +97,20 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setRightParentComplementaryMask(Mask newRightParentComplementaryMask)
+  public void setMask(Mask newMask)
   {
-    if (newRightParentComplementaryMask != rightParentComplementaryMask)
+    if (newMask != mask)
     {
       NotificationChain msgs = null;
-      if (rightParentComplementaryMask != null)
-        msgs = ((InternalEObject)rightParentComplementaryMask).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK, null, msgs);
-      if (newRightParentComplementaryMask != null)
-        msgs = ((InternalEObject)newRightParentComplementaryMask).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK, null, msgs);
-      msgs = basicSetRightParentComplementaryMask(newRightParentComplementaryMask, msgs);
+      if (mask != null)
+        msgs = ((InternalEObject)mask).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.INDEXER_RECIPE__MASK, null, msgs);
+      if (newMask != null)
+        msgs = ((InternalEObject)newMask).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.INDEXER_RECIPE__MASK, null, msgs);
+      msgs = basicSetMask(newMask, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK, newRightParentComplementaryMask, newRightParentComplementaryMask));
+      eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.INDEXER_RECIPE__MASK, newMask, newMask));
   }
 
   /**
@@ -124,19 +120,9 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
    */
   public int getArity()
   {
-    JoinRecipe _this = this;
-    ProjectionIndexerRecipe _leftParent = _this.getLeftParent();
-    int _arity = _leftParent.getArity();
-    JoinRecipe _this_1 = this;
-    IndexerRecipe _rightParent = _this_1.getRightParent();
-    int _arity_1 = _rightParent.getArity();
-    int _plus = (_arity + _arity_1);
-    JoinRecipe _this_2 = this;
-    IndexerRecipe _rightParent_1 = _this_2.getRightParent();
-    Mask _mask = _rightParent_1.getMask();
-    EList<Integer> _sourceIndices = _mask.getSourceIndices();
-    int _length = ((Object[])Conversions.unwrapArray(_sourceIndices, Object.class)).length;
-    return (_plus - _length);
+    IndexerRecipe _this = this;
+    Mask _mask = _this.getMask();
+    return _mask.getSourceArity();
   }
 
   /**
@@ -149,8 +135,8 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (featureID)
     {
-      case RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK:
-        return basicSetRightParentComplementaryMask(null, msgs);
+      case RecipesPackage.INDEXER_RECIPE__MASK:
+        return basicSetMask(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -165,8 +151,8 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (featureID)
     {
-      case RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK:
-        return getRightParentComplementaryMask();
+      case RecipesPackage.INDEXER_RECIPE__MASK:
+        return getMask();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -181,8 +167,8 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (featureID)
     {
-      case RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK:
-        setRightParentComplementaryMask((Mask)newValue);
+      case RecipesPackage.INDEXER_RECIPE__MASK:
+        setMask((Mask)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -198,8 +184,8 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (featureID)
     {
-      case RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK:
-        setRightParentComplementaryMask((Mask)null);
+      case RecipesPackage.INDEXER_RECIPE__MASK:
+        setMask((Mask)null);
         return;
     }
     super.eUnset(featureID);
@@ -215,8 +201,8 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (featureID)
     {
-      case RecipesPackage.JOIN_RECIPE__RIGHT_PARENT_COMPLEMENTARY_MASK:
-        return rightParentComplementaryMask != null;
+      case RecipesPackage.INDEXER_RECIPE__MASK:
+        return mask != null;
     }
     return super.eIsSet(featureID);
   }
@@ -233,7 +219,7 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
     {
       switch (baseOperationID)
       {
-        case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY: return RecipesPackage.JOIN_RECIPE___GET_ARITY;
+        case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY: return RecipesPackage.INDEXER_RECIPE___GET_ARITY;
         default: return super.eDerivedOperationID(baseOperationID, baseClass);
       }
     }
@@ -250,10 +236,10 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
   {
     switch (operationID)
     {
-      case RecipesPackage.JOIN_RECIPE___GET_ARITY:
+      case RecipesPackage.INDEXER_RECIPE___GET_ARITY:
         return getArity();
     }
     return super.eInvoke(operationID, arguments);
   }
 
-} //JoinRecipeImpl
+} //IndexerRecipeImpl

@@ -20,4 +20,13 @@ package org.eclipse.incquery.runtime.rete.recipes;
  */
 public interface CheckRecipe extends ExpressionEnforcerRecipe
 {
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @model kind="operation" unique="false"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.CheckRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _parent = _this.getParent();\nreturn _parent.getArity();'"
+   * @generated
+   */
+  int getArity();
+
 } // CheckRecipe

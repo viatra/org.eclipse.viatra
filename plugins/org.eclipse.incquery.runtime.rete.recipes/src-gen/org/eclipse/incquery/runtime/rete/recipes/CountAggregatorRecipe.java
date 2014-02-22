@@ -9,7 +9,7 @@ package org.eclipse.incquery.runtime.rete.recipes;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * The count aggregator node represents a "cound find" operation.
+ * The count aggregator node represents a "count find" operation.
  * <!-- end-model-doc -->
  *
  *

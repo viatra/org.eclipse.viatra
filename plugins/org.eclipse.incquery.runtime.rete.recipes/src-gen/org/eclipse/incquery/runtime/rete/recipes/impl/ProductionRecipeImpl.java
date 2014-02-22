@@ -3,10 +3,18 @@
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
@@ -18,6 +26,7 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.ProductionRecipeImpl#getMappedIndices <em>Mapped Indices</em>}</li>
  *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.ProductionRecipeImpl#getPattern <em>Pattern</em>}</li>
  * </ul>
  * </p>
@@ -26,6 +35,16 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
  */
 public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements ProductionRecipe
 {
+  /**
+   * The cached value of the '{@link #getMappedIndices() <em>Mapped Indices</em>}' map.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMappedIndices()
+   * @generated
+   * @ordered
+   */
+  protected EMap<String, Integer> mappedIndices;
+
   /**
    * The default value of the '{@link #getPattern() <em>Pattern</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -72,6 +91,20 @@ public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements P
    * <!-- end-user-doc -->
    * @generated
    */
+  public EMap<String, Integer> getMappedIndices()
+  {
+    if (mappedIndices == null)
+    {
+      mappedIndices = new EcoreEMap<String,Integer>(RecipesPackage.Literals.STRING_INDEX_MAP_ENTRY, StringIndexMapEntryImpl.class, this, RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES);
+    }
+    return mappedIndices;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Object getPattern()
   {
     return pattern;
@@ -96,10 +129,29 @@ public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements P
    * @generated
    */
   @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES:
+        return ((InternalEList<?>)getMappedIndices()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
     {
+      case RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES:
+        if (coreType) return getMappedIndices();
+        else return getMappedIndices().map();
       case RecipesPackage.PRODUCTION_RECIPE__PATTERN:
         return getPattern();
     }
@@ -116,6 +168,9 @@ public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements P
   {
     switch (featureID)
     {
+      case RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES:
+        ((EStructuralFeature.Setting)getMappedIndices()).set(newValue);
+        return;
       case RecipesPackage.PRODUCTION_RECIPE__PATTERN:
         setPattern(newValue);
         return;
@@ -133,6 +188,9 @@ public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements P
   {
     switch (featureID)
     {
+      case RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES:
+        getMappedIndices().clear();
+        return;
       case RecipesPackage.PRODUCTION_RECIPE__PATTERN:
         setPattern(PATTERN_EDEFAULT);
         return;
@@ -150,6 +208,8 @@ public class ProductionRecipeImpl extends MultiParentNodeRecipeImpl implements P
   {
     switch (featureID)
     {
+      case RecipesPackage.PRODUCTION_RECIPE__MAPPED_INDICES:
+        return mappedIndices != null && !mappedIndices.isEmpty();
       case RecipesPackage.PRODUCTION_RECIPE__PATTERN:
         return PATTERN_EDEFAULT == null ? pattern != null : !PATTERN_EDEFAULT.equals(pattern);
     }

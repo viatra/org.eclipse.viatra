@@ -2,6 +2,8 @@
  */
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.Collection;
 
 import org.eclipse.emf.common.util.EList;
@@ -79,6 +81,19 @@ public abstract class MultiParentNodeRecipeImpl extends ReteNodeRecipeImpl imple
    * <!-- end-user-doc -->
    * @generated
    */
+  public int getArity()
+  {
+    MultiParentNodeRecipe _this = this;
+    EList<ReteNodeRecipe> _parents = _this.getParents();
+    ReteNodeRecipe _get = _parents.get(0);
+    return _get.getArity();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -140,6 +155,41 @@ public abstract class MultiParentNodeRecipeImpl extends ReteNodeRecipeImpl imple
         return parents != null && !parents.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedOperationID(int baseOperationID, Class<?> baseClass)
+  {
+    if (baseClass == ReteNodeRecipe.class)
+    {
+      switch (baseOperationID)
+      {
+        case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY: return RecipesPackage.MULTI_PARENT_NODE_RECIPE___GET_ARITY;
+        default: return super.eDerivedOperationID(baseOperationID, baseClass);
+      }
+    }
+    return super.eDerivedOperationID(baseOperationID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException
+  {
+    switch (operationID)
+    {
+      case RecipesPackage.MULTI_PARENT_NODE_RECIPE___GET_ARITY:
+        return getArity();
+    }
+    return super.eInvoke(operationID, arguments);
   }
 
 } //MultiParentNodeRecipeImpl

@@ -35,12 +35,12 @@ public interface BetaRecipe extends ReteNodeRecipe
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Left Parent</em>' containment reference.
-   * @see #setLeftParent(ProjectionIndexer)
+   * @see #setLeftParent(ProjectionIndexerRecipe)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getBetaRecipe_LeftParent()
    * @model containment="true"
    * @generated
    */
-  ProjectionIndexer getLeftParent();
+  ProjectionIndexerRecipe getLeftParent();
 
   /**
    * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.BetaRecipe#getLeftParent <em>Left Parent</em>}' containment reference.
@@ -50,23 +50,22 @@ public interface BetaRecipe extends ReteNodeRecipe
    * @see #getLeftParent()
    * @generated
    */
-  void setLeftParent(ProjectionIndexer value);
+  void setLeftParent(ProjectionIndexerRecipe value);
 
   /**
    * Returns the value of the '<em><b>Right Parent</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Right Parent</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   *  can be an AggregatorIndexer
+   * <!-- end-model-doc -->
    * @return the value of the '<em>Right Parent</em>' containment reference.
-   * @see #setRightParent(ProjectionIndexer)
+   * @see #setRightParent(IndexerRecipe)
    * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getBetaRecipe_RightParent()
    * @model containment="true"
    * @generated
    */
-  ProjectionIndexer getRightParent();
+  IndexerRecipe getRightParent();
 
   /**
    * Sets the value of the '{@link org.eclipse.incquery.runtime.rete.recipes.BetaRecipe#getRightParent <em>Right Parent</em>}' containment reference.
@@ -76,6 +75,6 @@ public interface BetaRecipe extends ReteNodeRecipe
    * @see #getRightParent()
    * @generated
    */
-  void setRightParent(ProjectionIndexer value);
+  void setRightParent(IndexerRecipe value);
 
 } // BetaRecipe

@@ -112,9 +112,19 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
         return createProductionRecipeAdapter();
       }
       @Override
-      public Adapter caseProjectionIndexer(ProjectionIndexer object)
+      public Adapter caseIndexerRecipe(IndexerRecipe object)
       {
-        return createProjectionIndexerAdapter();
+        return createIndexerRecipeAdapter();
+      }
+      @Override
+      public Adapter caseProjectionIndexerRecipe(ProjectionIndexerRecipe object)
+      {
+        return createProjectionIndexerRecipeAdapter();
+      }
+      @Override
+      public Adapter caseAggregatorIndexerRecipe(AggregatorIndexerRecipe object)
+      {
+        return createAggregatorIndexerRecipeAdapter();
       }
       @Override
       public Adapter caseBetaRecipe(BetaRecipe object)
@@ -135,6 +145,11 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
       public Adapter caseInputRecipe(InputRecipe object)
       {
         return createInputRecipeAdapter();
+      }
+      @Override
+      public Adapter caseTypeInputRecipe(TypeInputRecipe object)
+      {
+        return createTypeInputRecipeAdapter();
       }
       @Override
       public Adapter caseUnaryInputRecipe(UnaryInputRecipe object)
@@ -172,9 +187,19 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
         return createEqualityFilterRecipeAdapter();
       }
       @Override
+      public Adapter caseTransparentRecipe(TransparentRecipe object)
+      {
+        return createTransparentRecipeAdapter();
+      }
+      @Override
       public Adapter caseTrimmerRecipe(TrimmerRecipe object)
       {
         return createTrimmerRecipeAdapter();
+      }
+      @Override
+      public Adapter caseExpressionDefinition(ExpressionDefinition object)
+      {
+        return createExpressionDefinitionAdapter();
       }
       @Override
       public Adapter caseExpressionEnforcerRecipe(ExpressionEnforcerRecipe object)
@@ -220,11 +245,6 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
       public Adapter caseAntiJoinRecipe(AntiJoinRecipe object)
       {
         return createAntiJoinRecipeAdapter();
-      }
-      @Override
-      public Adapter caseAggregatorJoinRecipe(AggregatorJoinRecipe object)
-      {
-        return createAggregatorJoinRecipeAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -354,16 +374,46 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexer <em>Projection Indexer</em>}'.
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe <em>Indexer Recipe</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexer
+   * @see org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe
    * @generated
    */
-  public Adapter createProjectionIndexerAdapter()
+  public Adapter createIndexerRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe <em>Projection Indexer Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe
+   * @generated
+   */
+  public Adapter createProjectionIndexerRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.AggregatorIndexerRecipe <em>Aggregator Indexer Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.AggregatorIndexerRecipe
+   * @generated
+   */
+  public Adapter createAggregatorIndexerRecipeAdapter()
   {
     return null;
   }
@@ -424,6 +474,21 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createInputRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe <em>Type Input Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe
+   * @generated
+   */
+  public Adapter createTypeInputRecipeAdapter()
   {
     return null;
   }
@@ -534,6 +599,21 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe <em>Transparent Recipe</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe
+   * @generated
+   */
+  public Adapter createTransparentRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe <em>Trimmer Recipe</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -544,6 +624,21 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createTrimmerRecipeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition <em>Expression Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition
+   * @generated
+   */
+  public Adapter createExpressionDefinitionAdapter()
   {
     return null;
   }
@@ -679,21 +774,6 @@ public class RecipesAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAntiJoinRecipeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.incquery.runtime.rete.recipes.AggregatorJoinRecipe <em>Aggregator Join Recipe</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.incquery.runtime.rete.recipes.AggregatorJoinRecipe
-   * @generated
-   */
-  public Adapter createAggregatorJoinRecipeAdapter()
   {
     return null;
   }

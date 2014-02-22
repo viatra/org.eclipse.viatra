@@ -131,12 +131,32 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case RecipesPackage.PROJECTION_INDEXER:
+      case RecipesPackage.INDEXER_RECIPE:
       {
-        ProjectionIndexer projectionIndexer = (ProjectionIndexer)theEObject;
-        T result = caseProjectionIndexer(projectionIndexer);
-        if (result == null) result = caseSingleParentNodeRecipe(projectionIndexer);
-        if (result == null) result = caseReteNodeRecipe(projectionIndexer);
+        IndexerRecipe indexerRecipe = (IndexerRecipe)theEObject;
+        T result = caseIndexerRecipe(indexerRecipe);
+        if (result == null) result = caseSingleParentNodeRecipe(indexerRecipe);
+        if (result == null) result = caseReteNodeRecipe(indexerRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.PROJECTION_INDEXER_RECIPE:
+      {
+        ProjectionIndexerRecipe projectionIndexerRecipe = (ProjectionIndexerRecipe)theEObject;
+        T result = caseProjectionIndexerRecipe(projectionIndexerRecipe);
+        if (result == null) result = caseIndexerRecipe(projectionIndexerRecipe);
+        if (result == null) result = caseSingleParentNodeRecipe(projectionIndexerRecipe);
+        if (result == null) result = caseReteNodeRecipe(projectionIndexerRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.AGGREGATOR_INDEXER_RECIPE:
+      {
+        AggregatorIndexerRecipe aggregatorIndexerRecipe = (AggregatorIndexerRecipe)theEObject;
+        T result = caseAggregatorIndexerRecipe(aggregatorIndexerRecipe);
+        if (result == null) result = caseIndexerRecipe(aggregatorIndexerRecipe);
+        if (result == null) result = caseSingleParentNodeRecipe(aggregatorIndexerRecipe);
+        if (result == null) result = caseReteNodeRecipe(aggregatorIndexerRecipe);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -170,10 +190,20 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case RecipesPackage.TYPE_INPUT_RECIPE:
+      {
+        TypeInputRecipe typeInputRecipe = (TypeInputRecipe)theEObject;
+        T result = caseTypeInputRecipe(typeInputRecipe);
+        if (result == null) result = caseInputRecipe(typeInputRecipe);
+        if (result == null) result = caseReteNodeRecipe(typeInputRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case RecipesPackage.UNARY_INPUT_RECIPE:
       {
         UnaryInputRecipe unaryInputRecipe = (UnaryInputRecipe)theEObject;
         T result = caseUnaryInputRecipe(unaryInputRecipe);
+        if (result == null) result = caseTypeInputRecipe(unaryInputRecipe);
         if (result == null) result = caseInputRecipe(unaryInputRecipe);
         if (result == null) result = caseReteNodeRecipe(unaryInputRecipe);
         if (result == null) result = defaultCase(theEObject);
@@ -183,6 +213,7 @@ public class RecipesSwitch<T> extends Switch<T>
       {
         BinaryInputRecipe binaryInputRecipe = (BinaryInputRecipe)theEObject;
         T result = caseBinaryInputRecipe(binaryInputRecipe);
+        if (result == null) result = caseTypeInputRecipe(binaryInputRecipe);
         if (result == null) result = caseInputRecipe(binaryInputRecipe);
         if (result == null) result = caseReteNodeRecipe(binaryInputRecipe);
         if (result == null) result = defaultCase(theEObject);
@@ -238,6 +269,17 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case RecipesPackage.TRANSPARENT_RECIPE:
+      {
+        TransparentRecipe transparentRecipe = (TransparentRecipe)theEObject;
+        T result = caseTransparentRecipe(transparentRecipe);
+        if (result == null) result = caseFilterRecipe(transparentRecipe);
+        if (result == null) result = caseAlphaRecipe(transparentRecipe);
+        if (result == null) result = caseSingleParentNodeRecipe(transparentRecipe);
+        if (result == null) result = caseReteNodeRecipe(transparentRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case RecipesPackage.TRIMMER_RECIPE:
       {
         TrimmerRecipe trimmerRecipe = (TrimmerRecipe)theEObject;
@@ -245,6 +287,13 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = caseAlphaRecipe(trimmerRecipe);
         if (result == null) result = caseSingleParentNodeRecipe(trimmerRecipe);
         if (result == null) result = caseReteNodeRecipe(trimmerRecipe);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case RecipesPackage.EXPRESSION_DEFINITION:
+      {
+        ExpressionDefinition expressionDefinition = (ExpressionDefinition)theEObject;
+        T result = caseExpressionDefinition(expressionDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -284,8 +333,6 @@ public class RecipesSwitch<T> extends Switch<T>
       {
         AggregatorRecipe aggregatorRecipe = (AggregatorRecipe)theEObject;
         T result = caseAggregatorRecipe(aggregatorRecipe);
-        if (result == null) result = caseAlphaRecipe(aggregatorRecipe);
-        if (result == null) result = caseSingleParentNodeRecipe(aggregatorRecipe);
         if (result == null) result = caseReteNodeRecipe(aggregatorRecipe);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -295,8 +342,6 @@ public class RecipesSwitch<T> extends Switch<T>
         CountAggregatorRecipe countAggregatorRecipe = (CountAggregatorRecipe)theEObject;
         T result = caseCountAggregatorRecipe(countAggregatorRecipe);
         if (result == null) result = caseAggregatorRecipe(countAggregatorRecipe);
-        if (result == null) result = caseAlphaRecipe(countAggregatorRecipe);
-        if (result == null) result = caseSingleParentNodeRecipe(countAggregatorRecipe);
         if (result == null) result = caseReteNodeRecipe(countAggregatorRecipe);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -336,15 +381,6 @@ public class RecipesSwitch<T> extends Switch<T>
         if (result == null) result = caseExistenceJoinRecipe(antiJoinRecipe);
         if (result == null) result = caseBetaRecipe(antiJoinRecipe);
         if (result == null) result = caseReteNodeRecipe(antiJoinRecipe);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case RecipesPackage.AGGREGATOR_JOIN_RECIPE:
-      {
-        AggregatorJoinRecipe aggregatorJoinRecipe = (AggregatorJoinRecipe)theEObject;
-        T result = caseAggregatorJoinRecipe(aggregatorJoinRecipe);
-        if (result == null) result = caseBetaRecipe(aggregatorJoinRecipe);
-        if (result == null) result = caseReteNodeRecipe(aggregatorJoinRecipe);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -465,17 +501,49 @@ public class RecipesSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Projection Indexer</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Indexer Recipe</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Projection Indexer</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Indexer Recipe</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseProjectionIndexer(ProjectionIndexer object)
+  public T caseIndexerRecipe(IndexerRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Projection Indexer Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Projection Indexer Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseProjectionIndexerRecipe(ProjectionIndexerRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Aggregator Indexer Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Aggregator Indexer Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAggregatorIndexerRecipe(AggregatorIndexerRecipe object)
   {
     return null;
   }
@@ -540,6 +608,22 @@ public class RecipesSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseInputRecipe(InputRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Type Input Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Type Input Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTypeInputRecipe(TypeInputRecipe object)
   {
     return null;
   }
@@ -657,6 +741,22 @@ public class RecipesSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Transparent Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Transparent Recipe</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTransparentRecipe(TransparentRecipe object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Trimmer Recipe</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -668,6 +768,22 @@ public class RecipesSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseTrimmerRecipe(TrimmerRecipe object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Expression Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Expression Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseExpressionDefinition(ExpressionDefinition object)
   {
     return null;
   }
@@ -812,22 +928,6 @@ public class RecipesSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAntiJoinRecipe(AntiJoinRecipe object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Aggregator Join Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Aggregator Join Recipe</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAggregatorJoinRecipe(AggregatorJoinRecipe object)
   {
     return null;
   }

@@ -2,48 +2,57 @@
  */
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
-import java.util.Collection;
-
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Equality Filter Recipe</b></em>'.
+ * An implementation of the model object '<em><b>Expression Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.EqualityFilterRecipeImpl#getIndices <em>Indices</em>}</li>
+ *   <li>{@link org.eclipse.incquery.runtime.rete.recipes.impl.ExpressionDefinitionImpl#getEvaluator <em>Evaluator</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements EqualityFilterRecipe
+public abstract class ExpressionDefinitionImpl extends MinimalEObjectImpl.Container implements ExpressionDefinition
 {
   /**
-   * The cached value of the '{@link #getIndices() <em>Indices</em>}' attribute list.
+   * The default value of the '{@link #getEvaluator() <em>Evaluator</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getIndices()
+   * @see #getEvaluator()
    * @generated
    * @ordered
    */
-  protected EList<Integer> indices;
+  protected static final Object EVALUATOR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getEvaluator() <em>Evaluator</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getEvaluator()
+   * @generated
+   * @ordered
+   */
+  protected Object evaluator = EVALUATOR_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected EqualityFilterRecipeImpl()
+  protected ExpressionDefinitionImpl()
   {
     super();
   }
@@ -56,7 +65,7 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
   @Override
   protected EClass eStaticClass()
   {
-    return RecipesPackage.Literals.EQUALITY_FILTER_RECIPE;
+    return RecipesPackage.Literals.EXPRESSION_DEFINITION;
   }
 
   /**
@@ -64,13 +73,22 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Integer> getIndices()
+  public Object getEvaluator()
   {
-    if (indices == null)
-    {
-      indices = new EDataTypeEList<Integer>(Integer.class, this, RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES);
-    }
-    return indices;
+    return evaluator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setEvaluator(Object newEvaluator)
+  {
+    Object oldEvaluator = evaluator;
+    evaluator = newEvaluator;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.EXPRESSION_DEFINITION__EVALUATOR, oldEvaluator, evaluator));
   }
 
   /**
@@ -83,8 +101,8 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
   {
     switch (featureID)
     {
-      case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
-        return getIndices();
+      case RecipesPackage.EXPRESSION_DEFINITION__EVALUATOR:
+        return getEvaluator();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -94,15 +112,13 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
-        getIndices().clear();
-        getIndices().addAll((Collection<? extends Integer>)newValue);
+      case RecipesPackage.EXPRESSION_DEFINITION__EVALUATOR:
+        setEvaluator(newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -118,8 +134,8 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
   {
     switch (featureID)
     {
-      case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
-        getIndices().clear();
+      case RecipesPackage.EXPRESSION_DEFINITION__EVALUATOR:
+        setEvaluator(EVALUATOR_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -135,8 +151,8 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
   {
     switch (featureID)
     {
-      case RecipesPackage.EQUALITY_FILTER_RECIPE__INDICES:
-        return indices != null && !indices.isEmpty();
+      case RecipesPackage.EXPRESSION_DEFINITION__EVALUATOR:
+        return EVALUATOR_EDEFAULT == null ? evaluator != null : !EVALUATOR_EDEFAULT.equals(evaluator);
     }
     return super.eIsSet(featureID);
   }
@@ -152,10 +168,10 @@ public class EqualityFilterRecipeImpl extends FilterRecipeImpl implements Equali
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (indices: ");
-    result.append(indices);
+    result.append(" (evaluator: ");
+    result.append(evaluator);
     result.append(')');
     return result.toString();
   }
 
-} //EqualityFilterRecipeImpl
+} //ExpressionDefinitionImpl

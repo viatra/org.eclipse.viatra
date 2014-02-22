@@ -50,13 +50,22 @@ public interface RecipesFactory extends EFactory
   ProductionRecipe createProductionRecipe();
 
   /**
-   * Returns a new object of class '<em>Projection Indexer</em>'.
+   * Returns a new object of class '<em>Projection Indexer Recipe</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Projection Indexer</em>'.
+   * @return a new object of class '<em>Projection Indexer Recipe</em>'.
    * @generated
    */
-  ProjectionIndexer createProjectionIndexer();
+  ProjectionIndexerRecipe createProjectionIndexerRecipe();
+
+  /**
+   * Returns a new object of class '<em>Aggregator Indexer Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Aggregator Indexer Recipe</em>'.
+   * @generated
+   */
+  AggregatorIndexerRecipe createAggregatorIndexerRecipe();
 
   /**
    * Returns a new object of class '<em>Mask</em>'.
@@ -122,6 +131,15 @@ public interface RecipesFactory extends EFactory
   EqualityFilterRecipe createEqualityFilterRecipe();
 
   /**
+   * Returns a new object of class '<em>Transparent Recipe</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Transparent Recipe</em>'.
+   * @generated
+   */
+  TransparentRecipe createTransparentRecipe();
+
+  /**
    * Returns a new object of class '<em>Trimmer Recipe</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -183,15 +201,6 @@ public interface RecipesFactory extends EFactory
    * @generated
    */
   AntiJoinRecipe createAntiJoinRecipe();
-
-  /**
-   * Returns a new object of class '<em>Aggregator Join Recipe</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Aggregator Join Recipe</em>'.
-   * @generated
-   */
-  AggregatorJoinRecipe createAggregatorJoinRecipe();
 
   /**
    * Returns the package supported by this factory.

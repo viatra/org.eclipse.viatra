@@ -2,6 +2,8 @@
  */
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.Collection;
 
 import org.eclipse.emf.common.util.EList;
@@ -12,6 +14,9 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
+import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
+
+import org.eclipse.xtext.xbase.lib.Conversions;
 
 /**
  * <!-- begin-user-doc -->
@@ -71,6 +76,18 @@ public class ConstantRecipeImpl extends ReteNodeRecipeImpl implements ConstantRe
       constantValues = new EDataTypeEList<Object>(Object.class, this, RecipesPackage.CONSTANT_RECIPE__CONSTANT_VALUES);
     }
     return constantValues;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public int getArity()
+  {
+    ConstantRecipe _this = this;
+    EList<Object> _constantValues = _this.getConstantValues();
+    return ((Object[])Conversions.unwrapArray(_constantValues, Object.class)).length;
   }
 
   /**
@@ -139,6 +156,41 @@ public class ConstantRecipeImpl extends ReteNodeRecipeImpl implements ConstantRe
         return constantValues != null && !constantValues.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedOperationID(int baseOperationID, Class<?> baseClass)
+  {
+    if (baseClass == ReteNodeRecipe.class)
+    {
+      switch (baseOperationID)
+      {
+        case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY: return RecipesPackage.CONSTANT_RECIPE___GET_ARITY;
+        default: return super.eDerivedOperationID(baseOperationID, baseClass);
+      }
+    }
+    return super.eDerivedOperationID(baseOperationID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException
+  {
+    switch (operationID)
+    {
+      case RecipesPackage.CONSTANT_RECIPE___GET_ARITY:
+        return getArity();
+    }
+    return super.eInvoke(operationID, arguments);
   }
 
   /**

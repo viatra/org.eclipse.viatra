@@ -70,7 +70,8 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.RETE_RECIPE: return createReteRecipe();
       case RecipesPackage.UNIQUENESS_ENFORCER_RECIPE: return createUniquenessEnforcerRecipe();
       case RecipesPackage.PRODUCTION_RECIPE: return createProductionRecipe();
-      case RecipesPackage.PROJECTION_INDEXER: return createProjectionIndexer();
+      case RecipesPackage.PROJECTION_INDEXER_RECIPE: return createProjectionIndexerRecipe();
+      case RecipesPackage.AGGREGATOR_INDEXER_RECIPE: return createAggregatorIndexerRecipe();
       case RecipesPackage.MASK: return createMask();
       case RecipesPackage.STRING_INDEX_MAP_ENTRY: return (EObject)createStringIndexMapEntry();
       case RecipesPackage.UNARY_INPUT_RECIPE: return createUnaryInputRecipe();
@@ -79,6 +80,7 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.TRANSITIVE_CLOSURE_RECIPE: return createTransitiveClosureRecipe();
       case RecipesPackage.INEQUALITY_FILTER_RECIPE: return createInequalityFilterRecipe();
       case RecipesPackage.EQUALITY_FILTER_RECIPE: return createEqualityFilterRecipe();
+      case RecipesPackage.TRANSPARENT_RECIPE: return createTransparentRecipe();
       case RecipesPackage.TRIMMER_RECIPE: return createTrimmerRecipe();
       case RecipesPackage.CHECK_RECIPE: return createCheckRecipe();
       case RecipesPackage.EVAL_RECIPE: return createEvalRecipe();
@@ -86,7 +88,6 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.JOIN_RECIPE: return createJoinRecipe();
       case RecipesPackage.SEMI_JOIN_RECIPE: return createSemiJoinRecipe();
       case RecipesPackage.ANTI_JOIN_RECIPE: return createAntiJoinRecipe();
-      case RecipesPackage.AGGREGATOR_JOIN_RECIPE: return createAggregatorJoinRecipe();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -164,10 +165,21 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ProjectionIndexer createProjectionIndexer()
+  public ProjectionIndexerRecipe createProjectionIndexerRecipe()
   {
-    ProjectionIndexerImpl projectionIndexer = new ProjectionIndexerImpl();
-    return projectionIndexer;
+    ProjectionIndexerRecipeImpl projectionIndexerRecipe = new ProjectionIndexerRecipeImpl();
+    return projectionIndexerRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AggregatorIndexerRecipe createAggregatorIndexerRecipe()
+  {
+    AggregatorIndexerRecipeImpl aggregatorIndexerRecipe = new AggregatorIndexerRecipeImpl();
+    return aggregatorIndexerRecipe;
   }
 
   /**
@@ -263,6 +275,17 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public TransparentRecipe createTransparentRecipe()
+  {
+    TransparentRecipeImpl transparentRecipe = new TransparentRecipeImpl();
+    return transparentRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public TrimmerRecipe createTrimmerRecipe()
   {
     TrimmerRecipeImpl trimmerRecipe = new TrimmerRecipeImpl();
@@ -333,17 +356,6 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
   {
     AntiJoinRecipeImpl antiJoinRecipe = new AntiJoinRecipeImpl();
     return antiJoinRecipe;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public AggregatorJoinRecipe createAggregatorJoinRecipe()
-  {
-    AggregatorJoinRecipeImpl aggregatorJoinRecipe = new AggregatorJoinRecipeImpl();
-    return aggregatorJoinRecipe;
   }
 
   /**

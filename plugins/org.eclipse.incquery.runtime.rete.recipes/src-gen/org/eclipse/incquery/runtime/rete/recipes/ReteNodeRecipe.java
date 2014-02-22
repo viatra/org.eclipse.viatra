@@ -52,4 +52,16 @@ public interface ReteNodeRecipe extends EObject
    */
   void setTraceInfo(String value);
 
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * <!-- begin-model-doc -->
+   *  The width of tuples contained by this node.
+   * <!-- end-model-doc -->
+   * @model kind="operation" unique="false"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='throw new <%java.lang.UnsupportedOperationException%>();'"
+   * @generated
+   */
+  int getArity();
+
 } // ReteNodeRecipe

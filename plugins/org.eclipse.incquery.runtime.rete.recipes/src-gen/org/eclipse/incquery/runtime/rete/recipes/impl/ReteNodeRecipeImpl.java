@@ -2,7 +2,11 @@
  */
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -96,6 +100,16 @@ public abstract class ReteNodeRecipeImpl extends MinimalEObjectImpl.Container im
    * <!-- end-user-doc -->
    * @generated
    */
+  public int getArity()
+  {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -155,6 +169,22 @@ public abstract class ReteNodeRecipeImpl extends MinimalEObjectImpl.Container im
         return TRACE_INFO_EDEFAULT == null ? traceInfo != null : !TRACE_INFO_EDEFAULT.equals(traceInfo);
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException
+  {
+    switch (operationID)
+    {
+      case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY:
+        return getArity();
+    }
+    return super.eInvoke(operationID, arguments);
   }
 
   /**

@@ -11,7 +11,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.incquery.runtime.rete.recipes.BetaRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexer;
+import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
 /**
@@ -38,7 +39,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * @generated
    * @ordered
    */
-  protected ProjectionIndexer leftParent;
+  protected ProjectionIndexerRecipe leftParent;
 
   /**
    * The cached value of the '{@link #getRightParent() <em>Right Parent</em>}' containment reference.
@@ -48,7 +49,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * @generated
    * @ordered
    */
-  protected ProjectionIndexer rightParent;
+  protected IndexerRecipe rightParent;
 
   /**
    * <!-- begin-user-doc -->
@@ -76,7 +77,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public ProjectionIndexer getLeftParent()
+  public ProjectionIndexerRecipe getLeftParent()
   {
     return leftParent;
   }
@@ -86,9 +87,9 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetLeftParent(ProjectionIndexer newLeftParent, NotificationChain msgs)
+  public NotificationChain basicSetLeftParent(ProjectionIndexerRecipe newLeftParent, NotificationChain msgs)
   {
-    ProjectionIndexer oldLeftParent = leftParent;
+    ProjectionIndexerRecipe oldLeftParent = leftParent;
     leftParent = newLeftParent;
     if (eNotificationRequired())
     {
@@ -103,7 +104,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setLeftParent(ProjectionIndexer newLeftParent)
+  public void setLeftParent(ProjectionIndexerRecipe newLeftParent)
   {
     if (newLeftParent != leftParent)
     {
@@ -124,7 +125,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public ProjectionIndexer getRightParent()
+  public IndexerRecipe getRightParent()
   {
     return rightParent;
   }
@@ -134,9 +135,9 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetRightParent(ProjectionIndexer newRightParent, NotificationChain msgs)
+  public NotificationChain basicSetRightParent(IndexerRecipe newRightParent, NotificationChain msgs)
   {
-    ProjectionIndexer oldRightParent = rightParent;
+    IndexerRecipe oldRightParent = rightParent;
     rightParent = newRightParent;
     if (eNotificationRequired())
     {
@@ -151,7 +152,7 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setRightParent(ProjectionIndexer newRightParent)
+  public void setRightParent(IndexerRecipe newRightParent)
   {
     if (newRightParent != rightParent)
     {
@@ -214,10 +215,10 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
     switch (featureID)
     {
       case RecipesPackage.BETA_RECIPE__LEFT_PARENT:
-        setLeftParent((ProjectionIndexer)newValue);
+        setLeftParent((ProjectionIndexerRecipe)newValue);
         return;
       case RecipesPackage.BETA_RECIPE__RIGHT_PARENT:
-        setRightParent((ProjectionIndexer)newValue);
+        setRightParent((IndexerRecipe)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -234,10 +235,10 @@ public abstract class BetaRecipeImpl extends ReteNodeRecipeImpl implements BetaR
     switch (featureID)
     {
       case RecipesPackage.BETA_RECIPE__LEFT_PARENT:
-        setLeftParent((ProjectionIndexer)null);
+        setLeftParent((ProjectionIndexerRecipe)null);
         return;
       case RecipesPackage.BETA_RECIPE__RIGHT_PARENT:
-        setRightParent((ProjectionIndexer)null);
+        setRightParent((IndexerRecipe)null);
         return;
     }
     super.eUnset(featureID);

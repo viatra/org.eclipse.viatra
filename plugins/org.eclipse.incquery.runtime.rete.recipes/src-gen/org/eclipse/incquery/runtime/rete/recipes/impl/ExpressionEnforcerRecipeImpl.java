@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 
@@ -36,24 +37,14 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
 public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl implements ExpressionEnforcerRecipe
 {
   /**
-   * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+   * The cached value of the '{@link #getExpression() <em>Expression</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getExpression()
    * @generated
    * @ordered
    */
-  protected static final Object EXPRESSION_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getExpression() <em>Expression</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getExpression()
-   * @generated
-   * @ordered
-   */
-  protected Object expression = EXPRESSION_EDEFAULT;
+  protected ExpressionDefinition expression;
 
   /**
    * The cached value of the '{@link #getMappedIndices() <em>Mapped Indices</em>}' map.
@@ -91,7 +82,7 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public Object getExpression()
+  public ExpressionDefinition getExpression()
   {
     return expression;
   }
@@ -101,12 +92,37 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setExpression(Object newExpression)
+  public NotificationChain basicSetExpression(ExpressionDefinition newExpression, NotificationChain msgs)
   {
-    Object oldExpression = expression;
+    ExpressionDefinition oldExpression = expression;
     expression = newExpression;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION, oldExpression, expression));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION, oldExpression, newExpression);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpression(ExpressionDefinition newExpression)
+  {
+    if (newExpression != expression)
+    {
+      NotificationChain msgs = null;
+      if (expression != null)
+        msgs = ((InternalEObject)expression).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION, null, msgs);
+      if (newExpression != null)
+        msgs = ((InternalEObject)newExpression).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION, null, msgs);
+      msgs = basicSetExpression(newExpression, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION, newExpression, newExpression));
   }
 
   /**
@@ -133,6 +149,8 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
   {
     switch (featureID)
     {
+      case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION:
+        return basicSetExpression(null, msgs);
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES:
         return ((InternalEList<?>)getMappedIndices()).basicRemove(otherEnd, msgs);
     }
@@ -169,7 +187,7 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
     switch (featureID)
     {
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION:
-        setExpression(newValue);
+        setExpression((ExpressionDefinition)newValue);
         return;
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES:
         ((EStructuralFeature.Setting)getMappedIndices()).set(newValue);
@@ -189,7 +207,7 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
     switch (featureID)
     {
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION:
-        setExpression(EXPRESSION_EDEFAULT);
+        setExpression((ExpressionDefinition)null);
         return;
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES:
         getMappedIndices().clear();
@@ -209,28 +227,11 @@ public abstract class ExpressionEnforcerRecipeImpl extends AlphaRecipeImpl imple
     switch (featureID)
     {
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__EXPRESSION:
-        return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
+        return expression != null;
       case RecipesPackage.EXPRESSION_ENFORCER_RECIPE__MAPPED_INDICES:
         return mappedIndices != null && !mappedIndices.isEmpty();
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (expression: ");
-    result.append(expression);
-    result.append(')');
-    return result.toString();
   }
 
 } //ExpressionEnforcerRecipeImpl

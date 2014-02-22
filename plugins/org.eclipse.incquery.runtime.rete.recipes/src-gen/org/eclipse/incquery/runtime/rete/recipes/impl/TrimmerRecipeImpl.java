@@ -2,8 +2,12 @@
  */
 package org.eclipse.incquery.runtime.rete.recipes.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -12,7 +16,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
+import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
+
+import org.eclipse.xtext.xbase.lib.Conversions;
 
 /**
  * <!-- begin-user-doc -->
@@ -113,6 +120,19 @@ public class TrimmerRecipeImpl extends AlphaRecipeImpl implements TrimmerRecipe
    * <!-- end-user-doc -->
    * @generated
    */
+  public int getArity()
+  {
+    TrimmerRecipe _this = this;
+    Mask _mask = _this.getMask();
+    EList<Integer> _sourceIndices = _mask.getSourceIndices();
+    return ((Object[])Conversions.unwrapArray(_sourceIndices, Object.class)).length;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -188,6 +208,41 @@ public class TrimmerRecipeImpl extends AlphaRecipeImpl implements TrimmerRecipe
         return mask != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedOperationID(int baseOperationID, Class<?> baseClass)
+  {
+    if (baseClass == ReteNodeRecipe.class)
+    {
+      switch (baseOperationID)
+      {
+        case RecipesPackage.RETE_NODE_RECIPE___GET_ARITY: return RecipesPackage.TRIMMER_RECIPE___GET_ARITY;
+        default: return super.eDerivedOperationID(baseOperationID, baseClass);
+      }
+    }
+    return super.eDerivedOperationID(baseOperationID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException
+  {
+    switch (operationID)
+    {
+      case RecipesPackage.TRIMMER_RECIPE___GET_ARITY:
+        return getArity();
+    }
+    return super.eInvoke(operationID, arguments);
   }
 
 } //TrimmerRecipeImpl

@@ -38,4 +38,13 @@ public interface MultiParentNodeRecipe extends ReteNodeRecipe
    */
   EList<ReteNodeRecipe> getParents();
 
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @model kind="operation" unique="false"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.MultiParentNodeRecipe%> _this = this;\n<%org.eclipse.emf.common.util.EList%><<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%>> _parents = _this.getParents();\n<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _get = _parents.get(0);\nreturn _get.getArity();'"
+   * @generated
+   */
+  int getArity();
+
 } // MultiParentNodeRecipe
