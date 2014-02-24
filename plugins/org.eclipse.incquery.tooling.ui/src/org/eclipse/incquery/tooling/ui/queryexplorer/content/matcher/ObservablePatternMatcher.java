@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.common.collect.Sets;
 
@@ -112,7 +113,11 @@ public class ObservablePatternMatcher {
 
                 @Override
                 public void notifyChanged(ChangeLevel changeLevel) {
-                    processMatchesRunnable.run();
+                	// invoke the processing runnable on the UI thread, to ensure 
+                	// databinding does not complain if the model is not
+                	// originally modified on the UI thread
+                	Display.getDefault().asyncExec(processMatchesRunnable);
+                    //processMatchesRunnable.run();
                 }
 
                 @Override
