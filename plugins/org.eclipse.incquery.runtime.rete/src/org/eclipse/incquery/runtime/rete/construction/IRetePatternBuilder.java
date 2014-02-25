@@ -15,8 +15,8 @@ import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
-import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * Exchangeable component of ReteEngine, responsible for building query plans of pattern matcher rete subnets.
@@ -34,7 +34,7 @@ public interface IRetePatternBuilder {
      * @throws OperationCompilerException
      *             if construction fails.
      */
-    RecipeTraceInfo construct(PQuery gtPattern) throws QueryPlannerException;
+    SubPlan construct(PQuery gtPattern) throws QueryPlannerException;
 
     /**
      * Extract the position mapping of the graph pattern.

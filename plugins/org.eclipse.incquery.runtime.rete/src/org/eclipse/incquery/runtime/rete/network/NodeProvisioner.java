@@ -23,7 +23,6 @@ import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.OnetimeIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe;
@@ -342,18 +341,18 @@ public class NodeProvisioner {
 			return inactiveRecipeTrace;
 		}
 	}
-	private class AggregatorReferenceIndexTraceInfo extends RecipeTraceInfo {
-		RecipeTraceInfo aggregatorNodeRecipeTrace;		
-		public AggregatorReferenceIndexTraceInfo(ProjectionIndexerRecipe recipe,
-				RecipeTraceInfo parentRecipeTrace,
-				RecipeTraceInfo aggregatorNodeRecipeTrace) {
-			super(recipe, parentRecipeTrace);
-			this.aggregatorNodeRecipeTrace = aggregatorNodeRecipeTrace;
-		}
-		public RecipeTraceInfo getAggregatorNodeRecipeTrace() {
-			return aggregatorNodeRecipeTrace;
-		}
-	}
+//	private class AggregatorReferenceIndexTraceInfo extends RecipeTraceInfo {
+//		RecipeTraceInfo aggregatorNodeRecipeTrace;		
+//		public AggregatorReferenceIndexTraceInfo(ProjectionIndexerRecipe recipe,
+//				RecipeTraceInfo parentRecipeTrace,
+//				RecipeTraceInfo aggregatorNodeRecipeTrace) {
+//			super(recipe, parentRecipeTrace);
+//			this.aggregatorNodeRecipeTrace = aggregatorNodeRecipeTrace;
+//		}
+//		public RecipeTraceInfo getAggregatorNodeRecipeTrace() {
+//			return aggregatorNodeRecipeTrace;
+//		}
+//	}
     class UserRequestTrace extends RecipeTraceInfo {
 		public UserRequestTrace(ReteNodeRecipe recipe,
 				Collection<RecipeTraceInfo> parentRecipeTraces) {

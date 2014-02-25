@@ -58,14 +58,14 @@ public class BuildHelper {
 
     }
 
-    /**
-     * Trims the results in the subplan into a collector, by selecting exported variables in a particular order.
-     */
-    public static void projectIntoCollector(IOperationCompiler buildable,
-            SubPlan plan, Collector collector, PVariable[] selectedVariables) {
-        SubPlan trimmer = project(buildable, plan, selectedVariables, false);
-        buildable.buildConnection(trimmer, collector);
-    }
+//    /**
+//     * Trims the results in the subplan into a collector, by selecting exported variables in a particular order.
+//     */
+//    public static void projectIntoCollector(IOperationCompiler buildable,
+//            SubPlan plan, Collector collector, PVariable[] selectedVariables) {
+//        SubPlan trimmer = project(buildable, plan, selectedVariables, false);
+//        buildable.buildConnection(trimmer, collector);
+//    }
 
     /**
      * Trims the results in the subplan by selecting exported variables in a particular order.

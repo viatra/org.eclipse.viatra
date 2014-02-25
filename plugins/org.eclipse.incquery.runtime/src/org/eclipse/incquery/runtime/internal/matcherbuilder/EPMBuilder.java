@@ -18,10 +18,10 @@ import java.util.Map;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * @author Bergmann Gábor
@@ -48,7 +48,7 @@ public class EPMBuilder implements IRetePatternBuilder {
     }
 
     @Override
-    public RecipeTraceInfo construct(PQuery pattern) throws QueryPlannerException {
+    public SubPlan construct(PQuery pattern) throws QueryPlannerException {
         try {
             EPMBuildScaffold epmBuildScaffold = new EPMBuildScaffold(operationCompiler, context);
             return epmBuildScaffold.construct(pattern);

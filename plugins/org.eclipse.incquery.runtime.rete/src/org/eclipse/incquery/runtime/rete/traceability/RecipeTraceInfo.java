@@ -33,7 +33,7 @@ public class RecipeTraceInfo implements TraceInfo {
 	Collection<RecipeTraceInfo> parentRecipeTraces;
 	
 	
-	public RecipeTraceInfo(ReteNodeRecipe recipe, Collection<RecipeTraceInfo> parentRecipeTraces) {
+	public RecipeTraceInfo(ReteNodeRecipe recipe, Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super();
 		this.recipe = recipe;
 		this.parentRecipeTraces = Collections.unmodifiableList(new ArrayList<RecipeTraceInfo>(parentRecipeTraces));

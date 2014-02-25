@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
@@ -23,18 +27,29 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
-import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.network.Network;
-import org.eclipse.incquery.runtime.rete.network.NodeProvisioner;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
+import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.CheckRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.EvalRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
+import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.SingleParentNodeRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.traceability.QueryPlanRecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -46,60 +61,27 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class ReteContainerCompiler
 		implements IOperationCompiler, Cloneable {
 
-    protected NodeProvisioner nodeProvisioner;
-    protected ReteContainer targetContainer;
-    protected Network reteNet;
-    protected ReteBoundary boundary;
-    protected ReteEngine engine;
-    protected boolean headAttached = false;
+	protected Map<SubPlan, QueryPlanRecipeTraceInfo> planToRecipe = new HashMap<SubPlan, QueryPlanRecipeTraceInfo>();
+	private final RecipesFactory recipesFactory = RecipesFactory.eINSTANCE;
+	
     
     // only if provided by putOnTab
     protected PQuery pattern = null;
     protected IPatternMatcherContext context = null;
 
-    protected void mapPlan(SubPlan plan, Address<? extends Supplier> handle) {
-        boundary.mapPlanToAddress(plan, handle);
+    protected QueryPlanRecipeTraceInfo getRecipeTrace(SubPlan plan) {
+        return planToRecipe.get(plan);
     }
     
-    protected Address<? extends Supplier> getHandle(SubPlan plan) {
-        return boundary.getAddress(plan);
-    }
-    
-    /**
-     * Constructs the builder attached to a specified container. Prerequisite: engine has its network and boundary
-     * fields initialized.
-     * 
-     * @param targetContainer
-     */
-    public ReteContainerCompiler(ReteEngine engine, ReteContainer targetContainer) {
-        super();
-        this.engine = engine;
-        this.reteNet = engine.getReteNet();
-        this.boundary = engine.getBoundary();
-        this.targetContainer = targetContainer;
-        this.nodeProvisioner = targetContainer.getProvisioner();
-        this.headAttached = false;
-    }
-
     /**
      * Constructs the builder attached to the head container. Prerequisite: engine has its network and boundary fields
      * initialized
      */
     public ReteContainerCompiler(ReteEngine engine) {
         super();
-        this.engine = engine;
-        this.reteNet = engine.getReteNet();
-        this.boundary = engine.getBoundary();
-        this.targetContainer = reteNet.getHeadContainer();
-        this.nodeProvisioner = targetContainer.getProvisioner();
-        this.headAttached = true;
     }
 
     public void reinitialize() {
-        this.reteNet = engine.getReteNet();
-        this.boundary = engine.getBoundary();
-        this.targetContainer = headAttached ? reteNet.getHeadContainer() : reteNet.getNextContainer();
-        this.nodeProvisioner = targetContainer.getProvisioner();
     }
     
     public void patternFinished(PQuery pattern, IPatternMatcherContext context, Address<? extends Receiver> collector) {
@@ -124,26 +106,48 @@ public class ReteContainerCompiler
         boundary.registerParentPlanForReceiver(collector, parentPlan);
     }
 
+    
+    @Override
+    public SubPlan buildProduction(Collection<SubPlan> projectedBodies, Map<String, Integer> posMapping) {
+    	final ProductionRecipe recipe = recipesFactory.createProductionRecipe();
+    	recipe.setPattern(pattern);
+    	
+    	Collection<QueryPlanRecipeTraceInfo> parentTraces = new ArrayList<QueryPlanRecipeTraceInfo>();
+    	for (SubPlan subPlan : projectedBodies) {
+			final QueryPlanRecipeTraceInfo parentTrace = getExistingParentTrace(subPlan);
+			parentTraces.add(parentTrace);
+			recipe.getParents().add(parentTrace.getRecipe());
+		}
+    	recipe.getMappedIndices(TODO);
+    	return traceExplicit(new SubPlan(new FlatTuple(elements)), parentTraces);
+    }    
+    
     public SubPlan buildStartingPlan(Object[] constantValues, Object[] constantNames) {
-        return trace(new SubPlan(new FlatTuple(constantNames)), nodeProvisioner.accessConstantNode(boundary
-                .wrapTuple(new FlatTuple(constantValues))));
+    	final ConstantRecipe recipe = recipesFactory.createConstantRecipe();
+    	recipe.getConstantValues().addAll(Arrays.asList(constantValues));
+    	return trace(new SubPlan(new FlatTuple(constantNames)), recipe);
     }
 
     public SubPlan buildEqualityChecker(SubPlan parentPlan, int[] indices) {
-        Address<? extends Supplier> checker = nodeProvisioner.accessEqualityFilterNode(getHandle(parentPlan), indices);
-        return trace(new SubPlan(parentPlan), checker);
+    	final EqualityFilterRecipe recipe = recipesFactory.createEqualityFilterRecipe();
+    	singleParentForRecipe(parentPlan, recipe);
+    	for (int i : indices) recipe.getIndices().add(i); 
+        return trace(new SubPlan(parentPlan), recipe);
     }
 
     public SubPlan buildInjectivityChecker(SubPlan parentPlan, int subject, int[] inequalIndices) {
-        Address<? extends Supplier> checker = nodeProvisioner.accessInequalityFilterNode(getHandle(parentPlan), subject,
-                new TupleMask(inequalIndices, parentPlan.getVariablesTuple().getSize()));
-        return trace(new SubPlan(parentPlan), checker);
+    	final InequalityFilterRecipe recipe = recipesFactory.createInequalityFilterRecipe();
+    	singleParentForRecipe(parentPlan, recipe);
+    	recipe.setSubject(subject);
+    	for (int i : inequalIndices) recipe.getInequals().add(i); 
+        return trace(new SubPlan(parentPlan), recipe);
     }
 
     @Override
     public SubPlan buildTransitiveClosure(SubPlan parentPlan) {
-        Address<? extends Supplier> checker = nodeProvisioner.accessTransitiveClosureNode(getHandle(parentPlan));
-        return trace(new SubPlan(parentPlan), checker);
+    	final TransitiveClosureRecipe recipe = recipesFactory.createTransitiveClosureRecipe();
+    	singleParentForRecipe(parentPlan, recipe);
+        return trace(new SubPlan(parentPlan), recipe);
     }
 
     @Override
@@ -153,56 +157,64 @@ public class ReteContainerCompiler
     }
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessInstantiationTransitiveRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan directInstantiationPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessInstantiationRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan transitiveGeneralizationPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessGeneralizationTransitiveRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan directGeneralizationPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessGeneralizationRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan transitiveContainmentPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessContainmentTransitiveRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan directContainmentPlan(Tuple nodes) {
-        return trace(new SubPlan(nodes), boundary.accessContainmentRoot());
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan binaryEdgeTypePlan(Tuple nodes, Object supplierKey) {
-        return trace(new SubPlan(nodes), boundary.accessBinaryEdgeRoot(supplierKey));
+    	final TypeInputRecipe recipe = RecipesHelper.binaryInputRecipe(supplierKey, supplierKey.toString());
+        return trace(new SubPlan(nodes), recipe);
     }
 
     public SubPlan ternaryEdgeTypePlan(Tuple nodes, Object supplierKey) {
-        return trace(new SubPlan(nodes), boundary.accessTernaryEdgeRoot(supplierKey));
+        throw new UnsupportedOperationException();
     }
 
     public SubPlan unaryTypePlan(Tuple nodes, Object supplierKey) {
-        return trace(new SubPlan(nodes), boundary.accessUnaryRoot(supplierKey));
+    	final TypeInputRecipe recipe = RecipesHelper.unaryInputRecipe(supplierKey, supplierKey.toString());
+        return trace(new SubPlan(nodes), recipe);
     }
 
+    
     public SubPlan buildBetaNode(SubPlan primaryPlan,
             SubPlan sidePlan, TupleMask primaryMask, TupleMask sideMask,
             TupleMask complementer, boolean negative) {
-        Address<? extends IterableIndexer> primarySlot = nodeProvisioner.accessProjectionIndexer(getHandle(primaryPlan),
-                primaryMask);
-        Address<? extends Indexer> sideSlot = nodeProvisioner.accessProjectionIndexer(getHandle(sidePlan), sideMask);
-
+    	final QueryPlanRecipeTraceInfo primaryIndexer = getIndexerRecipe(primaryPlan, primaryMask);
+    	final QueryPlanRecipeTraceInfo secondaryIndexer = getIndexerRecipe(sidePlan, sideMask);
         if (negative) {
-            Address<? extends Supplier> checker = nodeProvisioner.accessExistenceNode(primarySlot, sideSlot, true);
-            return trace(new SubPlan(primaryPlan), checker);
+        	final AntiJoinRecipe recipe = recipesFactory.createAntiJoinRecipe();
+        	recipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
+        	recipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
+
+            return traceExplicit(new SubPlan(primaryPlan), recipe, primaryIndexer, secondaryIndexer);
         } else {
-            Address<? extends Supplier> checker = nodeProvisioner.accessJoinNode(primarySlot, sideSlot, complementer);
+        	final JoinRecipe recipe = recipesFactory.createJoinRecipe();
+        	recipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
+        	recipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
+        	recipe.setRightParentComplementaryMask(RecipesHelper.mask(complementer.sourceWidth, complementer.indices));
+        	
             Tuple newCalibrationPattern = complementer.combine(primaryPlan.getVariablesTuple(),
-                    sidePlan.getVariablesTuple(), Options.enableInheritance, true);
-            return trace(new SubPlan(primaryPlan, sidePlan, newCalibrationPattern), checker);
+                    sidePlan.getVariablesTuple(), Options.enableInheritance, true);            
+            return traceExplicit(new SubPlan(primaryPlan, sidePlan, newCalibrationPattern), recipe, primaryIndexer, secondaryIndexer);
         }
     }
 
@@ -225,51 +237,30 @@ public class ReteContainerCompiler
     }
     
     @Override
-    public SubPlan buildPredicateChecker(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
-            SubPlan parentPlan) {
-        CachedPredicateEvaluatorNode cpen = new CachedPredicateEvaluatorNode(targetContainer, engine, evaluator,
-                tupleNameMap, parentPlan.getVariablesTuple().getSize());
-        Address<CachedPredicateEvaluatorNode> checker = Address.of(cpen);
-
-        reteNet.connectRemoteNodes(getHandle(parentPlan), checker, true);
-        SubPlan result = new SubPlan(parentPlan);
-
-        return trace(result, checker);
-
+    public SubPlan buildPredicateChecker(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap, SubPlan parentPlan) {
+    	final CheckRecipe recipe = recipesFactory.createCheckRecipe();
+    	singleParentForRecipe(parentPlan, recipe);
+    	recipe.setExpression(RecipesHelper.expressionDefinition(evaluator));
+        return trace(new SubPlan(parentPlan), recipe);
     }
 
     @Override
     public SubPlan buildFunctionEvaluator(IExpressionEvaluator evaluator, Map<String, Integer> tupleNameMap,
             SubPlan parentPlan, Object computedResultCalibrationElement) {
-        CachedFunctionEvaluatorNode cfen = new CachedFunctionEvaluatorNode(targetContainer, engine, evaluator, tupleNameMap, parentPlan.getVariablesTuple().getSize());
-        Address<CachedFunctionEvaluatorNode> computer = Address.of(cfen);
-        
-        reteNet.connectRemoteNodes(getHandle(parentPlan), computer, true);
+    	final EvalRecipe recipe = recipesFactory.createEvalRecipe();
+    	singleParentForRecipe(parentPlan, recipe);
+    	recipe.setExpression(RecipesHelper.expressionDefinition(evaluator));
         
         Object[] newCalibrationElement = { computedResultCalibrationElement };
         Tuple newCalibrationPattern = new LeftInheritanceTuple(parentPlan.getVariablesTuple(), newCalibrationElement);
         
-        SubPlan result = new SubPlan(parentPlan,
-                newCalibrationPattern);
-        
-        return trace(result, computer);
-    }
-
-    /**
-     * @return trace(a buildable that potentially acts on a separate container
-     */
-    public IOperationCompiler<Address<? extends Receiver>> getNextContainer() {
-        return new ReteContainerCompiler(engine, reteNet.getNextContainer());
-    }
-
-    public Address<? extends Receiver> patternCollector(PQuery pattern) throws QueryPlannerException {
-        return engine.getBoundary().createProductionInternal(pattern);
+        return trace(new SubPlan(parentPlan, newCalibrationPattern), recipe);
     }
 
     /**
      * No need to distinguish
      */
-    public IOperationCompiler<Address<? extends Receiver>> putOnTab(PQuery effort, IPatternMatcherContext effortContext) {
+    public IOperationCompiler putOnTab(PQuery effort, IPatternMatcherContext effortContext) {
     	final ReteContainerCompiler patternSpecific;
     	try {
     		patternSpecific = (ReteContainerCompiler) this.clone();
@@ -281,11 +272,55 @@ public class ReteContainerCompiler
         return patternSpecific;
     }
     
-    private SubPlan trace(SubPlan parentPlan, final Address<? extends Supplier> address) {
-    	NodeToPlanTraceInfo traceInfo = new NodeToPlanTraceInfo(parentPlan, pattern, context);
-    	mapPlan(parentPlan, address);
-    	address.getContainer().resolveLocal(address).assignTraceInfo(traceInfo);
-    	return parentPlan;
+    private SubPlan trace(SubPlan plan, ReteNodeRecipe recipe) {
+    	Collection<QueryPlanRecipeTraceInfo> parentTraces = new ArrayList<QueryPlanRecipeTraceInfo>();
+    	gatherParentTrace(parentTraces, plan.getPrimaryParentPlan());
+    	gatherParentTrace(parentTraces, plan.getSecondaryParentPlan());
+    	return traceExplicit(plan, recipe, parentTraces);
     }
+    private SubPlan traceExplicit(SubPlan plan, ReteNodeRecipe recipe, Collection<QueryPlanRecipeTraceInfo> parentTraces) {
+    	QueryPlanRecipeTraceInfo recipeTrace = new QueryPlanRecipeTraceInfo(plan, recipe, parentTraces);
+    	return trace(plan, recipeTrace);
+    }
+    private SubPlan traceExplicit(SubPlan plan, ReteNodeRecipe recipe, QueryPlanRecipeTraceInfo... parentTraces) {
+    	return traceExplicit(plan, recipe, Arrays.asList(parentTraces));
+    }
+
+	private SubPlan trace(SubPlan plan, QueryPlanRecipeTraceInfo recipeTrace) {
+    	planToRecipe.put(plan, recipeTrace);
+    	return plan;
+    }
+    
+	private void gatherParentTrace(
+			Collection<? super QueryPlanRecipeTraceInfo> parentTraces,
+			SubPlan parentPlan) {
+		if (parentPlan != null) {
+			parentTraces.add(getExistingParentTrace(parentPlan));
+		}
+	}
+	
+	private void singleParentForRecipe(SubPlan parentPlan,
+			final SingleParentNodeRecipe recipe) {
+		final QueryPlanRecipeTraceInfo parentTrace = getExistingParentTrace(parentPlan);
+		recipe.setParent(parentTrace.getRecipe());
+	}
+
+	private QueryPlanRecipeTraceInfo getExistingParentTrace(SubPlan parentPlan) {
+		final QueryPlanRecipeTraceInfo parentTrace = getRecipeTrace(parentPlan);
+		if (parentTrace == null)
+			throw new IllegalStateException("No recipe trace constructed for parent plan " + parentPlan);
+		return parentTrace;
+	}
+	
+    private QueryPlanRecipeTraceInfo getIndexerRecipe(SubPlan parentPlan, TupleMask mask) {
+    	final QueryPlanRecipeTraceInfo parentTrace = getExistingParentTrace(parentPlan);
+		final ProjectionIndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(
+    			parentTrace.getRecipe(), 
+    			RecipesHelper.mask(mask.sourceWidth, mask.indices)
+    	);
+		return new QueryPlanRecipeTraceInfo(parentPlan, recipe, parentTrace);
+    }
+
+    
 
 }

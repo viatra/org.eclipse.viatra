@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.planning;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
@@ -35,11 +36,11 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  */
 public interface IOperationCompiler {
 
-    public Collector patternCollector(PQuery pattern) throws QueryPlannerException;
- 
-    public void buildConnection(SubPlan parentPlan, Collector collector);
-    
-    public void patternFinished(PQuery pattern, IPatternMatcherContext context, Collector collector);
+//    public Collector patternCollector(PQuery pattern) throws QueryPlannerException;
+// 
+//    public void buildConnection(SubPlan parentPlan, Collector collector);
+//    
+//    public void patternFinished(PQuery pattern, IPatternMatcherContext context, Collector collector);
     
     public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
             throws QueryPlannerException;
@@ -98,5 +99,7 @@ public interface IOperationCompiler {
     public IOperationCompiler putOnTab(PQuery effort, IPatternMatcherContext context);
 
     public void reinitialize();
+
+	SubPlan buildProduction(Collection<SubPlan> projectedBodies, Map<String, Integer> posMapping);
 
 }

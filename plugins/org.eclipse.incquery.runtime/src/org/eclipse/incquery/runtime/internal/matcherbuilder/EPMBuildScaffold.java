@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.internal.matcherbuilder;
 
+import java.util.Collection;
+
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
@@ -19,7 +21,6 @@ import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.rete.util.Options.BuilderMethod;
 
@@ -39,26 +40,29 @@ public class EPMBuildScaffold {
         this.context = context;
     }
 
-    public RecipeTraceInfo construct(PQuery pattern) throws QueryPlannerException {
-        Collector production = operationCompiler.putOnTab(pattern, context).patternCollector(pattern);
+    public SubPlan construct(PQuery pattern) throws QueryPlannerException {
+    	Collection<SubPlan> bodyCollector;
         // TODO check annotations for reinterpret
 
         context.logDebug("EPMBuilder starts construction of: " + pattern.getFullyQualifiedName());
         for (PBody body : pattern.getContainedBodies()) {
-            IOperationCompiler currentBuildable = operationCompiler.getNextContainer().putOnTab(
+            IOperationCompiler currentBuildable = operationCompiler.putOnTab(
                     pattern, context);
             if (Options.builderMethod == BuilderMethod.LEGACY) {
                 throw new UnsupportedOperationException();
             } else {
                 SubPlan bodyFinal = Options.builderMethod.layoutStrategy()
                         .layout(body, currentBuildable, context);
-                BuildHelper.projectIntoCollector(currentBuildable, bodyFinal, production,
-                        body.getSymbolicParameterVariables().toArray(new PVariable[body.getSymbolicParameters().size()]));
+                final SubPlan projection = BuildHelper.project(currentBuildable, bodyFinal,
+                        body.getSymbolicParameterVariables().toArray(new PVariable[body.getSymbolicParameters().size()]), false);
+                bodyCollector.add(projection);
             }
         }
-        operationCompiler.patternFinished(pattern, context, production);
+//        Collector production = operationCompiler.putOnTab(pattern, context).patternCollector(pattern);
+//        operationCompiler.patternFinished(pattern, context, production);
 
-        return null;
+        final SubPlan completePlan = operationCompiler.putOnTab(pattern, context).buildProduction(bodyCollector);
+		return completePlan;
     }
 
 }
