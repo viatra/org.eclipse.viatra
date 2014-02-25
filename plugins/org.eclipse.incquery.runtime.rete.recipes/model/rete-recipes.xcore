@@ -214,7 +214,7 @@ class TrimmerRecipe extends AlphaRecipe {
 
 // Expressions
 
-abstract class ExpressionDefinition { 
+class ExpressionDefinition { 
 	Object evaluator	
 } 
 

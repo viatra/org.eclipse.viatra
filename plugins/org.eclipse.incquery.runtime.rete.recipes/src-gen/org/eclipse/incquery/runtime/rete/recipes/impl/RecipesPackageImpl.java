@@ -1399,7 +1399,7 @@ public class RecipesPackageImpl extends EPackageImpl implements RecipesPackage
 
     initEOperation(getTrimmerRecipe__GetArity(), theEcorePackage.getEInt(), "getArity", 0, 1, !IS_UNIQUE, IS_ORDERED);
 
-    initEClass(expressionDefinitionEClass, ExpressionDefinition.class, "ExpressionDefinition", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(expressionDefinitionEClass, ExpressionDefinition.class, "ExpressionDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getExpressionDefinition_Evaluator(), theEcorePackage.getEJavaObject(), "evaluator", null, 0, 1, ExpressionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(expressionEnforcerRecipeEClass, ExpressionEnforcerRecipe.class, "ExpressionEnforcerRecipe", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

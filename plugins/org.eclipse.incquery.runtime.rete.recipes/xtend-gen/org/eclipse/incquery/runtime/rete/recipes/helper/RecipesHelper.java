@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.rete.recipes.helper;
 import com.google.common.collect.Iterables;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.incquery.runtime.rete.recipes.BinaryInputRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
@@ -64,6 +65,16 @@ public class RecipesHelper {
       }
     };
     return ObjectExtensions.<ProjectionIndexerRecipe>operator_doubleArrow(_createProjectionIndexerRecipe, _function);
+  }
+  
+  public static ExpressionDefinition expressionDefinition(final Object evaluator) {
+    ExpressionDefinition _createExpressionDefinition = RecipesHelper.FACTORY.createExpressionDefinition();
+    final Procedure1<ExpressionDefinition> _function = new Procedure1<ExpressionDefinition>() {
+      public void apply(final ExpressionDefinition it) {
+        it.setEvaluator(evaluator);
+      }
+    };
+    return ObjectExtensions.<ExpressionDefinition>operator_doubleArrow(_createExpressionDefinition, _function);
   }
   
   public static TypeInputRecipe unaryInputRecipe(final Object typeKey, final String typeName) {

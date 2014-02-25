@@ -46,6 +46,12 @@ class RecipesHelper {
 		]
 	}
 	
+	def public static expressionDefinition(Object evaluator) {
+		FACTORY.createExpressionDefinition() => [
+			it.evaluator = evaluator
+		]
+	}
+	
 	def public static unaryInputRecipe(Object typeKey, String typeName) {
 		fillOut(FACTORY.createUnaryInputRecipe(), typeKey, typeName)
 	}

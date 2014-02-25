@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  *
  * @see org.eclipse.incquery.runtime.rete.recipes.RecipesPackage#getExpressionDefinition()
- * @model abstract="true"
+ * @model
  * @generated
  */
 public interface ExpressionDefinition extends EObject

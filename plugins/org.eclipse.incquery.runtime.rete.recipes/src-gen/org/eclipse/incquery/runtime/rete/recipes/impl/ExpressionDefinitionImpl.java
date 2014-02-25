@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesPackage;
  *
  * @generated
  */
-public abstract class ExpressionDefinitionImpl extends MinimalEObjectImpl.Container implements ExpressionDefinition
+public class ExpressionDefinitionImpl extends MinimalEObjectImpl.Container implements ExpressionDefinition
 {
   /**
    * The default value of the '{@link #getEvaluator() <em>Evaluator</em>}' attribute.
