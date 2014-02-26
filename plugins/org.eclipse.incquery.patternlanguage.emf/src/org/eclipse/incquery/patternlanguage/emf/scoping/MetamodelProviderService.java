@@ -91,66 +91,64 @@ public class MetamodelProviderService implements IMetamodelProvider {
 
     @Override
     public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-        // first try to look up the EPackage in the ResourceSet contents 
-        // in case of xcore resources accessing the EPackage.Registry will throw a ClassCastException 
-        // because the corresponding object will be an XPackage not an EPackage
-        EPackage pack = lookUpEPackageInResourceSetContents(packageUri, resourceSet);
-        if (pack != null) {
-            return pack;
-        }
-        else if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
+        if (EPackage.Registry.INSTANCE.containsKey(packageUri)) {
             return EPackage.Registry.INSTANCE.getEPackage(packageUri);
-        } else { 
-            URI uri = null;
-            try {
-                uri = URI.createURI(packageUri);
-                if (uri.fragment() == null) {
-                    Resource resource = resourceSet.getResource(uri, true);
-                    return (EPackage) resource.getContents().get(0);
+        } else {
+            EPackage pack = lookUpEPackageInResourceSetContents(packageUri, resourceSet);
+            if (pack != null) {
+                return pack;
+            } else {
+                URI uri = null;
+                try {
+                    uri = URI.createURI(packageUri);
+                    if (uri.fragment() == null) {
+                        Resource resource = resourceSet.getResource(uri, true);
+                        return (EPackage) resource.getContents().get(0);
+                    }
+                    return (EPackage) resourceSet.getEObject(uri, true);
+                } catch (RuntimeException ex) {
+                    if (uri != null && uri.isPlatformResource()) {
+                        String platformString = uri.toPlatformString(true);
+                        URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
+                        return loadEPackage(platformPluginURI.toString(), resourceSet);
+                    }
+                    logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
+                    return null;
                 }
-                return (EPackage) resourceSet.getEObject(uri, true);
-            } catch (RuntimeException ex) {
-                if (uri != null && uri.isPlatformResource()) {
-                    String platformString = uri.toPlatformString(true);
-                    URI platformPluginURI = URI.createPlatformPluginURI(platformString, true);
-                    return loadEPackage(platformPluginURI.toString(), resourceSet);
-                }
-                logger.trace("Cannot load package with URI '" + packageUri + "'", ex);
-                return null;
             }
         }
     }
 
     private EPackage lookUpEPackageInResourceSetContents(String packageUri, ResourceSet resourceSet) {
-        Set<Resource> processedResources = new HashSet<Resource>(); 
+        Set<Resource> processedResources = new HashSet<Resource>();
         while (processedResources.size() != resourceSet.getResources().size()) {
-        	Set<Resource> resources = new HashSet<Resource>(resourceSet.getResources());
-        	resources.removeAll(processedResources);
-			for (Resource resource : resources) {
-				EPackage pkg = findEPackageInResource(packageUri, resource);
-				if (pkg != null) {
-					return pkg;
-				}
-				processedResources.add(resource);
-			}
+            Set<Resource> resources = new HashSet<Resource>(resourceSet.getResources());
+            resources.removeAll(processedResources);
+            for (Resource resource : resources) {
+                EPackage pkg = findEPackageInResource(packageUri, resource);
+                if (pkg != null) {
+                    return pkg;
+                }
+                processedResources.add(resource);
+            }
         }
         return null;
     }
 
-	private EPackage findEPackageInResource(String packageUri, Resource resource) {
-		TreeIterator<EObject> it = resource.getAllContents();
-		while(it.hasNext()) {
-			EObject obj = it.next();
-			if (obj instanceof EPackage) {
-				if (((EPackage) obj).getNsURI().equals(packageUri)) {
-					return (EPackage) obj;
-				}
-			} else {
-				it.prune();
-			}
-		}
-		return null;
-	}
+    private EPackage findEPackageInResource(String packageUri, Resource resource) {
+        TreeIterator<EObject> it = resource.getAllContents();
+        while (it.hasNext()) {
+            EObject obj = it.next();
+            if (obj instanceof EPackage) {
+                if (((EPackage) obj).getNsURI().equals(packageUri)) {
+                    return (EPackage) obj;
+                }
+            } else {
+                it.prune();
+            }
+        }
+        return null;
+    }
 
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
