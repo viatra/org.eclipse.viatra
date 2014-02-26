@@ -9,7 +9,7 @@
  *   Tamas Szabo - initial API and implementation
  *   Istvan Rath - minor modifications
  *******************************************************************************/
- package library.validation
+package library.validation
 
 import "library"
 

@@ -65,7 +65,7 @@ pattern moreBooksInCategoryThan(C1 : BookCategory, C2 : BookCategory) {
 	M == count find categoryOfBook(C2, _B2);
 	check(N > M);
 	check(C1 != C2);
-} 
+}
 
 /*
  * The book category of Book B is BookCategory C
@@ -110,6 +110,13 @@ pattern bookOfWriter(W : Writer, B : Book) {
 	Writer.books(W, B);
 }
 
+/*
+ * Book B is a book of Writer W.
+ */
+pattern writerOfBook(B : Book, W : Writer) {
+	Book.writers(B, W);
+}
+
 // ************* numbers **********
 
 /*
@@ -119,7 +126,7 @@ pattern bookOfWriter(W : Writer, B : Book) {
 pattern averageNumberOfCoauthorsPerBook(W : Writer, A) {
 	find numberOfBooksOfWriter(W, NumOfBooks);
 	NumOfCoAuthors == count find coAuthorsOfWriter(W, _CW);
-	A == eval(if (NumOfBooks == 0) 0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
+	A == eval(if (NumOfBooks == 0) 0.0 else NumOfCoAuthors.doubleValue / NumOfBooks.doubleValue);
 }
 
 /*
@@ -140,5 +147,5 @@ pattern numberOfBooksOfWriter(W : Writer, N) {
  * The number of writers of Book B is N. 
  */
 pattern numberOfWritersOfBook(B : Book, N) {
-	N == count find bookOfWriter(B, _W);
+	N == count find writerOfBook(B, _W);
 }
