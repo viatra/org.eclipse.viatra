@@ -2,7 +2,6 @@
 <plugin>
 
    <extension
-         name=""
          point="org.eclipse.emf.ecore.generated_package">
       <package
             genModel="src/library/base/Library.xcoreiq"
@@ -11,22 +10,21 @@
       </package>
    </extension>
    <extension
+         id="extension.derived.name"
+         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+      <wellbehaving-derived-feature
+            classifier-name="Writer"
+            feature-name="name"
+            package-nsUri="library.base">
+      </wellbehaving-derived-feature>
+   </extension>
+   <extension
          id="library.base.writerName"
-         name=""
          point="org.eclipse.incquery.runtime.queryspecification">
       <matcher
             querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
             id="library.base.writerName">
       </matcher>
-   </extension>
-   <extension
-         id="library.base.writerName"
-         name=""
-         point="org.eclipse.incquery.runtime.xexpressionevaluator">
-      <evaluator
-            evaluatorClass="library.base.util.WriterNameEvaluator1_1"
-            id="library.base.writerName_1_1">
-      </evaluator>
    </extension>
 
 </plugin>

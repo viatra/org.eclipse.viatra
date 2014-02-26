@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<base:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:base="library.base" xsi:schemaLocation="library.base ../src/library/base/Library.xcoreiq#/EPackage">
+<base:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:base="library.base" xsi:schemaLocation="library.base ../src/library/base/Library.xcoreiq#/EPackage">
   <writers firstName="Leo" lastName="Tolstoy" books="//@books.0"/>
   <writers firstName="Aldous" lastName="Huxley" books="//@books.2"/>
   <writers firstName="John" lastName="Doe" books="//@books.3"/>

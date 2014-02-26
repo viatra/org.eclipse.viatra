@@ -23,15 +23,15 @@ class Writer {
 	container Library library opposite writers
 	refers Book[] books opposite writers
 	
-	// incquery-derived String name spec writerName
+	incquery-derived String name spec writerName
 	
-	derived String name get {
+	/*derived String name get {
 		var title = ""
 		if (books.size > 0) {
 			title = books.head.title
 		}
 		return firstName + " " + lastName + " (" + title + ")" 
-	}
+	}*/
 }
 
 class Book {
