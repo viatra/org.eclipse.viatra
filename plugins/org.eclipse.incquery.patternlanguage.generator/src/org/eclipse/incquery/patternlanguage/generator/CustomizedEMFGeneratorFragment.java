@@ -924,7 +924,7 @@ public class CustomizedEMFGeneratorFragment extends AbstractGeneratorFragment {
 	 * required to match the path format as expected from {@link GenModelImpl#getProjectPath}
 	 */
 	protected String toGenModelProjectPath(String path) {
-		return null == path || "".equals(path) || path.startsWith("/") ? path : path.substring(path.indexOf("/"));
+		return null == path || "".equals(path) || path.startsWith("/") ? path : path.substring(path.indexOf('/'));
 	}
 
 	/**

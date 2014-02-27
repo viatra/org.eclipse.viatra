@@ -31,18 +31,13 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-@SuppressWarnings("restriction")
 @Singleton
 public class TableViewerUtil {
-
-    @Inject
-    private ITypeProvider typeProvider;
 
     @Inject
     private Injector injector;
@@ -205,8 +200,6 @@ public class TableViewerUtil {
         } else if (Float.class.getName().toLowerCase().matches(classFqn)
                 || Double.class.getName().toLowerCase().matches(classFqn)) {
             return value.matches("[0-9]*\\.?[0-9]*");
-        } else if (String.class.getName().toLowerCase().matches(classFqn)) {
-            return true;
         } else {
             return true;
         }
