@@ -165,9 +165,9 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                         	if (dataType == null) {
                         		return false;
                         	} else if (dataType.equals(eDataType)){
-                        		return true;
+                        		return false;
                         	} else if (dataType.getInstanceClassName() != null && eDataType.getInstanceClassName() != null) {
-                        		return dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()) && resultList.contains(dataType);                        		
+                        		return dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()) && resultList.contains(eDataType);                        		
                         	}
                         	return false;
                         }
