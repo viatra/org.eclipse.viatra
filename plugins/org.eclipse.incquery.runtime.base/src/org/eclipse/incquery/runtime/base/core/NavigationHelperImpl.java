@@ -73,6 +73,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected Set<Object> allObservedClasses = null; // including subclasses; if null, must be recomputed
     protected Set<Object> observedDataTypes;
     protected Set<Object> observedFeatures;
+    protected Set<Object> ignoreResolveNotificationFeatures; // ignore RESOLVE for these features, as they are just starting to be observed - see [428458]
 
     /**
      * Feature registration and model traversal is delayed while true
@@ -186,6 +187,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
         this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
         this.observedFeatures = new HashSet<Object>();
+        this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashSet<Object>();
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
@@ -206,6 +208,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     public Set<Object> getObservedFeaturesInternal() {
         return observedFeatures;
+    }
+    
+    public boolean isFeatureResolveIgnored(EStructuralFeature feature) {
+        return ignoreResolveNotificationFeatures.contains(toKey(feature));
     }
 
     @Override
@@ -951,8 +957,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         			if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
         				final Set<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
         				startObservingClasses(delayedClasses);
-        				observedFeatures.addAll(delayedFeatures);
         				observedDataTypes.addAll(delayedDataTypes);
+        				observedFeatures.addAll(delayedFeatures);
         				
         				// make copies so that original accumulators can be cleaned for the next cycle
         				// or for the rare case that a coalesced  traversal is invoked during visitation, 
@@ -969,7 +975,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         					callable = new Callable<V>() {
         						@Override
         						public V call() throws Exception {
-        							traverse(visitor);
+        							// temporarily ignoring RESOLVE on these features, as they were not observed before
+        							ignoreResolveNotificationFeatures.addAll(toGatherFeatures); 
+        							try {
+        								traverse(visitor);
+        							} finally {
+        								ignoreResolveNotificationFeatures.removeAll(toGatherFeatures);        								
+        							}
         							return null;
         						}
 							};
