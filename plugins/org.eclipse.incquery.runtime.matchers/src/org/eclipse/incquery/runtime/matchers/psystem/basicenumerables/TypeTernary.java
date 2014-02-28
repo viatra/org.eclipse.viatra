@@ -55,7 +55,7 @@ public class TypeTernary extends TypeConstraint implements ITypeInfoProviderCons
 
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
-    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(edge), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,target})));
     	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
     		result.put(Collections.singleton(source), new HashSet<PVariable>(Arrays.asList(new PVariable[]{edge,target})));

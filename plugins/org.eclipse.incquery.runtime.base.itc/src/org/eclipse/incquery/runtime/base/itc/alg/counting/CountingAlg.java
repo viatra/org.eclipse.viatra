@@ -42,7 +42,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     private CountingTcRelation<V> tc = null;
     private CountingTcRelation<V> dtc = null;
     private IBiDirectionalGraphDataSource<V> gds = null;
-    private ArrayList<ITcObserver<V>> observers;
+    private List<ITcObserver<V>> observers;
 
     /**
      * Constructs a new Counting algorithm and initializes the transitive closure relation with the given graph data

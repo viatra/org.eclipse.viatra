@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
@@ -36,12 +37,14 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
             return super.getElements(((ReteContainer) inputElement).getAllNodes());
         } else if (inputElement instanceof ReteBoundary) {
             ReteBoundary rb = (ReteBoundary) inputElement;
-            ArrayList<Node> r = new ArrayList<Node>();
+            List<Node> r = new ArrayList<Node>();
             for (Object a : rb.getAllUnaryRoots()) {
-                r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all unary constraints
+                // access all unary constraints
+                r.add(rb.getHeadContainer().resolveLocal((Address) a)); 
             }
             for (Object a : rb.getAllTernaryEdgeRoots()) {
-                r.add(rb.getHeadContainer().resolveLocal((Address) a)); // access all ternary constraints
+                // access all ternary constraints
+                r.add(rb.getHeadContainer().resolveLocal((Address) a));
             }
             return r.toArray();
         }
@@ -50,7 +53,7 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
     
     private Object[] filterElements(Object[] elements) {
         if (elements!=null) {
-        ArrayList<Object> r= new ArrayList<Object>();
+        List<Object> r= new ArrayList<Object>();
         for (Object o : elements) {
             if (! (
                     (o instanceof DeltaMonitor) ||
@@ -80,7 +83,7 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
     
     private Object[] _getConnectedTo(Object entity) {
         if (entity instanceof Node) {
-            ArrayList<Node> r = new ArrayList<Node>();
+            List<Node> r = new ArrayList<Node>();
             if (entity instanceof Supplier) {
                 r.addAll(((Supplier) entity).getReceivers());
                 

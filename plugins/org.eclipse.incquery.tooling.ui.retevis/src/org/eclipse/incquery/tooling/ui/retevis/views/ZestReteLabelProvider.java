@@ -166,7 +166,7 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
                 }
             } else if (entity instanceof ConstantNode) {
                 ConstantNode node = (ConstantNode) entity;
-                ArrayList<Tuple> arrayList = new ArrayList<Tuple>();
+                List<Tuple> arrayList = new ArrayList<Tuple>();
                 node.pullInto(arrayList);
                 StringBuilder sb = new StringBuilder();
                 for (Tuple tuple : arrayList) {

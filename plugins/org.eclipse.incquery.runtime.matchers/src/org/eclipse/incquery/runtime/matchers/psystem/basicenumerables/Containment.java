@@ -37,7 +37,7 @@ public class Containment extends CoreModelRelationship {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
-    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(child), Collections.singleton(parent));
 		return result;
     }

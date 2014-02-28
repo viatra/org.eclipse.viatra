@@ -222,6 +222,7 @@ public class DisplayUtil {
                 break;
             default:
                 matchString = String.format("%d matches", matchesSize);
+                break;
             }
 
             String isCroppedString = isCropped ? " - Cropped" : "";

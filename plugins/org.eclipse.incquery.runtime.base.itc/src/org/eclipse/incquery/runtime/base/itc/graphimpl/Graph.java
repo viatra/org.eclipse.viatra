@@ -26,7 +26,7 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
     private static final long serialVersionUID = 1L;
     private Map<V, List<V>> edgeList;
     private Map<V, List<V>> edgeListReversed;
-    private ArrayList<IGraphObserver<V>> observers;
+    private List<IGraphObserver<V>> observers;
 
     public Graph() {
         this.edgeList = new HashMap<V, List<V>>();

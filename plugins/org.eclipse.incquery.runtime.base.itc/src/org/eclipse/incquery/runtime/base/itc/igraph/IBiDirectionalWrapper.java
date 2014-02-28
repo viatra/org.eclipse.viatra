@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.base.itc.igraph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,12 +30,12 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
 
     private static final long serialVersionUID = -5771114630390029106L;
     private IGraphDataSource<V> gds;
-    private HashMap<V, ArrayList<V>> backwardEdges;
+    private Map<V,List<V>> backwardEdges;
 
     public IBiDirectionalWrapper(IGraphDataSource<V> gds) {
         this.gds = gds;
 
-        this.backwardEdges = new HashMap<V, ArrayList<V>>();
+        this.backwardEdges = new HashMap<V, List<V>>();
 
         if (gds.getAllNodes() != null) {
             for (V s : gds.getAllNodes()) {
@@ -68,14 +69,14 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
     }
 
     @Override
-    public ArrayList<V> getSourceNodes(V target) {
+    public List<V> getSourceNodes(V target) {
         return backwardEdges.get(target);
     }
 
     @Override
     public void edgeInserted(V source, V target) {
         if (backwardEdges.get(target) == null) {
-            ArrayList<V> tSet = new ArrayList<V>();
+            List<V> tSet = new ArrayList<V>();
             tSet.add(source);
             backwardEdges.put(target, tSet);
         } else {

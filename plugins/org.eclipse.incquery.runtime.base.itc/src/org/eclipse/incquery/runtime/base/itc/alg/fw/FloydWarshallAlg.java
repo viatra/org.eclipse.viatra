@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.base.itc.alg.fw;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.base.itc.alg.dred.DRedTcRelation;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
@@ -43,8 +44,8 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
         tc.clear();
 
         int n = gds.getAllNodes().size();
-        HashMap<V, Integer> mapForw = new HashMap<V, Integer>();
-        HashMap<Integer, V> mapBackw = new HashMap<Integer, V>();
+        Map<V, Integer> mapForw = new HashMap<V, Integer>();
+        Map<Integer, V> mapBackw = new HashMap<Integer, V>();
         int[][] P = new int[n][n];
 
         int i, j, k;

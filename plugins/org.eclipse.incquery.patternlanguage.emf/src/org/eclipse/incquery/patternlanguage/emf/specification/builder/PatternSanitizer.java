@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.specification.builder;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -168,7 +169,7 @@ public class PatternSanitizer {
     protected Set<Pattern> getAllReferencedUnvalidatedPatterns(Collection<Pattern> patterns) {
         Set<Pattern> toBeValidated = new HashSet<Pattern>();
 
-        LinkedList<Pattern> unexplored = new LinkedList<Pattern>();
+        Deque<Pattern> unexplored = new LinkedList<Pattern>();
 
         for (Pattern pattern : patterns) {
             if (!admittedPatterns.contains(pattern)) {

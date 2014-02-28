@@ -37,6 +37,7 @@ public class LifoConflictResolver implements ConflictResolver {
 
     public static final class LifoConflictSet implements ChangeableConflictSet {
 
+        private static final String ACTIVATION_CANNOT_BE_NULL = "Activation cannot be null!";
         private LifoConflictResolver resolver;
         private Deque<Activation<?>> activations = new ArrayDeque<Activation<?>>();
 
@@ -59,7 +60,7 @@ public class LifoConflictResolver implements ConflictResolver {
             if (activations.isEmpty()) {
                 return Collections.emptySet();
             }
-            HashSet<Activation<?>> activationSet = new HashSet<Activation<?>>();
+            Set<Activation<?>> activationSet = new HashSet<Activation<?>>();
             activationSet.add(getNextActivation());
             return activationSet;
         }
@@ -71,22 +72,24 @@ public class LifoConflictResolver implements ConflictResolver {
 
         @Override
         public boolean addActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
             if (activation.equals(activations.peek())) {
-                return false; // no change required
+                // no change required
+                return false;
             } else {
                 // activation may already be in the queue, but never more than
                 // once (see JavaDoc of method)
                 activations.remove(activation);
                 activations.push(activation);
-                return true; // if the first activation changes, we consider it
+                // if the first activation changes, we consider it
+                return true;
                 // a change in the set
             }
         }
 
         @Override
         public boolean removeActivation(Activation<?> activation) {
-            checkArgument(activation != null, "Activation cannot be null!");
+            checkArgument(activation != null, ACTIVATION_CANNOT_BE_NULL);
             return activations.remove(activation);
         }
     }

@@ -288,6 +288,7 @@ public class EPMToPBody {
             break;
         case INEQUALITY:
             new Inequality(pBody, left, right, false);
+            break;
         }
     }
 

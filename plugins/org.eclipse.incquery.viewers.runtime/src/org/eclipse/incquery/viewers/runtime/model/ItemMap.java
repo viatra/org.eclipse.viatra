@@ -17,7 +17,7 @@ import com.google.common.collect.Multiset;
 
 public class ItemMap implements Multimap<Object, Item> {
     
-    HashMap<Object, List<Item>> storage = new HashMap<Object, List<Item>>();
+    Map<Object, List<Item>> storage = new HashMap<Object, List<Item>>();
     Set<Item> currentlyAdding = new HashSet<Item>();
 
     @Override

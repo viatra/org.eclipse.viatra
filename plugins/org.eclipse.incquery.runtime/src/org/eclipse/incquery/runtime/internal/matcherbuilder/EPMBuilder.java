@@ -61,7 +61,7 @@ public class EPMBuilder<Collector> implements IRetePatternBuilder<Collector> {
 
     @Override
     public Map<String, Integer> getPosMapping(PQuery query) {
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        Map<String, Integer> result = new HashMap<String, Integer>();
         List<String> parameters = query.getParameterNames();
         for (int i = 0; i < parameters.size(); ++i)
             result.put(parameters.get(i), i);

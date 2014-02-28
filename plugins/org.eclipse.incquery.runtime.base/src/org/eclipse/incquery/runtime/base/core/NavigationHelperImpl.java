@@ -949,7 +949,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         			boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClassesInternal()).isEmpty();
         			
         			if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-        				final HashSet<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
+        				final Set<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
         				startObservingClasses(delayedClasses);
         				observedFeatures.addAll(delayedFeatures);
         				observedDataTypes.addAll(delayedDataTypes);
@@ -957,9 +957,9 @@ public class NavigationHelperImpl implements NavigationHelper {
         				// make copies so that original accumulators can be cleaned for the next cycle
         				// or for the rare case that a coalesced  traversal is invoked during visitation, 
         				// e.g. by a derived feature implementation
-        				final HashSet<Object> toGatherClasses = new HashSet<Object>(delayedClasses);
-        				final HashSet<Object> toGatherFeatures = new HashSet<Object>(delayedFeatures);
-        				final HashSet<Object> toGatherDataTypes = new HashSet<Object>(delayedDataTypes);
+        				final Set<Object> toGatherClasses = new HashSet<Object>(delayedClasses);
+        				final Set<Object> toGatherFeatures = new HashSet<Object>(delayedFeatures);
+        				final Set<Object> toGatherDataTypes = new HashSet<Object>(delayedDataTypes);
         				
         				if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
         					// repeat the cycle with this visit

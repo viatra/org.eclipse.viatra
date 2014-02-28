@@ -48,7 +48,7 @@ public class TypeBinary extends TypeConstraint implements ITypeInfoProviderConst
 
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
-    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
     		result.put(Collections.singleton(source), Collections.singleton(target));
     	if (context.isBinaryEdgeMultiplicityOneTo(supplierKey))

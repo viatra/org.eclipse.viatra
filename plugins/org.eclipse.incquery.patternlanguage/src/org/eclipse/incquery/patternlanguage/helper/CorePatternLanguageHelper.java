@@ -115,7 +115,7 @@ public final class CorePatternLanguageHelper {
      * @return all xbase check() or eval() expressions in the pattern
      */
     public static Collection<XExpression> getAllTopLevelXBaseExpressions(EObject patternOrBody) {
-    	final ArrayList<XExpression> result = new ArrayList<XExpression>();
+    	final List<XExpression> result = new ArrayList<XExpression>();
     	final TreeIterator<EObject> eAllContents = patternOrBody.eAllContents();
     	while (eAllContents.hasNext()) {
     		final EObject content = eAllContents.next();
@@ -148,7 +148,7 @@ public final class CorePatternLanguageHelper {
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
     public static Map<String, Integer> getParameterPositionsByName(Pattern pattern) {
         EList<Variable> parameters = pattern.getParameters();
-        HashMap<String, Integer> posMapping = new HashMap<String, Integer>();
+        Map<String, Integer> posMapping = new HashMap<String, Integer>();
         int parameterPosition = 0;
         for (Variable parameter : parameters) {
             posMapping.put(parameter.getName(), parameterPosition++);
@@ -208,7 +208,7 @@ public final class CorePatternLanguageHelper {
     public static EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {
         EList<Variable> variables = previous;
 
-        HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+        Map<String, Variable> parameterMap = new HashMap<String, Variable>();
 
         EList<Variable> parameters = ((Pattern) body.eContainer()).getParameters();
         for (Variable var : variables) {
