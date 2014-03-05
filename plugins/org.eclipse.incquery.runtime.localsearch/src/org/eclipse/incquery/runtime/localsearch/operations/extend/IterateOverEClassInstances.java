@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 /**
  * Iterates all available {@link EClass} instances using an {@link NavigationHelper EMF-IncQuery Base indexer}. It is
@@ -24,29 +25,16 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
  */
 public class IterateOverEClassInstances extends ExtendOperation<EObject> {
 
-    private NavigationHelper baseIndexNavigator;
     private EClass clazz;
 
-    /**
-     * @param position
-     * @param it
-     */
-    public IterateOverEClassInstances(int position, EClass clazz, NavigationHelper baseIndexNavigator) {
+    public IterateOverEClassInstances(int position, EClass clazz) {
         super(position);
         this.clazz = clazz;
-        this.baseIndexNavigator = baseIndexNavigator;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime
-     * .localsearch.MatchingFrame)
-     */
     @Override
-    public void onInitialize(MatchingFrame frame) {
-        it = baseIndexNavigator.getAllInstances(clazz).iterator();
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+        it = context.getBaseIndex().getAllInstances(clazz).iterator();
     }
 
 }

@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
 import com.google.common.collect.Maps;
@@ -31,30 +32,27 @@ import com.google.common.collect.Maps;
  */
 public class IterateOverEStructuralFeatureInstances implements ISearchOperation {
 
-    private NavigationHelper baseIndexNavigator;
     private EStructuralFeature feature;
     private Integer sourcePosition, targetPosition;
     protected Iterator<Entry<EObject, Object>> it;
     
-    public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature,
-            NavigationHelper baseIndexNavigator) {
+    public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
         this.feature = feature;
-        this.baseIndexNavigator = baseIndexNavigator;
     }
     
     @Override
-    public void onBacktrack(MatchingFrame frame) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         frame.setValue(sourcePosition, null);
         frame.setValue(targetPosition, null);
         it = null;
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame) {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
         final Map<EObject, Object> instances = Maps.newHashMap();
-        baseIndexNavigator.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
+        context.getBaseIndex().processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
 
             @Override
             public void process(EStructuralFeature feature, EObject source, Object target) {
@@ -66,7 +64,7 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
     }
 
     @Override
-    public boolean execute(MatchingFrame frame) {
+    public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {
             final Entry<EObject, Object> next = it.next();
             frame.setValue(sourcePosition, next.getKey());

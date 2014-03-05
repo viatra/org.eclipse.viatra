@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.extend;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 /**
  * Iterates over all {@link EDataType} instances using an {@link NavigationHelper EMF-IncQuery Base indexer}. It is
@@ -21,25 +22,23 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
  */
 public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
 
-    private NavigationHelper baseIndexNavigator;
     private EDataType dataType;
 
     /**
      * @param position
      * @param it
      */
-    public IterateOverEDatatypeInstances(int position, EDataType dataType, NavigationHelper baseIndexNavigator) {
+    public IterateOverEDatatypeInstances(int position, EDataType dataType) {
         super(position);
         this.dataType = dataType;
-        this.baseIndexNavigator = baseIndexNavigator;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */
     @Override
-    public void onInitialize(MatchingFrame frame) {
-        it = baseIndexNavigator.getDataTypeInstances(dataType).iterator();
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+        it = context.getBaseIndex().getDataTypeInstances(dataType).iterator();
     }
 
 }

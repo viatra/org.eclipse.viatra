@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper EMF-IncQuery Base indexer}.
@@ -24,24 +25,21 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
  */
 public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
 
-    private NavigationHelper baseIndexNavigator;
     private int targetPosition;
     private EStructuralFeature feature;
 
-    public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature,
-            NavigationHelper baseIndexNavigator) {
+    public ExtendToEStructuralFeatureSource(int sourcePosition, int targetPosition, EStructuralFeature feature) {
         super(sourcePosition);
         this.targetPosition = targetPosition;
         this.feature = feature;
-        this.baseIndexNavigator = baseIndexNavigator;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */
     @Override
-    public void onInitialize(MatchingFrame frame) {
-        final Collection<EObject> values = baseIndexNavigator.findByFeatureValue(frame.getValue(targetPosition), feature);
+    public void onInitialize(MatchingFrame frame, ISearchContext context) {
+        final Collection<EObject> values = context.getBaseIndex().findByFeatureValue(frame.getValue(targetPosition), feature);
         // System.out.println("**FeatureSource " + feature.getContainerClass().getName() + "." + feature.getName() + " "
         // + values.size());
         it = values

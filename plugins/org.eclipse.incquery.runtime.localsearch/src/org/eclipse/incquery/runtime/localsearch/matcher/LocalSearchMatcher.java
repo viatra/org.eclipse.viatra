@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.MatchingTable;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
-import org.eclipse.incquery.runtime.localsearch.plan.SearchPlan;
+import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -28,17 +28,17 @@ import com.google.common.collect.UnmodifiableIterator;
  */
 public class LocalSearchMatcher {
 
-    private ImmutableList<SearchPlan> plan;
+    private ImmutableList<SearchPlanExecutor> plan;
     private int frameSize;
     private int keySize;
 
     private static class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
 
-        private UnmodifiableIterator<SearchPlan> iterator;
-        private SearchPlan currentPlan;
+        private UnmodifiableIterator<SearchPlanExecutor> iterator;
+        private SearchPlanExecutor currentPlan;
         private MatchingFrame frame;
 
-        public PlanExecutionIterator(final ImmutableList<SearchPlan> plan, MatchingFrame initialFrame) {
+        public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame) {
             this.frame = initialFrame.clone();
             Preconditions.checkArgument(plan.size() > 0);
             iterator = plan.iterator();
@@ -73,23 +73,23 @@ public class LocalSearchMatcher {
 
     /**
      * If a descendant initializes a matcher using the default constructor, it is expected that it also calls the
-     * {@link #setPlan(SearchPlan)} and {@link #setFramesize(int)} methods manually.
+     * {@link #setPlan(SearchPlanExecutor)} and {@link #setFramesize(int)} methods manually.
      */
     protected LocalSearchMatcher() {
     }
 
-    public LocalSearchMatcher(SearchPlan plan, int keySize, int framesize) {
+    public LocalSearchMatcher(SearchPlanExecutor plan, int keySize, int framesize) {
         super();
         this.keySize = keySize;
         this.plan = ImmutableList.of(plan);
         this.frameSize = framesize;
     }
 
-    protected void setPlan(SearchPlan plan) {
+    protected void setPlan(SearchPlanExecutor plan) {
         this.plan = ImmutableList.of(plan);
     }
 
-    protected void setPlan(SearchPlan[] plan) {
+    protected void setPlan(SearchPlanExecutor[] plan) {
         this.plan = ImmutableList.copyOf(plan);
     }
 
