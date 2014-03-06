@@ -126,7 +126,7 @@ public class PatternSanitizer {
         Set<Pattern> inadmissible = new HashSet<Pattern>();
         Map<String, Pattern> newPatternsByName = new HashMap<String, Pattern>();
         for (Pattern current : newPatterns) {
-            if (current == null) {
+            if (current == null || current.eIsProxy()) {
                 nullPatternFound = true;
                 logger.error("Null pattern value");
                 continue;

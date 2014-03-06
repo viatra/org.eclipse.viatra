@@ -79,8 +79,10 @@ public class ObservablePatternMatcher {
         IncQueryMatcher<? extends IPatternMatch> matcher = null;
         try {
             matcher = engine.getMatcher(specification);
+        } catch (IncQueryException e) {
+            message = e.getShortMessage();
         } catch (Exception e) {
-            message = (e instanceof IncQueryException) ? ((IncQueryException) e).getShortMessage() : e.getMessage();
+            message = e.getMessage();
         }
         this.exceptionMessage = message;
         //Cast required for newFilteredDeltaMonitor

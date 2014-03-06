@@ -19,6 +19,8 @@ import java.util.Map;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
+import com.google.common.base.Preconditions;
+
 /**
  * This class represents a composite element inside a pattern hierarchy.
  * 
@@ -91,6 +93,10 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public PatternComponent addComponent(String patternFragment) {
+        if(patternFragment == null || "".equals(patternFragment)) {
+            return null;
+        }
+        
         String[] tokens = patternFragment.split("\\.");
 
         if (tokens.length == 1) {
@@ -223,6 +229,10 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public void removeComponent(String patternFragment) {
+        if(patternFragment == null || "".equals(patternFragment)) {
+            return;
+        }
+
         String[] tokens = patternFragment.split("\\.");
         if (tokens.length == 1) {
             PatternComponent component = null;

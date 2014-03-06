@@ -222,12 +222,16 @@ public class QueryExplorerPatternRegistry {
 
         if (patterns != null) {
             for (IQuerySpecification<?> p : patterns) {
+                try {
                 String patternFqn = p.getFullyQualifiedName();
                 if (activePatterns.remove(p)) {
                     removedPatterns.add(p);
                 }
                 patternNameMap.remove(patternFqn);
                 builder.forgetSpecificationTransitively(p);
+                } catch (Exception e) {
+                    logger.log(new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, "Error while unregistering the pattern", e));
+                }
             }
         }
 

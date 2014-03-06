@@ -30,7 +30,6 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.Patt
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
-import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.Inject;
 
