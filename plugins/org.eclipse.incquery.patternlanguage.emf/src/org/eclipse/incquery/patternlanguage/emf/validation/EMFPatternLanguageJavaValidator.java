@@ -149,7 +149,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     @Check
     public void checkParametersNamed(Pattern pattern) {
         for (Variable var : pattern.getParameters()) {
-            if (var.getName().startsWith("_")) {
+            if (var.getName() != null && var.getName().startsWith("_")) {
                 error("Parameter name must not start with _", var, PatternLanguagePackage.Literals.VARIABLE__NAME,
                         EMFIssueCodes.SINGLEUSE_PARAMETER);
             }
