@@ -63,6 +63,7 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
+import org.eclipse.xtext.resource.CompilerPhases;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.typing.XbaseTypeProvider;
 
@@ -86,6 +87,9 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     @Inject
     private Primitives primitives;
+    
+    @Inject
+    private CompilerPhases compilerPhases;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
 
@@ -437,14 +441,16 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             final XExpression xExpression = eval.getExpression();
             final EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
             
-            JvmTypeReference type = getCommonReturnType(xExpression, true);
-            dataType.setName(type.getSimpleName());
-            dataType.setInstanceClassName(type.getQualifiedName());
+            if (!compilerPhases.isIndexing(xExpression)){
+            	JvmTypeReference type = getCommonReturnType(xExpression, true);
+            	dataType.setName(type.getSimpleName());
+            	dataType.setInstanceClassName(type.getQualifiedName());
+            } else {
+            	//During the indexing phase it is impossible to calculate the expression type
+            	//XXX very hacky solution
+            	return EcorePackage.Literals.EJAVA_OBJECT;
+            }
             return dataType;
-//          // TODO call type provider for eval() expression
-//            String simpleName = primitives.asPrimitiveIfWrapperType(type).getSimpleName();    
-
-//            return EcorePackage.Literals.EJAVA_OBJECT;
         } else if (valueReference instanceof EnumValue) {
             EnumValue enumValue = (EnumValue) valueReference;
             return enumValue.getEnumeration();
