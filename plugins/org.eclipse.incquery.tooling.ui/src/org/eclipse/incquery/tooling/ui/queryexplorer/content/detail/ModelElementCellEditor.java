@@ -20,7 +20,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -56,13 +56,13 @@ public class ModelElementCellEditor extends CellEditor {
     private Object value = null;
     private Notifier root;
     private Table table;
-    private ObservablePatternMatcher observableMatcher;
+    private PatternMatcherContent observableMatcher;
 
     @Inject
-    TableViewerUtil tableViewerUtil;
+    DetailsViewerUtil tableViewerUtil;
     private DialogCellLayout layout;
 
-    public ModelElementCellEditor(Table table, ObservablePatternMatcher observableMatcher) {
+    public ModelElementCellEditor(Table table, PatternMatcherContent observableMatcher) {
         super(table, SWT.NONE);
         this.root = observableMatcher.getParent().getNotifier();
         this.table = table;

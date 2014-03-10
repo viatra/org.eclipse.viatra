@@ -17,8 +17,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -34,36 +34,36 @@ public class InitializeRetevisHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        
+
         ISelection selection = HandlerUtil.getActiveMenuSelection(event);
         if (selection instanceof TreeSelection) {
-            ObservablePatternMatcherRoot root = getSelectedMatcherRoot(selection);
-            if (root.getMatchers()!=null && root.getMatchers().size()>0)
-            try {
-                ObservablePatternMatcher pm = root.getMatchers().get(0);
-                // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
-                ReteBoundary rb = ((AdvancedIncQueryEngine)pm.getMatcher().getEngine()).getReteEngine().getBoundary();
-                ReteVisView.getInstance().setContent(rb);
-            } catch (IncQueryException e) {
-                throw new ExecutionException("Error initializing pattern matcher.", e);
-            } catch (IllegalArgumentException e) {
-                throw new ExecutionException("Invalid selrection", e);
-            }
+            PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
+            if (root.getChildren() != null && root.getChildren().size() > 0)
+                try {
+                    PatternMatcherContent pm = root.getChildren().get(0);
+                    // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
+                    ReteBoundary rb = ((AdvancedIncQueryEngine) pm.getMatcher().getEngine()).getReteEngine()
+                            .getBoundary();
+                    ReteVisView.getInstance().setContent(rb);
+                } catch (IncQueryException e) {
+                    throw new ExecutionException("Error initializing pattern matcher.", e);
+                } catch (IllegalArgumentException e) {
+                    throw new ExecutionException("Invalid selrection", e);
+                }
         }
-        
+
         return null;
     }
 
-    protected ObservablePatternMatcherRoot getSelectedMatcherRoot(ISelection selection) {
+    protected PatternMatcherRootContent getSelectedMatcherRoot(ISelection selection) {
         Object firstElement = ((TreeSelection) selection).getFirstElement();
-        if (firstElement instanceof ObservablePatternMatcherRoot) {
-            return (ObservablePatternMatcherRoot) firstElement;
-        } else if (firstElement instanceof ObservablePatternMatcher) {
-            return ((ObservablePatternMatcher) firstElement).getParent();
+        if (firstElement instanceof PatternMatcherRootContent) {
+            return (PatternMatcherRootContent) firstElement;
+        } else if (firstElement instanceof PatternMatcherContent) {
+            return ((PatternMatcherContent) firstElement).getParent();
         } else {
             throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
         }
     }
-
 
 }

@@ -19,9 +19,9 @@ import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecif
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,12 +49,12 @@ public class ShowLocationHandler extends AbstractHandler {
         if (selection instanceof TreeSelection) {
             Object obj = selection.getFirstElement();
 
-            if (obj instanceof ObservablePatternMatch) {
-                ObservablePatternMatch pm = (ObservablePatternMatch) obj;
-                ModelConnectorTreeViewerKey key = pm.getParent().getParent().getKey();
+            if (obj instanceof PatternMatchContent) {
+                PatternMatchContent pm = (PatternMatchContent) obj;
+                PatternMatcherRootContentKey key = pm.getParent().getParent().getKey();
                 QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
-            } else if (obj instanceof ObservablePatternMatcher) {
-                ObservablePatternMatcher matcher = (ObservablePatternMatcher) obj;
+            } else if (obj instanceof PatternMatcherContent) {
+                PatternMatcherContent matcher = (PatternMatcherContent) obj;
                 if (matcher.getSpecification() != null) {
                     setSelectionToXTextEditor(matcher.getSpecification());
                 }
@@ -67,7 +67,7 @@ public class ShowLocationHandler extends AbstractHandler {
         if (!(specification instanceof GenericQuerySpecification)) {
             return;
         }
-        Pattern pattern = ((GenericQuerySpecification)specification).getPattern();
+        Pattern pattern = ((GenericQuerySpecification) specification).getPattern();
         IFile file = QueryExplorerPatternRegistry.getInstance().getFileForPattern(specification);
 
         for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()

@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +19,9 @@ import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -36,15 +38,21 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+/**
+ * A collection of useful utility methods for the details and filters viewer in the {@link QueryExplorer}.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @Singleton
-public class TableViewerUtil {
+public class DetailsViewerUtil {
 
     @Inject
     private Injector injector;
 
     private final Set<String> primitiveTypes;
 
-    protected TableViewerUtil() {
+    protected DetailsViewerUtil() {
         primitiveTypes = new HashSet<String>();
         primitiveTypes.add(Boolean.class.getName());
         primitiveTypes.add(Character.class.getName());
@@ -62,7 +70,7 @@ public class TableViewerUtil {
         return primitiveTypes.contains(fqn);
     }
 
-    public void prepareTableViewerForObservableInput(final ObservablePatternMatch match, TableViewer viewer) {
+    public void prepareFor(PatternMatchContent match, TableViewer viewer) {
         clearTableViewerColumns(viewer);
         String[] titles = { "Parameter", "Value" };
         createColumns(viewer, titles);
@@ -84,7 +92,7 @@ public class TableViewerUtil {
         }
     }
 
-    public void prepareTableViewerForMatcherConfiguration(ObservablePatternMatcher observableMatcher, TableViewer viewer) {
+    public void prepareFor(PatternMatcherContent observableMatcher, TableViewer viewer) {
         clearTableViewerColumns(viewer);
         String[] titles = { "Parameter", "Filter", "Class" };
         createColumns(viewer, titles);
@@ -153,34 +161,19 @@ public class TableViewerUtil {
     }
 
     public Object createValue(String classFqn, Object value) {
-        if (!(value instanceof String)) {
+        if (!(value instanceof String) || String.class.getName().matches(classFqn)) {
             return value;
         } else {
-            classFqn = classFqn.toLowerCase();
-            String strValue = value.toString();
-
-            if (strValue.matches("")) {
+            if (value.toString().matches("")) {
                 return null;
-            } else if (Boolean.class.getName().toLowerCase().matches(classFqn)) {
-                return Boolean.valueOf(strValue.toLowerCase());
-            } else if (Character.class.getName().toLowerCase().matches(classFqn)) {
-                return Character.valueOf(strValue.charAt(0));
-            } else if (Byte.class.getName().toLowerCase().matches(classFqn)) {
-                return Byte.valueOf(strValue);
-            } else if (Short.class.getName().toLowerCase().matches(classFqn)) {
-                return Short.valueOf(strValue);
-            } else if (Integer.class.getName().toLowerCase().matches(classFqn)) {
-                return Integer.valueOf(strValue);
-            } else if (Long.class.getName().toLowerCase().matches(classFqn)) {
-                return Long.valueOf(strValue);
-            } else if (Float.class.getName().toLowerCase().matches(classFqn)) {
-                return Float.valueOf(strValue);
-            } else if (Double.class.getName().toLowerCase().matches(classFqn)) {
-                return Double.valueOf(strValue);
-            } else if (String.class.getName().toLowerCase().matches(classFqn)) {
-                return value;
             } else {
-                return null;
+                try {
+                    Class<?> clazz = Class.forName(classFqn);
+                    Method method = clazz.getMethod("valueOf", String.class);
+                    return method.invoke(null, value);
+                } catch (Exception e) {
+                    return null;
+                }
             }
         }
     }

@@ -12,7 +12,6 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -31,29 +30,27 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConsta
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.ui.IEditorPart;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Each IEditingDomainProvider will be associated a PatternMatcherRoot element in the tree viewer. PatterMatcherRoots
- * are indexed with a ViewerRootKey.
- *
- * It's children element will be PatterMatchers.
- *
- * @author Tamas Szabo
- *
+ * A top level element in the {@link QueryExplorer}'s tree viewer, which is actually displayed. Instances of this class
+ * are always associated with an instance of {@link PatternMatcherRootContentKey}. The child elements of
+ * this {@link CompositeContent} will consist of {@link PatternMatcherContent} instances.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
  */
-public class ObservablePatternMatcherRoot extends EngineTaintListener {
+public class PatternMatcherRootContent extends CompositeContent<RootContent, PatternMatcherContent> {
 
-    private final Map<String, ObservablePatternMatcher> matchers;
-    private final List<ObservablePatternMatcher> sortedMatchers;
-    private final ModelConnectorTreeViewerKey key;
-
+    private final Map<String, PatternMatcherContent> mapping;
+    private final PatternMatcherRootContentKey key;
+    private ContentEngineTaintListener taintListener;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
-    public ObservablePatternMatcherRoot(ModelConnectorTreeViewerKey key) {
-        matchers = Maps.newHashMap();
-        sortedMatchers = Lists.newLinkedList();
+    public PatternMatcherRootContent(RootContent parent, PatternMatcherRootContentKey key) {
+        super(parent);
+        this.taintListener = new ContentEngineTaintListener();
+        this.mapping = Maps.newHashMap();
         this.key = key;
 
         AdvancedIncQueryEngine engine = key.getEngine();
@@ -61,7 +58,7 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
             key.setEngine(createEngine());
         }
         if (engine != null) {
-            engine.getLogger().addAppender(this);
+            engine.getLogger().addAppender(taintListener);
         }
     }
 
@@ -72,7 +69,8 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
 
         try {
-        	AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(), wildcardMode, dynamicEMFMode);
+            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(),
+                    wildcardMode, dynamicEMFMode);
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
@@ -82,64 +80,47 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
     }
 
     public void addMatcher(IncQueryEngine engine, IQuerySpecification<?> specification, boolean generated) {
-    	String fqn = specification.getFullyQualifiedName();
-        
-    	
-        ObservablePatternMatcher pm = new ObservablePatternMatcher(this, engine, specification,
+        String fqn = specification.getFullyQualifiedName();
+
+        PatternMatcherContent pm = new PatternMatcherContent(this, engine, specification,
                 generated);
-        this.matchers.put(fqn, pm);
+        this.mapping.put(fqn, pm);
 
         if (generated) {
-        	// generated matchers are inserted in front of the list
-            this.sortedMatchers.add(0, pm);
+            // generated matchers are inserted in front of the list
+            this.children.addChild(0, pm);
         } else {
-        	// generic matchers are inserted in the list according to the order in the eiq file
-            this.sortedMatchers.add(pm);
-        }
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
+            // generic matchers are inserted in the list according to the order in the eiq file
+            this.children.addChild(pm);
         }
     }
 
     public void removeMatcher(String patternFqn) {
         // if the pattern is first deactivated then removed, than the matcher corresponding matcher is disposed
-        ObservablePatternMatcher matcher = this.matchers.get(patternFqn);
+        PatternMatcherContent matcher = this.mapping.get(patternFqn);
         if (matcher != null) {
-            this.sortedMatchers.remove(matcher);
+            this.children.removeChild(matcher);
             matcher.dispose();
-            this.matchers.remove(patternFqn);
-            if (QueryExplorer.getInstance() != null) {
-                QueryExplorer.getInstance().getMatcherTreeViewer().refresh(this);
-            }
+            this.mapping.remove(patternFqn);
         }
     }
 
-    public static final String MATCHERS_ID = "matchers";
-
-    public List<ObservablePatternMatcher> getMatchers() {
-        return sortedMatchers;
-    }
-
-    public String getText() {
-        return key.toString();
-    }
-
+    @Override
     public void dispose() {
-        for (ObservablePatternMatcher pm : this.matchers.values()) {
-            pm.dispose();
-        }
-        AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
+        super.dispose();
+        
+        AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
-            engine.getLogger().removeAppender(this);
+            engine.getLogger().removeAppender(taintListener);
         }
     }
 
     public boolean isTainted() {
-    	AdvancedIncQueryEngine engine = key.getEngine();// createEngine();
+        AdvancedIncQueryEngine engine = key.getEngine();
         return (engine == null) ? true : engine.isTainted();
     }
 
-    public ModelConnectorTreeViewerKey getKey() {
+    public PatternMatcherRootContentKey getKey() {
         return key;
     }
 
@@ -151,17 +132,9 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         return this.key.getNotifier();
     }
 
-    @Override
-    public void engineBecameTainted() {
-        for (ObservablePatternMatcher matcher : this.matchers.values()) {
-            matcher.stopMonitoring();
-        }
-    }
-
     public void registerPattern(final IQuerySpecification<?>... patterns) {
-        IncQueryEngine engine;
+        IncQueryEngine engine = null;
         try {
-            // engine = EngineManager.getInstance().getIncQueryEngine(getNotifier());
             engine = key.getEngine();
 
             if (engine.getBaseIndex().isInWildcardMode()) {
@@ -175,7 +148,6 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
                     }
                 });
             }
-
         } catch (IncQueryException ex) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
                     "Cannot initialize pattern matcher engine.", ex));
@@ -196,18 +168,20 @@ public class ObservablePatternMatcherRoot extends EngineTaintListener {
         removeMatcher(specification.getFullyQualifiedName());
     }
 
-    /**
-     * Create a PatternMatcher root for the given key element.
-     *
-     * @param key
-     *            the key element (editorpart + notifier)
-     * @return the PatternMatcherRoot element
-     */
-    public static ObservablePatternMatcherRoot createPatternMatcherRoot(ModelConnectorTreeViewerKey key) {
-        ObservablePatternMatcherRoot root = new ObservablePatternMatcherRoot(key);
-        List<IQuerySpecification<?>> activePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
-        // runtime & generated matchers
-        root.registerPattern(activePatterns.toArray(new IQuerySpecification<?>[activePatterns.size()]));
-        return root;
+    private class ContentEngineTaintListener extends EngineTaintListener {
+
+        @Override
+        public void engineBecameTainted() {
+            for (PatternMatcherContent matcher : mapping.values()) {
+                matcher.stopMonitoring();
+            }
+        }
+        
     }
+
+    @Override
+    public String getText() {
+        return this.key.toString();
+    }
+
 }

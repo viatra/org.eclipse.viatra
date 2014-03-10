@@ -8,7 +8,6 @@
  * Contributors:
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.util.List;
@@ -23,24 +22,23 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**
- * A PatternMatch is associated to every match of a matcher. It is the lowest level element is the treeviewer.
+ * The bottom level element in the tree viewer of the {@link QueryExplorer}. Instances of this class 
+ * represent the matches of the pattern matchers loaded during runtime. 
  * 
- * @author Tamas Szabo
- * 
+ * @author Tamas Szabo (itemis AG)
+ *
  */
-public class ObservablePatternMatch {
+public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
 
-    private String text;
     private IPatternMatch match;
-    private ObservablePatternMatcher parent;
     private String message;
     private ParameterValueChangedListener listener;
     private List<IObservableValue> affectedValues;
 
-    public ObservablePatternMatch(ObservablePatternMatcher parent, IPatternMatch match) {
-        this.parent = parent;
+    public PatternMatchContent(PatternMatcherContent parent, IPatternMatch match) {
+        super(parent);
         this.match = match;
-        this.message = DisplayUtil.getMessage(match);//, parent.isGenerated());
+        this.message = DisplayUtil.getMessage(match);
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
             setText(DatabindingAdapterUtil.getMessage(match, message));
@@ -58,22 +56,6 @@ public class ObservablePatternMatch {
         }
     }
 
-    public void setText(String text) {
-        this.text = text;
-        String[] properties = new String[] { "text" };
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewer().update(this, properties);
-        }
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public ObservablePatternMatcher getParent() {
-        return parent;
-    }
-
     private class ParameterValueChangedListener implements IValueChangeListener {
         @Override
         public void handleValueChange(ValueChangeEvent event) {
@@ -88,4 +70,5 @@ public class ObservablePatternMatch {
     public Object[] getLocationObjects() {
         return this.match.toArray();
     }
+
 }

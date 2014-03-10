@@ -33,8 +33,8 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
 import org.eclipse.incquery.testing.core.ModelLoadHelper;
 import org.eclipse.incquery.testing.core.SnapshotHelper;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
@@ -72,10 +72,10 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		Object obj = selection.getFirstElement();
 		
 		IEditorPart editor = null;
-		List<ObservablePatternMatcher> matchers = new ArrayList<ObservablePatternMatcher>();
+		List<PatternMatcherContent> matchers = new ArrayList<PatternMatcherContent>();
 		IncQueryEngine engine = null;
-		if(obj instanceof ObservablePatternMatcher) {
-			ObservablePatternMatcher observablePatternMatcher = (ObservablePatternMatcher) obj;
+		if(obj instanceof PatternMatcherContent) {
+		    PatternMatcherContent observablePatternMatcher = (PatternMatcherContent) obj;
 			editor = observablePatternMatcher.getParent().getEditorPart();
 			matchers.add(observablePatternMatcher);
 			IncQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
@@ -83,12 +83,12 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			    engine = matcher.getEngine();
 			}
 			
-		} else if(obj instanceof ObservablePatternMatcherRoot) {
-			ObservablePatternMatcherRoot matcherRoot = (ObservablePatternMatcherRoot) obj;
+		} else if(obj instanceof PatternMatcherRootContent) {
+		    PatternMatcherRootContent matcherRoot = (PatternMatcherRootContent) obj;
 			editor = matcherRoot.getEditorPart();
-			if(matcherRoot.getMatchers().size() > 0) {
-				matchers.addAll(matcherRoot.getMatchers());
-				for (ObservablePatternMatcher obsMatcher : matcherRoot.getMatchers()) {
+			if(matcherRoot.getChildren().size() > 0) {
+				matchers.addAll(matcherRoot.getChildren());
+				for (PatternMatcherContent obsMatcher : matcherRoot.getChildren()) {
                     IncQueryMatcher<?> matcher = obsMatcher.getMatcher();
                     if(matcher != null && matcher.getEngine() != null) {
                         engine = matcher.getEngine();
@@ -139,7 +139,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 				return;
 			}
 		} 
-		for (ObservablePatternMatcher matcher : matchers) {
+		for (PatternMatcherContent matcher : matchers) {
 			if(matcher.getMatcher() != null) {
 				IPatternMatch filter = matcher.getMatcher().newMatch(matcher.getFilter());
 			    helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);

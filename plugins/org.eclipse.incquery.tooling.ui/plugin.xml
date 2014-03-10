@@ -118,7 +118,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot">
+                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
                </instanceof>
             </iterate>
          </with>
@@ -133,7 +133,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch">
+                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent">
                </instanceof>
             </iterate>
          </with>
@@ -148,7 +148,7 @@
             <iterate
                   ifEmpty="false">
                <instanceof
-                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher">
+                     value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
                </instanceof>
             </iterate>
          </with>

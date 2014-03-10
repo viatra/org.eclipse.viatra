@@ -19,8 +19,6 @@ import java.util.Map;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
-import com.google.common.base.Preconditions;
-
 /**
  * This class represents a composite element inside a pattern hierarchy.
  * 

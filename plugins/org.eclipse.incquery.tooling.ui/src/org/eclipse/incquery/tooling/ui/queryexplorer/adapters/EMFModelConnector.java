@@ -30,7 +30,7 @@ import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,7 +49,7 @@ public class EMFModelConnector implements IModelConnector {
 
     protected ILog logger;
 
-    private ModelConnectorTreeViewerKey key;
+    private PatternMatcherRootContentKey key;
 
     protected IWorkbenchPage workbenchPage;
 
@@ -65,12 +65,12 @@ public class EMFModelConnector implements IModelConnector {
     public void loadModel(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier notifier = getNotifier(modelConnectorTypeEnum);
         if (notifier != null) {
-            key = new ModelConnectorTreeViewerKey(editorPart, notifier);
+            key = new PatternMatcherRootContentKey(editorPart, notifier);
             workbenchPage = key.getEditorPart().getSite().getPage();
             modelEditorPartListener = new ModelEditorPartListener(this);
             workbenchPage.addPartListener(modelEditorPartListener);
             if (QueryExplorer.getInstance() != null) {
-                QueryExplorer.getInstance().getMatcherTreeViewerRoot().addPatternMatcherRoot(key);
+                QueryExplorer.getInstance().getRootContent().addPatternMatcherRoot(key);
             }
         }
     }
@@ -79,7 +79,7 @@ public class EMFModelConnector implements IModelConnector {
     public void unloadModel() {
         workbenchPage.removePartListener(modelEditorPartListener);
         if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getMatcherTreeViewerRoot().removePatternMatcherRoot(key);
+            QueryExplorer.getInstance().getRootContent().removePatternMatcherRoot(key);
         }
     }
 
@@ -97,7 +97,7 @@ public class EMFModelConnector implements IModelConnector {
     }
 
     // XXX This is only needed for the current QueryExplorer. In the future these should be removed.
-    public ModelConnectorTreeViewerKey getKey() {
+    public PatternMatcherRootContentKey getKey() {
         return key;
     }
 

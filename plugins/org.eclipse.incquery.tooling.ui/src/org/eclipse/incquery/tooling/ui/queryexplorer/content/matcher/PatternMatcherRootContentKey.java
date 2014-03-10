@@ -15,22 +15,23 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * the class is used to join an IEditorPart instance and a ResourceSet instance. Such a key will be used to map the
- * PatternMatcherRoot elements in the ViewerRoot.
+ * Instances of this class tie an {@link IEditorPart} and a {@link Notifier} together, which 
+ * belong to a {@link RootContent} element in the {@link QueryExplorer}.
  * 
- * @author Tamas Szabo
- * 
+ * @author Tamas Szabo (itemis AG)
+ *
  */
-public class ModelConnectorTreeViewerKey {
+public class PatternMatcherRootContentKey {
 
     private IEditorPart editorPart;
     private Notifier notifier;
     private AdvancedIncQueryEngine engine;
 
-    public ModelConnectorTreeViewerKey(IEditorPart editor, Notifier notifier) {
+    public PatternMatcherRootContentKey(IEditorPart editor, Notifier notifier) {
         super();
         this.editorPart = editor;
         this.notifier = notifier;
@@ -59,7 +60,7 @@ public class ModelConnectorTreeViewerKey {
         } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         } else {
-            ModelConnectorTreeViewerKey key = (ModelConnectorTreeViewerKey) obj;
+            PatternMatcherRootContentKey key = (PatternMatcherRootContentKey) obj;
             return key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier);
         }
     }
@@ -101,17 +102,10 @@ public class ModelConnectorTreeViewerKey {
         return sb.toString();
     }
 
-    /**
-     * @return the engine
-     */
     public AdvancedIncQueryEngine getEngine() {
         return engine;
     }
 
-    /**
-     * @param engine
-     *            the engine to set
-     */
     public void setEngine(AdvancedIncQueryEngine engine) {
         this.engine = engine;
     }

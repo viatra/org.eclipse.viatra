@@ -8,13 +8,13 @@
  * Contributors:
  *   Zoltan Ujhelyi, Tamas Szabo - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -23,11 +23,17 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-public class MatcherLabelProvider extends ColumnLabelProvider {
+/**
+ * A {@link ColumnLabelProvider} implementation of the {@link QueryExplorer}.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
+public class QueryExplorerLabelProvider extends ColumnLabelProvider {
 
     private List<ILabelProviderListener> listeners;
 
-    public MatcherLabelProvider() {
+    public QueryExplorerLabelProvider() {
         listeners = new ArrayList<ILabelProviderListener>();
     }
 
@@ -58,20 +64,20 @@ public class MatcherLabelProvider extends ColumnLabelProvider {
     public Image getImage(Object element) {
         ImageRegistry imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
 
-        if (element instanceof ObservablePatternMatcherRoot) {
-            ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) element;
+        if (element instanceof PatternMatcherRootContent) {
+            PatternMatcherRootContent root = (PatternMatcherRootContent) element;
             if (root.isTainted()) {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
             } else {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
             }
-        } else if (element instanceof ObservablePatternMatcher) {
-            if (((ObservablePatternMatcher) element).isCreated()) {
+        } else if (element instanceof PatternMatcherContent) {
+            if (((PatternMatcherContent) element).isCreated()) {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCHER);
             } else {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
             }
-        } else if (element instanceof ObservablePatternMatch) {
+        } else if (element instanceof PatternMatchContent) {
             return imageRegistry.get(IncQueryGUIPlugin.ICON_MATCH);
         } else {
             return null;
@@ -80,12 +86,8 @@ public class MatcherLabelProvider extends ColumnLabelProvider {
 
     @Override
     public String getText(Object element) {
-        if (element instanceof ObservablePatternMatcherRoot) {
-            return ((ObservablePatternMatcherRoot) element).getText();
-        } else if (element instanceof ObservablePatternMatcher) {
-            return ((ObservablePatternMatcher) element).getText();
-        } else if (element instanceof ObservablePatternMatch) {
-            return ((ObservablePatternMatch) element).getText();
+        if (element instanceof BaseContent<?>) {
+            return ((BaseContent<?>) element).getText();
         }
         return null;
     }
@@ -93,11 +95,8 @@ public class MatcherLabelProvider extends ColumnLabelProvider {
     @Override
     public Color getForeground(Object element) {
         Display display = Display.getCurrent();
-        if (element instanceof ObservablePatternMatcher) {
-            ObservablePatternMatcher matcher = (ObservablePatternMatcher) element;
-            // if (((ObservablePatternMatcher) element).getMatches().size() == 0) {
-            // return display.getSystemColor(SWT.COLOR_GRAY);
-            // }
+        if (element instanceof PatternMatcherContent) {
+            PatternMatcherContent matcher = (PatternMatcherContent) element;
             if (matcher.isGenerated()) {
                 return display.getSystemColor(SWT.COLOR_DARK_GRAY);
             }
