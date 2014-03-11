@@ -70,8 +70,10 @@ public class PatternMatcherContent extends
         String message = "";
         try {
             matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
+        } catch(IncQueryException e) {
+            message = e.getShortMessage();
         } catch (Exception e) {
-            message = (e instanceof IncQueryException) ? ((IncQueryException) e).getShortMessage() : e.getMessage();
+            message = e.getMessage();
         }
 
         this.exceptionMessage = message;

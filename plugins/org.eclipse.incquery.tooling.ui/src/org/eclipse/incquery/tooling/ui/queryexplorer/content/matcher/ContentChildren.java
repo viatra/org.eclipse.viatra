@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class ContentChildren<E> extends AbstractObservableList {
 
+    private static final String REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
     private List<E> elements;
 
     public ContentChildren() {
@@ -69,7 +70,7 @@ public class ContentChildren<E> extends AbstractObservableList {
         boolean res = elements.add(element);
         final ListDiff diff = Diffs.createListDiff(diffentry);
         Realm realm = getRealm();
-        Assert.isNotNull(realm, "Data binding Realm must not be null");
+        Assert.isNotNull(realm, REALM_MUST_NOT_BE_NULL);
         realm.exec(new Runnable() {
             @Override
             public void run() {
@@ -87,7 +88,7 @@ public class ContentChildren<E> extends AbstractObservableList {
         boolean res = elements.remove(element);
         final ListDiff diff = Diffs.createListDiff(diffentry);
         Realm realm = getRealm();
-        Assert.isNotNull(realm, "Data binding Realm must not be null");
+        Assert.isNotNull(realm, REALM_MUST_NOT_BE_NULL);
         realm.exec(new Runnable() {
             @Override
             public void run() {

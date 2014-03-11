@@ -40,12 +40,13 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
             ObservableDefinition def = parameterMap.get(parameterName);
             String expression = def.getExpression();
             switch (def.getType()) {
-            case OBSERVABLE_FEATURE:
-                return IncQueryObservables.getObservableValue(match, expression);
-            case OBSERVABLE_LABEL:
-                return IncQueryObservables.getObservableLabelFeature(match, expression);
+                case OBSERVABLE_FEATURE:
+                    return IncQueryObservables.getObservableValue(match, expression);
+                case OBSERVABLE_LABEL:
+                    return IncQueryObservables.getObservableLabelFeature(match, expression);
+                default:
+                    return null;
             }
-
         }
         return null;
     }
@@ -54,12 +55,13 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
         Preconditions.checkArgument(parameterMap.containsKey(parameterName), "Invalid parameter name");
         ObservableDefinition def = parameterMap.get(parameterName);
         switch (def.getType()) {
-        case OBSERVABLE_FEATURE:
-            return new MatcherProperty(def.getExpression());
-        case OBSERVABLE_LABEL:
-            return new MatcherLabelProperty(def.getExpression());
+            case OBSERVABLE_FEATURE:
+                return new MatcherProperty(def.getExpression());
+            case OBSERVABLE_LABEL:
+                return new MatcherLabelProperty(def.getExpression());
+            default:
+                return null;
         }
-        return null;
     }
 
 }
