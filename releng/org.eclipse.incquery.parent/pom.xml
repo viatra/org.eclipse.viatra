@@ -283,8 +283,8 @@
 				</property>
 			</activation>
 			<modules>
-				<module>../../maven/patternlanguage</module>
-				<module>../../maven/runtime</module>
+				<module>../../maven/incquery-patternlanguage</module>
+				<module>../../maven/incquery-runtime</module>
 			</modules>
 		</profile>
 		<profile>
