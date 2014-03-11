@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.specification;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> implements InitializablePQuery{
 
     public Pattern pattern;
-    private Set<PBody> containedBodies = new HashSet<PBody>();
+    private Set<PBody> containedBodies = new LinkedHashSet<PBody>();
 
     /**
      * Initializes a generic query specification for a given pattern. </p>
