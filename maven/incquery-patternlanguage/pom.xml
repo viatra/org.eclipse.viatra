@@ -6,7 +6,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
-			<artifactId>runtime</artifactId>
+			<artifactId>incquery-runtime</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
