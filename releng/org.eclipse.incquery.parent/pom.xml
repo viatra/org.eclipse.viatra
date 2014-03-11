@@ -191,6 +191,19 @@
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<distributionManagement>
+		<repository>
+			<id>repo.eclipse.org</id>
+			<name>EMF-IncQuery Project Repository - Releases</name>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>repo.eclipse.org</id>
+			<name>EMF-IncQuery Project Repository - Snapshots</name>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
+			<uniqueVersion>true</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
 		<url>http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/</url>
@@ -267,7 +280,7 @@
 			<activation>
 				<property>
 					<name>maven.runtime</name>
-				</property>				
+				</property>
 			</activation>
 			<modules>
 				<module>../../maven/patternlanguage</module>
