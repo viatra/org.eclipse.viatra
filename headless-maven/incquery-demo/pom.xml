@@ -21,7 +21,6 @@
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>runtime</artifactId>
 			<version>0.8.0-SNAPSHOT</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
