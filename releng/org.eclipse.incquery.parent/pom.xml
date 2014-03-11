@@ -20,6 +20,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
+		<module>../../releng/org.eclipse.incquery.target</module>
 	</modules>
 	<properties>
 		<tycho.version>0.18.0</tycho.version>
@@ -270,7 +271,6 @@
 				<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
-				<module>../../releng/org.eclipse.incquery.target</module>
 				<module>../../releng/org.eclipse.incquery.update</module>
 				<module>../../releng/org.eclipse.incquery.update.extras</module>
 			</modules>
