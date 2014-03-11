@@ -30,12 +30,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
+@Singleton
 public class PatternAnnotationProvider {
 
-    /**
-     * 
-     */
     private static final String VALIDATOR_PARAMETER_NAME = "additionalValidator";
 
     @Inject
