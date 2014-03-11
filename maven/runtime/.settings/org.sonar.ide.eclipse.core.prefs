@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+extraProperties=sonar.core.codeCoveragePlugin\=jacoco\r\nsonar.version\=3.7\r\nsonar.dynamicAnalysis\=reuseReports\r\nsonar.skippedModules\=org.eclipse.incquery.runtime.feature,org.eclipse.incquery.databinding.runtime.feature,org.eclipse.incquery.sdk.feature.feature,org.eclipse.incquery.validation.runtime.feature,org.eclipse.incquery.validation.tooling.feature,org.eclipse.incquery.licence.feature,org.eclipse.incquery.update,school,school.edit,school.editor,org.eclipse.incquery.snapshot,org.eclipse.incquery.snapshot.edit,org.eclipse.incquery.snapshot.editor\r\nsonar.jacoco.reportPath\=/Users/stampie/git/org.eclipse.incquery/maven/runtime/../../target/jacoco.exec
+projectKey=org.eclipse.incquery\:runtime
+serverUrl=http\://localhost\:9000
+version=2
