@@ -202,7 +202,6 @@
 			<id>repo.eclipse.org</id>
 			<name>EMF-IncQuery Project Repository - Snapshots</name>
 			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
-			<uniqueVersion>true</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
