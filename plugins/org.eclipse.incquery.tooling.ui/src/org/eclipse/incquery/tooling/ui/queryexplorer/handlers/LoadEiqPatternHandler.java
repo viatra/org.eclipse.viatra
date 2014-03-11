@@ -14,7 +14,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.google.inject.Inject;
@@ -32,7 +31,7 @@ public class LoadEiqPatternHandler extends AbstractHandler {
             if (file != null) {
                 RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
                 injector.injectMembers(registrator);
-                Display.getDefault().asyncExec(registrator);
+                registrator.run();
             }
         } catch (Exception e) {
             throw new ExecutionException("Cannot load pattern file", e);
