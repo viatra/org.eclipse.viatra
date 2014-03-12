@@ -345,23 +345,23 @@ public class DisplayUtil {
         		TreeIterator<EObject> it = resource.getAllContents();
 
         		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
-
+				QueryExplorer queryExplorer = QueryExplorer.getInstance();
         		while (it.hasNext()) {
         			EObject next = it.next();
         			if (next instanceof Pattern) {
 						Pattern oldPattern = (Pattern) next;
 
-						QueryExplorer queryExplorer = QueryExplorer.getInstance();
+
 						String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
                         queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(fqn);
 						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().purge();
-						queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
+						//queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
 
 						queryRegistry.removeActivePattern(fqn);
 						it.prune();
         			}
         		}
-
+				queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
         		resource.unload();
         	}
 			resource.load(null);
