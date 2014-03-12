@@ -13,7 +13,9 @@ package org.eclipse.incquery.databinding.runtime.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
@@ -34,6 +36,8 @@ import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
+import com.google.common.base.Function;
+
 /**
  * Observable view of a match set for a given {@link IncQueryMatcher} on a model (match sets of an
  * {@link IncQueryMatcher} are ordered by the order of their appearance).
@@ -48,8 +52,8 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 public class ObservablePatternMatchList<Match extends IPatternMatch> extends AbstractObservableList {
 
-    private final List<Match> cache = Collections.synchronizedList(new ArrayList<Match>());
-    private final ListCollectionUpdate updater = new ListCollectionUpdate();
+    private final List<Object> cache = Collections.synchronizedList(new ArrayList<Object>());
+    private final ListCollectionUpdate updater;
     private RuleSpecification<Match> specification;
     
     /**
@@ -68,6 +72,26 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IQuerySpecification<Matcher> querySpecification,
             IncQueryEngine engine) {
         this(querySpecification);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+    }
+
+    /**
+     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
+     * {@link IncQueryEngine}. The given converter function is used on each match and the end result is put into the
+     * view.
+     * 
+     * @param querySpecification
+     *            the {@link IQuerySpecification} used to create a matcher
+     * @param engine
+     *            the {@link IncQueryEngine} on which the matcher is created
+     * @param converter
+     *            the {@link Function} that is executed on each match to create the items in the list
+     * @throws IncQueryException
+     *             if the {@link IncQueryEngine} base index is not available
+     */
+    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
+            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Function<Match, Object> converter) {
+        this(querySpecification, converter);
         ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
     }
 
@@ -147,8 +171,15 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     }
     
     
+    protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IQuerySpecification<Matcher> querySpecification, Function<Match, Object> converter) {
+        super();
+        updater = new ListCollectionUpdate(converter);
+        this.specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
+    }
+
     protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(IQuerySpecification<Matcher> querySpecification) {
         super();
+        updater = new ListCollectionUpdate(null);
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
     }
     
@@ -163,10 +194,11 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
      */
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
         super();
+        updater = new ListCollectionUpdate(null);
         this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
         ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
     }
-
+    
     @Override
     public Object getElementType() {
         return IPatternMatch.class;
@@ -190,10 +222,33 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     }
 
     public class ListCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match> {
+        
+        protected final Function<Match, Object> converter;
+        protected final Map<Match, Object> matchToItem;
+        
+        /**
+         * 
+         */
+        public ListCollectionUpdate(Function<Match, Object> converter) {
+            if(converter != null) {
+                this.converter = converter;
+                matchToItem = new HashMap<Match, Object>();
+            } else {
+                this.converter = null;
+                matchToItem = null;
+            }
+        }
+        
         @Override
         public void addMatch(Match match) {
-            ListDiffEntry diffentry = Diffs.createListDiffEntry(cache.size(), true, match);
-            cache.add(match);
+            Object item = match;
+            if(converter != null) {
+                item = converter.apply(match);
+                matchToItem.put(match, item);
+            }
+            
+            ListDiffEntry diffentry = Diffs.createListDiffEntry(cache.size(), true, item);
+            cache.add(item);
             final ListDiff diff = Diffs.createListDiff(diffentry);
             Realm realm = getRealm();
             Assert.isNotNull(realm, "Data binding Realm must not be null");
@@ -210,9 +265,14 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
         @Override
         public void removeMatch(Match match) {
-            final int index = cache.indexOf(match);
-            ListDiffEntry diffentry = Diffs.createListDiffEntry(index, false, match);
-            cache.remove(match);
+            Object item = match;
+            if(converter != null) {
+                item = matchToItem.get(match);
+            }
+            
+            final int index = cache.indexOf(item);
+            ListDiffEntry diffentry = Diffs.createListDiffEntry(index, false, item);
+            cache.remove(item);
             final ListDiff diff = Diffs.createListDiff(diffentry);
             Realm realm = getRealm();
             Assert.isNotNull(realm, "Data binding Realm must not be null");
