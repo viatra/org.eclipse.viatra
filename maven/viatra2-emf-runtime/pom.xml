@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.viatra2</groupId>
+    <artifactId>org.eclipse.viatra2.emf.parent</artifactId>
+    <version>0.7.0-SNAPSHOT</version>
+    <relativePath>../../releng/org.eclipse.viatra2.emf.parent</relativePath>
+  </parent>
+  <artifactId>viatra2-emf-runtime</artifactId>
+  <name>VIATRA2 EMF Support</name>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.eclipse.incquery</groupId>
+  		<artifactId>incquery-runtime</artifactId>
+  		<version>0.8.0-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.eclipse.viatra2</groupId>
+  		<artifactId>org.eclipse.viatra2.emf.runtime</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  </dependencies>
+</project>
