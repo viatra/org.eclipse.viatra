@@ -42,7 +42,7 @@ import com.google.inject.Inject;
  * @author Tamas Szabo
  * 
  */
-public class RuntimeMatcherRegistrator{
+public class RuntimeMatcherRegistrator implements Runnable {
 
     private final IFile file;
 
@@ -53,6 +53,7 @@ public class RuntimeMatcherRegistrator{
         this.file = file;
     }
 
+    @Override
     public void run() {
         final QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
         if (queryExplorerInstance != null) {

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.RuntimeMatcherRegistrator;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.Injector;
 
@@ -35,7 +36,7 @@ class DeltaVisitor implements IResourceDeltaVisitor {
             if (QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
                 RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file);
                 injector.injectMembers(registrator);
-                registrator.run();
+                Display.getDefault().asyncExec(registrator);
             }
             return false;
         }
