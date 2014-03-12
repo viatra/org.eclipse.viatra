@@ -165,20 +165,6 @@
 			<url>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-	<repositories>
-		<repository>
-			<id>incquery-snapshots</id>
-			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>incquery-releases</id>
-			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
-		</repository>
-	</repositories>
 	<profiles>
 		<profile>
 			<id>eclipse_tooling</id>
@@ -209,6 +195,18 @@
 			<id>incquery.update</id>
 			<layout>p2</layout>
 			<url>${incquery.repository.url}</url>
+		</repository>
+		<repository>
+			<id>incquery-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>incquery-releases</id>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
 		</repository>
 	</repositories>
 	<scm>
