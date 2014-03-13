@@ -202,6 +202,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     
     @Override
     public Object getElementType() {
+        if(updater.converter != null) {
+            return Object.class;
+        }
         return IPatternMatch.class;
     }
 
@@ -219,12 +222,10 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
     public class SetCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match>{
         
+        private static final String DATA_BINDING_REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
         protected final Function<Match, Object> converter;
         protected final Map<Match, Object> matchToItem;
         
-        /**
-         * 
-         */
         public SetCollectionUpdate(Function<Match, Object> converter) {
             if(converter != null) {
                 this.converter = converter;
@@ -235,7 +236,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             }
         }
         
-        @SuppressWarnings("unchecked")
         @Override
         public void addMatch(Match match) {
             Object item = match;
@@ -247,7 +247,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             cache.add(item);
             final SetDiff diff = Diffs.createSetDiff(Sets.newHashSet(item), Collections.EMPTY_SET);
             Realm realm = getRealm();
-            Assert.isNotNull(realm, "Data binding Realm must not be null");
+            Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
 			realm.exec(new Runnable() {
 
 				@Override
@@ -259,7 +259,6 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 			});
         }
     
-        @SuppressWarnings("unchecked")
         @Override
         public void removeMatch(Match match) {
             Object item = match;
@@ -270,7 +269,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
             cache.remove(item);
             final SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, Sets.newHashSet(item));
             Realm realm = getRealm();
-            Assert.isNotNull(realm, "Data binding Realm must not be null");
+            Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
 			realm.exec(new Runnable() {
 
 				@Override

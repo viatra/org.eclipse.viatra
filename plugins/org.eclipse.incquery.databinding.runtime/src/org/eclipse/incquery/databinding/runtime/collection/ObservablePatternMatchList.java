@@ -201,6 +201,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     
     @Override
     public Object getElementType() {
+        if(updater.converter != null) {
+            return Object.class;
+        }
         return IPatternMatch.class;
     }
 
@@ -223,12 +226,10 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
 
     public class ListCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match> {
         
+        private static final String DATA_BINDING_REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
         protected final Function<Match, Object> converter;
         protected final Map<Match, Object> matchToItem;
         
-        /**
-         * 
-         */
         public ListCollectionUpdate(Function<Match, Object> converter) {
             if(converter != null) {
                 this.converter = converter;
@@ -251,7 +252,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
             cache.add(item);
             final ListDiff diff = Diffs.createListDiff(diffentry);
             Realm realm = getRealm();
-            Assert.isNotNull(realm, "Data binding Realm must not be null");
+            Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
 			realm.exec(new Runnable() {
 
 				@Override
@@ -275,7 +276,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
             cache.remove(item);
             final ListDiff diff = Diffs.createListDiff(diffentry);
             Realm realm = getRealm();
-            Assert.isNotNull(realm, "Data binding Realm must not be null");
+            Assert.isNotNull(realm, DATA_BINDING_REALM_MUST_NOT_BE_NULL);
 			realm.exec(new Runnable() {
 
 				@Override
