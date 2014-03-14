@@ -338,6 +338,7 @@ public class QueryExplorer extends ViewPart {
     private void initFileListener() {
         IResourceChangeListener listener = new ResourceChangeListener(injector);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
+        // FIXME this listener will never be removed
     }
 
     public PatternsViewerInput getPatternsViewerInput() {

@@ -215,6 +215,15 @@
          </activeWhen>
       </handler>
       <handler
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
+            commandId="org.eclipse.incquery.tooling.ui.attachmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.incquery.tooling.ui.showlocation">
       </handler>
@@ -301,7 +310,7 @@
                name="org.eclipse.incquery.tooling.ui.separator1"
                visible="true">
          </separator>
-      </menuContribution>
+      </menuContribution>     
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
@@ -400,6 +409,16 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:org.eclipse.incquery.tooling.ui.loadmodelmenu">
+         <command
+               commandId="org.eclipse.incquery.tooling.ui.attachmodel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
+               </reference>
+            </visibleWhen>
+         </command>            
          <command
                commandId="org.eclipse.incquery.tooling.ui.loadresourceset"
                style="push">
@@ -505,6 +524,11 @@
             categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.loadmodel"
             name="Load model">
+      </command>
+      <command
+            categoryId="org.eclipse.incquery.tooling.category"
+            id="org.eclipse.incquery.tooling.ui.attachmodel"
+            name="Attach pattern model">
       </command>
       <command
             categoryId="org.eclipse.incquery.tooling.category"

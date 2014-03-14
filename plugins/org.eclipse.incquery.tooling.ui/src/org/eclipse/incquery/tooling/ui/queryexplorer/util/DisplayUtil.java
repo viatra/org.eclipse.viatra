@@ -313,7 +313,18 @@ public class DisplayUtil {
 
 
 
-
+    public PatternModel extractPatternModelFromResource(Resource resource) {
+    	if (resource != null) {
+            if (resource.getErrors().size() > 0) {
+                return null;
+            }
+            if (resource.getContents().size() >= 1) {
+                EObject topElement = resource.getContents().get(0);
+                return topElement instanceof PatternModel ? (PatternModel) topElement : null;
+            }
+        }
+        return null;
+    }
 
 
 
@@ -341,7 +352,9 @@ public class DisplayUtil {
         try {
         	if (resource == null) {
         		resource = resourceSet.createResource(fileURI);
-        	} else if (resource.isLoaded()) {
+        	} 
+        	else if (resource.isLoaded()) {
+        		// TODO remove this kludgy, side effect-laden code from here
         		TreeIterator<EObject> it = resource.getAllContents();
 
         		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
@@ -369,15 +382,6 @@ public class DisplayUtil {
 			return null;
 		}
 
-        if (resource != null) {
-            if (resource.getErrors().size() > 0) {
-                return null;
-            }
-            if (resource.getContents().size() >= 1) {
-                EObject topElement = resource.getContents().get(0);
-                return topElement instanceof PatternModel ? (PatternModel) topElement : null;
-            }
-        }
-        return null;
+        return extractPatternModelFromResource(resource);
     }
 }

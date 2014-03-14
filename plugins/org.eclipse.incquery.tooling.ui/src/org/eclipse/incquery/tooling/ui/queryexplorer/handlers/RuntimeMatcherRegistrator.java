@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -34,7 +35,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRe
 import com.google.inject.Inject;
 
 /**
- * Runnable unit of registering patterns in given file.
+ * Runnable unit of registering patterns in given resource.
  * 
  * Note that if the work is implemented as a job, NullPointerException will occur when creating observables as the
  * default realm will be null (because of non-ui thread).
@@ -45,14 +46,17 @@ import com.google.inject.Inject;
 public class RuntimeMatcherRegistrator implements Runnable {
 
     private final IFile file;
-
+    private final Resource resource;
+    
     @Inject
     DisplayUtil dbUtil;
 
-    public RuntimeMatcherRegistrator(final IFile file) {
+    public RuntimeMatcherRegistrator(final IFile file, final Resource res) {
         this.file = file;
+        this.resource = res;
     }
 
+    
     @Override
     public void run() {
         final QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
@@ -96,10 +100,8 @@ public class RuntimeMatcherRegistrator implements Runnable {
         }
     }
 
-    private void removeLabelsFromPatternRegistry(final QueryExplorer queryExplorerInstance,
-            final PatternComposite viewerInput) {
-        final List<IQuerySpecification<?>> oldParsedModel = QueryExplorerPatternRegistry.getInstance()
-                .getRegisteredPatternsForFile(file);
+    private void removeLabelsFromPatternRegistry(final QueryExplorer queryExplorerInstance, final PatternComposite viewerInput) {
+        final List<IQuerySpecification<?>> oldParsedModel = QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file);
         if (oldParsedModel != null) {
             for (final IQuerySpecification<?> pattern : oldParsedModel) {
                 viewerInput.removeComponent(pattern.getFullyQualifiedName());
@@ -110,13 +112,17 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.getPatternsViewer().refresh();
     }
 
-    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr)
-            throws IncQueryException {
-        final PatternModel newParsedModel = dbUtil.parseEPM(file);
-        final Set<IQuerySpecification<?>> newPatterns = QueryExplorerPatternRegistry.getInstance()
-                .registerPatternModel(file, newParsedModel);
-        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance()
-                .getActivePatterns();
+    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr) throws IncQueryException {
+    	PatternModel newParsedModel = null;
+    	if (this.resource!=null) {
+    		newParsedModel = dbUtil.extractPatternModelFromResource(resource);
+    	} else {
+    		// TODO dangerously slow due to xbase jvm model inference process being invoked
+    		newParsedModel = dbUtil.parseEPM(file);
+    	}
+        // end TODO
+        final Set<IQuerySpecification<?>> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
+        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
         // now the active patterns also contain of the new patterns
         for (final PatternMatcherRootContent root : vr.getChildren()) {
             root.registerPattern(allActivePatterns.toArray(new IQuerySpecification<?>[allActivePatterns.size()]));
@@ -126,8 +132,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
     }
 
     private void unregisterPatternsFromMatcherTreeViewer(final RootContent vr) {
-        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance()
-                .getActivePatterns();
+        final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
         // deactivate patterns within the given file
         QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
 
