@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -31,9 +32,12 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
     @Override
     public void run() {
         RootContent vr = QueryExplorer.getInstance().getRootContent();
-        List<IQuerySpecification<?>> removedPatterns = QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
+        List<IQuerySpecification<?>> removedPatterns = QueryExplorerPatternRegistry.getInstance()
+                .unregisterPatternModel(file);
         for (IQuerySpecification<?> pattern : removedPatterns) {
-            for (PatternMatcherRootContent root : vr.getChildren()) {
+            Iterator<PatternMatcherRootContent> iterator = vr.getChildrenIterator();
+            while (iterator.hasNext()) {
+                PatternMatcherRootContent root = iterator.next();
                 root.unregisterPattern(pattern);
             }
             QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot()

@@ -13,6 +13,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -124,7 +125,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
         final Set<IQuerySpecification<?>> newPatterns = QueryExplorerPatternRegistry.getInstance().registerPatternModel(file, newParsedModel);
         final List<IQuerySpecification<?>> allActivePatterns = QueryExplorerPatternRegistry.getInstance().getActivePatterns();
         // now the active patterns also contain of the new patterns
-        for (final PatternMatcherRootContent root : vr.getChildren()) {
+        Iterator<PatternMatcherRootContent> iterator = vr.getChildrenIterator();
+        while (iterator.hasNext()) {
+            PatternMatcherRootContent root = iterator.next();
             root.registerPattern(allActivePatterns.toArray(new IQuerySpecification<?>[allActivePatterns.size()]));
             root.updateHasChildren();
         }
@@ -137,7 +140,9 @@ public class RuntimeMatcherRegistrator implements Runnable {
         QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
 
         // unregister all active patterns from the roots and wipe the appropriate iq engine
-        for (final PatternMatcherRootContent root : vr.getChildren()) {
+        Iterator<PatternMatcherRootContent> iterator = vr.getChildrenIterator();
+        while (iterator.hasNext()) {
+            PatternMatcherRootContent root = iterator.next();
             for (final IQuerySpecification<?> pattern : allActivePatterns) {
                 root.unregisterPattern(pattern);
                 root.updateHasChildren();

@@ -2,6 +2,7 @@ package org.eclipse.incquery.viewers.tooling.ui.handlers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -28,74 +29,77 @@ import com.google.common.collect.Lists;
 
 public abstract class InitializeViewersHandler extends AbstractHandler {
 
-	IModelConnectorTypeEnum type;
-	
-	public InitializeViewersHandler(IModelConnectorTypeEnum modelconnectortype) {
-		super();
-		type = modelconnectortype;
-	}
+    IModelConnectorTypeEnum type;
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-	        
-	        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
-	        if (selection instanceof TreeSelection) {
-	            PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
-	            
-	            try {
-	                IEditorPart editorPart = root.getEditorPart();
-	                if (editorPart instanceof IEditingDomainProvider) {
-	                    IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
-	                    ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
-	                    if (resourceSet.getResources().size() > 0) {
-	                        
-	                        // calculate patterns that need to be passed to the ZestView
-	                        
-	                        ArrayList<IQuerySpecification<?>> patterns = Lists.newArrayList();
-	                        
-	                        for (PatternMatcherContent opm: root.getChildren()) {
-	                            patterns.add( opm.getMatcher().getSpecification() );
-	                        }
-	                        
-	                        
-	//                        if (ViewersSandboxView.getInstance() != null) {
-	                            ViewerDataFilter filter = prepareFilterInformation(root);
-	                            // calculate the single resource that is of interest
-	                            EMFModelConnector emc = new EMFModelConnector(editorPart);
-	                            ViewersToolingViewsUtil.initializeContentsOnView(emc.getNotifier(type), patterns, filter);
-	                    }
-	                }
-	            } catch (IncQueryException e) {
-	                throw new ExecutionException("Error initializing pattern matcher.", e);
-	            } catch (IllegalArgumentException e) {
-	                throw new ExecutionException("Invalid selrection", e);
-	            }
-	        }
-	        
-	        return null;
-	    }
+    public InitializeViewersHandler(IModelConnectorTypeEnum modelconnectortype) {
+        super();
+        type = modelconnectortype;
+    }
 
-	protected PatternMatcherRootContent getSelectedMatcherRoot(ISelection selection) {
-	    Object firstElement = ((TreeSelection) selection).getFirstElement();
-	    if (firstElement instanceof PatternMatcherRootContent) {
-	        return (PatternMatcherRootContent) firstElement;
-	    } else if (firstElement instanceof PatternMatcherContent) {
-	        return ((PatternMatcherContent) firstElement).getParent();
-	    } else {
-	        throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
-	    }
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 
-	protected ViewerDataFilter prepareFilterInformation(PatternMatcherRootContent root) {
-	    ViewerDataFilter dataFilter = new ViewerDataFilter();
-	    for (PatternMatcherContent matcher : root.getChildren()) {
-	        final Object[] filter = matcher.getFilter();
-	        if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
-	            final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
-	            dataFilter.addSingleFilter(matcher.getMatcher().getSpecification(), filterMatch);
-	        }
-	    }
-	    return dataFilter;
-	}
+        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+        if (selection instanceof TreeSelection) {
+            PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
+
+            try {
+                IEditorPart editorPart = root.getEditorPart();
+                if (editorPart instanceof IEditingDomainProvider) {
+                    IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
+                    ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
+                    if (resourceSet.getResources().size() > 0) {
+
+                        // calculate patterns that need to be passed to the ZestView
+
+                        ArrayList<IQuerySpecification<?>> patterns = Lists.newArrayList();
+                        Iterator<PatternMatcherContent> iterator = root.getChildrenIterator();
+                        while (iterator.hasNext()) {
+                            patterns.add(iterator.next().getMatcher().getSpecification());
+                        }
+
+                        // if (ViewersSandboxView.getInstance() != null) {
+                        ViewerDataFilter filter = prepareFilterInformation(root);
+                        // calculate the single resource that is of interest
+                        EMFModelConnector emc = new EMFModelConnector(editorPart);
+                        ViewersToolingViewsUtil.initializeContentsOnView(emc.getNotifier(type), patterns, filter);
+                    }
+                }
+            } catch (IncQueryException e) {
+                throw new ExecutionException("Error initializing pattern matcher.", e);
+            } catch (IllegalArgumentException e) {
+                throw new ExecutionException("Invalid selrection", e);
+            }
+        }
+
+        return null;
+    }
+
+    protected PatternMatcherRootContent getSelectedMatcherRoot(ISelection selection) {
+        Object firstElement = ((TreeSelection) selection).getFirstElement();
+        if (firstElement instanceof PatternMatcherRootContent) {
+            return (PatternMatcherRootContent) firstElement;
+        } else if (firstElement instanceof PatternMatcherContent) {
+            return ((PatternMatcherContent) firstElement).getParent();
+        } else {
+            throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
+        }
+    }
+
+    protected ViewerDataFilter prepareFilterInformation(PatternMatcherRootContent root) {
+        ViewerDataFilter dataFilter = new ViewerDataFilter();
+        Iterator<PatternMatcherContent> iterator = root.getChildrenIterator();
+
+        while (iterator.hasNext()) {
+            PatternMatcherContent matcher = iterator.next();
+            final Object[] filter = matcher.getFilter();
+            if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
+                final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
+                dataFilter.addSingleFilter(matcher.getMatcher().getSpecification(), filterMatch);
+            }
+        }
+
+        return dataFilter;
+    }
 
 }

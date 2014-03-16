@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -29,9 +28,10 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
+import org.eclipse.incquery.runtime.evm.specific.job.SequentialProcessorsJob;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -65,6 +65,28 @@ public final class ObservableCollectionHelper {
     }
     
     /**
+     * Creates the rule used for updating the results including changes in feature values.
+     * 
+     * @param observableCollectionUpdate
+     *            the observable collection to handle
+     * @param querySpecification
+     *            the {@link IQuerySpecification} used to create the rule
+     */
+    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createUpdatingRuleSpecification(
+            IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate,
+            IQuerySpecification<Matcher> querySpecification) {
+
+        Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
+        Job<Match> updateJob = Jobs.newErrorLoggingJob(new SequentialProcessorsJob<Match>(
+                IncQueryActivationStateEnum.UPDATED, ImmutableList.of(
+                        new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate),
+                        new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)
+                )));
+        ImmutableSet<Job<Match>> allJobs = ImmutableSet.<Job<Match>> builder().addAll(jobs).add(updateJob).build();
+        return Rules.newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, allJobs);
+    }
+    
+    /**
      * Creates the rule used for updating the results.
      * 
      * @param observableCollectionUpdate
@@ -88,30 +110,12 @@ public final class ObservableCollectionHelper {
         return ImmutableSet.of(insertJob, deleteJob);
     }
 
-    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Match filter) {
+    public static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
-        if(filter != null) {
-            EventFilter<Match> matchFilter = Rules.newSingleMatchFilter(filter);
-			ruleEngine.addRule(specification, matchFilter);
-            fireActivations(ruleEngine, specification, matchFilter);
-        } else {
-            ruleEngine.addRule(specification);
-            fireActivations(ruleEngine, specification, specification.createEmptyFilter());
-        }
-    }
-    
-    public static <Match extends IPatternMatch> void prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
-        RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQEngineSchedulerFactory(engine));
-        if(multifilters != null) {
-            EventFilter<Match> matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
-            ruleEngine.addRule(specification, matchFilter);
-            fireActivations(ruleEngine, specification, matchFilter);
-        } else {
-            ruleEngine.addRule(specification);
-            fireActivations(ruleEngine, specification, specification.createEmptyFilter());
-        }
+		ruleEngine.addRule(specification, filter);
+        fireActivations(ruleEngine, specification, filter);
+        return ruleEngine;
     }
     
     /**
@@ -129,13 +133,4 @@ public final class ObservableCollectionHelper {
     	}
     }
     
-//    public static <Match extends IPatternMatch> void addPrioritizedRuleSpecification(RuleEngine engine,
-//            RuleSpecification<Match> specification, int priority, Match filter) {
-//        Comparator<Activation<?>> comparator = engine.getActivationComparator();
-//        if (comparator instanceof RulePriorityActivationComparator) {
-//            ((RulePriorityActivationComparator) comparator).setRuleSpecificationPriority(specification, priority);
-//        }
-//        engine.addRule(specification, true, filter);
-//    }
-
 }

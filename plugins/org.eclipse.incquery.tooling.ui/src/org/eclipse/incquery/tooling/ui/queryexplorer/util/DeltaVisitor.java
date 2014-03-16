@@ -29,9 +29,8 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 
     public boolean visit(IResourceDelta delta) {
         IResource res = delta.getResource();
-
-        if (res instanceof IFile && delta.getKind() == IResourceDelta.CHANGED) {
-
+        // only invoke registration if the file has indeed changed
+        if (res instanceof IFile && ((delta.getFlags() & IResourceDelta.CONTENT) > 0)) {
             IFile file = (IFile) res;
             if (QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
             	// FIXME attempt to retrieve existing resource from registry?

@@ -12,9 +12,11 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
@@ -32,9 +34,11 @@ import org.eclipse.ui.IEditorPart;
 public class RootContent extends CompositeContent<Object, PatternMatcherRootContent> {
 
     private Map<PatternMatcherRootContentKey, PatternMatcherRootContent> mapping;
-
+    private ContentChildren<PatternMatcherRootContent> children;
+    
     public RootContent() {
         super(null);
+        this.children = new ContentChildren<PatternMatcherRootContent>();
         this.mapping = new HashMap<PatternMatcherRootContentKey, PatternMatcherRootContent>();
     }
 
@@ -81,6 +85,16 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
     @Override
     public String getText() {
         return null;
+    }
+
+    @Override
+    public IObservableList getChildren() {
+        return children;
+    }
+
+    @Override
+    public Iterator<PatternMatcherRootContent> getChildrenIterator() {
+        return children.getElements().iterator();
     }
 
 }

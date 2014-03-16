@@ -42,7 +42,7 @@ import com.google.inject.Singleton;
  * A collection of useful utility methods for the details and filters viewer in the {@link QueryExplorer}.
  * 
  * @author Tamas Szabo (itemis AG)
- *
+ * 
  */
 @Singleton
 public class DetailsViewerUtil {
@@ -82,7 +82,7 @@ public class DetailsViewerUtil {
         viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 
         DatabindingAdapter<IPatternMatch> databindableMatcher = DisplayUtil.getDatabindingAdapter(match
-                .getPatternMatch().patternName());//, match.getParent().isGenerated());
+                .getPatternMatch().patternName());// , match.getParent().isGenerated());
 
         if (databindableMatcher == null) {
             viewer.setInput(null);
@@ -115,19 +115,20 @@ public class DetailsViewerUtil {
 
         viewer.setCellEditors(editors);
 
-        IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(observableMatcher.getPatternName());
+        IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(
+                observableMatcher.getPatternName());
         Object[] filter = observableMatcher.getFilter();
         MatcherConfiguration[] input;
         if (specification != null) {
-        	input = new MatcherConfiguration[specification.getParameters().size()];
-        	if (filter != null) {
-        		for (int i = 0; i < specification.getParameters().size(); i++) {
-        			PParameter var = specification.getParameters().get(i);
-        			input[i] = new MatcherConfiguration(var.getName(), var.getTypeName(), filter[i]);
-        		}
-        	}
+            input = new MatcherConfiguration[specification.getParameters().size()];
+            if (filter != null) {
+                for (int i = 0; i < specification.getParameters().size(); i++) {
+                    PParameter var = specification.getParameters().get(i);
+                    input[i] = new MatcherConfiguration(var.getName(), var.getTypeName(), filter[i]);
+                }
+            }
         } else {
-        	input = new MatcherConfiguration[0];
+            input = new MatcherConfiguration[0];
         }
         viewer.setInput(input);
     }
@@ -161,19 +162,19 @@ public class DetailsViewerUtil {
     }
 
     public Object createValue(String classFqn, Object value) {
-        if (!(value instanceof String) || String.class.getName().matches(classFqn)) {
+        if (!(value instanceof String)) {
+            return value;
+        } else if (value.toString().matches("")) {
+            return null;
+        } else if (String.class.getName().matches(classFqn)) {
             return value;
         } else {
-            if (value.toString().matches("")) {
+            try {
+                Class<?> clazz = Class.forName(classFqn);
+                Method method = clazz.getMethod("valueOf", String.class);
+                return method.invoke(null, value);
+            } catch (Exception e) {
                 return null;
-            } else {
-                try {
-                    Class<?> clazz = Class.forName(classFqn);
-                    Method method = clazz.getMethod("valueOf", String.class);
-                    return method.invoke(null, value);
-                } catch (Exception e) {
-                    return null;
-                }
             }
         }
     }

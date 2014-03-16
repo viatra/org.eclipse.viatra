@@ -54,6 +54,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     private final Set<Object> cache = Collections.synchronizedSet(new HashSet<Object>());
     private final SetCollectionUpdate updater;
     private RuleSpecification<Match> specification;
+    private EventFilter<Match> matchFilter;
 
     /**
      * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
@@ -112,13 +113,15 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             IncQueryEngine engine, Match filter) {
         this(querySpecification);
-        ObservableCollectionHelper.prepareRuleEngine(engine, specification, filter);
+        matchFilter = Rules.newSingleMatchFilter(filter);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
     }
 
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             IncQueryEngine engine, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
         this(querySpecification);
-        ObservableCollectionHelper.prepareRuleEngine(engine, specification, multifilters, semantics);
+        matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
     }
 
     
@@ -157,7 +160,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             RuleEngine engine, Match filter) {
         this(querySpecification);
-        EventFilter<Match> matchFilter = Rules.newSingleMatchFilter(filter);
+        matchFilter = Rules.newSingleMatchFilter(filter);
 		engine.addRule(specification, matchFilter);
 		ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
     }
@@ -165,7 +168,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             RuleEngine engine, Collection<Match> multifilters, IncQueryFilterSemantics semantics) {
         this(querySpecification);
-        EventFilter<Match> matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
+        matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
         engine.addRule(specification, matchFilter);
         ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
     }

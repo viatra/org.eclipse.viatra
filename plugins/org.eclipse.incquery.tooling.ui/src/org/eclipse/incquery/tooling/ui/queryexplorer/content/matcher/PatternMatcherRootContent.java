@@ -12,9 +12,11 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -43,12 +45,14 @@ import com.google.common.collect.Maps;
 public class PatternMatcherRootContent extends CompositeContent<RootContent, PatternMatcherContent> {
 
     private final Map<String, PatternMatcherContent> mapping;
+    private ContentChildren<PatternMatcherContent> children;
     private final PatternMatcherRootContentKey key;
     private ContentEngineTaintListener taintListener;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
     public PatternMatcherRootContent(RootContent parent, PatternMatcherRootContentKey key) {
         super(parent);
+        this.children = new ContentChildren<PatternMatcherContent>();
         this.taintListener = new ContentEngineTaintListener();
         this.mapping = Maps.newHashMap();
         this.key = key;
@@ -172,9 +176,9 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
 
         @Override
         public void engineBecameTainted() {
-            for (PatternMatcherContent matcher : mapping.values()) {
-                matcher.stopMonitoring();
-            }
+//            for (PatternMatcherContent matcher : mapping.values()) {
+//                matcher.stopMonitoring();
+//            }
         }
         
     }
@@ -182,6 +186,16 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     @Override
     public String getText() {
         return this.key.toString();
+    }
+    
+    @Override
+    public IObservableList getChildren() {
+        return children;
+    }
+
+    @Override
+    public Iterator<PatternMatcherContent> getChildrenIterator() {
+        return children.getElements().iterator();
     }
 
 }
