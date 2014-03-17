@@ -102,6 +102,7 @@ public class PatternMatcherContent extends
                     }
                     setText(DisplayUtil.getMessage(matcher, actualMatchSetSize, specification.getFullyQualifiedName(), isCropped(),
                             isGenerated(), isFiltered(), exceptionMessage));
+                    updateHasChildren();
                 }
             };
 
