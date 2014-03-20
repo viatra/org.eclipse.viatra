@@ -117,14 +117,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     private EMFModelComprehension comprehension;
 
-    <T> Set<T> setMinus(Collection<T> a, Collection<T> b) {
+    <T> Set<T> setMinus(Collection<? extends T> a, Collection<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    <T extends EObject> Set<T> resolveAllInternal(Set<T> a) {
+    <T extends EObject> Set<T> resolveAllInternal(Set<? extends T> a) {
     	if (a==null) a = Collections.emptySet();
         Set<T> result = new HashSet<T>();
         for (T t : a) {
@@ -144,7 +144,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return result;
     }
-    Set<Object> resolveFeaturesToKey(Set<EStructuralFeature> features) {
+    Set<Object> resolveFeaturesToKey(Set<? extends EStructuralFeature> features) {
     	Set<EStructuralFeature> resolveds = resolveAllInternal(features);
         Set<Object> result = new HashSet<Object>();
         for (EStructuralFeature resolved : resolveds) {
@@ -496,7 +496,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void addFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
         Set<EStructuralFeature> registered = this.subscribedFeatureListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EStructuralFeature>();
@@ -514,7 +514,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void removeFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> restriction = this.subscribedFeatureListeners.get(listener);
         if (restriction != null) {
         	boolean changed = restriction.removeAll(features);
@@ -764,7 +764,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (classes !=null || features != null || dataTypes!=null) {
 			final Set<Object> resolvedFeatures = resolveFeaturesToKey(features);
@@ -795,14 +795,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterObservedTypes(Set<EClass> classes,
-    		Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    		Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
     	unregisterEClasses(classes);
     	unregisterEDataTypes(dataTypes);
     	unregisterEStructuralFeatures(features);
     }
     
     @Override
-    public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (features != null) {
             final Set<Object> resolved = resolveFeaturesToKey(features);
@@ -824,7 +824,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
+    public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (features != null) {
         	final Set<Object> resolved = resolveFeaturesToKey(features);

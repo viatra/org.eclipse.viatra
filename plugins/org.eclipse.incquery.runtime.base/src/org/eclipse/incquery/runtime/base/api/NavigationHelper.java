@@ -419,7 +419,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void addFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Unregisters a feature listener for the given features.
@@ -429,7 +429,7 @@ public interface NavigationHelper {
      * @param features
      *            the collection of features
      */
-    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void removeFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Register a lightweight observer that is notified if the value of any feature of the given EObject changes.
@@ -460,7 +460,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe (null okay)
      */
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features);
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
     
     /**
      * Manually turns off indexing for the given types (indexing of others are unaffected). Note that if the
@@ -476,7 +476,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features that will be ignored again from now on (null okay)
      */
-    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features);
+    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
    
     
     /**
@@ -488,7 +488,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe
      */
-    public void registerEStructuralFeatures(Set<EStructuralFeature> features);
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
     /**
      * Manually turns off indexing for the given features (indexing of other features are unaffected). Note that if the
@@ -501,7 +501,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features that will be ignored again from now on
      */
-    public void unregisterEStructuralFeatures(Set<EStructuralFeature> features);
+    public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
     /**
      * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
