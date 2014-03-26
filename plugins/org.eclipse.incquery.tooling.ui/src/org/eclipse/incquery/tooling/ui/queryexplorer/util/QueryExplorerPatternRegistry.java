@@ -56,6 +56,8 @@ import com.google.common.collect.Sets;
  */
 public class QueryExplorerPatternRegistry {
 
+    private static final String WARNING_DURING_PATTERN_REGISTRATION = "Warning during pattern registration";
+
     private static QueryExplorerPatternRegistry instance;
 
     // maps the eiq files to the list of patterns which were registered from that file
@@ -101,7 +103,7 @@ public class QueryExplorerPatternRegistry {
      *            the pattern instance to be unregistered
      */
     public List<IQuerySpecification<?>> unregisterPattern(IQuerySpecification<?> specification) {
-    	ArrayList<IQuerySpecification<?>> removedSpecifications = Lists.newArrayList();
+    	List<IQuerySpecification<?>> removedSpecifications = Lists.newArrayList();
     	removedSpecifications.add(specification);
         patternNameMap.remove(specification.getFullyQualifiedName());
         Set<IQuerySpecification<?>> forgottenSpecifications = builder.forgetSpecificationTransitively(specification);
@@ -151,7 +153,7 @@ public class QueryExplorerPatternRegistry {
             if (!warnings.isEmpty()) {
                 if (warnings.size() == 1) {
                     ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null,
-                            "Warning during pattern registration", warnings.get(0));
+                            WARNING_DURING_PATTERN_REGISTRATION, warnings.get(0));
                 } else {
                     MultiStatus multiStatus = new MultiStatus(
                             IncQueryGUIPlugin.PLUGIN_ID,
@@ -160,7 +162,7 @@ public class QueryExplorerPatternRegistry {
                             "Multiple patterns with matching fully qualified names already exist in the pattern registry.",
                             null);
                     ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null,
-                            "Warning during pattern registration", multiStatus);
+                            WARNING_DURING_PATTERN_REGISTRATION, multiStatus);
                 }
             }
         }
@@ -220,12 +222,16 @@ public class QueryExplorerPatternRegistry {
 
         if (patterns != null) {
             for (IQuerySpecification<?> p : patterns) {
+                try {
                 String patternFqn = p.getFullyQualifiedName();
                 if (activePatterns.remove(p)) {
                     removedPatterns.add(p);
                 }
                 patternNameMap.remove(patternFqn);
                 builder.forgetSpecificationTransitively(p);
+                } catch (Exception e) {
+                    logger.log(new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, "Error while unregistering the pattern", e));
+                }
             }
         }
 

@@ -222,6 +222,7 @@ public class DisplayUtil {
                 break;
             default:
                 matchString = String.format("%d matches", matchesSize);
+                break;
             }
 
             String isCroppedString = isCropped ? " - Cropped" : "";
@@ -312,7 +313,18 @@ public class DisplayUtil {
 
 
 
-
+    public PatternModel extractPatternModelFromResource(Resource resource) {
+    	if (resource != null) {
+            if (resource.getErrors().size() > 0) {
+                return null;
+            }
+            if (resource.getContents().size() >= 1) {
+                EObject topElement = resource.getContents().get(0);
+                return topElement instanceof PatternModel ? (PatternModel) topElement : null;
+            }
+        }
+        return null;
+    }
 
 
 
@@ -340,27 +352,29 @@ public class DisplayUtil {
         try {
         	if (resource == null) {
         		resource = resourceSet.createResource(fileURI);
-        	} else if (resource.isLoaded()) {
+        	} 
+        	else if (resource.isLoaded()) {
+        		// TODO remove this kludgy, side effect-laden code from here
         		TreeIterator<EObject> it = resource.getAllContents();
 
         		QueryExplorerPatternRegistry queryRegistry = QueryExplorerPatternRegistry.getInstance();
-
+				QueryExplorer queryExplorer = QueryExplorer.getInstance();
         		while (it.hasNext()) {
         			EObject next = it.next();
         			if (next instanceof Pattern) {
 						Pattern oldPattern = (Pattern) next;
 
-						QueryExplorer queryExplorer = QueryExplorer.getInstance();
+
 						String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
                         queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(fqn);
 						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().purge();
-						queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
+						//queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
 
 						queryRegistry.removeActivePattern(fqn);
 						it.prune();
         			}
         		}
-
+				queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
         		resource.unload();
         	}
 			resource.load(null);
@@ -368,15 +382,6 @@ public class DisplayUtil {
 			return null;
 		}
 
-        if (resource != null) {
-            if (resource.getErrors().size() > 0) {
-                return null;
-            }
-            if (resource.getContents().size() >= 1) {
-                EObject topElement = resource.getContents().get(0);
-                return topElement instanceof PatternModel ? (PatternModel) topElement : null;
-            }
-        }
-        return null;
+        return extractPatternModelFromResource(resource);
     }
 }

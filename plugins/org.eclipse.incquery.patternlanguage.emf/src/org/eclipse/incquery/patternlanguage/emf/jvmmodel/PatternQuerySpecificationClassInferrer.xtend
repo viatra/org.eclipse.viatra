@@ -261,7 +261,9 @@ class PatternQuerySpecificationClassInferrer {
 			}
 			appender.append('''body.setExportedParameters(''')
 			appender.referClass(pattern,typeof(Arrays))
-			appender.append('''.asList(''')
+			appender.append('''.<''')
+			appender.referClass(pattern, typeof(ExportedParameter))
+			appender.append('''>asList(''')
 			appender.increaseIndentation
 			appender.newLine
 			val exportIt = pBody.symbolicParameters.iterator

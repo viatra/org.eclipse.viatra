@@ -51,7 +51,7 @@ public class RuntimeMatcherRegistrationHandler extends AbstractHandler {
         }
 
         if (file != null) {
-            RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file);
+            RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(file, null);
             injector.injectMembers(registrator);
             Display.getDefault().asyncExec(registrator);
         }

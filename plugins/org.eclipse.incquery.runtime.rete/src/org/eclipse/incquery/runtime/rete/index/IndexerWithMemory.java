@@ -12,7 +12,7 @@
 package org.eclipse.incquery.runtime.rete.index;
 
 import java.util.Collection;
-import java.util.Vector;
+import java.util.Collections;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -77,9 +77,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
 
     @Override
     public Collection<Supplier> getParents() {
-        Vector<Supplier> v = new Vector<Supplier>();
-        v.add(parent);
-        return v;
+        return Collections.singleton(parent);
     }
 
 }

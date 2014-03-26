@@ -13,8 +13,8 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.incquery.viewers.tooling.ui.views.ViewersToolingViewsUtil;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,7 +40,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	        
 	        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
 	        if (selection instanceof TreeSelection) {
-	            ObservablePatternMatcherRoot root = getSelectedMatcherRoot(selection);
+	            PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
 	            
 	            try {
 	                IEditorPart editorPart = root.getEditorPart();
@@ -53,7 +53,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	                        
 	                        ArrayList<IQuerySpecification<?>> patterns = Lists.newArrayList();
 	                        
-	                        for (ObservablePatternMatcher opm: root.getMatchers()) {
+	                        for (PatternMatcherContent opm: root.getChildren()) {
 	                            patterns.add( opm.getMatcher().getSpecification() );
 	                        }
 	                        
@@ -75,20 +75,20 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
 	        return null;
 	    }
 
-	protected ObservablePatternMatcherRoot getSelectedMatcherRoot(ISelection selection) {
+	protected PatternMatcherRootContent getSelectedMatcherRoot(ISelection selection) {
 	    Object firstElement = ((TreeSelection) selection).getFirstElement();
-	    if (firstElement instanceof ObservablePatternMatcherRoot) {
-	        return (ObservablePatternMatcherRoot) firstElement;
-	    } else if (firstElement instanceof ObservablePatternMatcher) {
-	        return ((ObservablePatternMatcher) firstElement).getParent();
+	    if (firstElement instanceof PatternMatcherRootContent) {
+	        return (PatternMatcherRootContent) firstElement;
+	    } else if (firstElement instanceof PatternMatcherContent) {
+	        return ((PatternMatcherContent) firstElement).getParent();
 	    } else {
 	        throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
 	    }
 	}
 
-	protected ViewerDataFilter prepareFilterInformation(ObservablePatternMatcherRoot root) {
+	protected ViewerDataFilter prepareFilterInformation(PatternMatcherRootContent root) {
 	    ViewerDataFilter dataFilter = new ViewerDataFilter();
-	    for (ObservablePatternMatcher matcher : root.getMatchers()) {
+	    for (PatternMatcherContent matcher : root.getChildren()) {
 	        final Object[] filter = matcher.getFilter();
 	        if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
 	            final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);

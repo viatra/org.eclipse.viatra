@@ -44,7 +44,7 @@ public class TransitiveClosureHelperImpl extends EContentAdapter implements Tran
     private Set<EStructuralFeature> features;
     private Set<EClass> classes;
     private EMFDataSource dataSource;
-    private ArrayList<ITcObserver<EObject>> tcObservers;
+    private List<ITcObserver<EObject>> tcObservers;
     private NavigationHelper navigationHelper;
     private boolean disposeBaseIndexWhenDisposed;
     

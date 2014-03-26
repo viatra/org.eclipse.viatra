@@ -80,7 +80,12 @@ public abstract class MyAbstractDeclarativeScopeProvider extends AbstractScopePr
 
 	protected Predicate<Method> getPredicate(EObject context,
 			EReference reference) {
-		String methodName = "scope_"
+		String methodName = 
+				(reference == null || reference.getEContainingClass() == null)
+				?
+						"no_such_scope"
+				:
+				"scope_"
 				+ reference.getEContainingClass().getName() + "_"
 				+ reference.getName();
 		//System.out.println(methodName + " ctx " + context.eClass().getName());

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
 import org.eclipse.incquery.runtime.base.itc.igraph.IBiDirectionalWrapper;
@@ -28,15 +29,15 @@ public class PKAlg<V> implements IGraphObserver<V> {
     /**
      * Maps the nodes to their indicies.
      */
-    private HashMap<V, Integer> node2index;
-    private HashMap<Integer, V> index2node;
-    private HashMap<V, Boolean> node2mark;
+    private Map<V, Integer> node2index;
+    private Map<Integer, V> index2node;
+    private Map<V, Boolean> node2mark;
 
     /**
      * Maps the index of a node to the index in the topsort.
      */
-    private HashMap<Integer, Integer> index2topsort;
-    private HashMap<Integer, Integer> topsort2index;
+    private Map<Integer, Integer> index2topsort;
+    private Map<Integer, Integer> topsort2index;
 
     /**
      * Index associated to the inserted nodes (incrementing with every insertion).
@@ -53,8 +54,8 @@ public class PKAlg<V> implements IGraphObserver<V> {
      */
     private int upper_bound;
 
-    private ArrayList<V> RF;
-    private ArrayList<V> RB;
+    private List<V> RF;
+    private List<V> RB;
     private IBiDirectionalGraphDataSource<V> gds;
 
     public PKAlg(IGraphDataSource<V> gds) {
@@ -90,8 +91,8 @@ public class PKAlg<V> implements IGraphObserver<V> {
         }
     }
 
-    private ArrayList<Integer> getIndicies(ArrayList<V> list) {
-        ArrayList<Integer> indicies = new ArrayList<Integer>();
+    private List<Integer> getIndicies(List<V> list) {
+        List<Integer> indicies = new ArrayList<Integer>();
 
         for (V n : list)
             indicies.add(index2topsort.get(node2index.get(n)));
@@ -104,7 +105,7 @@ public class PKAlg<V> implements IGraphObserver<V> {
         Collections.reverse(RB);
 
         // azon csomopontok indexei amelyek sorrendje nem jo
-        ArrayList<Integer> L = getIndicies(RF);
+        List<Integer> L = getIndicies(RF);
         L.addAll(getIndicies(RB));
         Collections.sort(L);
 

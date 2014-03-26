@@ -33,6 +33,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<labelSuffix></labelSuffix>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>

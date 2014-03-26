@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRoot;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.RootContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 public class RuntimeMatcherUnRegistrator implements Runnable {
@@ -30,10 +30,10 @@ public class RuntimeMatcherUnRegistrator implements Runnable {
 
     @Override
     public void run() {
-        MatcherTreeViewerRoot vr = QueryExplorer.getInstance().getMatcherTreeViewerRoot();
+        RootContent vr = QueryExplorer.getInstance().getRootContent();
         List<IQuerySpecification<?>> removedPatterns = QueryExplorerPatternRegistry.getInstance().unregisterPatternModel(file);
         for (IQuerySpecification<?> pattern : removedPatterns) {
-            for (ObservablePatternMatcherRoot root : vr.getRoots()) {
+            for (PatternMatcherRootContent root : vr.getChildren()) {
                 root.unregisterPattern(pattern);
             }
             QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot()

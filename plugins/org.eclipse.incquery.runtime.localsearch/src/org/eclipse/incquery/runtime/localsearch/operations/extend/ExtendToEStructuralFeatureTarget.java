@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Iterators;
 
@@ -42,7 +43,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void onInitialize(MatchingFrame frame) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
             final EObject value = (EObject) frame.getValue(sourcePosition);
             final Object featureValue = value.eGet(feature);

@@ -34,7 +34,8 @@ class DeltaVisitor implements IResourceDeltaVisitor {
 
             IFile file = (IFile) res;
             if (QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
-                RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file);
+            	// FIXME attempt to retrieve existing resource from registry?
+                RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file, null);
                 injector.injectMembers(registrator);
                 Display.getDefault().asyncExec(registrator);
             }

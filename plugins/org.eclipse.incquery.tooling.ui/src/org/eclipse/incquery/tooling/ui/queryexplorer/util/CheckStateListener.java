@@ -13,7 +13,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
@@ -68,14 +68,16 @@ public class CheckStateListener implements ICheckStateListener {
 
         if (event.getChecked() && !QueryExplorerPatternRegistry.getInstance().isActive(patternFqn)) {
             leaf.setSelected(true);
-            for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+            for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
                 root.registerPattern(specification);
+                root.updateHasChildren();
             }
             QueryExplorerPatternRegistry.getInstance().addActivePattern(specification);
         } else if (!event.getChecked()) {
             leaf.setSelected(false);
-            for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+            for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
                 root.unregisterPattern(specification);
+                root.updateHasChildren();
             }
             QueryExplorerPatternRegistry.getInstance().removeActivePattern(specification);
         }

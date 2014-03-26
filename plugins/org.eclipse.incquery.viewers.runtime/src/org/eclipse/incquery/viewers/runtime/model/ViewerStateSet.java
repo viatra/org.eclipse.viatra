@@ -177,6 +177,7 @@ public class ViewerStateSet extends ViewerState {
 			case CONTAINMENT:
 				initializeContainmentSet(model
 						.initializeObservableContainmentSet(filter, itemMap));
+				break;
 			}
 		}
 	}

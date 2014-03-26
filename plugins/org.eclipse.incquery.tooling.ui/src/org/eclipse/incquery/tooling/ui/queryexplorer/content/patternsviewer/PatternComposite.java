@@ -91,6 +91,10 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public PatternComponent addComponent(String patternFragment) {
+        if(patternFragment == null || "".equals(patternFragment)) {
+            return null;
+        }
+        
         String[] tokens = patternFragment.split("\\.");
 
         if (tokens.length == 1) {
@@ -223,6 +227,10 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public void removeComponent(String patternFragment) {
+        if(patternFragment == null || "".equals(patternFragment)) {
+            return;
+        }
+
         String[] tokens = patternFragment.split("\\.");
         if (tokens.length == 1) {
             PatternComponent component = null;

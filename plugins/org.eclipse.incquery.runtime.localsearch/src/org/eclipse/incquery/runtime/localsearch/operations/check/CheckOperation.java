@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
 /**
@@ -26,16 +27,16 @@ public abstract class CheckOperation implements ISearchOperation {
     private boolean executed;
 
     @Override
-    public void onInitialize(MatchingFrame frame) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         executed = false;
     }
 
     @Override
-    public void onBacktrack(MatchingFrame frame) throws LocalSearchException {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
     }
 
     @Override
-    public boolean execute(MatchingFrame frame) throws LocalSearchException {
+    public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         executed = executed ? false : check(frame);
         return executed;
     }

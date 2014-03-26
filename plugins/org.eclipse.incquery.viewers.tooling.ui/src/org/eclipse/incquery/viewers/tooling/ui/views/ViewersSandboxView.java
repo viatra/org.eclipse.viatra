@@ -175,7 +175,7 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
     }
     
     private List<IContributionItem> getDropdownMenuContributions(IViewerSandboxTab tab) {
-        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<IContributionItem>();
         if (tab!=null && tab.getDropDownMenuContributions()!=null) {
             r.addAll(tab.getDropDownMenuContributions());
         }
@@ -183,7 +183,7 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
     }
     
     private List<IContributionItem> getToolbarContributions(IViewerSandboxTab tab) {
-        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<IContributionItem>();
         if (tab!=null && tab.getToolBarContributions()!=null) {
             r.addAll(tab.getToolBarContributions());
         }   
@@ -246,7 +246,7 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
     }
 
     private static Collection<IQuerySpecification<?>> getPatternsWithProperAnnotations(Collection<IQuerySpecification<?>> input) {
-        ArrayList<IQuerySpecification<?>> res = new ArrayList<IQuerySpecification<?>>();
+        List<IQuerySpecification<?>> res = new ArrayList<IQuerySpecification<?>>();
         for (IQuerySpecification<?> p : input) {
             if (Iterables.any(p.getAllAnnotations(), new ViewersAnnotatedPatternTester())) {
                 res.add(p);

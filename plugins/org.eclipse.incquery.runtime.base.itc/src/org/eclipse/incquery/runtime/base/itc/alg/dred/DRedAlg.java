@@ -41,7 +41,7 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     private IGraphDataSource<V> graphDataSource = null;
     private DRedTcRelation<V> tc = null;
     private DRedTcRelation<V> dtc = null;
-    private ArrayList<ITcObserver<V>> observers;
+    private List<ITcObserver<V>> observers;
 
     /**
      * Constructs a new DRED algorithm and initializes the transitive closure relation with the given graph data source.
@@ -96,11 +96,8 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             Set<V> tupEnds = null;
             Set<Tuple<V>> tuples = new HashSet<Tuple<V>>();
 
-            // 1. d+(tc(x,y)) :- d(l(x,y))
-            if (!source.equals(target)) {
-                if (tc.addTuple(source, target)) {
-                    tuples.add(new Tuple<V>(source, target));
-                }
+            if (!source.equals(target) && tc.addTuple(source, target)) {
+                tuples.add(new Tuple<V>(source, target));
             }
 
             // 2. d+(tc(x,y)) :- d+(tc(x,z)) & lv(z,y) Descartes product
@@ -109,10 +106,8 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             for (V s : tupStarts) {
                 for (V t : tupEnds) {
-                    if (!s.equals(t)) {
-                        if (tc.addTuple(s, t)) {
-                            tuples.add(new Tuple<V>(s, t));
-                        }
+                    if (!s.equals(t) && tc.addTuple(s, t)) {
+                        tuples.add(new Tuple<V>(s, t));
                     }
                 }
             }
@@ -120,20 +115,16 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             // (s, source) -> (source, target)
             // tupStarts = tc.getTupleStarts(source);
             for (V s : tupStarts) {
-                if (!s.equals(target)) {
-                    if (tc.addTuple(s, target)) {
-                        tuples.add(new Tuple<V>(s, target));
-                    }
+                if (!s.equals(target) && tc.addTuple(s, target)) {
+                    tuples.add(new Tuple<V>(s, target));
                 }
             }
 
             // (source, target) -> (target, t)
             // tupEnds = tc.getTupleEnds(target);
             for (V t : tupEnds) {
-                if (!source.equals(t)) {
-                    if (tc.addTuple(source, t)) {
-                        tuples.add(new Tuple<V>(source, t));
-                    }
+                if (!source.equals(t) && tc.addTuple(source, t)) {
+                    tuples.add(new Tuple<V>(source, t));
                 }
             }
 
@@ -222,11 +213,9 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                         List<V> targetNodes = graphDataSource.getTargetNodes(t);
                         if (targetNodes != null) {
                             for (V tn : targetNodes) {
-                                if (!s.equals(tn)) {
-                                    if (tc.addTuple(s, tn)) {
-                                        dtc.addTuple(s, tn);
-                                        tuples.remove(new Tuple<V>(s, tn));
-                                    }
+                                if (!s.equals(tn) && tc.addTuple(s, tn)) {
+                                    dtc.addTuple(s, tn);
+                                    tuples.remove(new Tuple<V>(s, tn));
                                 }
                             }
                         }

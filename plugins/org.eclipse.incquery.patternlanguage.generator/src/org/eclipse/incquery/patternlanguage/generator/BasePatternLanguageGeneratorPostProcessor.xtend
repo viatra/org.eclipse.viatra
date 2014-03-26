@@ -158,7 +158,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		if (variable == null) {
 			InternalEObject container = this.eContainer;
 			while (container != null
-			&& !(container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
+				&& !(container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 				|| container instanceof org.eclipse.incquery.patternlanguage.patternLanguage.Pattern)) {
 			container = container.eInternalContainer();
 			}
@@ -170,7 +170,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 				org.eclipse.incquery.patternlanguage.patternLanguage.Pattern pattern =
 				(org.eclipse.incquery.patternlanguage.patternLanguage.Pattern) container;
 				for (org.eclipse.incquery.patternlanguage.patternLanguage.Variable var : pattern.getParameters()) {
-					if (var.getName().equals(getVar())) {
+					if (var.getName() != null && var.getName().equals(getVar())) {
 						var.getReferences().add(this);
 					}
 				}

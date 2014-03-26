@@ -29,6 +29,8 @@ import com.google.common.base.Preconditions;
  */
 public abstract class DatabindingAdapter<T extends IPatternMatch> {
 
+    private static final String SOURCE_MUST_BE_A_TYPED_PATTERN_MATCH = "Source must be a typed Pattern Match";
+    
     protected class MatcherProperty extends ValueProperty {
 
         private String expression;
@@ -37,59 +39,34 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
             this.expression = expression;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.core.databinding.property.value.IValueProperty#getValueType()
-         */
         @Override
         public Object getValueType() {
             return Object.class;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.eclipse.core.databinding.property.value.IValueProperty#observe(org.eclipse.core.databinding.observable
-         * .Realm, java.lang.Object)
-         */
         @Override
         public IObservableValue observe(Realm realm, Object source) {
-            Preconditions.checkArgument((source instanceof IPatternMatch), "Source must be a typed Pattern Match");
+            Preconditions.checkArgument((source instanceof IPatternMatch), SOURCE_MUST_BE_A_TYPED_PATTERN_MATCH);
             return IncQueryObservables.getObservableValue((IPatternMatch) source, expression);
         }
 
     }
 
     protected class MatcherLabelProperty extends ValueProperty {
-
         private String expression;
 
         public MatcherLabelProperty(String expression) {
             this.expression = expression;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.core.databinding.property.value.IValueProperty#getValueType()
-         */
         @Override
         public Object getValueType() {
             return String.class;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.eclipse.core.databinding.property.value.IValueProperty#observe(org.eclipse.core.databinding.observable
-         * .Realm, java.lang.Object)
-         */
         @Override
         public IObservableValue observe(Realm realm, Object source) {
-            Preconditions.checkArgument((source instanceof IPatternMatch), "Source must be a typed Pattern Match");
+            Preconditions.checkArgument((source instanceof IPatternMatch), SOURCE_MUST_BE_A_TYPED_PATTERN_MATCH);
             return IncQueryObservables.getObservableLabelFeature((IPatternMatch) source, expression);
         }
 

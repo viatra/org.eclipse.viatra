@@ -41,7 +41,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
-import org.eclipse.incquery.runtime.base.api.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
@@ -73,6 +74,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected Set<Object> allObservedClasses = null; // including subclasses; if null, must be recomputed
     protected Set<Object> observedDataTypes;
     protected Set<Object> observedFeatures;
+    protected Set<Object> ignoreResolveNotificationFeatures; // ignore RESOLVE for these features, as they are just starting to be observed - see [428458]
 
     /**
      * Feature registration and model traversal is delayed while true
@@ -115,14 +117,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     private EMFModelComprehension comprehension;
 
-    <T> Set<T> setMinus(Collection<T> a, Collection<T> b) {
+    <T> Set<T> setMinus(Collection<? extends T> a, Collection<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    <T extends EObject> Set<T> resolveAllInternal(Set<T> a) {
+    <T extends EObject> Set<T> resolveAllInternal(Set<? extends T> a) {
     	if (a==null) a = Collections.emptySet();
         Set<T> result = new HashSet<T>();
         for (T t : a) {
@@ -142,7 +144,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return result;
     }
-    Set<Object> resolveFeaturesToKey(Set<EStructuralFeature> features) {
+    Set<Object> resolveFeaturesToKey(Set<? extends EStructuralFeature> features) {
     	Set<EStructuralFeature> resolveds = resolveAllInternal(features);
         Set<Object> result = new HashSet<Object>();
         for (EStructuralFeature resolved : resolveds) {
@@ -186,6 +188,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
         this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
         this.observedFeatures = new HashSet<Object>();
+        this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashSet<Object>();
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
@@ -206,6 +209,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     public Set<Object> getObservedFeaturesInternal() {
         return observedFeatures;
+    }
+    
+    public boolean isFeatureResolveIgnored(EStructuralFeature feature) {
+        return ignoreResolveNotificationFeatures.contains(toKey(feature));
     }
 
     @Override
@@ -280,11 +287,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
     
+    @Override
     public void processDirectInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
         processDirectInstancesInternal(type, processor, typeKey);
     }
 
+    @Override
     public void processAllInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
         Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
@@ -294,6 +303,18 @@ public class NavigationHelperImpl implements NavigationHelper {
             }
         } 
         processDirectInstancesInternal(type, processor, typeKey);
+    }
+    
+    @Override
+    public void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor) {
+    	Object typeKey = toKey(type);
+        Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(typeKey);
+        if (valMap == null) {
+            return;
+        }
+        for (Object value : valMap.keySet()) {
+        	processor.process(type, value);
+        }
     }
 
     private void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {
@@ -475,7 +496,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void addFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
         Set<EStructuralFeature> registered = this.subscribedFeatureListeners.get(listener);
         if (registered == null) {
             registered = new HashSet<EStructuralFeature>();
@@ -493,7 +514,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener) {
+    public void removeFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> restriction = this.subscribedFeatureListeners.get(listener);
         if (restriction != null) {
         	boolean changed = restriction.removeAll(features);
@@ -743,7 +764,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 	}
 
 	@Override
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (classes !=null || features != null || dataTypes!=null) {
 			final Set<Object> resolvedFeatures = resolveFeaturesToKey(features);
@@ -774,14 +795,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterObservedTypes(Set<EClass> classes,
-    		Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+    		Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
     	unregisterEClasses(classes);
     	unregisterEDataTypes(dataTypes);
     	unregisterEStructuralFeatures(features);
     }
     
     @Override
-    public void registerEStructuralFeatures(Set<EStructuralFeature> features) {
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (features != null) {
             final Set<Object> resolved = resolveFeaturesToKey(features);
@@ -803,7 +824,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void unregisterEStructuralFeatures(Set<EStructuralFeature> features) {
+    public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (features != null) {
         	final Set<Object> resolved = resolveFeaturesToKey(features);
@@ -949,17 +970,17 @@ public class NavigationHelperImpl implements NavigationHelper {
         			boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClassesInternal()).isEmpty();
         			
         			if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-        				final HashSet<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
+        				final Set<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
         				startObservingClasses(delayedClasses);
-        				observedFeatures.addAll(delayedFeatures);
         				observedDataTypes.addAll(delayedDataTypes);
+        				observedFeatures.addAll(delayedFeatures);
         				
         				// make copies so that original accumulators can be cleaned for the next cycle
         				// or for the rare case that a coalesced  traversal is invoked during visitation, 
         				// e.g. by a derived feature implementation
-        				final HashSet<Object> toGatherClasses = new HashSet<Object>(delayedClasses);
-        				final HashSet<Object> toGatherFeatures = new HashSet<Object>(delayedFeatures);
-        				final HashSet<Object> toGatherDataTypes = new HashSet<Object>(delayedDataTypes);
+        				final Set<Object> toGatherClasses = new HashSet<Object>(delayedClasses);
+        				final Set<Object> toGatherFeatures = new HashSet<Object>(delayedFeatures);
+        				final Set<Object> toGatherDataTypes = new HashSet<Object>(delayedDataTypes);
         				
         				if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
         					// repeat the cycle with this visit
@@ -969,7 +990,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         					callable = new Callable<V>() {
         						@Override
         						public V call() throws Exception {
-        							traverse(visitor);
+        							// temporarily ignoring RESOLVE on these features, as they were not observed before
+        							ignoreResolveNotificationFeatures.addAll(toGatherFeatures); 
+        							try {
+        								traverse(visitor);
+        							} finally {
+        								ignoreResolveNotificationFeatures.removeAll(toGatherFeatures);        								
+        							}
         							return null;
         						}
 							};

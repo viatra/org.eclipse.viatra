@@ -11,7 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -97,13 +97,13 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.base.itc.igraph.IGraphDataSource;
 
 public class TopSort<V> {
 
     private IGraphDataSource<V> gds;
-    private HashMap<Integer, V> forwardNodeMap;
-    private HashMap<V, Integer> backwardNodeMap;
+    private Map<Integer, V> forwardNodeMap;
+    private Map<V, Integer> backwardNodeMap;
     private int nodeCount;
 
     private int[] visited;

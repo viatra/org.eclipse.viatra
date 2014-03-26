@@ -42,9 +42,9 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
-    	final HashMap<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(getDeferringVariables(), getDeducedVariables());
-		return result;
+        return result;
     }
 
     @Override

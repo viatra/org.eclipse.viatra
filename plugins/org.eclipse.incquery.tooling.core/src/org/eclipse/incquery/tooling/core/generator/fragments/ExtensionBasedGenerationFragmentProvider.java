@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.core.generator.fragments;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,8 @@ import com.google.inject.Inject;
  */
 public class ExtensionBasedGenerationFragmentProvider implements IGenerationFragmentProvider {
 
+    private static final String ANNOTATION = "annotation";
+
     @Inject
     private Logger logger;
 
@@ -51,7 +54,7 @@ public class ExtensionBasedGenerationFragmentProvider implements IGenerationFrag
         fragments = ArrayListMultimap.create();
         final IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSIONID);
         for (IConfigurationElement e : config) {
-            final String annotationName = e.getAttribute("annotation") != null ? e.getAttribute("annotation")
+            final String annotationName = e.getAttribute(ANNOTATION) != null ? e.getAttribute(ANNOTATION)
                     : GENERIC_ATTRIBUTE;
             try {
                 IGenerationFragment fragment = (IGenerationFragment) e.createExecutableExtension("fragment");
@@ -67,7 +70,7 @@ public class ExtensionBasedGenerationFragmentProvider implements IGenerationFrag
         if (fragments == null) {
             initializeFragments();
         }
-        HashSet<IGenerationFragment> fragmentSet = new HashSet<IGenerationFragment>(fragments.get(GENERIC_ATTRIBUTE));
+        Set<IGenerationFragment> fragmentSet = new HashSet<IGenerationFragment>(fragments.get(GENERIC_ATTRIBUTE));
         for (Annotation annotation : pattern.getAnnotations()) {
             fragmentSet.addAll(fragments.get(annotation.getName()));
         }

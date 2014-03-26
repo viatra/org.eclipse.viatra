@@ -71,8 +71,8 @@ public final class CorePatternLanguageHelper {
      * Returns the name of the pattern, qualified by package name.
      */
     public static String getFullyQualifiedName(Pattern pattern) {
-        if (pattern == null) {
-            throw new IllegalArgumentException("No pattern specified for getFullyQualifiedName");
+        if(pattern == null || pattern.eIsProxy()) {
+            return "";
         }
         PatternModel patternModel = (PatternModel) pattern.eContainer();
 
@@ -115,13 +115,14 @@ public final class CorePatternLanguageHelper {
      * @return all xbase check() or eval() expressions in the pattern
      */
     public static Collection<XExpression> getAllTopLevelXBaseExpressions(EObject patternOrBody) {
-    	final ArrayList<XExpression> result = new ArrayList<XExpression>();
+    	final List<XExpression> result = new ArrayList<XExpression>();
     	final TreeIterator<EObject> eAllContents = patternOrBody.eAllContents();
     	while (eAllContents.hasNext()) {
     		final EObject content = eAllContents.next();
 			if (content instanceof XExpression) {
 				result.add((XExpression) content);
-    			eAllContents.prune(); // do not include subexpressions
+				// do not include subexpressions
+    			eAllContents.prune();
     		}
     	}
         return result;
@@ -148,7 +149,7 @@ public final class CorePatternLanguageHelper {
     /** Compiles a map for name-based lookup of symbolic parameter positions. */
     public static Map<String, Integer> getParameterPositionsByName(Pattern pattern) {
         EList<Variable> parameters = pattern.getParameters();
-        HashMap<String, Integer> posMapping = new HashMap<String, Integer>();
+        Map<String, Integer> posMapping = new HashMap<String, Integer>();
         int parameterPosition = 0;
         for (Variable parameter : parameters) {
             posMapping.put(parameter.getName(), parameterPosition++);
@@ -208,7 +209,7 @@ public final class CorePatternLanguageHelper {
     public static EList<Variable> getAllVariablesInBody(PatternBody body, EList<Variable> previous) {
         EList<Variable> variables = previous;
 
-        HashMap<String, Variable> parameterMap = new HashMap<String, Variable>();
+        Map<String, Variable> parameterMap = new HashMap<String, Variable>();
 
         EList<Variable> parameters = ((Pattern) body.eContainer()).getParameters();
         for (Variable var : variables) {
@@ -494,7 +495,8 @@ public final class CorePatternLanguageHelper {
             					containerPatternBody(eval).getVariables());
                 if (!onlyFromAggregatedValues) {
                 	for (Variable variable : usedVariables) {
-                		if (variable.getName().startsWith("_")) { // can this ever be true?
+                	    // XXX can this ever be true?
+                		if (variable.getName().startsWith("_")) {
                 			resultSet.add(variable);
                 		}
                 	}

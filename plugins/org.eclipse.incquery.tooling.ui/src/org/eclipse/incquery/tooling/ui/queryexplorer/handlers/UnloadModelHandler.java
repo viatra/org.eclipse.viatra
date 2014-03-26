@@ -15,7 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -27,7 +27,7 @@ public class UnloadModelHandler extends AbstractHandler {
 
         ISelection selection = HandlerUtil.getActiveMenuSelection(event);
         if (selection instanceof TreeSelection) {
-            ObservablePatternMatcherRoot root = (ObservablePatternMatcherRoot) ((TreeSelection) selection)
+            PatternMatcherRootContent root = (PatternMatcherRootContent) ((TreeSelection) selection)
                     .getFirstElement();
             QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
         }

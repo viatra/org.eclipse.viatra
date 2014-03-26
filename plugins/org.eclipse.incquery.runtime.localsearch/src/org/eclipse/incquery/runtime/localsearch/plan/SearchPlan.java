@@ -1,80 +1,51 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Akos Horvath, Gergely Varro and Daniel Varro
+ * Copyright (c) 2010-2014, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Akos Horvath, Gergely Varro - initial API and implementation from the VIATRA2 project
- *    Zoltan Ujhelyi - adaptation to EMF-IncQuery based engine
+ *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
+package org.eclipse.incquery.runtime.localsearch.plan;
 
- package org.eclipse.incquery.runtime.localsearch.plan;
+import java.util.Arrays;
+import java.util.List;
 
-
-import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
-import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 /**
- * A SearchPlan is an unmodifiable array of 
- * SearchPlanOperations. PatternSignatures are supposed
- * to be fixed 
+ * A SearchPlan stores a collection of SearchPlanOperations for a fixed order of variables.
+ * 
+ * @author Zoltan Ujhelyi
+ * 
  */
 public class SearchPlan {
-    private int currentOperation;
 
-    private ISearchOperation[] operations;
-	
-    public SearchPlan(ISearchOperation[] operations) {
-		this.operations = operations;
-        this.currentOperation = -1;
-	}
-    
-    private void init(MatchingFrame frame) throws LocalSearchException {
-        if (currentOperation == -1) {
-            currentOperation++;
-            operations[currentOperation].onInitialize(frame);
-        } else if (currentOperation == operations.length) {
-            currentOperation--;
-        } else {
-            throw new LocalSearchException(LocalSearchException.PLAN_EXECUTION_ERROR);
-        }
-    }
-	
-	/**
-     * Calculates the cost of the search plan.
-	 */
-	public double cost() {
-		/* default generated stub */;
-		return 0.0;
-	}
+    private List<ISearchOperation> operations = Lists.newArrayList();
 
-    public boolean execute(MatchingFrame frame) throws LocalSearchException {
-        int upperBound = operations.length - 1;
-        init(frame);
-        while (currentOperation >= 0 && currentOperation <= upperBound) {
-            if (operations[currentOperation].execute(frame)) {
-                currentOperation++;
-                if (currentOperation <= upperBound) {
-                    operations[currentOperation].onInitialize(frame);
-                }
-            } else {
-                operations[currentOperation].onBacktrack(frame);
-                currentOperation--;
-            }
-        }
-        return (currentOperation > upperBound);
-    }
-    
-    public void resetPlan() {
-        currentOperation = -1;
+    public void addOperation(ISearchOperation operation) {
+        operations.add(operation);
     }
 
-    public void printDebugInformation() {
-        for (int i = 0; i < operations.length; i++) {
-            System.out.println("[" + i + "]\t" + operations[i].toString());
-        }
+    public void addOperations(ISearchOperation[] newOperations) {
+        operations.addAll(Arrays.asList(newOperations));
     }
+
+    public void addOperations(List<ISearchOperation> newOperations) {
+        operations.addAll(newOperations);
+    }
+
+    /**
+     * Returns an immutable list of operations stored in the plan.
+     * @return the operations
+     */
+    public List<ISearchOperation> getOperations() {
+        return ImmutableList.copyOf(operations);
+    }
+
 }

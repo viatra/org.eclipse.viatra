@@ -19,7 +19,6 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmIdentifiableElement
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
@@ -30,9 +29,9 @@ class GenerateQuerySpecificationExtension {
 
 	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
 		newArrayList(
-		exGen.contribExtension(pattern.getFullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
+		exGen.contribExtension(pattern.fullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
 			exGen.contribElement(it, "matcher") [
-				exGen.contribAttribute(it, "id", pattern.getFullyQualifiedName)
+				exGen.contribAttribute(it, "id", pattern.fullyQualifiedName)
 
 				val querySpecificationClass = associations.getJvmElements(pattern).
 				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType
@@ -46,8 +45,8 @@ class GenerateQuerySpecificationExtension {
 	}
 
 	def static getRemovableExtensionIdentifiers() {
-		newArrayList(
-			Pair::of("", IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID)
+		newImmutableList(
+			"" -> IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID
 		)
 	}
 }

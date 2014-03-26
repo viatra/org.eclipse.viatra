@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.specification;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +27,6 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
@@ -58,7 +57,7 @@ import com.google.common.collect.Lists;
 public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> implements InitializablePQuery{
 
     public Pattern pattern;
-    private Set<PBody> containedBodies = new HashSet<PBody>();
+    private Set<PBody> containedBodies = new LinkedHashSet<PBody>();
 
     /**
      * Initializes a generic query specification for a given pattern. </p>
@@ -165,8 +164,8 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
 
     @Override
     public Set<PBody> getContainedBodies() {
-        Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query " + getFullyQualifiedName() + " is not initialized.");
-        Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
+        Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query %s is not initialized.", getFullyQualifiedName());
+        Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
         return containedBodies;
     }
     

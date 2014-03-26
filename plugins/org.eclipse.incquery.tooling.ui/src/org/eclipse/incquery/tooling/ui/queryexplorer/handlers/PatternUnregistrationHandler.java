@@ -18,7 +18,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
@@ -68,7 +68,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
             	QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
 
             	//unregister patterns from observable roots
-            	for (ObservablePatternMatcherRoot root : QueryExplorer.getInstance().getMatcherTreeViewerRoot().getRoots()) {
+            	for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
             		root.unregisterPattern(removedSpecification);
             	}
 

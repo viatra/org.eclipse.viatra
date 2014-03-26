@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**
@@ -40,12 +40,12 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
  */
 public class DetailObserver extends AbstractObservableList {
 
-    private ObservablePatternMatch patternMatch;
+    private PatternMatchContent patternMatch;
     private List<DetailElement> details;
     private ValueChangeListener listener;
     private Map<IObservableValue, DetailElement> valueMap;
 
-    public DetailObserver(DatabindingAdapter<IPatternMatch> databindableMatcher, ObservablePatternMatch pm) {
+    public DetailObserver(DatabindingAdapter<IPatternMatch> databindableMatcher, PatternMatchContent pm) {
         this.patternMatch = pm;
         this.details = new ArrayList<DetailElement>();
         this.valueMap = new HashMap<IObservableValue, DetailElement>();

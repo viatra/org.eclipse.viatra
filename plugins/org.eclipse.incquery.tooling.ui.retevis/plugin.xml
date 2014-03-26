@@ -53,10 +53,10 @@
                <iterate>
                   <or>
                      <instanceof
-                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher">
+                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
                      </instanceof>
                      <instanceof
-                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcherRoot">
+                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
                      </instanceof>
                   </or>
                </iterate>

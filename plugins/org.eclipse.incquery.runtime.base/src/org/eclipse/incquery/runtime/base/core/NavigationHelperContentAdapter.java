@@ -255,6 +255,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         case Notification.REMOVING_ADAPTER:
             break;
         case Notification.RESOLVE:
+        	if (navigationHelper.isFeatureResolveIgnored(feature)) break; // otherwise same as SET
         case Notification.UNSET:
         case Notification.SET:
             featureUpdate(false, notifier, feature, oldValue);

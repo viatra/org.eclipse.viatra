@@ -24,16 +24,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.TableViewerUtil;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutPreferences;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPreferences;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherContentProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherLabelProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.MatcherTreeViewerRoot;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ModelConnectorTreeViewerKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatch;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.ObservablePatternMatcher;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerLabelProvider;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerObservableFactory;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.RootContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerTreeStructureAdvisor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
@@ -49,6 +50,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -72,10 +74,13 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- * Query Explorer view implementation.
- *
- * @author Tamas Szabo
- *
+ * The Query Explorer can be used to observe the contents of the pattern matchers on given EMF models. The patterns and
+ * models can be loaded into the explorer and it provides a tree viewer to browse the contents. Additional functionality
+ * involves the possibility to filter match sets, navigate to source model elements, select which patterns are active,
+ * etc.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
  */
 public class QueryExplorer extends ViewPart {
 
@@ -85,15 +90,13 @@ public class QueryExplorer extends ViewPart {
 
     public static final String ID = "org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer";
 
-    private final Map<ModelConnectorTreeViewerKey, IModelConnector> modelConnectorMap = new HashMap<ModelConnectorTreeViewerKey, IModelConnector>();
+    private final Map<PatternMatcherRootContentKey, IModelConnector> modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
 
     private TableViewer detailsTableViewer;
     private CheckboxTreeViewer patternsTreeViewer;
     private TreeViewer matcherTreeViewer;
 
-    private final MatcherContentProvider matcherContentProvider;
-    private final MatcherLabelProvider matcherLabelProvider;
-    private final MatcherTreeViewerRoot matcherTreeViewerRoot;
+    private final RootContent treeViewerRootContent;
 
     public static PatternsViewerInput patternsViewerInput = new PatternsViewerInput();
 
@@ -112,25 +115,23 @@ public class QueryExplorer extends ViewPart {
     private Injector injector;
 
     @Inject
-    private TableViewerUtil tableViewerUtil;
+    private DetailsViewerUtil tableViewerUtil;
 
     private String mementoPackagePresentation = "flat";
 
     public QueryExplorer() {
-        matcherContentProvider = new MatcherContentProvider();
-        matcherLabelProvider = new MatcherLabelProvider();
-        matcherTreeViewerRoot = new MatcherTreeViewerRoot();
+        treeViewerRootContent = new RootContent();
         flatCP = new PatternsViewerFlatContentProvider();
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
         flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
     }
 
-    public MatcherTreeViewerRoot getMatcherTreeViewerRoot() {
-        return matcherTreeViewerRoot;
+    public RootContent getRootContent() {
+        return treeViewerRootContent;
     }
 
-    public Map<ModelConnectorTreeViewerKey, IModelConnector> getModelConnectorMap() {
+    public Map<PatternMatcherRootContentKey, IModelConnector> getModelConnectorMap() {
         return modelConnectorMap;
     }
 
@@ -206,12 +207,15 @@ public class QueryExplorer extends ViewPart {
         detailsTableViewer = new TableViewer(detailsViewerFlyout.getFlyoutParent(), SWT.FULL_SELECTION);
 
         // matcherTreeViewer configuration
-        matcherTreeViewer.setContentProvider(matcherContentProvider);
-        matcherTreeViewer.setLabelProvider(matcherLabelProvider);
-        matcherTreeViewer.setInput(matcherTreeViewerRoot);
+        matcherTreeViewer.setContentProvider(new ObservableListTreeContentProvider(
+                new QueryExplorerObservableFactory(), new QueryExplorerTreeStructureAdvisor()));
+        matcherTreeViewer.setLabelProvider(new QueryExplorerLabelProvider());
+        matcherTreeViewer.setInput(treeViewerRootContent);
         matcherTreeViewer.setComparator(null);
+
         IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
-        selection.addValueChangeListener(new MatcherTreeViewerSelectionChangeListener());
+        selection.addValueChangeListener(new RootContentSelectionChangeListener());
+
         DoubleClickListener listener = new DoubleClickListener();
         injector.injectMembers(listener);
         matcherTreeViewer.addDoubleClickListener(listener);
@@ -220,8 +224,6 @@ public class QueryExplorer extends ViewPart {
         patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER
                 | SWT.MULTI);
         patternsTreeViewer.addCheckStateListener(new CheckStateListener());
-        // patternsTreeViewer.setContentProvider(flatCP);
-        // patternsTreeViewer.setLabelProvider(flatLP);
         setPackagePresentation(mementoPackagePresentation, false);
         patternsTreeViewer.setInput(patternsViewerInput);
 
@@ -259,7 +261,6 @@ public class QueryExplorer extends ViewPart {
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
-        // tableViewer.setContentProvider(new ObservableListContentProvider());
         GridData gridData = new GridData();
         gridData.verticalAlignment = GridData.FILL;
         gridData.horizontalSpan = 2;
@@ -284,7 +285,7 @@ public class QueryExplorer extends ViewPart {
         matcherTreeViewer.getControl().setFocus();
     }
 
-    private class MatcherTreeViewerSelectionChangeListener implements IValueChangeListener {
+    private class RootContentSelectionChangeListener implements IValueChangeListener {
 
         @Override
         public void handleValueChange(ValueChangeEvent event) {
@@ -293,13 +294,13 @@ public class QueryExplorer extends ViewPart {
             tableViewerUtil.clearTableViewerColumns(detailsTableViewer);
             clearTableViewer();
 
-            if (value instanceof ObservablePatternMatcher) {
-                ObservablePatternMatcher observableMatcher = (ObservablePatternMatcher) value;
+            if (value instanceof PatternMatcherContent) {
+                PatternMatcherContent observableMatcher = (PatternMatcherContent) value;
                 if (observableMatcher.getMatcher() != null) {
-                    tableViewerUtil.prepareTableViewerForMatcherConfiguration(observableMatcher, detailsTableViewer);
-                    String patternFqn = observableMatcher.getMatcher()
-                            .getSpecification().getFullyQualifiedName();
-                    IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
+                    tableViewerUtil.prepareFor(observableMatcher, detailsTableViewer);
+                    String patternFqn = observableMatcher.getMatcher().getSpecification().getFullyQualifiedName();
+                    IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(
+                            patternFqn);
                     List<PatternComponent> components = null;
                     if (QueryExplorerPatternRegistry.getInstance().isGenerated(pattern)) {
                         components = patternsViewerInput.getGeneratedPatternsRoot().find(patternFqn);
@@ -315,9 +316,9 @@ public class QueryExplorer extends ViewPart {
                 } else {
                     clearTableViewer();
                 }
-            } else if (value instanceof ObservablePatternMatch) {
-                ObservablePatternMatch match = (ObservablePatternMatch) value;
-                tableViewerUtil.prepareTableViewerForObservableInput(match, detailsTableViewer);
+            } else if (value instanceof PatternMatchContent) {
+                PatternMatchContent match = (PatternMatchContent) value;
+                tableViewerUtil.prepareFor(match, detailsTableViewer);
             }
         }
     }
@@ -337,6 +338,7 @@ public class QueryExplorer extends ViewPart {
     private void initFileListener() {
         IResourceChangeListener listener = new ResourceChangeListener(injector);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
+        // FIXME this listener will never be removed
     }
 
     public PatternsViewerInput getPatternsViewerInput() {

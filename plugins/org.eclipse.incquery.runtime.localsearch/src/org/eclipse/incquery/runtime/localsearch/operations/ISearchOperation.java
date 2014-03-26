@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.localsearch.operations;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 /**
  * @author Zoltan Ujhelyi
@@ -24,23 +25,26 @@ public interface ISearchOperation {
      * the operation may begin. Operations may use this method to initialize its internal data structures.
      * 
      * @param frame
+     * @param context
      */
-    void onInitialize(MatchingFrame frame) throws LocalSearchException;
+    void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
 
     /**
-     * After the execution of the operation failed and {@link #execute(MatchingFrame)} returns false, the onBacktrack
+     * After the execution of the operation failed and {@link #execute(MatchingFrame, ISearchContext)} returns false, the onBacktrack
      * callback is evaluated. Operations may use this method to clean up any temporary structures, and make the
      * operation ready for a new execution.
      * 
      * @param frame
+     * @param context 
      */
-    void onBacktrack(MatchingFrame frame) throws LocalSearchException;
+    void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
 
     /**
      * 
      * @param frame
+     * @param context
      * @return true if successful, or false if backtracking needed
      */
-    boolean execute(MatchingFrame frame) throws LocalSearchException;
+    boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
 
 }

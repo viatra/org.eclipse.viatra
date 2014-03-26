@@ -147,7 +147,9 @@ public class SpecificationBuilder {
 
     public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) throws IncQueryException {
+        Preconditions.checkArgument(pattern != null && !pattern.eIsProxy(), "Cannot create specification from a null pattern");
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
         Preconditions.checkArgument(!patternNameMap.containsKey(fqn) || pattern.equals(patternNameMap.get(fqn)),
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
         IQuerySpecification<?> specification = getSpecification(pattern);
@@ -176,7 +178,9 @@ public class SpecificationBuilder {
 
                         @Override
                         public boolean apply(Pattern pattern) {
-                            return !patternMap.containsKey(CorePatternLanguageHelper.getFullyQualifiedName(pattern));
+                            final String name = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                            return !pattern.eIsProxy() && !"".equals(name)
+                                   && !patternMap.containsKey(name);
                         }
                     }));
             // Initializing new query specifications
@@ -213,10 +217,20 @@ public class SpecificationBuilder {
                     rejected.setStatus(PQueryStatus.ERROR);
                     patternMap.put(patternFqn, rejected);
                     patternNameMap.put(patternFqn, rejectedPattern);
+                    newSpecifications.add(rejected);
                 }
             }
         }
-        return patternMap.get(fqn);
+        IQuerySpecification<?> specification = patternMap.get(fqn);
+        if (specification == null) {
+            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(pattern, true);
+            erroneousSpecification.setStatus(PQueryStatus.ERROR);
+            patternMap.put(fqn, erroneousSpecification);
+            patternNameMap.put(fqn, pattern);
+            newSpecifications.add(erroneousSpecification);
+            specification = erroneousSpecification;
+        }
+        return specification;
     }
 
     protected void buildAnnotations(Pattern pattern, InitializablePQuery query, EPMToPBody converter)

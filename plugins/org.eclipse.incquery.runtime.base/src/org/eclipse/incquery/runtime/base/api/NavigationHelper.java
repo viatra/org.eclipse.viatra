@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 /**
@@ -417,7 +419,7 @@ public interface NavigationHelper {
      * @param listener
      *            the listener instance
      */
-    public void addFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void addFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Unregisters a feature listener for the given features.
@@ -427,7 +429,7 @@ public interface NavigationHelper {
      * @param features
      *            the collection of features
      */
-    public void removeFeatureListener(Collection<EStructuralFeature> features, FeatureListener listener);
+    public void removeFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener);
 
     /**
      * Register a lightweight observer that is notified if the value of any feature of the given EObject changes.
@@ -458,7 +460,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe (null okay)
      */
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features);
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
     
     /**
      * Manually turns off indexing for the given types (indexing of others are unaffected). Note that if the
@@ -474,7 +476,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features that will be ignored again from now on (null okay)
      */
-    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features);
+    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
    
     
     /**
@@ -486,7 +488,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe
      */
-    public void registerEStructuralFeatures(Set<EStructuralFeature> features);
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
     /**
      * Manually turns off indexing for the given features (indexing of other features are unaffected). Note that if the
@@ -499,7 +501,7 @@ public interface NavigationHelper {
      * @param features
      *            the set of features that will be ignored again from now on
      */
-    public void unregisterEStructuralFeatures(Set<EStructuralFeature> features);
+    public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
     /**
      * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
@@ -618,6 +620,37 @@ public interface NavigationHelper {
      */
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature);
 
+    
+    /**
+	 * Traverses all instances of a selected data type stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+    void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor);
+    
+	/**
+	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+	void processAllInstances(EClass type, IEClassProcessor processor);
+
+	/**
+	 * Traverses all direct instances of a selected class stored in the base index, and allows executing a custom function on
+     * it. There is no guaranteed order in which the processor will be called with the selected features.
+	 * 
+	 * @param type
+	 * @param processor
+	 * @since 0.8
+	 */
+	void processDirectInstances(EClass type, IEClassProcessor processor);
+    
     /**
      * Traverses all instances of a selected feature stored in the base index, and allows executing a custom function on
      * it. There is no guaranteed order in which the processor will be called with the selected features.
@@ -645,6 +678,5 @@ public interface NavigationHelper {
      * Updates the value of indexed derived features that are not well-behaving.
      */
     void resampleDerivedFeatures();
-
 
 }

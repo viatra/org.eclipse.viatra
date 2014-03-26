@@ -132,8 +132,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return matches represented as a Match object.
      */
     protected Collection<Match> rawGetAllMatches(Object[] parameters) {
-        ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
-        ArrayList<Match> matches = new ArrayList<Match>();
+        List<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
+        List<Match> matches = new ArrayList<Match>();
         // clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher
         for (Tuple t : m)
             matches.add(tupleToMatch(t));
@@ -230,7 +230,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      *            the action that will process each pattern match.
      */
     protected void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        ArrayList<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
+        List<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
         // clones the tuples into match objects to protect the Tuples from modifications outside of the ReteMatcher
         for (Tuple t : m)
             processor.process(tupleToMatch(t));

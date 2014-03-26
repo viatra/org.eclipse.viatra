@@ -96,7 +96,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public List<IContributionItem> getDropDownMenuContributions() {
-        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<IContributionItem>();
         r.add(createLayoutMenu());
         return r;
     }
@@ -118,7 +118,7 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
     
     @Override
     public List<IContributionItem> getToolBarContributions() {
-        ArrayList<IContributionItem> r = new ArrayList<IContributionItem>();
+        List<IContributionItem> r = new ArrayList<IContributionItem>();
         MenuManager mgr = new MenuManager();
         mgr.removeAll();
         mgr.add(refreshGraph);

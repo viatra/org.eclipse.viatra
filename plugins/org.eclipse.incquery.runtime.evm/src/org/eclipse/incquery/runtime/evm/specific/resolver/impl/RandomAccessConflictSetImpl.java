@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.evm.specific.resolver.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -22,7 +23,7 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
 
 public abstract class RandomAccessConflictSetImpl implements ChangeableConflictSet {
 	
-	protected ArrayList<Activation<?>> activationList = new ArrayList<Activation<?>>();
+	protected List<Activation<?>> activationList = new ArrayList<Activation<?>>();
 	protected Map<Activation<?>, Integer> activationToPosition = new HashMap<Activation<?>, Integer>();
 
 	@Override

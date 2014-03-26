@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.extend;
 import java.util.Iterator;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
 /**
@@ -37,7 +38,7 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onBacktrack(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */
     @Override
-    public void onBacktrack(MatchingFrame frame) {
+    public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         frame.setValue(position, null);
         it = null;
 
@@ -47,7 +48,7 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#execute(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */
     @Override
-    public boolean execute(MatchingFrame frame) {
+    public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {
             T next = it.next();
             frame.setValue(position, next);

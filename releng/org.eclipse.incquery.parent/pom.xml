@@ -12,11 +12,7 @@
 	<modules>
 		<module>../../plugins/org.eclipse.incquery.patternlanguage.generator</module>
 		<module>../../plugins/org.eclipse.incquery.patternlanguage</module>
-		<module>../../plugins/org.eclipse.incquery.patternlanguage.ui</module>
 		<module>../../plugins/org.eclipse.incquery.patternlanguage.emf</module>
-		<module>../../plugins/org.eclipse.incquery.patternlanguage.emf.ui</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.generator.model</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
 		<module>../../plugins/org.eclipse.incquery.runtime</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.matchers</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.base</module>
@@ -24,50 +20,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.core</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
-		<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
-		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
-		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
-		<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
-		<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
-		<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-		<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
-		<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
-		<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
-		<module>../../plugins/org.eclipse.incquery.viewers.runtime</module>
-		<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui</module>
-		<module>../../plugins/org.eclipse.incquery.viewers.runtime.zest</module>
-		<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui.zest</module>
-		<module>../../tests/org.eclipse.incquery.patternlanguage.emf.tests</module>
-		<module>../../tests/org.eclipse.incquery.runtime.tests</module>
-		<module>../../tests/org.eclipse.incquery.runtime.base.itc.tests</module>
-		<module>../../tests/org.eclipse.incquery.snapshot</module>
-		<module>../../tests/org.eclipse.incquery.snapshot.edit</module>
-		<module>../../tests/org.eclipse.incquery.snapshot.editor</module>
-		<module>../../tests/org.eclipse.incquery.testing.core</module>
-		<module>../../tests/org.eclipse.incquery.testing.queries</module>
-		<module>../../tests/org.eclipse.incquery.testing.ui</module>
-		<module>../../features/org.eclipse.incquery.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>
-		<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
-		<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.sdk.feature</module>
-		<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
-		<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
-		<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
-		<module>../../features/org.eclipse.incquery.runtime.gmf.feature</module>
-		<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
-		<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 		<module>../../releng/org.eclipse.incquery.target</module>
-		<module>../../releng/org.eclipse.incquery.update</module>
-		<module>../../releng/org.eclipse.incquery.update.extras</module>
 	</modules>
 	<properties>
 		<tycho.version>0.18.0</tycho.version>
@@ -165,9 +118,9 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals>
-						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile>
-						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory>
+					<!-- <execution> <id>report</id> <phase>prepare-package</phase> <goals> 
+						<goal>report</goal> </goals> <configuration> <dataFile>${jacoco.targetdir}/jacoco.exec</dataFile> 
+						<outputDirectory>${jacoco.targetdir}/jacoco/${project.artifactId}</outputDirectory> 
 						</configuration> </execution> -->
 				</executions>
 			</plugin>
@@ -239,12 +192,24 @@
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<distributionManagement>
+		<repository>
+			<id>repo.eclipse.org</id>
+			<name>EMF-IncQuery Project Repository - Releases</name>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>repo.eclipse.org</id>
+			<name>EMF-IncQuery Project Repository - Snapshots</name>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
 		<url>http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/</url>
 	</scm>
 	<ciManagement>
-		<url>https://hudson.eclipse.org/hudson/</url>
+		<url>https://hudson.eclipse.org/incquery/</url>
 		<system>Hudson</system>
 	</ciManagement>
 	<issueManagement>
@@ -252,6 +217,75 @@
 		<system>Bugzilla</system>
 	</issueManagement>
 	<profiles>
+		<profile>
+			<id>eclipse_tooling</id>
+			<activation>
+				<property>
+					<name>!maven.runtime</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../../plugins/org.eclipse.incquery.patternlanguage.ui</module>
+				<module>../../plugins/org.eclipse.incquery.patternlanguage.emf.ui</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.generator.model</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.core</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
+				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
+				<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
+				<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
+				<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
+				<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
+				<module>../../plugins/org.eclipse.incquery.viewers.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui</module>
+				<module>../../plugins/org.eclipse.incquery.viewers.runtime.zest</module>
+				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui.zest</module>
+				<module>../../tests/org.eclipse.incquery.patternlanguage.emf.tests</module>
+				<module>../../tests/org.eclipse.incquery.runtime.tests</module>
+				<module>../../tests/org.eclipse.incquery.runtime.base.itc.tests</module>
+				<module>../../tests/org.eclipse.incquery.snapshot</module>
+				<module>../../tests/org.eclipse.incquery.snapshot.edit</module>
+				<module>../../tests/org.eclipse.incquery.snapshot.editor</module>
+				<module>../../tests/org.eclipse.incquery.testing.core</module>
+				<module>../../tests/org.eclipse.incquery.testing.queries</module>
+				<module>../../tests/org.eclipse.incquery.testing.ui</module>
+				<module>../../features/org.eclipse.incquery.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>
+				<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
+				<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.sdk.feature</module>
+				<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
+				<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
+				<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
+				<module>../../features/org.eclipse.incquery.runtime.gmf.feature</module>
+				<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
+				<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
+				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
+				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
+				<module>../../releng/org.eclipse.incquery.update</module>
+				<module>../../releng/org.eclipse.incquery.update.extras</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven_runtime</id>
+			<activation>
+				<property>
+					<name>maven.runtime</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../../maven/incquery-patternlanguage</module>
+				<module>../../maven/incquery-runtime</module>
+			</modules>
+		</profile>
 		<profile>
 			<id>sign_milestone</id>
 			<activation>

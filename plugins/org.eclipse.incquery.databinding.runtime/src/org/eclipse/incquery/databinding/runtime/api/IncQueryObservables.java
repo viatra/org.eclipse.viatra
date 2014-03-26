@@ -176,7 +176,8 @@ public final class IncQueryObservables {
         List<IObservableValue> affectedValues = new ArrayList<IObservableValue>();
         String[] tokens = message.split("\\$");
         //[425735] If i<1, affectedValues will be empty, thus a constant output is created
-        for (int i = 1; i < tokens.length; i = i + 2) { // odd tokens
+        // Processing only odd tokens
+        for (int i = 1; i < tokens.length; i = i + 2) { 
             IObservableValue value = IncQueryObservables.getObservableValue(match, tokens[i]);
             if (value != null) {
                 value.addValueChangeListener(changeListener);

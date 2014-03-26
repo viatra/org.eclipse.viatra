@@ -21,17 +21,14 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -55,7 +52,6 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
-import org.osgi.service.log.LogService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -103,11 +99,6 @@ public abstract class ProjectGenerationHelper {
     /**
      * Creates a new IncQuery project: a plug-in project with src and src-gen folders and specific dependencies.
      *
-     * @param description
-     * @param proj
-     * @param monitor
-     * @throws CoreException
-     * @throws CoreException
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
@@ -131,22 +122,15 @@ public abstract class ProjectGenerationHelper {
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             // Adding IncQuery-specific natures
-            ProjectGenerationHelper.addNatures(proj,
-                    ImmutableList.of(IncQueryNature.XTEXT_NATURE_ID, IncQueryNature.NATURE_ID), monitor);
+            ProjectGenerationHelper.updateNatures(proj,
+                    ImmutableList.of(IncQueryNature.XTEXT_NATURE_ID, IncQueryNature.NATURE_ID),
+                    ImmutableList.<String>of(), monitor);
         } finally {
             monitor.done();
             if (context != null && ref != null) {
                 context.ungetService(ref);
             }
         }
-    }
-
-    /**
-     * Adds a collection of natures to the project
-     */
-    public static void addNatures(IProject proj, Collection<String> natures, IProgressMonitor monitor)
-            throws CoreException {
-        updateNatures(proj, natures, ImmutableList.<String> of(), monitor);
     }
 
     /**
@@ -185,20 +169,6 @@ public abstract class ProjectGenerationHelper {
             file.create(contentStream, true, monitor);
         }
 
-    }
-
-    /**
-     * @param folder
-     * @param monitor
-     * @throws CoreException
-     */
-    public static void deleteJavaFiles(IFolder folder, final IProgressMonitor monitor) throws CoreException {
-        folder.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-        CollectDeletedElement visitor = new CollectDeletedElement();
-        folder.accept(visitor);
-        for (IResource res : visitor.toDelete) {
-            res.delete(false, new SubProgressMonitor(monitor, 1));
-        }
     }
 
     public static void initializePluginProject(IProject project, final List<String> dependencies,
@@ -279,32 +249,10 @@ public abstract class ProjectGenerationHelper {
                 }
             }
             return false;
-//        } catch (ResourceException e) {
-//            logMessage(LogService.LOG_WARNING, "Encountered ResourceException", e);
- //           throw e;
         } finally {
             if (context != null && ref != null) {
                 context.ungetService(ref);
             }
-        }
-    }
-
-    // at the moment unused helper method for logging
-    private static void logMessage(int level, String msg, Throwable t) {
-        ServiceReference<LogService> lsref = IncQueryGeneratorPlugin.getContext().getServiceReference(LogService.class);
-        if (lsref!=null) {
-            try {
-                LogService ls = IncQueryGeneratorPlugin.getContext().getService(lsref);
-                if (ls!=null) {
-                    ls.log(level, msg, t);
-                }
-            }
-            finally {
-                IncQueryGeneratorPlugin.getContext().ungetService(lsref);
-            }
-        }
-        else {
-            System.err.println("[IncQuery][ProjectGenerationHelper]["+level+"]["+msg+"]["+t.getMessage()+"]");
         }
     }
 
@@ -619,12 +567,6 @@ public abstract class ProjectGenerationHelper {
         fModel.save();
     }
 
-    /**
-     * @param extensionMap
-     * @param extension
-     * @param id
-     * @return
-     */
     private static boolean isExtensionInMap(Multimap<String, IPluginExtension> extensionMap,
             final IPluginExtension extension, String id) {
         boolean extensionToCreateFound = false;

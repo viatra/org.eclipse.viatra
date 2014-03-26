@@ -11,7 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
@@ -85,13 +85,13 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       new Inequality(body, var_Record, var_CorrespondingRecord);
       new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance().instance());
       bodies.add(body);
-    }setStatus(PQueryStatus.OK);
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private CorrespondingRecordsQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

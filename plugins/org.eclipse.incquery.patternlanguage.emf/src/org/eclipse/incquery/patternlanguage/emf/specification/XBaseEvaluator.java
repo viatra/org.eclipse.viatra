@@ -88,7 +88,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
             });
         } catch (IncQueryException e) {
             logger.error("XBase Java evaluator extension point initialization failed.", e);
-            throw new SpecificationBuilderException("XBase interpreter initialization failed", new String[0], "Failed Xbase interpreter initialization", pattern);
+            throw new SpecificationBuilderException("XBase interpreter initialization failed", new String[0], "Failed Xbase interpreter initialization", pattern, e);
         }
 
     }
