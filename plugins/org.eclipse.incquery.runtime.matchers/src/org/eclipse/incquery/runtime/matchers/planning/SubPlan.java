@@ -11,13 +11,18 @@
 
 package org.eclipse.incquery.runtime.matchers.planning;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.operations.POperation;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+
+import com.google.common.base.Joiner;
 
 /**
  * A plan representing a subset of (or possibly all the) constraints evaluated. A SubPlan instance is responsible for
@@ -27,108 +32,133 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * 
  */
 public class SubPlan {
-    private Tuple variablesTuple;
-    private Map<Object, Integer> variablesIndex;
-    private Set<PConstraint> constraints;
-    private SubPlan primaryParentPlan;
-    private SubPlan secondaryParentPlan;
-    /** TODO may contain variables that have been trimmed and are no longer in the tuple */
-	private final Set<PVariable> variablesSet; 
+	private PBody body;
+	private final Set<PVariable> visibleVariables; 
+	private final Set<PVariable> allVariables; 
+    private Set<PConstraint> allConstraints;
+    private Set<PConstraint> deltaConstraints;
+    
+    private List<? extends SubPlan> parentPlans;
+    private POperation operation;
 
-    private SubPlan(Map<Object, Integer> variablesIndex, Tuple variablesTuple) {
-        super();
-        this.variablesIndex = variablesIndex;
-        this.variablesTuple = variablesTuple;
-        this.constraints = new HashSet<PConstraint>();
-		variablesSet = new HashSet<PVariable>();
-		for (Object pVar : variablesIndex.keySet()) {
-			variablesSet.add((PVariable) pVar);
-		}
-    }
-
-    public SubPlan(Tuple variablesTuple) {
-        this(variablesTuple.invertIndex(), variablesTuple);
-    }
-
-    public SubPlan(SubPlan primaryParent) {
-        this(primaryParent.variablesIndex, primaryParent.variablesTuple);
-        this.primaryParentPlan = primaryParent;
-        constraints.addAll(primaryParent.getAllEnforcedConstraints());
-    }
-
-    public SubPlan(SubPlan primaryParent, Tuple variablesTuple) {
-        this(variablesTuple.invertIndex(), variablesTuple);
-        this.primaryParentPlan = primaryParent;
-        constraints.addAll(primaryParent.getAllEnforcedConstraints());
-    }
-
-    public SubPlan(SubPlan primaryParent, SubPlan secondaryParent, Tuple variablesTuple) {
-        this(variablesTuple.invertIndex(), variablesTuple);
-        this.primaryParentPlan = primaryParent;
-        this.secondaryParentPlan = secondaryParent;
-        constraints.addAll(primaryParent.getAllEnforcedConstraints());
-        constraints.addAll(secondaryParent.getAllEnforcedConstraints());
-    }
-
-    @Override
+    
+    
+    
+    
+	public SubPlan(PBody body, POperation operation, SubPlan... parentPlans) {
+		this(body, operation, Arrays.asList(parentPlans));
+	}
+	public SubPlan(PBody body, POperation operation, List<? extends SubPlan> parentPlans) {
+		super();
+		this.body = body;
+		this.parentPlans = parentPlans;
+		this.operation = operation;
+		
+		this.deltaConstraints = new HashSet<PConstraint>(operation.getDeltaConstraints());
+		// TODO does not work for union
+        this.allConstraints = new HashSet<PConstraint>(deltaConstraints);
+        for (SubPlan parentPlan: parentPlans)
+        	this.allConstraints.addAll(parentPlan.getAllEnforcedConstraints());
+        
+        this.allVariables = new HashSet<PVariable>();
+        for (PConstraint constraint: allConstraints)
+        	this.allVariables.addAll(constraint.getDeducedVariables());
+        
+        // TODO this is ugly a bit
+        if (operation instanceof PProject) { 
+	        this.visibleVariables = new HashSet<PVariable>(((PProject) operation).getToVariables());
+        } else {
+	        this.visibleVariables = new HashSet<PVariable>();
+	        for (SubPlan parentPlan: parentPlans)
+	        	this.visibleVariables.addAll(parentPlan.getVisibleVariables());
+	        for (PConstraint constraint: deltaConstraints)
+	        	this.visibleVariables.addAll(constraint.getDeducedVariables());
+        } 
+	}
+	
+	
+	@Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("SubPlan(" + getVariablesTuple() + "@" + "|");
-        for (PConstraint constraint : constraints)
-            sb.append(constraint.toString() + "&");
-        sb.append(")");
-        return sb.toString();
+        return toLongDebugString();
+    }
+    public String toShortDebugString() {
+    	return String.format("Plan{%s}:%s", 
+    			Joiner.on(',').join(visibleVariables),
+    			operation.getShortDebugName());
+    }
+    public String toLongDebugString() {
+    	return String.format("%s<%s>", 
+    			toShortDebugString(),
+    			Joiner.on("; ").join(parentPlans));
     }
 
-    /**
-     * @return the tuple of variables that define the schema emanating from the handle
-     */
-    public Tuple getVariablesTuple() {
-        return variablesTuple;
-    }
-
-    /**
-     * @return the index of the variable within variablesTuple
-     */
-    public Map<Object, Integer> getVariablesIndex() {
-        return variablesIndex;
-    }
-
-    /**
-     * @return the set of variables involved
-     */
-    public Set<PVariable> getVariablesSet() {
-        return variablesSet;
-    }
 
     /**
      * @return all constraints already enforced at this handle
      */
     public Set<PConstraint> getAllEnforcedConstraints() {
-        return constraints;
+        return allConstraints;
     }
 
     /**
      * @return the new constraints enforced at this handle, that aren't yet enforced at parents
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
-        Set<PConstraint> result = new HashSet<PConstraint>(constraints);
-        if (primaryParentPlan != null)
-            result.removeAll(primaryParentPlan.getAllEnforcedConstraints());
-        if (secondaryParentPlan != null)
-            result.removeAll(secondaryParentPlan.getAllEnforcedConstraints());
-        return result;
+        return deltaConstraints;
     }
 
-    public void addConstraint(PConstraint constraint) {
-        constraints.add(constraint);
+    public void inferConstraint(PConstraint constraint) {
+    	deltaConstraints.add(constraint);
+    	allConstraints.add(constraint);
     }
+	public PBody getBody() {
+		return body;
+	}
+	public Set<PVariable> getVisibleVariables() {
+		return visibleVariables;
+	}
+	public Set<PVariable> getAllVariables() {
+		return allVariables;
+	}
+	public List<? extends SubPlan> getParentPlans() {
+		return parentPlans;
+	}
+	public POperation getOperation() {
+		return operation;
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((operation == null) ? 0 : operation.hashCode());
+		result = prime * result
+				+ ((parentPlans == null) ? 0 : parentPlans.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof SubPlan))
+			return false;
+		SubPlan other = (SubPlan) obj;
+		if (operation == null) {
+			if (other.operation != null)
+				return false;
+		} else if (!operation.equals(other.operation))
+			return false;
+		if (parentPlans == null) {
+			if (other.parentPlans != null)
+				return false;
+		} else if (!parentPlans.equals(other.parentPlans))
+			return false;
+		return true;
+	}
 
-    public SubPlan getPrimaryParentPlan() {
-        return primaryParentPlan;
-    }
-
-    public SubPlan getSecondaryParentPlan() {
-        return secondaryParentPlan;
-    }
-
+	
 }
