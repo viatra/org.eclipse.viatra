@@ -13,35 +13,36 @@ package org.eclipse.incquery.runtime.matchers.planning.operations;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 
 /**
- * Represents a "selection" filter operation according to a deferred PConstraint (or transform in case of eval/aggregate).
+ * Represents a constraint application on a single parent SubPlan. 
+ * <p> Either a "selection" filter operation according to a deferred PConstraint (or transform in case of eval/aggregate), or
+ * alternatively a shorthand for PJoin + a PEnumerate on the right input for an enumerable PConstraint.
  * 
  * @author Bergmann Gabor
  *
  */
 public class PApply extends POperation {
 	
-	private DeferredPConstraint deferredPConstraint;
+	private PConstraint pConstraint;
 
-	public PApply(DeferredPConstraint deferredPConstraint) {
+	public PApply(PConstraint pConstraint) {
 		super();
-		this.deferredPConstraint = deferredPConstraint;
+		this.pConstraint = pConstraint;
 	}
-	public DeferredPConstraint getDeferredPConstraint() {
-		return deferredPConstraint;
+	public PConstraint getPConstraint() {
+		return pConstraint;
 	}
 
 	@Override
-	public String getShortDebugName() {
-		return String.format("APPLY_%s", deferredPConstraint.toString());
+	public String getShortName() {
+		return String.format("APPLY_%s", pConstraint.toString());
 	}
 	
 	@Override
 	public Set<? extends PConstraint> getDeltaConstraints() {
-		return Collections.singleton(deferredPConstraint);
+		return Collections.singleton(pConstraint);
 	}
 	
 	@Override
@@ -50,7 +51,7 @@ public class PApply extends POperation {
 		int result = 1;
 		result = prime
 				* result
-				+ ((deferredPConstraint == null) ? 0 : deferredPConstraint
+				+ ((pConstraint == null) ? 0 : pConstraint
 						.hashCode());
 		return result;
 	}
@@ -63,10 +64,10 @@ public class PApply extends POperation {
 		if (!(obj instanceof PApply))
 			return false;
 		PApply other = (PApply) obj;
-		if (deferredPConstraint == null) {
-			if (other.deferredPConstraint != null)
+		if (pConstraint == null) {
+			if (other.pConstraint != null)
 				return false;
-		} else if (!deferredPConstraint.equals(other.deferredPConstraint))
+		} else if (!pConstraint.equals(other.pConstraint))
 			return false;
 		return true;
 	}

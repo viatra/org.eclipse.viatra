@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.planning.operations.POperation;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PStart;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -33,13 +34,15 @@ import com.google.common.base.Joiner;
  */
 public class SubPlan {
 	private PBody body;
+	private List<? extends SubPlan> parentPlans;
+	private POperation operation;
+
 	private final Set<PVariable> visibleVariables; 
 	private final Set<PVariable> allVariables; 
+	private final Set<PVariable> introducedVariables; // delta compared to first parent
     private Set<PConstraint> allConstraints;
-    private Set<PConstraint> deltaConstraints;
+    private Set<PConstraint> deltaConstraints; // delta compared to all parents
     
-    private List<? extends SubPlan> parentPlans;
-    private POperation operation;
 
     
     
@@ -65,7 +68,10 @@ public class SubPlan {
         	this.allVariables.addAll(constraint.getDeducedVariables());
         
         // TODO this is ugly a bit
-        if (operation instanceof PProject) { 
+        if (operation instanceof PStart) {
+	        this.visibleVariables = new HashSet<PVariable>(((PStart) operation).getAPrioriVariables());
+        	this.allVariables.addAll(visibleVariables);
+        } else if (operation instanceof PProject) { 
 	        this.visibleVariables = new HashSet<PVariable>(((PProject) operation).getToVariables());
         } else {
 	        this.visibleVariables = new HashSet<PVariable>();
@@ -74,21 +80,25 @@ public class SubPlan {
 	        for (PConstraint constraint: deltaConstraints)
 	        	this.visibleVariables.addAll(constraint.getDeducedVariables());
         } 
+        
+        this.introducedVariables = new HashSet<PVariable>(this.visibleVariables);
+        if (!parentPlans.isEmpty()) 
+        	introducedVariables.removeAll(parentPlans.get(0).getVisibleVariables());
 	}
 	
 	
 	@Override
     public String toString() {
-        return toLongDebugString();
+        return toLongString();
     }
-    public String toShortDebugString() {
+    public String toShortString() {
     	return String.format("Plan{%s}:%s", 
     			Joiner.on(',').join(visibleVariables),
-    			operation.getShortDebugName());
+    			operation.getShortName());
     }
-    public String toLongDebugString() {
+    public String toLongString() {
     	return String.format("%s<%s>", 
-    			toShortDebugString(),
+    			toShortString(),
     			Joiner.on("; ").join(parentPlans));
     }
 
@@ -101,7 +111,7 @@ public class SubPlan {
     }
 
     /**
-     * @return the new constraints enforced at this handle, that aren't yet enforced at parents
+     * @return the new constraints enforced at this stage of plan, that aren't yet enforced at parents
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
         return deltaConstraints;
@@ -119,6 +129,12 @@ public class SubPlan {
 	}
 	public Set<PVariable> getAllVariables() {
 		return allVariables;
+	}
+	/**
+	 * Delta compared to first parent
+	 */
+	public Set<PVariable> getIntroducedVariables() {
+		return introducedVariables;
 	}
 	public List<? extends SubPlan> getParentPlans() {
 		return parentPlans;

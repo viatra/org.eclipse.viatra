@@ -39,7 +39,7 @@ public class PEnumerate extends POperation {
 	}
 
 	@Override
-	public String getShortDebugName() {
+	public String getShortName() {
 		return enumerablePConstraint.toString();
 	}
 	@Override

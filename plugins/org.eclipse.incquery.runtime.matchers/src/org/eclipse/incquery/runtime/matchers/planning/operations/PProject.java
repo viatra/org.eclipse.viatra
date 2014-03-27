@@ -28,7 +28,7 @@ import com.google.common.base.Joiner;
 public class PProject extends POperation {
 
 	private Set<PVariable> toVariables;
-	// TODO leave here? is this a problem in equivalnece checking?
+	// TODO leave here? is this a problem in equivalence checking?
 	private boolean uniquenessCheckNeededAfterwards = true;
 		
 	
@@ -55,7 +55,7 @@ public class PProject extends POperation {
 
 
 	@Override
-	public String getShortDebugName() {
+	public String getShortName() {
 		return String.format("PROJECT%s_{%s}", uniquenessCheckNeededAfterwards? "" : "*", Joiner.on(",").join(toVariables));
 	}
 

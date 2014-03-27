@@ -11,7 +11,6 @@
 package org.eclipse.incquery.runtime.matchers.planning.operations;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
@@ -19,23 +18,33 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 import com.google.common.base.Joiner;
 
+
 /**
- * Represents a natural join.
+ * No constraints, just a set of a priori known variables. Satisfied by a single tuple.
+ * 
+ * <p> Can also be used without a priori variables, 
+ *   e.g. as a "virtual parent" in extreme cases, 
+ *   such as <code>pattern foo(Bar) = {Bar = eval (3*4)} </code> 
+ * 
  * @author Bergmann Gabor
  *
  */
-public class PJoin extends POperation {
+public class PStart extends POperation {
 	
-	// TODO leave here? is this a problem in equivalnece checking?
-	private Set<PVariable> onVariables;
-	
+	private Set<PVariable> aPrioriVariables;
 
-	public PJoin(Set<PVariable> onVariables) {
+	
+	public PStart(Set<PVariable> aPrioriVariables) {
 		super();
-		this.onVariables = new HashSet<PVariable>(onVariables);
+		this.aPrioriVariables = aPrioriVariables;
 	}
-	public Set<PVariable> getOnVariables() {
-		return onVariables;
+	public Set<PVariable> getAPrioriVariables() {
+		return aPrioriVariables;
+	}
+
+	@Override
+	public String getShortName() {
+		return String.format("START_{%s}", Joiner.on(',').join(aPrioriVariables));
 	}
 
 	@Override
@@ -44,24 +53,33 @@ public class PJoin extends POperation {
 	}
 
 	@Override
-	public String getShortName() {
-		return String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
-	}
-	
-	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((aPrioriVariables == null) ? 0 : aPrioriVariables.hashCode());
+		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof PJoin))
+		if (!(obj instanceof PStart))
+			return false;
+		PStart other = (PStart) obj;
+		if (aPrioriVariables == null) {
+			if (other.aPrioriVariables != null)
+				return false;
+		} else if (!aPrioriVariables.equals(other.aPrioriVariables))
 			return false;
 		return true;
 	}
-	
 
+
+	
+	
 }

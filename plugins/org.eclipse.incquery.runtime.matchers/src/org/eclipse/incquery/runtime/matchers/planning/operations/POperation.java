@@ -29,11 +29,11 @@ public abstract class POperation {
 	 */
 	public abstract Set<? extends PConstraint> getDeltaConstraints();
 	
-	public abstract String getShortDebugName();
+	public abstract String getShortName();
 		
 	@Override
 	public String toString() {
-		return getShortDebugName();
+		return getShortName();
 	}
 
 }
