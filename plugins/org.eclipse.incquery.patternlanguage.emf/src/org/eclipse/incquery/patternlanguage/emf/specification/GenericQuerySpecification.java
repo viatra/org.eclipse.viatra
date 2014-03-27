@@ -56,7 +56,7 @@ import com.google.common.collect.Lists;
  */
 public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> implements InitializablePQuery{
 
-    public Pattern pattern;
+    private Pattern pattern;
     private Set<PBody> containedBodies = new LinkedHashSet<PBody>();
 
     /**
@@ -90,8 +90,11 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         if (delayedInitialization) {
             setStatus(PQueryStatus.UNINITIALIZED);
         } else {
-            SpecificationBuilder converter = new SpecificationBuilder();
-            converter.buildBodies(pattern, this);
+            containedBodies = doGetContainedBodies();
+            for (PBody body : containedBodies) {
+                body.setStatus(null);
+            }
+            setStatus(PQueryStatus.OK);
         }
     }
 
@@ -105,6 +108,9 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         if (bodies.isEmpty()) {
             setStatus(PQueryStatus.ERROR);
         } else {
+            for (PBody body : bodies) {
+                body.setStatus(null);
+            }
             containedBodies.addAll(bodies);
             setStatus(PQueryStatus.OK);
         }
@@ -173,6 +179,12 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     public void addAnnotation(PAnnotation annotation) {
         // Making the upper-level construct visible
         super.addAnnotation(annotation);
+    }
+
+    @Override
+    protected Set<PBody> doGetContainedBodies() throws IncQueryException {
+        SpecificationBuilder converter = new SpecificationBuilder();
+        return converter.getBodies(pattern, this);
     }
 
     

@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -86,8 +87,13 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     }
 
     @Override
+    public boolean isMutable() {
+        return status.equals(PQueryStatus.UNINITIALIZED);
+    }
+    
+    @Override
     public void checkMutability() throws IllegalStateException {
-        Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED), "Cannot edit query definition " + getFullyQualifiedName());
+        Preconditions.checkState(isMutable(), "Cannot edit query definition " + getFullyQualifiedName());
     }
 
     protected void addAnnotation(PAnnotation annotation) {
@@ -140,6 +146,40 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         return foundQueries;
     }
 
+    ImmutableSet<PBody> bodies;
+    
+    @Override
+    public Set<PBody> getContainedBodies() {
+        ensureInitialized();
+        Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
+        return bodies;
+    }
+
+    @Override
+    public Set<PBody> getMutableBodies() throws IncQueryException {
+        return doGetContainedBodies();
+    }
+    
+    protected void ensureInitialized() {
+        try {
+            if (status.equals(PQueryStatus.UNINITIALIZED)) {
+                bodies = ImmutableSet.copyOf(doGetContainedBodies());
+                for (PBody body : bodies) {
+                    body.setStatus(null);
+                }
+                setStatus(PQueryStatus.OK);
+            }
+        } catch (IncQueryException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Creates and returns the bodies of the query. If recalled again, a new instance is created.
+     * 
+     * @return
+     */
+    protected abstract Set<PBody> doGetContainedBodies() throws IncQueryException;
 
     // // EXPERIMENTAL
     //

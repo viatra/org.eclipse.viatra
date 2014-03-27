@@ -18,19 +18,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
  * A set of constraints representing a pattern body
+ * 
  * @author Gabor Bergmann
- *
+ * 
  */
 public class PBody {
     private PQuery query;
+
+    /**
+     * If null, then parent query status is reused
+     */
+    private PQueryStatus status = PQueryStatus.UNINITIALIZED;
 
     private Set<PVariable> allVariables;
     private Set<PVariable> uniqueVariables;
@@ -67,7 +75,7 @@ public class PBody {
 
     /**
      * Use this method to add a newly created constraint to the pSystem.
-     *
+     * 
      * @return whether the submission of the new constraint was successful
      */
     boolean registerConstraint(PConstraint constraint) {
@@ -77,7 +85,7 @@ public class PBody {
 
     /**
      * Use this method to remove an obsolete constraint from the pSystem.
-     *
+     * 
      * @return whether the removal of the constraint was successful
      */
     boolean unregisterConstraint(PConstraint constraint) {
@@ -127,9 +135,11 @@ public class PBody {
 
     /**
      * Find a PVariable by name
+     * 
      * @param name
      * @return the found variable
-     * @throws IllegalArgumentException if no PVariable is found with the selected name
+     * @throws IllegalArgumentException
+     *             if no PVariable is found with the selected name
      */
     public PVariable getVariableByNameChecked(Object name) throws IllegalArgumentException {
         if (!variablesByName.containsKey(name))
@@ -175,14 +185,14 @@ public class PBody {
             }
         });
     }
-    
+
     /**
      * Returns the exported parameter constraints of the body
      * 
      * @return a non-null, but possibly empty list
      */
     public List<ExportedParameter> getSymbolicParameters() {
-        return symbolicParameters == null ? Lists.<ExportedParameter>newArrayList() : symbolicParameters;
+        return symbolicParameters == null ? Lists.<ExportedParameter> newArrayList() : symbolicParameters;
     }
 
     public void setExportedParameters(List<ExportedParameter> symbolicParameters) {
@@ -190,7 +200,30 @@ public class PBody {
         this.symbolicParameters = Lists.newArrayList(symbolicParameters);
     }
 
+    /**
+     * Sets a specific status for the body. If set, the parent PQuery status will not be checked; if set to null, its corresponding PQuery
+     * status is checked for mutability.
+     * 
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(PQueryStatus status) {
+        this.status = status;
+    }
+
+    public boolean isMutable() {
+        if (status == null) {
+            return query.isMutable();
+        } else {
+            return status.equals(PQueryStatus.UNINITIALIZED);
+        }
+    }
+    
     void checkMutability() throws IllegalStateException {
-        query.checkMutability();
+        if (status == null) {
+            query.checkMutability();
+        } else {
+            Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED));
+        }
     }
 }
