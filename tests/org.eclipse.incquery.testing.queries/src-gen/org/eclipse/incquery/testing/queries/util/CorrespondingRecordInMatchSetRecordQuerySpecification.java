@@ -76,7 +76,7 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_CorrespodingRecord = body.getOrCreateVariableByName("CorrespodingRecord");
       PVariable var_ExpectedSet = body.getOrCreateVariableByName("ExpectedSet");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Record, "Record"), 
         new ExportedParameter(body, var_CorrespodingRecord, "CorrespodingRecord"), 
         new ExportedParameter(body, var_ExpectedSet, "ExpectedSet")
@@ -89,7 +89,7 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
       new TypeBinary(body, context, var_ExpectedSet, var_CorrespodingRecord, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new PositivePatternCall(body, new FlatTuple(var_Record, var_CorrespodingRecord), CorrespondingRecordsQuerySpecification.instance());
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
   }
   
