@@ -14,7 +14,7 @@ import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -76,7 +76,7 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
       PVariable var_Process = body.getOrCreateVariableByName("Process");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_CLE, "CLE"), 
         new ExportedParameter(body, var_Task, "Task")
       ));
@@ -87,13 +87,13 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
       new TypeBinary(body, context, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
       new TypeBinary(body, context, var_Checklist, var_CLE, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
       bodies.add(body);
-    }setStatus(PQueryStatus.OK);
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private ChecklistEntryTaskInCheckListProcessQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

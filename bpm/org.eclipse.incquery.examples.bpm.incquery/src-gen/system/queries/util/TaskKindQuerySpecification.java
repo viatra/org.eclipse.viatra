@@ -12,7 +12,7 @@ import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
@@ -70,7 +70,7 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
       PBody body = new PBody(this);
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Kind = body.getOrCreateVariableByName("Kind");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Task, "Task"), 
         new ExportedParameter(body, var_Kind, "Kind")
       ));
@@ -78,13 +78,13 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
       
       new TypeBinary(body, context, var_Task, var_Kind, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
       bodies.add(body);
-    }setStatus(PQueryStatus.OK);
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private TaskKindQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

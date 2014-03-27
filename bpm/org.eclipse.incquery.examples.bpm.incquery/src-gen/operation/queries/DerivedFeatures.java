@@ -6,6 +6,13 @@ import operation.queries.ChecklistProcessCorrespondenceMatcher;
 import operation.queries.DataReadByChecklistEntryMatcher;
 import operation.queries.IncorrectEntryInChecklistMatcher;
 import operation.queries.TaskChecklistEntryJobCorrespondenceMatcher;
+import operation.queries.util.ChecklistEntryJobCorrespondenceQuerySpecification;
+import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
+import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
+import operation.queries.util.DataReadByChecklistEntryQuerySpecification;
+import operation.queries.util.IncorrectEntryInChecklistQuerySpecification;
+import operation.queries.util.TaskChecklistEntryJobCorrespondenceQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
@@ -50,12 +57,60 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
   private static DerivedFeatures INSTANCE;
   
   private DerivedFeatures() throws IncQueryException {
-    querySpecifications.add(DataReadByChecklistEntryMatcher.querySpecification());
-    querySpecifications.add(TaskChecklistEntryJobCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(ChecklistEntryTaskCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(ChecklistEntryJobCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(ChecklistProcessCorrespondenceMatcher.querySpecification());
-    querySpecifications.add(IncorrectEntryInChecklistMatcher.querySpecification());
+    querySpecifications.add(ChecklistEntryJobCorrespondenceQuerySpecification.instance());
+    querySpecifications.add(ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
+    querySpecifications.add(ChecklistProcessCorrespondenceQuerySpecification.instance());
+    querySpecifications.add(IncorrectEntryInChecklistQuerySpecification.instance());
+    querySpecifications.add(TaskChecklistEntryJobCorrespondenceQuerySpecification.instance());
+    querySpecifications.add(DataReadByChecklistEntryQuerySpecification.instance());
     
+  }
+  
+  public ChecklistEntryJobCorrespondenceQuerySpecification getChecklistEntryJobCorrespondence() throws IncQueryException {
+    return ChecklistEntryJobCorrespondenceQuerySpecification.instance();
+  }
+  
+  public ChecklistEntryJobCorrespondenceMatcher getChecklistEntryJobCorrespondence(final IncQueryEngine engine) throws IncQueryException {
+    return ChecklistEntryJobCorrespondenceMatcher.on(engine);
+  }
+  
+  public ChecklistEntryTaskCorrespondenceQuerySpecification getChecklistEntryTaskCorrespondence() throws IncQueryException {
+    return ChecklistEntryTaskCorrespondenceQuerySpecification.instance();
+  }
+  
+  public ChecklistEntryTaskCorrespondenceMatcher getChecklistEntryTaskCorrespondence(final IncQueryEngine engine) throws IncQueryException {
+    return ChecklistEntryTaskCorrespondenceMatcher.on(engine);
+  }
+  
+  public ChecklistProcessCorrespondenceQuerySpecification getChecklistProcessCorrespondence() throws IncQueryException {
+    return ChecklistProcessCorrespondenceQuerySpecification.instance();
+  }
+  
+  public ChecklistProcessCorrespondenceMatcher getChecklistProcessCorrespondence(final IncQueryEngine engine) throws IncQueryException {
+    return ChecklistProcessCorrespondenceMatcher.on(engine);
+  }
+  
+  public IncorrectEntryInChecklistQuerySpecification getIncorrectEntryInChecklist() throws IncQueryException {
+    return IncorrectEntryInChecklistQuerySpecification.instance();
+  }
+  
+  public IncorrectEntryInChecklistMatcher getIncorrectEntryInChecklist(final IncQueryEngine engine) throws IncQueryException {
+    return IncorrectEntryInChecklistMatcher.on(engine);
+  }
+  
+  public TaskChecklistEntryJobCorrespondenceQuerySpecification getTaskChecklistEntryJobCorrespondence() throws IncQueryException {
+    return TaskChecklistEntryJobCorrespondenceQuerySpecification.instance();
+  }
+  
+  public TaskChecklistEntryJobCorrespondenceMatcher getTaskChecklistEntryJobCorrespondence(final IncQueryEngine engine) throws IncQueryException {
+    return TaskChecklistEntryJobCorrespondenceMatcher.on(engine);
+  }
+  
+  public DataReadByChecklistEntryQuerySpecification getDataReadByChecklistEntry() throws IncQueryException {
+    return DataReadByChecklistEntryQuerySpecification.instance();
+  }
+  
+  public DataReadByChecklistEntryMatcher getDataReadByChecklistEntry(final IncQueryEngine engine) throws IncQueryException {
+    return DataReadByChecklistEntryMatcher.on(engine);
   }
 }

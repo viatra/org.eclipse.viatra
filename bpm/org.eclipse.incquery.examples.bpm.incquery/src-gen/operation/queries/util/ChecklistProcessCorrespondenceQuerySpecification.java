@@ -12,7 +12,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -73,7 +73,7 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
       PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
       PVariable var_Process = body.getOrCreateVariableByName("Process");
       PVariable var_ProcessId = body.getOrCreateVariableByName("ProcessId");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Checklist, "Checklist"), 
         new ExportedParameter(body, var_Process, "Process")
       ));
@@ -88,13 +88,13 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
       annotation.addAttribute("feature","process");
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private ChecklistProcessCorrespondenceQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

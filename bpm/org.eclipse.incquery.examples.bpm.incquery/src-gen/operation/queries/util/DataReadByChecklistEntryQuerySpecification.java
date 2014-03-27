@@ -13,7 +13,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
@@ -76,7 +76,7 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
       PVariable var_CLE = body.getOrCreateVariableByName("CLE");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_Data = body.getOrCreateVariableByName("Data");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_CLE, "CLE"), 
         new ExportedParameter(body, var_Task, "Task"), 
         new ExportedParameter(body, var_Data, "Data")
@@ -94,13 +94,13 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
       annotation.addAttribute("severity","warning");
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private DataReadByChecklistEntryQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

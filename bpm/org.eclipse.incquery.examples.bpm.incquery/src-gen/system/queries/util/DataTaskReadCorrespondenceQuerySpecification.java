@@ -11,7 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -73,14 +73,14 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
       PVariable var_Data = body.getOrCreateVariableByName("Data");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Data, "Data"), 
         new ExportedParameter(body, var_Task, "Task")
       ));
       
       
-      new TypeBinary(body, context, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+      new TypeBinary(body, context, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
       new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
       bodies.add(body);
     }{
@@ -88,13 +88,13 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
       annotation.addAttribute("feature","readingTask");
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private DataTaskReadCorrespondenceQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

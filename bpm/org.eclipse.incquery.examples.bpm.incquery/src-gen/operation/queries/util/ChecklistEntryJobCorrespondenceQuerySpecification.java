@@ -14,7 +14,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -78,7 +78,7 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
       PVariable var_System = body.getOrCreateVariableByName("System");
       PVariable var_SysName = body.getOrCreateVariableByName("SysName");
       PVariable var_JobPath = body.getOrCreateVariableByName("JobPath");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_CLE, "CLE"), 
         new ExportedParameter(body, var_Job, "Job")
       ));
@@ -114,13 +114,13 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
       annotation.addAttribute("feature","jobs");
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private ChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

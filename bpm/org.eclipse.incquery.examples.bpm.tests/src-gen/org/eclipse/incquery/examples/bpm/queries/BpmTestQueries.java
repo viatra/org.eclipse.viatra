@@ -4,6 +4,11 @@ import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatcher;
 import org.eclipse.incquery.examples.bpm.queries.JobTasksMatcher;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatcher;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher;
+import org.eclipse.incquery.examples.bpm.queries.util.EntryTaskQuerySpecification;
+import org.eclipse.incquery.examples.bpm.queries.util.JobTasksQuerySpecification;
+import org.eclipse.incquery.examples.bpm.queries.util.NextActivityQuerySpecification;
+import org.eclipse.incquery.examples.bpm.queries.util.ProcessTasksQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
@@ -44,10 +49,42 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
   private static BpmTestQueries INSTANCE;
   
   private BpmTestQueries() throws IncQueryException {
-    querySpecifications.add(NextActivityMatcher.querySpecification());
-    querySpecifications.add(ProcessTasksMatcher.querySpecification());
-    querySpecifications.add(EntryTaskMatcher.querySpecification());
-    querySpecifications.add(JobTasksMatcher.querySpecification());
+    querySpecifications.add(ProcessTasksQuerySpecification.instance());
+    querySpecifications.add(NextActivityQuerySpecification.instance());
+    querySpecifications.add(JobTasksQuerySpecification.instance());
+    querySpecifications.add(EntryTaskQuerySpecification.instance());
     
+  }
+  
+  public ProcessTasksQuerySpecification getProcessTasks() throws IncQueryException {
+    return ProcessTasksQuerySpecification.instance();
+  }
+  
+  public ProcessTasksMatcher getProcessTasks(final IncQueryEngine engine) throws IncQueryException {
+    return ProcessTasksMatcher.on(engine);
+  }
+  
+  public NextActivityQuerySpecification getNextActivity() throws IncQueryException {
+    return NextActivityQuerySpecification.instance();
+  }
+  
+  public NextActivityMatcher getNextActivity(final IncQueryEngine engine) throws IncQueryException {
+    return NextActivityMatcher.on(engine);
+  }
+  
+  public JobTasksQuerySpecification getJobTasks() throws IncQueryException {
+    return JobTasksQuerySpecification.instance();
+  }
+  
+  public JobTasksMatcher getJobTasks(final IncQueryEngine engine) throws IncQueryException {
+    return JobTasksMatcher.on(engine);
+  }
+  
+  public EntryTaskQuerySpecification getEntryTask() throws IncQueryException {
+    return EntryTaskQuerySpecification.instance();
+  }
+  
+  public EntryTaskMatcher getEntryTask(final IncQueryEngine engine) throws IncQueryException {
+    return EntryTaskMatcher.on(engine);
   }
 }

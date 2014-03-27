@@ -11,7 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
@@ -73,7 +73,7 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
       PBody body = new PBody(this);
       PVariable var_SourceTask = body.getOrCreateVariableByName("SourceTask");
       PVariable var_AffectedTask = body.getOrCreateVariableByName("AffectedTask");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_SourceTask, "SourceTask"), 
         new ExportedParameter(body, var_AffectedTask, "AffectedTask")
       ));
@@ -83,13 +83,13 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
       new TypeUnary(body, var_AffectedTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new BinaryTransitiveClosure(body, new FlatTuple(var_SourceTask, var_AffectedTask), TasksAffectedThroughDataQuerySpecification.instance().instance());
       bodies.add(body);
-    }setStatus(PQueryStatus.OK);
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private TransitiveAffectedTasksThroughDataQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

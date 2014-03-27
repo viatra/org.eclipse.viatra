@@ -12,7 +12,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
@@ -70,7 +70,7 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
       PBody body = new PBody(this);
       PVariable var_Job = body.getOrCreateVariableByName("Job");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Job, "Job"), 
         new ExportedParameter(body, var_Task, "Task")
       ));
@@ -78,13 +78,13 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
       
       new TypeBinary(body, context, var_Job, var_Task, getFeatureLiteral("http://system/1.0", "Job", "tasks"), "http://system/1.0/Job.tasks");
       bodies.add(body);
-    }setStatus(PQueryStatus.OK);
+    }
     return bodies;
   }
   
   private JobTasksQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")

@@ -11,7 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -73,7 +73,7 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
       PVariable var_Job = body.getOrCreateVariableByName("Job");
       PVariable var_Task = body.getOrCreateVariableByName("Task");
       PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Job, "Job"), 
         new ExportedParameter(body, var_Task, "Task")
       ));
@@ -88,13 +88,13 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
       annotation.addAttribute("feature","tasks");
       addAnnotation(annotation);
     }
-    setStatus(PQueryStatus.OK);
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
   private JobTaskCorrespondenceQuerySpecification() throws IncQueryException {
     super();
-    setStatus(PQueryStatus.UNINITIALIZED);
+    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
