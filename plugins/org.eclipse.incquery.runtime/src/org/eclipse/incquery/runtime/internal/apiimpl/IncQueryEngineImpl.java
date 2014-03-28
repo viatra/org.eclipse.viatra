@@ -353,8 +353,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         @Override
         public void engineBecameTainted() {
             final IncQueryEngineImpl iqEngine = iqEngRef.get();
-            iqEngine.tainted = true;
-            iqEngine.lifecycleProvider.engineBecameTainted();
+            if (iqEngine != null) {
+                iqEngine.tainted = true;
+                iqEngine.lifecycleProvider.engineBecameTainted();
+            }
         }
     }
     
