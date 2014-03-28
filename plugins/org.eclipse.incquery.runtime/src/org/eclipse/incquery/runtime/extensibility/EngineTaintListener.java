@@ -14,6 +14,7 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
 
 /**
  * Listens for the event of the engine becoming tainted.
@@ -24,8 +25,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
  * @author Bergmann Gabor
  * @see IncQueryEngine#isTainted()
  */
-public abstract class EngineTaintListener extends AppenderSkeleton {
-    public static final Level TRESHOLD = Level.FATAL;
+public abstract class EngineTaintListener implements IIndexingErrorListener {
 
     /**
      * This callback will be alerted at most once, when the engine becomes tainted.
@@ -34,20 +34,31 @@ public abstract class EngineTaintListener extends AppenderSkeleton {
 
     private boolean noTaintDetectedYet = true;
 
-    @Override
-    public boolean requiresLayout() {
-        return false;
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    protected void append(LoggingEvent event) {
-        if (event.getLevel().isGreaterOrEqual(TRESHOLD) && noTaintDetectedYet) {
+    protected void notifyTainted() {
+        if (noTaintDetectedYet) {
             noTaintDetectedYet = false;
             engineBecameTainted();
         }
     }
+
+    @Override
+    public void error(String description) {
+        //Errors does not mean tainting
+    }
+
+    @Override
+    public void error(String description, Throwable t) {
+        //Errors does not mean tainting        
+    }
+
+    @Override
+    public void fatal(String description) {
+        notifyTainted();
+    }
+
+    @Override
+    public void fatal(String description, Throwable t) {
+        notifyTainted();
+    }
+    
 }

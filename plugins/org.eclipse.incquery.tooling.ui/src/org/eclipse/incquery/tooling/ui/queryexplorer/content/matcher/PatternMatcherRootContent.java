@@ -62,7 +62,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             key.setEngine(createEngine());
         }
         if (engine != null) {
-            engine.getLogger().addAppender(taintListener);
+            engine.addTaintListener(taintListener);
         }
     }
 
@@ -115,7 +115,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
-            engine.getLogger().removeAppender(taintListener);
+            engine.removeTaintListener(taintListener);
         }
     }
 

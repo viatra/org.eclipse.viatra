@@ -15,6 +15,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 
@@ -259,6 +260,19 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @return the tainted state
      */
 	public abstract boolean isTainted();
+	
+	/**
+	 * Adds a taint listener to the engine
+	 * @param listener
+	 * @since 0.8.0
+	 */
+	public abstract void addTaintListener(EngineTaintListener listener);
+	/**
+	 * Removes a taint listener from the engine
+	 * @param listener
+	 * @since 0.8.0
+	 */
+	public abstract void removeTaintListener(EngineTaintListener listener);
 
     /**
      * Discards any pattern matcher caches and forgets known patterns. The base index built directly on the underlying

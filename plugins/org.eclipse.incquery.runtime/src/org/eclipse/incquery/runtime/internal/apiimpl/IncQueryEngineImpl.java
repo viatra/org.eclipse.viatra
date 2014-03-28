@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.internal.apiimpl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,6 +97,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * EXPERIMENTAL
      */
     private final int reteThreads = 0;
+    
+    private Set<EngineTaintListener> taintListeners = new LinkedHashSet<EngineTaintListener>();
     
     /**
      * @param manager
@@ -181,6 +184,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
                 synchronized (this) {
                     baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, options,
                             getLogger());
+                    baseIndex.addIndexingErrorListener(taintListener);
                 }
             } catch (IncQueryBaseException e) {
                 throw new IncQueryException("Could not create EMF-IncQuery base index", "Could not create base index",
@@ -222,10 +226,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             if (logger == null)
                 throw new AssertionError(
                         "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
-
-            // if an error is logged, the engine becomes tainted
-            taintListener = new SelfTaintListener(this);
-            logger.addAppender(taintListener);
         }
         return logger;
     }
@@ -318,7 +318,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         	getLogger().warn(
         			"The base index could not be disposed along with the EMF-InQuery engine, as there are still active listeners on it.");
         }
-        getLogger().removeAppender(taintListener);
     }
 
     @Override
@@ -341,7 +340,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * Indicates whether the engine is in a tainted, inconsistent state.
      */
     private boolean tainted = false;
-    private EngineTaintListener taintListener;
+    private EngineTaintListener taintListener = new SelfTaintListener(this);
 
     private static class SelfTaintListener extends EngineTaintListener {
         WeakReference<IncQueryEngineImpl> iqEngRef;
@@ -430,6 +429,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
         lifecycleProvider.removeListener(listener);
+    }
+
+    @Override
+    public void addTaintListener(EngineTaintListener listener) {
+        taintListeners.add(taintListener);
+    }
+
+    @Override
+    public void removeTaintListener(EngineTaintListener listener) {
+        taintListeners.remove(listener);
+        
     }
     
     // /**
