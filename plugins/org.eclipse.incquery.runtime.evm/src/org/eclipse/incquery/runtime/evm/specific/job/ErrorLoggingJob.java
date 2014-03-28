@@ -17,13 +17,17 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
+ * Composite job for logging any errors that happen in the execution of the composed job.
+ * 
  * @author Abel Hegedus
  *
  */
 public class ErrorLoggingJob<EventAtom> extends CompositeJob<EventAtom> {
     
     /**
-     * @param job
+     * Composes the given job into an error logging job.
+     * 
+     * @param job the composed job
      */
     public ErrorLoggingJob(Job<EventAtom> job) {
         super(job);

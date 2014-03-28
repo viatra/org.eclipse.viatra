@@ -30,7 +30,7 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     private IMatchProcessor<Match> matchProcessor;
     
     /**
-     * @return the matchProcessor
+     * @return the matchProcessor executed by the job
      */
     public IMatchProcessor<Match> getMatchProcessor() {
         return matchProcessor;
@@ -38,9 +38,6 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
 
     /**
      * Creates a stateless job for the given state and processor.
-     * 
-     * @param incQueryActivationStateEnum
-     * @param matchProcessor
      */
     public StatelessJob(final IncQueryActivationStateEnum incQueryActivationStateEnum, final IMatchProcessor<Match> matchProcessor) {
         super(incQueryActivationStateEnum);
