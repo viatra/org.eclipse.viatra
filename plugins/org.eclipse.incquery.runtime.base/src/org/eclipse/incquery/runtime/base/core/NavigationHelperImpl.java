@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,6 +45,7 @@ import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
@@ -68,13 +70,15 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected NavigationHelperContentAdapter contentAdapter;
 
     private final Logger logger;
-
+    
     // type object or String id
     protected Set<Object> directlyObservedClasses = new HashSet<Object>();
-    protected Set<Object> allObservedClasses = null; // including subclasses; if null, must be recomputed
+    // including subclasses; if null, must be recomputed
+    protected Set<Object> allObservedClasses = null;
     protected Set<Object> observedDataTypes;
     protected Set<Object> observedFeatures;
-    protected Set<Object> ignoreResolveNotificationFeatures; // ignore RESOLVE for these features, as they are just starting to be observed - see [428458]
+    // ignore RESOLVE for these features, as they are just starting to be observed - see [428458]
+    protected Set<Object> ignoreResolveNotificationFeatures;
 
     /**
      * Feature registration and model traversal is delayed while true
@@ -113,6 +117,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     private Table<Object, FeatureListener, Set<EStructuralFeature>> featureListeners;
     private Table<Object, DataTypeListener, Set<EDataType>> dataTypeListeners;
 
+    private final Set<IIndexingErrorListener> errorListeners;
     private final BaseIndexOptions baseIndexOptions;
 
     private EMFModelComprehension comprehension;
@@ -192,7 +197,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.observedDataTypes = new HashSet<Object>();
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
-
+        this.errorListeners = new LinkedHashSet<IIndexingErrorListener>();
+        
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
@@ -601,7 +607,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                         listener.notifyChanged(baseIndexChanged);
                     }
                 } catch (Exception ex) {
-                    logger.fatal("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
+                    notifyFatalListener("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
                             ex);
                 }
             }
@@ -618,6 +624,30 @@ public class NavigationHelperImpl implements NavigationHelper {
     public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         baseIndexChangeListeners.remove(listener);
+    }
+
+    @Override
+    public boolean addIndexingErrorListener(IIndexingErrorListener listener) {
+        return errorListeners.add(listener);
+    }
+
+    @Override
+    public boolean removeIndexingErrorListener(IIndexingErrorListener listener) {
+        return errorListeners.remove(listener);
+    }
+    
+    public void notifyErrorListener(String message, Throwable t) {
+        logger.error(message, t);
+        for (IIndexingErrorListener listener : errorListeners) {
+            listener.error(message, t);
+        }
+    }
+    
+    public void notifyFatalListener(String message, Throwable t) {
+        logger.fatal(message, t);
+        for (IIndexingErrorListener listener : errorListeners) {
+            listener.fatal(message, t);
+        }
     }
 
     protected void considerForExpansion(EObject obj) {
@@ -1005,8 +1035,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         			}
         		}
 	        } catch (Exception e) {
-	            getLogger()
-	                    .fatal("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. ",
+	            notifyFatalListener("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. ",
 	                            e);
 	            throw new InvocationTargetException(e);
 	        }
@@ -1019,13 +1048,6 @@ public class NavigationHelperImpl implements NavigationHelper {
             comprehension.traverseModel(visitor, root);
         }
         contentAdapter.notifyBaseIndexChangeListeners();
-    }
-
-    /**
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return logger;
     }
 
     @Override

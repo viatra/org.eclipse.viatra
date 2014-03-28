@@ -329,10 +329,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     protected void processingFatal(final Throwable ex, final String task) {
-        navigationHelper.getLogger().fatal(logTaskFormat(task), ex);
+        navigationHelper.notifyFatalListener(logTaskFormat(task), ex);
     }
     protected void processingError(final Throwable ex, final String task) {
-        navigationHelper.getLogger().error(logTaskFormat(task), ex);
+        navigationHelper.notifyErrorListener(logTaskFormat(task), ex);
     }
 
 	private String logTaskFormat(final String task) {
