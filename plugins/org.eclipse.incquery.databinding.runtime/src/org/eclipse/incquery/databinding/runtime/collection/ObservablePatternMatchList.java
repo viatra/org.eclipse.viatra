@@ -348,7 +348,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
                 int mid = (left + right) >> 1;
                 int cv = comparator.compare(match, cache.get(mid));
                 if (cv == 0) {
-                    return -1;
+                    return mid;
                 }
                 if (cv < 0) {
                     right = mid - 1;
