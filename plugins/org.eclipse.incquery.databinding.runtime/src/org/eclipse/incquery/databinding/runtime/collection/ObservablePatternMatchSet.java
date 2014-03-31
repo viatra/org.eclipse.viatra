@@ -72,7 +72,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(IQuerySpecification<Matcher> querySpecification,
             IncQueryEngine engine) {
         this(querySpecification);
-        ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, specification.createEmptyFilter());
     }
     
     /**
@@ -93,7 +93,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchSet(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Function<Match, Object> converter) {
         this(querySpecification, converter);
-        ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+        ObservableCollectionHelper.prepareRuleEngine(engine, specification, specification.createEmptyFilter());
     }
 
     /**

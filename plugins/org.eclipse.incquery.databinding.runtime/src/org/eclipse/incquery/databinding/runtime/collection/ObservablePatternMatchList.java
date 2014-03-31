@@ -81,7 +81,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
         this(querySpecification);
-        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, null);
+        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, specification.createEmptyFilter());
     }
 
     /**
@@ -291,7 +291,8 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         EventFilter<Match> oldFilter = matchFilter;
         matchFilter = Rules.newSingleMatchFilter(filter);
         if(Objects.equal(matchFilter, oldFilter)) {
-            return; // same filter, do nothing
+            // same filter, do nothing
+            return;
         }
         
         if(oldFilter == null) {
