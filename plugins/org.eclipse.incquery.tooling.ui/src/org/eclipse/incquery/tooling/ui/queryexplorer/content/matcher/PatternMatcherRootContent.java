@@ -49,6 +49,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     private final PatternMatcherRootContentKey key;
     private ContentEngineTaintListener taintListener;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
+    private IStatus contentStatus;
 
     public PatternMatcherRootContent(RootContent parent, PatternMatcherRootContentKey key) {
         super(parent);
@@ -152,15 +153,26 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                     }
                 });
             }
+            contentStatus = Status.OK_STATUS;
         } catch (IncQueryException ex) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Cannot initialize pattern matcher engine.", ex));
+            reportMatcherError("Cannot initialize pattern matcher engine.", ex);
         } catch (InvocationTargetException e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause()));
+            reportMatcherError("Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause());
         }
     }
 
+    private void reportMatcherError(String message, Throwable t) {
+        if (t != null) {
+            contentStatus = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                message, t);
+        } else {
+            contentStatus = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                    message);
+        }
+        logger.log(contentStatus);
+        getParent().getViewer().refresh(this);
+    }
+    
     private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
         for (IQuerySpecification<?> query : queries) {
             boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
@@ -175,10 +187,27 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     private class ContentEngineTaintListener extends EngineTaintListener {
 
         @Override
+        public void error(String description) {
+            reportMatcherError(description, null);
+        }
+
+        @Override
+        public void error(String description, Throwable t) {
+            reportMatcherError(description, t);
+        }
+
+        @Override
+        public void fatal(String description) {
+            reportMatcherError(description, null);
+        }
+
+        @Override
+        public void fatal(String description, Throwable t) {
+            reportMatcherError(description, t);
+        }
+
+        @Override
         public void engineBecameTainted() {
-//            for (PatternMatcherContent matcher : mapping.values()) {
-//                matcher.stopMonitoring();
-//            }
         }
         
     }
@@ -198,4 +227,9 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         return children.getElements().iterator();
     }
 
+    public IStatus getStatus() {
+        return contentStatus;
+    }
+
+    
 }

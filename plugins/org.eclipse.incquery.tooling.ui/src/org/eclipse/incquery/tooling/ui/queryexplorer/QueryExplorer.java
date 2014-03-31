@@ -53,6 +53,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -211,6 +212,8 @@ public class QueryExplorer extends ViewPart {
                 new QueryExplorerObservableFactory(), new QueryExplorerTreeStructureAdvisor()));
         matcherTreeViewer.setLabelProvider(new QueryExplorerLabelProvider());
         matcherTreeViewer.setInput(treeViewerRootContent);
+        treeViewerRootContent.setViewer(matcherTreeViewer);
+        ColumnViewerToolTipSupport.enableFor(matcherTreeViewer);
         matcherTreeViewer.setComparator(null);
 
         IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);

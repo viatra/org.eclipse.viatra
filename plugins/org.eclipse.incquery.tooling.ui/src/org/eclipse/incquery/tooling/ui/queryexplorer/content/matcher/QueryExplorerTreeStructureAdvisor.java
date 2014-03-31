@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 
@@ -29,6 +30,11 @@ public class QueryExplorerTreeStructureAdvisor extends TreeStructureAdvisor {
     @SuppressWarnings("rawtypes")
     @Override
     public Boolean hasChildren(Object element) {
+        if (element instanceof PatternMatcherRootContent && 
+                (((PatternMatcherRootContent) element).isTainted()
+                || ((PatternMatcherRootContent) element).getStatus().getSeverity() == IStatus.ERROR)) {
+            return false;
+        }
         if (element instanceof CompositeContent<?, ?>) {
             return !((CompositeContent) element).getChildren().isEmpty();
         }

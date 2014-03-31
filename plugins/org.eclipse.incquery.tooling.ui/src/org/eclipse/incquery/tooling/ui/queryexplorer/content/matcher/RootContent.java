@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -35,6 +36,7 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
 
     private Map<PatternMatcherRootContentKey, PatternMatcherRootContent> mapping;
     private ContentChildren<PatternMatcherRootContent> children;
+    private TreeViewer viewer;
     
     public RootContent() {
         super(null);
@@ -95,6 +97,14 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
     @Override
     public Iterator<PatternMatcherRootContent> getChildrenIterator() {
         return children.getElements().iterator();
+    }
+
+    public void setViewer(TreeViewer viewer) {
+        this.viewer = viewer;
+    }
+
+    public TreeViewer getViewer() {
+        return viewer;
     }
 
 }
