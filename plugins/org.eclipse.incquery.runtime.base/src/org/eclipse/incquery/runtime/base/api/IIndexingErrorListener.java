@@ -19,8 +19,6 @@ package org.eclipse.incquery.runtime.base.api;
  */
 public interface IIndexingErrorListener {
 
-    void error(String description);
     void error(String description, Throwable t);
-    void fatal(String description);
     void fatal(String description, Throwable t);
 }

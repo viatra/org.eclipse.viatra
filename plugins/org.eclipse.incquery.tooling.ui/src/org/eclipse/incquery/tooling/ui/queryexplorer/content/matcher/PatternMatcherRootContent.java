@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
@@ -47,7 +49,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     private final Map<String, PatternMatcherContent> mapping;
     private ContentChildren<PatternMatcherContent> children;
     private final PatternMatcherRootContentKey key;
-    private ContentEngineTaintListener taintListener;
+    private IncQueryEngineLifecycleListener taintListener;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
     private IStatus contentStatus;
 
@@ -63,7 +65,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             key.setEngine(createEngine());
         }
         if (engine != null) {
-            engine.addTaintListener(taintListener);
+            engine.addLifecycleListener(taintListener);
         }
     }
 
@@ -116,7 +118,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
-            engine.removeTaintListener(taintListener);
+            engine.removeLifecycleListener(taintListener);
         }
     }
 
@@ -184,30 +186,23 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         removeMatcher(specification.getFullyQualifiedName());
     }
 
-    private class ContentEngineTaintListener extends EngineTaintListener {
+    private class ContentEngineTaintListener implements IncQueryEngineLifecycleListener {
 
         @Override
-        public void error(String description) {
-            reportMatcherError(description, null);
-        }
-
-        @Override
-        public void error(String description, Throwable t) {
+        public void engineBecameTainted(String description, Throwable t) {
             reportMatcherError(description, t);
         }
 
         @Override
-        public void fatal(String description) {
-            reportMatcherError(description, null);
+        public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
         }
 
         @Override
-        public void fatal(String description, Throwable t) {
-            reportMatcherError(description, t);
+        public void engineWiped() {
         }
 
         @Override
-        public void engineBecameTainted() {
+        public void engineDisposed() {
         }
         
     }

@@ -40,7 +40,7 @@ public interface IncQueryEngineLifecycleListener {
     /**
      * Called after the engine has become tainted due to a fatal error
      */
-    void engineBecameTainted();
+    void engineBecameTainted(String message, Throwable t);
     
     /**
      * Called after the engine has been wiped

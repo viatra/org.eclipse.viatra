@@ -14,7 +14,6 @@ package org.eclipse.incquery.runtime.internal.apiimpl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,12 +32,12 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.context.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
@@ -97,8 +96,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * EXPERIMENTAL
      */
     private final int reteThreads = 0;
-    
-    private Set<EngineTaintListener> taintListeners = new LinkedHashSet<EngineTaintListener>();
     
     /**
      * @param manager
@@ -340,22 +337,40 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * Indicates whether the engine is in a tainted, inconsistent state.
      */
     private boolean tainted = false;
-    private EngineTaintListener taintListener = new SelfTaintListener(this);
+    private IIndexingErrorListener taintListener = new SelfTaintListener(this);
 
-    private static class SelfTaintListener extends EngineTaintListener {
+    private static class SelfTaintListener implements IIndexingErrorListener {
         WeakReference<IncQueryEngineImpl> iqEngRef;
 
         public SelfTaintListener(IncQueryEngineImpl iqEngine) {
             this.iqEngRef = new WeakReference<IncQueryEngineImpl>(iqEngine);
         }
 
-        @Override
-        public void engineBecameTainted() {
+        public void engineBecameTainted(String description, Throwable t) {
             final IncQueryEngineImpl iqEngine = iqEngRef.get();
             if (iqEngine != null) {
                 iqEngine.tainted = true;
-                iqEngine.lifecycleProvider.engineBecameTainted();
+                iqEngine.lifecycleProvider.engineBecameTainted(description, t);
             }
+        }
+        
+        private boolean noTaintDetectedYet = true;
+
+        protected void notifyTainted(String description, Throwable t) {
+            if (noTaintDetectedYet) {
+                noTaintDetectedYet = false;
+                engineBecameTainted(description, t);
+            }
+        }
+
+        @Override
+        public void error(String description, Throwable t) {
+            //Errors does not mean tainting        
+        }
+
+        @Override
+        public void fatal(String description, Throwable t) {
+            notifyTainted(description, t);
         }
     }
     
@@ -431,17 +446,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         lifecycleProvider.removeListener(listener);
     }
 
-    @Override
-    public void addTaintListener(EngineTaintListener listener) {
-        taintListeners.add(taintListener);
-    }
-
-    @Override
-    public void removeTaintListener(EngineTaintListener listener) {
-        taintListeners.remove(listener);
-        
-    }
-    
     // /**
     // * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate
