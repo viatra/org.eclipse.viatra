@@ -106,7 +106,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		}
 		ResourceSet resourceSet = getResourceSetForNotifier(engine.getScope());
 		if(resourceSet == null) {
-			engine.getLogger().error("Cannot save snapshot, models not in ResourceSet!");
+			logger.error("Cannot save snapshot, models not in ResourceSet!");
 			return;
 		}
 		IFile snapshotFile = null;
@@ -120,7 +120,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
 				res.getContents().add(snapshot);
 			} else {
-				engine.getLogger().error("Selected file name must use .eiqsnapshot extension!");
+				logger.error("Selected file name must use .eiqsnapshot extension!");
 				return;
 			}
 		} else {
@@ -134,11 +134,11 @@ public class SaveSnapshotHandler extends AbstractHandler {
 						return;
 					}
 				} else {
-					engine.getLogger().error("Selected file does not contain snapshot!");
+					logger.error("Selected file does not contain snapshot!");
 					return;
 				}
 			} else {
-				engine.getLogger().error("Selected file not .eiqsnapshot!");
+				logger.error("Selected file not .eiqsnapshot!");
 				return;
 			}
 		} 
@@ -155,7 +155,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			try {
 				snapshot.eResource().save(null);
 			} catch(IOException e) {
-				engine.getLogger().error("Error during saving snapshot into file!",e);
+				logger.error("Error during saving snapshot into file!",e);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
 			Notifier matcherRoot = engine.getScope();
 			if(matcherRoot != root) {
-				engine.getLogger().error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
+				logger.error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
 				return false;
 			}
 			return true;

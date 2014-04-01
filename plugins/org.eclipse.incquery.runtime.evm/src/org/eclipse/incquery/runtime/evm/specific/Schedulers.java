@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.evm.update.IQBaseCallbackUpdateCompleteProvi
 import org.eclipse.incquery.runtime.evm.update.IQEngineUpdateCompleteProvider;
 import org.eclipse.incquery.runtime.evm.update.TransactionUpdateCompleteProvider;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -44,7 +45,7 @@ public final class Schedulers {
         try {
             return getIQBaseSchedulerFactory(engine.getBaseIndex());
         } catch (IncQueryException e) {
-            engine.getLogger().error("Base index not available in engine", e);
+            IncQueryLoggingUtil.getDefaultLogger().error("Base index not available in engine", e);
             return null;
         }
     }

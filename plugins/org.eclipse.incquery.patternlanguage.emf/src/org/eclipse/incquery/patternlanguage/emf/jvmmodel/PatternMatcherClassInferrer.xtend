@@ -24,6 +24,8 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.apache.log4j.Logger
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -49,6 +51,14 @@ class PatternMatcherClassInferrer {
    				initializer = [append('''«pattern.parameters.indexOf(variable)»''')]
    			]
    		}
+   		matchClass.members += pattern.toField("logger", pattern.newTypeRef(typeof(Logger))) [
+   			static = true
+   			final = true
+   			initializer = [
+   				referClass(pattern, IncQueryLoggingUtil)
+   				append('''.getLogger(«pattern.matcherClassName».class)''')
+   			]
+   		]
    	}
 
    	/**

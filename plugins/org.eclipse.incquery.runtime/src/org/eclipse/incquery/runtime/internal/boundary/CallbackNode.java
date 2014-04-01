@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.internal.boundary;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -26,12 +27,14 @@ public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleRe
 
 	IncQueryEngine engine;
     IMatchUpdateListener<? super Match> listener;
+    private Logger logger;
 
     public abstract Match statelessConvert(Tuple t);
 
-    public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine, IMatchUpdateListener<? super Match> listener) {
+    public CallbackNode(ReteContainer reteContainer, IncQueryEngine engine, Logger logger, IMatchUpdateListener<? super Match> listener) {
         super(reteContainer);
         this.engine = engine;
+        this.logger = logger;
         this.listener = listener;
     }
 
@@ -46,8 +49,7 @@ public abstract class CallbackNode<Match extends IPatternMatch> extends SimpleRe
         } catch (Throwable e) { // NOPMD
             if (e instanceof Error)
                 throw (Error) e;
-            engine.getLogger()
-                    .warn(String.format(
+            logger.warn(String.format(
                             "The incremental pattern matcher encountered an error during executing a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s called from CallbackNode)",
                             direction == Direction.INSERT ? "insertion" : "removal", match.prettyPrint(),
                             match.patternName(), e.getMessage(), e.getClass().getSimpleName(), listener), e);

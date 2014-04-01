@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeature;
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -50,7 +51,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
             match.set(getSourceParamName(), source);
             if (getMatcher().countMatches(match) > 1) {
                 String message = "[QueryBasedFeature] Single reference derived feature has multiple possible values, returning one arbitrary value";
-                engineForMatcher().getLogger().warn(message);
+                IncQueryLoggingUtil.getLogger(getClass()).warn(message);
             }
             IPatternMatch patternMatch = getMatcher().getOneArbitraryMatch(match);
             if (patternMatch != null) {
@@ -70,7 +71,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
                 sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): multiple values for single feature!\n");
                 sb.append("\n >> First value: ").append(source).append(" -> ").append(updateMemory.get(source));
                 sb.append("\n >> Second value: ").append(source).append(" -> ").append(target);
-                engineForMatcher().getLogger().error(sb.toString());
+                IncQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
             } else {
                 // must handle later (either in lost matches or after that)
                 updateMemory.put(source, target);

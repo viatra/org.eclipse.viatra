@@ -23,6 +23,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import static org.junit.Assert.*
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher
 import com.google.inject.Injector
+import org.apache.log4j.Logger
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -41,6 +42,7 @@ class TestExecutor {
 	@Inject extension ModelLoadHelper
 	@Inject extension SnapshotHelper
 	@Inject var Injector injector;
+	@Inject var Logger logger
 
 	/**
 	 * Checks the pattern name of the matcher against the one stored in
@@ -219,11 +221,11 @@ class TestExecutor {
 	}
 
 	def registerLogger(IncQueryEngine engine){
-		engine.logger.addAppender(new TestingLogAppender)
+		logger.addAppender(new TestingLogAppender)
 	}
 
 	def retrieveLoggerOutput(IncQueryEngine engine){
-		val logger = engine.getLogger
+		val logger = logger
 
 		val appers = logger.allAppenders
 		while (appers.hasMoreElements) {

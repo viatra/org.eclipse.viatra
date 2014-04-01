@@ -45,6 +45,15 @@ public class IncQueryLoggingUtil {
 
 	    return defaultRuntimeLogger;
 	}
+	
+	/**
+	 * Provides a class-specific logger that also stores the global logger settings of the EMF-IncQuery runtime
+	 * @param clazz
+	 * @return
+	 */
+	public static Logger getLogger(Class<?> clazz) {
+	    return Logger.getLogger(getDefaultLogger().getName() + clazz.getName());
+	}
 
 	private static Logger defaultRuntimeLogger;
 
