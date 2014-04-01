@@ -110,8 +110,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         this.emfRoot = emfRoot;
         this.options = options.copy();
         this.matchers = Maps.newHashMap();
-        this.lifecycleProvider = new LifecycleProvider(this, logger);
-        this.modelUpdateProvider = new ModelUpdateProvider(this, logger);
+        this.lifecycleProvider = new LifecycleProvider(this, getLogger());
+        this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
         if (!(emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet))
             throw new IncQueryException(IncQueryException.INVALID_EMFROOT
                     + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()),
