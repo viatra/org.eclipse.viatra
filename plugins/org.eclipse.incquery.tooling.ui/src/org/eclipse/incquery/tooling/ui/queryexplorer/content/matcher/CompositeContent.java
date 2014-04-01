@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
-import java.util.List;
+import java.util.Iterator;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 
 /**
@@ -26,24 +27,24 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
  */
 public abstract class CompositeContent<ParentType, ChildType extends BaseContent<?>> extends BaseContent<ParentType> {
 
-    protected ContentChildren<ChildType> children;
-
     public CompositeContent(ParentType parent) {
         super(parent);
-        this.children = new ContentChildren<ChildType>();
     }
 
+    @SuppressWarnings("unchecked")
     public void dispose() {
-        for (ChildType child : getChildren()) {
-            child.dispose();
+        if (!getChildren().isDisposed()) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                ((ChildType) getChildren().get(i)).dispose();
+            }
         }
     }
 
     /**
      * Call this method if the element is already present in the tree viewer, but it is not expanded yet and the
      * children list has changed. In this case, even if the children are updated properly, the tree viewer will not show
-     * that the element has children. Calling this method only has effect if the element is not expanded yet (because 
-     * in these cases the observable list propagates the updates properly). 
+     * that the element has children. Calling this method only has effect if the element is not expanded yet (because in
+     * these cases the observable list propagates the updates properly).
      */
     public void updateHasChildren() {
         // only perform it for items which are not expanded, ClassCastException will be thrown otherwise
@@ -53,8 +54,8 @@ public abstract class CompositeContent<ParentType, ChildType extends BaseContent
         }
     }
 
-    public List<ChildType> getChildren() {
-        return this.children.getElements();
-    }
+    public abstract Iterator<ChildType> getChildrenIterator();
+
+    public abstract IObservableList getChildren();
 
 }

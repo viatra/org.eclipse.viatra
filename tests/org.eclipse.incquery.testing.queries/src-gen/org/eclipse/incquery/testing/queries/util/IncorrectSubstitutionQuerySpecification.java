@@ -76,7 +76,7 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
       PVariable var_CorrespondingSubstitution = body.getOrCreateVariableByName("CorrespondingSubstitution");
       PVariable var_Value1 = body.getOrCreateVariableByName("Value1");
       PVariable var_Value2 = body.getOrCreateVariableByName("Value2");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Record, "Record"), 
         new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord")
       ));
@@ -90,7 +90,7 @@ public final class IncorrectSubstitutionQuerySpecification extends BaseGenerated
       new TypeBinary(body, context, var_CorrespondingSubstitution, var_Value2, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSubstitutionRecord", "derivedValue"), "http://www.eclipse.org/incquery/snapshot/MatchSubstitutionRecord.derivedValue");
       new Inequality(body, var_Value1, var_Value2);
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
   }
   

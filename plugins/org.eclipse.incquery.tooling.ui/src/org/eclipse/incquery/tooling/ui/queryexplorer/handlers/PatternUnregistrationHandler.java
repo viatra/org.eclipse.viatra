@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -68,7 +69,9 @@ public class PatternUnregistrationHandler extends AbstractHandler {
             	QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
 
             	//unregister patterns from observable roots
-            	for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
+            	Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent().getChildrenIterator();
+                while (iterator.hasNext()) {
+                    PatternMatcherRootContent root = iterator.next();
             		root.unregisterPattern(removedSpecification);
             	}
 

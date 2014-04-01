@@ -32,12 +32,12 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.context.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
@@ -179,6 +179,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
                 synchronized (this) {
                     baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, options,
                             getLogger());
+                    baseIndex.addIndexingErrorListener(taintListener);
                 }
             } catch (IncQueryBaseException e) {
                 throw new IncQueryException("Could not create EMF-IncQuery base index", "Could not create base index",
@@ -220,10 +221,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             if (logger == null)
                 throw new AssertionError(
                         "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
-
-            // if an error is logged, the engine becomes tainted
-            taintListener = new SelfTaintListener(this);
-            logger.addAppender(taintListener);
         }
         return logger;
     }
@@ -315,7 +312,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         	getLogger().warn(
         			"The base index could not be disposed along with the EMF-InQuery engine, as there are still active listeners on it.");
         }
-        getLogger().removeAppender(taintListener);
     }
 
     @Override
@@ -338,20 +334,40 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * Indicates whether the engine is in a tainted, inconsistent state.
      */
     private boolean tainted = false;
-    private EngineTaintListener taintListener;
+    private IIndexingErrorListener taintListener = new SelfTaintListener(this);
 
-    private static class SelfTaintListener extends EngineTaintListener {
+    private static class SelfTaintListener implements IIndexingErrorListener {
         WeakReference<IncQueryEngineImpl> iqEngRef;
 
         public SelfTaintListener(IncQueryEngineImpl iqEngine) {
             this.iqEngRef = new WeakReference<IncQueryEngineImpl>(iqEngine);
         }
 
-        @Override
-        public void engineBecameTainted() {
+        public void engineBecameTainted(String description, Throwable t) {
             final IncQueryEngineImpl iqEngine = iqEngRef.get();
-            iqEngine.tainted = true;
-            iqEngine.lifecycleProvider.engineBecameTainted();
+            if (iqEngine != null) {
+                iqEngine.tainted = true;
+                iqEngine.lifecycleProvider.engineBecameTainted(description, t);
+            }
+        }
+        
+        private boolean noTaintDetectedYet = true;
+
+        protected void notifyTainted(String description, Throwable t) {
+            if (noTaintDetectedYet) {
+                noTaintDetectedYet = false;
+                engineBecameTainted(description, t);
+            }
+        }
+
+        @Override
+        public void error(String description, Throwable t) {
+            //Errors does not mean tainting        
+        }
+
+        @Override
+        public void fatal(String description, Throwable t) {
+            notifyTainted(description, t);
         }
     }
     
@@ -426,7 +442,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
         lifecycleProvider.removeListener(listener);
     }
-    
+
     // /**
     // * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate

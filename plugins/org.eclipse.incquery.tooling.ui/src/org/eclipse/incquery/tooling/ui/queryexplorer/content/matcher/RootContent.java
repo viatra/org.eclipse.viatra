@@ -12,15 +12,18 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -32,9 +35,12 @@ import org.eclipse.ui.IEditorPart;
 public class RootContent extends CompositeContent<Object, PatternMatcherRootContent> {
 
     private Map<PatternMatcherRootContentKey, PatternMatcherRootContent> mapping;
-
+    private ContentChildren<PatternMatcherRootContent> children;
+    private TreeViewer viewer;
+    
     public RootContent() {
         super(null);
+        this.children = new ContentChildren<PatternMatcherRootContent>();
         this.mapping = new HashMap<PatternMatcherRootContentKey, PatternMatcherRootContent>();
     }
 
@@ -81,6 +87,24 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
     @Override
     public String getText() {
         return null;
+    }
+
+    @Override
+    public IObservableList getChildren() {
+        return children;
+    }
+
+    @Override
+    public Iterator<PatternMatcherRootContent> getChildrenIterator() {
+        return children.getElements().iterator();
+    }
+
+    public void setViewer(TreeViewer viewer) {
+        this.viewer = viewer;
+    }
+
+    public TreeViewer getViewer() {
+        return viewer;
     }
 
 }

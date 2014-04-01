@@ -57,6 +57,7 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.EdgeInterpre
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
@@ -103,7 +104,7 @@ public class EPMToPBody {
     public PBody toPBody(PatternBody body) throws IncQueryException {
         try {
             PBody pBody = new PBody(query);
-
+            
             preProcessParameters(pBody);
             gatherBodyConstraints(body, pBody);
             return pBody;

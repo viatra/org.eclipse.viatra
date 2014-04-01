@@ -12,6 +12,7 @@ package org.eclipse.incquery.testing.ui.handlers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -86,14 +87,16 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		} else if(obj instanceof PatternMatcherRootContent) {
 		    PatternMatcherRootContent matcherRoot = (PatternMatcherRootContent) obj;
 			editor = matcherRoot.getEditorPart();
-			if(matcherRoot.getChildren().size() > 0) {
-				matchers.addAll(matcherRoot.getChildren());
-				for (PatternMatcherContent obsMatcher : matcherRoot.getChildren()) {
-                    IncQueryMatcher<?> matcher = obsMatcher.getMatcher();
-                    if(matcher != null && matcher.getEngine() != null) {
-                        engine = matcher.getEngine();
-                        break;
-                    }
+			Iterator<PatternMatcherContent> iterator = matcherRoot.getChildrenIterator();
+			
+			while (iterator.hasNext()) {
+			    PatternMatcherContent patternMatcherContent = iterator.next();
+			    matchers.add(patternMatcherContent);
+			    
+                IncQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
+                if(matcher != null && matcher.getEngine() != null) {
+                    engine = matcher.getEngine();
+                    break;
                 }
 			}
 		}

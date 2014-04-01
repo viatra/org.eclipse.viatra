@@ -247,21 +247,22 @@ public class SpecificationBuilder {
 
     protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
             throws IncQueryException {
-        Set<PBody> bodies = getBodies(pattern, query, converter);
+        Set<PBody> bodies = getBodies(pattern, converter);
         query.initializeBodies(bodies);
         return bodies;
     }
 
     public Set<PBody> getBodies(Pattern pattern, PQuery query) throws IncQueryException {
-        return getBodies(pattern, query, new EPMToPBody(pattern, query, context, patternMap));
+        return getBodies(pattern, new EPMToPBody(pattern, query, context, patternMap));
     }
-
-    public Set<PBody> getBodies(Pattern pattern, PQuery query, EPMToPBody converter) throws IncQueryException {
+    
+    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException {
         try {
             Set<PBody> bodies = Sets.newHashSet();
             for (PatternBody body : pattern.getBodies()) {
                 PBody pBody = converter.toPBody(body);
-                bodies.add(PBodyNormalizer.normalizeBody(pBody, context));
+                pBody = PBodyNormalizer.normalizeBody(pBody, context);
+                bodies.add(pBody);
             }
             return bodies;
         } catch (QueryPlannerException e) {

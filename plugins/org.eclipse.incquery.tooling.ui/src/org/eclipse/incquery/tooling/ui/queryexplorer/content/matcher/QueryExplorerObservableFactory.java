@@ -27,7 +27,7 @@ public class QueryExplorerObservableFactory implements IObservableFactory {
     @Override
     public IObservable createObservable(Object target) {
         if (target instanceof CompositeContent<?, ?>) {
-            return ((CompositeContent) target).children;
+            return ((CompositeContent) target).getChildren();
         }
         return null;
     }

@@ -11,27 +11,22 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * The middle level element in the tree viewer of the {@link QueryExplorer}. Instances of this class represent the
@@ -40,37 +35,34 @@ import org.eclipse.swt.widgets.Display;
  * @author Tamas Szabo (itemis AG)
  * 
  */
-public class PatternMatcherContent extends
-        CompositeContent<PatternMatcherRootContent, PatternMatchContent> {
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class PatternMatcherContent extends CompositeContent<PatternMatcherRootContent, PatternMatchContent> {
 
-    private static int maxDisplayMatchSetSize = 100;
-    private int actualMatchSetSize = 0;
-
-    private static final String KEY_ATTRIBUTE_COMPARABLE_INTERFACE = "The key attribute does not implement the Comparable interface!";
     private static final String KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION = "The key attribute of OrderBy annotation must look like \"ClassName.AttributeName\"!";
-    private Map<IPatternMatch, PatternMatchContent> mapping;
     private final boolean generated;
     private IPatternMatch filter;
     private Object[] parameterFilter;
     private String orderParameter;
-    private boolean descendingOrder;
+    private boolean ascendingOrder;
     private final String exceptionMessage;
-    private IncQueryModelUpdateListener modelUpdateListener;
     private IQuerySpecification<?> specification;
-    IncQueryMatcher<IPatternMatch> matcher;
-    private DeltaMonitor<IPatternMatch> deltaMonitor;
-    private Runnable processMatchesRunnable;
+    private IncQueryMatcher<IPatternMatch> matcher;
+    private ObservablePatternMatchList children;
+    private TransformerFunction transformerFunction;
+    private MatchComparator matchComparator;
+    private IListChangeListener listChangeListener;
 
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public PatternMatcherContent(PatternMatcherRootContent parent, IncQueryEngine engine,
             final IQuerySpecification<?> specification, boolean generated) {
         super(parent);
         this.specification = specification;
+        this.transformerFunction = new TransformerFunction(this);
+        this.listChangeListener = new ListChangeListener();
 
         String message = "";
         try {
             matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
-        } catch(IncQueryException e) {
+        } catch (IncQueryException e) {
             message = e.getShortMessage();
         } catch (Exception e) {
             message = e.getMessage();
@@ -79,51 +71,36 @@ public class PatternMatcherContent extends
         this.exceptionMessage = message;
         this.generated = generated;
         this.orderParameter = null;
-        
+
         DisplayUtil.removeOrderByPatternWarning(specification.getFullyQualifiedName());
 
         if (this.matcher != null) {
             initOrdering();
             initFilter();
+            children = new ObservablePatternMatchList(specification, engine, transformerFunction, matchComparator,
+                    filter);
+            children.addListChangeListener(listChangeListener);
             
-            setText(DisplayUtil.getMessage(matcher, actualMatchSetSize, specification.getFullyQualifiedName(), isCropped(),
+            // this is needed, because the label will not be set if there is no match in the beginning
+            setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
                     isGenerated(), isFiltered(), exceptionMessage));
-            
-            this.mapping = new HashMap<IPatternMatch, PatternMatchContent>();
-
-            this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
-            this.processMatchesRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (deltaMonitor.matchFoundEvents.size() > 0 || deltaMonitor.matchLostEvents.size() > 0) {
-                        processNewMatches(deltaMonitor.matchFoundEvents);
-                        processLostMatches(deltaMonitor.matchLostEvents);
-                        deltaMonitor.clear();
-                    }
-                    setText(DisplayUtil.getMessage(matcher, actualMatchSetSize, specification.getFullyQualifiedName(), isCropped(),
-                            isGenerated(), isFiltered(), exceptionMessage));
-                    updateHasChildren();
-                }
-            };
-
-            modelUpdateListener = new IncQueryModelUpdateListener() {
-
-                @Override
-                public void notifyChanged(ChangeLevel changeLevel) {
-                    // invoke the processing runnable on the UI thread, to ensure
-                    // databinding does not complain if the model is not
-                    // originally modified on the UI thread
-                    Display.getDefault().asyncExec(processMatchesRunnable);
-                }
-
-                @Override
-                public ChangeLevel getLevel() {
-                    return ChangeLevel.MATCHSET;
-                }
-            };
-            parent.getKey().getEngine().addModelUpdateListener(modelUpdateListener);
-            this.processMatchesRunnable.run();
         }
+    }
+
+    private class ListChangeListener implements IListChangeListener {
+
+        @Override
+        public void handleListChange(ListChangeEvent event) {
+            for (ListDiffEntry entry : event.diff.getDifferences()) {
+                if (!entry.isAddition()) {
+                    ((PatternMatchContent) entry.getElement()).dispose();
+                }
+            }
+
+            setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
+                    isGenerated(), isFiltered(), exceptionMessage));
+        }
+
     }
 
     /**
@@ -138,105 +115,23 @@ public class PatternMatcherContent extends
                 }
                 if (ap.getKey().matches("direction")) {
                     String direction = ((String) ap.getValue());
-                    if (direction.matches("desc")) {
-                        descendingOrder = true;
+                    if (direction.matches("asc")) {
+                        ascendingOrder = true;
                     } else {
-                        descendingOrder = false;
+                        ascendingOrder = false;
                     }
                 }
             }
-        }
-    }
 
-    /**
-     * Returns the index of the new match in the list based on the ordering set on the matcher.
-     * 
-     * @param match
-     *            the match that will be inserted
-     * @return -1 if the match should be inserted at the end of the list, else the actual index
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private int placeOfMatch(IPatternMatch match) {
-        if (orderParameter != null) {
-            String[] tokens = orderParameter.split("\\.");
-
-            if (tokens.length == 2) {
-                String orderParameterClass = tokens[0];
-                String orderParameterAttribute = tokens[1];
-
-                EObject obj = (EObject) match.get(orderParameterClass);
-                EStructuralFeature feature = DatabindingAdapterUtil.getFeature(obj, orderParameterAttribute);
-                Object value = obj.eGet(feature);
-                if (value instanceof Comparable) {
-
-                    for (int i = 0; i < children.size(); i++) {
-                        IPatternMatch compMatch = ((PatternMatchContent) children.get(i))
-                                .getPatternMatch();
-                        EObject compObj = (EObject) compMatch.get(orderParameterClass);
-                        EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj,
-                                orderParameterAttribute);
-                        Comparable compValue = (Comparable) compObj.eGet(compFeature);
-                        // descending order, the new position is the index where the current match param is greater than
-                        // the actual element
-                        if (descendingOrder) {
-                            if (compValue.compareTo(value) <= 0) {
-                                return i;
-                            }
-                        }
-                        // ascending order, the new position is the index where the current match param is smaller than
-                        // the actual element
-                        else {
-                            if (compValue.compareTo(value) >= 0) {
-                                return i;
-                            }
-                        }
-                    }
-                } else {
+            if (orderParameter != null) {
+                String[] tokens = orderParameter.split("\\.");
+                if (tokens.length != 2) {
                     DisplayUtil.addOrderByPatternWarning(this.matcher.getPatternName(),
-                            KEY_ATTRIBUTE_COMPARABLE_INTERFACE);
+                            KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
+                } else {
+                    matchComparator = new MatchComparator(matcher, tokens[0], tokens[1], ascendingOrder);
                 }
-            } else {
-                DisplayUtil.addOrderByPatternWarning(this.matcher.getPatternName(),
-                        KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION);
             }
-        }
-        return -1;
-    }
-
-    private void processNewMatches(Collection<IPatternMatch> matches) {
-        for (IPatternMatch s : matches) {
-            actualMatchSetSize++;
-            addMatch(s);
-        }
-    }
-
-    private void processLostMatches(Collection<IPatternMatch> matches) {
-        for (IPatternMatch s : matches) {
-            actualMatchSetSize--;
-            removeMatch(s);
-        }
-    }
-
-    private void addMatch(IPatternMatch match) {
-        if (actualMatchSetSize <= maxDisplayMatchSetSize) {
-            PatternMatchContent pm = new PatternMatchContent(this, match);
-            this.mapping.put(match, pm);
-            int index = placeOfMatch(match);
-
-            if (index == -1) {
-                this.children.addChild(pm);
-            } else {
-                this.children.addChild(index, pm);
-            }
-        }
-    }
-
-    private void removeMatch(IPatternMatch match) {
-        // null checks - eclipse closing - issue 162
-        PatternMatchContent observableMatch = this.mapping.remove(match);
-        if (observableMatch != null) {
-            this.children.removeChild(observableMatch);
-            observableMatch.dispose();
         }
     }
 
@@ -260,20 +155,10 @@ public class PatternMatcherContent extends
         }
     }
 
-    @SuppressWarnings("deprecation")
     public void setFilter(Object[] parameterFilter) {
         this.parameterFilter = parameterFilter.clone();
         this.filter = this.matcher.newMatch(this.parameterFilter);
-
-        Set<IPatternMatch> tmp = new HashSet<IPatternMatch>(mapping.keySet());
-
-        for (IPatternMatch match : tmp) {
-            removeMatch(match);
-        }
-
-        this.actualMatchSetSize = 0;
-        this.deltaMonitor = this.matcher.newFilteredDeltaMonitor(true, filter);
-        this.processMatchesRunnable.run();
+        this.children.setFilter(filter);
     }
 
     private boolean isFiltered() {
@@ -306,10 +191,6 @@ public class PatternMatcherContent extends
         return generated;
     }
 
-    public boolean isCropped() {
-        return actualMatchSetSize > maxDisplayMatchSetSize;
-    }
-
     /**
      * Returns true if the RETE matcher was created for this observable matcher, false otherwise.
      * 
@@ -319,13 +200,23 @@ public class PatternMatcherContent extends
         return matcher != null;
     }
 
+    @Override
+    public IObservableList getChildren() {
+        return children;
+    }
+
+    @Override
+    public Iterator<PatternMatchContent> getChildrenIterator() {
+        return children.iterator();
+    }
+
     /**
      * If the engine becomes tainted stop monitoring the matcher. This way the previous match set will remain stable and
      * the user can still observe the contents.
      */
-    public void stopMonitoring() {
-        ((PatternMatcherRootContent) parent).getKey().getEngine()
-                .removeModelUpdateListener(modelUpdateListener);
-    }
+    // public void stopMonitoring() {
+    // ((PatternMatcherRootContent) parent).getKey().getEngine()
+    // .removeModelUpdateListener(modelUpdateListener);
+    // }
 
 }

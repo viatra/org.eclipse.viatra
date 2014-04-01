@@ -218,6 +218,6 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         }
         
         @Override
-        public void engineBecameTainted() {}
+        public void engineBecameTainted(String description, Throwable t) {}
     };
 }

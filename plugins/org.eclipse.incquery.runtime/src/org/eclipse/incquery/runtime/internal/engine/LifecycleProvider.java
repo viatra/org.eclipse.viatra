@@ -77,11 +77,11 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
         }
 
         @Override
-        public void engineBecameTainted() {
+        public void engineBecameTainted(String description, Throwable t) {
             if (!listeners.isEmpty()) {
                 for (IncQueryEngineLifecycleListener listener : new ArrayList<IncQueryEngineLifecycleListener>(listeners)) {
                     try {
-                        listener.engineBecameTainted();
+                        listener.engineBecameTainted(description, t);
                     } catch (Exception ex) {
                         this.incQueryEngine.getLogger().error(
                                 "EMF-IncQuery encountered an error in delivering engine tainted notification to listener "

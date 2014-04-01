@@ -679,4 +679,18 @@ public interface NavigationHelper {
      */
     void resampleDerivedFeatures();
 
+    /**
+     * Adds a listener for internal errors in the index. A listener can only be added once.
+     * @param listener
+     * @returns true if the listener was not already added
+     * @since 0.8.0
+     */
+    boolean addIndexingErrorListener(IIndexingErrorListener listener);
+    /**
+     * Removes a listener for internal errors in the index
+     * @param listener
+     * @returns true if the listener was successfully removed (e.g. it did exist)
+     * @since 0.8.0
+     */
+    boolean removeIndexingErrorListener(IIndexingErrorListener listener);
 }

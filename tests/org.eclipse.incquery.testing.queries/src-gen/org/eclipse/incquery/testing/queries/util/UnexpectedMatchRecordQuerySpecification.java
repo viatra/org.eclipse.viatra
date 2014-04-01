@@ -78,7 +78,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_PatternName = body.getOrCreateVariableByName("PatternName");
       PVariable var__CorrespodingRecord = body.getOrCreateVariableByName("_CorrespodingRecord");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_ActualSet, "ActualSet"), 
         new ExportedParameter(body, var_ExpectedSet, "ExpectedSet"), 
         new ExportedParameter(body, var_Record, "Record")
@@ -97,7 +97,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
+    
     return bodies;
   }
   

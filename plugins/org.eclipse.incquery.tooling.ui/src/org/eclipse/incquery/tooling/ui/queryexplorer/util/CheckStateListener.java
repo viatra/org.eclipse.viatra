@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
+import java.util.Iterator;
+
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
@@ -68,14 +70,20 @@ public class CheckStateListener implements ICheckStateListener {
 
         if (event.getChecked() && !QueryExplorerPatternRegistry.getInstance().isActive(patternFqn)) {
             leaf.setSelected(true);
-            for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
+            
+            Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent().getChildrenIterator();
+            while (iterator.hasNext()) {
+                PatternMatcherRootContent root = iterator.next();
                 root.registerPattern(specification);
                 root.updateHasChildren();
             }
             QueryExplorerPatternRegistry.getInstance().addActivePattern(specification);
         } else if (!event.getChecked()) {
             leaf.setSelected(false);
-            for (PatternMatcherRootContent root : QueryExplorer.getInstance().getRootContent().getChildren()) {
+            
+            Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent().getChildrenIterator();
+            while (iterator.hasNext()) {
+                PatternMatcherRootContent root = iterator.next();
                 root.unregisterPattern(specification);
                 root.updateHasChildren();
             }

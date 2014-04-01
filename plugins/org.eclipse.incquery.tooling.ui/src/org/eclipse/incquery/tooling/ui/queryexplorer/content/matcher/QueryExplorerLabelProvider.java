@@ -13,6 +13,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -66,7 +67,7 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
 
         if (element instanceof PatternMatcherRootContent) {
             PatternMatcherRootContent root = (PatternMatcherRootContent) element;
-            if (root.isTainted()) {
+            if (root.isTainted() || root.getStatus().getSeverity() == IStatus.ERROR) {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_ERROR);
             } else {
                 return imageRegistry.get(IncQueryGUIPlugin.ICON_ROOT);
@@ -90,6 +91,17 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
             return ((BaseContent<?>) element).getText();
         }
         return null;
+    }
+
+    @Override
+    public String getToolTipText(Object element) {
+        if (element instanceof PatternMatcherRootContent) {
+            IStatus status = ((PatternMatcherRootContent) element).getStatus();
+            if (!status.isOK()) {
+                return String.format("%s. For details, check the Error Log view.", status.getMessage());
+            }
+        }
+        return super.getToolTipText(element);
     }
 
     @Override

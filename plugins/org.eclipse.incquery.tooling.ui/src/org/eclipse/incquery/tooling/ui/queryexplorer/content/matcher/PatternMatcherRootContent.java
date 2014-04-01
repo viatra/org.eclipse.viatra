@@ -12,18 +12,22 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.EngineTaintListener;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
@@ -43,12 +47,15 @@ import com.google.common.collect.Maps;
 public class PatternMatcherRootContent extends CompositeContent<RootContent, PatternMatcherContent> {
 
     private final Map<String, PatternMatcherContent> mapping;
+    private ContentChildren<PatternMatcherContent> children;
     private final PatternMatcherRootContentKey key;
-    private ContentEngineTaintListener taintListener;
+    private IncQueryEngineLifecycleListener taintListener;
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
+    private IStatus contentStatus;
 
     public PatternMatcherRootContent(RootContent parent, PatternMatcherRootContentKey key) {
         super(parent);
+        this.children = new ContentChildren<PatternMatcherContent>();
         this.taintListener = new ContentEngineTaintListener();
         this.mapping = Maps.newHashMap();
         this.key = key;
@@ -58,7 +65,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             key.setEngine(createEngine());
         }
         if (engine != null) {
-            engine.getLogger().addAppender(taintListener);
+            engine.addLifecycleListener(taintListener);
         }
     }
 
@@ -111,7 +118,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
-            engine.getLogger().removeAppender(taintListener);
+            engine.removeLifecycleListener(taintListener);
         }
     }
 
@@ -148,15 +155,26 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                     }
                 });
             }
+            contentStatus = Status.OK_STATUS;
         } catch (IncQueryException ex) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Cannot initialize pattern matcher engine.", ex));
+            reportMatcherError("Cannot initialize pattern matcher engine.", ex);
         } catch (InvocationTargetException e) {
-            logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
-                    "Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause()));
+            reportMatcherError("Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause());
         }
     }
 
+    private void reportMatcherError(String message, Throwable t) {
+        if (t != null) {
+            contentStatus = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                message, t);
+        } else {
+            contentStatus = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
+                    message);
+        }
+        logger.log(contentStatus);
+        getParent().getViewer().refresh(this);
+    }
+    
     private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
         for (IQuerySpecification<?> query : queries) {
             boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
@@ -168,13 +186,23 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         removeMatcher(specification.getFullyQualifiedName());
     }
 
-    private class ContentEngineTaintListener extends EngineTaintListener {
+    private class ContentEngineTaintListener implements IncQueryEngineLifecycleListener {
 
         @Override
-        public void engineBecameTainted() {
-            for (PatternMatcherContent matcher : mapping.values()) {
-                matcher.stopMonitoring();
-            }
+        public void engineBecameTainted(String description, Throwable t) {
+            reportMatcherError(description, t);
+        }
+
+        @Override
+        public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
+        }
+
+        @Override
+        public void engineWiped() {
+        }
+
+        @Override
+        public void engineDisposed() {
         }
         
     }
@@ -183,5 +211,20 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     public String getText() {
         return this.key.toString();
     }
+    
+    @Override
+    public IObservableList getChildren() {
+        return children;
+    }
 
+    @Override
+    public Iterator<PatternMatcherContent> getChildrenIterator() {
+        return children.getElements().iterator();
+    }
+
+    public IStatus getStatus() {
+        return contentStatus;
+    }
+
+    
 }

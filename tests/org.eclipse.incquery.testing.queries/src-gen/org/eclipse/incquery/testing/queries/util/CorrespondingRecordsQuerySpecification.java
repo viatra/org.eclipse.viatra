@@ -74,7 +74,7 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_CorrespondingRecord = body.getOrCreateVariableByName("CorrespondingRecord");
-      body.setExportedParameters(Arrays.asList(
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
         new ExportedParameter(body, var_Record, "Record"), 
         new ExportedParameter(body, var_CorrespondingRecord, "CorrespondingRecord")
       ));
@@ -85,7 +85,7 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       new Inequality(body, var_Record, var_CorrespondingRecord);
       new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance().instance());
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
   }
   

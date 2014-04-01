@@ -87,7 +87,7 @@ public abstract class QueryBasedFeature {
         }
 
         @Override
-        public void engineBecameTainted() {
+        public void engineBecameTainted(String description, Throwable t) {
         }
     }
 

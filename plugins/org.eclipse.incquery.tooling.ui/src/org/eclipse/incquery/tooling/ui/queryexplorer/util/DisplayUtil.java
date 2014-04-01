@@ -189,7 +189,7 @@ public class DisplayUtil {
      * @return
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn) {
-        return getMessage(matcher, matchesSize, patternFqn, false, true, false, null);
+        return getMessage(matcher, matchesSize, patternFqn, false, false, null);
     }
 
     /**
@@ -208,7 +208,7 @@ public class DisplayUtil {
      * @return the label associated to the matcher
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
-            String patternFqn, boolean isCropped, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
+            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
         if (matcher == null) {
             return String.format("%s - %s", patternFqn, exceptionMessage);
         } else {
@@ -225,11 +225,10 @@ public class DisplayUtil {
                 break;
             }
 
-            String isCroppedString = isCropped ? " - Cropped" : "";
             String isFilteredString = isFiltered ? " - Filtered" : "";
             String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
 
-            return String.format("%s - %s %s %s %s", matcher.getPatternName(), matchString, isCroppedString, isFilteredString, isGeneratedString);
+            return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, isFilteredString, isGeneratedString);
         }
     }
 
@@ -256,7 +255,7 @@ public class DisplayUtil {
         IQuerySpecification<?> pattern = null;
 
         // find PatternUI annotation
-        for (IQuerySpecification<?> p : QueryExplorerPatternRegistry.getInstance().getAllPatterns()) {
+        for (IQuerySpecification<?> p : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
             if (p.getFullyQualifiedName().matches(patternName)) {
                 pattern = p;
 

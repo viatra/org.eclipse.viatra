@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.handlers;
 
+import java.util.Iterator;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -38,10 +40,10 @@ public class InitializeRetevisHandler extends AbstractHandler {
         ISelection selection = HandlerUtil.getActiveMenuSelection(event);
         if (selection instanceof TreeSelection) {
             PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
-            if (root.getChildren() != null && root.getChildren().size() > 0)
+            Iterator<PatternMatcherContent> iterator = root.getChildrenIterator();
+            if (iterator.hasNext()) {
                 try {
-                    PatternMatcherContent pm = root.getChildren().get(0);
-                    // String patternFqn = pl.getFullPatternNamePrefix()+"."+pl.getPatternNameFragment();
+                    PatternMatcherContent pm = iterator.next();
                     ReteBoundary rb = ((AdvancedIncQueryEngine) pm.getMatcher().getEngine()).getReteEngine()
                             .getBoundary();
                     ReteVisView.getInstance().setContent(rb);
@@ -50,6 +52,7 @@ public class InitializeRetevisHandler extends AbstractHandler {
                 } catch (IllegalArgumentException e) {
                     throw new ExecutionException("Invalid selrection", e);
                 }
+            }
         }
 
         return null;
