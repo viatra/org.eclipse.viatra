@@ -78,7 +78,7 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
       
       new TypeBinary(body, context, var_Act, var_Next, getFeatureLiteral("http://process/1.0", "Activity", "next"), "http://process/1.0/Activity.next");
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

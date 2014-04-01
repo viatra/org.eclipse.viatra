@@ -3,6 +3,7 @@ package system.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 import system.queries.TransitiveAffectedTasksThroughDataMatch;
 import system.queries.util.TransitiveAffectedTasksThroughDataQuerySpecification;
@@ -74,6 +76,8 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   private final static int POSITION_SOURCETASK = 0;
   
   private final static int POSITION_AFFECTEDTASK = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(TransitiveAffectedTasksThroughDataMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -287,9 +291,10 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch tupleToMatch(final Tuple t) {
     try {
-    	return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) t.get(POSITION_SOURCETASK), (process.Task) t.get(POSITION_AFFECTEDTASK));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) t.get(POSITION_SOURCETASK), (process.Task) t.get(POSITION_AFFECTEDTASK));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -297,9 +302,10 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatch(final Object[] match) {
     try {
-    	return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -307,9 +313,10 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new TransitiveAffectedTasksThroughDataMatch.Mutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TransitiveAffectedTasksThroughDataMatch.Mutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

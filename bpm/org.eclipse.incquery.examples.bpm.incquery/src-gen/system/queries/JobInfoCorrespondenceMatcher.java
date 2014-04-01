@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import operation.RuntimeInformation;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -12,6 +13,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import system.Job;
 import system.queries.JobInfoCorrespondenceMatch;
 import system.queries.util.JobInfoCorrespondenceQuerySpecification;
@@ -71,6 +73,8 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   private final static int POSITION_JOB = 0;
   
   private final static int POSITION_INFO = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(JobInfoCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -284,9 +288,10 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return new JobInfoCorrespondenceMatch.Immutable((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobInfoCorrespondenceMatch.Immutable((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -294,9 +299,10 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return new JobInfoCorrespondenceMatch.Immutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobInfoCorrespondenceMatch.Immutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -304,9 +310,10 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new JobInfoCorrespondenceMatch.Mutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobInfoCorrespondenceMatch.Mutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

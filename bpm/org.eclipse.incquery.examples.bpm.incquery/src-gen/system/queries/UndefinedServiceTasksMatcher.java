@@ -3,6 +3,7 @@ package system.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 import system.queries.UndefinedServiceTasksMatch;
 import system.queries.util.UndefinedServiceTasksQuerySpecification;
@@ -70,6 +72,8 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   }
   
   private final static int POSITION_TASK = 0;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(UndefinedServiceTasksMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -219,9 +223,10 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch tupleToMatch(final Tuple t) {
     try {
-    	return new UndefinedServiceTasksMatch.Immutable((process.Task) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new UndefinedServiceTasksMatch.Immutable((process.Task) t.get(POSITION_TASK));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -229,9 +234,10 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatch(final Object[] match) {
     try {
-    	return new UndefinedServiceTasksMatch.Immutable((process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new UndefinedServiceTasksMatch.Immutable((process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -239,9 +245,10 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new UndefinedServiceTasksMatch.Mutable((process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new UndefinedServiceTasksMatch.Mutable((process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

@@ -3,6 +3,7 @@ package system.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 import system.Data;
 import system.queries.DataTaskReadCorrespondenceMatch;
@@ -71,6 +73,8 @@ public class DataTaskReadCorrespondenceMatcher extends BaseMatcher<DataTaskReadC
   private final static int POSITION_DATA = 0;
   
   private final static int POSITION_TASK = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(DataTaskReadCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -284,9 +288,10 @@ public class DataTaskReadCorrespondenceMatcher extends BaseMatcher<DataTaskReadC
   @Override
   protected DataTaskReadCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return new DataTaskReadCorrespondenceMatch.Immutable((system.Data) t.get(POSITION_DATA), (process.Task) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new DataTaskReadCorrespondenceMatch.Immutable((system.Data) t.get(POSITION_DATA), (process.Task) t.get(POSITION_TASK));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -294,9 +299,10 @@ public class DataTaskReadCorrespondenceMatcher extends BaseMatcher<DataTaskReadC
   @Override
   protected DataTaskReadCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return new DataTaskReadCorrespondenceMatch.Immutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new DataTaskReadCorrespondenceMatch.Immutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -304,9 +310,10 @@ public class DataTaskReadCorrespondenceMatcher extends BaseMatcher<DataTaskReadC
   @Override
   protected DataTaskReadCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new DataTaskReadCorrespondenceMatch.Mutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new DataTaskReadCorrespondenceMatch.Mutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

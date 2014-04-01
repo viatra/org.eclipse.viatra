@@ -78,7 +78,7 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
       
       new TypeBinary(body, context, var_Job, var_Task, getFeatureLiteral("http://system/1.0", "Job", "tasks"), "http://system/1.0/Job.tasks");
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

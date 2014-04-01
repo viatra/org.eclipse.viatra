@@ -6,6 +6,7 @@ import java.util.Set;
 import operation.ChecklistEntry;
 import operation.queries.TaskChecklistEntryJobCorrespondenceMatch;
 import operation.queries.util.TaskChecklistEntryJobCorrespondenceQuerySpecification;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -14,6 +15,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 import system.Job;
 
@@ -77,6 +79,8 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   private final static int POSITION_CLE = 1;
   
   private final static int POSITION_JOB = 2;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(TaskChecklistEntryJobCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -336,9 +340,10 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) t.get(POSITION_TASK), (operation.ChecklistEntry) t.get(POSITION_CLE), (system.Job) t.get(POSITION_JOB));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) t.get(POSITION_TASK), (operation.ChecklistEntry) t.get(POSITION_CLE), (system.Job) t.get(POSITION_JOB));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -346,9 +351,10 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -356,9 +362,10 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new TaskChecklistEntryJobCorrespondenceMatch.Mutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new TaskChecklistEntryJobCorrespondenceMatch.Mutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

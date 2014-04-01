@@ -6,6 +6,7 @@ import java.util.Set;
 import operation.Checklist;
 import operation.queries.ChecklistProcessCorrespondenceMatch;
 import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -14,6 +15,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * Generated pattern matcher API of the operation.queries.ChecklistProcessCorrespondence pattern,
@@ -70,6 +72,8 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   private final static int POSITION_CHECKLIST = 0;
   
   private final static int POSITION_PROCESS = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(ChecklistProcessCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -283,9 +287,10 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) t.get(POSITION_CHECKLIST), (process.Process) t.get(POSITION_PROCESS));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) t.get(POSITION_CHECKLIST), (process.Process) t.get(POSITION_PROCESS));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -293,9 +298,10 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -303,9 +309,10 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new ChecklistProcessCorrespondenceMatch.Mutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ChecklistProcessCorrespondenceMatch.Mutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

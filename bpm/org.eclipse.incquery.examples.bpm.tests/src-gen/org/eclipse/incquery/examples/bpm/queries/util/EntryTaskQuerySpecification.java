@@ -78,7 +78,7 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
       
       new TypeBinary(body, context, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

@@ -78,7 +78,7 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
       
       new TypeBinary(body, context, var_Proc, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
