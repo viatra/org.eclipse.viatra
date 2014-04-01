@@ -3,6 +3,7 @@ package org.eclipse.incquery.examples.bpm.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatch;
 import org.eclipse.incquery.examples.bpm.queries.util.ProcessTasksQuerySpecification;
@@ -13,6 +14,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Activity;
 
 /**
@@ -68,6 +70,8 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   private final static int POSITION_PROC = 0;
   
   private final static int POSITION_TASK = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(ProcessTasksMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -282,7 +286,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   protected ProcessTasksMatch tupleToMatch(final Tuple t) {
     try {
     	return new ProcessTasksMatch.Immutable((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -292,7 +296,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   protected ProcessTasksMatch arrayToMatch(final Object[] match) {
     try {
     	return new ProcessTasksMatch.Immutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -302,7 +306,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   protected ProcessTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
     	return new ProcessTasksMatch.Mutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     

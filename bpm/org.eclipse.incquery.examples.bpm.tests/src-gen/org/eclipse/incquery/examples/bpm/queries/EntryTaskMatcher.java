@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import operation.ChecklistEntry;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatch;
 import org.eclipse.incquery.examples.bpm.queries.util.EntryTaskQuerySpecification;
@@ -14,6 +15,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 
 /**
@@ -69,6 +71,8 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   private final static int POSITION_ENTRY = 0;
   
   private final static int POSITION_TASK = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(EntryTaskMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -283,7 +287,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   protected EntryTaskMatch tupleToMatch(final Tuple t) {
     try {
     	return new EntryTaskMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_ENTRY), (process.Task) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -293,7 +297,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   protected EntryTaskMatch arrayToMatch(final Object[] match) {
     try {
     	return new EntryTaskMatch.Immutable((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -303,7 +307,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   protected EntryTaskMatch arrayToMatchMutable(final Object[] match) {
     try {
     	return new EntryTaskMatch.Mutable((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     

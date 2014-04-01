@@ -3,6 +3,7 @@ package org.eclipse.incquery.examples.bpm.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatch;
 import org.eclipse.incquery.examples.bpm.queries.util.NextActivityQuerySpecification;
@@ -13,6 +14,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Activity;
 
 /**
@@ -68,6 +70,8 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   private final static int POSITION_ACT = 0;
   
   private final static int POSITION_NEXT = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(NextActivityMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -282,7 +286,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   protected NextActivityMatch tupleToMatch(final Tuple t) {
     try {
     	return new NextActivityMatch.Immutable((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -292,7 +296,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   protected NextActivityMatch arrayToMatch(final Object[] match) {
     try {
     	return new NextActivityMatch.Immutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     
@@ -302,7 +306,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   protected NextActivityMatch arrayToMatchMutable(final Object[] match) {
     try {
     	return new NextActivityMatch.Mutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
+    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
     	return null;
     }
     

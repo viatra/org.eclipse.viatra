@@ -155,7 +155,6 @@ class RuntimeListenerTest {
     
     //test wipe
     engine.wipe
-    engine.logger.fatal("Tainting in progress")
     
     //test unsuccesful remove
     index.myLevel = ChangeLevel::MATCHSET
