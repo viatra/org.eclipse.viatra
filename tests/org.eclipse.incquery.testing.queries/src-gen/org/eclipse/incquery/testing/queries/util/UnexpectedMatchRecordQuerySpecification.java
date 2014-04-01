@@ -97,7 +97,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
     }
-    
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

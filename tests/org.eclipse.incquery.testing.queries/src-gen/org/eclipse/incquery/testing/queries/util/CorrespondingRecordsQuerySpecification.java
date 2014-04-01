@@ -85,7 +85,7 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       new Inequality(body, var_Record, var_CorrespondingRecord);
       new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance().instance());
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

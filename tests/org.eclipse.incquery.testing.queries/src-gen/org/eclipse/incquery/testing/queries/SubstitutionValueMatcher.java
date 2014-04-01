@@ -3,6 +3,7 @@ package org.eclipse.incquery.testing.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
 import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
 import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification;
@@ -91,6 +93,8 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   private final static int POSITION_SUBSTITUTION = 0;
   
   private final static int POSITION_VALUE = 1;
+  
+  private final static Logger logger = IncQueryLoggingUtil.getLogger(SubstitutionValueMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -304,9 +308,10 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -314,9 +319,10 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -324,9 +330,10 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new SubstitutionValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new SubstitutionValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+    } catch(ClassCastException e) {
+      logger.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

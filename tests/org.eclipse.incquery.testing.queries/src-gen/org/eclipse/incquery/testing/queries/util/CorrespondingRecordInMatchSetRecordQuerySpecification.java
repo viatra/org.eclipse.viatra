@@ -89,7 +89,7 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
       new TypeBinary(body, context, var_ExpectedSet, var_CorrespodingRecord, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new PositivePatternCall(body, new FlatTuple(var_Record, var_CorrespodingRecord), CorrespondingRecordsQuerySpecification.instance());
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

@@ -106,7 +106,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       annotation.addAttribute("feature","role");
       addAnnotation(annotation);
     }
-    
+    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   
