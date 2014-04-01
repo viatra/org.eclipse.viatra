@@ -12,7 +12,10 @@ package org.eclipse.incquery.runtime.matchers.planning.operations;
 
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Abstract superclass for representing a high-level query evaluation operation.
@@ -30,6 +33,19 @@ public abstract class POperation {
 	public abstract Set<? extends PConstraint> getDeltaConstraints();
 	
 	public abstract String getShortName();
+	
+	/**
+	 * @return the number of SubPlans that must be specified as parents
+	 */
+	public abstract int numParentSubPlans();
+	
+	/**
+	 * Checks whether this constraint can be properly applied at the given SubPlan.
+	 */
+	public void checkConsistency(SubPlan subPlan) {
+		Preconditions.checkArgument(this == subPlan.getOperation(), "POperation misalignment");
+		Preconditions.checkArgument(subPlan.getParentPlans().size() == numParentSubPlans(), "Incorrect number of parent SubPlans");
+	}
 		
 	@Override
 	public String toString() {

@@ -17,7 +17,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 
 /**
- * Represents a base relation defined by the instance set of an enumerable PConstraint.
+ * Represents a base relation defined by the instance set of an enumerable PConstraint; there are no parent SubPlans.
+ * 
+ * <p> <b>WARNING</b>: if there are coinciding variables in the variable tuple of the enumerable constraint, 
+ *   it is the responsibility of the compiler to check them for equality.
  * @author Bergmann Gabor
  *
  */
@@ -37,7 +40,10 @@ public class PEnumerate extends POperation {
 	public Set<? extends PConstraint> getDeltaConstraints() {
 		return Collections.singleton(enumerablePConstraint);
 	}
-
+	@Override
+	public int numParentSubPlans() {
+		return 0;
+	}
 	@Override
 	public String getShortName() {
 		return enumerablePConstraint.toString();

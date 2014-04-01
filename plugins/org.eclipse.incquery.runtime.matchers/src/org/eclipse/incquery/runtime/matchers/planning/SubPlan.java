@@ -42,6 +42,7 @@ public class SubPlan {
 	private final Set<PVariable> introducedVariables; // delta compared to first parent
     private Set<PConstraint> allConstraints;
     private Set<PConstraint> deltaConstraints; // delta compared to all parents
+    private Set<PConstraint> externallyInferredConstraints; // inferred in addition to direct consequences of the operation and parents 
     
 
     
@@ -57,6 +58,7 @@ public class SubPlan {
 		this.parentPlans = parentPlans;
 		this.operation = operation;
 		
+		this.externallyInferredConstraints = new HashSet<PConstraint>();
 		this.deltaConstraints = new HashSet<PConstraint>(operation.getDeltaConstraints());
 		// TODO does not work for union
         this.allConstraints = new HashSet<PConstraint>(deltaConstraints);
@@ -84,6 +86,8 @@ public class SubPlan {
         this.introducedVariables = new HashSet<PVariable>(this.visibleVariables);
         if (!parentPlans.isEmpty()) 
         	introducedVariables.removeAll(parentPlans.get(0).getVisibleVariables());
+        
+        operation.checkConsistency(this);
 	}
 	
 	
@@ -118,6 +122,7 @@ public class SubPlan {
     }
 
     public void inferConstraint(PConstraint constraint) {
+    	externallyInferredConstraints.add(constraint);
     	deltaConstraints.add(constraint);
     	allConstraints.add(constraint);
     }

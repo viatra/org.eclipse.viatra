@@ -8,11 +8,14 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.matchers.planning;
+package org.eclipse.incquery.runtime.rete.construction;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;

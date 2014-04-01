@@ -15,13 +15,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
-import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
-import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
-import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
@@ -93,11 +90,11 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
 
     }
 
-    public SubPlan getSidePlan(IOperationCompiler compiler) throws QueryPlannerException {
-        SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, query);
-        sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
-        return sidePlan;
-    }
+//    public SubPlan getSidePlan(IOperationCompiler compiler) throws QueryPlannerException {
+//        SubPlan sidePlan = compiler.patternCallPlan(actualParametersTuple, query);
+//        sidePlan = BuildHelper.enforceVariableCoincidences(compiler, sidePlan);
+//        return sidePlan;
+//    }
 
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {

@@ -20,5 +20,5 @@ import org.eclipse.incquery.runtime.matchers.psystem.PBody;
  * @author Gabor Bergmann
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan layout(PBody pSystem, IOperationCompiler compiler, IPatternMatcherContext context) throws QueryPlannerException;
+    public SubPlan layout(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) throws QueryPlannerException;
 }

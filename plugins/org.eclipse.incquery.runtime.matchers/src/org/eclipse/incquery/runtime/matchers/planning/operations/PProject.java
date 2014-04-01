@@ -10,53 +10,71 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.planning.operations;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 /**
- * Represents a projection to a limited set of variables.
- * <p> May optionally indicate that projections of tuples are inferred to be unique, no actual check needed.
+ * Represents a projection of a single parent SubPlan onto a limited set of variables.
+ * <p> May optionally prescribe an ordering of variables (List, as opposed to Set).
  * 
  * @author Bergmann Gabor
  *
  */
 public class PProject extends POperation {
 
-	private Set<PVariable> toVariables;
-	// TODO leave here? is this a problem in equivalence checking?
-	private boolean uniquenessCheckNeededAfterwards = true;
+	private Collection<PVariable> toVariables;
+	private boolean ordered;
 		
 	
 	public PProject(Set<PVariable> toVariables) {
 		super();
 		this.toVariables = toVariables;
+		this.ordered = false;
+	}
+	public PProject(List<PVariable> toVariables) {
+		super();
+		this.toVariables = toVariables;
+		this.ordered = true;
 	}
 	
-	public boolean isUniquenessCheckNeededAfterwards() {
-		return uniquenessCheckNeededAfterwards;
-	}
-	public void setUniquenessCheckNeededAfterwards(
-			boolean uniquenessCheckNeededAfterwards) {
-		this.uniquenessCheckNeededAfterwards = uniquenessCheckNeededAfterwards;
-	}
-	public Set<PVariable> getToVariables() {
+	public Collection<PVariable> getToVariables() {
 		return toVariables;
 	}
-
+	public boolean isOrdered() {		
+		return ordered;
+	}
+	
 	@Override
 	public Set<? extends PConstraint> getDeltaConstraints() {
 		return Collections.emptySet();
 	}
-
+	@Override
+	public int numParentSubPlans() {
+		return 1;
+	}
+	@Override
+	public void checkConsistency(SubPlan subPlan) {
+		super.checkConsistency(subPlan);
+		final SubPlan parentPlan = subPlan.getParentPlans().get(0);
+		Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(toVariables),
+				"Variables missing from project: "  + 
+					Joiner.on(',').join(Sets.difference(new HashSet<PVariable>(toVariables), parentPlan.getVisibleVariables())));
+	}
 
 	@Override
 	public String getShortName() {
-		return String.format("PROJECT%s_{%s}", uniquenessCheckNeededAfterwards? "" : "*", Joiner.on(",").join(toVariables));
+		return String.format("PROJECT%s_{%s}", ordered? "!" : "", Joiner.on(",").join(toVariables));
 	}
 
 	@Override

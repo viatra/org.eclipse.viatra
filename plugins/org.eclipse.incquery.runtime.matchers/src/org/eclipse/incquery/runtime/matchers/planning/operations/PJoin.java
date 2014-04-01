@@ -11,42 +11,50 @@
 package org.eclipse.incquery.runtime.matchers.planning.operations;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-
-import com.google.common.base.Joiner;
 
 /**
- * Represents a natural join.
+ * Represents a natural join of two parent SubPlans.
  * @author Bergmann Gabor
  *
  */
 public class PJoin extends POperation {
 	
-	// TODO leave here? is this a problem in equivalnece checking?
-	private Set<PVariable> onVariables;
-	
+//	// TODO leave here? is this a problem in equivalnece checking?
+//	private Set<PVariable> onVariables;
 
-	public PJoin(Set<PVariable> onVariables) {
+	public PJoin(/*Set<PVariable> onVariables*/) {
 		super();
-		this.onVariables = new HashSet<PVariable>(onVariables);
+		//this.onVariables = new HashSet<PVariable>(onVariables);
 	}
-	public Set<PVariable> getOnVariables() {
-		return onVariables;
-	}
+//	public Set<PVariable> getOnVariables() {
+//		return onVariables;
+//	}
 
 	@Override
 	public Set<? extends PConstraint> getDeltaConstraints() {
 		return Collections.emptySet();
 	}
+	@Override
+	public int numParentSubPlans() {
+		return 2;
+	}
 
 	@Override
 	public String getShortName() {
-		return String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
+		return "JOIN"; //String.format("JOIN_{%s}", Joiner.on(",").join(onVariables));
 	}
+
+	@Override
+	public void checkConsistency(SubPlan subPlan) {
+		super.checkConsistency(subPlan);
+//		for (SubPlan parentPlan : subPlan.getParentPlans())
+//			Preconditions.checkArgument(parentPlan.getVisibleVariables().containsAll(onVariables),
+//					"Variables missing from join: " + Joiner.on(',').join(Sets.difference(onVariables, parentPlan.getVisibleVariables())));		
+	}	
 	
 	@Override
 	public int hashCode() {

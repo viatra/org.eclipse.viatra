@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.planning.operations;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
@@ -20,7 +22,7 @@ import com.google.common.base.Joiner;
 
 
 /**
- * No constraints, just a set of a priori known variables. Satisfied by a single tuple.
+ * No constraints, and no parent SubPlan, just a (possibly empty) set of a priori known variables. Satisfied by a single tuple.
  * 
  * <p> Can also be used without a priori variables, 
  *   e.g. as a "virtual parent" in extreme cases, 
@@ -38,6 +40,9 @@ public class PStart extends POperation {
 		super();
 		this.aPrioriVariables = aPrioriVariables;
 	}
+	public PStart(PVariable... aPrioriVariables) {
+		this(new HashSet<PVariable>(Arrays.asList(aPrioriVariables)));
+	}
 	public Set<PVariable> getAPrioriVariables() {
 		return aPrioriVariables;
 	}
@@ -45,6 +50,10 @@ public class PStart extends POperation {
 	@Override
 	public String getShortName() {
 		return String.format("START_{%s}", Joiner.on(',').join(aPrioriVariables));
+	}
+	@Override
+	public int numParentSubPlans() {
+		return 0;
 	}
 
 	@Override

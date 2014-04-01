@@ -13,12 +13,18 @@ package org.eclipse.incquery.runtime.matchers.planning.operations;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Represents a constraint application on a single parent SubPlan. 
  * <p> Either a "selection" filter operation according to a deferred PConstraint (or transform in case of eval/aggregate), or
  * alternatively a shorthand for PJoin + a PEnumerate on the right input for an enumerable PConstraint.
+ * 
+ * <p> <b>WARNING</b>: if there are coinciding variables in the variable tuple of the enumerable constraint, 
+ *   it is the responsibility of the compiler to check them for equality.
  * 
  * @author Bergmann Gabor
  *
@@ -43,6 +49,22 @@ public class PApply extends POperation {
 	@Override
 	public Set<? extends PConstraint> getDeltaConstraints() {
 		return Collections.singleton(pConstraint);
+	}
+	
+	@Override
+	public int numParentSubPlans() {
+		return 1;
+	}
+	
+	@Override
+	public void checkConsistency(SubPlan subPlan) {
+		super.checkConsistency(subPlan);
+		for (SubPlan parentPlan : subPlan.getParentPlans())
+			Preconditions.checkArgument(!parentPlan.getAllEnforcedConstraints().contains(pConstraint),
+					"Double-checking constraint " + pConstraint);		
+		// TODO obtain context?
+		//if (pConstraint instanceof DeferredPConstraint)
+		//	Preconditions.checkArgument(((DeferredPConstraint) pConstraint).isReadyAt(subPlan, context))
 	}
 	
 	@Override

@@ -18,12 +18,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
-import org.eclipse.incquery.runtime.matchers.planning.SubPlanProcessor;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PEnumerate;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PJoin;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PStart;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -40,28 +44,30 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
-    public SubPlan layout(PBody pSystem, IOperationCompiler compiler, IPatternMatcherContext context)
+    public SubPlan layout(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context)
             throws QueryPlannerException {
-        return new Scaffold(pSystem, compiler, context).run();
+        return new Scaffold(pSystem, /*compiler,*/ context).run();
     }
 
 	public class Scaffold {
         PBody pSystem;
         PQuery query;
         IPatternMatcherContext context;
-        IOperationCompiler compiler;
-        SubPlanProcessor planProcessor = new SubPlanProcessor();
+        //IOperationCompiler compiler;
+        //SubPlanProcessor planProcessor = new SubPlanProcessor();
+        SubPlanFactory planFactory;
 
         Set<DeferredPConstraint> deferredConstraints = null;
         Set<EnumerablePConstraint> enumerableConstraints = null;
         Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
 
-        Scaffold(PBody pSystem, IOperationCompiler compiler, IPatternMatcherContext context) {
+        Scaffold(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) {
             this.pSystem = pSystem;
             this.context = context;
+            this.planFactory = new SubPlanFactory(pSystem);
             query = pSystem.getPattern();
-            this.compiler = compiler;
-            planProcessor.setCompiler(compiler);
+            //this.compiler = compiler;
+            //planProcessor.setCompiler(compiler);
         }
 
         /**
@@ -78,11 +84,11 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 deferredConstraints = pSystem.getConstraintsOfType(DeferredPConstraint.class);
                 enumerableConstraints = pSystem.getConstraintsOfType(EnumerablePConstraint.class);
                 for (EnumerablePConstraint enumerable : enumerableConstraints) {
-                    SubPlan plan = planProcessor.processEnumerableConstraint(enumerable);
+                    SubPlan plan = planFactory.createSubPlan(new PEnumerate(enumerable));
                     admitSubPlan(plan);
                 }
                 if (enumerableConstraints.isEmpty()) { // EXTREME CASE
-                    SubPlan plan = compiler.buildStartingPlan(new Object[] {}, new Object[] {});
+                    SubPlan plan = planFactory.createSubPlan(new PStart());
                     admitSubPlan(plan);
                 }
 
@@ -93,18 +99,23 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                     List<JoinCandidate> candidates = generateJoinCandidates();
                     JoinOrderingHeuristics ordering = new JoinOrderingHeuristics();
                     JoinCandidate selectedJoin = Collections.min(candidates, ordering);
-                    doJoin(selectedJoin.getPrimary(), selectedJoin.getSecondary());
+                    doJoin(selectedJoin);
                 }
-
-                // FINAL CHECK, whether all exported variables are present
                 assert (forefront.size() == 1);
-                SubPlan finalPlan = forefront.iterator().next();
+
+                // PROJECT TO PARAMETERS
+                SubPlan preFinalPlan = forefront.iterator().next();
+                SubPlan finalPlan = planFactory.createSubPlan(new PProject(pSystem.getSymbolicParameterVariables()), preFinalPlan);
+                
+                // FINAL CHECK, whether all exported variables are present + all constraint satisfied
                 BuildHelper.finalCheck(pSystem, finalPlan, context);
+    			// TODO integrate the check above in SubPlan / POperation 
 
                 context.logDebug(String.format(
-                		"%s: patternbody build concluded for %s",
+                		"%s: patternbody query plan concluded for %s as: %s",
                 		getClass().getSimpleName(), 
-                		query.getFullyQualifiedName()));
+                		query.getFullyQualifiedName(),
+                		finalPlan.toLongString()));
                return finalPlan;
             } catch (RetePatternBuildException ex) {
                 ex.setPatternDescription(query);
@@ -120,7 +131,8 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 for (SubPlan a : forefront) {
                     if (aIndex++ >= bIndex)
                         break;
-                    candidates.add(new JoinCandidate(a, b));
+                    final SubPlan joinedPlan = planFactory.createSubPlan(new PJoin(), a, b);
+                    candidates.add(new JoinCandidate(joinedPlan));
                 }
                 bIndex++;
             }
@@ -132,14 +144,14 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
         			!plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
-        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(compiler, plan, true);
+        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(planFactory, plan, true);
 				plan = trimmed;
         	}        	
         	// are there any checkable constraints?
             for (DeferredPConstraint deferred : deferredConstraints) {
                 if (!plan.getAllEnforcedConstraints().contains(deferred)) {
                     if (deferred.isReadyAt(plan, context)) {
-                        admitSubPlan(planProcessor.processDeferredConstraint(deferred, plan));
+                        admitSubPlan(planFactory.createSubPlan(new PApply(deferred), plan));
                         return;
                     }
                 }
@@ -148,12 +160,11 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             forefront.add(plan);
         }
 
-        private void doJoin(SubPlan primaryPlan, SubPlan secondaryPlan)
+        private void doJoin(JoinCandidate selectedJoin)
                 throws QueryPlannerException {
-            SubPlan joinedPlan = BuildHelper.naturalJoin(compiler, primaryPlan, secondaryPlan);
-            forefront.remove(primaryPlan);
-            forefront.remove(secondaryPlan);
-            admitSubPlan(joinedPlan);
+            forefront.remove(selectedJoin.getPrimary());
+            forefront.remove(selectedJoin.getSecondary());
+            admitSubPlan(selectedJoin.getJoinedPlan());
         }
 
     }

@@ -79,7 +79,7 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
 
     Set<PVariable> boundVariables(PConstraint o) {
         Set<PVariable> boundVariables = CollectionsFactory.getSet(o.getAffectedVariables());//new HashSet<PVariable>(o.getAffectedVariables());
-        boundVariables.retainAll(plan.getVariablesIndex().keySet());
+        boundVariables.retainAll(plan.getVisibleVariables());
         return boundVariables;
     }
 
