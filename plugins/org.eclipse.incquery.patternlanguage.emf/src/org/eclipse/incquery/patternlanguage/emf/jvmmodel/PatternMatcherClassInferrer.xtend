@@ -51,7 +51,7 @@ class PatternMatcherClassInferrer {
    				initializer = [append('''«pattern.parameters.indexOf(variable)»''')]
    			]
    		}
-   		matchClass.members += pattern.toField("logger", pattern.newTypeRef(typeof(Logger))) [
+   		matchClass.members += pattern.toField("LOGGER", pattern.newTypeRef(typeof(Logger))) [
    			static = true
    			final = true
    			initializer = [

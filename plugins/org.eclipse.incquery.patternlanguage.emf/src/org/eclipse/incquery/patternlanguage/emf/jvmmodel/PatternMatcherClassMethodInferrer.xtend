@@ -265,9 +265,9 @@ class PatternMatcherClassMethodInferrer {
   	def inferErrorLogging(String message, String exceptionName,  ITreeAppendable appendable) {
   		appendable.newLine
   		if(exceptionName == null){
-	  		appendable.append('''logger.error("«message»");''')
+	  		appendable.append('''LOGGER.error("«message»");''')
   		} else {
-  			appendable.append('''logger.error("«message»",«exceptionName»);''')
+  			appendable.append('''LOGGER.error("«message»",«exceptionName»);''')
   		}
 	}
 
