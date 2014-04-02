@@ -66,7 +66,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
-    Set<PBody> bodies = Sets.newHashSet();
+    Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
@@ -78,78 +78,6 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       
       
       new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MiscellaneousSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/MiscellaneousSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "FloatSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/FloatSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "StringSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/StringSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DoubleSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DoubleSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DateSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DateSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "BooleanSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/BooleanSubstitution.value");
-      bodies.add(body);
-    }{
-      PBody body = new PBody(this);
-      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
-      PVariable var_Value = body.getOrCreateVariableByName("Value");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Substitution, "Substitution"), 
-        new ExportedParameter(body, var_Value, "Value")
-      ));
-      
-      
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "LongSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/LongSubstitution.value");
       bodies.add(body);
     }{
       PBody body = new PBody(this);
@@ -173,7 +101,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EnumSubstitution", "valueLiteral"), "http://www.eclipse.org/incquery/snapshot/EnumSubstitution.valueLiteral");
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "IntSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/IntSubstitution.value");
       bodies.add(body);
     }{
       PBody body = new PBody(this);
@@ -185,7 +113,79 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "IntSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/IntSubstitution.value");
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "LongSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/LongSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DoubleSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DoubleSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "FloatSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/FloatSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "BooleanSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/BooleanSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "StringSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/StringSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DateSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DateSubstitution.value");
+      bodies.add(body);
+    }{
+      PBody body = new PBody(this);
+      PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
+      PVariable var_Value = body.getOrCreateVariableByName("Value");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_Substitution, "Substitution"), 
+        new ExportedParameter(body, var_Value, "Value")
+      ));
+      
+      
+      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EnumSubstitution", "valueLiteral"), "http://www.eclipse.org/incquery/snapshot/EnumSubstitution.valueLiteral");
       bodies.add(body);
     }{
       PAnnotation annotation = new PAnnotation("QueryExplorer");

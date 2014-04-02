@@ -83,7 +83,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
   
   private final static int POSITION_RECORD = 2;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(UnexpectedMatchRecordMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(UnexpectedMatchRecordMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -345,7 +345,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
     try {
       return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -356,7 +356,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
     try {
       return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -367,7 +367,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
     try {
       return new UnexpectedMatchRecordMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     

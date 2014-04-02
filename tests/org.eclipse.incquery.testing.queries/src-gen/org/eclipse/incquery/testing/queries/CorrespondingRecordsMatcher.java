@@ -75,7 +75,7 @@ public class CorrespondingRecordsMatcher extends BaseMatcher<CorrespondingRecord
   
   private final static int POSITION_CORRESPONDINGRECORD = 1;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(CorrespondingRecordsMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(CorrespondingRecordsMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -291,7 +291,7 @@ public class CorrespondingRecordsMatcher extends BaseMatcher<CorrespondingRecord
     try {
       return new CorrespondingRecordsMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_CORRESPONDINGRECORD));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -302,7 +302,7 @@ public class CorrespondingRecordsMatcher extends BaseMatcher<CorrespondingRecord
     try {
       return new CorrespondingRecordsMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPONDINGRECORD]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -313,7 +313,7 @@ public class CorrespondingRecordsMatcher extends BaseMatcher<CorrespondingRecord
     try {
       return new CorrespondingRecordsMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPONDINGRECORD]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
