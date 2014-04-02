@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.incquery.patternlanguage.annotations.ExtensionBasedAnnotationValidatorLoader;
+import org.eclipse.incquery.patternlanguage.annotations.IAnnotationValidatorLoader;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
@@ -174,5 +176,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     public Class<? extends ITargetPlatformMetamodelLoader> bindTargetPlatformMetamodelLoader(){
         return TargetPlatformMetamodelsIndex.class;
+    }
+    
+    public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
+        return ExtensionBasedAnnotationValidatorLoader.class;
     }
 }

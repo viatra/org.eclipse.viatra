@@ -59,8 +59,6 @@ public class XBaseEvaluator implements IExpressionEvaluator{
 
     private Iterable<String> usedNames;
 
-    private ClassLoader classLoader;
-
     /**
      * @param xExpression
      *            the expression to evaluate
@@ -74,7 +72,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
             XtextInjectorProvider.INSTANCE.getInjector().injectMembers(this);
             this.xExpression = xExpression;
             this.pattern = pattern;
-            classLoader = classLoaderProvider.getClassLoader(pattern);
+            ClassLoader classLoader = classLoaderProvider.getClassLoader(pattern);
             if (classLoader != null) {
                 interpreter.setClassLoader(classLoader);
             }
