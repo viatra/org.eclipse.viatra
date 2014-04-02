@@ -76,16 +76,16 @@ public class PProject extends POperation {
 	public String getShortName() {
 		return String.format("PROJECT%s_{%s}", ordered? "!" : "", Joiner.on(",").join(toVariables));
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (ordered ? 1231 : 1237);
 		result = prime * result
 				+ ((toVariables == null) ? 0 : toVariables.hashCode());
 		return result;
 	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -95,6 +95,8 @@ public class PProject extends POperation {
 		if (!(obj instanceof PProject))
 			return false;
 		PProject other = (PProject) obj;
+		if (ordered != other.ordered)
+			return false;
 		if (toVariables == null) {
 			if (other.toVariables != null)
 				return false;
@@ -102,7 +104,8 @@ public class PProject extends POperation {
 			return false;
 		return true;
 	}
-	
+
+
 	
 
 }

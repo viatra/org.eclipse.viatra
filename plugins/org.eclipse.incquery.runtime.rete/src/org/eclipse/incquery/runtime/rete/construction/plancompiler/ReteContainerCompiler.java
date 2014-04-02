@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.rete.construction;
+package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
 import java.util.Arrays;

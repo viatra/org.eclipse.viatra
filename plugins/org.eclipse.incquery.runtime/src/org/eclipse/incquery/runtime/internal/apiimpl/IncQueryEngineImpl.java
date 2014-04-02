@@ -45,7 +45,7 @@ import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.construction.ReteContainerCompiler;
+import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteContainerCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;

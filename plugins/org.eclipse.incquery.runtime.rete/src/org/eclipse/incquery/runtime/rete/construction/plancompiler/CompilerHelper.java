@@ -8,7 +8,7 @@
  * Contributors:
  *   Bergmann Gabor - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.rete.construction;
+package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.List;
 import java.util.Map;

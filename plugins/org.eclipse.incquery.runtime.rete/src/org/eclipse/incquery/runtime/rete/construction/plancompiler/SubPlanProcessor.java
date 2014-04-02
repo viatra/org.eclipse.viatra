@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.rete.construction;
+package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeTernary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
+import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 
 /**
  * @author Zoltan Ujhelyi
