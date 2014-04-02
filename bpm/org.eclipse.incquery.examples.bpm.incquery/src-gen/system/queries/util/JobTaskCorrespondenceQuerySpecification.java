@@ -67,7 +67,7 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
-    Set<PBody> bodies = Sets.newHashSet();
+    Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Job = body.getOrCreateVariableByName("Job");

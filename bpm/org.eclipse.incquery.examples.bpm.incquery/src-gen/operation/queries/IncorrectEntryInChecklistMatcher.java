@@ -81,7 +81,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
   
   private final static int POSITION_PROCESS = 2;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(IncorrectEntryInChecklistMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(IncorrectEntryInChecklistMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -343,7 +343,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
     try {
       return new IncorrectEntryInChecklistMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_CHECKLISTENTRY), (process.Task) t.get(POSITION_TASK), (process.Process) t.get(POSITION_PROCESS));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -354,7 +354,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
     try {
       return new IncorrectEntryInChecklistMatch.Immutable((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -365,7 +365,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
     try {
       return new IncorrectEntryInChecklistMatch.Mutable((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     

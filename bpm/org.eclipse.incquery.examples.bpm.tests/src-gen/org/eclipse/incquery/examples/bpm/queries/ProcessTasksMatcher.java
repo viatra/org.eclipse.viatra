@@ -71,7 +71,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   
   private final static int POSITION_TASK = 1;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(ProcessTasksMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(ProcessTasksMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -285,9 +285,10 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch tupleToMatch(final Tuple t) {
     try {
-    	return new ProcessTasksMatch.Immutable((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ProcessTasksMatch.Immutable((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -295,9 +296,10 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch arrayToMatch(final Object[] match) {
     try {
-    	return new ProcessTasksMatch.Immutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ProcessTasksMatch.Immutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -305,9 +307,10 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new ProcessTasksMatch.Mutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new ProcessTasksMatch.Mutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

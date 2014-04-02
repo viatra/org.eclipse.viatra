@@ -80,7 +80,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   
   private final static int POSITION_JOB = 2;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(TaskChecklistEntryJobCorrespondenceMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(TaskChecklistEntryJobCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -342,7 +342,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
     try {
       return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) t.get(POSITION_TASK), (operation.ChecklistEntry) t.get(POSITION_CLE), (system.Job) t.get(POSITION_JOB));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -353,7 +353,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
     try {
       return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -364,7 +364,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
     try {
       return new TaskChecklistEntryJobCorrespondenceMatch.Mutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     

@@ -74,7 +74,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   
   private final static int POSITION_INFO = 1;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(JobInfoCorrespondenceMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(JobInfoCorrespondenceMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -290,7 +290,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
     try {
       return new JobInfoCorrespondenceMatch.Immutable((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -301,7 +301,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
     try {
       return new JobInfoCorrespondenceMatch.Immutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -312,7 +312,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
     try {
       return new JobInfoCorrespondenceMatch.Mutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     

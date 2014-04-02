@@ -73,7 +73,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   
   private final static int POSITION_TASK = 0;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(UndefinedServiceTasksMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(UndefinedServiceTasksMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -225,7 +225,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
     try {
       return new UndefinedServiceTasksMatch.Immutable((process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
-      logger.error("Element(s) in tuple not properly typed!",e);
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
     }
     
@@ -236,7 +236,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
     try {
       return new UndefinedServiceTasksMatch.Immutable((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     
@@ -247,7 +247,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
     try {
       return new UndefinedServiceTasksMatch.Mutable((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      logger.error("Element(s) in array not properly typed!",e);
+      LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
     }
     

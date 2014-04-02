@@ -71,7 +71,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   
   private final static int POSITION_NEXT = 1;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(NextActivityMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(NextActivityMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -285,9 +285,10 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch tupleToMatch(final Tuple t) {
     try {
-    	return new NextActivityMatch.Immutable((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
-    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new NextActivityMatch.Immutable((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -295,9 +296,10 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch arrayToMatch(final Object[] match) {
     try {
-    	return new NextActivityMatch.Immutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new NextActivityMatch.Immutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -305,9 +307,10 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new NextActivityMatch.Mutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new NextActivityMatch.Mutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

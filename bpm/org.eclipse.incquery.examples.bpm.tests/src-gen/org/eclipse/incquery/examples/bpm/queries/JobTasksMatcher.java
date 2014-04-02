@@ -72,7 +72,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   
   private final static int POSITION_TASK = 1;
   
-  private final static Logger logger = IncQueryLoggingUtil.getLogger(JobTasksMatcher.class);
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(JobTasksMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -286,9 +286,10 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch tupleToMatch(final Tuple t) {
     try {
-    	return new JobTasksMatch.Immutable((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
-    } catch(ClassCastException e) {logger.error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobTasksMatch.Immutable((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -296,9 +297,10 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch arrayToMatch(final Object[] match) {
     try {
-    	return new JobTasksMatch.Immutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobTasksMatch.Immutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -306,9 +308,10 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new JobTasksMatch.Mutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
-    } catch(ClassCastException e) {logger.error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new JobTasksMatch.Mutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
