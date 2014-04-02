@@ -20,14 +20,12 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLifecycleListener> implements IncQueryEngineLifecycleListener{
 
-        private final AdvancedIncQueryEngine incQueryEngine;
         private final Logger logger;
 
         /**
          * @param incQueryEngine
          */
         public LifecycleProvider(AdvancedIncQueryEngine incQueryEngine, Logger logger) {
-            this.incQueryEngine = incQueryEngine;
             this.logger = logger;
         }
 

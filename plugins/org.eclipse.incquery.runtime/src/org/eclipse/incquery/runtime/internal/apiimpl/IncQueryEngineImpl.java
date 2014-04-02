@@ -213,7 +213,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return getBaseIndexInternal();
     }
 
-	public Logger getLogger() {
+	public final Logger getLogger() {
         if (logger == null) {
             final int hash = System.identityHashCode(this);
             logger = Logger.getLogger(IncQueryLoggingUtil.getDefaultLogger().getName() + "." + hash);
