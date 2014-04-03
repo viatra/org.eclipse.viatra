@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 
 /**

@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.Injector;
 
-class DeltaVisitor implements IResourceDeltaVisitor {
+class QueryExplorerDeltaVisitor implements IResourceDeltaVisitor {
     private final Injector injector;
 
-    public DeltaVisitor(Injector injector) {
+    public QueryExplorerDeltaVisitor(Injector injector) {
         this.injector = injector;
     }
 
@@ -33,7 +33,6 @@ class DeltaVisitor implements IResourceDeltaVisitor {
         if (res instanceof IFile && ((delta.getFlags() & IResourceDelta.CONTENT) > 0)) {
             IFile file = (IFile) res;
             if (QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
-            	// FIXME attempt to retrieve existing resource from registry?
                 RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator((IFile) file, null);
                 injector.injectMembers(registrator);
                 Display.getDefault().asyncExec(registrator);

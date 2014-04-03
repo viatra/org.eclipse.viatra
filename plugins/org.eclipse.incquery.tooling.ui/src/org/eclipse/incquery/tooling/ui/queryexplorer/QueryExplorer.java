@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
@@ -45,7 +44,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConsta
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DoubleClickListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.ResourceChangeListener;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerResourceChangeListener;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -70,6 +69,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.xtext.ui.editor.model.XtextDocument;
+import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -275,7 +276,8 @@ public class QueryExplorer extends ViewPart {
         // Focus listening and selection providing
         getSite().setSelectionProvider(matcherTreeViewer);
 
-        initFileListener();
+    	// removed listener due to new attach feature in https://bugs.eclipse.org/bugs/show_bug.cgi?id=429858
+        // initFileListener();
         initPatternsViewerWithGeneratedPatterns();
     }
 
@@ -339,9 +341,9 @@ public class QueryExplorer extends ViewPart {
     }
 
     private void initFileListener() {
-        IResourceChangeListener listener = new ResourceChangeListener(injector);
+        IResourceChangeListener listener = new QueryExplorerResourceChangeListener(injector);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
-        // FIXME this listener will never be removed
+        // fix me this listener will never be removed
     }
 
     public PatternsViewerInput getPatternsViewerInput() {

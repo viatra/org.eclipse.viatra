@@ -7,14 +7,14 @@
             adaptableType="org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor"
             class="org.eclipse.incquery.runtime.gmf.ModelConnectorAdapterFactoryForGMFEditors">
          <adapter
-               type="org.eclipse.incquery.runtime.api.IModelConnector">
+               type="org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector">
          </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart"
             class="org.eclipse.incquery.runtime.gmf.ModelConnectorAdapterFactoryForGMFEditors">
          <adapter
-               type="org.eclipse.incquery.runtime.api.IModelConnector">
+               type="org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector">
          </adapter>
       </factory>
    </extension>

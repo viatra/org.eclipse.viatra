@@ -12,7 +12,7 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.adapters;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 

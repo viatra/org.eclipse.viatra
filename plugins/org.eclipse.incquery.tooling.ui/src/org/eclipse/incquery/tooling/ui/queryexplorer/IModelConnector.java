@@ -8,9 +8,11 @@
  * Contributors:
  *   Andras Okros - second version implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.api;
+package org.eclipse.incquery.tooling.ui.queryexplorer;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This interface provides all api calls for an instance model registered in the Query Explorer. Implementations of this
@@ -43,5 +45,10 @@ public interface IModelConnector {
      *            Shows the location of these objects inside the specific editor.
      */
     public abstract void showLocation(Object[] locationObjects);
+    
+    /**
+     * @return a workbench part (view, editor) which is the owner of the model adapted by the model connector
+     */
+    public IWorkbenchPart getOwner();
 
 }

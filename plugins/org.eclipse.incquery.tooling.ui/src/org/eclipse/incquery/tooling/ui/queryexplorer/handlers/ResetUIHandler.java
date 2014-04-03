@@ -14,8 +14,8 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
