@@ -22,7 +22,7 @@ import com.google.common.base.Joiner;
 
 
 /**
- * No constraints, and no parent SubPlan, just a (possibly empty) set of a priori known variables. Satisfied by a single tuple.
+ * No constraints, and no parent SubPlan, just a (possibly empty) set of a priori known (input) variables. Satisfied by a single tuple.
  * 
  * <p> Can also be used without a priori variables, 
  *   e.g. as a "virtual parent" in extreme cases, 

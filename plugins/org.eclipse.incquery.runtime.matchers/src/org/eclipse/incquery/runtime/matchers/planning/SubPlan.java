@@ -27,7 +27,17 @@ import com.google.common.base.Joiner;
 
 /**
  * A plan representing a subset of (or possibly all the) constraints evaluated. A SubPlan instance is responsible for
- * maintaining a state of the plan; but after it is initialized it is expected be immutable.
+ * representing a state of the plan; but after it is initialized it is expected be immutable 
+ *  (exception: inferred constraints, see {@link #inferConstraint(PConstraint)}).
+ * 
+ * <p> A SubPlan is constructed by applying a {@link POperation} on zero or more parent SubPlans. 
+ * Important maintained information: <ul>
+ * <li>set of <b>variables</b> whose values are known when the runtime evaluation is at this stage,
+ * <li>set of <b>constraints</b> that are known to hold true at this point.
+ * </ul>
+ * 
+ * <p> Recommended to instantiate via a {@link SubPlanFactory} or subclasses, 
+ * so that query planners can subclass SubPlan if needed. 
  * 
  * @author Gabor Bergmann
  * 
@@ -48,10 +58,15 @@ public class SubPlan {
     
     
     
-    
+    /**
+     * A SubPlan is constructed by applying a {@link POperation} on zero or more parent SubPlans.
+     */
 	public SubPlan(PBody body, POperation operation, SubPlan... parentPlans) {
 		this(body, operation, Arrays.asList(parentPlans));
 	}
+    /**
+     * A SubPlan is constructed by applying a {@link POperation} on zero or more parent SubPlans.
+     */
 	public SubPlan(PBody body, POperation operation, List<? extends SubPlan> parentPlans) {
 		super();
 		this.body = body;
@@ -108,35 +123,55 @@ public class SubPlan {
 
 
     /**
-     * @return all constraints already enforced at this handle
+     * All constraints that are known to hold at this point
      */
     public Set<PConstraint> getAllEnforcedConstraints() {
         return allConstraints;
     }
 
     /**
-     * @return the new constraints enforced at this stage of plan, that aren't yet enforced at parents
+     * The new constraints enforced at this stage of plan, that aren't yet enforced at parents
+     * (results are also included in {@link SubPlan#getAllEnforcedConstraints()})
      */
     public Set<PConstraint> getDeltaEnforcedConstraints() {
         return deltaConstraints;
     }
 
+    /**
+     * Indicate that a given constraint was found to be automatically satisfied at this point 
+     *   without additional operations. 
+     * (results are also included in {@link SubPlan#getDeltaEnforcedConstraints()})
+     *   
+     * <p>Warning: not propagated automatically to child plans, 
+     *  so best to invoke before constructing further SubPlans. </p>
+     */
     public void inferConstraint(PConstraint constraint) {
     	externallyInferredConstraints.add(constraint);
     	deltaConstraints.add(constraint);
     	allConstraints.add(constraint);
     }
+    
 	public PBody getBody() {
 		return body;
 	}
+	
+	/**
+	 * Variables which are assigned a value at this point 
+	 * (results are also included in {@link SubPlan#getAllDeducedVariables()})
+	 */
 	public Set<PVariable> getVisibleVariables() {
 		return visibleVariables;
 	}
-	public Set<PVariable> getAllVariables() {
+	/**
+	 * Variables which have been assigned a value; 
+	 * includes visible variables (see {@link #getVisibleVariables()}) 
+	 *   and additionally any variables hidden by a projection (see {@link PProject}). 
+	 */
+	public Set<PVariable> getAllDeducedVariables() {
 		return allVariables;
 	}
 	/**
-	 * Delta compared to first parent
+	 * Delta compared to first parent: variables that are visible here but were not visible at the first parent.
 	 */
 	public Set<PVariable> getIntroducedVariables() {
 		return introducedVariables;
