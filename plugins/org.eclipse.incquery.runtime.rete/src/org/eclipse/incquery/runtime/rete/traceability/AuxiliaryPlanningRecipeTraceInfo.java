@@ -12,45 +12,39 @@ package org.eclipse.incquery.runtime.rete.traceability;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
-import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 
 /**
  * A trace marker associating a Rete recipe with a query SubPlan. 
  * 
- * <p> The Rete node represented by the recipe is equivalent to the SubPlan.
+ * <p> The recipe may be an auxiliary node; 
+ *   see {@link QueryPlanRecipeTraceInfo} if it represents the entire SubPlan instead.
  */
-public class QueryPlanRecipeTraceInfo extends AuxiliaryPlanningRecipeTraceInfo {
+public class AuxiliaryPlanningRecipeTraceInfo extends RecipeTraceInfo {
 
-	List<PVariable> variablesTuple;
-	Map<PVariable, Integer> posMapping;
-	
-	public QueryPlanRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple,
+	protected SubPlan subPlan;
+
+	public AuxiliaryPlanningRecipeTraceInfo(SubPlan subPlan, 
 			ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-		super(subPlan, recipe, parentRecipeTraces);
-		this.variablesTuple = variablesTuple;
-		
-		this.posMapping = new HashMap<PVariable, Integer>();
-		for (int i = 0; i < variablesTuple.size(); ++i)
-			posMapping.put(variablesTuple.get(i), i);
-	}
-	public QueryPlanRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple,
-			ReteNodeRecipe recipe,
-			RecipeTraceInfo... parentRecipeTraces) {
-		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
+		super(recipe, parentRecipeTraces);
+		this.subPlan = subPlan;
 	}
 
-	public List<PVariable> getVariablesTuple() {
-		return variablesTuple;
+	public AuxiliaryPlanningRecipeTraceInfo(SubPlan subPlan, 
+			ReteNodeRecipe recipe,
+			RecipeTraceInfo... parentRecipeTraces) {
+		this(subPlan, recipe, Arrays.asList(parentRecipeTraces));
 	}
-	public Map<PVariable, Integer> getPosMapping() {
-		return posMapping;
-	}	
+
+	public SubPlan getSubPlan() {
+		return subPlan;
+	}
+
+	public String getPatternName() {
+		return subPlan.getBody().getPattern().getFullyQualifiedName();
+	}
 
 }

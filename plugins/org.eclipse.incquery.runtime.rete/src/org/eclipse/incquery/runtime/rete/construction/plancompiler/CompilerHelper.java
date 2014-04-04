@@ -10,15 +10,24 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
+import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
+import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
+import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningRecipeTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.QueryPlanRecipeTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * @author Bergmann Gabor
@@ -68,6 +77,17 @@ public class CompilerHelper {
         SubPlan trimmer = buildable.buildTrimmer(plan, trim, enforceUniqueness);
 		return trimmer;
 	}
+	
+	/**
+	 * Returns a compiled indexer trace according to a mask 
+	 */
+    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, QueryPlanRecipeTraceInfo parentTrace, TupleMask mask) {
+		final ProjectionIndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(
+    			parentTrace.getRecipe(), 
+    			RecipesHelper.mask(mask.sourceWidth, mask.indices)
+    	);
+		return new AuxiliaryPlanningRecipeTraceInfo(planToCompile, recipe, parentTrace);
+    }
     
     /**
      * Calculated index mappings for a join, based on the common variables of the two parent subplans.
@@ -79,30 +99,34 @@ public class CompilerHelper {
         private TupleMask primaryMask;
         private TupleMask secondaryMask;
         private TupleMask complementerMask;
+		private RecipeTraceInfo primaryIndexer;
+		private RecipeTraceInfo secondaryIndexer;
+		private JoinRecipe joinRecipe;
+		private List<PVariable> variablesTuple;
 
         /**
          * @pre enforceVariableCoincidences() has been called on both sides.
          */
-        public JoinHelper(SubPlan primaryPlan, SubPlan secondaryPlan) {
+        public JoinHelper(SubPlan planToCompile, QueryPlanRecipeTraceInfo primaryCompiled, QueryPlanRecipeTraceInfo secondaryCompiled) {
             super();
 
-            Set<PVariable> primaryVariables = primaryPlan.getVariablesTuple().getDistinctElements();
-            Set<PVariable> secondaryVariables = secondaryPlan.getVariablesTuple().getDistinctElements();
+            Set<PVariable> primaryVariables = new HashSet<PVariable>(primaryCompiled.getVariablesTuple());
+            Set<PVariable> secondaryVariables = new HashSet<PVariable>(secondaryCompiled.getVariablesTuple());
             int oldNodes = 0;
             Set<Integer> introducingSecondaryIndices = new TreeSet<Integer>();
             for (PVariable var : secondaryVariables) {
                 if (primaryVariables.contains(var))
                     oldNodes++;
                 else
-                    introducingSecondaryIndices.add(secondaryPlan.getVariablesIndex().get(var));
+                    introducingSecondaryIndices.add(secondaryCompiled.getPosMapping().get(var));
             }
             int[] primaryIndices = new int[oldNodes];
             final int[] secondaryIndices = new int[oldNodes];
             int k = 0;
             for (PVariable var : secondaryVariables) {
                 if (primaryVariables.contains(var)) {
-                    primaryIndices[k] = primaryPlan.getVariablesIndex().get(var);
-                    secondaryIndices[k] = secondaryPlan.getVariablesIndex().get(var);
+                    primaryIndices[k] = primaryCompiled.getPosMapping().get(var);
+                    secondaryIndices[k] = secondaryCompiled.getPosMapping().get(var);
                     k++;
                 }
             }
@@ -111,33 +135,56 @@ public class CompilerHelper {
             for (Integer integer : introducingSecondaryIndices) {
                 complementerIndices[l++] = integer;
             }
-            primaryMask = new TupleMask(primaryIndices, primaryPlan.getVariablesTuple().getSize());
-            secondaryMask = new TupleMask(secondaryIndices, secondaryPlan.getVariablesTuple().getSize());
-            complementerMask = new TupleMask(complementerIndices, secondaryPlan.getVariablesTuple().getSize());
-
+            primaryMask = new TupleMask(primaryIndices, primaryCompiled.getVariablesTuple().size());
+            secondaryMask = new TupleMask(secondaryIndices, secondaryCompiled.getVariablesTuple().size());
+            complementerMask = new TupleMask(complementerIndices, secondaryCompiled.getVariablesTuple().size());
+            
+        	primaryIndexer = getIndexerRecipe(planToCompile, primaryCompiled, primaryMask);
+        	secondaryIndexer = getIndexerRecipe(planToCompile, secondaryCompiled, secondaryMask);
+        	
+        	joinRecipe = RecipesFactory.eINSTANCE.createJoinRecipe();
+        	joinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
+        	joinRecipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
+    		joinRecipe.setRightParentComplementaryMask(RecipesHelper.mask(complementerMask.sourceWidth, complementerMask.indices));
+        	
+            variablesTuple = new ArrayList<PVariable>(primaryCompiled.getVariablesTuple());
+            for (int complementerIndex : complementerMask.indices)
+            	variablesTuple.add(secondaryCompiled.getVariablesTuple().get(complementerIndex));
         }
+        
 
-        /**
-         * @return the primaryMask
-         */
         public TupleMask getPrimaryMask() {
             return primaryMask;
         }
 
-        /**
-         * @return the secondaryMask
-         */
         public TupleMask getSecondaryMask() {
             return secondaryMask;
         }
 
-        /**
-         * @return the complementerMask
-         */
         public TupleMask getComplementerMask() {
             return complementerMask;
         }
 
+
+		public RecipeTraceInfo getPrimaryIndexer() {
+			return primaryIndexer;
+		}
+
+
+		public RecipeTraceInfo getSecondaryIndexer() {
+			return secondaryIndexer;
+		}
+
+
+		public JoinRecipe getJoinRecipe() {
+			return joinRecipe;
+		}
+
+
+		public List<PVariable> getVariablesTuple() {
+			return variablesTuple;
+		}
+        
     }
     
     

@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.planning.helpers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -72,9 +73,16 @@ public class BuildHelper {
     
     
     /**
+     * @return true iff a set of given variables functionally determine all visible variables in the subplan according to the subplan's constraints
+     */
+    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining) {
+		return areVariablesDetermined(plan, determining, plan.getVisibleVariables());
+	}
+    
+    /**
      * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
      */
-    public static boolean areVariablesDetermined(SubPlan plan, Set<PVariable> determining, Set<PVariable> determined) {
+    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined) {
         Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
         for (PConstraint pConstraint : plan.getAllEnforcedConstraints())
             dependencies.putAll(pConstraint.getFunctionalDependencies());
