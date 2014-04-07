@@ -129,9 +129,12 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      * @return
      */
     protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
-        if (classifier != null && classifier.getInstanceClass() != null) {
-            JvmTypeReference typeReference = typeReferences.getTypeForName(classifier.getInstanceClass(), variable);
-            return primitives.asWrapperTypeIfPrimitive(typeReference);
+        if (classifier != null) {
+        	Class<?> c = classifier.getInstanceClass();
+        	if (c!=null) {
+	            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
+	            return primitives.asWrapperTypeIfPrimitive(typeReference);
+        	}
         }
         return null;
     }
