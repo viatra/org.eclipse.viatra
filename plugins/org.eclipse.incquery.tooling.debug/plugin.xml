@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.incquery.tooling.ui"
+            class="org.eclipse.incquery.tooling.debug.variables.IncQueryVariablesView"
+            icon="icons/logo2.png"
+            id="org.eclipse.incquery.tooling.debug.variables.IncQueryVariablesView"
+            name="EMF-IncQuery Variables"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
