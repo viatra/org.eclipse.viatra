@@ -54,7 +54,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class GenModelMetamodelProviderService extends TargetPlatformMetamodelProviderService implements IEiqGenmodelProvider {
 
     private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
