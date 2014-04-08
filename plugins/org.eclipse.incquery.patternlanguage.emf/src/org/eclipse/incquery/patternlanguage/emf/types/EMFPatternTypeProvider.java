@@ -129,9 +129,12 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      * @return
      */
     protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
-        if (classifier != null && classifier.getInstanceClass() != null) {
-            JvmTypeReference typeReference = typeReferences.getTypeForName(classifier.getInstanceClass(), variable);
-            return primitives.asWrapperTypeIfPrimitive(typeReference);
+        if (classifier != null) {
+        	Class<?> c = classifier.getInstanceClass();
+        	if (c!=null) {
+	            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
+	            return primitives.asWrapperTypeIfPrimitive(typeReference);
+        	}
         }
         return null;
     }
@@ -439,16 +442,22 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         } else if (valueReference instanceof FunctionEvaluationValue) {
             FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
             final XExpression xExpression = eval.getExpression();
-            final EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
-            
+            EDataType dataType;            
             if (!compilerPhases.isIndexing(xExpression)){
             	JvmTypeReference type = getCommonReturnType(xExpression, true);
-            	dataType.setName(type.getSimpleName());
-            	dataType.setInstanceClassName(type.getQualifiedName());
+            	if (type == null) {
+            	    //Return type can be null - in that case return Object
+            	    //XXX very hacky solution
+            	    dataType = EcorePackage.Literals.EJAVA_OBJECT;
+            	} else {
+            	    dataType = EcoreFactory.eINSTANCE.createEDataType();
+            	    dataType.setName(type.getSimpleName());
+            	    dataType.setInstanceClassName(type.getQualifiedName());
+            	}
             } else {
             	//During the indexing phase it is impossible to calculate the expression type
             	//XXX very hacky solution
-            	return EcorePackage.Literals.EJAVA_OBJECT;
+            	dataType = EcorePackage.Literals.EJAVA_OBJECT;
             }
             return dataType;
         } else if (valueReference instanceof EnumValue) {
