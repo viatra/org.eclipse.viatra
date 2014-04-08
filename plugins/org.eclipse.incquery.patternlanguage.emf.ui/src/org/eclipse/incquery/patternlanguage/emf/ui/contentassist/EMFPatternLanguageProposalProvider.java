@@ -27,6 +27,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLan
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
+import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionElement;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -66,16 +67,21 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     IScopeProvider scopeProvider;
     @Inject
     ReferenceProposalCreator crossReferenceProposalCreator;
+    @Inject
+    private EMFPatternLanguageGrammarAccess ga;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.xtext.xbase.ui.contentassist.XbaseProposalProvider#completeKeyword(org.eclipse.xtext.Keyword,
-     * org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext,
-     * org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor)
-     */
+    @Override
+    public void createProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        // suppress content assist in comments
+        if (context.getCurrentNode().getGrammarElement() == ga.getML_COMMENTRule()
+                || context.getCurrentNode().getGrammarElement() == ga.getSL_COMMENTRule()) {
+            return;
+        }
+        super.createProposals(context, acceptor);
+    }
+
     @SuppressWarnings("restriction")
-	@Override
+    @Override
     public void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
             ICompletionProposalAcceptor acceptor) {
         // ignore keywords in FILTERED set
@@ -97,17 +103,14 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
                 if (typeClassifier instanceof EEnum) {
                     // In case of EEnums add Enum Literal constants
                     EEnum type = (EEnum) typeClassifier;
-                    
+
                     ContentAssistContext.Builder myContextBuilder = context.copy();
-                	myContextBuilder.setMatcher(new EnumPrefixMatcher(type.getName()));
-                    
+                    myContextBuilder.setMatcher(new EnumPrefixMatcher(type.getName()));
+
                     for (EEnumLiteral literal : type.getELiterals()) {
-                        ICompletionProposal completionProposal = 
-                        	createCompletionProposal("::" + literal.getName(), 
-                        							 type.getName() + "::" + literal.getName(), 
-                        							 null, 
-                        							 myContextBuilder.toContext());
-						acceptor.accept(completionProposal);
+                        ICompletionProposal completionProposal = createCompletionProposal("::" + literal.getName(),
+                                type.getName() + "::" + literal.getName(), null, myContextBuilder.toContext());
+                        acceptor.accept(completionProposal);
                     }
                 }
                 // XXX The following code re-specifies scoping instead of reusing the scope provider
@@ -171,7 +174,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     }
 
     @SuppressWarnings("restriction")
-	private void createClassifierProposals(PackageImport declaration, EObject model, ContentAssistContext context,
+    private void createClassifierProposals(PackageImport declaration, EObject model, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         // String alias = declaration.getAlias();
         // QualifiedName prefix = (!Strings.isEmpty(alias))
@@ -209,7 +212,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     }
 
     @SuppressWarnings("restriction")
-	public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
+    public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         IScope scope = scopeProvider.getScope(model.getTail(),
                 EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME);
