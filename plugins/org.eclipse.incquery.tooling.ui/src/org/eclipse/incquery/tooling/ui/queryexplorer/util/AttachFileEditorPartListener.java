@@ -53,7 +53,7 @@ public class AttachFileEditorPartListener extends BasePartListener {
 //                            + "') attached to the Query Explorer.\nWould you like to unregister them?";
 //                    boolean answer = MessageDialog.openQuestion(closedEditor.getSite().getShell(), dialogTitle,
 //                            question);
-                	boolean answer = true;
+                	boolean answer = false;
                     if (answer) {
                     	// use PatternUnregistrationHandler
                     	PatternUnregistrationHandler puh = new PatternUnregistrationHandler();
