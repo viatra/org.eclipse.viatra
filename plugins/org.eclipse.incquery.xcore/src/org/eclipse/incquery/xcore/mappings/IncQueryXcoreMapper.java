@@ -17,6 +17,12 @@ import org.eclipse.emf.ecore.xcore.XPackage;
 import org.eclipse.emf.ecore.xcore.mappings.XcoreMapper;
 import org.eclipse.incquery.xcore.model.XIncQueryDerivedFeature;
 
+/**
+ * An {@link XcoreMapper} extended with the functionality to handle the {@link XIncQueryDerivedFeature}s too. 
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 public class IncQueryXcoreMapper extends XcoreMapper {
 
     public XIncQueryDerivedFeatureMapping getMapping(XIncQueryDerivedFeature xIncQueryDerivedFeature) {

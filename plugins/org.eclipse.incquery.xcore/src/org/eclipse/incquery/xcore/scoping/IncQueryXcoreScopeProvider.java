@@ -15,14 +15,20 @@ import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper;
 
 import com.google.inject.Inject;
 
-public class IncQueryXcoreScopeProvider extends XcoreScopeProvider
-{
-  @Inject
-  private IncQueryXcoreMapper mapper;
+/**
+ * This scope provider reuses all the functionality of {@link XcoreScopeProvider}, but the mapper is initialized to
+ * {@link IncQueryXcoreMapper}.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
+ */
+public class IncQueryXcoreScopeProvider extends XcoreScopeProvider {
+    @Inject
+    private IncQueryXcoreMapper mapper;
 
-  public IncQueryXcoreScopeProvider() {
-      super();
-      super.mapper = this.mapper;
-  }
-  
+    public IncQueryXcoreScopeProvider() {
+        super();
+        super.mapper = this.mapper;
+    }
+
 }

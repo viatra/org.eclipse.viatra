@@ -13,7 +13,14 @@ package org.eclipse.incquery.xcore.generator
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 
-class WellBehavingFeatureDefinitionGenerator {
+/**
+ * Generator for the IncQuery derived feature definitions. The pattern based derived features in the IncQuery & Xcore metamodel 
+ * will be backed by a well-behaving derived feature in runtime.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
+ */
+public class WellBehavingFeatureDefinitionGenerator {
 
 	private static final String EXTENSION_POINT = "org.eclipse.incquery.runtime.base.wellbehaving.derived.features";
 	private static final String EXTENSION_ELEMENT = "wellbehaving-derived-feature";
@@ -30,7 +37,7 @@ class WellBehavingFeatureDefinitionGenerator {
 
 	def static getRemovableExtensionIdentifiers() {
 		newArrayList(
-			Pair::of("",EXTENSION_POINT)
+			Pair::of("", EXTENSION_POINT)
 		)
 	}
 
