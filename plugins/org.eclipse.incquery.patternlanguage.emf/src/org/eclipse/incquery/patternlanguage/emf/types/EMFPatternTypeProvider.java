@@ -122,6 +122,20 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     }
 
     /**
+	 * 
+	 */
+//	public EMFPatternTypeProvider() {
+//		System.out.println("EMFTypeProvider instantiated");
+//	}
+
+    
+    /**
+     * internal class cache, introduced to speed up calls to EClassifier.getInstanceClass
+     * significantly.
+     */
+    private Map<EClassifier, Class<?>> classCache = Maps.newHashMap();
+    
+    /**
      * Returns the {@link JvmTypeReference} for a given {@link EClassifier} and {@link Variable} combination.
      * 
      * @param classifier
@@ -130,7 +144,16 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      */
     protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
         if (classifier != null) {
-        	Class<?> c = classifier.getInstanceClass();
+        	Class<?> c = classCache.get(classifier);
+        	if (c==null) {
+//        		System.out.println("cc miss for "+classifier.getInstanceClassName());
+        		Class<?> newC = classifier.getInstanceClass();
+        		classCache.put(classifier, newC);
+        		c=newC;
+        	}
+//        	else {
+//        		System.out.println("cc hit for "+classifier.getInstanceClassName());
+//        	}
         	if (c!=null) {
 	            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
 	            return primitives.asWrapperTypeIfPrimitive(typeReference);
