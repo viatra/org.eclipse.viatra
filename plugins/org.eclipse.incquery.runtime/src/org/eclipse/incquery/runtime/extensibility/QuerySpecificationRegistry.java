@@ -110,10 +110,12 @@ public final class QuerySpecificationRegistry {
                         + " does not equal pattern FQN of query specification " + fullyQualifiedName + " in plugin.xml of "
                         + el.getDeclaringExtension().getUniqueIdentifier());
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            //If there are serious compilation errors in the file loaded by the query registry, an error is thrown
             if(id == null) {
                 id = "undefined in plugin.xml";
             }
+            //TODO error logging for the user interface
             IncQueryLoggingUtil.getDefaultLogger().error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing ID: "
                             + id + "! " + e.getMessage(), e);

@@ -11,6 +11,7 @@
 package org.eclipse.incquery.patternlanguage.emf;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,7 +25,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class EcoreGenmodelRegistry {
 
     private static final String EPACKAGE_EXTENSION_ID = "org.eclipse.emf.ecore.generated_package";
@@ -33,7 +38,9 @@ public class EcoreGenmodelRegistry {
     private Map<String, String> genmodelUriMap = Maps.newHashMap();
     private Map<String, GenPackage> genpackageMap = Maps.newHashMap();
     private Logger logger;
+    private Set<String> reportedProblematicGenmodelUris = Sets.newHashSet();
 
+    @Inject
     public EcoreGenmodelRegistry(Logger logger) {
         this.logger = logger;
 
@@ -91,7 +98,10 @@ public class EcoreGenmodelRegistry {
                 }
             }
         } catch (RuntimeException ex) {
-            logger.error("Error while retrieving genmodel of EPackage " + nsURI + " from location: " + genmodelUri, ex);
+            if (!reportedProblematicGenmodelUris.contains(genmodelUri)) {
+                reportedProblematicGenmodelUris.add(genmodelUri);
+                logger.error("Error while retrieving genmodel of EPackage " + nsURI + " from location: " + genmodelUri, ex);
+            }
         }
         return null;
     }

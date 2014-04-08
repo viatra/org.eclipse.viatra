@@ -23,6 +23,7 @@ import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmMo
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
+import org.eclipse.incquery.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
@@ -46,6 +47,7 @@ import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
+import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -180,5 +182,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     
     public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
         return ExtensionBasedAnnotationValidatorLoader.class;
+    }
+    
+    @Override
+    public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
+        return EMFPatternLanguageTemplateProposalProvider.class;
     }
 }

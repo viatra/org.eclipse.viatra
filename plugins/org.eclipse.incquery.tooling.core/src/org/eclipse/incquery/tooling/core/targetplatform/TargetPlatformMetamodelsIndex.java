@@ -41,6 +41,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -59,7 +60,8 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     @Inject
     Logger logger;
 
-	private static final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
+	private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
+	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
 	
 	private void update(){
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
@@ -129,7 +131,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         return metamodel;
     }
 	
-    public static final class TargetPlatformMetamodel {
+    public final class TargetPlatformMetamodel {
 		
 		private final URI genModelUri;
 		private final String packageURI;
@@ -181,10 +183,16 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
                         }
                     }
                 } else {
-                    logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI));
+                    if (!reportedProblematicGenmodelUris.contains(genModelUri)) {
+                        reportedProblematicGenmodelUris.add(genModelUri);
+                        logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI));
+                    }
                 }
             } catch (Exception e) {
-                logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI), e);
+                if (!reportedProblematicGenmodelUris.contains(genModelUri)) {
+                    reportedProblematicGenmodelUris.add(genModelUri);
+                    logger.warn(String.format(GENMODEL_LOAD_ERROR, this.genModelUri, packageURI), e);
+                }
             }
 			return null;
 		}
