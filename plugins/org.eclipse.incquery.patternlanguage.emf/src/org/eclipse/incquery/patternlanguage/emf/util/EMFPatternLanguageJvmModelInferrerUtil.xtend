@@ -44,7 +44,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
 	@Inject extension EMFJvmTypesBuilder
 	Logger logger = Logger::getLogger(getClass())
-	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 //	@Inject ITypeProvider typeProvider
 	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
@@ -269,9 +268,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		if (escapable == null) return null
   		// escape double quotes
   		var escapedString = escapable.replaceAll("\"", "\\\\\"")
-  		// escape javadoc comments to single space
-  		// FIXME need a better replacement, or better way to do this
-  		escapedString = escapedString.replaceAll(MULTILINE_COMMENT_PATTERN, " ")
+		escapedString = escapedString.replaceAll("\\*+/", "")
+			.replaceAll("/*\\*", "");
   		return escapedString
   	}
 
