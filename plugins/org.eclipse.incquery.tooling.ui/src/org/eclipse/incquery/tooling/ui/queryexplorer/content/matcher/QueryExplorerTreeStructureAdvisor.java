@@ -35,7 +35,7 @@ public class QueryExplorerTreeStructureAdvisor extends TreeStructureAdvisor {
                 || ((PatternMatcherRootContent) element).getStatus().getSeverity() == IStatus.ERROR)) {
             return false;
         }
-        if (element instanceof CompositeContent<?, ?>) {
+        if (element instanceof CompositeContent<?, ?> && ((CompositeContent) element).getChildren() != null) {
             return !((CompositeContent) element).getChildren().isEmpty();
         }
         return false;

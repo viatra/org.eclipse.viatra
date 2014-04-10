@@ -44,7 +44,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private Object[] parameterFilter;
     private String orderParameter;
     private boolean ascendingOrder;
-    private final String exceptionMessage;
+    private String exceptionMessage;
     private IQuerySpecification<?> specification;
     private IncQueryMatcher<IPatternMatch> matcher;
     private ObservablePatternMatchList children;
@@ -59,30 +59,31 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         this.transformerFunction = new TransformerFunction(this);
         this.listChangeListener = new ListChangeListener();
 
-        String message = "";
         try {
             matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
         } catch (IncQueryException e) {
-            message = e.getShortMessage();
+            this.exceptionMessage = e.getShortMessage();
         } catch (Exception e) {
-            message = e.getMessage();
+            this.exceptionMessage = e.getMessage();
         }
 
-        this.exceptionMessage = message;
         this.generated = generated;
         this.orderParameter = null;
 
         DisplayUtil.removeOrderByPatternWarning(specification.getFullyQualifiedName());
-
+        
         if (this.matcher != null) {
             initOrdering();
             initFilter();
             children = new ObservablePatternMatchList(specification, engine, transformerFunction, matchComparator,
                     filter);
             children.addListChangeListener(listChangeListener);
-            
-            // this is needed, because the label will not be set if there is no match in the beginning
+            // label needs to be set explicitly, in case of no matches setText will not be invoked at all
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
+                    isGenerated(), isFiltered(), exceptionMessage));
+        }
+        else {
+            setText(DisplayUtil.getMessage(null, 0, specification.getFullyQualifiedName(),
                     isGenerated(), isFiltered(), exceptionMessage));
         }
     }

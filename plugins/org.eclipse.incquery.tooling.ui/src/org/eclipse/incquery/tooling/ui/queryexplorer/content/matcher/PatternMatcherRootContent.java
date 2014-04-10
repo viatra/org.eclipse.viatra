@@ -106,8 +106,8 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         // if the pattern is first deactivated then removed, than the matcher corresponding matcher is disposed
         PatternMatcherContent matcher = this.mapping.get(patternFqn);
         if (matcher != null) {
-            this.children.removeChild(matcher);
             matcher.dispose();
+            this.children.removeChild(matcher);
             this.mapping.remove(patternFqn);
         }
     }
@@ -115,7 +115,6 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     @Override
     public void dispose() {
         super.dispose();
-        
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
             engine.removeLifecycleListener(taintListener);
