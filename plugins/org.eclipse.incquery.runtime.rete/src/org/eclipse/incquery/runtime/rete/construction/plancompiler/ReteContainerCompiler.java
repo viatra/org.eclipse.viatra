@@ -49,6 +49,7 @@ import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningRecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.traceability.QueryPlanRecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
@@ -91,7 +92,7 @@ public class ReteContainerCompiler
 
     public SubPlan buildTrimmer(SubPlan parentPlan, TupleMask trimMask, boolean enforceUniqueness) {
         Address<? extends Supplier> trimmer = nodeProvisioner.accessTrimmerNode(getHandle(parentPlan), trimMask);
-        final Tuple trimmedVariables = trimMask.transform(parentPlan.getVariablesTuple());
+        final Tuple trimmedVariables = trimMask.transform(parentPlan.getNaturalJoinVariablesTuple());
         Address<? extends Supplier> resultNode;
         if (enforceUniqueness) {
         	resultNode = nodeProvisioner.accessUniquenessEnforcerNode(trimmer, trimmedVariables.getSize());
@@ -199,7 +200,7 @@ public class ReteContainerCompiler
             SubPlan sidePlan, TupleMask primaryMask, TupleMask sideMask,
             TupleMask complementer, boolean negative) {
     	final QueryPlanRecipeTraceInfo primaryIndexer = getIndexerRecipe(primaryPlan, primaryMask);
-    	final QueryPlanRecipeTraceInfo secondaryIndexer = getIndexerRecipe(sidePlan, sideMask);
+    	final AuxiliaryPlanningRecipeTraceInfo secondaryIndexer = getIndexerRecipe(sidePlan, sideMask);
         if (negative) {
         	final AntiJoinRecipe recipe = recipesFactory.createAntiJoinRecipe();
         	recipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
@@ -212,8 +213,8 @@ public class ReteContainerCompiler
         	recipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
         	recipe.setRightParentComplementaryMask(RecipesHelper.mask(complementer.sourceWidth, complementer.indices));
         	
-            Tuple newCalibrationPattern = complementer.combine(primaryPlan.getVariablesTuple(),
-                    sidePlan.getVariablesTuple(), Options.enableInheritance, true);            
+            Tuple newCalibrationPattern = complementer.combine(primaryPlan.getNaturalJoinVariablesTuple(),
+                    sidePlan.getNaturalJoinVariablesTuple(), Options.enableInheritance, true);            
             return traceExplicit(new SubPlan(primaryPlan, sidePlan, newCalibrationPattern), recipe, primaryIndexer, secondaryIndexer);
         }
     }
@@ -229,7 +230,7 @@ public class ReteContainerCompiler
                 TupleMask.selectSingle(originalSideMask.indices.length, originalSideMask.indices.length + 1));
 
         Object[] newCalibrationElement = { aggregateResultCalibrationElement };
-        Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryPlan.getVariablesTuple(), newCalibrationElement);
+        Tuple newCalibrationPattern = new LeftInheritanceTuple(primaryPlan.getNaturalJoinVariablesTuple(), newCalibrationElement);
 
         SubPlan result = new SubPlan(primaryPlan, newCalibrationPattern);
 
@@ -252,7 +253,7 @@ public class ReteContainerCompiler
     	recipe.setExpression(RecipesHelper.expressionDefinition(evaluator));
         
         Object[] newCalibrationElement = { computedResultCalibrationElement };
-        Tuple newCalibrationPattern = new LeftInheritanceTuple(parentPlan.getVariablesTuple(), newCalibrationElement);
+        Tuple newCalibrationPattern = new LeftInheritanceTuple(parentPlan.getNaturalJoinVariablesTuple(), newCalibrationElement);
         
         return trace(new SubPlan(parentPlan, newCalibrationPattern), recipe);
     }
@@ -301,7 +302,7 @@ public class ReteContainerCompiler
 	
 	private void singleParentForRecipe(SubPlan parentPlan,
 			final SingleParentNodeRecipe recipe) {
-		final QueryPlanRecipeTraceInfo parentTrace = getExistingParentTrace(parentPlan);
+		final AuxiliaryPlanningRecipeTraceInfo parentTrace = getExistingParentTrace(parentPlan);
 		recipe.setParent(parentTrace.getRecipe());
 	}
 

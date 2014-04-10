@@ -12,9 +12,7 @@ package org.eclipse.incquery.runtime.rete.traceability;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -27,30 +25,15 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  */
 public class QueryPlanRecipeTraceInfo extends AuxiliaryPlanningRecipeTraceInfo {
 
-	List<PVariable> variablesTuple;
-	Map<PVariable, Integer> posMapping;
-	
 	public QueryPlanRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple,
 			ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
-		super(subPlan, recipe, parentRecipeTraces);
-		this.variablesTuple = variablesTuple;
-		
-		this.posMapping = new HashMap<PVariable, Integer>();
-		for (int i = 0; i < variablesTuple.size(); ++i)
-			posMapping.put(variablesTuple.get(i), i);
+		super(subPlan, variablesTuple, recipe, parentRecipeTraces);
 	}
 	public QueryPlanRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple,
 			ReteNodeRecipe recipe,
 			RecipeTraceInfo... parentRecipeTraces) {
 		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
 	}
-
-	public List<PVariable> getVariablesTuple() {
-		return variablesTuple;
-	}
-	public Map<PVariable, Integer> getPosMapping() {
-		return posMapping;
-	}	
 
 }

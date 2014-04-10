@@ -207,7 +207,7 @@ public class SubPlanProcessor {
         if (resultPositionLeft == null) {
             return counterBetaPlan;
         } else {
-            int resultPositionFinal = counterBetaPlan.getVariablesTuple().getSize() - 1; // appended to the last position
+            int resultPositionFinal = counterBetaPlan.getNaturalJoinVariablesTuple().getSize() - 1; // appended to the last position
             final SubPlan equalityCheckerPlan = 
                     compiler.buildEqualityChecker(counterBetaPlan, new int[]{resultPositionFinal, resultPositionLeft});
             return compiler.buildTrimmer(equalityCheckerPlan, TupleMask.omit(resultPositionFinal, 1+resultPositionFinal), false);
