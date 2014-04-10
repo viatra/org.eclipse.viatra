@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
+import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
@@ -22,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * @author Gabor Bergmann
  * 
  */
-public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> {
+public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference {
 
     public BinaryTransitiveClosure(PBody pSystem, Tuple variablesTuple,
             PQuery pattern) {
@@ -32,6 +33,11 @@ public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> 
     @Override
     protected String keyToString() {
         return supplierKey.getFullyQualifiedName() + "+";
+    }
+    
+    @Override
+    public PQuery getReferredQuery() {
+    	return supplierKey;
     }
     
     
