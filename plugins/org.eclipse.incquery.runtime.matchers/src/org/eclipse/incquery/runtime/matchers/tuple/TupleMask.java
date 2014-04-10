@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.tuple;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -156,13 +157,23 @@ public class TupleMask {
     }
 
     /**
-     * Generates a masked view of the original pattern.
+     * Generates a masked view of the original tuple.
      */
     public Tuple transform(Tuple original) {
         Object signature[] = new Object[indices.length];
         for (int i = 0; i < indices.length; ++i)
             signature[i] = original.get(indices[i]);
         return new FlatTuple(signature);
+    }
+
+    /**
+     * Generates a masked view of the original tuple.
+     */
+    public <T> List<T> transform(List<T> original) {
+    	List<T> signature = new ArrayList<T>(indices.length);
+        for (int i = 0; i < indices.length; ++i)
+            signature.add(original.get(indices[i]));
+        return signature;
     }
 
     /**
