@@ -169,6 +169,11 @@
 	</build>
 	<repositories>
 		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
 			<id>fornax.repository</id>
 			<name>Fornax Repository</name>
 			<url>http://www.fornax-platform.org/m2/repository</url>
