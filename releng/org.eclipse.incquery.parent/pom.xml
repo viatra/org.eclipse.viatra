@@ -23,18 +23,17 @@
 		<module>../../releng/org.eclipse.incquery.target</module>
 	</modules>
 	<properties>
-		<tycho.version>0.18.0</tycho.version>
-		<tycho.extras.version>0.18.0</tycho.extras.version>
+		<tycho.version>0.20.0</tycho.version>
+		<tycho.extras.version>0.20.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<jacoco.version>0.6.3.201306030806</jacoco.version>
+		<jacoco.version>0.7.0.201403182114</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.4.2</xtend.compiler.version>
+		<xtend.compiler.version>2.4.3</xtend.compiler.version>
 		<!-- Sonar -->
-		<sonar.version>3.7</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
