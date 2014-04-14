@@ -24,7 +24,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
@@ -36,6 +35,7 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.network.Tunnel;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -75,11 +75,6 @@ public class ReteBoundary {
      */
     protected Map<Object, Address<? extends Tunnel>> binaryEdgeRoots;
 
-    /**
-     * Full query plans usable to construct production nodes.
-     */
-    protected Map<PQuery, RecipeTraceInfo> queryPlans;
-
     protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
 
     protected Address<? extends Tunnel> containmentRoot;
@@ -115,7 +110,6 @@ public class ReteBoundary {
         ternaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
         binaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
 
-        queryPlans = CollectionsFactory.getMap();//new HashMap<PatternDescription, Address<? extends Production>>();
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
         subplanToAddressMapping = CollectionsFactory.getMap();
 
@@ -149,8 +143,8 @@ public class ReteBoundary {
         return ternaryEdgeRoots.values();
     }
 
-    public Collection<RecipeTraceInfo> getAllProductionNodes() {
-        return queryPlans.values();
+    public Collection<? extends RecipeTraceInfo> getAllProductionNodes() {
+        return engine.getCompiler().getCachedCompiledQueries().values();
     }
 
 //    /**
@@ -414,20 +408,23 @@ public class ReteBoundary {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
     public synchronized RecipeTraceInfo accessProductionTrace(PQuery query)
-            throws QueryPlannerException {
-    	RecipeTraceInfo pn;
-        pn = queryPlans.get(query);
-        if (pn == null) {
-            pn = construct(query);
-            TODO handle recursion by reinterpret-RecipeTrace
-            queryPlans.put(query, pn);
-            if (pn == null) {
-                String[] args = { query.toString() };
-                throw new RetePatternBuildException("Unsuccessful planning of RETE construction recipe for query {1}",
-                        args, "Could not create RETE recipe plan.", query);
-            }
-        }
-        return pn;
+            throws QueryPlannerException 
+    {
+    	final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
+    	return compiled;
+//    	RecipeTraceInfo pn;
+//        pn = queryPlans.get(query);
+//        if (pn == null) {
+//            pn = construct(query);
+//            TODO handle recursion by reinterpret-RecipeTrace
+//            queryPlans.put(query, pn);
+//            if (pn == null) {
+//                String[] args = { query.toString() };
+//                throw new RetePatternBuildException("Unsuccessful planning of RETE construction recipe for query {1}",
+//                        args, "Could not create RETE recipe plan.", query);
+//            }
+//        }
+//        return pn;
     }
     /**
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
@@ -488,15 +485,6 @@ public class ReteBoundary {
     // }
     // return pn;
     // }
-
-    /**
-     * @pre: builder is set
-     */
-    private RecipeTraceInfo construct(PQuery query) throws QueryPlannerException {
-        engine.getReteNet().waitForReteTermination();
-        return engine.getBuilder().construct(query);
-        // production.setDirty(false);
-    }
 
     // protected void constructScoper(
     // Address<? extends Production> unscopedProduction,

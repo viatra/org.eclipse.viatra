@@ -20,12 +20,12 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * @author Bergmann Gabor
  *
  */
-public class ProductionTraceInfo extends RecipeTraceInfo implements
+public class CompiledQuery extends RecipeTraceInfo implements
 		PatternTraceInfo {
 	
 	private PQuery query;
 	
-	public ProductionTraceInfo(ReteNodeRecipe recipe,
+	public CompiledQuery(ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces,
 			PQuery query) {
 		super(recipe, parentRecipeTraces);

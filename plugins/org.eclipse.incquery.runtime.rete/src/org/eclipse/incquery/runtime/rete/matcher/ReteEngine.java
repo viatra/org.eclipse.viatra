@@ -25,8 +25,8 @@ import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.IRetePatternBuilder;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
+import org.eclipse.incquery.runtime.rete.construction.plancompiler.RecipePlanCompiler;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.NodeProvisioner;
@@ -53,7 +53,7 @@ public class ReteEngine {
     // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
     // matcher
 
-    protected IRetePatternBuilder builder;
+    protected RecipePlanCompiler compiler;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
 
@@ -79,7 +79,7 @@ public class ReteEngine {
 
         initEngine();
 
-        this.builder = null;
+        this.compiler = null;
     }
 
     /**
@@ -135,7 +135,7 @@ public class ReteEngine {
     public void killEngine() {
         deconstructEngine();
         // this.framework = null;
-        this.builder = null;
+        this.compiler = null;
     }
 
     /**
@@ -147,7 +147,7 @@ public class ReteEngine {
 
         initEngine();
 
-        builder.refresh();
+        compiler.reset();
     }
 
     /**
@@ -401,10 +401,9 @@ public class ReteEngine {
      * @param builder
      *            the pattern matcher builder to set
      */
-    public void setBuilder(
-            IRetePatternBuilder builder) {
+    public void setCompiler(RecipePlanCompiler builder) {
     	ensureInitialized();
-        this.builder = builder;
+        this.compiler = builder;
     }
 
     /**
@@ -447,9 +446,9 @@ public class ReteEngine {
         return context;
     }
 
-    public IRetePatternBuilder getBuilder() {
+    public RecipePlanCompiler getCompiler() {
     	ensureInitialized();
-       return builder;
+       return compiler;
     }
 
     // /**

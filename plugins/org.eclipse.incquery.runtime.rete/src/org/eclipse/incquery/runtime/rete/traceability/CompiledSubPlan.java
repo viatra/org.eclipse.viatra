@@ -28,9 +28,9 @@ import com.google.common.base.Joiner;
  * <p> The Rete node represented by the recipe is equivalent to the SubPlan.
  * <p> Invariant: each variable has at most one index associated with it in the tuple, i.e. no duplicates.
  */
-public class CompiledQueryPlan extends AuxiliaryPlanningTrace {
+public class CompiledSubPlan extends AuxiliaryPlanningTrace {
 
-	public CompiledQueryPlan(SubPlan subPlan, List<PVariable> variablesTuple,
+	public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
 			ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super(subPlan, variablesTuple, recipe, parentRecipeTraces);
@@ -43,7 +43,7 @@ public class CompiledQueryPlan extends AuxiliaryPlanningTrace {
 					Joiner.on(',').join(variablesTuple), subPlan.toShortString(), recipe));
 		}
 	}
-	public CompiledQueryPlan(SubPlan subPlan, List<PVariable> variablesTuple,
+	public CompiledSubPlan(SubPlan subPlan, List<PVariable> variablesTuple,
 			ReteNodeRecipe recipe,
 			RecipeTraceInfo... parentRecipeTraces) {
 		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));

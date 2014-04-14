@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.IdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.NullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -51,7 +51,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
 	private ReteEngine reteEngine;
-	private ReteBoundary boundary;
+	private InputConnector connector;
 		
 	static final TupleMask nullMask = TupleMask.linear(0, 2); 
 	static final TupleMask sourceKnown = TupleMask.selectSingle(0, 2); 
@@ -92,7 +92,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		this.engine = engine;
 	//	this.baseIndex = engine.getBaseIndex();
 	//	this.reteEngine = engine.getReteEngine();
-		this.boundary = reteEngine.getBoundary();
+		this.connector = reteEngine.getReteNet().getInputConnector();
 		this.feature = feature;
 		setTag(feature.getName());
 		
@@ -121,10 +121,10 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	}
 	
 	protected Tuple makeTuple(EObject source, Object target) {
-		return new FlatTuple(boundary.wrapElement(source), boundary.wrapElement(target));
+		return new FlatTuple(connector.wrapElement(source), connector.wrapElement(target));
 	}
 	protected Tuple makeTupleSingle(Object element) {
-		return new FlatTuple(boundary.wrapElement(element));
+		return new FlatTuple(connector.wrapElement(element));
 	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {

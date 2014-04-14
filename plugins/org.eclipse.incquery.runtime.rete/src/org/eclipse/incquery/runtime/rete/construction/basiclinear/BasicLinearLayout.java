@@ -47,7 +47,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 	//SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan layout(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryPlannerException {
+    public SubPlan plan(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryPlannerException {
     	SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
         //planProcessor.setCompiler(compiler);

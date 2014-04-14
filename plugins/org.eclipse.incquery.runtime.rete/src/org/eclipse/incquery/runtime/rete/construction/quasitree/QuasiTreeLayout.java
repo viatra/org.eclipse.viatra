@@ -44,7 +44,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
-    public SubPlan layout(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context)
+    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context)
             throws QueryPlannerException {
         return new Scaffold(pSystem, /*compiler,*/ context).run();
     }

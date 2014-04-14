@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.IdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.NullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -52,7 +52,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
 	private ReteEngine reteEngine;
-	private ReteBoundary boundary;
+	private InputConnector connector;
 	
 	static final TupleMask nullMask = TupleMask.linear(0, 1); 
 	static final TupleMask identityMask = TupleMask.identity(1); 
@@ -79,7 +79,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 		this.engine = engine;
 	//	this.baseIndex = engine.getBaseIndex();
 	//	this.reteEngine = engine.getReteEngine();
-	//	this.boundary = reteEngine.getBoundary();
+		this.connector = reteEngine.getReteNet().getInputConnector();
 		this.clazz = clazz;
 		setTag(clazz.getName());
 						
@@ -110,7 +110,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	}
 
 	protected Tuple makeTuple(EObject instance) {
-		return new FlatTuple(boundary.wrapElement(instance));
+		return new FlatTuple(connector.wrapElement(instance));
 	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {

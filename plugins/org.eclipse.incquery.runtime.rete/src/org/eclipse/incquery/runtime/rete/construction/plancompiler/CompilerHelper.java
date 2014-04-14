@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
@@ -34,7 +35,7 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningTrace;
-import org.eclipse.incquery.runtime.rete.traceability.CompiledQueryPlan;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -118,7 +119,7 @@ public class CompilerHelper {
 //	}
 	
 	/**
-	 * Makes sure that all variables in the tuple are different so that it can be used as {@link CompiledQueryPlan}.
+	 * Makes sure that all variables in the tuple are different so that it can be used as {@link CompiledSubPlan}.
 	 * If a variable occurs multiple times, equality checks are applied and then the results are trimmed so that duplicates are hidden.
 	 * If no manipulation is necessary, the original trace is returned.  
 	 * 
@@ -180,8 +181,14 @@ public class CompilerHelper {
 	 * Extracts the variable list representation of the variables tuple. 
 	 */
 	public static List<PVariable> convertVariablesTuple(EnumerablePConstraint constraint) {
+		return convertVariablesTuple(constraint.getVariablesTuple());
+	}
+	/**
+	 * Extracts the variable list representation of the variables tuple. 
+	 */
+	public static List<PVariable> convertVariablesTuple(Tuple variablesTuple) {
 		List<PVariable> result = new ArrayList<PVariable>();
-		for (Object o : constraint.getVariablesTuple().getElements())
+		for (Object o : variablesTuple.getElements())
 			result.add((PVariable) o);
 		return result;
 	}

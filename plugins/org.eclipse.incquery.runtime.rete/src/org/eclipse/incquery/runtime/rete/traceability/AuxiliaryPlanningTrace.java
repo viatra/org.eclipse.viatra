@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * A trace marker associating a Rete recipe with a query SubPlan. 
  * 
  * <p> The recipe may be an auxiliary node; 
- *   see {@link CompiledQueryPlan} if it represents the entire SubPlan instead.
+ *   see {@link CompiledSubPlan} if it represents the entire SubPlan instead.
  */
 public class AuxiliaryPlanningTrace extends RecipeTraceInfo {
 
@@ -70,8 +70,8 @@ public class AuxiliaryPlanningTrace extends RecipeTraceInfo {
 	 * Returns a new clone that reinterprets the same compiled form as belonging to a different subPlan.
 	 * Useful e.g. if child plan turns out to be a no-op. 
 	 */
-	public CompiledQueryPlan cloneFor(SubPlan newSubPlan) {
-	    return new CompiledQueryPlan(newSubPlan, 
+	public CompiledSubPlan cloneFor(SubPlan newSubPlan) {
+	    return new CompiledSubPlan(newSubPlan, 
 	    		getVariablesTuple(), 
 	    		getRecipe(), 
 	    		getParentRecipeTraces());
