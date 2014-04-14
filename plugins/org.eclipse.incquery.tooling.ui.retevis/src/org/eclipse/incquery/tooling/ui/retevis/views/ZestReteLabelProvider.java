@@ -13,11 +13,9 @@ package org.eclipse.incquery.tooling.ui.retevis.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.text.FlowPage;
@@ -25,7 +23,6 @@ import org.eclipse.draw2d.text.TextFlow;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -38,10 +35,10 @@ import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.misc.ConstantNode;
 import org.eclipse.incquery.runtime.rete.network.Node;
-import org.eclipse.incquery.runtime.rete.network.Production;
-import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledSubPlan;
+import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.tuple.MaskedTupleMemory;
 import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -74,13 +71,13 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
     public void setRb(ReteBoundary rb) {
         this.rb = rb;
         // initialize reverse traceability information
-        resetReverseMap();
-        for (Object _o : rb.getAllProductionNodes()) {
-            Node productionNode = rb.getHeadContainer().resolveLocal((Address<?>) _o);
-            if (productionNode instanceof Production) {
-                initalizeReverseMap((Production) productionNode);
-            }
-        }
+//        resetReverseMap();
+//        for (Object _o : rb.getAllProductionNodes()) {
+//            Node productionNode = rb.getHeadContainer().resolveLocal((Address<?>) _o);
+//            if (productionNode instanceof Production) {
+//                initalizeReverseMap((Production) productionNode);
+//            }
+//        }
     }
 
     @Override
@@ -117,14 +114,11 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             }
             if (!(n instanceof UniquenessEnforcerNode || n instanceof ConstantNode)) {
                 sb.append("\n");
-                for (SubPlan st : getStubsForNode(n)) {
+                for (PlanningTrace trace : getStubsForNode(n)) {
                     sb.append("<");
-                    Tuple variablesTuple = st.getVariablesTuple();
-                    for (Object obj : variablesTuple.getElements()) {
-                        if (obj instanceof PVariable) {
-                            String nameObj = ((PVariable) obj).getName();
-                            sb.append(nameObj);
-                        }
+                    List<PVariable> variablesTuple = trace.getVariablesTuple();
+                    for (PVariable var : variablesTuple) {
+                        sb.append(var.getName());
                         sb.append("; ");
                     }
                     sb.append(">  ");
@@ -145,8 +139,9 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
             Node n = (Node) entity;
 //            String s = "";
             StringBuilder infoBuilder = new StringBuilder("Stubs:\n");
-            for (SubPlan st : getStubsForNode(n)) {
-                infoBuilder.append(getEnforcedConstraints(st));
+            for (PlanningTrace trace : getStubsForNode(n)) {
+                if (trace instanceof CompiledSubPlan)
+                	infoBuilder.append(getEnforcedConstraints(trace.getSubPlan()));
             }
 
             FlowPage fp = new FlowPage();
@@ -195,47 +190,50 @@ public class ZestReteLabelProvider extends LabelProvider implements IEntityStyle
         return sb.toString();
     }
 
-    private Collection<SubPlan> getStubsForNode(Node n) {
+    private Collection<PlanningTrace> getStubsForNode(Node n) {
+    	Collection<PlanningTrace> result = new HashSet<PlanningTrace>();
         if (n!=null) {
-        Collection<SubPlan> r = reverseMap.get(n);
-        if (r != null)
-            return r;
+        	Set<TraceInfo> traceInfos = n.getTraceInfos();
+        	for (TraceInfo traceInfo : traceInfos) {
+				if (traceInfo instanceof PlanningTrace)
+					result.add((PlanningTrace) traceInfo);
+			}
         }
-        return Collections.emptySet();
+        return result;
     }
 
-    private Map<Node, Collection<SubPlan>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
+//    private Map<Node, Collection<SubPlan>> reverseMap;// = new HashMap<Node, Collection<Stub<Address<?>>>>();
+//
+//    private void resetReverseMap() {
+//        reverseMap = new HashMap<Node, Collection<SubPlan>>();
+//    }
+//
+//    private void initalizeReverseMap(Production prod) {
+////        for (Object _stubOfProd : rb.getParentPlansOfReceiver(new Address<Receiver>(prod))) {
+////            SubPlan stubOfProd = (SubPlan) _stubOfProd;
+////            for (SubPlan s : getAllParentStubs(stubOfProd)) {
+////                Address<? extends Node> address = rb.getAddress(s);
+////                Node n = rb.getHeadContainer().resolveLocal(address);
+////                Collection<SubPlan> t = reverseMap.get(n);
+////                if (t == null) {
+////                    t = new HashSet<SubPlan>();
+////                }
+////                t.add(s);
+////                reverseMap.put(n, t);
+////            }
+////        }
+//    }
 
-    private void resetReverseMap() {
-        reverseMap = new HashMap<Node, Collection<SubPlan>>();
-    }
-
-    private void initalizeReverseMap(Production prod) {
-        for (Object _stubOfProd : rb.getParentPlansOfReceiver(new Address<Receiver>(prod))) {
-            SubPlan stubOfProd = (SubPlan) _stubOfProd;
-            for (SubPlan s : getAllParentStubs(stubOfProd)) {
-                Address<? extends Node> address = rb.getAddress(s);
-                Node n = rb.getHeadContainer().resolveLocal(address);
-                Collection<SubPlan> t = reverseMap.get(n);
-                if (t == null) {
-                    t = new HashSet<SubPlan>();
-                }
-                t.add(s);
-                reverseMap.put(n, t);
-            }
-        }
-    }
-
-    private static Collection<SubPlan> getAllParentStubs(SubPlan st) {
-        if (st != null) {
-            List<SubPlan> v = new ArrayList<SubPlan>();
-            v.add(st);
-            v.addAll(getAllParentStubs(st.getPrimaryParentPlan()));
-            v.addAll(getAllParentStubs(st.getSecondaryParentPlan()));
-            return v;
-        } else
-            return Collections.emptyList();
-    }
+//    private static Collection<SubPlan> getAllParentStubs(SubPlan st) {
+//        if (st != null) {
+//            List<SubPlan> v = new ArrayList<SubPlan>();
+//            v.add(st);
+//            v.addAll(getAllParentStubs(st.getPrimaryParentPlan()));
+//            v.addAll(getAllParentStubs(st.getSecondaryParentPlan()));
+//            return v;
+//        } else
+//            return Collections.emptyList();
+//    }
 
     @Override
     public Color getNodeHighlightColor(Object entity) {
