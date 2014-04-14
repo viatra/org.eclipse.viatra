@@ -11,9 +11,13 @@
 package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -24,13 +28,13 @@ import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
-import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningRecipeTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningTrace;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledQueryPlan;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -86,31 +90,89 @@ public class CompilerHelper {
 //		return trimmer;
 //	}
 
+//	/**
+//	 * Make sure last tuple element equals with the element at the given parameter, then trim it away.
+//	 */
+//	public static AuxiliaryPlanningRecipeTraceInfo trimLastIfEqual(
+//			SubPlan plan,
+//			AuxiliaryPlanningRecipeTraceInfo enforcerTrace,
+//			final Integer lastEqualsWithIndex) 
+//	{
+//		final int coreVariablesSize = enforcerTrace.getVariablesTuple().size()-1;
+//
+//		EqualityFilterRecipe equalityFilterRecipe = FACTORY.createEqualityFilterRecipe();
+//		equalityFilterRecipe.setParent(enforcerTrace.getRecipe());
+//		equalityFilterRecipe.getIndices().add(lastEqualsWithIndex);
+//		equalityFilterRecipe.getIndices().add(coreVariablesSize /*index of newly added copy*/);
+//		final AuxiliaryPlanningRecipeTraceInfo equalityTrace = 
+//				new AuxiliaryPlanningRecipeTraceInfo(plan, 
+//						enforcerTrace.getVariablesTuple(), equalityFilterRecipe, enforcerTrace);
+//		
+//		TrimmerRecipe trimmerRecipe = FACTORY.createTrimmerRecipe();
+//		trimmerRecipe.setParent(equalityFilterRecipe);
+//		final TupleMask mask = TupleMask.omit(coreVariablesSize /*omit last*/, coreVariablesSize+1);
+//		trimmerRecipe.setMask(RecipesHelper.mask(mask.sourceWidth, mask.indices));
+//		return new AuxiliaryPlanningRecipeTraceInfo(plan, 
+//				mask.transform(enforcerTrace.getVariablesTuple()), 
+//				trimmerRecipe, equalityTrace);
+//	}
+	
 	/**
-	 * Make sure last tuple element equals with the element at the given parameter, then trim it away.
+	 * Makes sure that all variables in the tuple are different so that it can be used as {@link CompiledQueryPlan}.
+	 * If a variable occurs multiple times, equality checks are applied and then the results are trimmed so that duplicates are hidden.
+	 * If no manipulation is necessary, the original trace is returned.  
+	 * 
+	 * <p> to be used whenever a constraint introduces new variables.
 	 */
-	public static AuxiliaryPlanningRecipeTraceInfo trimLastIfEqual(
-			SubPlan plan,
-			AuxiliaryPlanningRecipeTraceInfo enforcerTrace,
-			final Integer lastEqualsWithIndex) 
+	public static AuxiliaryPlanningTrace checkAndTrimEqualVariables(
+			SubPlan plan, final AuxiliaryPlanningTrace coreTrace) 
 	{
-		final int coreVariablesSize = enforcerTrace.getVariablesTuple().size()-1;
+		// are variables in the constraint all different?
+		final List<PVariable> coreVariablesTuple = coreTrace.getVariablesTuple();
+		final int constraintArity = coreVariablesTuple.size();
+		final int distinctVariables = coreTrace.getPosMapping().size();
+		if (constraintArity == distinctVariables) {
+			// all variables occur exactly once in tuple
+			return coreTrace;
+		} else { // apply equality checks and trim
+			
+			// find the positions in the tuple for each variable
+			Map<PVariable, SortedSet<Integer>> posMultimap = new HashMap<PVariable, SortedSet<Integer>>();
+			List<PVariable> trimmedVariablesTuple = new ArrayList<PVariable>(distinctVariables);
+			int[] trimIndices = new int[distinctVariables]; 
+			for (int i = 0; i < constraintArity; ++i) {
+				final PVariable variable = coreVariablesTuple.get(i);
+				SortedSet<Integer> indexSet = posMultimap.get(variable);
+				if (indexSet == null) { // first occurrence of variable
+					indexSet = new TreeSet<Integer>();
+					posMultimap.put(variable, indexSet);
+					
+					// this is the first occurrence, set up trimming
+					trimIndices[trimmedVariablesTuple.size()] = i;
+					trimmedVariablesTuple.add(variable);
+				}
+				indexSet.add(i);
+			}
 
-		EqualityFilterRecipe equalityFilterRecipe = FACTORY.createEqualityFilterRecipe();
-		equalityFilterRecipe.setParent(enforcerTrace.getRecipe());
-		equalityFilterRecipe.getIndices().add(lastEqualsWithIndex);
-		equalityFilterRecipe.getIndices().add(coreVariablesSize /*index of newly added copy*/);
-		final AuxiliaryPlanningRecipeTraceInfo equalityTrace = 
-				new AuxiliaryPlanningRecipeTraceInfo(plan, 
-						enforcerTrace.getVariablesTuple(), equalityFilterRecipe, enforcerTrace);
-		
-		TrimmerRecipe trimmerRecipe = FACTORY.createTrimmerRecipe();
-		trimmerRecipe.setParent(equalityFilterRecipe);
-		final TupleMask mask = TupleMask.omit(coreVariablesSize /*omit last*/, coreVariablesSize+1);
-		trimmerRecipe.setMask(RecipesHelper.mask(mask.sourceWidth, mask.indices));
-		return new AuxiliaryPlanningRecipeTraceInfo(plan, 
-				mask.transform(enforcerTrace.getVariablesTuple()), 
-				trimmerRecipe, equalityTrace);
+			// construct equality checks for each variable occurring multiple times
+			AuxiliaryPlanningTrace lastTrace = coreTrace;
+			for (Entry<PVariable, SortedSet<Integer>> entry : posMultimap.entrySet()) {
+				if (entry.getValue().size() > 1) {
+					EqualityFilterRecipe equalityFilterRecipe = FACTORY.createEqualityFilterRecipe();
+					equalityFilterRecipe.setParent(lastTrace.getRecipe());
+					equalityFilterRecipe.getIndices().addAll(entry.getValue());
+					lastTrace = new AuxiliaryPlanningTrace(plan, 
+							coreVariablesTuple, equalityFilterRecipe, lastTrace);
+				}
+			}
+				
+			// trim so that each variable occurs only once
+			TrimmerRecipe trimmerRecipe = FACTORY.createTrimmerRecipe();
+			trimmerRecipe.setParent(lastTrace.getRecipe());
+			trimmerRecipe.setMask(RecipesHelper.mask(constraintArity, trimIndices));
+			return new AuxiliaryPlanningTrace(plan, 
+					trimmedVariablesTuple, trimmerRecipe, lastTrace);
+		}
 	}
 	
 	
@@ -128,22 +190,14 @@ public class CompilerHelper {
 	/**
 	 * Returns a compiled indexer trace according to a mask 
 	 */
-    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, AuxiliaryPlanningRecipeTraceInfo parentTrace, TupleMask mask) {
+    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, AuxiliaryPlanningTrace parentTrace, TupleMask mask) {
 		final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
-		final Mask mask2 = RecipesHelper.mask(mask.sourceWidth, mask.indices);
-		IndexerRecipe recipe;
-		if (parentRecipe instanceof AggregatorRecipe) {
-			recipe = FACTORY.createAggregatorIndexerRecipe();
-			recipe.setParent(parentRecipe);
-			recipe.setMask(mask2);
-		} else {
-			recipe = RecipesHelper.projectionIndexerRecipe(
-				parentRecipe, 
-				mask2
-			);
-		}
+		if (parentRecipe instanceof AggregatorRecipe) 
+			throw new IllegalArgumentException("Cannot take projection indexer of aggregator node at plan " + planToCompile);
+		IndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(parentRecipe, 
+				RecipesHelper.mask(mask.sourceWidth, mask.indices));
 		// final List<PVariable> maskedVariables = mask.transform(parentTrace.getVariablesTuple());
-		return new AuxiliaryPlanningRecipeTraceInfo(planToCompile, 
+		return new AuxiliaryPlanningTrace(planToCompile, 
 				/*maskedVariables*/ parentTrace.getVariablesTuple(), recipe, parentTrace);
 		// TODO add specialized indexer trace info?
     }
@@ -167,8 +221,8 @@ public class CompilerHelper {
          * @pre enforceVariableCoincidences() has been called on both sides.
          */
         public JoinHelper(SubPlan planToCompile, 
-        		AuxiliaryPlanningRecipeTraceInfo primaryCompiled, 
-        		AuxiliaryPlanningRecipeTraceInfo callTrace) 
+        		AuxiliaryPlanningTrace primaryCompiled, 
+        		AuxiliaryPlanningTrace callTrace) 
         {
             super();
 
@@ -250,7 +304,7 @@ public class CompilerHelper {
     }
 
 	protected static TrimmerRecipe makeTrimmerRecipe(
-			final AuxiliaryPlanningRecipeTraceInfo compiledParent,
+			final AuxiliaryPlanningTrace compiledParent,
 			List<PVariable> projectedVariables) {
 		final ReteNodeRecipe parentRecipe = compiledParent.getRecipe();
 		List<Integer> projectionSourceIndices = new ArrayList<Integer>();

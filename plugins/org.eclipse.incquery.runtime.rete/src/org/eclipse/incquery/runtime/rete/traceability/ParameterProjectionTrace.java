@@ -21,14 +21,14 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * @author Bergmann Gabor
  *
  */
-public class ParameterProjectionTraceInfo extends RecipeTraceInfo implements PatternTraceInfo {
+public class ParameterProjectionTrace extends RecipeTraceInfo implements PatternTraceInfo {
 
-	public ParameterProjectionTraceInfo(PBody body, ReteNodeRecipe recipe,
+	public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
 			RecipeTraceInfo... parentRecipeTraces) {
 		this(body, recipe, Arrays.asList(parentRecipeTraces));
 	}
 
-	public ParameterProjectionTraceInfo(PBody body, ReteNodeRecipe recipe,
+	public ParameterProjectionTrace(PBody body, ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super(recipe, parentRecipeTraces);
 		this.body = body;

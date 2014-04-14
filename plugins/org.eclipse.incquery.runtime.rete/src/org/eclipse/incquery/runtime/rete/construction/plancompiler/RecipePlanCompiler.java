@@ -12,10 +12,8 @@ package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,16 +40,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatte
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.Containment;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.Generalization;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.Instantiation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeTernary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
-import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.BinaryInputRecipe;
@@ -72,27 +64,26 @@ import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
-import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningRecipeTraceInfo;
-import org.eclipse.incquery.runtime.rete.traceability.ParameterProjectionTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningTrace;
+import org.eclipse.incquery.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.incquery.runtime.rete.traceability.ProductionTraceInfo;
-import org.eclipse.incquery.runtime.rete.traceability.QueryPlanRecipeTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledQueryPlan;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
-import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
- * Compiles query plans into Rete recipes 
+ * Compiles query plans into Rete recipes traced by a {@link CompiledQueryPlan}.
  * 
  * @author Bergmann Gabor
  *
  */
 public class RecipePlanCompiler {
 	
-	private Map<SubPlan, QueryPlanRecipeTraceInfo> compilerCache = new HashMap<SubPlan, QueryPlanRecipeTraceInfo>();
+	private Map<SubPlan, CompiledQueryPlan> compilerCache = new HashMap<SubPlan, CompiledQueryPlan>();
 	private Map<ReteNodeRecipe, SubPlan> backTrace = new HashMap<ReteNodeRecipe, SubPlan>();
 	
 	final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 	
-	public RecipeTraceInfo compileProduction(PQuery query, Collection<SubPlan> bodies) {
+	public RecipeTraceInfo compileProduction(PQuery query, Collection<SubPlan> bodies) throws QueryPlannerException {
 		//TODO skip production node if there is just one body and no projection needed?
 		Collection<RecipeTraceInfo> bodyFinalTraces = new HashSet<RecipeTraceInfo>();
 		Collection<ReteNodeRecipe> bodyFinalRecipes = new HashSet<ReteNodeRecipe>();
@@ -101,9 +92,12 @@ public class RecipePlanCompiler {
 			// skip over any projections at the end
 			while (bodyFinalPlan.getOperation() instanceof PProject)
 				bodyFinalPlan = bodyFinalPlan.getParentPlans().get(0);
-		
+			
+			// TODO checkAndTrimEqualVariables may introduce superfluous trim, 
+			// but whatever (no uniqueness enforcer needed)
+			
 			// compile body
-			final QueryPlanRecipeTraceInfo compiledBody = getCompiledForm(bodyFinalPlan);
+			final CompiledQueryPlan compiledBody = getCompiledForm(bodyFinalPlan);
 			
 			// project to parameter list 
 			final PBody body = bodyFinalPlan.getBody();
@@ -113,7 +107,7 @@ public class RecipePlanCompiler {
 				bodyFinalRecipes.add(compiledBody.getRecipe());
 			} else {
 				TrimmerRecipe trimmerRecipe = CompilerHelper.makeTrimmerRecipe(compiledBody, parameterList);
-				RecipeTraceInfo trimmerTrace = new ParameterProjectionTraceInfo(body, trimmerRecipe, compiledBody);
+				RecipeTraceInfo trimmerTrace = new ParameterProjectionTrace(body, trimmerRecipe, compiledBody);
 				bodyFinalTraces.add(trimmerTrace);
 				bodyFinalRecipes.add(trimmerRecipe);
 			}
@@ -129,8 +123,8 @@ public class RecipePlanCompiler {
 		return compiled;
 	}
 	
-	public QueryPlanRecipeTraceInfo getCompiledForm(SubPlan plan) {
-		QueryPlanRecipeTraceInfo compiled = compilerCache.get(plan);
+	public CompiledQueryPlan getCompiledForm(SubPlan plan) throws QueryPlannerException {
+		CompiledQueryPlan compiled = compilerCache.get(plan);
 		if (compiled == null) {
 			compiled = doCompileDispatch(plan);
 			compilerCache.put(plan, compiled);
@@ -140,19 +134,19 @@ public class RecipePlanCompiler {
 	}
 	
 	
-	private QueryPlanRecipeTraceInfo doCompileDispatch(SubPlan plan) {
+	private CompiledQueryPlan doCompileDispatch(SubPlan plan) throws QueryPlannerException {
 		final POperation operation = plan.getOperation();
 		if (operation instanceof PEnumerate) {
 			return doCompileEnumerate(((PEnumerate) operation).getEnumerablePConstraint(), plan);
 		} else if (operation instanceof PApply) {
 			final PConstraint pConstraint = ((PApply) operation).getPConstraint();
 			if (pConstraint instanceof EnumerablePConstraint) {
-				QueryPlanRecipeTraceInfo primaryParent = getCompiledForm(plan.getParentPlans().get(0));
-				AuxiliaryPlanningRecipeTraceInfo secondaryParent = 
+				CompiledQueryPlan primaryParent = getCompiledForm(plan.getParentPlans().get(0));
+				AuxiliaryPlanningTrace secondaryParent = 
 						doEnumerateDispatch(plan, (EnumerablePConstraint) pConstraint);		
 				return compileToNaturalJoin(plan, primaryParent, secondaryParent);
 			} else if (pConstraint instanceof DeferredPConstraint) {
-				 return doCheckDispatch((DeferredPConstraint)pConstraint, plan);
+				 return doDeferredDispatch((DeferredPConstraint)pConstraint, plan);
 			} else  {
 				throw new IllegalArgumentException(
 						"Unsupported PConstraint in query plan: " + plan.toShortString()); 
@@ -171,27 +165,27 @@ public class RecipePlanCompiler {
 	}
 
 
-	private QueryPlanRecipeTraceInfo doCheckDispatch(DeferredPConstraint constraint, SubPlan plan) {
+	private CompiledQueryPlan doDeferredDispatch(DeferredPConstraint constraint, SubPlan plan) throws QueryPlannerException {
 		final SubPlan parentPlan = plan.getParentPlans().get(0);
-    	final QueryPlanRecipeTraceInfo parentCompiled = getCompiledForm(parentPlan);
+    	final CompiledQueryPlan parentCompiled = getCompiledForm(parentPlan);
         if (constraint instanceof Equality) {
-            return processConstraint((Equality)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((Equality)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof ExportedParameter) {
-            return processConstraint((ExportedParameter)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((ExportedParameter)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof Inequality) {
-            return processConstraint((Inequality)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((Inequality)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof NegativePatternCall) {
-            return processConstraint((NegativePatternCall)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((NegativePatternCall)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof PatternMatchCounter) {
-            return processConstraint((PatternMatchCounter)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((PatternMatchCounter)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof ExpressionEvaluation) {
-            return processConstraint((ExpressionEvaluation)constraint, plan, parentPlan, parentCompiled);
+            return compileDeferred((ExpressionEvaluation)constraint, plan, parentPlan, parentCompiled);
         }
         throw new UnsupportedOperationException("Unknown deferred constraint " + constraint);
 	}
 	
-    private QueryPlanRecipeTraceInfo processConstraint(Equality constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled) {
+    private CompiledQueryPlan compileDeferred(Equality constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) {
         if (constraint.isMoot())
         	return parentCompiled.cloneFor(plan);
 
@@ -207,7 +201,7 @@ public class RecipePlanCompiler {
         	equalityFilterRecipe.getIndices().add(indexLower);
         	equalityFilterRecipe.getIndices().add(indexHigher);	
         	
-            return new QueryPlanRecipeTraceInfo(plan, 
+            return new CompiledQueryPlan(plan, 
             		parentCompiled.getVariablesTuple(), 
             		equalityFilterRecipe, 
             		parentCompiled);
@@ -221,13 +215,13 @@ public class RecipePlanCompiler {
         }
     }
     
-    private QueryPlanRecipeTraceInfo processConstraint(ExportedParameter constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled) {
+    private CompiledQueryPlan compileDeferred(ExportedParameter constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) {
     	return parentCompiled.cloneFor(plan);
     }
     
-    private QueryPlanRecipeTraceInfo processConstraint(Inequality constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled) {
+    private CompiledQueryPlan compileDeferred(Inequality constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) {
         if (constraint.isEliminable())
         	return parentCompiled.cloneFor(plan);
 
@@ -243,7 +237,7 @@ public class RecipePlanCompiler {
         	inequalityFilterRecipe.setSubject(indexLower);
         	inequalityFilterRecipe.getInequals().add(indexHigher);
         	        	
-            return new QueryPlanRecipeTraceInfo(plan, 
+            return new CompiledQueryPlan(plan, 
             		parentCompiled.getVariablesTuple(), 
             		inequalityFilterRecipe, 
             		parentCompiled);
@@ -256,10 +250,10 @@ public class RecipePlanCompiler {
             );
         }
     }
-    private QueryPlanRecipeTraceInfo processConstraint(NegativePatternCall constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled)  
+    private CompiledQueryPlan compileDeferred(NegativePatternCall constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) throws QueryPlannerException  
     {
-		final AuxiliaryPlanningRecipeTraceInfo callTrace = referQuery(constraint.getReferredQuery());
+		final AuxiliaryPlanningTrace callTrace = referQuery(constraint.getReferredQuery());
 		
 		JoinHelper joinHelper = new JoinHelper(plan, parentCompiled, callTrace);
 		final RecipeTraceInfo primaryIndexer = joinHelper.getPrimaryIndexer();
@@ -269,49 +263,66 @@ public class RecipePlanCompiler {
 		antiJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
 		antiJoinRecipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
 		
-		return new QueryPlanRecipeTraceInfo(plan, parentCompiled.getVariablesTuple(), antiJoinRecipe, primaryIndexer, secondaryIndexer);
+		return new CompiledQueryPlan(plan, parentCompiled.getVariablesTuple(), antiJoinRecipe, primaryIndexer, secondaryIndexer);
     }
-    private QueryPlanRecipeTraceInfo processConstraint(PatternMatchCounter constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled)  
+    private CompiledQueryPlan compileDeferred(PatternMatchCounter constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) throws QueryPlannerException  
     {
-		final AuxiliaryPlanningRecipeTraceInfo callTrace = referQuery(constraint.getReferredQuery());
+		final AuxiliaryPlanningTrace callTrace = referQuery(constraint.getReferredQuery());
 		
+		// hack: use some mask computations (+ the indexers) from a fake natural join against the called query
 		JoinHelper fakeJoinHelper = new JoinHelper(plan, parentCompiled, callTrace);
-		final RecipeTraceInfo fakePrimaryIndexer = fakeJoinHelper.getPrimaryIndexer();
-		final RecipeTraceInfo fakeSecondaryIndexer = fakeJoinHelper.getSecondaryIndexer();
+		final RecipeTraceInfo primaryIndexer = fakeJoinHelper.getPrimaryIndexer();
+		final RecipeTraceInfo callProjectionIndexer = fakeJoinHelper.getSecondaryIndexer();
 
 		final List<PVariable> sideVariablesTuple = fakeJoinHelper.getSecondaryMask().transform(callTrace.getVariablesTuple());
 		/*if (!booleanCheck)*/ sideVariablesTuple.add(constraint.getResultVariable());
 
 		CountAggregatorRecipe aggregatorRecipe = FACTORY.createCountAggregatorRecipe();
-		aggregatorRecipe.setParent((ProjectionIndexerRecipe) fakeSecondaryIndexer.getRecipe());
-		AuxiliaryPlanningRecipeTraceInfo aggregatorTrace = new AuxiliaryPlanningRecipeTraceInfo(plan, sideVariablesTuple, aggregatorRecipe, fakeSecondaryIndexer);
+		aggregatorRecipe.setParent((ProjectionIndexerRecipe) callProjectionIndexer.getRecipe());
+		AuxiliaryPlanningTrace aggregatorTrace = 
+				new AuxiliaryPlanningTrace(plan, sideVariablesTuple, aggregatorRecipe, callProjectionIndexer);
 		
-		JoinHelper joinHelper = new JoinHelper(plan, parentCompiled, aggregatorTrace);		
-		return new QueryPlanRecipeTraceInfo(plan, 
-				joinHelper.getNaturalJoinVariablesTuple(), 
-				joinHelper.getNaturalJoinRecipe(), 
-				joinHelper.getPrimaryIndexer(), joinHelper.getSecondaryIndexer());
-        TODO what if new variable already known
-//        SubPlan sidePlan = constraint.getSidePlan(compiler);
-//        BuildHelper.JoinHelper joinHelper = new BuildHelper.JoinHelper(parentPlan, sidePlan);
-//        Integer resultPositionLeft = parentPlan.getVariablesIndex().get(constraint.getResultVariable());
-//        TupleMask primaryMask = joinHelper.getPrimaryMask();
-//        TupleMask secondaryMask = joinHelper.getSecondaryMask();
-//        final SubPlan counterBetaPlan = compiler.buildCounterBetaNode(parentPlan, sidePlan, primaryMask, secondaryMask,
-//                joinHelper.getComplementerMask(), constraint.getResultVariable());
-//        if (resultPositionLeft == null) {
-//            return counterBetaPlan;
-//        } else {
-//            int resultPositionFinal = counterBetaPlan.getNaturalJoinVariablesTuple().getSize() - 1; // appended to the last position
-//            final SubPlan equalityCheckerPlan = 
-//                    compiler.buildEqualityChecker(counterBetaPlan, new int[]{resultPositionFinal, resultPositionLeft});
-//            return compiler.buildTrimmer(equalityCheckerPlan, TupleMask.omit(resultPositionFinal, 1+resultPositionFinal), false);
-//        }
+		IndexerRecipe aggregatorIndexerRecipe = FACTORY.createAggregatorIndexerRecipe();
+		aggregatorIndexerRecipe.setParent(aggregatorRecipe);
+		aggregatorIndexerRecipe.setMask(RecipesHelper.mask(
+				sideVariablesTuple.size(), 
+				//use same indices as in the projection indexer 
+				// EVEN if result variable already visible in left parent
+				fakeJoinHelper.getSecondaryMask().indices 
+		));
+		AuxiliaryPlanningTrace aggregatorIndexerTrace = 
+				new AuxiliaryPlanningTrace(plan, sideVariablesTuple, aggregatorIndexerRecipe, aggregatorTrace);
+		
+    	JoinRecipe naturalJoinRecipe = FACTORY.createJoinRecipe();
+    	naturalJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
+    	naturalJoinRecipe.setRightParent(aggregatorIndexerRecipe);
+		naturalJoinRecipe.setRightParentComplementaryMask(RecipesHelper.mask(
+				sideVariablesTuple.size(), 
+				// extend with last element only - the computation value
+				sideVariablesTuple.size() - 1
+		));
+		
+        // what if the new variable already has a value?
+		boolean alreadyKnown = parentPlan.getVisibleVariables().contains(constraint.getResultVariable());
+		final List<PVariable> aggregatedVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());		
+		if (!alreadyKnown) aggregatedVariablesTuple.add(constraint.getResultVariable());
+
+		AuxiliaryPlanningTrace joinTrace = new AuxiliaryPlanningTrace(plan,
+			aggregatedVariablesTuple, 
+			naturalJoinRecipe, 
+			primaryIndexer, aggregatorIndexerTrace);
+
+        return CompilerHelper.checkAndTrimEqualVariables(plan, joinTrace).cloneFor(plan);
+//		if (!alreadyKnown) {
+//			return joinTrace.cloneFor(plan);
+//		} else {
+//        	//final Integer equalsWithIndex = parentCompiled.getPosMapping().get(parentCompiled.getVariablesTuple());
+//		}
     }
     
-    private QueryPlanRecipeTraceInfo processConstraint(ExpressionEvaluation constraint, 
-    		SubPlan plan, SubPlan parentPlan, QueryPlanRecipeTraceInfo parentCompiled) {
+    private CompiledQueryPlan compileDeferred(ExpressionEvaluation constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledQueryPlan parentCompiled) {
         Map<String, Integer> tupleNameMap = new HashMap<String, Integer>();
         for (String name : constraint.getEvaluator().getInputParameterNames()) {
             Map<? extends Object, Integer> index = parentCompiled.getPosMapping();
@@ -331,43 +342,34 @@ public class RecipePlanCompiler {
         				
         final List<PVariable> enforcerVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());
         if (!booleanCheck) enforcerVariablesTuple.add(outputVariable);
-        AuxiliaryPlanningRecipeTraceInfo enforcerTrace = 
-        		new AuxiliaryPlanningRecipeTraceInfo(plan, enforcerVariablesTuple, enforcerRecipe, parentCompiled);
-        AuxiliaryPlanningRecipeTraceInfo resultTrace = enforcerTrace;
-        if (!booleanCheck && parentPlan.getVisibleVariables().contains(outputVariable)) {     
-        	// what if the new variable already has a value?
-        	final Integer equalsWithIndex = parentCompiled.getPosMapping().get(outputVariable);
-        	resultTrace = CompilerHelper.trimLastIfEqual(plan, enforcerTrace, equalsWithIndex);
-        } 
-        return resultTrace.cloneFor(plan);
+        AuxiliaryPlanningTrace enforcerTrace = 
+        		new AuxiliaryPlanningTrace(plan, enforcerVariablesTuple, enforcerRecipe, parentCompiled);
+
+        return CompilerHelper.checkAndTrimEqualVariables(plan, enforcerTrace).cloneFor(plan);
     }
 
 
-	private QueryPlanRecipeTraceInfo doCompileJoin(PJoin operation, SubPlan plan) {
-		final List<QueryPlanRecipeTraceInfo> compiledParents = getCompiledFormOfParents(plan);
-		final QueryPlanRecipeTraceInfo leftCompiled = compiledParents.get(0);
-		final QueryPlanRecipeTraceInfo rightCompiled = compiledParents.get(1);
+	private CompiledQueryPlan doCompileJoin(PJoin operation, SubPlan plan) throws QueryPlannerException {
+		final List<CompiledQueryPlan> compiledParents = getCompiledFormOfParents(plan);
+		final CompiledQueryPlan leftCompiled = compiledParents.get(0);
+		final CompiledQueryPlan rightCompiled = compiledParents.get(1);
 		
 		return compileToNaturalJoin(plan, leftCompiled, rightCompiled);
 	}
 
-	private QueryPlanRecipeTraceInfo compileToNaturalJoin(SubPlan plan,
-			final AuxiliaryPlanningRecipeTraceInfo leftCompiled,
-			final AuxiliaryPlanningRecipeTraceInfo rightCompiled) {
+	private CompiledQueryPlan compileToNaturalJoin(SubPlan plan,
+			final AuxiliaryPlanningTrace leftCompiled,
+			final AuxiliaryPlanningTrace rightCompiled) {
 		JoinHelper joinHelper = new JoinHelper(plan, leftCompiled, rightCompiled);
-        return new QueryPlanRecipeTraceInfo(plan, 
+        return new CompiledQueryPlan(plan, 
         		joinHelper.getNaturalJoinVariablesTuple(), 
         		joinHelper.getNaturalJoinRecipe(), 
         		joinHelper.getPrimaryIndexer(), joinHelper.getSecondaryIndexer());
 	}
-	/**
-	 * @param operation
-	 * @param plan
-	 * @return
-	 */
-	private QueryPlanRecipeTraceInfo doCompileProject(PProject operation, SubPlan plan) {
-		final List<QueryPlanRecipeTraceInfo> compiledParents = getCompiledFormOfParents(plan);
-		final QueryPlanRecipeTraceInfo compiledParent = compiledParents.get(0);
+
+	private CompiledQueryPlan doCompileProject(PProject operation, SubPlan plan) throws QueryPlannerException {
+		final List<CompiledQueryPlan> compiledParents = getCompiledFormOfParents(plan);
+		final CompiledQueryPlan compiledParent = compiledParents.get(0);
 		
 		// TODO add smarter ordering here?
 		List<PVariable> projectedVariables = new ArrayList<PVariable>(operation.getToVariables());
@@ -376,16 +378,16 @@ public class RecipePlanCompiler {
 		
 		if (BuildHelper.areAllVariablesDetermined(plan.getParentPlans().get(0), projectedVariables)) {
 			// skip uniqueness enforcement if unneeded?
-			return new QueryPlanRecipeTraceInfo(plan, projectedVariables, trimmerRecipe, compiledParent);
+			return new CompiledQueryPlan(plan, projectedVariables, trimmerRecipe, compiledParent);
 		} else {
-			RecipeTraceInfo trimTrace = new AuxiliaryPlanningRecipeTraceInfo(plan, projectedVariables, trimmerRecipe, compiledParent);
+			RecipeTraceInfo trimTrace = new AuxiliaryPlanningTrace(plan, projectedVariables, trimmerRecipe, compiledParent);
 			UniquenessEnforcerRecipe uniquenessEnforcerRecipe = FACTORY.createUniquenessEnforcerRecipe();
 			uniquenessEnforcerRecipe.getParents().add(trimmerRecipe);			
-			return new QueryPlanRecipeTraceInfo(plan, projectedVariables, uniquenessEnforcerRecipe, trimTrace);
+			return new CompiledQueryPlan(plan, projectedVariables, uniquenessEnforcerRecipe, trimTrace);
 		}							
 	}
 
-	private QueryPlanRecipeTraceInfo doCompileStart(PStart operation,
+	private CompiledQueryPlan doCompileStart(PStart operation,
 			SubPlan plan) {
 		if (!operation.getAPrioriVariables().isEmpty()) {
 			throw new IllegalArgumentException(
@@ -394,97 +396,100 @@ public class RecipePlanCompiler {
 		final ConstantRecipe recipe = FACTORY.createConstantRecipe();
 		recipe.getConstantValues().clear();
 		
-		return new QueryPlanRecipeTraceInfo(plan, new ArrayList<PVariable>(), recipe);
+		return new CompiledQueryPlan(plan, new ArrayList<PVariable>(), recipe);
 	}
 
-	private QueryPlanRecipeTraceInfo doCompileEnumerate(
+	private CompiledQueryPlan doCompileEnumerate(
 			EnumerablePConstraint constraint,
-			SubPlan plan) {		
-		final Tuple originalVariablesTuple = constraint.getVariablesTuple();
-		final Map<Object, Integer> invertedIndex = originalVariablesTuple.invertIndex();
-		List<PVariable> variables = new ArrayList<PVariable>();
-		for (int i = 0; i < originalVariablesTuple.getSize(); ++i) {
-			final Object variable = originalVariablesTuple.get(i);
-			if (i == invertedIndex.get(variable)){ // only on last occurrence
-				variables.add((PVariable) variable);
-			}
-		}
-		final AuxiliaryPlanningRecipeTraceInfo coreTrace = doEnumerateDispatch(plan, constraint);
-		
-		return new QueryPlanRecipeTraceInfo(plan, variables, coreTrace.getRecipe(), coreTrace.getParentRecipeTraces());
-		
-		TODO check variable coincidences
+			SubPlan plan) throws QueryPlannerException 
+	{		
+		final AuxiliaryPlanningTrace trimmedTrace = 
+				doEnumerateAndDeduplicate(constraint, plan);
+			
+		return trimmedTrace.cloneFor(plan);
 	}
+
+	private AuxiliaryPlanningTrace doEnumerateAndDeduplicate(
+			EnumerablePConstraint constraint, SubPlan plan) throws QueryPlannerException 
+	{
+		final AuxiliaryPlanningTrace coreTrace = 
+				doEnumerateDispatch(plan, constraint);		
+		final AuxiliaryPlanningTrace trimmedTrace = 
+				CompilerHelper.checkAndTrimEqualVariables(plan, coreTrace);
+		return trimmedTrace;
+	}
+
 	
 	
-	private AuxiliaryPlanningRecipeTraceInfo doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) {
+	
+	private AuxiliaryPlanningTrace doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) throws QueryPlannerException {
         if (constraint instanceof BinaryTransitiveClosure) {
-            return processConstraint(plan, (BinaryTransitiveClosure) constraint);
+            return compileEnumerable(plan, (BinaryTransitiveClosure) constraint);
         } else if (constraint instanceof ConstantValue) {
-            return processConstraint(plan, (ConstantValue) constraint);
+            return compileEnumerable(plan, (ConstantValue) constraint);
 //        } else if (constraint instanceof Containment) {
-//            return processConstraint(plan, (Containment) constraint);
+//            return compileEnumerable(plan, (Containment) constraint);
 //        } else if (constraint instanceof Generalization) {
-//            return processConstraint(plan, (Generalization) constraint);
+//            return compileEnumerable(plan, (Generalization) constraint);
 //        } else if (constraint instanceof Instantiation) {
-//            return processConstraint(plan, (Instantiation) constraint);
+//            return compileEnumerable(plan, (Instantiation) constraint);
         } else if (constraint instanceof PositivePatternCall) {
-            return processConstraint(plan, (PositivePatternCall) constraint);
+            return compileEnumerable(plan, (PositivePatternCall) constraint);
         } else if (constraint instanceof TypeBinary) {
-            return processConstraint(plan, (TypeBinary) constraint);
+            return compileEnumerable(plan, (TypeBinary) constraint);
 //        } else if (constraint instanceof TypeTernary) {
-//            return processConstraint((TypeTernary) constraint);
+//            return compileEnumerable((TypeTernary) constraint);
         } else if (constraint instanceof TypeUnary) {
-            return processConstraint(plan, (TypeUnary) constraint);
+            return compileEnumerable(plan, (TypeUnary) constraint);
         }
         throw new UnsupportedOperationException("Unknown enumerable constraint " + constraint);
 	}
 
-	private AuxiliaryPlanningRecipeTraceInfo processConstraint(SubPlan plan,
-			BinaryTransitiveClosure constraint) {
+	private AuxiliaryPlanningTrace compileEnumerable(SubPlan plan,
+			BinaryTransitiveClosure constraint) throws QueryPlannerException {
 		final PQuery referredQuery = constraint.getSupplierKey();
-		final AuxiliaryPlanningRecipeTraceInfo callTrace = referQuery(referredQuery);
+		final AuxiliaryPlanningTrace callTrace = referQuery(referredQuery);
 		
 		final TransitiveClosureRecipe recipe = FACTORY.createTransitiveClosureRecipe();
 		recipe.setParent(callTrace.getRecipe());
 
-		return new AuxiliaryPlanningRecipeTraceInfo(plan, CompilerHelper.convertVariablesTuple(constraint), recipe, callTrace);
+		return new AuxiliaryPlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe, callTrace);
 	}
 
-	private AuxiliaryPlanningRecipeTraceInfo processConstraint(SubPlan plan, PositivePatternCall constraint) {
+	private AuxiliaryPlanningTrace compileEnumerable(SubPlan plan, PositivePatternCall constraint) throws QueryPlannerException {
 		final PQuery referredQuery = constraint.getReferredQuery();
 		return referQuery(referredQuery);
 	}
 
-	private AuxiliaryPlanningRecipeTraceInfo processConstraint(SubPlan plan, TypeBinary constraint) {
+	private AuxiliaryPlanningTrace compileEnumerable(SubPlan plan, TypeBinary constraint) {
 		final BinaryInputRecipe recipe = FACTORY.createBinaryInputRecipe();
 		initTypeInputRecipe(constraint, recipe);
-		return new AuxiliaryPlanningRecipeTraceInfo(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
+		return new AuxiliaryPlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
 	}
-	private AuxiliaryPlanningRecipeTraceInfo processConstraint(SubPlan plan, TypeUnary constraint) {
+	private AuxiliaryPlanningTrace compileEnumerable(SubPlan plan, TypeUnary constraint) {
 		final UnaryInputRecipe recipe = FACTORY.createUnaryInputRecipe();
 		initTypeInputRecipe(constraint, recipe);
-		return new AuxiliaryPlanningRecipeTraceInfo(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
+		return new AuxiliaryPlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
 	}
 	private void initTypeInputRecipe(TypeConstraint constraint, final TypeInputRecipe recipe) {
 		recipe.setTypeKey(constraint.getSupplierKey());
 		recipe.setTypeName(constraint.getTypeString());
 	}
 	
-	private AuxiliaryPlanningRecipeTraceInfo processConstraint(SubPlan plan, ConstantValue constraint) {
+	private AuxiliaryPlanningTrace compileEnumerable(SubPlan plan, ConstantValue constraint) {
 		final ConstantRecipe recipe = FACTORY.createConstantRecipe();
 		recipe.getConstantValues().add(constraint.getSupplierKey());
-		return new AuxiliaryPlanningRecipeTraceInfo(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
+		return new AuxiliaryPlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
 	}
 	
 	
-	private AuxiliaryPlanningRecipeTraceInfo referQuery(PQuery query) {
+	private AuxiliaryPlanningTrace referQuery(PQuery query) throws QueryPlannerException {
 	}
 
 	
 
-	protected List<QueryPlanRecipeTraceInfo> getCompiledFormOfParents(SubPlan plan) {
-		List<QueryPlanRecipeTraceInfo> results = new ArrayList<QueryPlanRecipeTraceInfo>();
+	protected List<CompiledQueryPlan> getCompiledFormOfParents(SubPlan plan) throws QueryPlannerException {
+		List<CompiledQueryPlan> results = new ArrayList<CompiledQueryPlan>();
 		for (SubPlan parentPlan : plan.getParentPlans()) {
 			results.add(getCompiledForm(parentPlan));
 		}

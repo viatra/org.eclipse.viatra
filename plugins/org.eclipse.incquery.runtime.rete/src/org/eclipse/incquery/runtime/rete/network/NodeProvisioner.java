@@ -30,7 +30,9 @@ import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.remote.RemoteReceiver;
 import org.eclipse.incquery.runtime.rete.remote.RemoteSupplier;
+import org.eclipse.incquery.runtime.rete.traceability.ActiveNodeConflictTrace;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
+import org.eclipse.incquery.runtime.rete.traceability.UserRequestTrace;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -295,15 +297,15 @@ public class NodeProvisioner {
     	
     	final TransparentRecipe transparentRecipe = RecipesFactory.eINSTANCE.createTransparentRecipe();
 		transparentRecipe.setParent(parentRecipeTrace.getRecipe());
-		final ActiveNodeConflictTraceInfo transparentRecipeTrace = 
-				new ActiveNodeConflictTraceInfo(transparentRecipe, parentRecipeTrace, inactiveIndexerRecipeTrace);
+		final ActiveNodeConflictTrace transparentRecipeTrace = 
+				new ActiveNodeConflictTrace(transparentRecipe, parentRecipeTrace, inactiveIndexerRecipeTrace);
     	
 		final org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe activeIndexerRecipe = 
 				RecipesFactory.eINSTANCE.createProjectionIndexerRecipe();
 		activeIndexerRecipe.setParent(transparentRecipe);
 		activeIndexerRecipe.setMask(inactiveIndexerRecipe.getMask());
-		final ActiveNodeConflictTraceInfo activeIndexerRecipeTrace = 
-				new ActiveNodeConflictTraceInfo(activeIndexerRecipe, transparentRecipeTrace, inactiveIndexerRecipeTrace);
+		final ActiveNodeConflictTrace activeIndexerRecipeTrace = 
+				new ActiveNodeConflictTrace(activeIndexerRecipe, transparentRecipeTrace, inactiveIndexerRecipeTrace);
 		
         return activeIndexerRecipeTrace;
     }
@@ -328,41 +330,7 @@ public class NodeProvisioner {
     // projectionIndexers.put(params, indexer);
     // }
     // }
-	
-	private class ActiveNodeConflictTraceInfo extends RecipeTraceInfo {
-		RecipeTraceInfo inactiveRecipeTrace;		
-		public ActiveNodeConflictTraceInfo(ReteNodeRecipe recipe,
-				RecipeTraceInfo parentRecipeTrace,
-				RecipeTraceInfo inactiveRecipeTrace) {
-			super(recipe, parentRecipeTrace);
-			this.inactiveRecipeTrace = inactiveRecipeTrace;
-		}
-		public RecipeTraceInfo getInactiveRecipeTrace() {
-			return inactiveRecipeTrace;
-		}
-	}
-//	private class AggregatorReferenceIndexTraceInfo extends RecipeTraceInfo {
-//		RecipeTraceInfo aggregatorNodeRecipeTrace;		
-//		public AggregatorReferenceIndexTraceInfo(ProjectionIndexerRecipe recipe,
-//				RecipeTraceInfo parentRecipeTrace,
-//				RecipeTraceInfo aggregatorNodeRecipeTrace) {
-//			super(recipe, parentRecipeTrace);
-//			this.aggregatorNodeRecipeTrace = aggregatorNodeRecipeTrace;
-//		}
-//		public RecipeTraceInfo getAggregatorNodeRecipeTrace() {
-//			return aggregatorNodeRecipeTrace;
-//		}
-//	}
-    class UserRequestTrace extends RecipeTraceInfo {
-		public UserRequestTrace(ReteNodeRecipe recipe,
-				Collection<RecipeTraceInfo> parentRecipeTraces) {
-			super(recipe, parentRecipeTraces);
-		}
-		public UserRequestTrace(ReteNodeRecipe recipe,
-				RecipeTraceInfo... parentRecipeTraces) {
-			super(recipe, parentRecipeTraces);
-		}
-    }
+
 
 
 }

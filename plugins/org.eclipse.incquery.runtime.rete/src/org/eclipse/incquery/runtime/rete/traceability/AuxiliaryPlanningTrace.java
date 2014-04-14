@@ -24,15 +24,15 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * A trace marker associating a Rete recipe with a query SubPlan. 
  * 
  * <p> The recipe may be an auxiliary node; 
- *   see {@link QueryPlanRecipeTraceInfo} if it represents the entire SubPlan instead.
+ *   see {@link CompiledQueryPlan} if it represents the entire SubPlan instead.
  */
-public class AuxiliaryPlanningRecipeTraceInfo extends RecipeTraceInfo {
+public class AuxiliaryPlanningTrace extends RecipeTraceInfo {
 
 	protected SubPlan subPlan;
 	protected List<PVariable> variablesTuple;
 	protected Map<PVariable, Integer> posMapping;
 
-	public AuxiliaryPlanningRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple, 
+	public AuxiliaryPlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
 			ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super(recipe, parentRecipeTraces);
@@ -44,7 +44,7 @@ public class AuxiliaryPlanningRecipeTraceInfo extends RecipeTraceInfo {
 			posMapping.put(variablesTuple.get(i), i);
 	}
 
-	public AuxiliaryPlanningRecipeTraceInfo(SubPlan subPlan, List<PVariable> variablesTuple, 
+	public AuxiliaryPlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
 			ReteNodeRecipe recipe,
 			RecipeTraceInfo... parentRecipeTraces) {
 		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
@@ -70,8 +70,8 @@ public class AuxiliaryPlanningRecipeTraceInfo extends RecipeTraceInfo {
 	 * Returns a new clone that reinterprets the same compiled form as belonging to a different subPlan.
 	 * Useful e.g. if child plan turns out to be a no-op. 
 	 */
-	public QueryPlanRecipeTraceInfo cloneFor(SubPlan newSubPlan) {
-	    return new QueryPlanRecipeTraceInfo(newSubPlan, 
+	public CompiledQueryPlan cloneFor(SubPlan newSubPlan) {
+	    return new CompiledQueryPlan(newSubPlan, 
 	    		getVariablesTuple(), 
 	    		getRecipe(), 
 	    		getParentRecipeTraces());
