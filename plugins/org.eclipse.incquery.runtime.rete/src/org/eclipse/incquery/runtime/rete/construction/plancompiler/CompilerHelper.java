@@ -34,7 +34,7 @@ import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
-import org.eclipse.incquery.runtime.rete.traceability.AuxiliaryPlanningTrace;
+import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
@@ -125,8 +125,8 @@ public class CompilerHelper {
 	 * 
 	 * <p> to be used whenever a constraint introduces new variables.
 	 */
-	public static AuxiliaryPlanningTrace checkAndTrimEqualVariables(
-			SubPlan plan, final AuxiliaryPlanningTrace coreTrace) 
+	public static PlanningTrace checkAndTrimEqualVariables(
+			SubPlan plan, final PlanningTrace coreTrace) 
 	{
 		// are variables in the constraint all different?
 		final List<PVariable> coreVariablesTuple = coreTrace.getVariablesTuple();
@@ -156,13 +156,13 @@ public class CompilerHelper {
 			}
 
 			// construct equality checks for each variable occurring multiple times
-			AuxiliaryPlanningTrace lastTrace = coreTrace;
+			PlanningTrace lastTrace = coreTrace;
 			for (Entry<PVariable, SortedSet<Integer>> entry : posMultimap.entrySet()) {
 				if (entry.getValue().size() > 1) {
 					EqualityFilterRecipe equalityFilterRecipe = FACTORY.createEqualityFilterRecipe();
 					equalityFilterRecipe.setParent(lastTrace.getRecipe());
 					equalityFilterRecipe.getIndices().addAll(entry.getValue());
-					lastTrace = new AuxiliaryPlanningTrace(plan, 
+					lastTrace = new PlanningTrace(plan, 
 							coreVariablesTuple, equalityFilterRecipe, lastTrace);
 				}
 			}
@@ -171,7 +171,7 @@ public class CompilerHelper {
 			TrimmerRecipe trimmerRecipe = FACTORY.createTrimmerRecipe();
 			trimmerRecipe.setParent(lastTrace.getRecipe());
 			trimmerRecipe.setMask(RecipesHelper.mask(constraintArity, trimIndices));
-			return new AuxiliaryPlanningTrace(plan, 
+			return new PlanningTrace(plan, 
 					trimmedVariablesTuple, trimmerRecipe, lastTrace);
 		}
 	}
@@ -197,14 +197,14 @@ public class CompilerHelper {
 	/**
 	 * Returns a compiled indexer trace according to a mask 
 	 */
-    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, AuxiliaryPlanningTrace parentTrace, TupleMask mask) {
+    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, PlanningTrace parentTrace, TupleMask mask) {
 		final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
 		if (parentRecipe instanceof AggregatorRecipe) 
 			throw new IllegalArgumentException("Cannot take projection indexer of aggregator node at plan " + planToCompile);
 		IndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(parentRecipe, 
 				RecipesHelper.mask(mask.sourceWidth, mask.indices));
 		// final List<PVariable> maskedVariables = mask.transform(parentTrace.getVariablesTuple());
-		return new AuxiliaryPlanningTrace(planToCompile, 
+		return new PlanningTrace(planToCompile, 
 				/*maskedVariables*/ parentTrace.getVariablesTuple(), recipe, parentTrace);
 		// TODO add specialized indexer trace info?
     }
@@ -228,8 +228,8 @@ public class CompilerHelper {
          * @pre enforceVariableCoincidences() has been called on both sides.
          */
         public JoinHelper(SubPlan planToCompile, 
-        		AuxiliaryPlanningTrace primaryCompiled, 
-        		AuxiliaryPlanningTrace callTrace) 
+        		PlanningTrace primaryCompiled, 
+        		PlanningTrace callTrace) 
         {
             super();
 
@@ -311,7 +311,7 @@ public class CompilerHelper {
     }
 
 	protected static TrimmerRecipe makeTrimmerRecipe(
-			final AuxiliaryPlanningTrace compiledParent,
+			final PlanningTrace compiledParent,
 			List<PVariable> projectedVariables) {
 		final ReteNodeRecipe parentRecipe = compiledParent.getRecipe();
 		List<Integer> projectionSourceIndices = new ArrayList<Integer>();

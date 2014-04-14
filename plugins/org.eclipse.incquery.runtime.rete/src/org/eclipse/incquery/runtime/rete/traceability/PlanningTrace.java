@@ -26,13 +26,13 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * <p> The recipe may be an auxiliary node; 
  *   see {@link CompiledSubPlan} if it represents the entire SubPlan instead.
  */
-public class AuxiliaryPlanningTrace extends RecipeTraceInfo {
+public class PlanningTrace extends RecipeTraceInfo {
 
 	protected SubPlan subPlan;
 	protected List<PVariable> variablesTuple;
 	protected Map<PVariable, Integer> posMapping;
 
-	public AuxiliaryPlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
+	public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
 			ReteNodeRecipe recipe,
 			Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super(recipe, parentRecipeTraces);
@@ -44,7 +44,7 @@ public class AuxiliaryPlanningTrace extends RecipeTraceInfo {
 			posMapping.put(variablesTuple.get(i), i);
 	}
 
-	public AuxiliaryPlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
+	public PlanningTrace(SubPlan subPlan, List<PVariable> variablesTuple, 
 			ReteNodeRecipe recipe,
 			RecipeTraceInfo... parentRecipeTraces) {
 		this(subPlan, variablesTuple, recipe, Arrays.asList(parentRecipeTraces));
