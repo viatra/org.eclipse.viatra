@@ -11,7 +11,7 @@
 package org.eclipse.incquery.runtime.graphiti;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.incquery.runtime.api.IModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.ui.IEditorPart;
 
 /**

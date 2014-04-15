@@ -176,7 +176,7 @@
                   value="org.eclipse.ui.IEditorPart">
             </instanceof>
             <adapt
-                  type="org.eclipse.incquery.runtime.api.IModelConnector">
+                  type="org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector">
             </adapt>
          </with>
       </definition>
@@ -205,8 +205,17 @@
             </reference>
          </activeWhen>
       </handler>
-      <handler
+<!--      <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
+            commandId="org.eclipse.incquery.tooling.ui.loadmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
+            </reference>
+         </activeWhen>
+      </handler> -->
+      <handler
+            class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
             <reference
@@ -410,16 +419,6 @@
             allPopups="false"
             locationURI="menu:org.eclipse.incquery.tooling.ui.loadmodelmenu">
          <command
-               commandId="org.eclipse.incquery.tooling.ui.attachmodel"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
-               </reference>
-            </visibleWhen>
-         </command>            
-         <command
                commandId="org.eclipse.incquery.tooling.ui.loadresourceset"
                style="push">
             <visibleWhen
@@ -459,7 +458,17 @@
                </reference>
             </visibleWhen>
          </command>
-      </menuContribution>
+      	 <command
+               commandId="org.eclipse.incquery.tooling.ui.attachmodel"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
+               </reference>
+            </visibleWhen>
+         </command>            
+         </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
@@ -647,7 +656,7 @@
             adaptableType="org.eclipse.ui.IEditorPart"
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
          <adapter
-               type="org.eclipse.incquery.runtime.api.IModelConnector">
+               type="org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector">
          </adapter>
       </factory>
    </extension>

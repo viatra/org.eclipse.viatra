@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -50,7 +51,7 @@ public class IncQueryEventRealm implements EventRealm {
                     (IncQueryEventSourceSpecification<Match>) sourceSpecification);
             eventSource.prepareSource();
         } catch (IncQueryException e) {
-            engine.getLogger()
+            IncQueryLoggingUtil.getDefaultLogger()
                     .error("Could not create matcher for event source definition " + sourceSpecification + " in realm "
                             + this, e);
         }

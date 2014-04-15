@@ -69,7 +69,7 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     EMFPatternMatcherContext context = new EMFPatternMatcherContext();
-    Set<PBody> bodies = Sets.newHashSet();
+    Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
@@ -85,7 +85,7 @@ public final class CorrespondingRecordsQuerySpecification extends BaseGeneratedQ
       new Inequality(body, var_Record, var_CorrespondingRecord);
       new NegativePatternCall(body, new FlatTuple(var_Record, var_CorrespondingRecord), IncorrectSubstitutionQuerySpecification.instance().instance());
       bodies.add(body);
-    }
+    }setStatus(PQuery.PQueryStatus.OK);
     return bodies;
   }
   

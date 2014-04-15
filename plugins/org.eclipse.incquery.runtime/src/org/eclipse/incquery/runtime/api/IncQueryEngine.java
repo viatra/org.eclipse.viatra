@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.api;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -128,16 +127,5 @@ public abstract class IncQueryEngine {
      * @return the scope of pattern matching, i.e. the root of the EMF model tree that this engine is attached to.
      */
 	public abstract Notifier getScope();
-	
-    /**
-     * Run-time events (such as exceptions during expression evaluation) will be logged to this logger.
-     * <p>
-     * DEFAULT BEHAVIOUR: If Eclipse is running, the default logger pipes to the Eclipse Error Log. Otherwise, messages
-     * are written to stderr.
-     * </p>
-     * 
-     * @return the logger that errors will be logged to during runtime execution.
-     */
-	public abstract Logger getLogger();
 
 }

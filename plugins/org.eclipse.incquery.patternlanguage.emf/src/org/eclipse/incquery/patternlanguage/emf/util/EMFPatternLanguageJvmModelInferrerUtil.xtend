@@ -34,6 +34,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -44,7 +45,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
 	@Inject extension EMFJvmTypesBuilder
 	Logger logger = Logger::getLogger(getClass())
-	private String MULTILINE_COMMENT_PATTERN = "(/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/)"
 //	@Inject ITypeProvider typeProvider
 	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
@@ -269,9 +269,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		if (escapable == null) return null
   		// escape double quotes
   		var escapedString = escapable.replaceAll("\"", "\\\\\"")
-  		// escape javadoc comments to single space
-  		// FIXME need a better replacement, or better way to do this
-  		escapedString = escapedString.replaceAll(MULTILINE_COMMENT_PATTERN, " ")
+		escapedString = escapedString.replaceAll("\\*+/", "")
+			.replaceAll("/*\\*", "");
   		return escapedString
   	}
 
@@ -353,7 +352,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	
 	def findInferredClass(Pattern pattern, Class clazz) {
 		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
-			superTypes.exists[type.qualifiedName == clazz.canonicalName]
+			superTypes.exists[!(it  instanceof JvmUnknownTypeReference) && (type.qualifiedName == clazz.canonicalName)]
 		]
 	}
 	

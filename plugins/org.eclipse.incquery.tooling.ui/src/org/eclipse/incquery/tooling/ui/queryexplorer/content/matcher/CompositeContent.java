@@ -33,7 +33,7 @@ public abstract class CompositeContent<ParentType, ChildType extends BaseContent
 
     @SuppressWarnings("unchecked")
     public void dispose() {
-        if (!getChildren().isDisposed()) {
+        if (getChildren() != null) {
             for (int i = 0; i < getChildren().size(); i++) {
                 ((ChildType) getChildren().get(i)).dispose();
             }

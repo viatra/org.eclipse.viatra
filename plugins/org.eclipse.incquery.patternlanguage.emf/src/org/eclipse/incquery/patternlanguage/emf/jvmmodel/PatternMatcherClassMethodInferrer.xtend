@@ -211,12 +211,14 @@ class PatternMatcherClassMethodInferrer {
   	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
    		appendable.append('''
    			try {
-   				return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);
+   			  return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);
    			} catch(ClassCastException e) {''')
+   		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in tuple not properly typed!", "e", appendable)
+   		appendable.decreaseIndentation
+   		appendable.newLine
    		appendable.append('''
-   				//throw new IncQueryRuntimeException(e.getMessage());
-   				return null;
+   			  return null;
    			}
    		''')
   	}
@@ -227,12 +229,14 @@ class PatternMatcherClassMethodInferrer {
   	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   				return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   			  return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
+   		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
+   		appendable.decreaseIndentation
+   		appendable.newLine
    		appendable.append('''
-   				//throw new IncQueryRuntimeException(e.getMessage());
-   				return null;
+   			  return null;
    			}
    		''')
   	}
@@ -242,12 +246,14 @@ class PatternMatcherClassMethodInferrer {
   	def inferArrayToMatchMutableMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   				return new «pattern.matchClassName».«pattern.matchMutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   			  return new «pattern.matchClassName».«pattern.matchMutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
+   		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
+   		appendable.decreaseIndentation
+   		appendable.newLine
    		appendable.append('''
-   				//throw new IncQueryRuntimeException(e.getMessage());
-   				return null;
+   			  return null;
    			}
    		''')
   	}
@@ -257,10 +263,11 @@ class PatternMatcherClassMethodInferrer {
   	 *
   	 */
   	def inferErrorLogging(String message, String exceptionName,  ITreeAppendable appendable) {
+  		appendable.newLine
   		if(exceptionName == null){
-	  		appendable.append('''engine.getLogger().error("«message»");''')
+	  		appendable.append('''LOGGER.error("«message»");''')
   		} else {
-  			appendable.append('''engine.getLogger().error("«message»",«exceptionName»);''')
+  			appendable.append('''LOGGER.error("«message»",«exceptionName»);''')
   		}
 	}
 

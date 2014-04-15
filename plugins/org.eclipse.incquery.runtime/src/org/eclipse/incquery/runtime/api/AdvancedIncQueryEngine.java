@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.api;
 
-import org.apache.log4j.Appender;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;

@@ -258,7 +258,7 @@ public class SpecificationBuilder {
     
     public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException {
         try {
-            Set<PBody> bodies = Sets.newHashSet();
+            Set<PBody> bodies = Sets.newLinkedHashSet();
             for (PatternBody body : pattern.getBodies()) {
                 PBody pBody = converter.toPBody(body);
                 pBody = PBodyNormalizer.normalizeBody(pBody, context);

@@ -45,6 +45,25 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
 
+/**
+ * The class is responsible for the generation of the EMF model/edit/editor/test plugin and their contents based 
+ * on the definition of the IncQuery & Xcore metamodel. Apart from
+ * mapping all Xcore related model elements to Ecore specific model elements, it also needs to register the setting
+ * delegates related annotations on both the {@link EPackage} and the {@link EStructuralFeature}s. 
+ * The {@link XbaseCompiler} will be used to generate source code for standard Xcore-specific getters/setters/derived features.  
+ * This class will be used 
+ * in the generated Ecore source code use case. 
+ * <br><br>
+ * The specified annotations will then be generated into the EMF generated code. <br>
+ * (1) The {@link EPackage} will have an annotation with the source EcorePackage.eNS_URI, key "settingDelegates" and value
+ * "org.eclipse.incquery.querybasedfeature". <br>
+ * (2) The {@link EStructuralFeature}s will have an annotation with the source "org.eclipse.incquery.querybasedfeature",
+ * key "patternFQN" and the value will be the fully qualified name of the EIQ pattern which provides the value of the
+ * feature.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
+ */
 class IncQueryXcoreGenerator extends XcoreGenerator {
 
 	@Inject
@@ -171,10 +190,8 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 					if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						if (bestEntry == null) {
 							bestEntry = classpathEntry;
-						}
-						else if (classpathEntry.getPath().toString().endsWith("src-gen") || 
-							classpathEntry.getPath().toString().endsWith("src-gen/")
-						) {
+						} else if (classpathEntry.getPath().toString().endsWith("src-gen") ||
+							classpathEntry.getPath().toString().endsWith("src-gen/")) {
 							bestEntry = classpathEntry;
 						}
 					}

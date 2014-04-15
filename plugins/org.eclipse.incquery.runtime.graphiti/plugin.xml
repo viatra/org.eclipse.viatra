@@ -7,7 +7,7 @@
             adaptableType="org.eclipse.graphiti.ui.editor.DiagramEditor"
             class="org.eclipse.incquery.runtime.graphiti.ModelConnectorAdapterFactoryForGraphiti">
          <adapter
-               type="org.eclipse.incquery.runtime.api.IModelConnector">
+               type="org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector">
          </adapter>
       </factory>
    </extension>

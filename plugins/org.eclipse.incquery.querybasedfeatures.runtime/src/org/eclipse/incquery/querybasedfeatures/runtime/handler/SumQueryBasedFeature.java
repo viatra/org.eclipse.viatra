@@ -62,8 +62,8 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
             counterMemory.put(source, tempMemory);
             return new ENotificationImpl(source, Notification.SET, getFeature(), getIntValue(source), tempMemory);
         } else {
-            engineForMatcher()
-                    .getLogger()
+            IncQueryLoggingUtil
+                    .getLogger(getClass())
                     .error(String
                             .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s reached the maximum value of int!",
                                     source, getFeature()));
@@ -80,8 +80,8 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
         }
         Integer value = counterMemory.get(source);
         if (value == null) {
-            engineForMatcher()
-                    .getLogger()
+            IncQueryLoggingUtil
+                    .getLogger(getClass())
                     .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
         } else if (value >= delta) {
             int tempMemory = value - delta;
@@ -89,8 +89,8 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
             counterMemory.put(source, tempMemory);
             return new ENotificationImpl(source, Notification.SET, getFeature(), oldValue, tempMemory);
         } else {
-            engineForMatcher()
-                    .getLogger()
+            IncQueryLoggingUtil
+                    .getLogger(getClass())
                     .error(String
                             .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s cannot go below zero!",
                                     source, getFeature()));

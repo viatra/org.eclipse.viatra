@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.internal.engine;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
@@ -19,26 +20,23 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 
 public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLifecycleListener> implements IncQueryEngineLifecycleListener{
 
-        /**
-         * 
-         */
-        private final AdvancedIncQueryEngine incQueryEngine;
+        private final Logger logger;
 
         /**
          * @param incQueryEngine
          */
-        public LifecycleProvider(AdvancedIncQueryEngine incQueryEngine) {
-            this.incQueryEngine = incQueryEngine;
+        public LifecycleProvider(AdvancedIncQueryEngine incQueryEngine, Logger logger) {
+            this.logger = logger;
         }
 
         @Override
         protected void listenerAdded(IncQueryEngineLifecycleListener listener) {
-            this.incQueryEngine.getLogger().debug("Lifecycle listener " + listener + " added to engine.");
+            logger.debug("Lifecycle listener " + listener + " added to engine.");
         }
 
         @Override
         protected void listenerRemoved(IncQueryEngineLifecycleListener listener) {
-            this.incQueryEngine.getLogger().debug("Lifecycle listener " + listener + " removed from engine.");
+            logger.debug("Lifecycle listener " + listener + " removed from engine.");
         }
 
 //        public void propagateEventToListeners(Predicate<IncQueryEngineLifecycleListener> function) {
@@ -62,7 +60,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                     try {
                         listener.matcherInstantiated(matcher);
                     } catch (Exception ex) {
-                        this.incQueryEngine.getLogger().error(
+                        logger.error(
                                 "EMF-IncQuery encountered an error in delivering matcher initialization notification to listener "
                                         + listener + ".", ex);
                     }
@@ -83,7 +81,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                     try {
                         listener.engineBecameTainted(description, t);
                     } catch (Exception ex) {
-                        this.incQueryEngine.getLogger().error(
+                        logger.error(
                                 "EMF-IncQuery encountered an error in delivering engine tainted notification to listener "
                                         + listener + ".", ex);
                     }
@@ -104,7 +102,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                     try {
                         listener.engineWiped();
                     } catch (Exception ex) {
-                        this.incQueryEngine.getLogger().error(
+                        logger.error(
                                 "EMF-IncQuery encountered an error in delivering engine wiped notification to listener "
                                         + listener + ".", ex);
                     }
@@ -125,7 +123,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                     try {
                         listener.engineDisposed();
                     } catch (Exception ex) {
-                        this.incQueryEngine.getLogger().error(
+                        logger.error(
                                 "EMF-IncQuery encountered an error in delivering engine disposed notification to listener "
                                         + listener + ".", ex);
                     }

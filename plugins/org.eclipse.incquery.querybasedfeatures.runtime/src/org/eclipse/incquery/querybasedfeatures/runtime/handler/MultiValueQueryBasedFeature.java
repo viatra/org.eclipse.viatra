@@ -26,6 +26,7 @@ import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeature;
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -109,7 +110,7 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
                 StringBuilder sb = new StringBuilder();
                 sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): removing value from list that doesn't contains it!");
                 sb.append("\n >> Non-existing value: ").append(source).append(" -> ").append(removed);
-                engineForMatcher().getLogger().error(sb.toString());
+                IncQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
             }
             values.remove(removed);
         }

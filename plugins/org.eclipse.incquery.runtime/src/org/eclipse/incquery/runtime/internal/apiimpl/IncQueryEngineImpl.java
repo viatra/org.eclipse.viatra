@@ -108,8 +108,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         this.emfRoot = emfRoot;
         this.options = options.copy();
         this.matchers = Maps.newHashMap();
-        this.lifecycleProvider = new LifecycleProvider(this);
-        this.modelUpdateProvider = new ModelUpdateProvider(this);
+        this.lifecycleProvider = new LifecycleProvider(this, getLogger());
+        this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
         if (!(emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet))
             throw new IncQueryException(IncQueryException.INVALID_EMFROOT
                     + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()),
@@ -211,10 +211,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         return getBaseIndexInternal();
     }
 
-   
-
-    @Override
-	public Logger getLogger() {
+	public final Logger getLogger() {
         if (logger == null) {
             final int hash = System.identityHashCode(this);
             logger = Logger.getLogger(IncQueryLoggingUtil.getDefaultLogger().getName() + "." + hash);
@@ -393,7 +390,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
         final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-                this, listener) {
+                this, logger, listener) {
             @Override
             public Match statelessConvert(Tuple t) {
                 //return bm.tupleToMatch(t);

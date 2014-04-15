@@ -26,9 +26,9 @@ import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
-import org.eclipse.incquery.runtime.api.IModelConnector;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.ModelEditorPartListener;
@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Model connector implementation for the default EMF generated model editors.
@@ -178,5 +179,13 @@ public class EMFModelConnector implements IModelConnector {
 
         return new TreePath(nodes.toArray());
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.api.IModelConnector#getOwner()
+	 */
+	@Override
+	public IWorkbenchPart getOwner() {
+		return this.editorPart;
+	}
 
 }

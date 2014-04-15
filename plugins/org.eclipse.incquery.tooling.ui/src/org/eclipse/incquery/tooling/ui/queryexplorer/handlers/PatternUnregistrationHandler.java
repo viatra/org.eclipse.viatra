@@ -61,7 +61,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
      * @param fqn
      *            the fully qualified name of the pattern
      */
-    private void unregisterPattern(String fqn) {
+    public void unregisterPattern(String fqn) {
         IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(fqn);
         if (specification != null && !QueryExplorerPatternRegistry.getInstance().isGenerated(specification)) {
             List<IQuerySpecification<?>> removedSpecifications = QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);

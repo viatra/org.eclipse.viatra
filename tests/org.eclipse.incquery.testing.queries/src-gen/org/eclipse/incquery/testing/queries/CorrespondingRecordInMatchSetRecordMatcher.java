@@ -3,6 +3,7 @@ package org.eclipse.incquery.testing.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
 import org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecordMatch;
@@ -77,6 +79,8 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseMatcher<Corr
   private final static int POSITION_CORRESPODINGRECORD = 1;
   
   private final static int POSITION_EXPECTEDSET = 2;
+  
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(CorrespondingRecordInMatchSetRecordMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -336,9 +340,10 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseMatcher<Corr
   @Override
   protected CorrespondingRecordInMatchSetRecordMatch tupleToMatch(final Tuple t) {
     try {
-    	return new CorrespondingRecordInMatchSetRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_CORRESPODINGRECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new CorrespondingRecordInMatchSetRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_CORRESPODINGRECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET));
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -346,9 +351,10 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseMatcher<Corr
   @Override
   protected CorrespondingRecordInMatchSetRecordMatch arrayToMatch(final Object[] match) {
     try {
-    	return new CorrespondingRecordInMatchSetRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPODINGRECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new CorrespondingRecordInMatchSetRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPODINGRECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -356,9 +362,10 @@ public class CorrespondingRecordInMatchSetRecordMatcher extends BaseMatcher<Corr
   @Override
   protected CorrespondingRecordInMatchSetRecordMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new CorrespondingRecordInMatchSetRecordMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPODINGRECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new CorrespondingRecordInMatchSetRecordMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_CORRESPODINGRECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

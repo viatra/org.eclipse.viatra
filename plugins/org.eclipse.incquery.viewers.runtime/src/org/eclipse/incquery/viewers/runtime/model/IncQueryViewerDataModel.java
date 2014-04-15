@@ -47,6 +47,7 @@ import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentList;
 import org.eclipse.incquery.viewers.runtime.model.converters.ContainmentSet;
@@ -92,7 +93,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
 //      this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
-        logger = engine.getLogger();
+        logger = IncQueryLoggingUtil.getLogger(getClass());
         ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
         resolver = new ViewersConflictResolver();

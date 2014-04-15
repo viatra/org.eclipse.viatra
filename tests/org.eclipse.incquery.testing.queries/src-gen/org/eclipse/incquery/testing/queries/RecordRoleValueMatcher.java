@@ -3,6 +3,7 @@ package org.eclipse.incquery.testing.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord;
 import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
 import org.eclipse.incquery.testing.queries.RecordRoleValueMatch;
@@ -78,6 +80,8 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   private final static int POSITION_RECORD = 0;
   
   private final static int POSITION_ROLE = 1;
+  
+  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(RecordRoleValueMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -291,9 +295,10 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch tupleToMatch(final Tuple t) {
     try {
-    	return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) t.get(POSITION_ROLE));
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in tuple not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) t.get(POSITION_ROLE));
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in tuple not properly typed!",e);
+      return null;
     }
     
   }
@@ -301,9 +306,10 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch arrayToMatch(final Object[] match) {
     try {
-    	return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }
@@ -311,9 +317,10 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return new RecordRoleValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
-    } catch(ClassCastException e) {engine.getLogger().error("Element(s) in array not properly typed!",e);	//throw new IncQueryRuntimeException(e.getMessage());
-    	return null;
+      return new RecordRoleValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
+    } catch(ClassCastException e) {
+      LOGGER.error("Element(s) in array not properly typed!",e);
+      return null;
     }
     
   }

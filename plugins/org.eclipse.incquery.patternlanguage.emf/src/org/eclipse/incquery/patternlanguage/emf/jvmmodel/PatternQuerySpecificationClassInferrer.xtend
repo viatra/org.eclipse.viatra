@@ -246,7 +246,7 @@ class PatternQuerySpecificationClassInferrer {
 		appender.referClass(pattern, typeof(Set), pattern.newTypeRef(typeof(PBody)))
 		appender.append(''' bodies = ''')
 		appender.referClass(pattern, typeof(Sets))
-		appender.append('''.newHashSet();''')
+		appender.append('''.newLinkedHashSet();''')
 		appender.newLine
 		for (pBody : genericSpecification.containedBodies) {
 			appender.increaseIndentation

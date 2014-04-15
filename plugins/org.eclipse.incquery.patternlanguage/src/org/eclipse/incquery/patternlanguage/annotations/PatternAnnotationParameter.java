@@ -8,9 +8,9 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.patternlanguage.annotations.impl;
+package org.eclipse.incquery.patternlanguage.annotations;
 
-public class ExtensionBasedPatternAnnotationParameter {
+public class PatternAnnotationParameter {
     public static final String STRING = "string";
     public static final String VARIABLEREFERENCE = "variablereference";
     public static final String LIST = "list";
@@ -24,7 +24,7 @@ public class ExtensionBasedPatternAnnotationParameter {
     private String description;
     private boolean deprecated;
 
-    public ExtensionBasedPatternAnnotationParameter(String name, String type, String description, boolean multiple,
+    public PatternAnnotationParameter(String name, String type, String description, boolean multiple,
             boolean mandatory, boolean deprecated) {
         super();
         this.name = name;

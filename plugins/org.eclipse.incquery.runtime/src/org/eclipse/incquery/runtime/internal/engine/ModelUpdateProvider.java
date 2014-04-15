@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -34,21 +35,20 @@ import com.google.common.collect.Sets;
 
 public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUpdateListener> {
 
-    /**
-     * 
-     */
     private final AdvancedIncQueryEngine incQueryEngine;
     private ChangeLevel currentChange = ChangeLevel.NO_CHANGE;
     private ChangeLevel maxLevel = ChangeLevel.NO_CHANGE;
     private final Multimap<ChangeLevel, IncQueryModelUpdateListener> listenerMap;
+    private final Logger logger;
     
     /**
      * @param incQueryEngine TODO
      * 
      */
-    public ModelUpdateProvider(AdvancedIncQueryEngine incQueryEngine) {
+    public ModelUpdateProvider(AdvancedIncQueryEngine incQueryEngine, Logger logger) {
         super();
         this.incQueryEngine = incQueryEngine;
+        this.logger = logger;
         Map<ChangeLevel, Collection<IncQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);
         listenerMap = Multimaps.newSetMultimap(map,
                 new com.google.common.base.Supplier<Set<IncQueryModelUpdateListener>>() {
@@ -129,12 +129,12 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
     private void handleUnsuccesfulRemove(IncQueryModelUpdateListener listener) {
         for (Entry<ChangeLevel, IncQueryModelUpdateListener> entry : listenerMap.entries()) {
             if(entry.getValue().equals(listener)) {
-                this.incQueryEngine.getLogger().error("Listener "+listener+" change level changed since initialization!");
+                logger.error("Listener "+listener+" change level changed since initialization!");
                 listenerMap.remove(entry.getKey(), entry.getValue());
                 return; // listener is contained only once
             }
         }
-        this.incQueryEngine.getLogger().error("Listener "+listener+" already removed from map (e.g. engine was already disposed)!");
+        logger.error("Listener "+listener+" already removed from map (e.g. engine was already disposed)!");
     }
 
     private void notifyListeners() {
@@ -152,7 +152,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
                         try {
                             listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {
-                            this.incQueryEngine.getLogger().error(
+                            logger.error(
                                     "EMF-IncQuery encountered an error in delivering model update notification to listener "
                                             + listener + ".", ex);
                         }

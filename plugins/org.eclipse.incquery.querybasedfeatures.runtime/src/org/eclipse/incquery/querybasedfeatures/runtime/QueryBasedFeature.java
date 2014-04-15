@@ -76,7 +76,7 @@ public abstract class QueryBasedFeature {
                 matcher = (IncQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
                         .getQuerySpecification(patternName).getMatcher(engineForMatcher());
             } catch (IncQueryException e) {
-                engineForMatcher().getLogger().error(
+                IncQueryLoggingUtil.getDefaultLogger().error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);
             }
             dm = matcher.newDeltaMonitor(false);
@@ -116,15 +116,15 @@ public abstract class QueryBasedFeature {
         this.sourceParamName = sourceParamName;
         this.targetParamName = targetParamName;
         if (matcher.getPositionOfParameter(sourceParamName) == null) {
-            engineForMatcher().getLogger().error(
+            IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Source parameter " + sourceParamName + " not found!");
         }
         if (targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
-            engineForMatcher().getLogger().error(
+            IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
         if ((targetParamName == null) != (getKind() == QueryBasedFeatureKind.COUNTER)) {
-            engineForMatcher().getLogger().error(
+            IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Invalid configuration (no targetParamName needed for Counter)!");
         }
         // IPatternMatch partialMatch = matcher.newEmptyMatch();

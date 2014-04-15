@@ -35,7 +35,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class MetamodelProviderService implements IMetamodelProvider {
 
     @Inject
@@ -44,11 +46,12 @@ public class MetamodelProviderService implements IMetamodelProvider {
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
 
+    @Inject
     private EcoreGenmodelRegistry genmodelRegistry;
 
     protected EcoreGenmodelRegistry getGenmodelRegistry() {
-        if (genmodelRegistry == null)
-            genmodelRegistry = new EcoreGenmodelRegistry(logger);
+//        if (genmodelRegistry == null)
+//            genmodelRegistry = new EcoreGenmodelRegistry(logger);
         return genmodelRegistry;
     }
 

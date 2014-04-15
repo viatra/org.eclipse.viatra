@@ -50,7 +50,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
-import org.eclipse.incquery.patternlanguage.validation.whitelist.XBasePureCheckerUtil;
+import org.eclipse.incquery.patternlanguage.validation.whitelist.PureClassChecker;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -95,6 +95,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Inject
     private PatternAnnotationProvider annotationProvider;
+    @Inject
+    private PureClassChecker purityChecker;
     @Inject
     private ITypeProvider provider;
     @Inject
@@ -674,7 +676,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
                     if (jvmIdentifiableElement instanceof JvmOperation) {
                         JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
-                        if (XBasePureCheckerUtil.isImpureElement(jvmOperation)) {
+                        if (purityChecker.isImpureElement(jvmOperation)) {
                             elementsWithWarnings.add(jvmOperation.getQualifiedName());
                         }
                     }

@@ -12,6 +12,7 @@ package org.eclipse.incquery.patternlanguage.annotations.impl;
 
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationValidator;
+import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationParameter;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
@@ -36,24 +37,24 @@ import com.google.common.collect.Iterables;
  * @author Zoltan Ujhelyi
  * @noinstantiate This class is not intended to be instantiated by clients
  */
-public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotationValidator {
+public class PatternAnnotationValidator implements IPatternAnnotationValidator {
 
-    private final Iterable<ExtensionBasedPatternAnnotationParameter> definedAttributes;
+    private final Iterable<PatternAnnotationParameter> definedAttributes;
     private final String name;
     private final String description;
     private final boolean deprecated;
     private final IPatternAnnotationAdditionalValidator validator;
 
     private static final ImmutableMap<String, Class<? extends ValueReference>> TYPEMAPPING = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
-            .put(ExtensionBasedPatternAnnotationParameter.INT, IntValue.class)
-            .put(ExtensionBasedPatternAnnotationParameter.STRING, StringValue.class)
-            .put(ExtensionBasedPatternAnnotationParameter.DOUBLE, DoubleValue.class)
-            .put(ExtensionBasedPatternAnnotationParameter.BOOLEAN, BoolValue.class)
-            .put(ExtensionBasedPatternAnnotationParameter.LIST, ListValue.class)
-            .put(ExtensionBasedPatternAnnotationParameter.VARIABLEREFERENCE, VariableValue.class).build();
+            .put(PatternAnnotationParameter.INT, IntValue.class)
+            .put(PatternAnnotationParameter.STRING, StringValue.class)
+            .put(PatternAnnotationParameter.DOUBLE, DoubleValue.class)
+            .put(PatternAnnotationParameter.BOOLEAN, BoolValue.class)
+            .put(PatternAnnotationParameter.LIST, ListValue.class)
+            .put(PatternAnnotationParameter.VARIABLEREFERENCE, VariableValue.class).build();
 
-    public ExtensionBasedPatternAnnotationValidator(String name, String description, boolean deprecated,
-            Iterable<ExtensionBasedPatternAnnotationParameter> parameters,
+    public PatternAnnotationValidator(String name, String description, boolean deprecated,
+            Iterable<PatternAnnotationParameter> parameters,
             IPatternAnnotationAdditionalValidator validator) {
         super();
         this.name = name;
@@ -72,10 +73,10 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
     }
 
     private static final class AnnotationDefinitionParameterName implements
-            Function<ExtensionBasedPatternAnnotationParameter, String> {
+            Function<PatternAnnotationParameter, String> {
 
         @Override
-        public String apply(ExtensionBasedPatternAnnotationParameter input) {
+        public String apply(PatternAnnotationParameter input) {
             Preconditions.checkNotNull(input, "input");
             return input.getName();
         }
@@ -94,11 +95,11 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
     @Override
     public Iterable<String> getMissingMandatoryAttributes(Annotation annotation) {
         final Iterable<String> actualAttributeNames = getParameterNames(annotation);
-        final Iterable<ExtensionBasedPatternAnnotationParameter> filteredParameters = Iterables.filter(
-                definedAttributes, new Predicate<ExtensionBasedPatternAnnotationParameter>() {
+        final Iterable<PatternAnnotationParameter> filteredParameters = Iterables.filter(
+                definedAttributes, new Predicate<PatternAnnotationParameter>() {
 
                     @Override
-                    public boolean apply(ExtensionBasedPatternAnnotationParameter input) {
+                    public boolean apply(PatternAnnotationParameter input) {
                         Preconditions.checkNotNull(input, "input");
                         return input.isMandatory() && !Iterables.contains(actualAttributeNames, input.getName());
                     }
@@ -122,8 +123,8 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
 
     @Override
     public Class<? extends ValueReference> getExpectedParameterType(AnnotationParameter parameter) {
-        ExtensionBasedPatternAnnotationParameter expectedParameter = null;
-        for (ExtensionBasedPatternAnnotationParameter p : definedAttributes) {
+        PatternAnnotationParameter expectedParameter = null;
+        for (PatternAnnotationParameter p : definedAttributes) {
             if (p.getName().equals(parameter.getName())) {
                 expectedParameter = p;
             }
@@ -150,7 +151,7 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
 
     @Override
     public String getDescription(String parameterName) {
-        for (ExtensionBasedPatternAnnotationParameter param : definedAttributes) {
+        for (PatternAnnotationParameter param : definedAttributes) {
             if (param.getName().equals(parameterName)) {
                 return param.getDescription();
             }
@@ -165,7 +166,7 @@ public class ExtensionBasedPatternAnnotationValidator implements IPatternAnnotat
 
     @Override
     public boolean isDeprecated(String parameterName) {
-        for (ExtensionBasedPatternAnnotationParameter param : definedAttributes) {
+        for (PatternAnnotationParameter param : definedAttributes) {
             if (param.getName().equals(parameterName)) {
                 return param.isDeprecated();
             }

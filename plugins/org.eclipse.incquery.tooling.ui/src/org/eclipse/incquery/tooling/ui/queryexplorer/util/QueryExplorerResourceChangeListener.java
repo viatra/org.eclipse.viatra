@@ -18,17 +18,17 @@ import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 
 import com.google.inject.Injector;
 
-public class ResourceChangeListener implements IResourceChangeListener {
+public class QueryExplorerResourceChangeListener implements IResourceChangeListener {
     private final Injector injector;
 
-    public ResourceChangeListener(Injector injector) {
+    public QueryExplorerResourceChangeListener(Injector injector) {
         this.injector = injector;
     }
 
     public void resourceChanged(IResourceChangeEvent event) {
         if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
             try {
-                event.getDelta().accept(new DeltaVisitor(injector));
+                event.getDelta().accept(new QueryExplorerDeltaVisitor(injector));
             } catch (CoreException e) {
                 IncQueryGUIPlugin.getDefault().logException("Visitor failed on delta", e);
             }

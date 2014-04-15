@@ -10,88 +10,27 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.annotations;
 
-import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.incquery.patternlanguage.annotations.impl.ExtensionBasedPatternAnnotationParameter;
-import org.eclipse.incquery.patternlanguage.annotations.impl.ExtensionBasedPatternAnnotationValidator;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 @Singleton
 public class PatternAnnotationProvider {
 
-    private static final String VALIDATOR_PARAMETER_NAME = "additionalValidator";
-
-    @Inject
-    private Logger log;
-    @Inject
-    private Injector injector;
-
-    private static final class ExtensionConverter implements
-            Function<IConfigurationElement, ExtensionBasedPatternAnnotationParameter> {
-        @Override
-        public ExtensionBasedPatternAnnotationParameter apply(IConfigurationElement input) {
-            Preconditions.checkNotNull(input, "input");
-            final String parameterName = input.getAttribute("name");
-            final boolean mandatory = Boolean.parseBoolean(input.getAttribute("mandatory"));
-            final boolean multiple = Boolean.parseBoolean(input.getAttribute("multiple"));
-            final String deprecatedString = input.getAttribute("deprecated");
-            final boolean deprecated = Boolean.parseBoolean(deprecatedString);
-            final String type = input.getAttribute("type");
-            final String description = input.getAttribute("description");
-            return new ExtensionBasedPatternAnnotationParameter(parameterName, type, description, multiple, mandatory,
-                    deprecated);
-        }
-    }
-
-    static final String EXTENSIONID = "org.eclipse.incquery.patternlanguage.annotation";
+    @Inject(optional=true)
+    private IAnnotationValidatorLoader loader;
     private Map<String, IPatternAnnotationValidator> annotationValidators;
 
     protected void initializeValidators() {
-        annotationValidators = new Hashtable<String, IPatternAnnotationValidator>();
-        final IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSIONID);
-        for (IConfigurationElement e : config) {
-            try {
-                final String annotationName = e.getAttribute("name");
-                final String description = e.getAttribute("description");
-                final String deprecatedString = e.getAttribute("deprecated");
-                final boolean deprecated = Boolean.parseBoolean(deprecatedString);
-
-                final IConfigurationElement[] parameters = e.getChildren("annotationparameter");
-
-                IPatternAnnotationAdditionalValidator validator = null;
-
-                final Iterable<ExtensionBasedPatternAnnotationParameter> parameterIterable = Iterables.transform(
-                        Arrays.asList(parameters), new ExtensionConverter());
-                if (e.getAttribute(VALIDATOR_PARAMETER_NAME) != null) {
-                    validator = (IPatternAnnotationAdditionalValidator) e
-                            .createExecutableExtension(VALIDATOR_PARAMETER_NAME);
-                    injector.injectMembers(validator);
-                }
-
-                final IPatternAnnotationValidator annotationValidator = new ExtensionBasedPatternAnnotationValidator(
-                        annotationName, description, deprecated, parameterIterable, validator);
-                annotationValidators.put(annotationName, annotationValidator);
-            } catch (CoreException ex) {
-                log.error(
-                        String.format("Error while initializing the validator for annotation %s.",
-                                e.getAttribute("name")), ex);
-            }
+        if (loader != null) {
+            annotationValidators = Maps.newHashMap(loader.getKnownValidators());
         }
     }
 

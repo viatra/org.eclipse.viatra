@@ -704,6 +704,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkReferredPackages(ReferenceType type) {
+        if (type.getRefname() == null || type.getRefname().eIsProxy()) {
+            //If reference name is not set, do not check package
+            return;
+        }
         final EClass referredType = type.getRefname().getEContainingClass();
         final EPackage referredPackage = referredType.getEPackage();
         final String nsUri = Strings.emptyIfNull(referredPackage.getNsURI());
