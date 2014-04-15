@@ -83,7 +83,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
     public DualInputNode(ReteContainer reteContainer, TupleMask complementerSecondaryMask) {
         super(reteContainer);
         this.complementerSecondaryMask = complementerSecondaryMask;
-        connectToIndexers(primarySlot, secondarySlot);
+        //connectToIndexers(primarySlot, secondarySlot);
     }
 
     /**

@@ -25,6 +25,7 @@ import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.BetaRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.MultiParentNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
@@ -100,7 +101,7 @@ class ConnectionFactory {
 		// TODO Beta nodes are already connected?
 	}
 
-	private Indexer resolveIndexer(final ProjectionIndexerRecipe indexerRecipe) {
+	private Indexer resolveIndexer(final IndexerRecipe indexerRecipe) {
 		final Address<? extends Node> address = reteContainer.getNetwork().getExistingNodeByRecipe(indexerRecipe);
 		return (Indexer) reteContainer.resolveLocal(address);
 	}
@@ -135,7 +136,7 @@ class ConnectionFactory {
         Slots result = new Slots() {
             {
                 primary = (IterableIndexer) resolveIndexer((ProjectionIndexerRecipe) primarySlot.getRecipe());
-                secondary = resolveIndexer((ProjectionIndexerRecipe) secondarySlot.getRecipe());
+                secondary = resolveIndexer((IndexerRecipe) secondarySlot.getRecipe());
             }
         };
         if (activeNodeConflict(result.primary, result.secondary))

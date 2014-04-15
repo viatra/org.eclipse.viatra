@@ -88,8 +88,8 @@ public class Network {
         super();
         this.threads = threads;
         this.context = context;
-        this.nodeFactory = new NodeFactory(context);
         this.inputConnector = new InputConnector(this);
+        this.nodeFactory = new NodeFactory(context);
 
         containers = new ArrayList<ReteContainer>();
         firstContainer = (threads > 1) ? Options.firstFreeContainer : 0; // NOPMD
@@ -393,7 +393,7 @@ public class Network {
 	 * @return
 	 */
 	public InputConnector getInputConnector() {
-		return null;
+		return inputConnector;
 	}
 
 }

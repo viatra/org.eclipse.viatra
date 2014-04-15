@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.IndexerListener;
@@ -37,12 +38,17 @@ public class ZestReteContentProvider extends ArrayContentProvider implements IGr
             return super.getElements(((ReteContainer) inputElement).getAllNodes());
         } else if (inputElement instanceof ReteBoundary) {
             ReteBoundary rb = (ReteBoundary) inputElement;
+            final InputConnector inputConnector = rb.getHeadContainer().getInputConnectionFactory();
             List<Node> r = new ArrayList<Node>();
-            for (Object a : rb.getAllUnaryRoots()) {
+            for (Object a : inputConnector.getAllUnaryRoots()) {
                 // access all unary constraints
                 r.add(rb.getHeadContainer().resolveLocal((Address) a)); 
             }
-            for (Object a : rb.getAllTernaryEdgeRoots()) {
+            for (Object a : inputConnector.getAllBinaryEdgeRoots()) {
+            	// access all binary constraints
+            	r.add(rb.getHeadContainer().resolveLocal((Address) a));
+            }
+            for (Object a : inputConnector.getAllTernaryEdgeRoots()) {
                 // access all ternary constraints
                 r.add(rb.getHeadContainer().resolveLocal((Address) a));
             }

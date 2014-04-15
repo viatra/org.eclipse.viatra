@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
@@ -69,10 +70,10 @@ import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
-import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.incquery.runtime.rete.traceability.ParameterProjectionTrace;
+import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -418,8 +419,10 @@ public class RecipePlanCompiler {
 		ExpressionEnforcerRecipe enforcerRecipe = 
 				booleanCheck ? FACTORY.createCheckRecipe() : FACTORY.createEvalRecipe();
 		enforcerRecipe.setParent(parentCompiled.getRecipe());
-		enforcerRecipe.setExpression(RecipesHelper.expressionDefinition(constraint));
-		enforcerRecipe.getMappedIndices().addAll(tupleNameMap.entrySet());
+		enforcerRecipe.setExpression(RecipesHelper.expressionDefinition(constraint.getEvaluator()));
+		for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
+			enforcerRecipe.getMappedIndices().put(entry.getKey(), entry.getValue());			
+		}
         				
         final List<PVariable> enforcerVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());
         if (!booleanCheck) enforcerVariablesTuple.add(outputVariable);

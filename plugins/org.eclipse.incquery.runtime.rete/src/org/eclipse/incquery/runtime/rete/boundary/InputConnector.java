@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.boundary;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Node;
-import org.eclipse.incquery.runtime.rete.network.Receiver;
+import org.eclipse.incquery.runtime.rete.network.Supplier;
+import org.eclipse.incquery.runtime.rete.network.Tunnel;
 import org.eclipse.incquery.runtime.rete.recipes.BinaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
@@ -28,6 +33,31 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
  */
 public class InputConnector {
 	Network network;
+	
+	
+    /*
+     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities
+     * regardless of type (global supertype), if allowed
+     */
+    protected Map<Object, Address<? extends Tunnel>> unaryRoots = CollectionsFactory.getMap();
+    /*
+     * arity:3 (rel, from, to) used as VPM relation constraints null label means all relations regardless of type
+     * (global supertype)
+     */
+    protected Map<Object, Address<? extends Tunnel>> ternaryEdgeRoots = CollectionsFactory.getMap();
+    /*
+     * arity:2 (from, to) not used over VPM; can be used as EMF references for instance label is the object representing
+     * the type null label means all entities regardless of type if allowed (global supertype), if allowed
+     */
+    protected Map<Object, Address<? extends Tunnel>> binaryEdgeRoots = CollectionsFactory.getMap();
+	
+    protected Address<? extends Tunnel> containmentRoot = null;
+    protected Address<? extends Supplier> containmentTransitiveRoot = null;
+    protected Address<? extends Tunnel> instantiationRoot = null;
+    protected Address<? extends Supplier> instantiationTransitiveRoot = null;
+    protected Address<? extends Tunnel> generalizationRoot = null;
+    protected Address<? extends Supplier> generalizationTransitiveRoot = null;
+	
 
 	public InputConnector(Network network) {
 		super();
@@ -44,22 +74,24 @@ public class InputConnector {
 	 * Connects a given input node to the external input source.
 	 */
 	public void connectInput(InputRecipe recipe, Node freshNode) {
-		final Address<Receiver> freshAddress = Address.of((Receiver)freshNode);
+		final Address<Tunnel> freshAddress = Address.of((Tunnel)freshNode);
 		if (recipe instanceof TypeInputRecipe) {
 			final Object typeKey = ((TypeInputRecipe) recipe).getTypeKey();
 			
 			if (recipe instanceof UnaryInputRecipe) {
+				unaryRoots.put(typeKey, freshAddress);
 				new EntityFeeder(freshAddress, this, typeKey).feed();
 //		        if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
 //		            Collection<? extends Object> subTypes = context.enumerateDirectUnarySubtypes(typeObject);
-		//
+//		
 //		            for (Object subType : subTypes) {
 //		                Address<? extends Tunnel> subRoot = accessUnaryRoot(subType);
 //		                network.connectRemoteNodes(subRoot, tn, true);
 //		            }
 //		        }
 			} else if (recipe instanceof BinaryInputRecipe) {
-				new RelationFeeder(freshAddress, this, typeKey).feed();
+				binaryEdgeRoots.put(typeKey, freshAddress);
+				new ReferenceFeeder(freshAddress, this, typeKey).feed();
 				//        if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
 				//            Collection<? extends Object> subTypes = context.enumerateDirectTernaryEdgeSubtypes(typeObject);
 				//
@@ -114,4 +146,66 @@ public class InputConnector {
         return wrappers;
     }
 	
+    /**
+     * fetches the entity Root node under specified label; returns null if it doesn't exist yet
+     */
+    public Address<? extends Tunnel> getUnaryRoot(Object label) {
+        return unaryRoots.get(label);
+    }
+
+    public Collection<Address<? extends Tunnel>> getAllUnaryRoots() {
+        return unaryRoots.values();
+    }
+
+    /**
+     * fetches the relation Root node under specified label; returns null if it doesn't exist yet
+     */
+    public Address<? extends Tunnel> getTernaryEdgeRoot(Object label) {
+        return ternaryEdgeRoots.get(label);
+    }
+
+    public Collection<Address<? extends Tunnel>> getAllTernaryEdgeRoots() {
+        return ternaryEdgeRoots.values();
+    }
+    
+    /**
+     * fetches the reference Root node under specified label; returns null if it doesn't exist yet
+     */
+    public Address<? extends Tunnel> getBinaryEdgeRoot(Object label) {
+        return binaryEdgeRoots.get(label);
+    }
+
+    public Collection<Address<? extends Tunnel>> getAllBinaryEdgeRoots() {
+        return binaryEdgeRoots.values();
+    }
+
+
+	public Address<? extends Tunnel> getContainmentRoot() {
+		return containmentRoot;
+	}
+
+
+	public Address<? extends Supplier> getContainmentTransitiveRoot() {
+		return containmentTransitiveRoot;
+	}
+
+
+	public Address<? extends Tunnel> getInstantiationRoot() {
+		return instantiationRoot;
+	}
+
+
+	public Address<? extends Supplier> getInstantiationTransitiveRoot() {
+		return instantiationTransitiveRoot;
+	}
+
+
+	public Address<? extends Tunnel> getGeneralizationRoot() {
+		return generalizationRoot;
+	}
+
+    
+    
+    
+    
 }

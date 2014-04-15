@@ -43,6 +43,8 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
  * outside for various reasons.
  *
  * @author Gabor Bergmann
+ * 
+ * <p> TODO: should eventually be merged into {@link InputConnector} and deleted
  *
  */
 public class ReteBoundary {
@@ -59,30 +61,9 @@ public class ReteBoundary {
     IPatternMatcherContext.GeneralizationQueryDirection generalizationQueryDirection;
 	protected final InputConnector inputConnector;
 
-    /*
-     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities
-     * regardless of type (global supertype), if allowed
-     */
-    protected Map<Object, Address<? extends Tunnel>> unaryRoots;
-    /*
-     * arity:3 (rel, from, to) used as VPM relation constraints null label means all relations regardless of type
-     * (global supertype)
-     */
-    protected Map<Object, Address<? extends Tunnel>> ternaryEdgeRoots;
-    /*
-     * arity:2 (from, to) not used over VPM; can be used as EMF references for instance label is the object representing
-     * the type null label means all entities regardless of type if allowed (global supertype), if allowed
-     */
-    protected Map<Object, Address<? extends Tunnel>> binaryEdgeRoots;
 
     protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
 
-    protected Address<? extends Tunnel> containmentRoot;
-    protected Address<? extends Supplier> containmentTransitiveRoot;
-    protected Address<? extends Tunnel> instantiationRoot;
-    protected Address<? extends Supplier> instantiationTransitiveRoot;
-    protected Address<? extends Tunnel> generalizationRoot;
-    protected Address<? extends Supplier> generalizationTransitiveRoot;
 
     /**
      * SubPlans of parent nodes that have the key node as their child. For RETE --> SubPlan traceability, mainly at production
@@ -106,41 +87,9 @@ public class ReteBoundary {
         this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
         this.parentPlansOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<SubPlan<Address<? extends Supplier>>>>();
 
-        unaryRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-        ternaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-        binaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
         subplanToAddressMapping = CollectionsFactory.getMap();
 
-        containmentRoot = null;
-        containmentTransitiveRoot = null;
-        instantiationRoot = null;
-        generalizationRoot = null;
-        generalizationTransitiveRoot = null;
-    }
-
-
-    /**
-     * fetches the entity Root node under specified label; returns null if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> getUnaryRoot(Object label) {
-        return unaryRoots.get(label);
-    }
-
-    public Collection<Address<? extends Tunnel>> getAllUnaryRoots() {
-        return unaryRoots.values();
-    }
-
-    /**
-     * fetches the relation Root node under specified label; returns null if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> getTernaryEdgeRoot(Object label) {
-        return ternaryEdgeRoots.get(label);
-    }
-
-    public Collection<Address<? extends Tunnel>> getAllTernaryEdgeRoots() {
-        return ternaryEdgeRoots.values();
     }
 
     public Collection<? extends RecipeTraceInfo> getAllProductionNodes() {
@@ -517,7 +466,7 @@ public class ReteBoundary {
     // updaters for change notification
     // if the corresponding rete input isn't created yet, call is ignored
     public void updateUnary(Direction direction, Object entity, Object typeObject) {
-        Address<? extends Tunnel> root = unaryRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getUnaryRoot(typeObject);
         if (root != null) {
             network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(entity)));
             if (!engine.isParallelExecutionEnabled())
@@ -531,7 +480,7 @@ public class ReteBoundary {
     }
 
     public void updateTernaryEdge(Direction direction, Object relation, Object from, Object to, Object typeObject) {
-        Address<? extends Tunnel> root = ternaryEdgeRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getTernaryEdgeRoot(typeObject);
         if (root != null) {
             network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(relation), inputConnector.wrapElement(from),
                     inputConnector.wrapElement(to)));
@@ -546,7 +495,7 @@ public class ReteBoundary {
     }
 
     public void updateBinaryEdge(Direction direction, Object from, Object to, Object typeObject) {
-        Address<? extends Tunnel> root = binaryEdgeRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getBinaryEdgeRoot(typeObject);
         if (root != null) {
             network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(from), inputConnector.wrapElement(to)));
             if (!engine.isParallelExecutionEnabled())
@@ -560,7 +509,8 @@ public class ReteBoundary {
     }
 
     public void updateContainment(Direction direction, Object container, Object element) {
-        if (containmentRoot != null) {
+        final Address<? extends Tunnel> containmentRoot = inputConnector.getContainmentRoot();
+		if (containmentRoot != null) {
             network.sendExternalUpdate(containmentRoot, direction, new FlatTuple(inputConnector.wrapElement(container),
                     inputConnector.wrapElement(element)));
             if (!engine.isParallelExecutionEnabled())
@@ -569,7 +519,8 @@ public class ReteBoundary {
     }
 
     public void updateInstantiation(Direction direction, Object parent, Object child) {
-        if (instantiationRoot != null) {
+        final Address<? extends Tunnel> instantiationRoot = inputConnector.getInstantiationRoot();
+       if (instantiationRoot != null) {
             network.sendExternalUpdate(instantiationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
                     inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())
@@ -578,7 +529,8 @@ public class ReteBoundary {
     }
 
     public void updateGeneralization(Direction direction, Object parent, Object child) {
-        if (generalizationRoot != null) {
+       final Address<? extends Tunnel> generalizationRoot = inputConnector.getGeneralizationRoot();
+       if (generalizationRoot != null) {
             network.sendExternalUpdate(generalizationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
                     inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())

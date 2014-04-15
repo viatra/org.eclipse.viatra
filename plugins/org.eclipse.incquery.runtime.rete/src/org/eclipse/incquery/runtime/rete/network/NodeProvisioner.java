@@ -22,6 +22,7 @@ import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.OnetimeIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -106,14 +107,14 @@ public class NodeProvisioner {
 			RecipeTraceInfo recipeTrace,
 			final ReteNodeRecipe recipe,
 			Collection<ReteNodeRecipe> sameClassRecipes) {
-		if (recipe instanceof org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe) {
+		if (recipe instanceof IndexerRecipe) {
 			
 			// INSTANTIATE AND HOOK UP 
 			// (cannot delay hooking up, because parent determines indexer implementation)
 			ensureParents(recipeTrace);
 			final ReteNodeRecipe parentRecipe = recipeTrace.getParentRecipeTraces().iterator().next().getRecipe();
 			final Indexer result = nodeFactory.createIndexer(reteContainer,
-					(org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe)recipe, 
+					(IndexerRecipe)recipe, 
 					asSupplier((Address<? extends Supplier>) reteContainer.network.getExistingNodeByRecipe(parentRecipe)), 
 					recipeTrace);
 
