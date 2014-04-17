@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.incquery.patternlanguage.annotations.ExtensionBasedAnnotationValidatorLoader;
 import org.eclipse.incquery.patternlanguage.annotations.IAnnotationValidatorLoader;
+import org.eclipse.incquery.patternlanguage.emf.GenmodelExtensionLoader;
+import org.eclipse.incquery.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
@@ -46,6 +48,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.services.XtextGrammarAccess.GeneratedMetamodelElements;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
@@ -182,6 +185,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     
     public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
         return ExtensionBasedAnnotationValidatorLoader.class;
+    }
+    
+    public Class<? extends IGenmodelMappingLoader> bindGenmodelMappingLoader() {
+        return GenmodelExtensionLoader.class;
     }
     
     @Override
