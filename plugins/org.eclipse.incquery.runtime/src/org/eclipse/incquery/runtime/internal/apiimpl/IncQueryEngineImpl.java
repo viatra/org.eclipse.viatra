@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -216,7 +217,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public final Logger getLogger() {
         if (logger == null) {
             final int hash = System.identityHashCode(this);
-            logger = Logger.getLogger(IncQueryLoggingUtil.getDefaultLogger().getName() + "." + hash);
+            logger = Logger.getLogger(IncQueryLoggingUtil.getLogger(IncQueryEngine.class).getName() + "." + hash);
             if (logger == null)
                 throw new AssertionError(
                         "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
