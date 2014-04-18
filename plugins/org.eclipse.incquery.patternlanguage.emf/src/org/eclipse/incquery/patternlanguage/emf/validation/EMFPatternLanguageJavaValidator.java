@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.validation;
 
+import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,10 @@ import org.eclipse.incquery.patternlanguage.emf.ResolutionException;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternImport;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
@@ -63,9 +67,14 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
+import org.eclipse.xtext.xbase.lib.Functions;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.inject.Inject;
 
 /**
@@ -720,6 +729,27 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         referredType.getName(), nsUri), type,
                         EMFPatternLanguagePackage.Literals.REFERENCE_TYPE__REFNAME,
                         EMFIssueCodes.MISSING_PACKAGE_IMPORT, nsUri);
+            }
+
+        }
+    }
+    
+    @SuppressWarnings("restriction")
+    @Check
+    public void checkPatternImports(XImportSection section) {
+        if (!isIgnored(IMPORT_UNUSED)) {
+            final Set<Pattern> usedPatterns = Sets.newHashSet();
+            final UnmodifiableIterator<PatternCall> it = Iterators.filter(section.eResource().getAllContents(), PatternCall.class);
+            while (it.hasNext()) {
+                PatternCall call = it.next();
+                usedPatterns.add(call.getPatternRef());
+            }
+            for (PatternImport decl : section.getPatternImport()) {
+                if (!usedPatterns.contains(decl.getPattern())) {
+                    warning("The import '" + CorePatternLanguageHelper.getFullyQualifiedName(decl.getPattern())
+                            + "' is never used.", decl, null,
+                            IMPORT_UNUSED);
+                }
             }
 
         }

@@ -85,7 +85,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			uses java.util.Calendar
+			import java ^java.util.Calendar
 
 			pattern name(L) = {
 				ELong(L);
@@ -102,7 +102,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
-			uses java.util.*
+			import java ^java.util.*
 
 			pattern name(L) = {
 				ELong(L);

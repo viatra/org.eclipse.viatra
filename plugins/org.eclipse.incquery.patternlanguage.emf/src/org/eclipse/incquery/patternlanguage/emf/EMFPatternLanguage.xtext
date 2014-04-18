@@ -26,16 +26,23 @@ EMFPatternModel returns core::PatternModel:
 	
 XImportSection:
 	{XImportSection}
-	packageImport+=PackageImport*
-	importDeclarations+=XImportDeclaration*
+	(
+	packageImport+=PackageImport |
+	patternImport+=PatternImport |
+	importDeclarations+=XImportDeclaration
+	)*
 ;
 	
 PackageImport:
-	'import' ePackage = [ecore::EPackage|STRING] ';'?// ('as' alias=ID)?
+	'import' 'epackage'? ePackage = [ecore::EPackage|STRING] ';'?// ('as' alias=ID)? |
+;
+
+PatternImport:
+	'import' 'pattern'? pattern = [core::Pattern|QualifiedName] ';'?
 ;
 
 XImportDeclaration returns xtype::XImportDeclaration:
-	'uses' (
+	'import' 'java' (
 		(static?='static' extension?='extension'? importedType=[types::JvmDeclaredType|QualifiedName] '.' '*') 
 		| importedType=[types::JvmDeclaredType|QualifiedName] 
 		| importedNamespace=QualifiedNameWithWildcard) ';'?

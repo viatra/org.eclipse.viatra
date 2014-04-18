@@ -15,6 +15,7 @@ import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpression
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
+import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageImportNamespaceProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
@@ -69,7 +70,8 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
                 .to(EMFPatternLanguageDeclarativeScopeProvider.class);
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
-                .to(XImportSectionNamespaceScopeProvider.class);
+                .to(EMFPatternLanguageImportNamespaceProvider.class);
+        // .to(XImportSectionNamespaceScopeProvider.class);
     }
 
     @Override
@@ -129,7 +131,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
         return EMFPatternLanguageJvmModelInferrer.class;
     }
-
 
     public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider() {
         return EMFPatternJvmModelAssociator.class;
