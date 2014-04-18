@@ -43,7 +43,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
     protected SumQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind) {
         super(feature, false);
         if (!(feature instanceof EAttribute)) {
-            IncQueryLoggingUtil.getDefaultLogger().error(
+            IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
         }
         this.countOnly = QueryBasedFeatureKind.COUNTER.equals(kind);

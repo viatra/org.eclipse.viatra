@@ -102,7 +102,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         try {
             engine = delegateFactory.getEngineForNotifier(notifierForSource, dynamicEMFMode);
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger().error("Engine preparation failed", e);
+            IncQueryLoggingUtil.getLogger(getClass()).error("Engine preparation failed", e);
             throw new IllegalStateException("Engine preparation failed", e);
         }
         
@@ -133,7 +133,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
                     queryBasedFeature.startMonitoring();
                 }
             } catch (IncQueryException e) {
-                IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
+                IncQueryLoggingUtil.getLogger(getClass()).error("Handler initialization failed", e);
             }
         }
 

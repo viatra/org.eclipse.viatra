@@ -69,7 +69,7 @@ public class ConstraintAdapter {
             ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger().error(
+            IncQueryLoggingUtil.getLogger(getClass()).error(
                     String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
     }

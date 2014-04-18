@@ -76,7 +76,7 @@ public abstract class QueryBasedFeature {
                 matcher = (IncQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
                         .getQuerySpecification(patternName).getMatcher(engineForMatcher());
             } catch (IncQueryException e) {
-                IncQueryLoggingUtil.getDefaultLogger().error(
+                IncQueryLoggingUtil.getLogger(getClass()).error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);
             }
             dm = matcher.newDeltaMonitor(false);
@@ -108,7 +108,7 @@ public abstract class QueryBasedFeature {
     protected void initialize(final IncQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
         if (initialized) {
-            IncQueryLoggingUtil.getDefaultLogger().error("[QueryBasedFeature] Feature already initialized!");
+            IncQueryLoggingUtil.getLogger(getClass()).error("[QueryBasedFeature] Feature already initialized!");
             return;
         }
         initialized = true;

@@ -35,7 +35,7 @@ public class ErrorLoggingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     @Override
     protected void handleError(Activation<? extends EventAtom> activation, Exception exception, Context context) {
-        IncQueryLoggingUtil.getDefaultLogger().error("Exception occurred while executing job on activation " + activation +"!",
+        IncQueryLoggingUtil.getLogger(getClass()).error("Exception occurred while executing job on activation " + activation +"!",
                 exception);
     }
 

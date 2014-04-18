@@ -51,7 +51,7 @@ public class IncQueryEventRealm implements EventRealm {
                     (IncQueryEventSourceSpecification<Match>) sourceSpecification);
             eventSource.prepareSource();
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger()
+            IncQueryLoggingUtil.getLogger(getClass())
                     .error("Could not create matcher for event source definition " + sourceSpecification + " in realm "
                             + this, e);
         }

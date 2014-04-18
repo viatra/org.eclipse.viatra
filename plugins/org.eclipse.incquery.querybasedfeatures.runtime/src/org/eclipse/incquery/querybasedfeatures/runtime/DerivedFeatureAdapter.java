@@ -137,12 +137,12 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     if (tempOldValue != null) {
                         tempOldValue.eAdapters().remove(path.getDependantAdapter());
                     } else {
-                    	IncQueryLoggingUtil.getDefaultLogger().debug("[DerivedFeatureAdapter] oldValue is not set");
+                    	IncQueryLoggingUtil.getLogger(getClass()).debug("[DerivedFeatureAdapter] oldValue is not set");
                     }
                     if (newValue != null) {
                         newValue.eAdapters().add(path.getDependantAdapter());
                     } else {
-                    	IncQueryLoggingUtil.getDefaultLogger().debug("[DerivedFeatureAdapter] new value is not set");
+                    	IncQueryLoggingUtil.getLogger(getClass()).debug("[DerivedFeatureAdapter] new value is not set");
                     }
                     break;
                 case Notification.ADD:
@@ -175,7 +175,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 case Notification.REMOVING_ADAPTER:
                     break;
                 default:
-                	IncQueryLoggingUtil.getDefaultLogger().debug(
+                	IncQueryLoggingUtil.getLogger(getClass()).debug(
                             "[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
                     return; // No notification
                 }
@@ -224,7 +224,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 }
             }
         } catch (Exception ex) {
-        	IncQueryLoggingUtil.getDefaultLogger().error(
+        	IncQueryLoggingUtil.getLogger(getClass()).error(
                     "The derived feature adapter encountered an error in processing the EMF model. "
                             + "This happened while maintaining the derived feature " + derivedFeature.getName()
                             + " of object " + source, ex);

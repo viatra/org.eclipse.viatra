@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.util;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
@@ -43,6 +42,7 @@ public class IncQueryLoggingUtil {
 	        if (defaultRuntimeLogger == null)
 	            throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
 	    }
+
 	    return defaultRuntimeLogger;
 	}
 	
@@ -52,7 +52,7 @@ public class IncQueryLoggingUtil {
 	 * @return
 	 */
 	public static Logger getLogger(Class<?> clazz) {
-	    return Logger.getLogger(getDefaultLogger().getName() + "." + clazz.getName());
+	    return Logger.getLogger(getDefaultLogger().getName() + clazz.getName());
 	}
 
 	private static Logger defaultRuntimeLogger;
