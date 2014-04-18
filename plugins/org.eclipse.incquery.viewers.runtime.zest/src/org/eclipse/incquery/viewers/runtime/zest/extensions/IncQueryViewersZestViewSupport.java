@@ -11,10 +11,6 @@
 package org.eclipse.incquery.viewers.runtime.zest.extensions;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
-import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
@@ -23,6 +19,10 @@ import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;

@@ -27,13 +27,13 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.DetailsViewe
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutPreferences;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPreferences;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerLabelProvider;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerObservableFactory;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
-import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.RootContent;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerLabelProvider;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerObservableFactory;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.QueryExplorerTreeStructureAdvisor;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.RootContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerFlatContentProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerFlatLabelProvider;
@@ -69,8 +69,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.xtext.ui.editor.model.XtextDocument;
-import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

@@ -11,11 +11,6 @@
 
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
-import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
-import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.CompositeLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
@@ -24,6 +19,11 @@ import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
+import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
+import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.tooling.ui.retevis.Activator;
 import org.eclipse.incquery.tooling.ui.retevis.theme.ColorTheme;
