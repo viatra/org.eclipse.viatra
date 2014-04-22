@@ -24,8 +24,8 @@
 <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.gef4.geometry.feature.group" version="0.1.0.201401040305"/>
-<unit id="org.eclipse.gef4.zest.sdk.feature.group" version="0.1.0.201401040305"/>
+<unit id="org.eclipse.gef4.geometry.feature.group" version="0.1.0.201404120206"/>
+<unit id="org.eclipse.gef4.zest.sdk.feature.group" version="0.1.0.201404120206"/>
 <repository location="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
 </location>
 </locations>

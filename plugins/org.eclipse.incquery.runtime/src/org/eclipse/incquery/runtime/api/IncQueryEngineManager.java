@@ -215,7 +215,7 @@ public class IncQueryEngineManager {
                 }
             }
         } catch (Exception ex) {
-        	IncQueryLoggingUtil.getDefaultLogger().fatal(
+        	IncQueryLoggingUtil.getLogger(getClass()).fatal(
                     "EMF-IncQuery Engine Manager encountered an error in delivering notifications"
                             + " about engine initialization. ", ex);
         }

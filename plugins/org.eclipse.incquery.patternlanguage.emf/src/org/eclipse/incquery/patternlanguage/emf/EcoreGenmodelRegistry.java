@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -32,40 +30,22 @@ import com.google.inject.Singleton;
 @Singleton
 public class EcoreGenmodelRegistry {
 
-    private static final String EPACKAGE_EXTENSION_ID = "org.eclipse.emf.ecore.generated_package";
-    private static final String GENMODEL_ATTRIBUTE = "genModel";
-    private static final String URI_ATTRIBUTE = "uri";
-    private Map<String, String> genmodelUriMap = Maps.newHashMap();
+    private Map<String, String> genmodelUriMap;
     private Map<String, GenPackage> genpackageMap = Maps.newHashMap();
+    @Inject
     private Logger logger;
     private Set<String> reportedProblematicGenmodelUris = Sets.newHashSet();
-
-    @Inject
-    public EcoreGenmodelRegistry(Logger logger) {
-        this.logger = logger;
-
-        if (Platform.getExtensionRegistry() == null) {
-            return;
-        }
-        IConfigurationElement[] packages = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                EPACKAGE_EXTENSION_ID);
-        for (IConfigurationElement packageExtension : packages) {
-            if (packageExtension.isValid()) {
-                String genmodelUri = packageExtension.getAttribute(GENMODEL_ATTRIBUTE);
-                if (genmodelUri != null && !genmodelUri.isEmpty()) {
-                    String uri = packageExtension.getAttribute(URI_ATTRIBUTE);
-                    if (URI.createURI(genmodelUri).isRelative()) {
-                        genmodelUriMap.put(uri, String.format("platform:/plugin/%s/%s", packageExtension
-                                .getContributor().getName(), genmodelUri));
-                    } else {
-                        genmodelUriMap.put(uri, genmodelUri);
-                    }
-                }
-            }
+    @Inject(optional=true)
+    private IGenmodelMappingLoader loader;
+    
+    private void ensureInitialized() {
+        if (genmodelUriMap == null && loader != null) {
+            genmodelUriMap = loader.loadGenmodels();
         }
     }
-
+    
     public GenPackage findGenPackage(String nsURI, ResourceSet set) {
+        ensureInitialized();
         if (!genpackageMap.containsKey(nsURI)) {
             if (!genmodelUriMap.containsKey(nsURI)) {
                 return null;

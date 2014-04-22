@@ -45,7 +45,7 @@ public final class Schedulers {
         try {
             return getIQBaseSchedulerFactory(engine.getBaseIndex());
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger().error("Base index not available in engine", e);
+            IncQueryLoggingUtil.getLogger(Schedulers.class).error("Base index not available in engine", e);
             return null;
         }
     }

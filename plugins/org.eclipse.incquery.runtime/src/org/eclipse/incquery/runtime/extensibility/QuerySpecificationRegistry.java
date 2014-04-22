@@ -71,7 +71,7 @@ public final class QuerySpecificationRegistry {
                     if (el.getName().equals("matcher")) {
                         prepareQuerySpecification(specifications, duplicates, el);
                     } else {
-                    	IncQueryLoggingUtil.getDefaultLogger().error(
+                    	IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                                 "[QuerySpecificationRegistry] Unknown configuration element " + el.getName()
                                         + " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
                     }
@@ -84,7 +84,7 @@ public final class QuerySpecificationRegistry {
                 for (String fqn : duplicates) {
                     duplicateSB.append(String.format("\t%s%n", fqn));
                 }
-                IncQueryLoggingUtil.getDefaultLogger().warn(duplicateSB.toString());
+                IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).warn(duplicateSB.toString());
             }
         }
     }
@@ -116,7 +116,7 @@ public final class QuerySpecificationRegistry {
                 id = "undefined in plugin.xml";
             }
             //TODO error logging for the user interface
-            IncQueryLoggingUtil.getDefaultLogger().error(
+            IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing ID: "
                             + id + "! " + e.getMessage(), e);
         }
@@ -133,7 +133,7 @@ public final class QuerySpecificationRegistry {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
         } else {
             IncQueryLoggingUtil
-                    .getDefaultLogger()
+                    .getLogger(QuerySpecificationRegistry.class)
                     .warn(String
                             .format("[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!",
                                     qualifiedName));

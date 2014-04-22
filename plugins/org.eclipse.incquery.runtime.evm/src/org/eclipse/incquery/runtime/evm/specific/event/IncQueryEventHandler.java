@@ -54,7 +54,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHand
         try {
             monitor = new LightweightAttributeMonitor<Match>(eventSource.getMatcher().getEngine().getBaseIndex());
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger().error("Error happened while accessing base index", e);
+            IncQueryLoggingUtil.getLogger(getClass()).error("Error happened while accessing base index", e);
         }
         return monitor;
     }

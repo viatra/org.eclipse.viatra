@@ -9,12 +9,13 @@ import org.eclipse.incquery.patternlanguage.annotations.IAnnotationValidatorLoad
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguagePlugin;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageRuntimeModule;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
+import org.eclipse.incquery.patternlanguage.emf.GenmodelExtensionLoader;
+import org.eclipse.incquery.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.xtext.junit4.GlobalRegistries;
 import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.junit4.IInjectorProvider;
 import org.eclipse.xtext.junit4.IRegistryConfigurator;
-import org.eclipse.xtext.service.AbstractGenericModule;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -45,6 +46,10 @@ public class EMFPatternLanguageInjectorProvider implements IInjectorProvider, IR
             @SuppressWarnings("unused")
             public Class<? extends IAnnotationValidatorLoader> bindAnnotationValidatorLoader() {
                 return ExtensionBasedAnnotationValidatorLoader.class;
+            }
+            @SuppressWarnings("unused")
+            public Class<? extends IGenmodelMappingLoader> bindGenmodelMappingLoader() {
+                return GenmodelExtensionLoader.class;
             }
         });
         IncQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));

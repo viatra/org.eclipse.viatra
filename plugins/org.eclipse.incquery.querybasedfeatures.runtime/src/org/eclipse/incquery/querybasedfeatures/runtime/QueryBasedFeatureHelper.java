@@ -137,7 +137,7 @@ public final class QueryBasedFeatureHelper {
 
         QueryBasedFeature newFeature = createQueryBasedFeature(feature, kind, keepCache);
         if(newFeature == null) {
-            IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed, feature kind " + kind + " not supported!");
+            IncQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed, feature kind " + kind + " not supported!");
             return null;
         }
         
@@ -152,12 +152,12 @@ public final class QueryBasedFeatureHelper {
                 newFeature.initialize(matcher, sourceParamName, targetParamName);
                 newFeature.startMonitoring();
             } catch (IncQueryException e) {
-            	IncQueryLoggingUtil.getDefaultLogger().error("Handler initialization failed", e);
+            	IncQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed", e);
                 return null;
             }
         } else {
         	IncQueryLoggingUtil
-                    .getDefaultLogger()
+        	        .getLogger(QueryBasedFeatureHelper.class)
                     .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
         }
 

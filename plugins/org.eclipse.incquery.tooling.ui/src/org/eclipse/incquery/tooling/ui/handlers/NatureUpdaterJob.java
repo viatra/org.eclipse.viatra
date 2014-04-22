@@ -86,20 +86,35 @@ class NatureUpdaterJob extends Job {
 
         //Lookup the IncQuery-related command indixii
         int xtextIndex = -1;
+        ICommand xtextCommand = null; 
         int iqIndex = -1;
-        for (int i = 0; i < commands.length; i++) {
+        ICommand iqCommand = null;
+        int commandListSize = commands.length;
+        for (int i = 0; i < commandListSize; i++) {
             String id = commands[i].getBuilderName();
             if (IncQueryNature.BUILDER_ID.equals(id)) {
                 iqIndex = i;
+                iqCommand = commands[i];
             } else if (XtextProjectHelper.BUILDER_ID.equals(id)) {
                 xtextIndex = i;
+                xtextCommand = commands[i];
             }
         }
 
         //Preparing reordered array
-        ICommand[] newCommands = new ICommand[commands.length];
-        newCommands[0] = commands[iqIndex];
-        newCommands[1] = commands[xtextIndex];
+        if (iqIndex < 0) {
+            commandListSize++;
+            iqCommand = desc.newCommand();
+            iqCommand.setBuilderName(IncQueryNature.BUILDER_ID);
+        }
+        if (xtextIndex < 0) {
+            commandListSize++;
+            xtextCommand = desc.newCommand();
+            xtextCommand.setBuilderName(XtextProjectHelper.BUILDER_ID);
+        }
+        ICommand[] newCommands = new ICommand[commandListSize];
+        newCommands[0] = iqCommand;
+        newCommands[1] = xtextCommand;
 
         int commandIndex = 2;
         for (int i = 0; i < commands.length; i++) {
@@ -160,6 +175,7 @@ class NatureUpdaterJob extends Job {
                     .<String> of() : ImmutableList.of(IncQueryNature.NATURE_ID);
             final ImmutableList<String> oldIDs = project.hasNature(ProjectNatureUpdater.OLD_NATURE_ID) ? ImmutableList.of(ProjectNatureUpdater.OLD_NATURE_ID)
                     : ImmutableList.<String> of();
+            
             if (newIDs.size() + oldIDs.size() > 0) {
                 ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
             }
