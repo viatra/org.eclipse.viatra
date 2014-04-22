@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra2.emf.runtime.transformation.eventdriven;
 
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -21,37 +24,27 @@ import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.viatra2.emf.runtime.rules.ITransformationRule;
-import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
-@SuppressWarnings("unchecked")
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+
 public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>>
         implements ITransformationRule<Match, Matcher> {
     private IQuerySpecification<Matcher> precondition;
     private RuleSpecification<Match> ruleSpecification;
 
     public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            IMatchProcessor<Match> action, ActivationLifeCycle lifeCycle) {
-        Job<Match> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, action);
-        
-        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle,
-                CollectionLiterals.newHashSet(job));
-    }
+            Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle) {
+        Set<Job<Match>> jobs = Sets.newHashSet();
 
-    public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            IMatchProcessor<Match> actionOnAppear, IMatchProcessor<Match> actionOnDisappear,
-            ActivationLifeCycle lifeCycle) {
-        Job<Match> jobOnAppear = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, actionOnAppear);
-        Job<Match> jobOnDisappear = Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, actionOnDisappear);
-        
-        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle,
-                CollectionLiterals.newHashSet(jobOnAppear, jobOnDisappear));
-    }
+        for (Entry<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
+            IncQueryActivationStateEnum state = stateAction.getKey();
+            IMatchProcessor<Match> action = stateAction.getValue();
 
-    public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            IMatchProcessor<Match> action, IncQueryActivationStateEnum transition, ActivationLifeCycle lifeCycle) {
-        Job<Match> job = Jobs.newStatelessJob(transition, action);
-        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle,
-                CollectionLiterals.newHashSet(job));
+            jobs.add(Jobs.newStatelessJob(state, action));
+        }
+
+        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs);
     }
 
     @Override

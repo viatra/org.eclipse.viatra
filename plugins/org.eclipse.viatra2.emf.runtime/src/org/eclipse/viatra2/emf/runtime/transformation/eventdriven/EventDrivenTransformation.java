@@ -14,6 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -31,12 +32,6 @@ import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.Sets;
 
-/**
- * A transformation triggered by observed events.
- * 
- * @author Istvan David
- * 
- */
 public class EventDrivenTransformation {
     private IncQueryEngine incQueryEngine;
     private UpdateCompleteBasedSchedulerFactory schedulerFactory;
@@ -77,6 +72,11 @@ public class EventDrivenTransformation {
         return this;
     }
 
+    public EventDrivenTransformation setDebugLevel(Level level) {
+        executionSchema.getLogger().setLevel(level);
+        return this;
+    }
+
     public EventDrivenTransformation addRule(@SuppressWarnings("rawtypes") EventDrivenTransformationRule rule) {
         rules.add(rule);
         return this;
@@ -108,5 +108,11 @@ public class EventDrivenTransformation {
     public EventDrivenTransformation setConflictResolver(ConflictResolver conflictResolver) {
         this.conflictResolver = conflictResolver;
         return this;
+    }
+
+    public void useDebugInfo(boolean debug) {
+        if (debug) {
+            executionSchema.getLogger().setLevel(Level.DEBUG);
+        }
     }
 }

@@ -16,7 +16,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver;
 
 public class RuleOrderBasedFixedPriorityResolver extends FixedPriorityConflictResolver {
-
     public RuleOrderBasedFixedPriorityResolver() {
         super();
     }

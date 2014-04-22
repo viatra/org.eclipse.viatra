@@ -11,7 +11,6 @@
 package org.eclipse.viatra2.emf.runtime.transformation.eventdriven;
 
 public class InconsistentEventSemanticsException extends Exception {
-
     private static final long serialVersionUID = 3645910677281157585L;
     private static final String ERROR_MSG = "Inconsistent event semantics.";
 
@@ -25,6 +24,5 @@ public class InconsistentEventSemanticsException extends Exception {
 
     private static String getErrorMsg(String previousSemantics, String newSemantics) {
         return ERROR_MSG + " (Mixing " + previousSemantics + " and " + newSemantics + " is not valid.)";
-
     }
 }
