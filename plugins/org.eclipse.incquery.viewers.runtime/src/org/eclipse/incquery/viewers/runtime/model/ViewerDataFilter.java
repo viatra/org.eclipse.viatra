@@ -13,6 +13,7 @@ package org.eclipse.incquery.viewers.runtime.model;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
@@ -120,32 +121,11 @@ public class ViewerDataFilter {
      * @return
      */
     public <Match extends IPatternMatch> ObservablePatternMatchSet<Match> getObservableSet(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, RuleEngine engine) {
-
-        if (isFiltered(querySpecification)) {
-            ViewerFilterDefinition def = getFilter(querySpecification);
-            switch (def.semantics) {
-            case SINGLE:
-                @SuppressWarnings("unchecked")
-                Match singleFilterMatch = (Match) def.singleFilterMatch;
-                return new ObservablePatternMatchSet<Match>(querySpecification,
-                        engine,
-                        (Match)singleFilterMatch); 
-            default:
-                @SuppressWarnings("unchecked")
-                Collection<Match> filterMatches = (Collection<Match>)def.filterMatches;
-                return new ObservablePatternMatchSet<Match>(querySpecification,
-                        engine,
-                        filterMatches,
-                        def.semantics);
-            }
-        }
-        else {
-            return new ObservablePatternMatchSet<Match>(querySpecification, engine);
-        }
+        ObservablePatternMatchCollectionBuilder<Match> builder = ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine);
+        prepareFilter(querySpecification, builder);
+        return builder.buildSet();
     }
-   
 
-    
     /**
      * Returns an observable list of pattern matches, taking account the existing filter rules for a pattern. If no
      * filtering rule is defined for the selected pattern, all matches are returned.
@@ -155,27 +135,26 @@ public class ViewerDataFilter {
      * @return
      */
     public <Match extends IPatternMatch> ObservablePatternMatchList<Match> getObservableList(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, RuleEngine engine) {
+        ObservablePatternMatchCollectionBuilder<Match> builder = ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine);
+        prepareFilter(querySpecification, builder);
+        return builder.buildList();
+    }
 
+    private <Match extends IPatternMatch> void prepareFilter(
+            IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification,
+            ObservablePatternMatchCollectionBuilder<Match> builder) {
         if (isFiltered(querySpecification)) {
             ViewerFilterDefinition def = getFilter(querySpecification);
             switch (def.semantics) {
             case SINGLE:
                 @SuppressWarnings("unchecked")
-                Match singleFilterMatch = (Match)def.singleFilterMatch;
-                return new ObservablePatternMatchList<Match>(querySpecification,
-                        engine,
-                        singleFilterMatch); 
+                Match singleFilterMatch = (Match) def.singleFilterMatch;
+                builder.setFilter(singleFilterMatch); 
             default:
                 @SuppressWarnings("unchecked")
                 Collection<Match> filterMatches = (Collection<Match>)def.filterMatches;
-                return new ObservablePatternMatchList<Match>(querySpecification,
-                        engine,
-                        filterMatches,
-                        def.semantics);
+                builder.setFilter(filterMatches, def.semantics);
             }
-        }
-        else {
-            return new ObservablePatternMatchList<Match>(querySpecification, engine);
         }
     }
 }

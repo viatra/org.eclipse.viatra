@@ -23,8 +23,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
-import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
-import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -60,7 +59,7 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
             Matcher matcher) {
-        return new ObservablePatternMatchList<Match>(matcher);
+        return ObservablePatternMatchCollectionBuilder.create(matcher).buildList();
     }
 
     /**
@@ -81,7 +80,7 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
-        return new ObservablePatternMatchList<Match>(querySpecification, engine);
+        return ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine).buildList();
     }
 
     /**
@@ -103,7 +102,8 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
-        return new ObservablePatternMatchList<Match>(querySpecification, engine, filter);
+        return ObservablePatternMatchCollectionBuilder.create(querySpecification).setFilter(filter).setEngine(engine)
+                .buildList();
     }
 
     /**
@@ -115,7 +115,7 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
             Matcher matcher) {
-        return new ObservablePatternMatchSet<Match>(matcher);
+        return ObservablePatternMatchCollectionBuilder.create(matcher).buildSet();
     }
 
     /**
@@ -133,7 +133,7 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
-        return new ObservablePatternMatchSet<Match>(querySpecification, engine);
+        return ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine).buildSet();
     }
 
     /**
@@ -152,7 +152,7 @@ public final class IncQueryObservables {
      */
     public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
             IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
-        return new ObservablePatternMatchSet<Match>(querySpecification, engine, filter);
+        return ObservablePatternMatchCollectionBuilder.create(querySpecification).setFilter(filter).setEngine(engine).buildSet();
     }
 
     /**

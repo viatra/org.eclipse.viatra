@@ -57,7 +57,7 @@ public final class ObservableCollectionHelper {
      * @param querySpecification
      *            the {@link IQuerySpecification} used to create the rule
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IQuerySpecification<Matcher> querySpecification) {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
@@ -72,7 +72,7 @@ public final class ObservableCollectionHelper {
      * @param querySpecification
      *            the {@link IQuerySpecification} used to create the rule
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createUpdatingRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createUpdatingRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate,
             IQuerySpecification<Matcher> querySpecification) {
 
@@ -94,7 +94,7 @@ public final class ObservableCollectionHelper {
      * @param matcher
      *            the {@link IncQueryMatcher} used to create the rule
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
@@ -110,7 +110,7 @@ public final class ObservableCollectionHelper {
         return ImmutableSet.of(insertJob, deleteJob);
     }
 
-    public static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
+    protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
                 Schedulers.getIQEngineSchedulerFactory(engine));
 		ruleEngine.addRule(specification, filter);

@@ -18,6 +18,7 @@ import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -75,8 +76,13 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         if (this.matcher != null) {
             initOrdering();
             initFilter();
-            children = new ObservablePatternMatchList(specification, engine, transformerFunction, matchComparator,
-                    filter);
+            
+            ObservablePatternMatchCollectionBuilder<IPatternMatch> builder = ObservablePatternMatchCollectionBuilder.create((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+            builder.setComparator(matchComparator).setConverter(transformerFunction).setFilter(filter);
+            children = builder.setEngine(engine).buildList();
+//            
+//            children = new ObservablePatternMatchList(specification, engine, transformerFunction, matchComparator,
+//                    filter);
             children.addListChangeListener(listChangeListener);
             // label needs to be set explicitly, in case of no matches setText will not be invoked at all
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),

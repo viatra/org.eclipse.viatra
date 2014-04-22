@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.databinding.runtime.collection;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -36,8 +34,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -47,6 +43,9 @@ import com.google.common.collect.Sets;
 /**
  * Observable view of a match set for a given {@link IncQueryMatcher} on a model (match sets of an
  * {@link IncQueryMatcher} are ordered by the order of their appearance).
+ * 
+ * <p>
+ * For creating complex observable lists, use {@link ObservablePatternMatchCollectionBuilder}.
  * 
  * <p>
  * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be
@@ -59,177 +58,64 @@ import com.google.common.collect.Sets;
 public class ObservablePatternMatchList<Match extends IPatternMatch> extends AbstractObservableList {
 
     private final List<Match> cache = Collections.synchronizedList(new LinkedList<Match>());
-    private final ListCollectionUpdate updater;
+    private ListCollectionUpdate updater;
     private RuleSpecification<Match> specification;
     private EventFilter<Match> matchFilter;
     private RuleEngine ruleEngine;
     
+    private ObservablePatternMatchCollection<Match> internalCollection;
+    
     /**
-     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
-     * {@link IncQueryEngine}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} used to create a matcher
-     * @param engine
-     *            the {@link IncQueryEngine} on which the matcher is created
-     * @throws IncQueryException
-     *             if the {@link IncQueryEngine} base index is not available
+     * Creates an observable list, that will be built be the {@link ObservablePatternMatchCollectionBuilder}
+     * using the {@link ObservablePatternMatchCollection} interface.
      */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
-        this(querySpecification);
-        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, specification.createEmptyFilter());
+    protected ObservablePatternMatchList() {
+        this.internalCollection = new ObservablePatternMatchCollection<Match>() {
+
+            @Override
+            public void createUpdater(Function<Match, ?> converter, Comparator<Match> comparator) {
+                updater = new ListCollectionUpdate(converter, comparator);
+            }
+
+            @Override
+            public void createRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) {
+                specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
+            }
+
+            @Override
+            public void createRuleSpecification(IncQueryMatcher<Match> matcher) {
+                specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
+            }
+
+            @Override
+            public void setFilter(EventFilter<Match> filter) {
+                if(filter == null) {
+                    matchFilter = specification.createEmptyFilter();
+                } else {
+                    matchFilter = filter;
+                }
+            }
+
+            @Override
+            public void initialize(IncQueryEngine engine) {
+                ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
+            }
+
+            @Override
+            public void initialize(RuleEngine engine) {
+                ruleEngine = engine;
+                engine.addRule(specification, matchFilter);
+                ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
+            }
+            
+        };
+        
     }
 
-    /**
-     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
-     * {@link IncQueryEngine}. The given converter function is used on each match and the end result is put into the
-     * view. The given comparator is used to define the ordering between the elements in the list. The additional filter
-     * parameter can be used to filter the match set of the {@link IQuerySpecification}.
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} used to create a matcher
-     * @param engine
-     *            the {@link IncQueryEngine} on which the matcher is created
-     * @param converter
-     *            the {@link Function} that is executed on each match to create the items in the list
-     * @param comparator
-     *            the {@link Comparator} that is used to define the ordering between the matches
-     * @param filter
-     *            the partial match to be used as a filter
-     * @throws IncQueryException
-     *             if the {@link IncQueryEngine} base index is not available
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Function<Match, Object> converter,
-            Comparator<Match> comparator, Match filter) {
-        this(querySpecification, converter, comparator);
-        matchFilter = Rules.newSingleMatchFilter(filter);
-        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
+    protected ObservablePatternMatchCollection<Match> getInternalCollection() {
+        return internalCollection;
     }
-
-    /**
-     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
-     * {@link IncQueryEngine}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} used to create a matcher
-     * @param engine
-     *            the {@link IncQueryEngine} on which the matcher is created
-     * @param filter
-     *            the partial match to be used as filter
-     * @throws IncQueryException
-     *             if the {@link IncQueryEngine} base index is not available
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
-        this(querySpecification);
-        matchFilter = Rules.newSingleMatchFilter(filter);
-        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
-    }
-
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Collection<Match> multifilters,
-            IncQueryFilterSemantics semantics) {
-        this(querySpecification);
-        matchFilter = Rules.newMultiMatchFilter(multifilters, semantics);
-        ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
-    }
-
-    /**
-     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
-     * {@link RuleEngine}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} used to create a matcher
-     * @param engine
-     *            an existing {@link RuleEngine} that specifies the used model
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, RuleEngine engine) {
-        this(querySpecification);
-        ruleEngine = engine;
-        engine.addRule(specification);
-        ObservableCollectionHelper.fireActivations(engine, specification, specification.createEmptyFilter());
-    }
-
-    /**
-     * Creates an observable view of the match set of the given {@link IQuerySpecification} initialized on the given
-     * {@link RuleEngine}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-     * 
-     * @param querySpecification
-     *            the {@link IQuerySpecification} used to create a matcher
-     * @param engine
-     *            an existing {@link RuleEngine} that specifies the used model
-     * @param filter
-     *            the partial match to be used as filter
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, RuleEngine engine, Match filter) {
-        this(querySpecification);
-        ruleEngine = engine;
-        matchFilter = Rules.newSingleMatchFilter(filter);
-        engine.addRule(specification, matchFilter);
-        ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
-    }
-
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, RuleEngine engine, Collection<Match> multifilter,
-            IncQueryFilterSemantics semantics) {
-        this(querySpecification);
-        ruleEngine = engine;
-        matchFilter = Rules.newMultiMatchFilter(multifilter, semantics);
-        engine.addRule(specification, matchFilter);
-        ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
-    }
-
-    protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification, Function<Match, Object> converter,
-            Comparator<Match> comparator) {
-        super();
-        updater = new ListCollectionUpdate(converter, comparator);
-        if(comparator != null) {
-            this.specification = ObservableCollectionHelper.createUpdatingRuleSpecification(updater, querySpecification);
-        } else {
-            this.specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
-        }
-    }
-
-    protected <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(
-            IQuerySpecification<Matcher> querySpecification) {
-        super();
-        updater = new ListCollectionUpdate(null, null);
-        this.specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
-    }
-
-    /**
-     * Creates an observable view of the match set of the given {@link IncQueryMatcher}.
-     * 
-     * <p>
-     * Consider using {@link IncQueryObservables#observeMatchesAsList} instead!
-     * 
-     * @param matcher
-     *            the {@link IncQueryMatcher} to use as the source of the observable list
-     */
-    public <Matcher extends IncQueryMatcher<Match>> ObservablePatternMatchList(Matcher matcher) {
-        super();
-        updater = new ListCollectionUpdate(null, null);
-        this.specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
-        ObservableCollectionHelper.prepareRuleEngine(matcher.getEngine(), specification, null);
-    }
-
+    
     @Override
     public Object getElementType() {
         if (updater.converter != null) {
@@ -286,6 +172,12 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         return specification;
     }
     
+    /**
+     * Update the filter used by the observable during runtime.
+     * The contents of the observable are updated and the diff is sent to observers.
+     * 
+     * @param filter
+     */
     public void setFilter(Match filter) {
         
         EventFilter<Match> oldFilter = matchFilter;
@@ -319,14 +211,14 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     public class ListCollectionUpdate implements IObservablePatternMatchCollectionUpdate<Match> {
 
         protected static final String DATA_BINDING_REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
-        protected final Function<Match, Object> converter;
+        protected final Function<Match, ?> converter;
         protected final Comparator<Match> comparator;
         protected final Map<Match, Object> matchToItem;
         protected ListDiff nextDiff = null;
         private List<Match> oldCache = null;
         private Set<Match> removed;
 
-        public ListCollectionUpdate(Function<Match, Object> converter, Comparator<Match> comparator) {
+        public ListCollectionUpdate(Function<Match, ?> converter, Comparator<Match> comparator) {
             if (converter != null) {
                 this.converter = converter;
                 matchToItem = new HashMap<Match, Object>();
