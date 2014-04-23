@@ -92,7 +92,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
                 @Override
                 public void initialize(RuleEngine engine) {
                     ruleEngine = engine;
-                    engine.addRule(specification, matchFilter);
+                    ruleEngine.addRule(specification, matchFilter);
                     ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
                 }
                 

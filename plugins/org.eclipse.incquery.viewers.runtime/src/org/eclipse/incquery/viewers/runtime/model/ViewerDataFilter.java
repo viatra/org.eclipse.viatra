@@ -149,11 +149,13 @@ public class ViewerDataFilter {
             case SINGLE:
                 @SuppressWarnings("unchecked")
                 Match singleFilterMatch = (Match) def.singleFilterMatch;
-                builder.setFilter(singleFilterMatch); 
+                builder.setFilter(singleFilterMatch);
+                break;
             default:
                 @SuppressWarnings("unchecked")
                 Collection<Match> filterMatches = (Collection<Match>)def.filterMatches;
                 builder.setFilter(filterMatches, def.semantics);
+                break;
             }
         }
     }

@@ -320,7 +320,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
                 removed = Sets.newHashSet();
                 return oldCache;
             }
-            return null;
+            return Collections.emptyList();
         }
         
         private void resumeUpdates() {
