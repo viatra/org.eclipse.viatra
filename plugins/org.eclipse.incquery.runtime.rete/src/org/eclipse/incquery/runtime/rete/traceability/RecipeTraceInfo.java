@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -24,24 +25,22 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  */
 public class RecipeTraceInfo implements TraceInfo {
 	public ReteNodeRecipe getRecipe() {return recipe;}
-	public Collection<RecipeTraceInfo> getParentRecipeTraces() {return parentRecipeTraces;}
+	public List<RecipeTraceInfo> getParentRecipeTraces() {return Collections.unmodifiableList(parentRecipeTraces);}
 	@Override 
 	public Node getNode() {return node;}
 	
 	private Node node;
 	ReteNodeRecipe recipe;
-	Collection<RecipeTraceInfo> parentRecipeTraces;
+	ParentTraceList parentRecipeTraces;
 	
 	
 	public RecipeTraceInfo(ReteNodeRecipe recipe, Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
 		super();
 		this.recipe = recipe;
-		this.parentRecipeTraces = Collections.unmodifiableList(new ArrayList<RecipeTraceInfo>(parentRecipeTraces));
+		this.parentRecipeTraces = ParentTraceList.from(parentRecipeTraces); //Collections.unmodifiableList(new ArrayList<RecipeTraceInfo>(parentRecipeTraces));
 	}
 	public RecipeTraceInfo(ReteNodeRecipe recipe, RecipeTraceInfo... parentRecipeTraces) {
-		super();
-		this.recipe = recipe;
-		this.parentRecipeTraces = Collections.unmodifiableList(Arrays.asList(parentRecipeTraces));
+		this(recipe, Arrays.asList(parentRecipeTraces));
 	}
 	
 	@Override
@@ -54,4 +53,19 @@ public class RecipeTraceInfo implements TraceInfo {
 	public boolean propagateToProductionNodeParentAlso() {return false;}
 	@Override 
 	public void assignNode(Node node) {this.node = node;}
+	
+	public static class ParentTraceList extends ArrayList<RecipeTraceInfo> {
+		private static final long serialVersionUID = 8530268272318311419L;
+		
+		public static ParentTraceList from(Collection<? extends RecipeTraceInfo> parentRecipeTraces) {
+			if (parentRecipeTraces instanceof ParentTraceList) {
+				// We do not copy, merely refer. this way, modifications flow through if recursion is resolved later
+				return (ParentTraceList) parentRecipeTraces;
+			} else {
+				ParentTraceList result = new ParentTraceList();
+				result.addAll(parentRecipeTraces);
+				return result;
+			}
+		}
+	}
 }

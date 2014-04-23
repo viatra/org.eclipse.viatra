@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -29,13 +31,15 @@ import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
-import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledSubPlan;
+import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -45,79 +49,7 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 public class CompilerHelper {
 	
 	final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
-	
-	
-//    /**
-//     * If two or more variables are the same in the variablesTuple of the subplan, then a checker node is built to enforce
-//     * their equality.
-//     * 
-//     * @return the derived subplan that contains the additional checkers, or the original if no action was necessary.
-//     */
-//    public static SubPlan enforceVariableCoincidences(IOperationCompiler buildable, SubPlan plan) {
-//        Map<Object, List<Integer>> indexWithMupliplicity = plan.getNaturalJoinVariablesTuple().invertIndexWithMupliplicity();
-//        for (Map.Entry<Object, List<Integer>> pVariableIndices : indexWithMupliplicity.entrySet()) {
-//            List<Integer> indices = pVariableIndices.getValue();
-//            if (indices.size() > 1) {
-//                int[] indexArray = new int[indices.size()];
-//                int m = 0;
-//                for (Integer index : indices)
-//                    indexArray[m++] = index;
-//                plan = buildable.buildEqualityChecker(plan, indexArray);
-//                // TODO also trim here?
-//            }
-//        }
-//        return plan;
-//
-//    }
-//
-//    /**
-//     * Trims the results in the subplan by selecting exported variables in a particular order.
-//     * 
-//     * @return the derived subplan.
-//     * @param enforceUniqueness if true, uniqueness after projection will be enforced
-//     */
-//	public static SubPlan project(
-//			IOperationCompiler buildable,
-//			SubPlan plan, PVariable[] selectedVariables,
-//			boolean enforceUniqueness) {
-//		int paramNum = selectedVariables.length;
-//        int[] tI = new int[paramNum];
-//        for (int i = 0; i < paramNum; i++) {
-//            tI[i] = plan.getVariablesIndex().get(selectedVariables[i]);
-//        }
-//        int tiW = plan.getNaturalJoinVariablesTuple().getSize();
-//        TupleMask trim = new TupleMask(tI, tiW);
-//        SubPlan trimmer = buildable.buildTrimmer(plan, trim, enforceUniqueness);
-//		return trimmer;
-//	}
-
-//	/**
-//	 * Make sure last tuple element equals with the element at the given parameter, then trim it away.
-//	 */
-//	public static AuxiliaryPlanningRecipeTraceInfo trimLastIfEqual(
-//			SubPlan plan,
-//			AuxiliaryPlanningRecipeTraceInfo enforcerTrace,
-//			final Integer lastEqualsWithIndex) 
-//	{
-//		final int coreVariablesSize = enforcerTrace.getVariablesTuple().size()-1;
-//
-//		EqualityFilterRecipe equalityFilterRecipe = FACTORY.createEqualityFilterRecipe();
-//		equalityFilterRecipe.setParent(enforcerTrace.getRecipe());
-//		equalityFilterRecipe.getIndices().add(lastEqualsWithIndex);
-//		equalityFilterRecipe.getIndices().add(coreVariablesSize /*index of newly added copy*/);
-//		final AuxiliaryPlanningRecipeTraceInfo equalityTrace = 
-//				new AuxiliaryPlanningRecipeTraceInfo(plan, 
-//						enforcerTrace.getVariablesTuple(), equalityFilterRecipe, enforcerTrace);
-//		
-//		TrimmerRecipe trimmerRecipe = FACTORY.createTrimmerRecipe();
-//		trimmerRecipe.setParent(equalityFilterRecipe);
-//		final TupleMask mask = TupleMask.omit(coreVariablesSize /*omit last*/, coreVariablesSize+1);
-//		trimmerRecipe.setMask(RecipesHelper.mask(mask.sourceWidth, mask.indices));
-//		return new AuxiliaryPlanningRecipeTraceInfo(plan, 
-//				mask.transform(enforcerTrace.getVariablesTuple()), 
-//				trimmerRecipe, equalityTrace);
-//	}
-	
+		
 	/**
 	 * Makes sure that all variables in the tuple are different so that it can be used as {@link CompiledSubPlan}.
 	 * If a variable occurs multiple times, equality checks are applied and then the results are trimmed so that duplicates are hidden.
@@ -197,7 +129,7 @@ public class CompilerHelper {
 	/**
 	 * Returns a compiled indexer trace according to a mask 
 	 */
-    public static RecipeTraceInfo getIndexerRecipe(SubPlan planToCompile, PlanningTrace parentTrace, TupleMask mask) {
+    public static RecipeTraceInfo makeIndexerTrace(SubPlan planToCompile, PlanningTrace parentTrace, TupleMask mask) {
 		final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
 		if (parentRecipe instanceof AggregatorRecipe) 
 			throw new IllegalArgumentException("Cannot take projection indexer of aggregator node at plan " + planToCompile);
@@ -208,6 +140,40 @@ public class CompilerHelper {
 				/*maskedVariables*/ parentTrace.getVariablesTuple(), recipe, parentTrace);
 		// TODO add specialized indexer trace info?
     }
+
+    /**
+     * Creates a trimmer that keeps selected variables only.
+     */
+	protected static TrimmerRecipe makeTrimmerRecipe(
+			final PlanningTrace compiledParent,
+			List<PVariable> projectedVariables) {
+		final ReteNodeRecipe parentRecipe = compiledParent.getRecipe();
+		List<Integer> projectionSourceIndices = new ArrayList<Integer>();
+		for (PVariable pVariable : projectedVariables) {
+			projectionSourceIndices.add(compiledParent.getPosMapping().get(pVariable));
+		}
+		final TrimmerRecipe trimmerRecipe = ReteRecipeCompiler.FACTORY.createTrimmerRecipe();
+		trimmerRecipe.setParent(parentRecipe);
+		trimmerRecipe.setMask(RecipesHelper.mask(parentRecipe.getArity(), projectionSourceIndices));
+		return trimmerRecipe;
+	}
+
+
+    /**
+     * Creates a recipe for a production node and the corresponding trace.
+     */
+	public static CompiledQuery makeQueryTrace(PQuery query,
+			Collection<RecipeTraceInfo> bodyFinalTraces,
+			Collection<ReteNodeRecipe> bodyFinalRecipes) 
+	{
+		final ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
+		recipe.setPattern(query);
+		recipe.getParents().addAll(bodyFinalRecipes);
+		for (int i = 0; i < query.getParameterNames().size(); ++i)
+			recipe.getMappedIndices().put(query.getParameterNames().get(i), i);
+		
+		return new CompiledQuery(recipe, bodyFinalTraces, query);
+	}    
     
     /**
      * Calculated index mappings for a join, based on the common variables of the two parent subplans.
@@ -262,8 +228,8 @@ public class CompilerHelper {
             secondaryMask = new TupleMask(secondaryIndices, callTrace.getVariablesTuple().size());
             complementerMask = new TupleMask(complementerIndices, callTrace.getVariablesTuple().size());
             
-        	primaryIndexer = getIndexerRecipe(planToCompile, primaryCompiled, primaryMask);
-        	secondaryIndexer = getIndexerRecipe(planToCompile, callTrace, secondaryMask);
+        	primaryIndexer = makeIndexerTrace(planToCompile, primaryCompiled, primaryMask);
+        	secondaryIndexer = makeIndexerTrace(planToCompile, callTrace, secondaryMask);
         	
         	naturalJoinRecipe = FACTORY.createJoinRecipe();
         	naturalJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
@@ -309,19 +275,5 @@ public class CompilerHelper {
 		}
         
     }
-
-	protected static TrimmerRecipe makeTrimmerRecipe(
-			final PlanningTrace compiledParent,
-			List<PVariable> projectedVariables) {
-		final ReteNodeRecipe parentRecipe = compiledParent.getRecipe();
-		List<Integer> projectionSourceIndices = new ArrayList<Integer>();
-		for (PVariable pVariable : projectedVariables) {
-			projectionSourceIndices.add(compiledParent.getPosMapping().get(pVariable));
-		}
-		final TrimmerRecipe trimmerRecipe = RecipePlanCompiler.FACTORY.createTrimmerRecipe();
-		trimmerRecipe.setParent(parentRecipe);
-		trimmerRecipe.setMask(RecipesHelper.mask(parentRecipe.getArity(), projectionSourceIndices));
-		return trimmerRecipe;
-	}    
     
 }

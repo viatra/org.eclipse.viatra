@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.construction.plancompiler.RecipePlanCompiler;
+import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.NodeProvisioner;
@@ -53,7 +53,7 @@ public class ReteEngine {
     // protected Map<GTPattern, Map<Map<Integer, Scope>, RetePatternMatcher>> matchersScoped; // (pattern, scopemap) ->
     // matcher
 
-    protected RecipePlanCompiler compiler;
+    protected ReteRecipeCompiler compiler;
 
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
 
@@ -401,7 +401,7 @@ public class ReteEngine {
      * @param builder
      *            the pattern matcher builder to set
      */
-    public void setCompiler(RecipePlanCompiler builder) {
+    public void setCompiler(ReteRecipeCompiler builder) {
     	ensureInitialized();
         this.compiler = builder;
     }
@@ -446,7 +446,7 @@ public class ReteEngine {
         return context;
     }
 
-    public RecipePlanCompiler getCompiler() {
+    public ReteRecipeCompiler getCompiler() {
     	ensureInitialized();
        return compiler;
     }

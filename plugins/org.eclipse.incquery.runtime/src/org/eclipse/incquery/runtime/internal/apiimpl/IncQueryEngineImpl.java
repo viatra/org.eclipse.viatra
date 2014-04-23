@@ -45,7 +45,7 @@ import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.construction.plancompiler.RecipePlanCompiler;
+import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
@@ -283,7 +283,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     private ReteEngine buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
         ReteEngine engine;
         engine = new ReteEngine(context, reteThreads);
-        RecipePlanCompiler compiler = new RecipePlanCompiler(Options.builderMethod.layoutStrategy(), context);
+        ReteRecipeCompiler compiler = new ReteRecipeCompiler(Options.builderMethod.layoutStrategy(), context);
         //EPMBuilder builder = new EPMBuilder(buildable, context);
         engine.setCompiler(compiler);
         return engine;

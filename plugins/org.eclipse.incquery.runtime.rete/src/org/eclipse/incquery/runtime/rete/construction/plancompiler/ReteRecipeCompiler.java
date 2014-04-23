@@ -60,7 +60,6 @@ import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -76,20 +75,22 @@ import org.eclipse.incquery.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.incquery.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 /**
- * Compiles queries and query plans into Rete recipes traced by a {@link CompiledSubPlan}.
- * 
- * TODO handle recursion
+ * Compiles queries and query plans into Rete recipes, 
+ * 	traced by respectively a {@link CompiledQuery} or {@link CompiledSubPlan}.
  * 
  * @author Bergmann Gabor
  *
  */
-public class RecipePlanCompiler {
+public class ReteRecipeCompiler {
 	
 	private IQueryPlannerStrategy plannerStrategy;
 	private IPatternMatcherContext context;
 	
-	public RecipePlanCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context) {
+	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context) {
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.context = context;
@@ -102,6 +103,8 @@ public class RecipePlanCompiler {
 	private Set<PBody> planningInProgress = new HashSet<PBody>();
 	
 	private Map<PQuery, CompiledQuery> queryCompilerCache = new HashMap<PQuery, CompiledQuery>();
+	private Set<PQuery> compilationInProgress = new HashSet<PQuery>();
+	private Multimap<PQuery, RecursionCutoffPoint> recursionCutoffPoints = HashMultimap.create();
 	private Map<SubPlan, CompiledSubPlan> subPlanCompilerCache = new HashMap<SubPlan, CompiledSubPlan>();
 	private Map<ReteNodeRecipe, SubPlan> compilerBackTrace = new HashMap<ReteNodeRecipe, SubPlan>();
 	
@@ -123,10 +126,25 @@ public class RecipePlanCompiler {
 	public CompiledQuery getCompiledForm(PQuery query) throws QueryPlannerException {
 		CompiledQuery compiled = queryCompilerCache.get(query);
 		if (compiled == null) {
-			compiled = compileProduction(query);
-			
-			queryCompilerCache.put(query, compiled);
-			//backTrace.put(compiled.getRecipe(), plan);
+			boolean reentrant = ! compilationInProgress.add(query);
+			if (reentrant) { // oops, recursion into body in progress
+				RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query);
+				recursionCutoffPoints.put(query, cutoffPoint);
+				return cutoffPoint.getCompiledQuery();
+			} else { // not reentrant, therefore no recursion, do the compilation
+				try {
+					compiled = compileProduction(query);
+					queryCompilerCache.put(query, compiled);
+					//backTrace.put(compiled.getRecipe(), plan);
+					
+					// if this was a recursive query, mend all points where recursion was cut off
+					for (RecursionCutoffPoint cutoffPoint : recursionCutoffPoints.get(query)) {
+						cutoffPoint.mend(compiled);
+					}
+				} finally {
+					compilationInProgress.remove(query);				
+				}
+			}
 		}
 		return compiled;
 	}
@@ -145,12 +163,19 @@ public class RecipePlanCompiler {
 	}
 	
 	public SubPlan getPlan(PBody pBody) throws QueryPlannerException {
+		// if the query is not marked as being compiled, initiate compilation
+		//  (this is useful in case of recursion if getPlan() is the entry point)
+		PQuery pQuery = pBody.getPattern();
+		if (!compilationInProgress.contains(pQuery)) 
+			getCompiledForm(pQuery);
+		
+		// Is the plan already cached?
 		SubPlan plan = plannerCache.get(pBody);
 		if (plan == null) {
 			boolean reentrant = ! planningInProgress.add(pBody);
-			if (reentrant) { // oops, recursion into in body progress
-				// TODO support recursion
-				throw new IllegalArgumentException("Recursion unsupported:" + pBody);
+			if (reentrant) { // oops, recursion into body in progress
+				throw new IllegalArgumentException("Planning-level recursion unsupported: "
+					+ pBody.getPattern().getFullyQualifiedName());
 			} else { // not reentrant, therefore no recursion, do the planning
 				try {
 					plan = plannerStrategy.plan(pBody, context);
@@ -203,17 +228,12 @@ public class RecipePlanCompiler {
 			}
 		}
 		
-		final ProductionRecipe recipe = FACTORY.createProductionRecipe();
-		recipe.setPattern(query);
-		recipe.getParents().addAll(bodyFinalRecipes);
-		for (int i = 0; i < query.getParameterNames().size(); ++i)
-			recipe.getMappedIndices().put(query.getParameterNames().get(i), i);
-		CompiledQuery compiled = new CompiledQuery(recipe, bodyFinalTraces, query);
+		CompiledQuery compiled = CompilerHelper.makeQueryTrace(query, bodyFinalTraces, bodyFinalRecipes);
 		
 		return compiled;
 	}
-	
-	
+
+
 	private CompiledSubPlan doCompileDispatch(SubPlan plan) throws QueryPlannerException {
 		final POperation operation = plan.getOperation();
 		if (operation instanceof PEnumerate) {

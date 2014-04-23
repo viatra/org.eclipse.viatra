@@ -67,8 +67,9 @@ public class PlanningTrace extends RecipeTraceInfo {
 	}
 
 	/**
-	 * Returns a new clone that reinterprets the same compiled form as belonging to a different subPlan.
-	 * Useful e.g. if child plan turns out to be a no-op. 
+	 * Returns a new clone that reinterprets the same compiled form
+	 *  as the compiled form of a (potentially different) subPlan.
+	 * Useful e.g. if child plan turns out to be a no-op, or when promoting a {@link PlanningTrace} to {@link CompiledSubPlan}. 
 	 */
 	public CompiledSubPlan cloneFor(SubPlan newSubPlan) {
 	    return new CompiledSubPlan(newSubPlan, 
