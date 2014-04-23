@@ -48,16 +48,19 @@ public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
     public void process(IPatternMatch match) {
         EObject location = constraint.getLocationObject(match);
         if (location != null && location.eResource() != null) {
-            URI uri = location.eResource().getURI();
-            String platformString = uri.toPlatformString(true);
-            if (platformString==null) {
-                logger.error("Marker location for " + location.toString() + " is invalid!");
-                return;
-            }
-            IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+            IResource markerLoc = adapter.getResourceForEditor();
             if(markerLoc == null) {
-                logger.error("Marker location " + platformString + " for " + location + "is not in workspace!");
-                return;
+                URI uri = location.eResource().getURI();
+                String platformString = uri.toPlatformString(true);
+                if (platformString==null) {
+                    logger.error("Marker location for " + location.toString() + " is invalid!");
+                    return;
+                }
+                markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);
+                if(markerLoc == null) {
+                    logger.error("Marker location " + platformString + " for " + location + "is not in workspace!");
+                    return;
+                }
             }
             try {
                 IMarker marker = markerLoc.createMarker(EValidator.MARKER);

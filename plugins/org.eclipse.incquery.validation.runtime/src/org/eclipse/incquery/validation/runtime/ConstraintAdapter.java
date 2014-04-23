@@ -16,12 +16,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
@@ -32,6 +34,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEn
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
 import com.google.common.collect.ImmutableSet;
@@ -47,9 +50,11 @@ import com.google.common.collect.Sets;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private RuleEngine engine;
+    private ExecutionSchema engine;
+    private IResource resourceForEditor;
 
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
+        resourceForEditor = getIResourceForEditor(editorPart);
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
 
         Set<RuleSpecification<?>> rules = Sets.newHashSet();
@@ -68,10 +73,24 @@ public class ConstraintAdapter {
             IncQueryEngine incQueryEngine = IncQueryEngine.on(notifier);
             ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
             this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
+            this.engine.startUnscheduledExecution();
         } catch (IncQueryException e) {
             IncQueryLoggingUtil.getLogger(getClass()).error(
                     String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
+    }
+
+    private IResource getIResourceForEditor(IEditorPart editorPart) {
+        // get resource for editor input (see org.eclipse.ui.ide.ResourceUtil.getResource)
+        IEditorInput input = editorPart.getEditorInput();
+        IResource resource = null;
+        if(input != null) {
+            Object o = input.getAdapter(IFile.class);
+            if (o instanceof IResource) {
+                resource = (IResource) o;
+            }
+        }
+        return resource;
     }
 
     public void dispose() {
@@ -96,5 +115,9 @@ public class ConstraintAdapter {
 
     public IMarker removeMarker(IPatternMatch match) {
         return this.markerMap.remove(match);
+    }
+    
+    protected IResource getResourceForEditor() {
+        return resourceForEditor;
     }
 }
