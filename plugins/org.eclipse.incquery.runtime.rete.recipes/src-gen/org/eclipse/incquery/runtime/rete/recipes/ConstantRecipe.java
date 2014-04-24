@@ -47,7 +47,7 @@ public interface ConstantRecipe extends ReteNodeRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe%> _this = this;\n<%org.eclipse.emf.common.util.EList%><<%java.lang.Object%>> _constantValues = _this.getConstantValues();\nreturn ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_constantValues, <%java.lang.Object%>.class)).length;'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.emf.common.util.EList%><<%java.lang.Object%>> _constantValues = this.getConstantValues();\nreturn ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_constantValues, <%java.lang.Object%>.class)).length;'"
    * @generated
    */
   int getArity();

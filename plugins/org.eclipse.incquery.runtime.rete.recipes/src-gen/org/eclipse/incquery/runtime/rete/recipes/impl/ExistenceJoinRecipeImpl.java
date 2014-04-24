@@ -52,8 +52,7 @@ public abstract class ExistenceJoinRecipeImpl extends BetaRecipeImpl implements 
    */
   public int getArity()
   {
-    ExistenceJoinRecipe _this = this;
-    ProjectionIndexerRecipe _leftParent = _this.getLeftParent();
+    ProjectionIndexerRecipe _leftParent = this.getLeftParent();
     return _leftParent.getArity();
   }
 

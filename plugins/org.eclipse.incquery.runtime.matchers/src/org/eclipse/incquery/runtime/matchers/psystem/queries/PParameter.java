@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.matchers.psystem;
+package org.eclipse.incquery.runtime.matchers.psystem.queries;
 
 /**
  * A descriptor for PQuery parameters. A parameter has a name and a type

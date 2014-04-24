@@ -122,8 +122,7 @@ public class TrimmerRecipeImpl extends AlphaRecipeImpl implements TrimmerRecipe
    */
   public int getArity()
   {
-    TrimmerRecipe _this = this;
-    Mask _mask = _this.getMask();
+    Mask _mask = this.getMask();
     EList<Integer> _sourceIndices = _mask.getSourceIndices();
     return ((Object[])Conversions.unwrapArray(_sourceIndices, Object.class)).length;
   }

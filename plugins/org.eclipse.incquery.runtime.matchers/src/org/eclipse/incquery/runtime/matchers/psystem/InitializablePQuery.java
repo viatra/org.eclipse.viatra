@@ -12,7 +12,9 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * Adds extra methods to the PQuery interface to initialize its contents.
@@ -35,7 +37,7 @@ public interface InitializablePQuery extends PQuery {
      *
      * @param bodies
      */
-    void initializeBodies(Set<PBody> bodies);
+    void initializeBodies(Set<PBody> bodies) throws QueryPlannerException;
 
     /**
      * Adds an annotation to the specification. Only applicable if the pattern is still

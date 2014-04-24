@@ -43,9 +43,9 @@ import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
 import org.eclipse.incquery.runtime.matchers.psystem.PBody
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference
@@ -108,7 +108,6 @@ class PatternQuerySpecificationClassInferrer {
 
   	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
   		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, true, builder)
-  		querySpecificationClass.inferQuerySpecificationConstructor(pattern)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true)
   		querySpecificationClass.inferExpressions(pattern)
   	}
@@ -116,7 +115,6 @@ class PatternQuerySpecificationClassInferrer {
   	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
   		querySpecificationClass.visibility = JvmVisibility::DEFAULT
   		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, false, builder)
-  		querySpecificationClass.inferQuerySpecificationConstructor(pattern)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false)
   		querySpecificationClass.inferExpressions(pattern)
   	}
@@ -132,13 +130,7 @@ class PatternQuerySpecificationClassInferrer {
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
 			body = [append('''
-				try {
 					return «pattern.querySpecificationHolderClassName».INSTANCE;
-				} catch (''') referClass(pattern, typeof(ExceptionInInitializerError)) append(" ") append('''
-				err) {
-					processInitializerError(err);
-					throw err;
-				}
 			''')]
 		]
 
@@ -205,41 +197,15 @@ class PatternQuerySpecificationClassInferrer {
 					logger.warn("Error while building PBodies", e)
 					return
 				}
-				appender.referClass(pattern, typeof(EMFPatternMatcherContext))
-				appender.append = ''' context = new EMFPatternMatcherContext();'''
-				appender.newLine
 				if (genericSpecification != null) {
 					appender.inferBodies(pattern, genericSpecification, context)
 					appender.inferAnnotations(pattern, genericSpecification)
 				} else {
 					appender.append('''Cannot initialize PSystem from the pattern definition''')
 				}
-				appender.append('''setStatus(''')
-				appender.referClass(pattern, typeof(PQueryStatus))
-				appender.append('''.OK);''')
-				appender.newLine
 				appender.append('''return bodies;''')
 			]
 			]
-  	}
-
- 	/**
-   	 * Infers constructor for QuerySpecification class based on the input 'pattern'.
-   	 */
-  	def inferQuerySpecificationConstructor(JvmDeclaredType querySpecificationClass, Pattern pattern) {
-		querySpecificationClass.members += pattern.toConstructor [
-			simpleName = querySpecificationClass.simpleName
-			visibility = JvmVisibility::PRIVATE
-			exceptions += pattern.newTypeRef(typeof(IncQueryException))
-			body = [
-				append('''super();''')
-				newLine
-				append('''setStatus(''')
-				referClass(pattern, typeof(PQueryStatus))
-				append('''.UNINITIALIZED);''')
-			]
-		]
-
   	}
 
 	def inferBodies(ITreeAppendable appender, Pattern pattern, IQuerySpecification<?> genericSpecification, EMFPatternMatcherContext context) {
@@ -248,7 +214,7 @@ class PatternQuerySpecificationClassInferrer {
 		appender.referClass(pattern, typeof(Sets))
 		appender.append('''.newLinkedHashSet();''')
 		appender.newLine
-		for (pBody : genericSpecification.containedBodies) {
+		for (pBody : genericSpecification.disjunctBodies.bodies) {
 			appender.increaseIndentation
 			appender.append("{")
 			appender.newLine
@@ -283,6 +249,7 @@ class PatternQuerySpecificationClassInferrer {
 			appender.decreaseIndentation
 			appender.newLine
 			appender.append("}")
+			appender.newLine
 		}
 	}
 
@@ -316,13 +283,7 @@ class PatternQuerySpecificationClassInferrer {
 				visibility = JvmVisibility::PUBLIC
 				static = true
 				body = [append('''
-					try {
-						return new «pattern.querySpecificationClassName»();
-					} catch (''') referClass(pattern, typeof(IncQueryException)) append(" ") append('''
-					ex) {
-						throw new ''') referClass(pattern, typeof(RuntimeException)) append('''
-						(ex);
-					}
+					return new «pattern.querySpecificationClassName»();					
 				''')]
 			]
 		]
@@ -370,7 +331,7 @@ class PatternQuerySpecificationClassInferrer {
 				val literal = constraint.supplierKey as EStructuralFeature
 				val container = literal.EContainingClass
 				val packageNsUri = container.EPackage.nsURI
-				appender.append('''(body, context, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");''')
+				appender.append('''(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");''')
 			}
 			ConstantValue : {
 				appender.append('''new ''')

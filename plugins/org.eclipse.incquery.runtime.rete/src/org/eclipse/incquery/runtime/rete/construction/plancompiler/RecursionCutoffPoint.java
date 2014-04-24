@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.Collections;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;

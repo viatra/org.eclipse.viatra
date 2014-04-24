@@ -51,8 +51,7 @@ public abstract class FilterRecipeImpl extends AlphaRecipeImpl implements Filter
    */
   public int getArity()
   {
-    FilterRecipe _this = this;
-    ReteNodeRecipe _parent = _this.getParent();
+    ReteNodeRecipe _parent = this.getParent();
     return _parent.getArity();
   }
 

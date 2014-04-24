@@ -16,5 +16,7 @@ Export-Package: org.eclipse.incquery.runtime.matchers,
  org.eclipse.incquery.runtime.matchers.psystem.annotations,
  org.eclipse.incquery.runtime.matchers.psystem.basicdeferred,
  org.eclipse.incquery.runtime.matchers.psystem.basicenumerables,
+ org.eclipse.incquery.runtime.matchers.psystem.queries,
+ org.eclipse.incquery.runtime.matchers.psystem.rewriters,
  org.eclipse.incquery.runtime.matchers.tuple
 Bundle-ClassPath: .

@@ -6,17 +6,15 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
 
 /**
@@ -34,12 +32,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
    * 
    */
   public static RecordRoleValueQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -66,7 +59,6 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -79,10 +71,11 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       ));
       
       
-      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
+      new TypeBinary(body, CONTEXT, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
       new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Filter"));
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Record = body.getOrCreateVariableByName("Record");
       PVariable var_Role = body.getOrCreateVariableByName("Role");
@@ -93,10 +86,11 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       ));
       
       
-      new TypeBinary(body, context, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
+      new TypeBinary(body, CONTEXT, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
       new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Match"));
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryExplorer");
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
@@ -106,13 +100,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       annotation.addAttribute("feature","role");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private RecordRoleValueQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -129,11 +117,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
     private final static RecordRoleValueQuerySpecification INSTANCE = make();
     
     public static RecordRoleValueQuerySpecification make() {
-      try {
-      	return new RecordRoleValueQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new RecordRoleValueQuerySpecification();					
       
     }
   }

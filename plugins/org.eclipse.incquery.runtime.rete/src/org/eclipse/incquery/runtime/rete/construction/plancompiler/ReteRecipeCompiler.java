@@ -35,7 +35,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -190,7 +190,7 @@ public class ReteRecipeCompiler {
 	
 	private CompiledQuery compileProduction(PQuery query) throws QueryPlannerException {
 		Collection<SubPlan> bodyPlans = new ArrayList<SubPlan>();
-		for (PBody pBody : query.getContainedBodies()) {
+		for (PBody pBody : query.getDisjunctBodies().getBodies()) {
 			SubPlan bodyPlan = getPlan(pBody);
 			bodyPlans.add(bodyPlan);
 		}

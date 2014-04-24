@@ -15,20 +15,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PQueries;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -42,6 +48,10 @@ import com.google.common.collect.Sets;
 public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
+    private static final Logger LOGGER = IncQueryLoggingUtil.getLogger(BaseQuerySpecification.class);
+    protected static final IPatternMatcherContext CONTEXT = new EMFPatternMatcherContext(LOGGER);
+    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(CONTEXT);
+    
     private final class AnnotationNameTester implements Predicate<PAnnotation> {
         private final String annotationName;
 
@@ -123,7 +133,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
     @Override
     public Set<PQuery> getDirectReferredQueries() {
-        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(getContainedBodies(),
+        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(canonicalDisjunction.getBodies(),
                 PQueries.directlyReferencedQueriesFunction()));
         return Sets.newHashSet(queries);
     }
@@ -146,34 +156,39 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         return foundQueries;
     }
 
-    ImmutableSet<PBody> bodies;
+    PDisjunction canonicalDisjunction;
     
     @Override
-    public Set<PBody> getContainedBodies() {
+    public PDisjunction getDisjunctBodies() {
         ensureInitialized();
         Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
-        return bodies;
-    }
-
-    @Override
-    public Set<PBody> getMutableBodies() throws IncQueryException {
-        return doGetContainedBodies();
+        return canonicalDisjunction;
     }
     
-    protected void ensureInitialized() {
+    protected final void ensureInitialized() {
         try {
             if (status.equals(PQueryStatus.UNINITIALIZED)) {
-                bodies = ImmutableSet.copyOf(doGetContainedBodies());
-                for (PBody body : bodies) {
-                    body.setStatus(null);
-                }
+                setBodies(doGetContainedBodies());
                 setStatus(PQueryStatus.OK);
             }
         } catch (IncQueryException e) {
+            setStatus(PQueryStatus.ERROR);
+            throw new RuntimeException(e);
+        } catch (RewriterException e) {
+            setStatus(PQueryStatus.ERROR);
             throw new RuntimeException(e);
         }
     }
 
+    protected final void setBodies(Set<PBody> bodies) throws RewriterException {
+        canonicalDisjunction = new PDisjunction(this, bodies);
+        for (PBody body : canonicalDisjunction.getBodies()) {
+            body.setStatus(null);
+        }
+        NORMALIZER.rewrite(canonicalDisjunction);
+        setStatus(PQueryStatus.OK);
+    }
+    
     /**
      * Creates and returns the bodies of the query. If recalled again, a new instance is created.
      * 

@@ -51,8 +51,7 @@ public class EvalRecipeImpl extends ExpressionEnforcerRecipeImpl implements Eval
    */
   public int getArity()
   {
-    EvalRecipe _this = this;
-    ReteNodeRecipe _parent = _this.getParent();
+    ReteNodeRecipe _parent = this.getParent();
     int _arity = _parent.getArity();
     return (1 + _arity);
   }

@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**

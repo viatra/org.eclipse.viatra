@@ -124,15 +124,12 @@ public class JoinRecipeImpl extends BetaRecipeImpl implements JoinRecipe
    */
   public int getArity()
   {
-    JoinRecipe _this = this;
-    ProjectionIndexerRecipe _leftParent = _this.getLeftParent();
+    ProjectionIndexerRecipe _leftParent = this.getLeftParent();
     int _arity = _leftParent.getArity();
-    JoinRecipe _this_1 = this;
-    IndexerRecipe _rightParent = _this_1.getRightParent();
+    IndexerRecipe _rightParent = this.getRightParent();
     int _arity_1 = _rightParent.getArity();
     int _plus = (_arity + _arity_1);
-    JoinRecipe _this_2 = this;
-    IndexerRecipe _rightParent_1 = _this_2.getRightParent();
+    IndexerRecipe _rightParent_1 = this.getRightParent();
     Mask _mask = _rightParent_1.getMask();
     EList<Integer> _sourceIndices = _mask.getSourceIndices();
     int _length = ((Object[])Conversions.unwrapArray(_sourceIndices, Object.class)).length;

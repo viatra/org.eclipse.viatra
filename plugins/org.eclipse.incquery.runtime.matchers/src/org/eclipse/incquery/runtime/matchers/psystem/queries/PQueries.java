@@ -8,9 +8,11 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.matchers.psystem;
+package org.eclipse.incquery.runtime.matchers.psystem.queries;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

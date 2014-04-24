@@ -6,18 +6,16 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
 import org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification;
@@ -37,12 +35,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
    * 
    */
   public static UnexpectedMatchRecordQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -69,7 +62,6 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -86,24 +78,19 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
       
       
       
-      new TypeBinary(body, context, var_ActualSet, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
-      new TypeBinary(body, context, var_ActualSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
-      new TypeBinary(body, context, var_ExpectedSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
+      new TypeBinary(body, CONTEXT, var_ActualSet, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
+      new TypeBinary(body, CONTEXT, var_ActualSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
+      new TypeBinary(body, CONTEXT, var_ExpectedSet, var_PatternName, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "patternQualifiedName"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.patternQualifiedName");
       new Inequality(body, var_ActualSet, var_ExpectedSet);
       new NegativePatternCall(body, new FlatTuple(var_Record, var__CorrespodingRecord, var_ExpectedSet), CorrespondingRecordInMatchSetRecordQuerySpecification.instance().instance());
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryExplorer");
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private UnexpectedMatchRecordQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -120,11 +107,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
     private final static UnexpectedMatchRecordQuerySpecification INSTANCE = make();
     
     public static UnexpectedMatchRecordQuerySpecification make() {
-      try {
-      	return new UnexpectedMatchRecordQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new UnexpectedMatchRecordQuerySpecification();					
       
     }
   }

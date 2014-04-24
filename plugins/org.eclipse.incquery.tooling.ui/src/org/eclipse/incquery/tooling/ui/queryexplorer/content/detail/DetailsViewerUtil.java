@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;

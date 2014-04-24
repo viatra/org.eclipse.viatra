@@ -26,8 +26,10 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 import org.eclipse.xtext.xbase.typing.ITypeProvider;
@@ -57,7 +59,6 @@ import com.google.common.collect.Lists;
 public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> implements InitializablePQuery{
 
     private Pattern pattern;
-    private Set<PBody> containedBodies = new LinkedHashSet<PBody>();
 
     /**
      * Initializes a generic query specification for a given pattern. </p>
@@ -90,11 +91,11 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         if (delayedInitialization) {
             setStatus(PQueryStatus.UNINITIALIZED);
         } else {
-            containedBodies = doGetContainedBodies();
-            for (PBody body : containedBodies) {
-                body.setStatus(null);
+            try {
+                setBodies(doGetContainedBodies());
+            } catch (RewriterException e) {
+                throw new IncQueryException(e);
             }
-            setStatus(PQueryStatus.OK);
         }
     }
 
@@ -103,20 +104,16 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
      * @param bodies a non-empty set of {@link PBody} instances
      */
     @Override
-    public void initializeBodies(Set<PBody> bodies) {
+    public void initializeBodies(Set<PBody> bodies) throws QueryPlannerException {
         Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The bodies can only be set for uninitialized queries.");
         if (bodies.isEmpty()) {
             setStatus(PQueryStatus.ERROR);
         } else {
-            for (PBody body : bodies) {
-                body.setStatus(null);
-            }
-            containedBodies.addAll(bodies);
-            setStatus(PQueryStatus.OK);
+            setBodies(bodies);
         }
     }
 
-    public void setStatus(PQueryStatus newStatus) {
+    public final void setStatus(PQueryStatus newStatus) {
         Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
         super.setStatus(newStatus);
     }
@@ -169,10 +166,10 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     }
 
     @Override
-    public Set<PBody> getContainedBodies() {
+    public PDisjunction getDisjunctBodies() {
         Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query %s is not initialized.", getFullyQualifiedName());
         Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
-        return containedBodies;
+        return super.getDisjunctBodies();
     }
     
     @Override

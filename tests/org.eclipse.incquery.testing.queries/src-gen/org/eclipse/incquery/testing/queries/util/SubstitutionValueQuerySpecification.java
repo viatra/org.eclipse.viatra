@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
 
 /**
@@ -33,12 +31,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
    * 
    */
   public static SubstitutionValueQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -65,7 +58,6 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -77,9 +69,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MiscellaneousSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/MiscellaneousSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MiscellaneousSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/MiscellaneousSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -89,9 +82,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EMFSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/EMFSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EMFSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/EMFSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -101,9 +95,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "IntSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/IntSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "IntSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/IntSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -113,9 +108,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "LongSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/LongSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "LongSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/LongSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -125,9 +121,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DoubleSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DoubleSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DoubleSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DoubleSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -137,9 +134,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "FloatSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/FloatSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "FloatSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/FloatSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -149,9 +147,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "BooleanSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/BooleanSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "BooleanSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/BooleanSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -161,9 +160,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "StringSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/StringSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "StringSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/StringSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -173,9 +173,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DateSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DateSubstitution.value");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "DateSubstitution", "value"), "http://www.eclipse.org/incquery/snapshot/DateSubstitution.value");
       bodies.add(body);
-    }{
+    }
+    {
       PBody body = new PBody(this);
       PVariable var_Substitution = body.getOrCreateVariableByName("Substitution");
       PVariable var_Value = body.getOrCreateVariableByName("Value");
@@ -185,9 +186,10 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       ));
       
       
-      new TypeBinary(body, context, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EnumSubstitution", "valueLiteral"), "http://www.eclipse.org/incquery/snapshot/EnumSubstitution.valueLiteral");
+      new TypeBinary(body, CONTEXT, var_Substitution, var_Value, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "EnumSubstitution", "valueLiteral"), "http://www.eclipse.org/incquery/snapshot/EnumSubstitution.valueLiteral");
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryExplorer");
       annotation.addAttribute("display",false);
       addAnnotation(annotation);
@@ -197,13 +199,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
       annotation.addAttribute("feature","derivedValue");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private SubstitutionValueQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -220,11 +216,7 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
     private final static SubstitutionValueQuerySpecification INSTANCE = make();
     
     public static SubstitutionValueQuerySpecification make() {
-      try {
-      	return new SubstitutionValueQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new SubstitutionValueQuerySpecification();					
       
     }
   }

@@ -57,7 +57,7 @@ public interface AggregatorRecipe extends ReteNodeRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe%> _parent = _this.getParent();\n<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = _parent.getMask();\n<%org.eclipse.emf.common.util.EList%><<%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();\nint _length = ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_sourceIndices, <%java.lang.Object%>.class)).length;\nreturn (1 + _length);'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe%> _parent = this.getParent();\n<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = _parent.getMask();\n<%org.eclipse.emf.common.util.EList%><<%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();\nint _length = ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_sourceIndices, <%java.lang.Object%>.class)).length;\nreturn (1 + _length);'"
    * @generated
    */
   int getArity();

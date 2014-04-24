@@ -20,9 +20,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
-import org.eclipse.incquery.runtime.matchers.psystem.PQueries;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;

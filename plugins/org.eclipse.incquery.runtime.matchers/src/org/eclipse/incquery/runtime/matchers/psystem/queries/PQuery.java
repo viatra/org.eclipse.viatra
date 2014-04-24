@@ -8,11 +8,12 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.matchers.psystem;
+package org.eclipse.incquery.runtime.matchers.psystem.queries;
 
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 /**
@@ -56,23 +57,12 @@ public interface PQuery {
     String getFullyQualifiedName();
 
     /**
-     * Returns all bodies associated with the query. If called multiple times, the same set with the same contents will
-     * be returned.
+     * Returns all bodies associated with the query in their canonical form. If called multiple times, the same set with
+     * the same contents will be returned.
      * 
      * @return
      */
-    Set<PBody> getContainedBodies();
-
-    /**
-     * Creates and returns a mutable version of the contained bodies. Each call will result in a new set of mutable
-     * bodies.
-     * 
-     * @return
-     * @throws Exception
-     *             - in practice this method will throw an IncQueryException - however that exception type is not known
-     *             in the matchers bundle
-     */
-    Set<PBody> getMutableBodies() throws Exception;
+    PDisjunction getDisjunctBodies();
 
     /**
      * Returns all queries directly referred in the constraints. They are all required to evaluate this query

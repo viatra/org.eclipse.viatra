@@ -23,7 +23,7 @@ public interface FilterRecipe extends AlphaRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.FilterRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _parent = _this.getParent();\nreturn _parent.getArity();'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();\nreturn _parent.getArity();'"
    * @generated
    */
   int getArity();

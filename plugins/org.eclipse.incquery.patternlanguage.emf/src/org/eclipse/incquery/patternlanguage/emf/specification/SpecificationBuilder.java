@@ -33,10 +33,10 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PBodyNormalizer;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -248,7 +248,11 @@ public class SpecificationBuilder {
     protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
             throws IncQueryException {
         Set<PBody> bodies = getBodies(pattern, converter);
-        query.initializeBodies(bodies);
+        try {
+            query.initializeBodies(bodies);
+        } catch (QueryPlannerException e) {
+            throw new IncQueryException(e);
+        }
         return bodies;
     }
 
@@ -257,17 +261,12 @@ public class SpecificationBuilder {
     }
     
     public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException {
-        try {
-            Set<PBody> bodies = Sets.newLinkedHashSet();
-            for (PatternBody body : pattern.getBodies()) {
-                PBody pBody = converter.toPBody(body);
-                pBody = PBodyNormalizer.normalizeBody(pBody, context);
-                bodies.add(pBody);
-            }
-            return bodies;
-        } catch (QueryPlannerException e) {
-            throw new IncQueryException(e);
+        Set<PBody> bodies = Sets.newLinkedHashSet();
+        for (PatternBody body : pattern.getBodies()) {
+            PBody pBody = converter.toPBody(body);
+            bodies.add(pBody);
         }
+        return bodies;
     }
 
     public IQuerySpecification<?> getSpecification(Pattern pattern) {

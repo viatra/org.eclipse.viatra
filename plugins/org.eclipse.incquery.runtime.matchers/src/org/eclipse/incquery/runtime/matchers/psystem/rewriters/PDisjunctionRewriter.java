@@ -8,16 +8,21 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.matchers.psystem;
+package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
-
 /**
+ * An abstract base class for creating alternative representations for PDisjunctions.
  * @author Zoltan Ujhelyi
  *
  */
-public interface IQueryReference {
+public abstract class PDisjunctionRewriter {
 
-    PQuery getReferredQuery();
+    public abstract PDisjunction rewrite(PDisjunction disjunction) throws RewriterException;
+    
+    public PDisjunction rewrite(PQuery query) throws RewriterException {
+        return rewrite(query.getDisjunctBodies());
+    }
 }

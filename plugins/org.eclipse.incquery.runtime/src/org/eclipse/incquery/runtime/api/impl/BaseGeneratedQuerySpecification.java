@@ -32,6 +32,11 @@ import com.google.common.base.Preconditions;
 public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
 
+    public BaseGeneratedQuerySpecification() {
+        super();
+        ensureInitialized();
+    }
+    
     protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
         Throwable cause1 = err.getCause();
         if (cause1 instanceof RuntimeException) {
@@ -44,7 +49,6 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
     
     @Override
     public PQueryStatus getStatus() {
-        ensureInitialized();
         return super.getStatus();
     }
 

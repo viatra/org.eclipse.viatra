@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;

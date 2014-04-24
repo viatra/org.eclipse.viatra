@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * Interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher

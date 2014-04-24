@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.rete.traceability;
 
 import java.util.Collection;
 
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 
 /**
