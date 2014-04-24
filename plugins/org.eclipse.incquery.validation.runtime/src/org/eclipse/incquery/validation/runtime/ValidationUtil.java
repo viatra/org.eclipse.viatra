@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -45,7 +46,7 @@ public final class ValidationUtil {
 
     }
 
-    private static Logger logger = Logger.getLogger(ValidationUtil.class);
+    private static Logger logger = IncQueryLoggingUtil.getLogger(ValidationUtil.class);
 
     private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<IWorkbenchPage, Set<IEditorPart>>();
 
@@ -105,13 +106,24 @@ public final class ValidationUtil {
 
         IExtensionRegistry reg = Platform.getExtensionRegistry();
         IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.incquery.validation.runtime.constraint");
+        Set<String> classFQNs = Sets.newHashSet();
+        Set<String> duplicateFQNs = Sets.newHashSet();
 
         for (IExtension extension : ep.getExtensions()) {
             for (IConfigurationElement ce : extension.getConfigurationElements()) {
                 if (ce.getName().equals("constraint")) {
-                    processConstraintConfigurationElement(result, ce);
+                    processConstraintConfigurationElement(result, ce, classFQNs, duplicateFQNs);
                 }
             }
+        }
+        if(!duplicateFQNs.isEmpty()) {
+            StringBuilder duplicateSB = new StringBuilder(
+                    "[ValidationUtil] Trying to register constraints with the same class multiple times. Check your plug-in configuration!\n");
+            duplicateSB.append("The following classes appeared multiple times:\n");
+            for (String fqn : duplicateFQNs) {
+                duplicateSB.append(String.format("\t%s%n", fqn));
+            }
+            logger.error(duplicateSB.toString());
         }
         return result;
     }
@@ -122,7 +134,7 @@ public final class ValidationUtil {
      */
     @SuppressWarnings("unchecked")
     private static void processConstraintConfigurationElement(Multimap<String, Constraint<IPatternMatch>> result,
-            IConfigurationElement ce) {
+            IConfigurationElement ce, Set<String> classFQNs, Set<String> duplicateFQNs) {
         try {
             List<String> ids = new ArrayList<String>();
             for (IConfigurationElement child : ce.getChildren()) {
@@ -134,13 +146,19 @@ public final class ValidationUtil {
                 }
             }
 
-            Object o = ce.createExecutableExtension("class");
-            if (o instanceof Constraint<?>) {
-                if (ids.isEmpty()) {
-                    ids.add("*");
-                }
-                for (String id : ids) {
-                    result.put(id, (Constraint<IPatternMatch>) o);
+            String classFQN = ce.getAttribute("class");
+            if(classFQNs.contains(classFQN)) {
+                duplicateFQNs.add(classFQN);
+            } else {
+                classFQNs.add(classFQN);
+                Object o = ce.createExecutableExtension("class");
+                if (o instanceof Constraint<?>) {
+                    if (ids.isEmpty()) {
+                        ids.add("*");
+                    }
+                    for (String id : ids) {
+                        result.put(id, (Constraint<IPatternMatch>) o);
+                    }
                 }
             }
         } catch (CoreException e) {
