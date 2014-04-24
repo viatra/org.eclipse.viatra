@@ -36,7 +36,7 @@ public abstract class VariableDeferredPConstraint extends DeferredPConstraint {
      */
     @Override
     public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
-        return plan.getVariablesIndex().keySet().containsAll(getDeferringVariables());
+        return plan.getVisibleVariables().containsAll(getDeferringVariables());
     }
 
 }

@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * @author Gabor Bergmann
@@ -40,10 +41,11 @@ public interface Supplier extends Node {
     void removeChild(Receiver receiver);
 
     /**
-     * Instantiates (or reuses, depending on implementation) an index according to the given mask. Intended for internal
-     * use; clients should invoke through Library.accesProjectionIndexer() instead to enable reusing.
+     * Instantiates (or reuses, depending on implementation) an index according to the given mask. 
+     * 
+     * Intended for internal use; clients should invoke through Library instead to enable reusing.
      */
-    ProjectionIndexer constructIndex(TupleMask mask);
+    ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces);
 
     /**
      * lists receivers

@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.index.GenericProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * Base implementation for a supplier node.
@@ -54,8 +55,9 @@ public abstract class StandardNode extends BaseNode implements Supplier {
     }
 
     @Override
-    public ProjectionIndexer constructIndex(TupleMask mask) {
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
         final GenericProjectionIndexer indexer = new GenericProjectionIndexer(reteContainer, mask);
+        for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
         reteContainer.connectAndSynchronize(this, indexer);
         return indexer;
     }

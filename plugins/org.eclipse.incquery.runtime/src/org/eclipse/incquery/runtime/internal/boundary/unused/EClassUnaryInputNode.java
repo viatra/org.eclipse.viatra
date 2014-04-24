@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.IdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.NullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 
@@ -51,7 +52,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
 	private ReteEngine reteEngine;
-	private ReteBoundary boundary;
+	private InputConnector connector;
 	
 	static final TupleMask nullMask = TupleMask.linear(0, 1); 
 	static final TupleMask identityMask = TupleMask.identity(1); 
@@ -78,7 +79,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 		this.engine = engine;
 	//	this.baseIndex = engine.getBaseIndex();
 	//	this.reteEngine = engine.getReteEngine();
-	//	this.boundary = reteEngine.getBoundary();
+		this.connector = reteEngine.getReteNet().getInputConnector();
 		this.clazz = clazz;
 		setTag(clazz.getName());
 						
@@ -109,7 +110,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	}
 
 	protected Tuple makeTuple(EObject instance) {
-		return new FlatTuple(boundary.wrapElement(instance));
+		return new FlatTuple(connector.wrapElement(instance));
 	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {
@@ -128,17 +129,21 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtime.rete.network.StandardNode#constructIndex(org.eclipse.incquery.runtime.rete.tuple.TupleMask)
-	 */
-	@Override
-	public ProjectionIndexer constructIndex(TupleMask mask) {
-		if (Options.employTrivialIndexers) {
-			if (nullMask.equals(mask)) return getNullIndexer();
-			if (identityMask.equals(mask)) return getIdentityIndexer();
-		}
-		return super.constructIndex(mask);
-	}
+    @Override
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
+        if (Options.employTrivialIndexers) {
+            if (nullMask.equals(mask)) {
+                final ProjectionIndexer indexer = getNullIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            } if (identityMask.equals(mask)) {
+                final ProjectionIndexer indexer = getIdentityIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            }
+        }
+        return super.constructIndex(mask, traces);
+    }
 	
 	/**
 	 * @return the nullIndexer

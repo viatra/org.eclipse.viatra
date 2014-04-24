@@ -16,14 +16,15 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.planning.IOperationCompiler;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
-import org.eclipse.incquery.runtime.matchers.planning.SubPlanProcessor;
+import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
+import org.eclipse.incquery.runtime.matchers.planning.operations.PStart;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
@@ -43,12 +44,13 @@ import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
  */
 public class BasicLinearLayout implements IQueryPlannerStrategy {
 
-	SubPlanProcessor planProcessor = new SubPlanProcessor();
+	//SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan layout(final PBody pSystem, final IOperationCompiler<?> compiler, IPatternMatcherContext context) throws QueryPlannerException {
+    public SubPlan plan(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryPlannerException {
+    	SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
-        planProcessor.setCompiler(compiler);
+        //planProcessor.setCompiler(compiler);
         try {
             context.logDebug(String.format(
             		"%s: patternbody build started for %s",
@@ -56,19 +58,10 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
             		query.getFullyQualifiedName()));
 
             // STARTING THE LINE
-            SubPlan plan = compiler.buildStartingPlan(new Object[] {}, new Object[] {});
-
-            // Set<ConstantValue> constants = pSystem.getConstraintsOfType(ConstantValue.class);
-            // for (ConstantValue<PatternDescription, StubHandle> pConstraint : constants) {
-            // S<StubHandle> sideStub = pConstraint.doCreateStub();
-            // stub = BuildHelper.naturalJoin(buildable, stub, sideStub);
-            // }
+            SubPlan plan = planFactory.createSubPlan(new PStart());
 
             Set<PConstraint> pQueue = CollectionsFactory.getSet(pSystem.getConstraints());//new HashSet<PConstraint>(pSystem.getConstraints()); // TreeSet<PConstraint>(new
                                                                                           // OrderingHeuristics());
-            // pQueue.addAll(pSystem.getConstraintsOfType(EnumerablePConstraint.class));
-            // pQueue.addAll(pSystem.getConstraintsOfType(DeferredPConstraint.class));
-            // // omitted: symbolic & equality -- not anymore
 
             // MAIN LOOP
             while (!pQueue.isEmpty()) {
@@ -76,46 +69,33 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
                         new OrderingHeuristics(plan, context)); // pQueue.iterator().next();
                 pQueue.remove(pConstraint);
 
-                if (pConstraint instanceof EnumerablePConstraint) {
-                    EnumerablePConstraint enumerable = (EnumerablePConstraint) pConstraint;
-                    SubPlan sidePlan = planProcessor.processEnumerableConstraint(enumerable);
-                    plan = BuildHelper.naturalJoin(compiler, plan, sidePlan);
-                } else {
-                    DeferredPConstraint deferred = (DeferredPConstraint) pConstraint;
-                    if (deferred.isReadyAt(plan, context)) {
-                        plan = planProcessor.processDeferredConstraint(deferred, plan);
-                    } else {
+                // if we have no better option than an unready deferred constraint, raise error
+				if (pConstraint instanceof DeferredPConstraint) {
+					final DeferredPConstraint deferred = (DeferredPConstraint) pConstraint;
+                    if (!deferred.isReadyAt(plan, context)) {
                         raiseForeverDeferredError(deferred, plan, context);
                     }
                 }
+				// TODO integrate the check above in SubPlan / POperation??
+				
+				// replace incumbent plan with its child
+				plan = planFactory.createSubPlan(new PApply(pConstraint), plan);              		
             }
 
-            // FINAL CHECK, whether all exported variables are present
-            BuildHelper.finalCheck(pSystem, plan, context);
-
-            // // output
-            // int paramNum = patternScaffold.gtPattern.getSymParameters().size();
-            // int[] tI = new int[paramNum];
-            // int tiW = stub.getVariablesTuple().getSize();
-            // for (int i = 0; i < paramNum; i++) {
-            // PatternVariable variable = patternScaffold.gtPattern.getSymParameters().get(i);
-            // // for (Object o : variable.getElementInPattern()) // in all bodies
-            // // {
-            // PatternNodeBase pNode = pGraph.getPNode(variable);
-            // // if (stub.calibrationIndex.containsKey(pNode))
-            // tI[i] = stub.getVariablesIndex().get(pNode);
-            // // }
-            // }
-            // TupleMask trim = new TupleMask(tI, tiW);
-            // Stub<StubHandle> trimmer = buildable.buildTrimmer(stub, trim);
-            // buildable.buildConnection(trimmer, collector);
-
+            // PROJECT TO PARAMETERS
+            SubPlan finalPlan = planFactory.createSubPlan(new PProject(pSystem.getSymbolicParameterVariables()), plan);
+            
+            // FINAL CHECK, whether all exported variables are present + all constraint satisfied
+            BuildHelper.finalCheck(pSystem, finalPlan, context);
+			// TODO integrate the check above in SubPlan / POperation 
+            
             context.logDebug(String.format(
-            		"%s: patternbody build concluded for %s",
+            		"%s: patternbody query plan concluded for %s as: %s",
             		getClass().getSimpleName(), 
-            		query.getFullyQualifiedName()));
+            		query.getFullyQualifiedName(),
+            		finalPlan.toLongString()));
 
-            return plan;
+            return finalPlan;
 
         } catch (RetePatternBuildException ex) {
             ex.setPatternDescription(query);
@@ -138,7 +118,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     	} else if (constraint instanceof ExpressionEvaluation) {
     		raiseForeverDeferredError((ExpressionEvaluation)constraint, plan, context);
     	} else if (constraint instanceof VariableDeferredPConstraint) {
-    		raiseForeverDeferredError((VariableDeferredPConstraint)constraint, plan, context);
+    		raiseForeverDeferredError(constraint, plan, context);
     	}
     }
     
@@ -158,7 +138,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     }
     private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
         if (constraint.checkTypeSafety(plan, context) == null) {
-            raiseForeverDeferredError((VariableDeferredPConstraint)constraint, plan);
+            raiseForeverDeferredError(constraint, plan);
         } else {
             String[] args = { toString(), constraint.checkTypeSafety(plan, context).toString() };
             String msg = "The checking of pattern constraint {1} cannot be deferred further, but variable {2} is still not type safe. "
@@ -169,7 +149,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     }
     private void raiseForeverDeferredError(VariableDeferredPConstraint constraint, SubPlan plan) throws RetePatternBuildException {
     	Set<PVariable> missing = CollectionsFactory.getSet(constraint.getDeferringVariables());//new HashSet<PVariable>(getDeferringVariables());
-        missing.removeAll(plan.getVariablesIndex().keySet());
+        missing.removeAll(plan.getVisibleVariables());
         String[] args = { toString(), Arrays.toString(missing.toArray()) };
         String msg = "The checking of pattern constraint {1} requires the values of variables {2}, but it cannot be deferred further. "
                 + "HINT: the incremental matcher is not an equation solver, please make sure that all variable values are deducible.";

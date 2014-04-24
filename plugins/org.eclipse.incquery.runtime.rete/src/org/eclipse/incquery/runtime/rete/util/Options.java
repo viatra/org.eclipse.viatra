@@ -57,7 +57,7 @@ public class Options {
             case PSYSTEM_QUASITREE:
                 return new QuasiTreeLayout();
             default:
-                return null;
+            	throw new UnsupportedOperationException();
             }
         }
     }

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.tests;
 
-import static org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper.closureOf;
+import static org.eclipse.incquery.runtime.matchers.planning.helpers.FunctionalDependencyHelper.closureOf;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;

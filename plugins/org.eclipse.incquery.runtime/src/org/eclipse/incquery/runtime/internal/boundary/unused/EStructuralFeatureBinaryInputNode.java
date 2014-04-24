@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.IdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.NullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -50,7 +51,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
 	private ReteEngine reteEngine;
-	private ReteBoundary boundary;
+	private InputConnector connector;
 		
 	static final TupleMask nullMask = TupleMask.linear(0, 2); 
 	static final TupleMask sourceKnown = TupleMask.selectSingle(0, 2); 
@@ -91,7 +92,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		this.engine = engine;
 	//	this.baseIndex = engine.getBaseIndex();
 	//	this.reteEngine = engine.getReteEngine();
-		this.boundary = reteEngine.getBoundary();
+		this.connector = reteEngine.getReteNet().getInputConnector();
 		this.feature = feature;
 		setTag(feature.getName());
 		
@@ -120,10 +121,10 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	}
 	
 	protected Tuple makeTuple(EObject source, Object target) {
-		return new FlatTuple(boundary.wrapElement(source), boundary.wrapElement(target));
+		return new FlatTuple(connector.wrapElement(source), connector.wrapElement(target));
 	}
 	protected Tuple makeTupleSingle(Object element) {
-		return new FlatTuple(boundary.wrapElement(element));
+		return new FlatTuple(connector.wrapElement(element));
 	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {
@@ -141,19 +142,31 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtimerete.network.StandardNode#constructIndex(org.eclipse.incquery.runtimerete.tuple.TupleMask)
-	 */
-	@Override
-	public ProjectionIndexer constructIndex(TupleMask mask) {
-		if (Options.employTrivialIndexers) {
-			if (nullMask.equals(mask)) return getNullIndexer();
-			if (identityMask.equals(mask)) return getIdentityIndexer();
-			if (sourceKnown.equals(mask)) return getSourceIndexer();
-			if (targetKnown.equals(mask)) return getTargetIndexer();
-		}
-		return super.constructIndex(mask);
-	}
+    @Override
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
+        if (Options.employTrivialIndexers) {
+            if (nullMask.equals(mask)) {
+                final ProjectionIndexer indexer = getNullIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            } if (identityMask.equals(mask)) {
+                final ProjectionIndexer indexer = getIdentityIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            }
+			if (sourceKnown.equals(mask)) {
+				final ProjectionIndexer indexer = getSourceIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+			}
+			if (targetKnown.equals(mask)) {
+				final ProjectionIndexer indexer = getTargetIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+			}
+        }
+        return super.constructIndex(mask, traces);
+    }
 	
 	/**
 	 * @return the nullIndexer

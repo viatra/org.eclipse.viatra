@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.rete.network.BaseNode;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * An abstract standard implementation of the Indexer interface, providing common bookkeeping functionality.

@@ -36,9 +36,9 @@ public class ExistenceNode extends DualInputNode {
      * @param negative
      *            if false, act as axistence checker, otherwise a nonexistence-checker
      */
-    public ExistenceNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
+    public ExistenceNode(ReteContainer reteContainer,
             boolean negative) {
-        super(reteContainer, primarySlot, secondarySlot, null);
+        super(reteContainer, null);
         this.negative = negative;
     }
 

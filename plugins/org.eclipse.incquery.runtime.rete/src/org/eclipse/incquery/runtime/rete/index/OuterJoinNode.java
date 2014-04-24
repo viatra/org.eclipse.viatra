@@ -36,9 +36,9 @@ public class OuterJoinNode extends DualInputNode {
      *            the default line to use instead of missing elements if a left tuple has no match
      * 
      */
-    public OuterJoinNode(ReteContainer reteContainer, IterableIndexer primarySlot, Indexer secondarySlot,
+    public OuterJoinNode(ReteContainer reteContainer,
             TupleMask complementerSecondaryMask, Tuple defaults) {
-        super(reteContainer, primarySlot, secondarySlot, complementerSecondaryMask);
+        super(reteContainer, complementerSecondaryMask);
         this.defaults = defaults;
     }
 

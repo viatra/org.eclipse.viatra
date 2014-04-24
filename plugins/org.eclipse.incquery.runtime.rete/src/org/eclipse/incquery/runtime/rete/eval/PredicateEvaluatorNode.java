@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
+import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
@@ -25,6 +25,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.SingleInputNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
 /**
@@ -46,7 +47,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class PredicateEvaluatorNode extends SingleInputNode {
 
     protected ReteEngine engine;
-    protected ReteBoundary boundary;
+    protected InputConnector inputConnector;
     protected Integer rhsIndex;
     protected int[] affectedIndices;
     protected Set<Tuple> outgoing;
@@ -74,7 +75,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             int[] affectedIndices, int tupleWidth, AbstractEvaluator evaluator) {
         super(container);
         this.engine = engine;
-        this.boundary = engine.getBoundary();
+        this.inputConnector = engine.getReteNet().getInputConnector();
         this.rhsIndex = rhsIndex;
         this.affectedIndices = affectedIndices;
         this.tupleWidth = tupleWidth;
@@ -100,26 +101,31 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     }
 
     @Override
-    public ProjectionIndexer constructIndex(TupleMask mask) {
+    public ProjectionIndexer constructIndex(TupleMask mask, TraceInfo... traces) {
         if (Options.employTrivialIndexers) {
-            if (nullMask.equals(mask))
-                return getNullIndexer();
-            if (identityMask.equals(mask))
-                return getIdentityIndexer();
+            if (nullMask.equals(mask)) {
+                final ProjectionIndexer indexer = getNullIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            } if (identityMask.equals(mask)) {
+                final ProjectionIndexer indexer = getIdentityIndexer();
+                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);
+				return indexer;
+            }
         }
-        return super.constructIndex(mask);
+        return super.constructIndex(mask, traces);
     }
 
     @Override
     public void pullInto(Collection<Tuple> collector) {
         for (Tuple ps : outgoing)
-            collector.add(boundary.wrapTuple(ps));
+            collector.add(inputConnector.wrapTuple(ps));
 
     }
 
     @Override
     public void update(Direction direction, Tuple wrappers) {
-        Tuple updateElement = boundary.unwrapTuple(wrappers);
+        Tuple updateElement = inputConnector.unwrapTuple(wrappers);
 //        updateOccurences(direction, updateElement);
         if (direction == Direction.REVOKE) {
             if (outgoing.remove(updateElement)) {
@@ -184,11 +190,11 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         if (result) /* expression evaluates to true */
         {
             if (outgoing.add(ps))
-                propagateUpdate(Direction.INSERT, boundary.wrapTuple(ps));
+                propagateUpdate(Direction.INSERT, inputConnector.wrapTuple(ps));
         } else /* expression evaluates to false */
         {
             if (outgoing.remove(ps))
-                propagateUpdate(Direction.REVOKE, boundary.wrapTuple(ps));
+                propagateUpdate(Direction.REVOKE, inputConnector.wrapTuple(ps));
         }
     }
 

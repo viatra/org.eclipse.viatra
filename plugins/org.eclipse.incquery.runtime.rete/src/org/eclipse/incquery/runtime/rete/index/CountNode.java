@@ -24,8 +24,8 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
  */
 public class CountNode extends AggregatorNode {
 
-    public CountNode(ReteContainer reteContainer, ProjectionIndexer projection) {
-        super(reteContainer, projection);
+    public CountNode(ReteContainer reteContainer) {
+        super(reteContainer);
     }
 
     int sizeOf(Collection<Tuple> group) {

@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.network.Tunnel;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * @author Gabor Bergmann

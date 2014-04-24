@@ -149,6 +149,15 @@ public interface RecipesFactory extends EFactory
   TrimmerRecipe createTrimmerRecipe();
 
   /**
+   * Returns a new object of class '<em>Expression Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Expression Definition</em>'.
+   * @generated
+   */
+  ExpressionDefinition createExpressionDefinition();
+
+  /**
    * Returns a new object of class '<em>Check Recipe</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

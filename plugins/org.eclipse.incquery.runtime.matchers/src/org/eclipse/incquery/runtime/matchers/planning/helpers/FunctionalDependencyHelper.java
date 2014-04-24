@@ -8,8 +8,9 @@
  * Contributors:
  *   Adam Dudas - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.base.api;
+package org.eclipse.incquery.runtime.matchers.planning.helpers;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,7 @@ public class FunctionalDependencyHelper {
      *            The functional dependencies of which the closure operation is relative to.
      * @return The closure of the specified attribute set relative to the specified functional dependencies.
      */
-    public static <A> Set<A> closureOf(Set<A> attributes, Map<Set<A>, Set<A>> dependencies) {
+    public static <A> Set<A> closureOf(Collection<A> attributes, Map<Set<A>, Set<A>> dependencies) {
         Set<A> closureSet = new HashSet<A>();
 
         for (Set<A> closureSet1 = new HashSet<A>(attributes); closureSet.addAll(closureSet1);) {

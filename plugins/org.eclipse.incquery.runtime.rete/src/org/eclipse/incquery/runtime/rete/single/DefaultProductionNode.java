@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * Default implementation of the Production node, based on UniquenessEnforcerNode

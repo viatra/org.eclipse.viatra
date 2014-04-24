@@ -12,8 +12,6 @@
 package org.eclipse.incquery.runtime.rete.boundary;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.GeneralizationQueryDirection;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
@@ -28,9 +26,8 @@ public class RelationFeeder extends Feeder {
      * @param boundary
      * @param typeObject
      */
-    public RelationFeeder(Address<? extends Receiver> receiver, IPatternMatcherRuntimeContext context,
-            Network network, ReteBoundary boundary, Object typeObject) {
-        super(receiver, context, network, boundary);
+    public RelationFeeder(Address<? extends Receiver> receiver, InputConnector inputConnector, Object typeObject) {
+        super(receiver, inputConnector);
         this.typeObject = typeObject;
     }
 

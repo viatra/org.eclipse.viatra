@@ -82,6 +82,7 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
       case RecipesPackage.EQUALITY_FILTER_RECIPE: return createEqualityFilterRecipe();
       case RecipesPackage.TRANSPARENT_RECIPE: return createTransparentRecipe();
       case RecipesPackage.TRIMMER_RECIPE: return createTrimmerRecipe();
+      case RecipesPackage.EXPRESSION_DEFINITION: return createExpressionDefinition();
       case RecipesPackage.CHECK_RECIPE: return createCheckRecipe();
       case RecipesPackage.EVAL_RECIPE: return createEvalRecipe();
       case RecipesPackage.COUNT_AGGREGATOR_RECIPE: return createCountAggregatorRecipe();
@@ -290,6 +291,17 @@ public class RecipesFactoryImpl extends EFactoryImpl implements RecipesFactory
   {
     TrimmerRecipeImpl trimmerRecipe = new TrimmerRecipeImpl();
     return trimmerRecipe;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExpressionDefinition createExpressionDefinition()
+  {
+    ExpressionDefinitionImpl expressionDefinition = new ExpressionDefinitionImpl();
+    return expressionDefinition;
   }
 
   /**

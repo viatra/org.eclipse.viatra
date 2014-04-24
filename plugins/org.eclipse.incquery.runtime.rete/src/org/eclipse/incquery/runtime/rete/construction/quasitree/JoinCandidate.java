@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.base.api.FunctionalDependencyHelper;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
@@ -29,18 +29,21 @@ import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 class JoinCandidate {
     SubPlan primary;
     SubPlan secondary;
+    
+    SubPlan joinedPlan;
 
     Set<PVariable> varPrimary;
     Set<PVariable> varSecondary;
     Set<PVariable> varCommon;
 
-    JoinCandidate(SubPlan primary, SubPlan secondary) {
+    JoinCandidate(SubPlan joinedPlan) {
         super();
-        this.primary = primary;
-        this.secondary = secondary;
+        this.joinedPlan = joinedPlan;
+        this.primary = joinedPlan.getParentPlans().get(0);
+        this.secondary = joinedPlan.getParentPlans().get(1);
 
-        varPrimary = getPrimary().getVariablesSet();
-        varSecondary = getSecondary().getVariablesSet();
+        varPrimary = getPrimary().getVisibleVariables();
+        varSecondary = getSecondary().getVisibleVariables();
         varCommon = CollectionsFactory.getSet(varPrimary);
         varCommon.retainAll(varSecondary);
     }
@@ -59,7 +62,11 @@ class JoinCandidate {
         return secondary;
     }
 
-    /*
+    public SubPlan getJoinedPlan() {
+		return joinedPlan;
+	}
+
+	/*
      * (non-Javadoc)
      * 
      * @see java.lang.Object#toString()

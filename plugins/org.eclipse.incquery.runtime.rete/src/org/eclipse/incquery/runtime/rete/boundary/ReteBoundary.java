@@ -23,12 +23,7 @@ import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
-import org.eclipse.incquery.runtime.rete.index.Indexer;
-import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
-import org.eclipse.incquery.runtime.rete.index.JoinNode;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
@@ -40,13 +35,16 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.network.Tunnel;
 import org.eclipse.incquery.runtime.rete.remote.Address;
-import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
+import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;
+import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
  * Responsible for the storage, maintenance and communication of the nodes of the network that are accessible form the
  * outside for various reasons.
  *
  * @author Gabor Bergmann
+ * 
+ * <p> TODO: should eventually be merged into {@link InputConnector} and deleted
  *
  */
 public class ReteBoundary {
@@ -61,35 +59,11 @@ public class ReteBoundary {
 
     protected IPatternMatcherRuntimeContext context;
     IPatternMatcherContext.GeneralizationQueryDirection generalizationQueryDirection;
+	protected final InputConnector inputConnector;
 
-    /*
-     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities
-     * regardless of type (global supertype), if allowed
-     */
-    protected Map<Object, Address<? extends Tunnel>> unaryRoots;
-    /*
-     * arity:3 (rel, from, to) used as VPM relation constraints null label means all relations regardless of type
-     * (global supertype)
-     */
-    protected Map<Object, Address<? extends Tunnel>> ternaryEdgeRoots;
-    /*
-     * arity:2 (from, to) not used over VPM; can be used as EMF references for instance label is the object representing
-     * the type null label means all entities regardless of type if allowed (global supertype), if allowed
-     */
-    protected Map<Object, Address<? extends Tunnel>> binaryEdgeRoots;
-
-    protected Map<PQuery, Address<? extends Production>> productions;
-    // protected Map<PatternDescription, Map<Map<Integer, Scope>, Address<? extends Production>>> productionsScoped; //
-    // (pattern, scopemap) -> production
 
     protected Map<SubPlan, Address<? extends Supplier>> subplanToAddressMapping;
 
-    protected Address<? extends Tunnel> containmentRoot;
-    protected Address<? extends Supplier> containmentTransitiveRoot;
-    protected Address<? extends Tunnel> instantiationRoot;
-    protected Address<? extends Supplier> instantiationTransitiveRoot;
-    protected Address<? extends Tunnel> generalizationRoot;
-    protected Address<? extends Supplier> generalizationTransitiveRoot;
 
     /**
      * SubPlans of parent nodes that have the key node as their child. For RETE --> SubPlan traceability, mainly at production
@@ -107,321 +81,251 @@ public class ReteBoundary {
         this.engine = engine;
         this.network = engine.getReteNet();
         this.headContainer = network.getHeadContainer();
+        inputConnector = network.getInputConnector();
 
         this.context = engine.getContext();
         this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
         this.parentPlansOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<SubPlan<Address<? extends Supplier>>>>();
 
-        unaryRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-        ternaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-        binaryEdgeRoots = CollectionsFactory.getMap();//new HashMap<Object, Address<? extends Tunnel>>();
-
-        productions = CollectionsFactory.getMap();//new HashMap<PatternDescription, Address<? extends Production>>();
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();
         subplanToAddressMapping = CollectionsFactory.getMap();
 
-        containmentRoot = null;
-        containmentTransitiveRoot = null;
-        instantiationRoot = null;
-        generalizationRoot = null;
-        generalizationTransitiveRoot = null;
     }
 
-    /**
-     * Wraps the element into a form suitable for entering the network model element -> internal object
-     */
-    public Object wrapElement(Object element) {
-        return element;// .getID();
+    public Collection<? extends RecipeTraceInfo> getAllProductionNodes() {
+        return engine.getCompiler().getCachedCompiledQueries().values();
     }
 
-    /**
-     * Unwraps the element into its original form internal object -> model element
-     */
-    public Object unwrapElement(Object wrapper) {
-        return wrapper;// modelManager.getElementByID((String)
-                       // wrapper);
-    }
-
-    /**
-     * Unwraps the tuple of elements into a form suitable for entering the network
-     */
-    public Tuple wrapTuple(Tuple unwrapped) {
-        // int size = unwrapped.getSize();
-        // Object[] elements = new Object[size];
-        // for (int i=0; i<size; ++i) elements[i] =
-        // wrapElement(unwrapped.get(i));
-        // return new FlatTuple(elements);
-        return unwrapped;
-    }
-
-    /**
-     * Unwraps the tuple of elements into their original form
-     */
-    public Tuple unwrapTuple(Tuple wrappers) {
-        // int size = wrappers.getSize();
-        // Object[] elements = new Object[size];
-        // for (int i=0; i<size; ++i) elements[i] =
-        // unwrapElement(wrappers.get(i));
-        // return new FlatTuple(elements);
-        return wrappers;
-    }
-
-    /**
-     * fetches the entity Root node under specified label; returns null if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> getUnaryRoot(Object label) {
-        return unaryRoots.get(label);
-    }
-
-    public Collection<Address<? extends Tunnel>> getAllUnaryRoots() {
-        return unaryRoots.values();
-    }
-
-    /**
-     * fetches the relation Root node under specified label; returns null if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> getTernaryEdgeRoot(Object label) {
-        return ternaryEdgeRoots.get(label);
-    }
-
-    public Collection<Address<? extends Tunnel>> getAllTernaryEdgeRoots() {
-        return ternaryEdgeRoots.values();
-    }
-
-    public Collection<Address<? extends Production>> getAllProductionNodes() {
-        return productions.values();
-    }
-
-    /**
-     * accesses the entity Root node under specified label; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessUnaryRoot(Object typeObject) {
-        Address<? extends Tunnel> tn;
-        tn = unaryRoots.get(typeObject);
-        if (tn == null) {
-            tn = headContainer.getLibrary().newUniquenessEnforcerNode(1, typeObject);
-            unaryRoots.put(typeObject, tn);
-
-            new EntityFeeder(tn, context, network, this, typeObject).feed();
-
-            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
-                Collection<? extends Object> subTypes = context.enumerateDirectUnarySubtypes(typeObject);
-
-                for (Object subType : subTypes) {
-                    Address<? extends Tunnel> subRoot = accessUnaryRoot(subType);
-                    network.connectRemoteNodes(subRoot, tn, true);
-                }
-            }
-
-        }
-        return tn;
-    }
-
-    /**
-     * accesses the relation Root node under specified label; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessTernaryEdgeRoot(Object typeObject) {
-        Address<? extends Tunnel> tn;
-        tn = ternaryEdgeRoots.get(typeObject);
-        if (tn == null) {
-            tn = headContainer.getLibrary().newUniquenessEnforcerNode(3, typeObject);
-            ternaryEdgeRoots.put(typeObject, tn);
-
-            new RelationFeeder(tn, context, network, this, typeObject).feed();
-
-            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
-                Collection<? extends Object> subTypes = context.enumerateDirectTernaryEdgeSubtypes(typeObject);
-
-                for (Object subType : subTypes) {
-                    Address<? extends Tunnel> subRoot = accessTernaryEdgeRoot(subType);
-                    network.connectRemoteNodes(subRoot, tn, true);
-                }
-            }
-        }
-        return tn;
-    }
-
-    /**
-     * accesses the reference Root node under specified label; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessBinaryEdgeRoot(Object typeObject) {
-        Address<? extends Tunnel> tn;
-        tn = binaryEdgeRoots.get(typeObject);
-        if (tn == null) {
-            tn = headContainer.getLibrary().newUniquenessEnforcerNode(2, typeObject);
-            binaryEdgeRoots.put(typeObject, tn);
-
-            new ReferenceFeeder(tn, context, network, this, typeObject).feed();
-
-            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
-                Collection<? extends Object> subTypes = context.enumerateDirectBinaryEdgeSubtypes(typeObject);
-
-                for (Object subType : subTypes) {
-                    Address<? extends Tunnel> subRoot = accessBinaryEdgeRoot(subType);
-                    network.connectRemoteNodes(subRoot, tn, true);
-                }
-            }
-        }
-        return tn;
-    }
-
-    /**
-     * accesses the special direct containment relation Root node; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessContainmentRoot() {
-        if (containmentRoot == null) {
-            // containment: relation quasi-type
-            containmentRoot = headContainer.getLibrary().newUniquenessEnforcerNode(2, "$containment");
-
-            new ContainmentFeeder(containmentRoot, context, network, this).feed();
-        }
-        return containmentRoot;
-    }
-
-    /**
-     * accesses the special transitive containment relation Root node; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Supplier> accessContainmentTransitiveRoot() {
-        if (containmentTransitiveRoot == null) {
-            // transitive containment: derived
-            Address<? extends Tunnel> containmentTransitiveRoot = headContainer.getLibrary().newUniquenessEnforcerNode(
-                    2, "$containmentTransitive");
-            network.connectRemoteNodes(accessContainmentRoot(), containmentTransitiveRoot, true);
-
-            final int[] actLI = { 1 };
-            final int arcLIw = 2;
-            final int[] actRI = { 0 };
-            final int arcRIw = 2;
-            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    accessContainmentRoot(), new TupleMask(actLI, arcLIw));
-            Address<? extends IterableIndexer> jSecondarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    containmentTransitiveRoot, new TupleMask(actRI, arcRIw));
-
-            final int[] actRIcomp = { 1 };
-            final int arcRIwcomp = 2;
-            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
-
-            Address<JoinNode> andCT = headContainer.getLibrary().accessJoinNode(jPrimarySlot, jSecondarySlot,
-                    complementerMask);
-
-            final int[] mask = { 0, 2 };
-            final int maskw = 3;
-            Address<TrimmerNode> tr = headContainer.getLibrary().accessTrimmerNode(andCT, new TupleMask(mask, maskw));
-            network.connectRemoteNodes(tr, containmentTransitiveRoot, true);
-
-            this.containmentTransitiveRoot = containmentTransitiveRoot; // cast
-                                                                        // back
-                                                                        // to
-                                                                        // Supplier
-        }
-        return containmentTransitiveRoot;
-    }
-
-    /**
-     * accesses the special instantiation relation Root node; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessInstantiationRoot() {
-        if (instantiationRoot == null) {
-            // instantiation: relation quasi-type
-            instantiationRoot = headContainer.getLibrary().newUniquenessEnforcerNode(2, "$instantiation");
-
-            new InstantiationFeeder(instantiationRoot, context, network, this).feed();
-        }
-        return instantiationRoot;
-    }
-
-    /**
-     * accesses the special transitive instantiation relation Root node; creates the node if it doesn't exist yet
-     * InstantiationTransitive = Instantiation o (Generalization)^*
-     */
-    public Address<? extends Supplier> accessInstantiationTransitiveRoot() {
-        if (instantiationTransitiveRoot == null) {
-            // transitive instantiation: derived
-            Address<? extends Tunnel> instantiationTransitiveRoot = headContainer.getLibrary()
-                    .newUniquenessEnforcerNode(2, "$instantiationTransitive");
-            network.connectRemoteNodes(accessInstantiationRoot(), instantiationTransitiveRoot, true);
-
-            final int[] actLI = { 1 };
-            final int arcLIw = 2;
-            final int[] actRI = { 0 };
-            final int arcRIw = 2;
-            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    accessGeneralizationRoot(), new TupleMask(actLI, arcLIw));
-            Address<? extends Indexer> jSecondarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    instantiationTransitiveRoot, new TupleMask(actRI, arcRIw));
-
-            final int[] actRIcomp = { 1 };
-            final int arcRIwcomp = 2;
-            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
-
-            Address<JoinNode> andCT = headContainer.getLibrary().accessJoinNode(jPrimarySlot, jSecondarySlot,
-                    complementerMask);
-
-            final int[] mask = { 0, 2 };
-            final int maskw = 3;
-            Address<? extends TrimmerNode> tr = headContainer.getLibrary().accessTrimmerNode(andCT,
-                    new TupleMask(mask, maskw));
-            network.connectRemoteNodes(tr, instantiationTransitiveRoot, true);
-
-            this.instantiationTransitiveRoot = instantiationTransitiveRoot; // cast
-                                                                            // back
-                                                                            // to
-                                                                            // Supplier
-        }
-        return instantiationTransitiveRoot;
-    }
-
-    /**
-     * accesses the special generalization relation Root node; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Tunnel> accessGeneralizationRoot() {
-        if (generalizationRoot == null) {
-            // generalization: relation quasi-type
-            generalizationRoot = headContainer.getLibrary().newUniquenessEnforcerNode(2, "$generalization");
-
-            new GeneralizationFeeder(generalizationRoot, context, network, this).feed();
-        }
-        return generalizationRoot;
-    }
-
-    /**
-     * accesses the special transitive containment relation Root node; creates the node if it doesn't exist yet
-     */
-    public Address<? extends Supplier> accessGeneralizationTransitiveRoot() {
-        if (generalizationTransitiveRoot == null) {
-            // transitive generalization: derived
-            Address<? extends Tunnel> generalizationTransitiveRoot = headContainer.getLibrary()
-                    .newUniquenessEnforcerNode(2, "$generalizationTransitive");
-            network.connectRemoteNodes(accessGeneralizationRoot(), generalizationTransitiveRoot, true);
-
-            final int[] actLI = { 1 };
-            final int arcLIw = 2;
-            final int[] actRI = { 0 };
-            final int arcRIw = 2;
-            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    accessGeneralizationRoot(), new TupleMask(actLI, arcLIw));
-            Address<? extends Indexer> jSecondarySlot = headContainer.getLibrary().accessProjectionIndexer(
-                    generalizationTransitiveRoot, new TupleMask(actRI, arcRIw));
-
-            final int[] actRIcomp = { 1 };
-            final int arcRIwcomp = 2;
-            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
-
-            Address<JoinNode> andCT = headContainer.getLibrary().accessJoinNode(jPrimarySlot, jSecondarySlot,
-                    complementerMask);
-
-            final int[] mask = { 0, 2 };
-            final int maskw = 3;
-            Address<TrimmerNode> tr = headContainer.getLibrary().accessTrimmerNode(andCT, new TupleMask(mask, maskw));
-            network.connectRemoteNodes(tr, generalizationTransitiveRoot, true);
-
-            this.generalizationTransitiveRoot = generalizationTransitiveRoot; // cast
-                                                                              // back
-                                                                              // to
-                                                                              // Supplier
-        }
-        return generalizationTransitiveRoot;
-    }
+//    /**
+//     * accesses the entity Root node under specified label; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessUnaryRoot(Object typeObject) {
+//        Address<? extends Tunnel> tn;
+//        tn = unaryRoots.get(typeObject);
+//        if (tn == null) {
+//            tn = headContainer.getProvisioner().newUniquenessEnforcerNode(1, typeObject);
+//            unaryRoots.put(typeObject, tn);
+//
+//            new EntityFeeder(tn, context, network, this, typeObject).feed();
+//
+//            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
+//                Collection<? extends Object> subTypes = context.enumerateDirectUnarySubtypes(typeObject);
+//
+//                for (Object subType : subTypes) {
+//                    Address<? extends Tunnel> subRoot = accessUnaryRoot(subType);
+//                    network.connectRemoteNodes(subRoot, tn, true);
+//                }
+//            }
+//
+//        }
+//        return tn;
+//    }
+//
+//    /**
+//     * accesses the relation Root node under specified label; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessTernaryEdgeRoot(Object typeObject) {
+//        Address<? extends Tunnel> tn;
+//        tn = ternaryEdgeRoots.get(typeObject);
+//        if (tn == null) {
+//            tn = headContainer.getProvisioner().newUniquenessEnforcerNode(3, typeObject);
+//            ternaryEdgeRoots.put(typeObject, tn);
+//
+//            new RelationFeeder(tn, context, network, this, typeObject).feed();
+//
+//            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
+//                Collection<? extends Object> subTypes = context.enumerateDirectTernaryEdgeSubtypes(typeObject);
+//
+//                for (Object subType : subTypes) {
+//                    Address<? extends Tunnel> subRoot = accessTernaryEdgeRoot(subType);
+//                    network.connectRemoteNodes(subRoot, tn, true);
+//                }
+//            }
+//        }
+//        return tn;
+//    }
+//
+//    /**
+//     * accesses the reference Root node under specified label; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessBinaryEdgeRoot(Object typeObject) {
+//        Address<? extends Tunnel> tn;
+//        tn = binaryEdgeRoots.get(typeObject);
+//        if (tn == null) {
+//            tn = headContainer.getProvisioner().newUniquenessEnforcerNode(2, typeObject);
+//            binaryEdgeRoots.put(typeObject, tn);
+//
+//            new ReferenceFeeder(tn, context, network, this, typeObject).feed();
+//
+//            if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.BOTH) {
+//                Collection<? extends Object> subTypes = context.enumerateDirectBinaryEdgeSubtypes(typeObject);
+//
+//                for (Object subType : subTypes) {
+//                    Address<? extends Tunnel> subRoot = accessBinaryEdgeRoot(subType);
+//                    network.connectRemoteNodes(subRoot, tn, true);
+//                }
+//            }
+//        }
+//        return tn;
+//    }
+//
+//    /**
+//     * accesses the special direct containment relation Root node; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessContainmentRoot() {
+//        if (containmentRoot == null) {
+//            // containment: relation quasi-type
+//            containmentRoot = headContainer.getProvisioner().newUniquenessEnforcerNode(2, "$containment");
+//
+//            new ContainmentFeeder(containmentRoot, context, network, this).feed();
+//        }
+//        return containmentRoot;
+//    }
+//
+//    /**
+//     * accesses the special transitive containment relation Root node; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Supplier> accessContainmentTransitiveRoot() {
+//        if (containmentTransitiveRoot == null) {
+//            // transitive containment: derived
+//            Address<? extends Tunnel> containmentTransitiveRoot = headContainer.getProvisioner().newUniquenessEnforcerNode(
+//                    2, "$containmentTransitive");
+//            network.connectRemoteNodes(accessContainmentRoot(), containmentTransitiveRoot, true);
+//
+//            final int[] actLI = { 1 };
+//            final int arcLIw = 2;
+//            final int[] actRI = { 0 };
+//            final int arcRIw = 2;
+//            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    accessContainmentRoot(), new TupleMask(actLI, arcLIw));
+//            Address<? extends IterableIndexer> jSecondarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    containmentTransitiveRoot, new TupleMask(actRI, arcRIw));
+//
+//            final int[] actRIcomp = { 1 };
+//            final int arcRIwcomp = 2;
+//            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
+//
+//            Address<? extends Supplier> andCT = headContainer.getProvisioner().accessJoinNode(jPrimarySlot, jSecondarySlot,
+//                    complementerMask);
+//
+//            final int[] mask = { 0, 2 };
+//            final int maskw = 3;
+//            Address<? extends Supplier> tr = headContainer.getProvisioner().accessTrimmerNode(andCT, new TupleMask(mask, maskw));
+//            network.connectRemoteNodes(tr, containmentTransitiveRoot, true);
+//
+//            this.containmentTransitiveRoot = containmentTransitiveRoot; // cast
+//                                                                        // back
+//                                                                        // to
+//                                                                        // Supplier
+//        }
+//        return containmentTransitiveRoot;
+//    }
+//
+//    /**
+//     * accesses the special instantiation relation Root node; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessInstantiationRoot() {
+//        if (instantiationRoot == null) {
+//            // instantiation: relation quasi-type
+//            instantiationRoot = headContainer.getProvisioner().newUniquenessEnforcerNode(2, "$instantiation");
+//
+//            new InstantiationFeeder(instantiationRoot, context, network, this).feed();
+//        }
+//        return instantiationRoot;
+//    }
+//
+//    /**
+//     * accesses the special transitive instantiation relation Root node; creates the node if it doesn't exist yet
+//     * InstantiationTransitive = Instantiation o (Generalization)^*
+//     */
+//    public Address<? extends Supplier> accessInstantiationTransitiveRoot() {
+//        if (instantiationTransitiveRoot == null) {
+//            // transitive instantiation: derived
+//            Address<? extends Tunnel> instantiationTransitiveRoot = headContainer.getProvisioner()
+//                    .newUniquenessEnforcerNode(2, "$instantiationTransitive");
+//            network.connectRemoteNodes(accessInstantiationRoot(), instantiationTransitiveRoot, true);
+//
+//            final int[] actLI = { 1 };
+//            final int arcLIw = 2;
+//            final int[] actRI = { 0 };
+//            final int arcRIw = 2;
+//            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    accessGeneralizationRoot(), new TupleMask(actLI, arcLIw));
+//            Address<? extends Indexer> jSecondarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    instantiationTransitiveRoot, new TupleMask(actRI, arcRIw));
+//
+//            final int[] actRIcomp = { 1 };
+//            final int arcRIwcomp = 2;
+//            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
+//
+//            Address<? extends Supplier> andCT = headContainer.getProvisioner().accessJoinNode(jPrimarySlot, jSecondarySlot,
+//                    complementerMask);
+//
+//            final int[] mask = { 0, 2 };
+//            final int maskw = 3;
+//            Address<? extends Supplier> tr = headContainer.getProvisioner().accessTrimmerNode(andCT,
+//                    new TupleMask(mask, maskw));
+//            network.connectRemoteNodes(tr, instantiationTransitiveRoot, true);
+//
+//            this.instantiationTransitiveRoot = instantiationTransitiveRoot; // cast
+//                                                                            // back
+//                                                                            // to
+//                                                                            // Supplier
+//        }
+//        return instantiationTransitiveRoot;
+//    }
+//
+//    /**
+//     * accesses the special generalization relation Root node; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Tunnel> accessGeneralizationRoot() {
+//        if (generalizationRoot == null) {
+//            // generalization: relation quasi-type
+//            generalizationRoot = headContainer.getProvisioner().newUniquenessEnforcerNode(2, "$generalization");
+//
+//            new GeneralizationFeeder(generalizationRoot, context, network, this).feed();
+//        }
+//        return generalizationRoot;
+//    }
+//
+//    /**
+//     * accesses the special transitive containment relation Root node; creates the node if it doesn't exist yet
+//     */
+//    public Address<? extends Supplier> accessGeneralizationTransitiveRoot() {
+//        if (generalizationTransitiveRoot == null) {
+//            // transitive generalization: derived
+//            Address<? extends Tunnel> generalizationTransitiveRoot = headContainer.getProvisioner()
+//                    .newUniquenessEnforcerNode(2, "$generalizationTransitive");
+//            network.connectRemoteNodes(accessGeneralizationRoot(), generalizationTransitiveRoot, true);
+//
+//            final int[] actLI = { 1 };
+//            final int arcLIw = 2;
+//            final int[] actRI = { 0 };
+//            final int arcRIw = 2;
+//            Address<? extends IterableIndexer> jPrimarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    accessGeneralizationRoot(), new TupleMask(actLI, arcLIw));
+//            Address<? extends Indexer> jSecondarySlot = headContainer.getProvisioner().accessProjectionIndexer(
+//                    generalizationTransitiveRoot, new TupleMask(actRI, arcRIw));
+//
+//            final int[] actRIcomp = { 1 };
+//            final int arcRIwcomp = 2;
+//            TupleMask complementerMask = new TupleMask(actRIcomp, arcRIwcomp);
+//
+//            Address<? extends Supplier> andCT = headContainer.getProvisioner().accessJoinNode(jPrimarySlot, jSecondarySlot,
+//                    complementerMask);
+//
+//            final int[] mask = { 0, 2 };
+//            final int maskw = 3;
+//            Address<? extends Supplier> tr = headContainer.getProvisioner().accessTrimmerNode(andCT, new TupleMask(mask, maskw));
+//            network.connectRemoteNodes(tr, generalizationTransitiveRoot, true);
+//
+//            this.generalizationTransitiveRoot = generalizationTransitiveRoot; // cast
+//                                                                              // back
+//                                                                              // to
+//                                                                              // Supplier
+//        }
+//        return generalizationTransitiveRoot;
+//    }
 
     // /**
     // * Registers and publishes a supplier under specified label.
@@ -452,44 +356,55 @@ public class ReteBoundary {
     /**
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
-    public synchronized Address<? extends Production> accessProduction(PQuery query)
-            throws QueryPlannerException {
-        Address<? extends Production> pn;
-        pn = productions.get(query);
-        if (pn == null) {
-            construct(query);
-            pn = productions.get(query);
-            if (pn == null) {
-                String[] args = { query.toString() };
-                throw new RetePatternBuildException("Unsuccessful creation of RETE production node for query {1}",
-                        args, "Could not create RETE production node.", query);
-            }
-        }
-        return pn;
+    public synchronized RecipeTraceInfo accessProductionTrace(PQuery query)
+            throws QueryPlannerException 
+    {
+    	final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
+    	return compiled;
+//    	RecipeTraceInfo pn;
+//        pn = queryPlans.get(query);
+//        if (pn == null) {
+//            pn = construct(query);
+//            TODO handle recursion by reinterpret-RecipeTrace
+//            queryPlans.put(query, pn);
+//            if (pn == null) {
+//                String[] args = { query.toString() };
+//                throw new RetePatternBuildException("Unsuccessful planning of RETE construction recipe for query {1}",
+//                        args, "Could not create RETE recipe plan.", query);
+//            }
+//        }
+//        return pn;
     }
-
     /**
-     * creates the production node for the specified pattern Contract: only call from the builder (through Buildable)
-     * responsible for building this pattern
-     *
-     * @throws PatternMatcherCompileTimeException
-     *             if production node is already created
+     * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
-    public synchronized Address<? extends Production> createProductionInternal(PQuery gtPattern)
+    public synchronized Address<? extends Production> accessProductionNode(PQuery query)
             throws QueryPlannerException {
-        if (productions.containsKey(gtPattern)) {
-            String[] args = { gtPattern.toString() };
-            throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args,
-                    "Duplicate RETE production node.", gtPattern);
-        }
-
-        Map<String, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
-        Address<? extends Production> pn = headContainer.getLibrary().newProductionNode(posMapping, gtPattern);
-        productions.put(gtPattern, pn);
-        context.reportPatternDependency(gtPattern);
-
-        return pn;
+    	return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(accessProductionTrace(query));
     }
+
+//    /**
+//     * creates the production node for the specified pattern Contract: only call from the builder (through Buildable)
+//     * responsible for building this pattern
+//     *
+//     * @throws PatternMatcherCompileTimeException
+//     *             if production node is already created
+//     */
+//    public synchronized Address<? extends Production> createProductionInternal(PQuery gtPattern)
+//            throws QueryPlannerException {
+//        if (queryPlans.containsKey(gtPattern)) {
+//            String[] args = { gtPattern.toString() };
+//            throw new RetePatternBuildException("Multiple creation attempts of production node for {1}", args,
+//                    "Duplicate RETE production node.", gtPattern);
+//        }
+//
+//        Map<String, Integer> posMapping = engine.getBuilder().getPosMapping(gtPattern);
+//        Address<? extends Production> pn = headContainer.getProvisioner().newProductionNode(posMapping, gtPattern);
+//        queryPlans.put(gtPattern, pn);
+//        context.reportPatternDependency(gtPattern);
+//
+//        return pn;
+//    }
 
     // /**
     // * accesses the production node for specified pattern and scope map; creates the node if
@@ -519,15 +434,6 @@ public class ReteBoundary {
     // }
     // return pn;
     // }
-
-    /**
-     * @pre: builder is set
-     */
-    protected void construct(PQuery query) throws QueryPlannerException {
-        engine.getReteNet().waitForReteTermination();
-        engine.getBuilder().construct(query);
-        // production.setDirty(false);
-    }
 
     // protected void constructScoper(
     // Address<? extends Production> unscopedProduction,
@@ -560,9 +466,9 @@ public class ReteBoundary {
     // updaters for change notification
     // if the corresponding rete input isn't created yet, call is ignored
     public void updateUnary(Direction direction, Object entity, Object typeObject) {
-        Address<? extends Tunnel> root = unaryRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getUnaryRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(wrapElement(entity)));
+            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(entity)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
@@ -574,10 +480,10 @@ public class ReteBoundary {
     }
 
     public void updateTernaryEdge(Direction direction, Object relation, Object from, Object to, Object typeObject) {
-        Address<? extends Tunnel> root = ternaryEdgeRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getTernaryEdgeRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(wrapElement(relation), wrapElement(from),
-                    wrapElement(to)));
+            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(relation), inputConnector.wrapElement(from),
+                    inputConnector.wrapElement(to)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
@@ -589,9 +495,9 @@ public class ReteBoundary {
     }
 
     public void updateBinaryEdge(Direction direction, Object from, Object to, Object typeObject) {
-        Address<? extends Tunnel> root = binaryEdgeRoots.get(typeObject);
+        Address<? extends Tunnel> root = inputConnector.getBinaryEdgeRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(wrapElement(from), wrapElement(to)));
+            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(from), inputConnector.wrapElement(to)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
@@ -603,27 +509,30 @@ public class ReteBoundary {
     }
 
     public void updateContainment(Direction direction, Object container, Object element) {
-        if (containmentRoot != null) {
-            network.sendExternalUpdate(containmentRoot, direction, new FlatTuple(wrapElement(container),
-                    wrapElement(element)));
+        final Address<? extends Tunnel> containmentRoot = inputConnector.getContainmentRoot();
+		if (containmentRoot != null) {
+            network.sendExternalUpdate(containmentRoot, direction, new FlatTuple(inputConnector.wrapElement(container),
+                    inputConnector.wrapElement(element)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
     }
 
     public void updateInstantiation(Direction direction, Object parent, Object child) {
-        if (instantiationRoot != null) {
-            network.sendExternalUpdate(instantiationRoot, direction, new FlatTuple(wrapElement(parent),
-                    wrapElement(child)));
+        final Address<? extends Tunnel> instantiationRoot = inputConnector.getInstantiationRoot();
+       if (instantiationRoot != null) {
+            network.sendExternalUpdate(instantiationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
+                    inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
     }
 
     public void updateGeneralization(Direction direction, Object parent, Object child) {
-        if (generalizationRoot != null) {
-            network.sendExternalUpdate(generalizationRoot, direction, new FlatTuple(wrapElement(parent),
-                    wrapElement(child)));
+       final Address<? extends Tunnel> generalizationRoot = inputConnector.getGeneralizationRoot();
+       if (generalizationRoot != null) {
+            network.sendExternalUpdate(generalizationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
+                    inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }

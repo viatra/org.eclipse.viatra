@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
+import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
 
 /**
  * A special node depending on a projection indexer to aggregate tuple groups with the same projection. Only propagates
@@ -42,26 +43,32 @@ public abstract class AggregatorNode extends StandardNode {
     AggregatorOuterIdentityIndexer[] aggregatorOuterIdentityIndexers = null;
 
     /**
-     * @param reteContainer
-     * @param projection
-     *            the projection indexer whose tuple groups should be aggregated
+     * MUST call initializeWith() afterwards!
      */
-    public AggregatorNode(ReteContainer reteContainer, ProjectionIndexer projection) {
+    public AggregatorNode(ReteContainer reteContainer) {
         super(reteContainer);
         this.me = this;
         mainAggregates = //new HashMap<Tuple, Object>();
                 CollectionsFactory.getMap();
-        this.projection = projection;
-        this.sourceWidth = projection.getMask().indices.length;
-        for (Tuple signature : projection.getSignatures()) {
-            mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
-        }
-        projection.attachListener(new DefaultIndexerListener(this) {
-            @Override
-            public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
-                aggregateUpdate(direction, updateElement, signature, change);
-            }
-        });
+    }
+    
+    /**
+     * @param projection
+     *            the projection indexer whose tuple groups should be aggregated
+     */
+    public void initializeWith(ProjectionIndexer projection) {
+    	this.projection = projection;
+    	this.sourceWidth = projection.getMask().indices.length;
+    	
+    	for (Tuple signature : projection.getSignatures()) {
+    		mainAggregates.put(signature, aggregateGroup(signature, projection.get(signature)));
+    	}
+    	projection.attachListener(new DefaultIndexerListener(this) {
+    		@Override
+    		public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature, boolean change) {
+    			aggregateUpdate(direction, updateElement, signature, change);
+    		}
+    	});
     }
 
     /**
@@ -69,6 +76,7 @@ public abstract class AggregatorNode extends StandardNode {
      */
     public abstract Object aggregateGroup(Tuple signature, Collection<Tuple> group);
 
+    
     /**
      * Aggregates (reduces) a group of tuples, having access to the previous aggregated value (before the update) and
      * the update definition. Defaults to aggregateGroup(). Override to increase performance.

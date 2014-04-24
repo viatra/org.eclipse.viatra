@@ -89,8 +89,8 @@ public class Equality extends DeferredPConstraint {
     }
 
     @Override
-    public boolean isReadyAt(SubPlan olan, IPatternMatcherContext context) {
-        return olan.getVariablesIndex().containsKey(who) && olan.getVariablesIndex().containsKey(withWhom);
+    public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
+        return plan.getVisibleVariables().contains(who) && plan.getVisibleVariables().contains(withWhom);
         // will be replaced by || if copierNode is available;
         // until then, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is
         // recommended.

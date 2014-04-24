@@ -15,10 +15,10 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 /**
- * An algorithm that builds a matcher based on a PSystem.
+ * An algorithm that builds a query plan based on a PSystem representation of a body of constraints.
  * 
  * @author Gabor Bergmann
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan layout(PBody pSystem, IOperationCompiler<?> compiler, IPatternMatcherContext context) throws QueryPlannerException;
+    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) throws QueryPlannerException;
 }

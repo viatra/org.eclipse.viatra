@@ -43,15 +43,13 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
-import org.eclipse.incquery.runtime.internal.matcherbuilder.EPMBuilder;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.construction.ReteContainerCompiler;
+import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
-import org.eclipse.incquery.runtime.rete.network.Receiver;
-import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -285,10 +283,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     private ReteEngine buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
         ReteEngine engine;
         engine = new ReteEngine(context, reteThreads);
-        ReteContainerCompiler buildable = new ReteContainerCompiler(engine);
-        EPMBuilder<Address<? extends Receiver>> builder = new EPMBuilder<Address<? extends Receiver>>(
-                buildable, context);
-        engine.setBuilder(builder);
+        ReteRecipeCompiler compiler = new ReteRecipeCompiler(Options.builderMethod.layoutStrategy(), context);
+        //EPMBuilder builder = new EPMBuilder(buildable, context);
+        engine.setCompiler(compiler);
         return engine;
     }
     
