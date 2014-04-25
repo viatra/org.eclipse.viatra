@@ -31,6 +31,8 @@ public class PatternAnnotationProvider {
     protected void initializeValidators() {
         if (loader != null) {
             annotationValidators = Maps.newHashMap(loader.getKnownValidators());
+        } else {
+            annotationValidators = Maps.newHashMap();
         }
     }
 
