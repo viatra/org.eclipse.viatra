@@ -12,8 +12,18 @@ package org.eclipse.incquery.tooling.debug.notification;
 
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
+/**
+ * Classes that implement this interface can register themselves in the 
+ * {@link IncQueryDebugEventSetProcessor} to receive notifications 
+ * when the program has been suspended or a step command has ended. 
+ * Upon these events, all the registered listeners will be notified 
+ * with the corresponding {@link JDIStackFrame}.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
-public interface IDebugEventSetListener {
+public interface IncQueryDebugEventSetListener {
 
     public void update(JDIStackFrame frame);
     

@@ -11,9 +11,16 @@
 package org.eclipse.incquery.tooling.debug.variables;
 
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.tooling.debug.common.StackFrameWrapper;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
+/**
+ * A Debug Variables View that displays the {@link IncQueryEngine}s in the JVM.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class IncQueryVariablesView extends VariablesView {
 

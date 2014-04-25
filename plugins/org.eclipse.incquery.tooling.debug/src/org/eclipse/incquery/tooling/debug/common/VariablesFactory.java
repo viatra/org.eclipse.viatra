@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.debug.common;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -22,13 +21,18 @@ import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 
+/**
+ * Subclasses of this factory are responsible for the creation of {@link IJavaVariable}s, which will be 
+ * displayed in the Debugger View.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
-public class VariablesFactory {
+public abstract class VariablesFactory {
 
-    public List<IJavaVariable> getVariables(JDIStackFrame wrappedStackFrame, ThreadReference threadReference) {
-        return new ArrayList<IJavaVariable>();
-    }
-
+    public abstract List<IJavaVariable> getVariables(JDIStackFrame wrappedStackFrame, ThreadReference threadReference);
+    
     public VirtualMachine getVirtualMachine(JDIStackFrame wrappedStackFrame) {
         try {
             JDIObjectValue classLoaderObject = (JDIObjectValue) wrappedStackFrame.getReferenceType().getClassLoaderObject();

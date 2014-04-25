@@ -19,6 +19,13 @@ import org.eclipse.jdt.internal.debug.core.model.JDIVariable;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
+/**
+ * An IncQuery Debug variable which has a specific JDI value attached.  
+ * Variables will be displayed in the Eclipse Debug View.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class IncQueryDebugVariable extends JDIVariable {
 

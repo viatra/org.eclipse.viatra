@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.incquery.tooling.debug.common.VariablesFactory;
 import org.eclipse.incquery.tooling.debug.variables.values.EngineValue;
@@ -26,6 +27,13 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 
+/**
+ * This factory is responsible for the creation of {@link IJavaVariable}s for all the available {@link IncQueryEngine}s 
+ * in the current JVM.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class DebugVariablesFactory extends VariablesFactory {
 

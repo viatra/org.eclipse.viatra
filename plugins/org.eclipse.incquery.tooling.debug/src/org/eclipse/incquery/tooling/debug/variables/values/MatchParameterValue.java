@@ -24,6 +24,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIArrayEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIFieldVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectCollectedException;
@@ -32,6 +33,13 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
+/**
+ * The value of an IncQuery Debug Variable which represents a match parameter.
+ * The children variables will be created by the original {@link JDIValue#getVariables()} logic.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class MatchParameterValue extends IncQueryDebugValue {
 
@@ -44,6 +52,7 @@ public class MatchParameterValue extends IncQueryDebugValue {
         return additionalData[0];
     }
     
+    // Copied from JDIValue.getVariablesList()
     @Override
     protected synchronized List<IJavaVariable> getVariablesList() throws DebugException {
         if (fVariables != null) {

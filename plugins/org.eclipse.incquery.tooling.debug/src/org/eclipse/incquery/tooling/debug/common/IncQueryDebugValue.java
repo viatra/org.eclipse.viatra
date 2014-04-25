@@ -21,6 +21,17 @@ import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
+/**
+ * An instances of this class represents the value of an IncQuery Debug variable. It is also responsible for the
+ * creation of the children variables.
+ * <br><br>
+ * WARNING: Java Reflection and the Java Debug API are used heavily for the creation of the label and the children
+ * variables. Upon API changes (field name change, method name change) these calls can break easily and thus, need to be
+ * adjusted accordingly.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ * 
+ */
 @SuppressWarnings("restriction")
 public abstract class IncQueryDebugValue extends JDIValue {
 
@@ -30,7 +41,8 @@ public abstract class IncQueryDebugValue extends JDIValue {
     protected ThreadReference threadReference;
     protected String[] additionalData;
 
-    public IncQueryDebugValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value, String... additionalData) {
+    public IncQueryDebugValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value,
+            String... additionalData) {
         super(debugTarget, value);
         this.debugTarget = debugTarget;
         this.fValue = value;
@@ -42,5 +54,10 @@ public abstract class IncQueryDebugValue extends JDIValue {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns the String representation of the value. This value will be used in the Eclipse Debug View.
+     * 
+     * @return the String representation of the value
+     */
     public abstract String getLabel();
 }

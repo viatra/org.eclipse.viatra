@@ -23,6 +23,15 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 import com.sun.jdi.StackFrame;
 
+/**
+ * Instances of this class wrap a {@link JDIStackFrame} and replaces the original 
+ * {@link IJavaVariable}s with the ones that are created by the attached 
+ * {@link VariablesFactory}. The {@link JDIStackFrame} then will be used by the 
+ * Eclipse Debug Tooling to populate the contents of the Debug View.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class StackFrameWrapper extends JDIStackFrame {
 

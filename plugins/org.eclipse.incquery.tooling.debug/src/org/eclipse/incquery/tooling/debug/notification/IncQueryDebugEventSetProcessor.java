@@ -19,11 +19,21 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
+/**
+ * A {@link IDebugEventSetListener} implementation which only listens for 
+ * SUSPEND and STEP_END events and notifies all the registered {@link IncQueryDebugEventSetListener}s 
+ * when the source of the events is a {@link JDIThread}.
+ * 
+ * This class is not used at the moment.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings(value = "all")
 public class IncQueryDebugEventSetProcessor implements IDebugEventSetListener {
 
     private static IncQueryDebugEventSetProcessor instance;
-    private List<org.eclipse.incquery.tooling.debug.notification.IDebugEventSetListener> listeners;
+    private List<IncQueryDebugEventSetListener> listeners;
 
     public static IncQueryDebugEventSetProcessor getInstance() {
         if (instance == null) {
@@ -33,14 +43,14 @@ public class IncQueryDebugEventSetProcessor implements IDebugEventSetListener {
     }
 
     protected IncQueryDebugEventSetProcessor() {
-        this.listeners = new LinkedList<org.eclipse.incquery.tooling.debug.notification.IDebugEventSetListener>();
+        this.listeners = new LinkedList<IncQueryDebugEventSetListener>();
     }
 
-    public void addListener(org.eclipse.incquery.tooling.debug.notification.IDebugEventSetListener listener) {
+    public void addListener(IncQueryDebugEventSetListener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeListener(org.eclipse.incquery.tooling.debug.notification.IDebugEventSetListener listener) {
+    public void removeListener(IncQueryDebugEventSetListener listener) {
         this.listeners.remove(listener);
     }
 
@@ -52,7 +62,7 @@ public class IncQueryDebugEventSetProcessor implements IDebugEventSetListener {
                 if (source instanceof JDIThread) {
                     JDIThread thread = (JDIThread) source;
                     try {
-                        for (org.eclipse.incquery.tooling.debug.notification.IDebugEventSetListener listener : listeners) {
+                        for (IncQueryDebugEventSetListener listener : listeners) {
                             listener.update((JDIStackFrame) thread.getStackFrames()[0]);
                         }
                     } catch (DebugException e) {

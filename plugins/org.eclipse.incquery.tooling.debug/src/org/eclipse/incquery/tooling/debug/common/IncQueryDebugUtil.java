@@ -11,7 +11,7 @@
 package org.eclipse.incquery.tooling.debug.common;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.sun.jdi.AbsentInformationException;
@@ -21,6 +21,12 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
+/**
+ * Utility methods based on either Java Reflection or on the Java Debug API.
+ * 
+ * @author Tamas Szabo (itemis AG)
+ *
+ */
 @SuppressWarnings("restriction")
 public class IncQueryDebugUtil {
 
@@ -56,10 +62,7 @@ public class IncQueryDebugUtil {
      */
     public static Value getField(ObjectReference ref, String fieldName) {
         com.sun.jdi.Field field = ref.referenceType().fieldByName(fieldName);
-        if (field == null)
-            return null;
-        else
-            return ref.getValue(field);
+        return (field == null) ? null : ref.getValue(field);
     }
 
     /**
@@ -80,6 +83,7 @@ public class IncQueryDebugUtil {
      *            the name of the method to invoke
      * @return the result of the method invocation, or null if an error occurred during invocation
      */
+    @SuppressWarnings("unchecked")
     public static Value invokeMethod(ThreadReference threadReference, ObjectReference ref, String methodName) {
         Value result = null;
         int t = 0;
@@ -100,7 +104,7 @@ public class IncQueryDebugUtil {
         if (method != null) {
             while (result == null && t < 5) {
                 try {
-                    result = ref.invokeMethod(threadReference, method, new ArrayList<Value>(), 0);
+                    result = ref.invokeMethod(threadReference, method, (List<? extends Value>) Collections.emptyList(), 0);
                 } catch (Exception e) {
                     result = null;
                 }
