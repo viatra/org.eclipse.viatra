@@ -19,6 +19,7 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.base.itc</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.localsearch</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.rete</module>
+		<module>../../plugins/org.eclipse.incquery.runtime.rete.recipes</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../releng/org.eclipse.incquery.target</module>
 	</modules>

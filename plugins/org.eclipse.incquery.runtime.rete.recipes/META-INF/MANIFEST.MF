@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.incquery.runtime.rete.recipes;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 0.8.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -13,6 +13,6 @@ Export-Package: org.eclipse.incquery.runtime.rete.recipes,
  org.eclipse.incquery.runtime.rete.recipes.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.xtext.xbase.lib,
- org.eclipse.emf.ecore.xcore.lib
+ org.eclipse.xtext.xbase.lib
 Bundle-ActivationPolicy: lazy
+
