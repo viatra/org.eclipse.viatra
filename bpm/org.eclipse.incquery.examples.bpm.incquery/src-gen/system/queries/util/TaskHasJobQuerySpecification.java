@@ -8,15 +8,13 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import system.queries.util.JobTaskCorrespondenceQuerySpecification;
 
@@ -35,12 +33,7 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedQuerySpecification
    * 
    */
   public static TaskHasJobQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -67,7 +60,6 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedQuerySpecification
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -80,13 +72,8 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedQuerySpecification
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new PositivePatternCall(body, new FlatTuple(var__Job, var_Task), JobTaskCorrespondenceQuerySpecification.instance());
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
-  }
-  
-  private TaskHasJobQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -94,11 +81,7 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedQuerySpecification
     private final static TaskHasJobQuerySpecification INSTANCE = make();
     
     public static TaskHasJobQuerySpecification make() {
-      try {
-      	return new TaskHasJobQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new TaskHasJobQuerySpecification();					
       
     }
   }

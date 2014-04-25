@@ -29,6 +29,7 @@ import system.Job;
  * 
  * <p>Original source:
  * <code><pre>
+ * ChecklistEntry.jobs relation 
  * {@literal @}QueryBasedFeature(feature = "jobs")
  * pattern ChecklistEntryJobCorrespondence(CLE : ChecklistEntry, Job : Job) = {
  *   Job.name(Job,JobName);

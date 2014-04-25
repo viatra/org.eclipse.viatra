@@ -29,6 +29,7 @@ import process.Task;
  * 
  * <p>Original source:
  * <code><pre>
+ * ChecklistEntry.task relation 
  * {@literal @}QueryBasedFeature(feature = "task")
  * pattern ChecklistEntryTaskCorrespondence(CLE : ChecklistEntry, Task : Task) = {
  * 	Task.id(Task, TaskId);

@@ -29,7 +29,17 @@ import system.queries.util.TransitiveAffectedTasksThroughDataQuerySpecification;
  * <p>Original source:
  * <code><pre>
  * // extra transitive query, Gaben would probably cry... 
- *  
+ * pattern TransitiveAffectedTasksThroughData(SourceTask, AffectedTask) = {
+ * 	Task(SourceTask);
+ * 	Task(AffectedTask);
+ * 	find TasksAffectedThroughData(SourceTask, AffectedTask);
+ * } or {
+ * 	Task(SourceTask);
+ * 	Task(InnerAffectedTask);
+ * 	find TasksAffectedThroughData(SourceTask, InnerAffectedTask);
+ * 	Task(AffectedTask);
+ * 	find TransitiveAffectedTasksThroughData(InnerAffectedTask, AffectedTask);
+ * }
  * 
  * // transitive query, new style... 
  * pattern TransitiveAffectedTasksThroughData(SourceTask, AffectedTask) = {

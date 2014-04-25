@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import system.queries.JobInfoCorrespondenceMatcher;
 
 /**
@@ -33,12 +31,7 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
    * 
    */
   public static JobInfoCorrespondenceQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -65,7 +58,6 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -78,21 +70,16 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
       ));
       
       
-      new TypeBinary(body, context, var_CLE, var_Info, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info"), "http://operation/1.0/ChecklistEntry.info");
-      new TypeBinary(body, context, var_CLE, var_Job, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs"), "http://operation/1.0/ChecklistEntry.jobs");
+      new TypeBinary(body, CONTEXT, var_CLE, var_Info, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info"), "http://operation/1.0/ChecklistEntry.info");
+      new TypeBinary(body, CONTEXT, var_CLE, var_Job, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs"), "http://operation/1.0/ChecklistEntry.jobs");
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryBasedFeature");
       annotation.addAttribute("feature","info");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private JobInfoCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -109,11 +96,7 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
     private final static JobInfoCorrespondenceQuerySpecification INSTANCE = make();
     
     public static JobInfoCorrespondenceQuerySpecification make() {
-      try {
-      	return new JobInfoCorrespondenceQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new JobInfoCorrespondenceQuerySpecification();					
       
     }
   }

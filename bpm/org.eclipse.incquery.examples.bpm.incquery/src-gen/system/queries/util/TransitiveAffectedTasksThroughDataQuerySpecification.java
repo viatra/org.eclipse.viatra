@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import system.queries.TransitiveAffectedTasksThroughDataMatcher;
 import system.queries.util.TasksAffectedThroughDataQuerySpecification;
@@ -35,12 +33,7 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
    * 
    */
   public static TransitiveAffectedTasksThroughDataQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -67,7 +60,6 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -83,13 +75,8 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
       new TypeUnary(body, var_AffectedTask, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
       new BinaryTransitiveClosure(body, new FlatTuple(var_SourceTask, var_AffectedTask), TasksAffectedThroughDataQuerySpecification.instance().instance());
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
-  }
-  
-  private TransitiveAffectedTasksThroughDataQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -106,11 +93,7 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
     private final static TransitiveAffectedTasksThroughDataQuerySpecification INSTANCE = make();
     
     public static TransitiveAffectedTasksThroughDataQuerySpecification make() {
-      try {
-      	return new TransitiveAffectedTasksThroughDataQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new TransitiveAffectedTasksThroughDataQuerySpecification();					
       
     }
   }

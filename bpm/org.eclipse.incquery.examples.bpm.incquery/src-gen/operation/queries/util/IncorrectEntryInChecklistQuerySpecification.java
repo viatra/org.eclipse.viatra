@@ -10,12 +10,9 @@ import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
 import operation.queries.util.TaskInProcessQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
@@ -23,6 +20,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParam
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
@@ -40,12 +38,7 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
    * 
    */
   public static IncorrectEntryInChecklistQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -72,7 +65,6 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -88,25 +80,20 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
       
       
       
-      new TypeBinary(body, context, var_Checklist, var_ChecklistEntry, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
+      new TypeBinary(body, CONTEXT, var_Checklist, var_ChecklistEntry, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
       new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_ChecklistEntry, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance().instance());
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!");
       annotation.addAttribute("location",new ParameterReference("ChecklistEntry"));
       annotation.addAttribute("severity","error");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private IncorrectEntryInChecklistQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -123,11 +110,7 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
     private final static IncorrectEntryInChecklistQuerySpecification INSTANCE = make();
     
     public static IncorrectEntryInChecklistQuerySpecification make() {
-      try {
-      	return new IncorrectEntryInChecklistQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new IncorrectEntryInChecklistQuerySpecification();					
       
     }
   }

@@ -29,6 +29,7 @@ import system.queries.util.DataTaskReadCorrespondenceQuerySpecification;
  * 
  * <p>Original source:
  * <code><pre>
+ * Data.readingTask relation 
  * {@literal @}QueryBasedFeature(feature = "readingTask")
  * pattern DataTaskReadCorrespondence(Data : Data, Task : Task) = {
  * 	Data.readingTaskIds(Data,TaskId);

@@ -10,15 +10,13 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
@@ -36,12 +34,7 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
    * 
    */
   public static ChecklistEntryTaskInCheckListProcessQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -68,7 +61,6 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -84,16 +76,11 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
       
       new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
       new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance());
-      new TypeBinary(body, context, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
-      new TypeBinary(body, context, var_Checklist, var_CLE, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
+      new TypeBinary(body, CONTEXT, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
+      new TypeBinary(body, CONTEXT, var_Checklist, var_CLE, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
-  }
-  
-  private ChecklistEntryTaskInCheckListProcessQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -101,11 +88,7 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
     private final static ChecklistEntryTaskInCheckListProcessQuerySpecification INSTANCE = make();
     
     public static ChecklistEntryTaskInCheckListProcessQuerySpecification make() {
-      try {
-      	return new ChecklistEntryTaskInCheckListProcessQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new ChecklistEntryTaskInCheckListProcessQuerySpecification();					
       
     }
   }

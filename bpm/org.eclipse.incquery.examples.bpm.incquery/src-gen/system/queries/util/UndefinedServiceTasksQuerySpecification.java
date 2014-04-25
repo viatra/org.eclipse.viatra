@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
@@ -19,6 +16,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParam
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import system.queries.UndefinedServiceTasksMatcher;
 import system.queries.util.TaskHasJobQuerySpecification;
@@ -38,12 +36,7 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
    * 
    */
   public static UndefinedServiceTasksQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -70,7 +63,6 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -81,23 +73,18 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
       ));
       
       new ConstantValue(body, var__virtual_0_, getEnumLiteral("http://process/1.0", "TaskKind", "service").getInstance());
-      new TypeBinary(body, context, var_Task, var__virtual_0_, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
+      new TypeBinary(body, CONTEXT, var_Task, var__virtual_0_, getFeatureLiteral("http://process/1.0", "Task", "kind"), "http://process/1.0/Task.kind");
       new NegativePatternCall(body, new FlatTuple(var_Task), TaskHasJobQuerySpecification.instance().instance());
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("Constraint");
       annotation.addAttribute("message","Service Task $Task.name$ has no job");
       annotation.addAttribute("location",new ParameterReference("Task"));
       annotation.addAttribute("severity","warning");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private UndefinedServiceTasksQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -114,11 +101,7 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
     private final static UndefinedServiceTasksQuerySpecification INSTANCE = make();
     
     public static UndefinedServiceTasksQuerySpecification make() {
-      try {
-      	return new UndefinedServiceTasksQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new UndefinedServiceTasksQuerySpecification();					
       
     }
   }

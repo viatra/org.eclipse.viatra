@@ -8,15 +8,13 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 
 /**
  * A pattern-specific query specification that can instantiate TaskInProcessMatcher in a type-safe way.
@@ -33,12 +31,7 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
    * 
    */
   public static TaskInProcessQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -65,7 +58,6 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -78,15 +70,10 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
       
       
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
-      new TypeBinary(body, context, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
+      new TypeBinary(body, CONTEXT, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
       bodies.add(body);
-    }setStatus(PQuery.PQueryStatus.OK);
+    }
     return bodies;
-  }
-  
-  private TaskInProcessQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -94,11 +81,7 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
     private final static TaskInProcessQuerySpecification INSTANCE = make();
     
     public static TaskInProcessQuerySpecification make() {
-      try {
-      	return new TaskInProcessQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new TaskInProcessQuerySpecification();					
       
     }
   }

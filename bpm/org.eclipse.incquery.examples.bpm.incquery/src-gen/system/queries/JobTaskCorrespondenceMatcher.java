@@ -30,7 +30,7 @@ import system.queries.util.JobTaskCorrespondenceQuerySpecification;
  * <p>Original source:
  * <code><pre>
  * // first query n-to-m traceability
- *  
+ *  Job.tasks relation 
  * {@literal @}QueryBasedFeature(feature = "tasks")
  * pattern JobTaskCorrespondence(Job : Job, Task : Task) = {
  * 	Job.taskIds(Job,TaskId);

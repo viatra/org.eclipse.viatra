@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  * 
  * <p>Original source:
  * <code><pre>
+ * Checklist.process relation 
  * {@literal @}QueryBasedFeature(feature = "process")
  * pattern ChecklistProcessCorrespondence(Checklist : Checklist, Process : Process) = {
  * 	Process.id(Process,ProcessId);

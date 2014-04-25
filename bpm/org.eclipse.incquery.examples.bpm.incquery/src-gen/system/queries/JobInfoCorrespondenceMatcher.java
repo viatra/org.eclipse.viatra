@@ -29,6 +29,7 @@ import system.queries.util.JobInfoCorrespondenceQuerySpecification;
  * 
  * <p>Original source:
  * <code><pre>
+ * Job.info relation 
  * {@literal @}QueryBasedFeature(feature = "info")
  * pattern JobInfoCorrespondence(Job : Job, Info : RuntimeInformation) = {
  * 	ChecklistEntry.info(CLE, Info);

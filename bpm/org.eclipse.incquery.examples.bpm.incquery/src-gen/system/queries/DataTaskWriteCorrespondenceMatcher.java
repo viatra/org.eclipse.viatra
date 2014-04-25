@@ -29,6 +29,7 @@ import system.queries.util.DataTaskWriteCorrespondenceQuerySpecification;
  * 
  * <p>Original source:
  * <code><pre>
+ * Data.writingTask relation 
  * {@literal @}QueryBasedFeature(feature = "writingTask")
  * pattern DataTaskWriteCorrespondence(Data : Data ,Task : Task) = {
  * 	Data.writingTaskIds(Data,TaskId);

@@ -7,17 +7,15 @@ import java.util.Set;
 import operation.queries.ChecklistEntryTaskCorrespondenceMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 
 /**
  * A pattern-specific query specification that can instantiate ChecklistEntryTaskCorrespondenceMatcher in a type-safe way.
@@ -34,12 +32,7 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
    * 
    */
   public static ChecklistEntryTaskCorrespondenceQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -66,7 +59,6 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -80,21 +72,16 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
       
       
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
-      new TypeBinary(body, context, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
-      new TypeBinary(body, context, var_CLE, var_TaskId, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "taskId"), "http://operation/1.0/ChecklistEntry.taskId");
+      new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
+      new TypeBinary(body, CONTEXT, var_CLE, var_TaskId, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "taskId"), "http://operation/1.0/ChecklistEntry.taskId");
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryBasedFeature");
       annotation.addAttribute("feature","task");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private ChecklistEntryTaskCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -111,11 +98,7 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
     private final static ChecklistEntryTaskCorrespondenceQuerySpecification INSTANCE = make();
     
     public static ChecklistEntryTaskCorrespondenceQuerySpecification make() {
-      try {
-      	return new ChecklistEntryTaskCorrespondenceQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new ChecklistEntryTaskCorrespondenceQuerySpecification();					
       
     }
   }

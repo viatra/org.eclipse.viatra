@@ -7,19 +7,17 @@ import java.util.Set;
 import operation.queries.ChecklistEntryJobCorrespondenceMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 
 /**
  * A pattern-specific query specification that can instantiate ChecklistEntryJobCorrespondenceMatcher in a type-safe way.
@@ -36,12 +34,7 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
    * 
    */
   public static ChecklistEntryJobCorrespondenceQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
@@ -68,7 +61,6 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    EMFPatternMatcherContext context = new EMFPatternMatcherContext();
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
       PBody body = new PBody(this);
@@ -84,10 +76,10 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
       ));
       
       
-      new TypeBinary(body, context, var_Job, var_JobName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
-      new TypeBinary(body, context, var_System, var_SysName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
-      new TypeBinary(body, context, var_Job, var_System, getFeatureLiteral("http://system/1.0", "Job", "runsOn"), "http://system/1.0/Job.runsOn");
-      new TypeBinary(body, context, var_CLE, var_JobPath, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobPaths"), "http://operation/1.0/ChecklistEntry.jobPaths");
+      new TypeBinary(body, CONTEXT, var_Job, var_JobName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
+      new TypeBinary(body, CONTEXT, var_System, var_SysName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
+      new TypeBinary(body, CONTEXT, var_Job, var_System, getFeatureLiteral("http://system/1.0", "Job", "runsOn"), "http://system/1.0/Job.runsOn");
+      new TypeBinary(body, CONTEXT, var_CLE, var_JobPath, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobPaths"), "http://operation/1.0/ChecklistEntry.jobPaths");
       new ExpressionEvaluation(body, new IExpressionEvaluator() {
         @Override
         public String getShortDescription() {
@@ -109,18 +101,13 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
         
         },  null); 
       bodies.add(body);
-    }{
+    }
+    {
       PAnnotation annotation = new PAnnotation("QueryBasedFeature");
       annotation.addAttribute("feature","jobs");
       addAnnotation(annotation);
     }
-    setStatus(PQuery.PQueryStatus.OK);
     return bodies;
-  }
-  
-  private ChecklistEntryJobCorrespondenceQuerySpecification() throws IncQueryException {
-    super();
-    setStatus(PQuery.PQueryStatus.UNINITIALIZED);
   }
   
   @SuppressWarnings("all")
@@ -137,11 +124,7 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
     private final static ChecklistEntryJobCorrespondenceQuerySpecification INSTANCE = make();
     
     public static ChecklistEntryJobCorrespondenceQuerySpecification make() {
-      try {
-      	return new ChecklistEntryJobCorrespondenceQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new ChecklistEntryJobCorrespondenceQuerySpecification();					
       
     }
   }
