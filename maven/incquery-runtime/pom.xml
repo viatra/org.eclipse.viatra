@@ -16,6 +16,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
+			<artifactId>org.eclipse.incquery.runtime.rete.recipes</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.matchers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
