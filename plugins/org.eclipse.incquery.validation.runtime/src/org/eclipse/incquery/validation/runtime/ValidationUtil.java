@@ -39,6 +39,12 @@ import com.google.common.collect.Sets;
 
 public final class ValidationUtil {
 
+    private static final String CONSTRAINT_ATTRIBUTE_NAME = "constraint";
+    private static final String VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID = "org.eclipse.incquery.validation.runtime.constraint";
+    private static final String EDITOR_ID_ATTRIBUTE_NAME = "editorId";
+    private static final String ENABLED_FOR_EDITOR_ATTRIBUTE_NAME = "enabledForEditor";
+    private static final String CLASS_ATTRIBUTE_NAME = "class";
+
     /**
      * Constructor hidden for utility class
      */
@@ -105,13 +111,13 @@ public final class ValidationUtil {
         Multimap<String, Constraint<IPatternMatch>> result = HashMultimap.create();
 
         IExtensionRegistry reg = Platform.getExtensionRegistry();
-        IExtensionPoint ep = reg.getExtensionPoint("org.eclipse.incquery.validation.runtime.constraint");
+        IExtensionPoint ep = reg.getExtensionPoint(VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID);
         Set<String> classFQNs = Sets.newHashSet();
         Set<String> duplicateFQNs = Sets.newHashSet();
 
         for (IExtension extension : ep.getExtensions()) {
             for (IConfigurationElement ce : extension.getConfigurationElements()) {
-                if (ce.getName().equals("constraint")) {
+                if (ce.getName().equals(CONSTRAINT_ATTRIBUTE_NAME)) {
                     processConstraintConfigurationElement(result, ce, classFQNs, duplicateFQNs);
                 }
             }
@@ -138,20 +144,20 @@ public final class ValidationUtil {
         try {
             List<String> ids = new ArrayList<String>();
             for (IConfigurationElement child : ce.getChildren()) {
-                if (child.getName().equals("enabledForEditor")) {
-                    String id = child.getAttribute("editorId");
+                if (child.getName().equals(ENABLED_FOR_EDITOR_ATTRIBUTE_NAME)) {
+                    String id = child.getAttribute(EDITOR_ID_ATTRIBUTE_NAME);
                     if (id != null && !id.equals("")) {
                         ids.add(id);
                     }
                 }
             }
 
-            String classFQN = ce.getAttribute("class");
+            String classFQN = ce.getAttribute(CLASS_ATTRIBUTE_NAME);
             if(classFQNs.contains(classFQN)) {
                 duplicateFQNs.add(classFQN);
             } else {
                 classFQNs.add(classFQN);
-                Object o = ce.createExecutableExtension("class");
+                Object o = ce.createExecutableExtension(CLASS_ATTRIBUTE_NAME);
                 if (o instanceof Constraint<?>) {
                     if (ids.isEmpty()) {
                         ids.add("*");
