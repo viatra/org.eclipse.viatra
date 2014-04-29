@@ -352,7 +352,14 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	
 	def findInferredClass(Pattern pattern, Class clazz) {
 		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
-			superTypes.exists[!(it  instanceof JvmUnknownTypeReference) && (type.qualifiedName == clazz.canonicalName)]
+//			superTypes.forEach[println(it.qualifiedName)]
+			superTypes.exists[
+				if(type == null) {
+					false
+				} else {
+				    type.qualifiedName == clazz.canonicalName
+				}
+			]
 		]
 	}
 	
