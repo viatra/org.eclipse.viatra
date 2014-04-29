@@ -12,18 +12,18 @@
 package org.eclipse.incquery.testing.core
 
 import com.google.common.base.Preconditions
+import com.google.inject.Injector
 import org.eclipse.core.resources.IFile
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
-import com.google.inject.Injector
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -87,8 +87,12 @@ class ModelLoadHelper {
 	/**
 	 * Load a pattern model from the given platform URI into a new resource set.
 	 */
-	def loadPatternModelFromUri(String platformUri, Injector injector){
-		val resource = XmiModelUtil.prepareXtextResource(injector).loadAdditionalResourceFromUri(platformUri)
+	def loadPatternModelFromUri(String platformUri, Injector injector, String... additionalDependencyPlatformUris){
+		val resourceSet = XmiModelUtil.prepareXtextResource(injector)
+		for (additionalUri : additionalDependencyPlatformUris)
+			resourceSet.loadAdditionalResourceFromUri(additionalUri)
+			
+		val resource = resourceSet.loadAdditionalResourceFromUri(platformUri)
 		if(resource.contents.size > 0){
 			if(resource.contents.get(0) instanceof PatternModel){
 				resource.contents.get(0) as PatternModel
