@@ -12,6 +12,7 @@ package org.eclipse.incquery.patternlanguage.emf.formatting;
 
 import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;
+import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.XImportSectionElements;
 import org.eclipse.incquery.patternlanguage.services.PatternLanguageGrammarAccess.AnnotationElements;
 import org.eclipse.incquery.patternlanguage.services.PatternLanguageGrammarAccess.PatternElements;
 import org.eclipse.xtext.Keyword;
@@ -34,7 +35,7 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap(2).before(patternModelAccess.getPatternsAssignment_3());
         c.setLinewrap(2).between(patternModelAccess.getPatternsAssignment_3(),
                 patternModelAccess.getPatternsAssignment_3());
-
+        
         PatternElements patternAccess = grammar.getPatternAccess();
         c.setLinewrap(1).after(patternAccess.getAnnotationsAssignment_0());
         c.setSpace(" ").around(patternAccess.getOrKeyword_9_0());
@@ -46,7 +47,7 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap(0, 1, 2).before(grammar.getSL_COMMENTRule());
         c.setLinewrap(0, 1, 2).before(grammar.getML_COMMENTRule());
         c.setLinewrap(0, 1, 1).after(grammar.getML_COMMENTRule());
-
+        
         for (Keyword keyword : grammar.findKeywords("=")) {
             c.setSpace(" ").around(keyword);
         }
@@ -91,6 +92,9 @@ public class EMFPatternLanguageFormatter extends AbstractDeclarativeFormatter {
         for (Keyword keyword : grammar.findKeywords("}")) {
             c.setLinewrap(2).after(keyword);
             c.setIndentationDecrement().before(keyword);
+        }
+        for (Keyword keyword : grammar.findKeywords("import")) {
+            c.setLinewrap(1).before(keyword);
         }
     }
 }
