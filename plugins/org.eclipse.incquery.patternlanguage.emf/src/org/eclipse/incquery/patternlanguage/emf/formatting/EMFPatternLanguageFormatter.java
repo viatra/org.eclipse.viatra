@@ -12,7 +12,6 @@ package org.eclipse.incquery.patternlanguage.emf.formatting;
 
 import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess;
 import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.EMFPatternModelElements;
-import org.eclipse.incquery.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.XImportSectionElements;
 import org.eclipse.incquery.patternlanguage.services.PatternLanguageGrammarAccess.AnnotationElements;
 import org.eclipse.incquery.patternlanguage.services.PatternLanguageGrammarAccess.PatternElements;
 import org.eclipse.xtext.Keyword;
