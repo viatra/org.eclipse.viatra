@@ -73,7 +73,7 @@ class CheckConstraintTest {
 
 			pattern name(L) = {
 				ELong(L);
-				check(java::util::Calendar::getInstance().getTime().getTime() > L);
+				check(^java::util::Calendar::getInstance().getTime().getTime() > L);
 			}
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)

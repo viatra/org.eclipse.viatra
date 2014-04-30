@@ -14,6 +14,7 @@ import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -32,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionElemen
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -39,6 +41,7 @@ import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.ILeafNode;
@@ -48,10 +51,14 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal.IReplacementTextApplier;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.xbase.ui.contentassist.XbaseProposalProvider;
+import org.eclipse.xtext.xbase.ui.hover.XbaseInformationControlInput;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -68,6 +75,8 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     @Inject
     ReferenceProposalCreator crossReferenceProposalCreator;
     @Inject
+    IQualifiedNameConverter nameConverter;
+    @Inject
     private EMFPatternLanguageGrammarAccess ga;
 
     @Override
@@ -80,6 +89,37 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         super.createProposals(context, acceptor);
     }
 
+    @Override
+    protected Function<IEObjectDescription, ICompletionProposal> getProposalFactory(String ruleName,
+            ContentAssistContext contentAssistContext) {
+        
+        Function<IEObjectDescription, ICompletionProposal> factory = super.getProposalFactory(ruleName, contentAssistContext);
+        if (contentAssistContext.getCurrentNode().getSemanticElement() instanceof PatternCall && ga.getQualifiedNameRule().getName().equals(ruleName)) {
+            factory = Functions.compose(new Function<ICompletionProposal, ICompletionProposal>(){
+
+                @Override
+                public ICompletionProposal apply(ICompletionProposal original) {
+                    if (original instanceof ConfigurableCompletionProposal) {
+                        ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) original;
+                        Object info = prop.getAdditionalProposalInfo(new NullProgressMonitor());
+                        if (info instanceof XbaseInformationControlInput) {
+                            XbaseInformationControlInput input = (XbaseInformationControlInput) info;
+                            if (input.getElement() instanceof Pattern) {
+                                final Pattern pattern = (Pattern) input.getElement();
+                                prop.setTextApplier(new PatternImporter(pattern));
+                            }
+                        }
+                        
+                    }
+                    return original;
+                }
+                
+            }, factory);
+        }
+        
+        return factory;
+    }
+    
     @SuppressWarnings("restriction")
     @Override
     public void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
