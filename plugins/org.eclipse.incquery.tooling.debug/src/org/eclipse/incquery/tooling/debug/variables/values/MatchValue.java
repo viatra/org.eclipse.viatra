@@ -52,13 +52,12 @@ public class MatchValue extends IncQueryDebugValue {
                 fVariables = new ArrayList<IJavaVariable>();
                 ArrayReference parameters = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, object, "toArray");
                 ObjectReference parameterNames = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference, object, "parameterNames");
-                ObjectReference list = (ObjectReference) IncQueryDebugUtil.getField(parameterNames, "list");
-                ArrayReference a = (ArrayReference) IncQueryDebugUtil.getField(list, "a");
+                ArrayReference list = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, parameterNames, "toArray");
                 
                 for (int i = 0; i < parameters.length(); i++) {
                     IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
                     MatchParameterValue value = new MatchParameterValue(debugTarget, threadReference, 
-                            parameters.getValue(i), ((StringReference) a.getValue(i)).value());
+                            parameters.getValue(i), ((StringReference) list.getValue(i)).value());
                     var.setValue(value);
                     fVariables.add(var);
 

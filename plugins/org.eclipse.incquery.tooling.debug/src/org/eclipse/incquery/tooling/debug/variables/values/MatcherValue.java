@@ -63,13 +63,15 @@ public class MatcherValue extends IncQueryDebugValue {
 
             ObjectReference currentMatches = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference, object, "getAllMatches");
             ArrayReference elementDataFieldValue = (ArrayReference) IncQueryDebugUtil.getField(currentMatches, "elementData");
-
-            for (Value val : elementDataFieldValue.getValues()) {
-                if (val != null) {
-                    IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
-                    MatchValue value = new MatchValue(debugTarget, threadReference, val);
-                    var.setValue(value);
-                    fVariables.add(var);
+                   
+            if (elementDataFieldValue.length() > 0) {
+                for (Value val : elementDataFieldValue.getValues()) {
+                    if (val != null) {
+                        IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
+                        MatchValue value = new MatchValue(debugTarget, threadReference, val);
+                        var.setValue(value);
+                        fVariables.add(var);
+                    }
                 }
             }
             return fVariables;

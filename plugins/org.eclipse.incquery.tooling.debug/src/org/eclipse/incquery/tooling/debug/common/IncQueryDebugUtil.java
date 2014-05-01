@@ -14,7 +14,6 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
-import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
@@ -25,7 +24,7 @@ import com.sun.jdi.Value;
  * Utility methods based on either Java Reflection or on the Java Debug API.
  * 
  * @author Tamas Szabo (itemis AG)
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class IncQueryDebugUtil {
@@ -91,20 +90,19 @@ public class IncQueryDebugUtil {
         Method method = null;
         List<Method> methods = ref.referenceType().methodsByName(methodName);
         for (Method m : methods) {
-            try {
-                if (m.arguments().isEmpty()) {
-                    method = m;
-                    break;
-                }
-            } catch (AbsentInformationException e) {
-                // ignore
+            // argumentTypeNames is the safest method from the ones which deal with arguments because
+            // this one will not throw any kind of Exception
+            if (m.argumentTypeNames().isEmpty()) {
+                method = m;
+                break;
             }
         }
-        
+
         if (method != null) {
             while (result == null && t < 5) {
                 try {
-                    result = ref.invokeMethod(threadReference, method, (List<? extends Value>) Collections.emptyList(), 0);
+                    result = ref.invokeMethod(threadReference, method, (List<? extends Value>) Collections.emptyList(),
+                            0);
                 } catch (Exception e) {
                     result = null;
                 }
