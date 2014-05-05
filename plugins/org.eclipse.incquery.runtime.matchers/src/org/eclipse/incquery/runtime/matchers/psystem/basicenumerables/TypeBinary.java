@@ -56,5 +56,13 @@ public class TypeBinary extends TypeConstraint implements ITypeInfoProviderConst
 		return result;
     }
 
+    /**
+     * Returns the metamodel context used for creating this constraint
+     * @return the context
+     */
+    public IPatternMatcherContext getContext() {
+        return context;
+    }
+
 
 }
