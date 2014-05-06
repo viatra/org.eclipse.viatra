@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>incquery-maven-plugin</artifactId>
+	<packaging>maven-plugin</packaging>
+	<name>EMF-IncQuery Maven Plug-in</name>
+	
+    <properties>
+    		<xtend.compiler.version>2.5.3</xtend.compiler.version>
+    </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>3.0.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<version>2.9.1.v20130827-0309</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.xtend</groupId>
+			<artifactId>org.eclipse.xtend.lib</artifactId>
+			<version>${xtend.compiler.version}</version>
+		</dependency>
+
+		<dependency>
+		<groupId>org.eclipse.core</groupId>
+		<artifactId>org.eclipse.core.resources</artifactId>
+		<version>3.7.100</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.codegen.ecore</artifactId>
+			<version>2.9.1-v20140203-1126</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.incquery</groupId>
+			<artifactId>incquery-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.incquery</groupId>
+			<artifactId>incquery-patternlanguage</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>xtext-maven-plugin</artifactId>
+			<version>${xtend.compiler.version}</version>
+		</dependency>
+	</dependencies>
+	<parent>
+		<groupId>org.eclipse.incquery</groupId>
+		<artifactId>org.eclipse.incquery.parent</artifactId>
+		<version>0.8.0-SNAPSHOT</version>
+		<relativePath>../../releng/org.eclipse.incquery.parent/pom.xml</relativePath>
+	</parent>
+</project>
