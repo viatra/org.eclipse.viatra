@@ -1,0 +1,157 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2014, Miklos Foldenyi, Andras Szabolcs Nagy, Abel Hegedus, Akos Horvath, Zoltan Ujhelyi and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *   Miklos Foldenyi - initial API and implementation
+ *   Andras Szabolcs Nagy - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.dse.api.strategy.impl;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
+import org.eclipse.viatra.dse.base.GlobalContext;
+import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.IState;
+import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+
+public class ParallelBFSNextTransition implements INextTransition {
+
+    private class TrajectoryWrapper {
+        public final LinkedList<ITransition> transitionTrajectory;
+
+        @SuppressWarnings("unchecked")
+        public TrajectoryWrapper(TrajectoryInfo trajectory) {
+            transitionTrajectory = (LinkedList<ITransition>) trajectory.getTransitionTrajectory().clone();
+        }
+
+    }
+
+    private class SharedData {
+        public volatile ConcurrentLinkedQueue<TrajectoryWrapper> pullQueue = new ConcurrentLinkedQueue<TrajectoryWrapper>();
+        public volatile ConcurrentLinkedQueue<TrajectoryWrapper> pushQueue = new ConcurrentLinkedQueue<TrajectoryWrapper>();
+        public volatile int maxDepth = Integer.MAX_VALUE;
+        public volatile int actLevel = 0;
+
+        public AtomicInteger numOfThreadsAtBarrier = new AtomicInteger();
+        public volatile int maxNumberOfThreads = 0;
+        public volatile boolean barrier1 = true;
+        public volatile boolean barrier2 = true;
+
+        public volatile boolean isAllExplored = false;
+    }
+
+    SharedData sharedData;
+
+    private int initMaxDepth = Integer.MAX_VALUE;
+
+    public ParallelBFSNextTransition() {
+    }
+
+    public ParallelBFSNextTransition(int maxDepth) {
+        this.initMaxDepth = maxDepth;
+    }
+
+    @Override
+    public void init(ThreadContext context) {
+        GlobalContext gc = context.getGlobalContext();
+        if (gc.getSharedObject() == null) {
+            sharedData = new SharedData();
+            sharedData.maxDepth = initMaxDepth;
+            sharedData.maxNumberOfThreads = context.getGlobalContext().getThreadPool().getMaximumPoolSize();
+            gc.setSharedObject(sharedData);
+
+            while (context.getGlobalContext().tryStartNewThread(context) != null) {
+            }
+        } else {
+            sharedData = (SharedData) gc.getSharedObject();
+        }
+
+    }
+
+    @Override
+    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+
+        DesignSpaceManager dsm = context.getDesignSpaceManager();
+        TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
+
+        if (sharedData.actLevel > sharedData.maxDepth) {
+            return null;
+        }
+
+        if (trajectory.canStepBack()) {
+            // push to queue only, if not already traversed, not goal and not cut
+            if (!dsm.isNewModelStateAlreadyTraversed()
+                    && dsm.getCurrentState().getTraversalState().equals(IState.TraversalStateType.TRAVERSED)) {
+                sharedData.pushQueue.add(new TrajectoryWrapper(trajectory));
+            }
+
+            dsm.undoLastTransformation();
+        }
+
+        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
+        do {
+            if (!transitions.isEmpty()) {
+                return transitions.get(0);
+            } else {
+                TrajectoryWrapper next = sharedData.pullQueue.poll();
+                if (next == null) {
+                    int position = sharedData.numOfThreadsAtBarrier.incrementAndGet();
+                    if (position == sharedData.maxNumberOfThreads) {
+                        if (sharedData.pushQueue.size() == 0) {
+                            sharedData.isAllExplored = true;
+                        }
+                        sharedData.pullQueue = sharedData.pushQueue;
+                        sharedData.pushQueue = new ConcurrentLinkedQueue<TrajectoryWrapper>();
+                        sharedData.maxNumberOfThreads = context.getGlobalContext().getThreadPool().getMaximumPoolSize();
+                        sharedData.numOfThreadsAtBarrier.set(0);
+                        if (sharedData.actLevel % 2 == 0) {
+                            sharedData.barrier2 = true;
+                            ++sharedData.actLevel;
+                            sharedData.barrier1 = false;
+                        } else {
+                            sharedData.barrier1 = true;
+                            ++sharedData.actLevel;
+                            sharedData.barrier2 = false;
+                        }
+                    } else {
+                        int actLevel = sharedData.actLevel;
+                        do {
+                            try {
+                                Thread.sleep(2);
+                            } catch (InterruptedException e) {
+                            }
+                        } while (actLevel % 2 == 0 ? sharedData.barrier1 : sharedData.barrier2);
+                    }
+                } else {
+
+                    while (dsm.undoLastTransformation()) {
+                    }
+
+                    for (ITransition t : next.transitionTrajectory) {
+                        dsm.fireActivation(t);
+                    }
+
+                }
+                transitions = dsm.getUntraversedTransitionsFromCurrentState();
+            }
+        } while (!sharedData.isAllExplored);
+
+        return null;
+
+    }
+
+    @Override
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+            boolean constraintsNotSatisfied) {
+    }
+
+}
