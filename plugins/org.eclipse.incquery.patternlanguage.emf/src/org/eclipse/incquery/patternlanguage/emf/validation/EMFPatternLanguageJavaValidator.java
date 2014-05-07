@@ -602,7 +602,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 EClassifier inputClassifier = emfTypeProvider
                         .getClassifierForLiteralComputationEnumValueReference(valueReference);
                 if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
-                    error("The type inferred from the called pattern (" + typeClassifier.getInstanceClassName()
+                    final String typeClassifierName = typeClassifier == null ? "(unknown)" : typeClassifier.getInstanceClassName();
+                    error("The type inferred from the called pattern (" + typeClassifierName
                             + ") is different from the input literal/computational value ("
                             + inputClassifier.getInstanceClassName() + ").", patternCall, null,
                             EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);

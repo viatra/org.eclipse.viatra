@@ -219,7 +219,7 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
 
     @Override
     public GenPackage findGenPackage(EObject ctx, final EPackage ePackage) {
-        if (ePackage == null) {
+        if (ePackage == null || ePackage.eIsProxy()) {
             return null;
         }
         return findGenPackage(ctx, ePackage.getNsURI());
