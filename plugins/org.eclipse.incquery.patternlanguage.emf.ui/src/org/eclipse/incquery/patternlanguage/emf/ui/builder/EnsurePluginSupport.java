@@ -17,10 +17,10 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.incquery.tooling.core.generator.ExtensionData;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -48,15 +48,15 @@ public class EnsurePluginSupport {
     private Logger logger;
 
     private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
-    private Multimap<IProject, IPluginExtension> appendableExtensionMap = ArrayListMultimap.create();
+    private Multimap<IProject, ExtensionData> appendableExtensionMap = ArrayListMultimap.create();
     private Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
     private Multimap<IProject, String> modelBundleIds = HashMultimap.create();
 
-    public void appendExtension(IProject project, IPluginExtension extension) {
+    public void appendExtension(IProject project, ExtensionData extension) {
         appendableExtensionMap.put(project, extension);
     }
 
-    public void appendAllExtension(IProject project, Iterable<IPluginExtension> extensions) {
+    public void appendAllExtension(IProject project, Iterable<ExtensionData> extensions) {
         appendableExtensionMap.putAll(project, extensions);
     }
 
@@ -133,7 +133,7 @@ public class EnsurePluginSupport {
         if (!appendableExtensionMap.isEmpty()) {
             // iterate over the contributed extensions, remove the removables
             for (IProject proj : appendableExtensionMap.keySet()) {
-                Iterable<IPluginExtension> extensions = appendableExtensionMap.get(proj);
+                Iterable<ExtensionData> extensions = appendableExtensionMap.get(proj);
                 Collection<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
                 if (!removableExtensions.isEmpty()) {
                     removeSameExtensions(removableExtensions, extensions);
@@ -144,7 +144,7 @@ public class EnsurePluginSupport {
             for (IProject proj : removableExtensionMap.keySet()) {
                 if (!appendableExtensionMap.containsKey(proj)) {
                     Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
-                    Iterable<IPluginExtension> extensions = Lists.newArrayList();
+                    Iterable<ExtensionData> extensions = Lists.newArrayList();
                     ProjectGenerationHelper.ensureExtensions(proj, extensions, removableExtensions);
                 }
             }
@@ -153,15 +153,15 @@ public class EnsurePluginSupport {
             // remove all previous extension
             for (IProject proj : removableExtensionMap.keySet()) {
                 Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);
-                Iterable<IPluginExtension> extensions = Lists.newArrayList();
+                Iterable<ExtensionData> extensions = Lists.newArrayList();
                 ProjectGenerationHelper.ensureExtensions(proj, extensions, removableExtensions);
             }
         }
     }
 
-    private void removeSameExtensions(Collection<Pair<String, String>> removeFrom, Iterable<IPluginExtension> searchList) {
+    private void removeSameExtensions(Collection<Pair<String, String>> removeFrom, Iterable<ExtensionData> searchList) {
         // not remove a removable if exist in the current extension map
-        for (final IPluginExtension ext : searchList) {
+        for (final ExtensionData ext : searchList) {
             Pair<String, String> found = IterableExtensions.findFirst(removeFrom,
                     new Functions.Function1<Pair<String, String>, Boolean>() {
                         @Override

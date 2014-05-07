@@ -26,19 +26,20 @@ class GenerateQuerySpecificationExtension {
 
 	@Inject	IJvmModelAssociations associations
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
+	@Inject extension ExtensionGenerator exGen
 
-	def extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+	def extensionContribution(Pattern pattern) {
 		newArrayList(
-		exGen.contribExtension(pattern.fullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
-			exGen.contribElement(it, "matcher") [
-				exGen.contribAttribute(it, "id", pattern.fullyQualifiedName)
+		contribExtension(pattern.fullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
+			contribElement(it, "matcher") [
+				contribAttribute(it, "id", pattern.fullyQualifiedName)
 
 				val querySpecificationClass = associations.getJvmElements(pattern).
 				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType
 				val providerClass = querySpecificationClass.members.
 				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.querySpecificationProviderClassName)]) as JvmIdentifiableElement
 
-				exGen.contribAttribute(it, "querySpecificationProvider", providerClass.qualifiedName)
+				contribAttribute(it, "querySpecificationProvider", providerClass.qualifiedName)
 			]
 		]
 		)

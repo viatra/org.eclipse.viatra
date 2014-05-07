@@ -14,8 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
-import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.incquery.tooling.core.generator.ExtensionData;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Pair;
 
@@ -62,16 +61,14 @@ public interface IGenerationFragment {
      */
     void cleanUp(Pattern pattern, IFileSystemAccess fsa);
 
-    // public Iterable<JvmGenericType> inferFiles(Pattern pattern);
     /**
      * Returns a collection of extension contributions for the selected pattern. The {@link ExtensionGeneration}
      * parameter provides a builder API for Xtend-based generators to have a readable generator.
      *
      * @param pattern
-     * @param exGen
      * @return a collection of plugin extensions
      */
-    Iterable<IPluginExtension> extensionContribution(Pattern pattern, ExtensionGenerator exGen);
+    Iterable<ExtensionData> extensionContribution(Pattern pattern);
 
     /**
      * Returns a collections of extensions, that need to be removed from the plugin.xml.

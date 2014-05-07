@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.incquery.runtime.IncQueryRuntimePlugin;
+import org.eclipse.incquery.tooling.core.generator.ExtensionData;
 import org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -478,7 +479,7 @@ public abstract class ProjectGenerationHelper {
      * @param contributedExtensions
      * @throws CoreException
      */
-    public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions,
+    public static void ensureExtensions(IProject project, Iterable<ExtensionData> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions) throws CoreException {
         ensureExtensions(project, contributedExtensions, removedExtensions, new NullProgressMonitor());
     }
@@ -495,7 +496,7 @@ public abstract class ProjectGenerationHelper {
      * @param monitor
      * @throws CoreException
      */
-    public static void ensureExtensions(IProject project, Iterable<IPluginExtension> contributedExtensions,
+    public static void ensureExtensions(IProject project, Iterable<ExtensionData> contributedExtensions,
             Iterable<Pair<String, String>> removedExtensions, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
         		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
@@ -503,84 +504,13 @@ public abstract class ProjectGenerationHelper {
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
         }
-        Multimap<String, IPluginExtension> extensionMap = ArrayListMultimap.create();
-        for (IPluginExtension extension : contributedExtensions) {
-            extensionMap.put(extension.getId(), extension);
-        }
-        // XXX Using two APIs to extension generation: one to read and one to
-        // write
-        IFile pluginXml = PDEProject.getPluginXml(project);
-        IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(project);
-        WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
-        fModel.setEditable(true);
-        fModel.load();
-        // Storing a write-only plugin.xml model
-        IExtensions extensions = fModel.getExtensions();
-        // Storing a read-only plugin.xml model
-        if (plugin != null) {
-            IExtensions readExtension = plugin.getExtensions();
-            nextExtension: for (final IPluginExtension extension : readExtension.getExtensions()) {
-                String id = getExtensionId(extension, project);
-                String prefixedId = project.getName() + "." + id;
-                boolean extensionToCreateFound =
-                        isExtensionInMap(extensionMap, extension, extension.getId())
-                     || isExtensionInMap(extensionMap, extension, id)
-                     || isExtensionInMap(extensionMap, extension, prefixedId);
-                if (extensionToCreateFound) {
-                    //Replaced with a new instance - do not copy
-                    continue nextExtension;
-                }
-                // remove if contained in the removables
-                final String extensionId = id;
-                Pair<String, String> removable = Iterables.find(removedExtensions,
-                        new Predicate<Pair<String, String>>() {
-                            @Override
-                            public boolean apply(Pair<String, String> p) {
-                                return p.getKey().equals(extensionId) && p.getValue().equals(extension.getPoint());
-                            }
-                        }, null);
-
-                if (removable == null) {
-                    // XXX cloning extensions to remove project name prefixes
-                    IPluginExtension cloneExtension = fModel.createExtension();
-                    cloneExtension.setId(id);
-                    String name = extension.getName();
-                    if (name != null && !name.isEmpty()) {
-                        cloneExtension.setName(name);
-                    }
-                    cloneExtension.setPoint(extension.getPoint());
-                    for (IPluginObject obj : extension.getChildren()) {
-                        cloneExtension.add(obj);
-                    }
-                    cloneExtension.setInTheModel(true);
-                    extensions.add(cloneExtension);
-                }
-            }
-            for (IPluginExtensionPoint point : readExtension.getExtensionPoints()) {
-                extensions.add(point);
-            }
-        }
-        for (IPluginExtension contribExtension : contributedExtensions) {
-            extensions.add(contribExtension);
-            contribExtension.setInTheModel(true);
-        }
-        fModel.save();
+        PluginXmlModifier modifier = new PluginXmlModifier();
+        modifier.loadPluginXml(project);
+        modifier.removeExtensions(removedExtensions);
+        modifier.addExtensions(contributedExtensions);
+        modifier.savePluginXml();
     }
-
-    private static boolean isExtensionInMap(Multimap<String, IPluginExtension> extensionMap,
-            final IPluginExtension extension, String id) {
-        boolean extensionToCreateFound = false;
-        if (extensionMap.containsKey(id)) {
-            extensionToCreateFound = Iterables.any(extensionMap.get(id), new Predicate<IPluginExtension>() {
-                @Override
-                public boolean apply(IPluginExtension ex) {
-                    return ex.getPoint().equals(extension.getPoint());
-                }
-            });
-        }
-        return extensionToCreateFound;
-    }
-
+    
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
      *
@@ -608,83 +538,10 @@ public abstract class ProjectGenerationHelper {
         if (StringExtensions.isNullOrEmpty(project.getName())) {
             return;
         }
-        IFile pluginXml = PDEProject.getPluginXml(project);
-        IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(project);
-        WorkspacePluginModel fModel = new WorkspacePluginModel(pluginXml, false);
-        fModel.setEditable(true);
-        fModel.load();
-        // Storing a write-only plugin.xml model
-        IExtensions extensions = fModel.getExtensions();
-        if (plugin != null) {
-            // Storing a read-only plugin.xml model
-            IExtensions readExtension = plugin.getExtensions();
-            for (final IPluginExtension extension : readExtension.getExtensions()) {
-                String id = getExtensionId(extension, project);
-                if (id == null || !isRemovableExtension(id, extension.getPoint(), removableExtensionIdentifiers)) {
-                    // XXX cloning extensions to remove project name prefixes
-                    IPluginExtension cloneExtension = fModel.createExtension();
-                    cloneExtension.setId(id);
-                    cloneExtension.setName(extension.getName());
-                    cloneExtension.setPoint(extension.getPoint());
-                    for (IPluginObject obj : extension.getChildren()) {
-                        cloneExtension.add(obj);
-                    }
-                    cloneExtension.setInTheModel(true);
-                    extensions.add(cloneExtension);
-                }
-            }
-            // add extension points
-            for (IPluginExtensionPoint point : readExtension.getExtensionPoints()) {
-                extensions.add(point);
-            }
-        }
-        fModel.save();
-    }
-
-    /**
-     * Returns true if the extension is removable from the plugin.xml. If the extension id is prefixed with one of the
-     * identifier prefix and the pointId is equals with the extension's point id, then the extension will be removed. If
-     * the prefix is null or empty, only the pointId equality is necessary for the removal.
-     *
-     * @param extensionId
-     * @param pointId
-     * @param removableExtensionIdentifiers
-     * @return
-     */
-    private static boolean isRemovableExtension(final String extensionId, final String pointId,
-            Collection<Pair<String, String>> removableExtensionIdentifiers) {
-        Pair<String, String> foundOne = IterableExtensions.findFirst(removableExtensionIdentifiers,
-                new Functions.Function1<Pair<String, String>, Boolean>() {
-                    @Override
-                    public Boolean apply(Pair<String, String> p) {
-                        if (StringExtensions.isNullOrEmpty(p.getKey())) {
-                            return pointId.equals(p.getValue());
-                        }
-                        return extensionId.startsWith(p.getKey()) && pointId.equals(p.getValue());
-                    }
-                });
-        return foundOne != null;
-    }
-
-    /**
-     * Returns the extension Id. If the extension does not contain the plug-in name, it becomes prefixed with it.
-     *
-     * @param extension
-     * @param project
-     * @return
-     */
-    private static String getExtensionId(IPluginExtension extension, IProject project) {
-        String id = extension.getId();
-//        if (!id.contains(".")) {
-//           return project.getName() + "." + id;
-//        }
-        if (id != null && id.startsWith(project.getName())) {
-            int beginIndex = project.getName().length() + 1;
-            if (beginIndex >= 0) {
-                id = id.substring(beginIndex);
-            }
-        }
-        return id;
+        PluginXmlModifier modifier = new PluginXmlModifier();
+        modifier.loadPluginXml(project);
+        modifier.removeExtensions(removableExtensionIdentifiers);
+        modifier.savePluginXml();
     }
 
     /**

@@ -42,6 +42,8 @@ implements IGenerationFragment {
 
 	@Inject
 	private IErrorFeedback feedback
+	
+	@Inject extension ExtensionGenerator exGen
 
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
 	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
@@ -113,20 +115,20 @@ implements IGenerationFragment {
 		"validation"
 	}
 
-	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+	override extensionContribution(Pattern pattern) {
 		val extensionList = newArrayList(
-      exGen.contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
+      contribExtension(pattern.constraintContributionId, VALIDATION_EXTENSION_POINT) [
         for(ann : pattern.annotations){
           if(ann.name == annotationLiteral){
-            exGen.contribElement(it, "constraint") [
-              exGen.contribAttribute(it, "class", pattern.constraintClassName(ann))
-              exGen.contribAttribute(it, "name", pattern.fullyQualifiedName)
+            contribElement(it, "constraint") [
+              contribAttribute(it, "class", pattern.constraintClassName(ann))
+              contribAttribute(it, "name", pattern.fullyQualifiedName)
 
               val editorIds = ann.getAnnotationParameterValue("targetEditorId")
               for (id : editorIds){
                 val editorId = (id as StringValue).value
-                exGen.contribElement(it, "enabledForEditor")[
-                  exGen.contribAttribute(it, "editorId", editorId)
+                contribElement(it, "enabledForEditor")[
+                  contribAttribute(it, "editorId", editorId)
                 ]
               }
 
@@ -137,8 +139,8 @@ implements IGenerationFragment {
 
                 if (genPackage != null) {
                   val editorId = genPackage.qualifiedEditorClassName+"ID";
-                  exGen.contribElement(it, "enabledForEditor")[
-                    exGen.contribAttribute(it, "editorId", editorId)
+                  contribElement(it, "enabledForEditor")[
+                    contribAttribute(it, "editorId", editorId)
                   ]
                 }
               }

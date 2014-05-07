@@ -11,43 +11,31 @@
 
 package org.eclipse.incquery.tooling.core.generator
 
-import org.eclipse.pde.core.plugin.IExtensionsModelFactory
-import org.eclipse.pde.core.plugin.IPluginExtension
-import org.eclipse.pde.core.plugin.IPluginElement
-import org.eclipse.pde.core.plugin.IPluginObject
-import org.eclipse.core.resources.IProject
-import org.eclipse.core.resources.IFile
-import org.eclipse.pde.internal.core.project.PDEProject
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel
-import org.eclipse.pde.core.plugin.IPluginParent
+import org.eclipse.incquery.tooling.core.project.XmlDocumentHelper
+import org.w3c.dom.Document
+import org.w3c.dom.Element
 
 class ExtensionGenerator {
 	
-	IExtensionsModelFactory factory
+	Document document = XmlDocumentHelper.emptyXmlDocument
 	
-	def setProject(IProject project) {
-		val IFile plugin = PDEProject::getPluginXml(project)
-		val fModel = new WorkspacePluginModel(plugin, true)
-		factory = fModel.factory
-	}
-	
-	def contribExtension(String id, String point, (IPluginExtension) => void initializer) {
-		val ex = factory.createExtension
-		ex.id = id
-		ex.point = point
+	def contribExtension(String id, String point, (Element) => void initializer) {
+		val ex = document.createElement("extension")
+		ex.setAttribute("id", id)
+		
+		ex.setAttribute("point", point)
 		ex.init(initializer)
+		ex.normalize
+		new ExtensionData(ex)
 	}
 	
-	def contribElement(IPluginObject parent, String name, (IPluginElement) => void initializer) {
-		val el = factory.createElement(parent)
-		el.name = name
-		if (parent instanceof IPluginParent) {
-			(parent as IPluginParent).add(el)
-		}
+	def contribElement(Element parent, String name, (Element) => void initializer) {
+		val el = document.createElement(name)
+		parent.appendChild(el)
 		el.init(initializer)
 	}
 	
-	def contribAttribute(IPluginElement element, String name, String value) {
+	def contribAttribute(Element element, String name, String value) {
 		element.setAttribute(name, value)
 	}
 	

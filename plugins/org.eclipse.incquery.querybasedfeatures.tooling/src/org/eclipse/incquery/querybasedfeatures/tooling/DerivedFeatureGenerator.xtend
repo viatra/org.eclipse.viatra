@@ -70,6 +70,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	@Inject extension DerivedFeatureSourceCodeUtil
 	@Inject Logger logger
 	@Inject IErrorFeedback errorFeedback
+	@Inject extension ExtensionGenerator exGen
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 
 	/* usage: @DerivedFeature(
@@ -590,17 +591,17 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		rewrite.replace(oldBody, newBody, null)
 	}
 
-	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
+	override extensionContribution(Pattern pattern) {
 		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
 			// create wellbehaving extension using nsUri, classifier name and feature name
 			try{
 				val parameters = pattern.processDerivedFeatureAnnotation(false)
 				val wellbehaving = newArrayList(
-				exGen.contribExtension(pattern.derivedContributionId, DERIVED_EXTENSION_POINT) [
-					exGen.contribElement(it, "wellbehaving-derived-feature") [
-						exGen.contribAttribute(it, "package-nsUri", (parameters.get("package") as GenPackage).NSURI)
-						exGen.contribAttribute(it, "classifier-name", (parameters.get("source") as EClass).name)
-						exGen.contribAttribute(it, "feature-name", (parameters.get("feature") as EStructuralFeature).name)
+				contribExtension(pattern.derivedContributionId, DERIVED_EXTENSION_POINT) [
+					contribElement(it, "wellbehaving-derived-feature") [
+						contribAttribute(it, "package-nsUri", (parameters.get("package") as GenPackage).NSURI)
+						contribAttribute(it, "classifier-name", (parameters.get("source") as EClass).name)
+						contribAttribute(it, "feature-name", (parameters.get("feature") as EStructuralFeature).name)
 					]
 				]
 				)

@@ -37,6 +37,7 @@ import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.tooling.core.generator.ExtensionData;
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.incquery.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment;
@@ -51,6 +52,7 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
 import org.eclipse.xtext.util.Pair;
+import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -166,8 +168,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             return;
         }
         final IProject project = context.getBuiltProject();
-        ExtensionGenerator extensionGenerator = new ExtensionGenerator();
-        extensionGenerator.setProject(project);
         calculateEMFModelProjects(deltaResource, project);
         TreeIterator<EObject> it = deltaResource.getAllContents();
         while (it.hasNext()) {
@@ -177,8 +177,8 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
                 if (isPublic || CorePatternLanguageHelper.hasXBaseExpression(pattern)) {
                     if (isPublic) {
-                        Iterable<IPluginExtension> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
-                                .extensionContribution(pattern, extensionGenerator);
+                        Iterable<ExtensionData> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
+                                .extensionContribution(pattern);
                         ensureSupport.appendAllExtension(project, querySpecificationExtensionContribution);
                     }
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
@@ -236,9 +236,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport.createProjectFileSystemAccess(targetProject);
         fragment.generateFiles(pattern, fsa);
         // Generating Eclipse extensions
-        ExtensionGenerator exGenerator = new ExtensionGenerator();
-        exGenerator.setProject(targetProject);
-        Iterable<IPluginExtension> extensionContribution = fragment.extensionContribution(pattern, exGenerator);
+        Iterable<ExtensionData> extensionContribution = fragment.extensionContribution(pattern);
         // Gathering all registered extensions together to avoid unnecessary
         // plugin.xml modifications
         // Both for performance and for avoiding race conditions

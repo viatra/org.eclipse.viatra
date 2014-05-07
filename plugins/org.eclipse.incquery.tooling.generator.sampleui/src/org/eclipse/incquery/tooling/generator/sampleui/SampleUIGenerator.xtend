@@ -18,7 +18,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.pde.core.plugin.IPluginExtension
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.lib.Pair
 
@@ -33,6 +32,7 @@ class SampleUIGenerator implements IGenerationFragment {
 	public static val String UI_COMMANDS_PREFIX = "generated.incquery.command."
 	public static val String UI_HANDLERS_PREFIX = "generated.incquery.handler."
 	public static val String UI_MENUS_PREFIX = "generated.incquery.menu."
+	@Inject extension ExtensionGenerator exGen = new ExtensionGenerator
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 		fsa.generateFile(pattern.handlerClassJavaFile, pattern.patternHandler)
@@ -73,50 +73,50 @@ class SampleUIGenerator implements IGenerationFragment {
 		"ui"
 	}
 
-	override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-		val menuContribution = pattern.menuContribution(exGen)
+	override extensionContribution(Pattern pattern) {
+		val menuContribution = pattern.menuContribution
 		newArrayList(
-		exGen.contribExtension(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT) [
-			exGen.contribElement(it, "command") [
-				exGen.contribAttribute(it, "id", pattern.commandId)
-				exGen.contribAttribute(it, "name", "Get All Matches for " + pattern.fullyQualifiedName)
-				exGen.contribAttribute(it, "categoryId", "org.eclipse.incquery.tooling.category")
+		contribExtension(pattern.commandExtensionId, ECLIPSE_UI_COMMANDS_EXTENSION_POINT) [
+			contribElement(it, "command") [
+				contribAttribute(it, "id", pattern.commandId)
+				contribAttribute(it, "name", "Get All Matches for " + pattern.fullyQualifiedName)
+				contribAttribute(it, "categoryId", "org.eclipse.incquery.tooling.category")
 			]
 		],
-		exGen.contribExtension(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT) [
-			exGen.contribElement(it, "handler") [
-				exGen.contribAttribute(it, "commandId", pattern.commandId)
-				exGen.contribAttribute(it, "class", pattern.handlerClassName)
+		contribExtension(pattern.handlerExtensionId, ECLIPSE_UI_HANDLERS_EXTENSION_POINT) [
+			contribElement(it, "handler") [
+				contribAttribute(it, "commandId", pattern.commandId)
+				contribAttribute(it, "class", pattern.handlerClassName)
 			]
 		],
 		menuContribution
 		)
 	}
 
-	def IPluginExtension menuContribution(Pattern pattern, ExtensionGenerator exGen) {
+	def menuContribution(Pattern pattern) {
 		val fileExtension = pattern.handlerFileExtension
 		if (fileExtension.nullOrEmpty) {
 			throw new IllegalArgumentException("FileExtension must be defined for Handler annotation in pattern: " + pattern.fullyQualifiedName);
 		}
-		exGen.contribExtension(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT) [
-			exGen.contribElement(it, "menuContribution") [
-				exGen.contribAttribute(it, "locationURI", "popup:org.eclipse.ui.popup.any")
-				exGen.contribElement(it, "menu") [
-					exGen.contribAttribute(it, "label", "EMF-IncQuery")
-					exGen.contribElement(it, "command") [
-						exGen.contribAttribute(it, "commandId", pattern.commandId)
-						exGen.contribAttribute(it, "style", "push")
-						exGen.contribElement(it, "visibleWhen") [
-							exGen.contribAttribute(it, "checkEnabled", "false")
-							exGen.contribElement(it, "with") [
-								exGen.contribAttribute(it, "variable", "selection")
-								exGen.contribElement(it, "iterate") [
-									exGen.contribAttribute(it, "ifEmpty", "false")
-									exGen.contribElement(it, "adapt") [
-										exGen.contribAttribute(it, "type", "org.eclipse.core.resources.IFile")
-										exGen.contribElement(it, "test") [
-											exGen.contribAttribute(it, "property", "org.eclipse.core.resources.name")
-											exGen.contribAttribute(it, "value", String::format("*.%s", fileExtension))
+		contribExtension(pattern.menuExtensionId, ECLIPSE_UI_MENUS_EXTENSION_POINT) [
+			contribElement(it, "menuContribution") [
+				contribAttribute(it, "locationURI", "popup:org.eclipse.ui.popup.any")
+				contribElement(it, "menu") [
+					contribAttribute(it, "label", "EMF-IncQuery")
+					contribElement(it, "command") [
+						contribAttribute(it, "commandId", pattern.commandId)
+						contribAttribute(it, "style", "push")
+						contribElement(it, "visibleWhen") [
+							contribAttribute(it, "checkEnabled", "false")
+							contribElement(it, "with") [
+								contribAttribute(it, "variable", "selection")
+								contribElement(it, "iterate") [
+									contribAttribute(it, "ifEmpty", "false")
+									contribElement(it, "adapt") [
+										contribAttribute(it, "type", "org.eclipse.core.resources.IFile")
+										contribElement(it, "test") [
+											contribAttribute(it, "property", "org.eclipse.core.resources.name")
+											contribAttribute(it, "value", String::format("*.%s", fileExtension))
 										]
 									]
 								]

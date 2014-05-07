@@ -38,6 +38,7 @@ import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
+import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.incquery.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
@@ -193,5 +194,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
         return EMFPatternLanguageTemplateProposalProvider.class;
+    }
+    
+    public Class<? extends ExtensionGenerator> bindExtensionGenerator() {
+        return ExtensionGenerator.class;
     }
 }
