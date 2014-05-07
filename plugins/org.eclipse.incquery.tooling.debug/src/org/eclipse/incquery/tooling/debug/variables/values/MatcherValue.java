@@ -76,6 +76,11 @@ public class MatcherValue extends IncQueryDebugValue {
             }
             return fVariables;
         }
-
+    }
+ 
+    @Override
+    public String getValueString() throws DebugException {
+        String label = getLabel();
+        return (label == null ? super.getValueString() : label);
     }
 }

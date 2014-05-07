@@ -60,4 +60,5 @@ public abstract class IncQueryDebugValue extends JDIValue {
      * @return the String representation of the value
      */
     public abstract String getLabel();
+  
 }

@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ArrayReference;
+import com.sun.jdi.BooleanValue;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
@@ -88,6 +89,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
         if (cachedLabel == null) {
             try {
                 ObjectReference object = (ObjectReference) this.fValue;
+                BooleanValue isManaged = (BooleanValue) IncQueryDebugUtil.invokeMethod(threadReference, object, "isManaged");
                 ObjectReference emfRoot = (ObjectReference) IncQueryDebugUtil.getField(object, "emfRoot");
                 ObjectReference resourceSet = null;
 
@@ -106,7 +108,11 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                 ObjectReference resources = (ObjectReference) IncQueryDebugUtil.getField(resourceSet, "resources");
                 ArrayReference data = (ArrayReference) IncQueryDebugUtil.getField(resources, "data");
 
-                StringBuilder sb = new StringBuilder("IncQueryEngine on ");
+                StringBuilder sb = new StringBuilder();
+                if (!isManaged.booleanValue()) {
+                    sb.append("Advanced");
+                }
+                sb.append("IncQueryEngine on ");
 
                 for (Value resource : data.getValues()) {
                     if (resource != null) {

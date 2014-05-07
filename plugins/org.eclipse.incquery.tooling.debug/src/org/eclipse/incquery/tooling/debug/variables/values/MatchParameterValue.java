@@ -109,4 +109,9 @@ public class MatchParameterValue extends IncQueryDebugValue {
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public String getValueString() throws DebugException {
+        return super.getValueString();
+    }
 }

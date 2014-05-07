@@ -29,7 +29,6 @@ import com.sun.jdi.Value;
 @SuppressWarnings("restriction")
 public class IncQueryDebugVariable extends JDIVariable {
 
-    private Value jdiValue;
     private IValue modelValue;
     
     public IncQueryDebugVariable(JDIDebugTarget target) {
@@ -73,16 +72,12 @@ public class IncQueryDebugVariable extends JDIVariable {
 
     @Override
     protected Value retrieveValue() throws DebugException {
-        return this.jdiValue;
+        return null;
     }
 
     @Override
     protected Type getUnderlyingType() throws DebugException {
-        try {
-            return this.jdiValue.type();
-        } catch (RuntimeException e) {
-            return null;
-        }
+        return null;
     }
     
     @Override

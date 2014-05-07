@@ -29,16 +29,17 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IPatternMatch} instance. 
- * Children variables will be the pattern match parameters.
+ * The value of an IncQuery Debug Variable which represents an {@link IPatternMatch} instance. Children variables will
+ * be the pattern match parameters.
  * 
  * @author Tamas Szabo (itemis AG)
- *
+ * 
  */
 @SuppressWarnings("restriction")
 public class MatchValue extends IncQueryDebugValue {
 
-    public MatchValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value, String... additionalData) {
+    public MatchValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value,
+            String... additionalData) {
         super(debugTarget, threadReference, value, additionalData);
     }
 
@@ -50,13 +51,16 @@ public class MatchValue extends IncQueryDebugValue {
             try {
                 ObjectReference object = (ObjectReference) fValue;
                 fVariables = new ArrayList<IJavaVariable>();
-                ArrayReference parameters = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, object, "toArray");
-                ObjectReference parameterNames = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference, object, "parameterNames");
-                ArrayReference list = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, parameterNames, "toArray");
-                
+                ArrayReference parameters = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, object,
+                        "toArray");
+                ObjectReference parameterNames = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference,
+                        object, "parameterNames");
+                ArrayReference list = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, parameterNames,
+                        "toArray");
+
                 for (int i = 0; i < parameters.length(); i++) {
                     IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
-                    MatchParameterValue value = new MatchParameterValue(debugTarget, threadReference, 
+                    MatchParameterValue value = new MatchParameterValue(debugTarget, threadReference,
                             parameters.getValue(i), ((StringReference) list.getValue(i)).value());
                     var.setValue(value);
                     fVariables.add(var);
@@ -73,5 +77,16 @@ public class MatchValue extends IncQueryDebugValue {
     @Override
     public String getLabel() {
         return "match";
+    }
+
+    @Override
+    public String getValueString() throws DebugException {
+        ObjectReference value = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference,
+                (ObjectReference) fValue, "prettyPrint");
+        if (value != null) {
+            return ((StringReference) value).value();
+        } else {
+            return super.getValueString();
+        }
     }
 }
