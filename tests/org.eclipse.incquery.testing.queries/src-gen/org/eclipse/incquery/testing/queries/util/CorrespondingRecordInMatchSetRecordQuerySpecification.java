@@ -4,10 +4,11 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -17,7 +18,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecordMatcher;
 import org.eclipse.incquery.testing.queries.util.CorrespondingRecordsQuerySpecification;
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.incquery.testing.queries.util.CorrespondingRecordsQuerySpecif
  * 
  */
 @SuppressWarnings("all")
-public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends BaseGeneratedQuerySpecification<CorrespondingRecordInMatchSetRecordMatcher> {
+final class CorrespondingRecordInMatchSetRecordQuerySpecification extends BaseGeneratedQuerySpecification<IncQueryMatcher<IPatternMatch>> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -40,8 +40,8 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
   }
   
   @Override
-  protected CorrespondingRecordInMatchSetRecordMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
-    return CorrespondingRecordInMatchSetRecordMatcher.on(engine);
+  protected IncQueryMatcher<IPatternMatch> instantiate(final IncQueryEngine engine) throws IncQueryException {
+    throw new UnsupportedOperationException();
   }
   
   @Override
@@ -84,15 +84,6 @@ public final class CorrespondingRecordInMatchSetRecordQuerySpecification extends
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<CorrespondingRecordInMatchSetRecordQuerySpecification> {
-    @Override
-    public CorrespondingRecordInMatchSetRecordQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

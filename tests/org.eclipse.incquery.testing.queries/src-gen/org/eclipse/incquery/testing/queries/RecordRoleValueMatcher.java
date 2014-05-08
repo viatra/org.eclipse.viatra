@@ -29,6 +29,15 @@ import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecificati
  * 
  * <p>Original source:
  * <code><pre>
+ * pattern NotFoundMatchRecord(
+ * 	ActualSet : MatchSetRecord,
+ * 	ExpectedSet : MatchSetRecord,
+ * 	Record : MatchRecord
+ * ) = {
+ * 	MatchSetRecord.matches(ExpectedSet, Record);
+ * 	neg find CorrespondingRecordInMatchSetRecord(Record, CorrespodingRecord, ActualSet);
+ * }
+ * 
  * {@literal @}QueryExplorer(display = false)
  * {@literal @}QueryBasedFeature(feature = "role")
  * pattern RecordRoleValue(

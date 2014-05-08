@@ -1,72 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.4"?><plugin>
 
-   <extension
-         id="org.eclipse.incquery.testing.queries.IncorrectSubstitution"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.IncorrectSubstitutionQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.IncorrectSubstitution">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.testing.queries.CorrespondingRecords"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.CorrespondingRecordsQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.CorrespondingRecords">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecord">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.testing.queries.RecordRoleValue"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.RecordRoleValue">
-      </matcher>
-   </extension>
-   <extension
-         id="extension.derived.org.eclipse.incquery.testing.queries.RecordRoleValue"
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="MatchRecord"
-            feature-name="role"
-            package-nsUri="http://www.eclipse.org/incquery/snapshot">
-      </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.testing.queries.SubstitutionValue"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification$Provider"
-            id="org.eclipse.incquery.testing.queries.SubstitutionValue">
-      </matcher>
-   </extension>
-   <extension
-         id="extension.derived.org.eclipse.incquery.testing.queries.SubstitutionValue"
-         point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-      <wellbehaving-derived-feature
-            classifier-name="MatchSubstitutionRecord"
-            feature-name="derivedValue"
-            package-nsUri="http://www.eclipse.org/incquery/snapshot">
-      </wellbehaving-derived-feature>
-   </extension>
+   
+   
+   
+   <extension id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord" point="org.eclipse.incquery.runtime.queryspecification">
+    <matcher id="org.eclipse.incquery.testing.queries.UnexpectedMatchRecord" querySpecificationProvider="org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpecification$Provider"/>
+  </extension>
+   <extension id="org.eclipse.incquery.testing.queries.RecordRoleValue" point="org.eclipse.incquery.runtime.queryspecification">
+    <matcher id="org.eclipse.incquery.testing.queries.RecordRoleValue" querySpecificationProvider="org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification$Provider"/>
+  </extension>
+   <extension id="extension.derived.org.eclipse.incquery.testing.queries.RecordRoleValue" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="MatchRecord" feature-name="role" package-nsUri="http://www.eclipse.org/incquery/snapshot"/>
+  </extension>
+   <extension id="org.eclipse.incquery.testing.queries.SubstitutionValue" point="org.eclipse.incquery.runtime.queryspecification">
+    <matcher id="org.eclipse.incquery.testing.queries.SubstitutionValue" querySpecificationProvider="org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification$Provider"/>
+  </extension>
+   <extension id="extension.derived.org.eclipse.incquery.testing.queries.SubstitutionValue" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="MatchSubstitutionRecord" feature-name="derivedValue" package-nsUri="http://www.eclipse.org/incquery/snapshot"/>
+  </extension>
 
 </plugin>

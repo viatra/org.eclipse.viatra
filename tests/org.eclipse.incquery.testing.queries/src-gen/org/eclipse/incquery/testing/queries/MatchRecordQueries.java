@@ -3,15 +3,9 @@ package org.eclipse.incquery.testing.queries;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.testing.queries.CorrespondingRecordInMatchSetRecordMatcher;
-import org.eclipse.incquery.testing.queries.CorrespondingRecordsMatcher;
-import org.eclipse.incquery.testing.queries.IncorrectSubstitutionMatcher;
 import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
 import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
-import org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification;
-import org.eclipse.incquery.testing.queries.util.CorrespondingRecordsQuerySpecification;
-import org.eclipse.incquery.testing.queries.util.IncorrectSubstitutionQuerySpecification;
 import org.eclipse.incquery.testing.queries.util.RecordRoleValueQuerySpecification;
 import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecification;
 import org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpecification;
@@ -55,37 +49,10 @@ public final class MatchRecordQueries extends BaseGeneratedPatternGroup {
   private static MatchRecordQueries INSTANCE;
   
   private MatchRecordQueries() throws IncQueryException {
-    querySpecifications.add(IncorrectSubstitutionQuerySpecification.instance());
-    querySpecifications.add(CorrespondingRecordsQuerySpecification.instance());
-    querySpecifications.add(CorrespondingRecordInMatchSetRecordQuerySpecification.instance());
     querySpecifications.add(UnexpectedMatchRecordQuerySpecification.instance());
     querySpecifications.add(RecordRoleValueQuerySpecification.instance());
     querySpecifications.add(SubstitutionValueQuerySpecification.instance());
     
-  }
-  
-  public IncorrectSubstitutionQuerySpecification getIncorrectSubstitution() throws IncQueryException {
-    return IncorrectSubstitutionQuerySpecification.instance();
-  }
-  
-  public IncorrectSubstitutionMatcher getIncorrectSubstitution(final IncQueryEngine engine) throws IncQueryException {
-    return IncorrectSubstitutionMatcher.on(engine);
-  }
-  
-  public CorrespondingRecordsQuerySpecification getCorrespondingRecords() throws IncQueryException {
-    return CorrespondingRecordsQuerySpecification.instance();
-  }
-  
-  public CorrespondingRecordsMatcher getCorrespondingRecords(final IncQueryEngine engine) throws IncQueryException {
-    return CorrespondingRecordsMatcher.on(engine);
-  }
-  
-  public CorrespondingRecordInMatchSetRecordQuerySpecification getCorrespondingRecordInMatchSetRecord() throws IncQueryException {
-    return CorrespondingRecordInMatchSetRecordQuerySpecification.instance();
-  }
-  
-  public CorrespondingRecordInMatchSetRecordMatcher getCorrespondingRecordInMatchSetRecord(final IncQueryEngine engine) throws IncQueryException {
-    return CorrespondingRecordInMatchSetRecordMatcher.on(engine);
   }
   
   public UnexpectedMatchRecordQuerySpecification getUnexpectedMatchRecord() throws IncQueryException {
