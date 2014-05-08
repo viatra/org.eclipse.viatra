@@ -175,16 +175,17 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
             if (obj instanceof Pattern) {
                 Pattern pattern = (Pattern) obj;
                 boolean isPublic = !CorePatternLanguageHelper.isPrivate(pattern);
-                if (isPublic || CorePatternLanguageHelper.hasXBaseExpression(pattern)) {
-                    if (isPublic) {
-                        Iterable<ExtensionData> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
-                                .extensionContribution(pattern);
-                        ensureSupport.appendAllExtension(project, querySpecificationExtensionContribution);
-                    }
+                if (isPublic) {
                     executeGeneratorFragments(context.getBuiltProject(), pattern);
                     ensureSupport.exportPackage(project, util.getPackageName(pattern));
                     ensureSupport.exportPackage(project, util.getUtilPackageName(pattern));
                 }
+            } else if (obj instanceof PatternModel) {
+                PatternModel model = (PatternModel) obj;
+                Iterable<ExtensionData> querySpecificationExtensionContribution = querySpecificationExtensionGenerator
+                        .extensionContribution(model);
+                ensureSupport.appendAllExtension(project, querySpecificationExtensionContribution);
+                
             }
         }
     }

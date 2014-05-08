@@ -43,9 +43,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
 import org.eclipse.incquery.runtime.matchers.psystem.PBody
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference
@@ -60,21 +57,21 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 
 /**
@@ -90,7 +87,6 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension ITypeProvider
 	@Inject extension TypeReferences types
 	@Inject var IErrorFeedback feedback
-	@Inject extension Primitives
 	@Inject var Logger logger
 
 	/**
@@ -257,20 +253,6 @@ class PatternQuerySpecificationClassInferrer {
    	 * Infers inner class for QuerySpecification class based on the input 'pattern'.
    	 */
   	def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic) {
-  		if (isPublic) {
-  			querySpecificationClass.members += pattern.toClass(pattern.querySpecificationProviderClassName) [
-				visibility = JvmVisibility::PUBLIC
-				setStatic(true)
-				superTypes += pattern.newTypeRef(typeof(IQuerySpecificationProvider), types.createTypeRef(querySpecificationClass))
-
-				members += pattern.toMethod("get", types.createTypeRef(querySpecificationClass)) [
-					visibility = JvmVisibility::PUBLIC
-					annotations += pattern.toAnnotation(typeof (Override))
-					exceptions += pattern.newTypeRef(typeof (IncQueryException))
-					body = [append('''return instance();''')]
-				]
-			]
-		}
    		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true

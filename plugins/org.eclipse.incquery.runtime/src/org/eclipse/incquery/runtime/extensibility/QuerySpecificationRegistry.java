@@ -23,16 +23,18 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQueryGroup;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
- * Registry for generated query specifications contributed via the plug-in mechanism.
- * Allows accessing query specification instances based on the Pattern object or the fully qualified name of the pattern.
- *
+ * Registry for generated query specifications contributed via the plug-in mechanism. Allows accessing query
+ * specification instances based on the Pattern object or the fully qualified name of the pattern.
+ * 
  * @author Abel Hegedus
- *
+ * 
  */
 public final class QuerySpecificationRegistry {
     private static final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> QUERY_SPECIFICATIONS = createQuerySpecificationRegistry();
@@ -50,7 +52,8 @@ public final class QuerySpecificationRegistry {
     }
 
     // Does not use the field QUERY_SPECIFICATIONS as it may still be uninitialized
-    private static void initRegistry(Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications) {
+    private static void initRegistry(
+            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications) {
         specifications.clear();
 
         IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -70,8 +73,10 @@ public final class QuerySpecificationRegistry {
                 for (IConfigurationElement el : els) {
                     if (el.getName().equals("matcher")) {
                         prepareQuerySpecification(specifications, duplicates, el);
+                    } else if (el.getName().equals("group")) {
+                        prepareQueryGroup(specifications, duplicates, el);
                     } else {
-                    	IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
+                        IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                                 "[QuerySpecificationRegistry] Unknown configuration element " + el.getName()
                                         + " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
                     }
@@ -89,45 +94,70 @@ public final class QuerySpecificationRegistry {
         }
     }
 
-    private static void prepareQuerySpecification(Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications, Set<String> duplicates,
-            IConfigurationElement el) {
+    private static void prepareQueryGroup(
+            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
+            Set<String> duplicates, IConfigurationElement el) {
+        String id = null;
+        try {
+            id = el.getAttribute("id");
+            IQueryGroup group = (IQueryGroup) el.createExecutableExtension("group");
+            for (IQuerySpecification<?> specification : group.getSpecifications()) {
+                loadQuerySpecification(specifications, duplicates, el, specification);
+            }
+        } catch (Throwable e) {
+            // If there are serious compilation errors in the file loaded by the query registry, an error is thrown
+            if (id == null) {
+                id = "undefined in plugin.xml";
+            }
+            // TODO error logging for the user interface
+            IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
+                    "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing group: "
+                            + id + "! " + e.getMessage(), e);
+        }
+    }
+
+    private static void prepareQuerySpecification(
+            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
+            Set<String> duplicates, IConfigurationElement el) {
         String id = null;
         try {
             id = el.getAttribute("id");
             @SuppressWarnings("unchecked")
             IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> provider = (IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>) el
                     .createExecutableExtension("querySpecificationProvider");
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = provider.get();
-            String fullyQualifiedName = querySpecification.getFullyQualifiedName();
-            if (id.equals(fullyQualifiedName)) {
-                if (specifications.containsKey(fullyQualifiedName)) {
-                    duplicates.add(fullyQualifiedName);
-                } else {
-                    specifications.put(fullyQualifiedName, querySpecification);
-                }
-            } else {
-                throw new UnsupportedOperationException("Id attribute value " + id
-                        + " does not equal pattern FQN of query specification " + fullyQualifiedName + " in plugin.xml of "
-                        + el.getDeclaringExtension().getUniqueIdentifier());
-            }
+            loadQuerySpecification(specifications, duplicates, el, provider.get());
         } catch (Throwable e) {
-            //If there are serious compilation errors in the file loaded by the query registry, an error is thrown
-            if(id == null) {
+            // If there are serious compilation errors in the file loaded by the query registry, an error is thrown
+            if (id == null) {
                 id = "undefined in plugin.xml";
             }
-            //TODO error logging for the user interface
+            // TODO error logging for the user interface
             IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing ID: "
                             + id + "! " + e.getMessage(), e);
         }
     }
 
+    private static void loadQuerySpecification(
+            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
+            Set<String> duplicates, IConfigurationElement el,
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification)
+            throws IncQueryException {
+        String fullyQualifiedName = querySpecification.getFullyQualifiedName();
+        if (specifications.containsKey(fullyQualifiedName)) {
+            duplicates.add(fullyQualifiedName);
+        } else {
+            specifications.put(fullyQualifiedName, querySpecification);
+        }
+    }
+
     /**
      * Puts the specification in the registry, unless it already contains a specification for the given pattern FQN
-     *
+     * 
      * @param specification
      */
-    public static void registerQuerySpecification(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification) {
+    public static void registerQuerySpecification(
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification) {
         String qualifiedName = specification.getFullyQualifiedName();
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
@@ -142,8 +172,9 @@ public final class QuerySpecificationRegistry {
 
     /**
      * Removes the query specification from the registry which belongs to the given fully qualified pattern name.
-     *
-     * @param patternFQN the fully qualified name of the pattern
+     * 
+     * @param patternFQN
+     *            the fully qualified name of the pattern
      */
     public static void unregisterQuerySpecification(String patternFQN) {
         QUERY_SPECIFICATIONS.remove(patternFQN);
@@ -153,14 +184,18 @@ public final class QuerySpecificationRegistry {
      * @return a copy of the set of contributed query specifications
      */
     public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getContributedQuerySpecifications() {
-        return new HashSet<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(QUERY_SPECIFICATIONS.values());
+        return new HashSet<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(
+                QUERY_SPECIFICATIONS.values());
     }
 
     /**
-     * @param patternFQN the fully qualified name of a registered generated pattern
-     * @return the generated query specification of the pattern with the given fully qualified name, if it is registered, or null if there is no such generated pattern
+     * @param patternFQN
+     *            the fully qualified name of a registered generated pattern
+     * @return the generated query specification of the pattern with the given fully qualified name, if it is
+     *         registered, or null if there is no such generated pattern
      */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(String patternFQN) {
+    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(
+            String patternFQN) {
         if (QUERY_SPECIFICATIONS.containsKey(patternFQN)) {
             return QUERY_SPECIFICATIONS.get(patternFQN);
         }
@@ -168,32 +203,34 @@ public final class QuerySpecificationRegistry {
     }
 
     /**
-     * Returns the set of query specifications in a given package. Only query specifications with the exact package fully
-     * qualified name are returned.
-     *
+     * Returns the set of query specifications in a given package. Only query specifications with the exact package
+     * fully qualified name are returned.
+     * 
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications inside the given package, empty set otherwise.
      */
-    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroup(String packageFQN) {
+    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroup(
+            String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, false);
     }
 
     /**
-     * Returns the set of query specifications in a given package. query specifications with package names starting with the
-     * given package are returned.
-     *
+     * Returns the set of query specifications in a given package. query specifications with package names starting with
+     * the given package are returned.
+     * 
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications in the given package subtree, empty set otherwise.
      */
-    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(String packageFQN) {
+    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(
+            String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, true);
     }
 
     /**
      * Returns a pattern group for the given package
-     *
+     * 
      * @param packageFQN
      *            the fully qualified name of the package
      * @param includeSubPackages
@@ -201,13 +238,15 @@ public final class QuerySpecificationRegistry {
      *            if it is in the given package
      * @return the query specifications in the group
      */
-    private static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(String packageFQN, boolean includeSubPackages) {
+    private static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(
+            String packageFQN, boolean includeSubPackages) {
         Map<String, Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>> map = new HashMap<String, Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>>();
         if (map.containsKey(packageFQN)) {
             return map.get(packageFQN);
         } else {
             Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
-            for (Entry<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> entry : QUERY_SPECIFICATIONS.entrySet()) {
+            for (Entry<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> entry : QUERY_SPECIFICATIONS
+                    .entrySet()) {
                 addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
             }
             if (group.size() > 0) {
@@ -218,8 +257,9 @@ public final class QuerySpecificationRegistry {
     }
 
     /**
-     * Adds the query specification to an existing group if the package of the query specification's pattern matches the given package name.
-     *
+     * Adds the query specification to an existing group if the package of the query specification's pattern matches the
+     * given package name.
+     * 
      * @param packageFQN
      *            the fully qualified name of the package
      * @param group
@@ -232,8 +272,10 @@ public final class QuerySpecificationRegistry {
      *            if true, the pattern is added if it is in the package hierarchy, if false, the pattern is added only
      *            if it is in the given package
      */
-    private static void addPatternToGroup(String packageFQN, Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification, boolean includeSubPackages) {
+    private static void addPatternToGroup(String packageFQN,
+            Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification,
+            boolean includeSubPackages) {
         if (packageFQN.length() + 1 < patternFQN.length()) {
             if (includeSubPackages) {
                 if (patternFQN.startsWith(packageFQN + '.')) {

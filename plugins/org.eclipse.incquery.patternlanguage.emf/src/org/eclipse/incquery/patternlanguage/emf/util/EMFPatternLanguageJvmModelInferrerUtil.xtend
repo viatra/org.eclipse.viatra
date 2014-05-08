@@ -350,7 +350,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		pattern.findInferredClass(typeof (BaseGeneratedQuerySpecification))
 	}
 	
-	def findInferredClass(Pattern pattern, Class clazz) {
+	def findInferredClass(EObject pattern, Class clazz) {
 		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
 //			superTypes.forEach[println(it.qualifiedName)]
 			superTypes.exists[

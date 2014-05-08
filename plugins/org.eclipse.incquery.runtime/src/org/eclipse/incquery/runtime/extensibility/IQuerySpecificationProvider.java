@@ -14,11 +14,13 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * Provides an IQuerySpecification. Used e.g. as a plug-in extension.
+ * Provides an IQuerySpecification. Used e.g. as a plug-in extension. Not needed since IncQuery 0.8; leaving it because
+ * earlier generated code utilizes this.
  * 
  * @author Bergmann Gabor
  * 
  */
+@Deprecated()
 public interface IQuerySpecificationProvider<Specification extends IQuerySpecification<?>> {
     public Specification get() throws IncQueryException;
 }

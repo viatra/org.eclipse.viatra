@@ -8,46 +8,38 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.tooling.core.generator
 
 import com.google.inject.Inject
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.runtime.IExtensions
-import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.xtext.common.types.JvmIdentifiableElement
-import org.eclipse.xtext.common.types.JvmType
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-
-import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup
+import org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory
 
 class GenerateQuerySpecificationExtension {
 
-	@Inject	IJvmModelAssociations associations
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension ExtensionGenerator exGen
 
-	def extensionContribution(Pattern pattern) {
-		newArrayList(
-		contribExtension(pattern.fullyQualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
-			contribElement(it, "matcher") [
-				contribAttribute(it, "id", pattern.fullyQualifiedName)
-
-				val querySpecificationClass = associations.getJvmElements(pattern).
-				  findFirst[it instanceof JvmDeclaredType && (it as JvmDeclaredType).simpleName.equals(pattern.querySpecificationClassName)] as JvmDeclaredType
-				val providerClass = querySpecificationClass.members.
-				  findFirst([it instanceof JvmType && (it as JvmType).simpleName.equals(pattern.querySpecificationProviderClassName)]) as JvmIdentifiableElement
-
-				contribAttribute(it, "querySpecificationProvider", providerClass.qualifiedName)
-			]
-		]
-		)
+	def extensionContribution(PatternModel model) {
+		newImmutableList(
+			{
+				val groupClass = model.findInferredClass(typeof(BaseGeneratedPatternGroup))
+				contribExtension(groupClass.qualifiedName, IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID) [
+					contribElement(it, "group") [
+						contribAttribute(it, "id", groupClass.qualifiedName)
+						contribAttribute(it, "group",
+							typeof(SingletonExtensionFactory).canonicalName + ":" + groupClass.qualifiedName)
+					]
+				]
+			})
 	}
 
 	def static getRemovableExtensionIdentifiers() {
 		newImmutableList(
-			"" -> IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID
-		)
+			{
+				"" -> IExtensions::QUERY_SPECIFICATION_EXTENSION_POINT_ID
+			})
 	}
 }
