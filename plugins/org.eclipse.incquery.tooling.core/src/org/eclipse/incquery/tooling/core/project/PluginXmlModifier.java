@@ -108,7 +108,8 @@ public class PluginXmlModifier {
                 // New items, adding nodes to the end
                 for (ExtensionData data : cell.getValue()) {
                     document.adoptNode(data.getNode());
-                    document.appendChild(data.getNode());
+                    final Node root = document.getDocumentElement();
+                    root.appendChild(data.getNode());
                 }
             }
             extensionTable.put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
@@ -126,7 +127,7 @@ public class PluginXmlModifier {
         for (Pair<String, String> ex : removedExtensions) {
             final String id = ex.getKey();
             final String point = ex.getValue();
-            if (id == null) {
+            if (Strings.isNullOrEmpty(id)) {
                 if (extensionTable.containsColumn(point)) {
                     for (List<ExtensionData> elements : extensionTable.columnMap().get(point).values()) {
                         for (ExtensionData data : elements) {
