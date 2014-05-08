@@ -44,6 +44,7 @@ import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.xbase.compiler.XbaseCompiler
+import org.eclipse.incquery.tooling.core.generator.ExtensionData
 
 /**
  * The class is responsible for the generation of the EMF model/edit/editor/test plugin and their contents based 
@@ -78,11 +79,10 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 		val pack = resource.contents.head as XPackage
 
 		val EPackage ePackage = pack.mapping.EPackage
-		val List<IPluginExtension> extensions = Lists.newArrayList()
+		val List<ExtensionData> extensions = Lists.newArrayList()
 		val GenModel genModel = resource.contents.filter(typeof(GenModel)).head
 		val IProject project = ResourcesPlugin.workspace.root.getProject(genModel.modelPluginID);
 		val ExtensionGenerator exGen = new ExtensionGenerator
-		exGen.setProject(project)
 
 		//Set annotation for the query based feature factory
 		EcoreUtil::setAnnotation(
