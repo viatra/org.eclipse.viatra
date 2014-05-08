@@ -1,69 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin>
 
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.processTasks"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.ProcessTasksQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.processTasks">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.nextActivity"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.NextActivityQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.nextActivity">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.jobTasks"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.JobTasksQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.jobTasks">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.entryTask"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.EntryTaskQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.entryTask">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.processTasks"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.ProcessTasksQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.processTasks">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.nextActivity"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.NextActivityQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.nextActivity">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.jobTasks"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.JobTasksQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.jobTasks">
-      </matcher>
-   </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.queries.entryTask"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="org.eclipse.incquery.examples.bpm.queries.util.EntryTaskQuerySpecification$Provider"
-            id="org.eclipse.incquery.examples.bpm.queries.entryTask">
-      </matcher>
-   </extension>
+   
+   
+   
+   
 
+<extension id="org.eclipse.incquery.examples.bpm.queries.BpmTestQueries" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.bpm.queries.BpmTestQueries" id="org.eclipse.incquery.examples.bpm.queries.BpmTestQueries"/>
+  </extension>
 </plugin>

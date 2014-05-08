@@ -1,965 +1,565 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <plugin>
 
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
+   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+         <enabledForEditor editorId="process.presentation.ProcessEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
+         <enabledForEditor editorId="system.presentation.SystemEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
+         <enabledForEditor editorId="operation.presentation.OperationEditorID">
          </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
+         <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
          </enabledForEditor>
       </constraint>
    </extension>
-   <extension
-         id="validation.constraint.operation.queries.IncorrectEntryInChecklist"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.IncorrectEntryInChecklist"
-            class="operation.queries.IncorrectEntryInChecklistConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         </enabledForEditor>
-      </constraint>
-   </extension>
-   <extension
-         id="validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.TaskChecklistEntryJobCorrespondence"
-            class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         </enabledForEditor>
-      </constraint>
-   </extension>
-   <extension
-         id="validation.constraint.operation.queries.DataReadByChecklistEntry"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="operation.queries.DataReadByChecklistEntry"
-            class="operation.queries.DataReadByChecklistEntryConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         </enabledForEditor>
-      </constraint>
-   </extension>
-   <extension
-         id="validation.constraint.system.queries.UndefinedServiceTasks"
-         point="org.eclipse.incquery.validation.runtime.constraint">
-      <constraint
-            name="system.queries.UndefinedServiceTasks"
-            class="system.queries.UndefinedServiceTasksConstraint0">
-         <enabledForEditor
-               editorId="process.presentation.ProcessEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="system.presentation.SystemEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="operation.presentation.OperationEditorID">
-         </enabledForEditor>
-         <enabledForEditor
-               editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID">
-         </enabledForEditor>
-      </constraint>
-   </extension>
+   <extension id="validation.constraint.operation.queries.IncorrectEntryInChecklist" point="org.eclipse.incquery.validation.runtime.constraint">
+    <constraint class="operation.queries.IncorrectEntryInChecklistConstraint0" name="operation.queries.IncorrectEntryInChecklist">
+      <enabledForEditor editorId="process.presentation.ProcessEditorID"/>
+      <enabledForEditor editorId="system.presentation.SystemEditorID"/>
+      <enabledForEditor editorId="operation.presentation.OperationEditorID"/>
+      <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID"/>
+    </constraint>
+  </extension>
+   <extension id="validation.constraint.operation.queries.TaskChecklistEntryJobCorrespondence" point="org.eclipse.incquery.validation.runtime.constraint">
+    <constraint class="operation.queries.TaskChecklistEntryJobCorrespondenceConstraint0" name="operation.queries.TaskChecklistEntryJobCorrespondence">
+      <enabledForEditor editorId="process.presentation.ProcessEditorID"/>
+      <enabledForEditor editorId="system.presentation.SystemEditorID"/>
+      <enabledForEditor editorId="operation.presentation.OperationEditorID"/>
+      <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID"/>
+    </constraint>
+  </extension>
+   <extension id="validation.constraint.operation.queries.DataReadByChecklistEntry" point="org.eclipse.incquery.validation.runtime.constraint">
+    <constraint class="operation.queries.DataReadByChecklistEntryConstraint0" name="operation.queries.DataReadByChecklistEntry">
+      <enabledForEditor editorId="process.presentation.ProcessEditorID"/>
+      <enabledForEditor editorId="system.presentation.SystemEditorID"/>
+      <enabledForEditor editorId="operation.presentation.OperationEditorID"/>
+      <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID"/>
+    </constraint>
+  </extension>
+   <extension id="validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
+    <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
+      <enabledForEditor editorId="process.presentation.ProcessEditorID"/>
+      <enabledForEditor editorId="system.presentation.SystemEditorID"/>
+      <enabledForEditor editorId="operation.presentation.OperationEditorID"/>
+      <enabledForEditor editorId="org.eclipse.emf.ecore.presentation.EcoreEditorID"/>
+    </constraint>
+  </extension>
 
 </plugin>

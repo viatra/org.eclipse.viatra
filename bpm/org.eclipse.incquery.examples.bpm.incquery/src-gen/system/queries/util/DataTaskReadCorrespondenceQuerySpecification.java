@@ -71,8 +71,8 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
       ));
       
       
-      new TypeBinary(body, CONTEXT, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
       new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+      new TypeBinary(body, CONTEXT, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
       new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
       bodies.add(body);
     }
