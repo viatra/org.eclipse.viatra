@@ -4,6 +4,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 /**
  * A data descriptor class for describing extension contributions. The class uses a {@link Node} object to store all
@@ -31,7 +32,7 @@ public class ExtensionData {
                 point = att.getNodeValue();
             }
         }
-        Preconditions.checkArgument(point != null && point != "", "Extension must specify extension point id");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(point), "Extension must specify extension point id");
     }
 
     /**

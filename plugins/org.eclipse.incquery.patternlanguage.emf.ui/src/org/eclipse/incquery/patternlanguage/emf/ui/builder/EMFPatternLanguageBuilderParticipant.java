@@ -38,13 +38,11 @@ import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStat
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.core.generator.ExtensionData;
-import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.incquery.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.incquery.tooling.core.project.ProjectGenerationHelper;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
@@ -52,7 +50,6 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
 import org.eclipse.xtext.util.Pair;
-import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;

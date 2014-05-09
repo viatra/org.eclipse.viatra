@@ -153,14 +153,12 @@ public class PluginXmlModifier {
 
     private void loadExtensionData(Node n) {
         int type = n.getNodeType();
-        if (type == Node.ELEMENT_NODE) {
-            if ("extension".equals(n.getNodeName())) {
-                ExtensionData data = new ExtensionData(n);
-                if (data.getId() != "") {
-                    addExtensionToMap(data, extensionTable);
-                }
-                return;
+        if (type == Node.ELEMENT_NODE && "extension".equals(n.getNodeName())) {
+            ExtensionData data = new ExtensionData(n);
+            if (!Strings.isNullOrEmpty(data.getId())) {
+                addExtensionToMap(data, extensionTable);
             }
+            return;
         }
         for (Node child = n.getFirstChild(); child != null; child = child.getNextSibling()) {
             loadExtensionData(child);
