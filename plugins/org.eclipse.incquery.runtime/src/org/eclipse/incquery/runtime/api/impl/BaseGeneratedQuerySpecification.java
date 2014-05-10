@@ -46,11 +46,6 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
             }
         }
     }
-    
-    @Override
-    public PQueryStatus getStatus() {
-        return super.getStatus();
-    }
 
     protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);

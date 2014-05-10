@@ -144,34 +144,32 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      * @return
      */
     protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
-    	if ("void".equals(classifier.getInstanceClassName())) {
-    		// hack to speed up things quite a bit
-    		return null;
-    	}
-    	
-    	String key = classifier.getInstanceClassName();
-    	
-        if (classifier != null) {
-        	Class<?> c = null;
-        	if (classCache.containsKey(key)) {
-        		c = classCache.get(key);
-        	}
-        	else {
-//        		System.out.println("cc miss for "+classifier.getInstanceClassName());
-//        		Long start = System.nanoTime();
-        		Class<?> newC = classifier.getInstanceClass();
-//        		Long stop = System.nanoTime();
-//        		System.out.println("getInstClass for '"+key+"' took " + (stop-start)/(1000*1000) +" ms, returning '"+newC+"' as result");
-        		if (newC!=null) {
-        			classCache.put(key, newC);
-        			c=newC;
-        		}
-        	}
-        	
-        	if (c!=null) {
-	            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
-	            return primitives.asWrapperTypeIfPrimitive(typeReference);
-        	}
+        if (classifier == null || "void".equals(classifier.getInstanceClassName())) {
+            // hack to speed up things quite a bit
+            return null;
+        }
+
+        String key = classifier.getInstanceClassName();
+
+        Class<?> c = null;
+        if (classCache.containsKey(key)) {
+            c = classCache.get(key);
+        } else {
+            // System.out.println("cc miss for "+classifier.getInstanceClassName());
+            // Long start = System.nanoTime();
+            Class<?> newC = classifier.getInstanceClass();
+            // Long stop = System.nanoTime();
+            // System.out.println("getInstClass for '"+key+"' took " + (stop-start)/(1000*1000)
+            // +" ms, returning '"+newC+"' as result");
+            if (newC != null) {
+                classCache.put(key, newC);
+                c = newC;
+            }
+        }
+
+        if (c != null) {
+            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
+            return primitives.asWrapperTypeIfPrimitive(typeReference);
         }
         return null;
     }

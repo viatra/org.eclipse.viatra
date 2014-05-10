@@ -35,22 +35,21 @@ import org.xml.sax.SAXException;
  */
 public final class XmlDocumentHelper {
 
-    private static DocumentBuilderFactory factory;
+    private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
+    {
+        // Following settings required to maintain original lexical information
+        FACTORY.setCoalescing(false);
+        FACTORY.setExpandEntityReferences(false);
+        FACTORY.setIgnoringComments(false);
+        FACTORY.setIgnoringElementContentWhitespace(false);
+    }
     
     private XmlDocumentHelper() {
         //Hiding constructor for utility class
     }
 
     public static DocumentBuilderFactory getDefaultFactory() {
-        if (factory == null) {
-            factory = DocumentBuilderFactory.newInstance();
-            // Following settings required to maintain original lexical information
-            factory.setCoalescing(false);
-            factory.setExpandEntityReferences(false);
-            factory.setIgnoringComments(false);
-            factory.setIgnoringElementContentWhitespace(false);
-        }
-        return factory;
+        return FACTORY;
     }
 
     public static Document loadDocument(InputStream is) throws SAXException, IOException, ParserConfigurationException {
