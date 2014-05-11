@@ -52,7 +52,7 @@ public class IncQueryLoggingUtil {
 	 * @return
 	 */
 	public static Logger getLogger(Class<?> clazz) {
-	    return Logger.getLogger(getDefaultLogger().getName() + clazz.getName());
+	    return Logger.getLogger(getDefaultLogger().getName() + "." + clazz.getName());
 	}
 
 	private static Logger defaultRuntimeLogger;
