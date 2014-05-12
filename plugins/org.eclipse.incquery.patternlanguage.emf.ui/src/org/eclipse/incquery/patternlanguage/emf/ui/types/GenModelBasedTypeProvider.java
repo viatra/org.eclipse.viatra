@@ -27,6 +27,7 @@ import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.diagnostics.Severity;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -77,24 +78,30 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
      */
     private JvmTypeReference resolveTypeReference(GenPackage genPackage, EClassifier classifier, Variable variable) {
         GenClass genClass = findGenClass(genPackage, classifier);
-        if (genClass != null) {
-            JvmTypeReference typeReference = getTypeReferenceForTypeName(genClass.getQualifiedInterfaceName(), variable);
-            if (typeReference == null) {
-                EObject context = variable;
-                if (variable.eContainer() instanceof PatternBody && variable.getReferences().size() > 0) {
-                    context = variable.getReferences().get(0);
-                }
-                errorFeedback
-                        .reportError(
-                                context,
-                                String.format(
-                                        "Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
-                                        variable.getName()), EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE,
-                                Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
-            }
-            return typeReference;
+        String className = null;
+        if (!Strings.isNullOrEmpty(classifier.getInstanceClassName())) {
+            className = classifier.getInstanceClassName();
+        } else if (genClass != null) {
+            className = genClass.getQualifiedInterfaceName();
+        } else {
+            //At this point, no corresponding genpackage declaration was found; creating default type
+            className = genPackage.getGenModel().getModelPluginPackageName() + "." + classifier.getName();
         }
-        return null;
+        JvmTypeReference typeReference = getTypeReferenceForTypeName(className, variable);
+        if (typeReference == null) {
+            EObject context = variable;
+            if (variable.eContainer() instanceof PatternBody && variable.getReferences().size() > 0) {
+                context = variable.getReferences().get(0);
+            }
+            errorFeedback
+            .reportError(
+                    context,
+                    String.format(
+                            "Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
+                            variable.getName()), EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE,
+                            Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+        }
+        return typeReference;
     }
 
     private GenClass findGenClass(GenPackage genPackage, EClassifier classifier) {
