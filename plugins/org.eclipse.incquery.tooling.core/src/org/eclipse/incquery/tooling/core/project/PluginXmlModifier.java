@@ -79,6 +79,8 @@ public class PluginXmlModifier {
             pluginXml.setContents(stream, false, true, new NullProgressMonitor());
         } catch (TransformerException e) {
             throw wrapException(e);
+        } catch (IOException e) {
+            wrapException(e);
         }
     }
 

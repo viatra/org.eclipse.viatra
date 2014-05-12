@@ -12,18 +12,26 @@ package org.eclipse.incquery.tooling.core.project;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -43,9 +51,11 @@ public final class XmlDocumentHelper {
         FACTORY.setIgnoringComments(false);
         FACTORY.setIgnoringElementContentWhitespace(false);
     }
-    
+
+    private static Transformer serializingTransformer;
+
     private XmlDocumentHelper() {
-        //Hiding constructor for utility class
+        // Hiding constructor for utility class
     }
 
     public static DocumentBuilderFactory getDefaultFactory() {
@@ -56,22 +66,25 @@ public final class XmlDocumentHelper {
         return getDefaultFactory().newDocumentBuilder().parse(is);
     }
 
-    public static InputStream saveDocument(Document document) throws TransformerException {
+    public static InputStream saveDocument(Document document) throws TransformerException, IOException {
         final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         StreamResult result = new StreamResult(outStream);
-        transformer.transform(new DOMSource(document), result);
-        
+        getXmlSerializerTransformer().transform(new DOMSource(document), result);
+
         return new ByteArrayInputStream(outStream.toByteArray());
     }
 
     public static Document getEmptyXmlDocument() throws ParserConfigurationException {
         return getDefaultFactory().newDocumentBuilder().newDocument();
+    }
+
+    private static Transformer getXmlSerializerTransformer() throws TransformerConfigurationException, IOException {
+        if (serializingTransformer == null) {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            serializingTransformer = tf.newTransformer(new StreamSource(FileLocator.openStream(
+                    FrameworkUtil.getBundle(XmlDocumentHelper.class), new Path("/formatter.xslt"), false)));
+        }
+        return serializingTransformer;
     }
 }
