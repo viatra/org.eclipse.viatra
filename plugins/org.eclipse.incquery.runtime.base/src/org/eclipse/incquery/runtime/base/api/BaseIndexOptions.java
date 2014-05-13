@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.base.api;
 
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
+
 /**
  * The base index options indicate how the indices are built.
  * 
@@ -48,11 +51,12 @@ public class BaseIndexOptions {
      * By default, base indices will be constructed with dynamic EMF mode set as false.
      */
     protected static final boolean DYNAMIC_EMF_MODE_DEFAULT = false;
-    
-    
+
     protected boolean dynamicEMFMode = DYNAMIC_EMF_MODE_DEFAULT;
     protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
     protected boolean wildcardMode = WILDCARD_MODE_DEFAULT;
+    protected IBaseIndexObjectFilter notifierFilterConfiguration;
+    protected IBaseIndexResourceFilter resourceFilterConfiguration;
 
     /**
      * Creates a base index options with the default values.
@@ -70,6 +74,39 @@ public class BaseIndexOptions {
 
     public void setDynamicEMFMode(boolean dynamicEMFMode) {
         this.dynamicEMFMode = dynamicEMFMode;
+    }
+
+    /**
+     * Adds an object-level filter to the indexer. Warning - object-level indexing can increase indexing time
+     * noticeably. If possibly, use {@link #setResourceFilterConfiguration(IBaseIndexResourceFilter)} instead.
+     * 
+     * @param filter
+     */
+    public void setObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
+        this.notifierFilterConfiguration = filter;
+    }
+
+    /**
+     * @return the selected object filter configuration, or null if not set
+     */
+    public IBaseIndexObjectFilter getObjectFilterConfiguration() {
+        return notifierFilterConfiguration;
+    }
+
+    /**
+     * Adds a resource filter
+     * 
+     * @param filter
+     */
+    public void setResourceFilterConfiguration(IBaseIndexResourceFilter filter) {
+        this.resourceFilterConfiguration = filter;
+    }
+
+    /**
+     * @return the selected resource filter, or null if not set
+     */
+    public IBaseIndexResourceFilter getResourceFilterConfiguration() {
+        return resourceFilterConfiguration;
     }
 
     /**
@@ -106,6 +143,8 @@ public class BaseIndexOptions {
     public BaseIndexOptions copy() {
         BaseIndexOptions baseIndexOptions = new BaseIndexOptions(this.dynamicEMFMode, this.wildcardMode);
         baseIndexOptions.traverseOnlyWellBehavingDerivedFeatures = this.traverseOnlyWellBehavingDerivedFeatures;
+        baseIndexOptions.notifierFilterConfiguration = this.notifierFilterConfiguration;
+        baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
         return baseIndexOptions;
     }
 

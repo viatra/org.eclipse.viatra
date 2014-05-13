@@ -37,10 +37,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -134,8 +137,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private final EMFModelComprehension comprehension;
     private final boolean isDynamicModel;
 
+    private IBaseIndexObjectFilter objectFilterConfiguration;
+    private IBaseIndexResourceFilter resourceFilterConfiguration;
+
     public NavigationHelperContentAdapter(final NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
+        final BaseIndexOptions options = this.navigationHelper.getBaseIndexOptions();
+        objectFilterConfiguration = options.getObjectFilterConfiguration();
+        resourceFilterConfiguration = options.getResourceFilterConfiguration();
         this.comprehension = navigationHelper.getComprehension();
         this.isDynamicModel = navigationHelper.getBaseIndexOptions().isDynamicEMFMode();
         this.valueToFeatureToHolderMap = HashBasedTable.create();
@@ -961,5 +970,39 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             notifyLightweightObservers(source, feature, notification);
         }
     }
+
+    @Override
+    public void setTarget(Notifier target) {
+        if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(target)) {
+            return;
+        }
+        super.setTarget(target);
+    }
+
+    @Override
+    public void unsetTarget(Notifier target) {
+        if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(target)) {
+            return;
+        }
+        super.unsetTarget(target);
+    }
+    
+    @Override
+    public void setTarget(Resource target) {
+        if (resourceFilterConfiguration != null && resourceFilterConfiguration.isResourceFiltered(target)) {
+            return;
+        }
+        super.setTarget(target);
+    }
+    
+    @Override
+    public void unsetTarget(Resource target) {
+        if (resourceFilterConfiguration != null && resourceFilterConfiguration.isResourceFiltered(target)) {
+            return;
+        }
+        super.unsetTarget(target);
+    }
+
+
     
 }
