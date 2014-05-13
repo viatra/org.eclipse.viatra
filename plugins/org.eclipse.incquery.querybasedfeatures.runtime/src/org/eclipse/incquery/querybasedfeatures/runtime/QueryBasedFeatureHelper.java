@@ -158,7 +158,7 @@ public final class QueryBasedFeatureHelper {
         } else {
         	IncQueryLoggingUtil
         	        .getLogger(QueryBasedFeatureHelper.class)
-                    .error("Handler initialization failed, query specification is null. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.");
+                    .error(String.format("Handler initialization failed, query specification is null for %s. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.", patternFQN));
         }
 
         return queryBasedFeatureHandler;
