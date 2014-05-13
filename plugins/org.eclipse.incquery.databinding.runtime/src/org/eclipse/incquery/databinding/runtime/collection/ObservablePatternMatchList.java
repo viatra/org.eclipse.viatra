@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
@@ -137,9 +138,14 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         return cache.get(index);
     }
 
+    private void getterCalled() {
+        ObservableTracker.getterCalled(this);
+    }
+    
     @SuppressWarnings("rawtypes")
     @Override
     public Iterator iterator() {
+        getterCalled();
         if (updater.converter != null) {
             final Iterator<Match> iterator = cache.iterator();
             return new Iterator<Object>() {
