@@ -12,6 +12,8 @@
 package org.eclipse.incquery.patternlanguage.emf.ui.types;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
+import org.eclipse.emf.codegen.ecore.genmodel.GenClassifier;
+import org.eclipse.emf.codegen.ecore.genmodel.GenEnum;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -77,12 +79,14 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
      * @return
      */
     private JvmTypeReference resolveTypeReference(GenPackage genPackage, EClassifier classifier, Variable variable) {
-        GenClass genClass = findGenClass(genPackage, classifier);
+        GenClassifier genClassifier = findGenClassifier(genPackage, classifier);
         String className = null;
         if (!Strings.isNullOrEmpty(classifier.getInstanceClassName())) {
             className = classifier.getInstanceClassName();
-        } else if (genClass != null) {
-            className = genClass.getQualifiedInterfaceName();
+        } else if (genClassifier instanceof GenClass) {
+            className = ((GenClass) genClassifier).getQualifiedInterfaceName();
+        } else if (genClassifier instanceof GenEnum) {
+            className = ((GenEnum) genClassifier).getQualifiedInstanceClassName();
         } else {
             //At this point, no corresponding genpackage declaration was found; creating default type
             className = genPackage.getGenModel().getModelPluginPackageName() + "." + classifier.getName();
@@ -104,10 +108,10 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
         return typeReference;
     }
 
-    private GenClass findGenClass(GenPackage genPackage, EClassifier classifier) {
-        for (GenClass genClass : genPackage.getGenClasses()) {
-            if (classifier.equals(genClass.getEcoreClassifier())) {
-                return genClass;
+    private GenClassifier findGenClassifier(GenPackage genPackage, EClassifier classifier) {
+        for (GenClassifier genClassifier : genPackage.getGenClassifiers()) {
+            if (classifier.equals(genClassifier.getEcoreClassifier())) {
+                return genClassifier;
             }
         }
         return null;
