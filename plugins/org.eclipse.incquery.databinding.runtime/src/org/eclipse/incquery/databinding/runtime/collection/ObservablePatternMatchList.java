@@ -142,6 +142,9 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         ObservableTracker.getterCalled(this);
     }
     
+    /**
+     * @TrackedGetter This method will notify ObservableTracker that the receiver has been read from
+     */
     @SuppressWarnings("rawtypes")
     @Override
     public Iterator iterator() {
