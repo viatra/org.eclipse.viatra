@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -34,11 +35,11 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
+ * Adapter that turns derived features that recalculate their values on each getter call
+ * based on a well-defined set of navigation from the source into well-behaving derived features
+ * by automatically calling the getters and sending notifications.
+ * 
  * @author Abel Hegedus
- * 
- *         TODO: move to incquery code
- * 
- * 
  */
 public class DerivedFeatureAdapter extends AdapterImpl {
     private final InternalEObject source;
@@ -52,11 +53,12 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     private Object oldValue;
     private EClassifier type;
     private EMFModelComprehension comprehension;
+    private Logger logger = IncQueryLoggingUtil.getLogger(DerivedFeatureAdapter.class);
 
     private final List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
     private final List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();
 
-    /*
+    /**
      * Convenience constructor for a local and navigated dependency
      */
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
@@ -67,7 +69,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
         addLocalDependencyInternal(localFeature);
     }
 
-    /*
+    /**
      * Convenience constructor for a navigated dependency
      */
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature,
@@ -76,7 +78,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
         addNavigatedDependencyInternal(navigationFeature, dependantFeature);
     }
 
-    /*
+    /**
      * Convenience constructor for a local dependency
      */
     public DerivedFeatureAdapter(EObject source, EStructuralFeature derivedFeature, EStructuralFeature localFeature) {
@@ -126,10 +128,10 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
     @Override
     public void notifyChanged(Notification notification) {
-        // System.err.println("[Source: " + derivedFeature.getName() + "] New notification: " + notification);
+        logger.trace("[Source: " + derivedFeature.getName() + "] New notification: " + notification);
         for (DependentFeaturePath path : featurePaths) {
             if (notification.getFeature().equals(path.getNavigationFeature())) {
-                // System.err.println("Handling notification.");
+                logger.trace("Handling notification.");
                 switch (notification.getEventType()) {
                 case Notification.SET:
                     EObject newValue = (EObject) notification.getNewValue();
@@ -137,12 +139,12 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     if (tempOldValue != null) {
                         tempOldValue.eAdapters().remove(path.getDependantAdapter());
                     } else {
-                    	IncQueryLoggingUtil.getLogger(getClass()).debug("[DerivedFeatureAdapter] oldValue is not set");
+                        logger.debug("[DerivedFeatureAdapter] oldValue is not set");
                     }
                     if (newValue != null) {
                         newValue.eAdapters().add(path.getDependantAdapter());
                     } else {
-                    	IncQueryLoggingUtil.getLogger(getClass()).debug("[DerivedFeatureAdapter] new value is not set");
+                        logger.debug("[DerivedFeatureAdapter] new value is not set");
                     }
                     break;
                 case Notification.ADD:
@@ -175,7 +177,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 case Notification.REMOVING_ADAPTER:
                     break;
                 default:
-                	IncQueryLoggingUtil.getLogger(getClass()).debug(
+                    logger.debug(
                             "[DerivedFeatureAdapter] Unhandled notification: " + notification.getEventType());
                     return; // No notification
                 }
@@ -183,14 +185,14 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             }
         }
         if (localFeatures.contains(notification.getFeature())) {
-            // System.err.println("Handling notification.");
+            logger.trace("Handling notification.");
             refreshDerivedFeature();
         }
     }
 
     @SuppressWarnings("unchecked")
     private void refreshDerivedFeature() {
-        // System.err.println("[Notify: " + derivedFeature.getName() + "] Derived refresh.");
+        logger.trace("[Notify: " + derivedFeature.getName() + "] Derived refresh.");
         try {
             if (source.eNotificationRequired()) {
                 if (type == null) {
@@ -202,11 +204,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     } else {
                         oldValue = new HashSet<EObject>();
                     }
-                    // if(currentValue == null) {
                     currentValue = new HashSet<EObject>();
-                    // } else {
-                    // ((Collection<EObject>) currentValue).clear();
-                    // }
                     Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
                     for (Object target : targets) {
                         
@@ -224,7 +222,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                 }
             }
         } catch (Exception ex) {
-        	IncQueryLoggingUtil.getLogger(getClass()).error(
+        	logger.error(
                     "The derived feature adapter encountered an error in processing the EMF model. "
                             + "This happened while maintaining the derived feature " + derivedFeature.getName()
                             + " of object " + source, ex);
@@ -239,7 +237,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
             @Override
             public void notifyChanged(Notification msg) {
-                // System.err.println("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
+                logger.trace("[Dependant: " + derivedFeature.getName() + "] New notification: " + msg);
                 if (msg.getFeature().equals(dependantFeature)) {
                     refreshDerivedFeature();
                 }
@@ -288,7 +286,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
 
 		@Override
         public void visitAttribute(EObject source, EAttribute feature, Object target) {
-            // System.err.println("Attribute refresh.");
+		    logger.trace("Attribute refresh.");
             // send set notification
             sendSetNotification(source, feature, currentValue, target);
             storeSingleValue(feature, target);
@@ -299,19 +297,15 @@ public class DerivedFeatureAdapter extends AdapterImpl {
             return;
         }
 
-        // @Override
-        // public void visitExternalReference(EObject source, EReference feature, EObject target) {
-        // }
-
         @Override
         public void visitNonContainmentReference(EObject source, EReference feature, EObject target) {
-            // System.err.println("Non-containment reference refresh.");
+            logger.trace("Non-containment reference refresh.");
             sendNotificationForEReference(source, feature, target);
         }
 
         @Override
         public void visitInternalContainment(EObject source, EReference feature, EObject target) {
-            // System.err.println("Containment reference refresh.");
+            logger.trace("Containment reference refresh.");
             sendNotificationForEReference(source, feature, target);
         }
 
@@ -348,16 +342,6 @@ public class DerivedFeatureAdapter extends AdapterImpl {
         source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.REMOVE_MANY, feature, oldTarget,
                 null));
     }
-
-    /**
-     * @param source
-     * @param feature
-     * @param target
-     */
-    /*
-     * private void sendRemoveNotification(EObject source, EStructuralFeature feature, Object oldTarget) {
-     * source.eNotify(new ENotificationImpl((InternalEObject) source, Notification.REMOVE, feature, oldTarget, null)); }
-     */
 
     @SuppressWarnings("unchecked")
     private void sendNotificationForEReference(EObject source, EReference feature, EObject target) {
