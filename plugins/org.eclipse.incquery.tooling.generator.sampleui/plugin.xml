@@ -11,6 +11,7 @@
    <extension
          point="org.eclipse.incquery.patternlanguage.annotation">
       <annotation
+            deprecated="true"
             description="This annotation can be used to generate a sample code with a handler and a dialog that shows the matches of the query in a selected file resource."
             name="Handler">
          <annotationparameter
