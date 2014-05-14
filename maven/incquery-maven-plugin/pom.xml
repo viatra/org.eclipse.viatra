@@ -58,6 +58,18 @@
 			<version>${xtend.compiler.version}</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>repo.eclipse.org</id>
+			<url>https://repo.eclipse.org/content/groups/releases/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.eclipse.org</id>
+			<url>https://repo.eclipse.org/content/groups/releases/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<parent>
 		<groupId>org.eclipse.incquery</groupId>
 		<artifactId>org.eclipse.incquery.parent</artifactId>
