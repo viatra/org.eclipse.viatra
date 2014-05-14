@@ -213,7 +213,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         }
     }
 
-    @SuppressWarnings("restriction")
     private void createClassifierProposals(PackageImport declaration, EObject model, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         // String alias = declaration.getAlias();
@@ -251,7 +250,6 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         return false;
     }
 
-    @SuppressWarnings("restriction")
     public void complete_RefType(PathExpressionElement model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         IScope scope = scopeProvider.getScope(model.getTail(),
