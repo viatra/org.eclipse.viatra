@@ -44,6 +44,9 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
     public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
         for (String annotationName : annotationProvider.getAllAnnotationNames()) {
+            if (annotationProvider.isDeprecated(annotationName)) {
+                continue;
+            }
             String prefixedName = String.format("@%s", annotationName);
             String prefix = context.getPrefix();
             ContentAssistContext modifiedContext = context;
