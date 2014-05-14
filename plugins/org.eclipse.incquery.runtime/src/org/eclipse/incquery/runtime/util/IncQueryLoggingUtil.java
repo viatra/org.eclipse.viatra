@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.util;
 
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 import com.google.common.base.Preconditions;
 
@@ -53,6 +55,17 @@ public class IncQueryLoggingUtil {
 	 */
 	public static Logger getLogger(Class<?> clazz) {
 	    return Logger.getLogger(getDefaultLogger().getName() + "." + clazz.getName());
+	}
+	
+	/**
+	 * Adds an appender to the default logger that will output to the default console with the TTCC conversion pattern.
+	 * Call this method if you don't have Log4J configured from properties.
+	 * In addition, additivity is set to false for the default logger.
+	 */
+	public static void setupConsoleAppenderForDefaultLogger() {
+	    Logger logger = getDefaultLogger();
+	    logger.setAdditivity(false);
+        logger.addAppender(new ConsoleAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
 	}
 
 	private static Logger defaultRuntimeLogger;
