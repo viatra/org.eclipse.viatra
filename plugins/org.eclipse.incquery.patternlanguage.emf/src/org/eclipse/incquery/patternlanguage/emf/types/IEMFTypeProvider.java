@@ -55,9 +55,9 @@ public interface IEMFTypeProvider {
 
     /**
      * @param variable
-     * @return the {@link EClassifier} for the given {@link Variable}. Returns null, if it fails.
+     * @return the {@link EClassifier} explicitly given in the parameter list for the given pattern parameter {@link Variable}. Returns null, if none found or not a parameter(Ref).
      */
-    EClassifier getClassifierForPatternParameterVariable(Variable variable);
+    EClassifier getExplicitClassifierForPatternParameterVariable(Variable variable);
 
     /**
 	 * Calculates the JVM type of the selected variable. The calculation

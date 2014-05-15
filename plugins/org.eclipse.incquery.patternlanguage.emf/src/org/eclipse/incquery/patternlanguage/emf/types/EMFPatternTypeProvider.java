@@ -179,7 +179,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         EcoreUtil2.resolveAll(variable);
         EObject container = variable.eContainer();
         if (container instanceof Pattern) {
-            return getClassifierForVariableWithPattern((Pattern) container, variable, 0);
+            return getClassifierForParameterVariable((Pattern) container, variable, 0);
         } else if (container instanceof PatternBody) {
             return getClassifierForVariableWithPatternBody((PatternBody) container, variable, 0, null);
         }
@@ -223,6 +223,16 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         return resultList;
     }
 
+    
+    private EClassifier getClassifierForParameterVariable(Pattern pattern, Variable parameterVariable, int recursionCallingLevel) {
+    	EClassifier explicitType = getExplicitClassifierForPatternParameterVariable(parameterVariable);
+		if (explicitType != null) { // there is an explicit type, it overrides inference
+    		return explicitType;
+    	} else { // no explicit type, try to infer something from bodies  		
+    		return getClassifierForVariableWithPattern(pattern, parameterVariable, recursionCallingLevel);
+    	}
+    }
+    
     private EClassifier getClassifierForVariableWithPattern(Pattern pattern, Variable variable,
             int recursionCallingLevel) {
         Set<EClassifier> intermediateResultList = new HashSet<EClassifier>();
@@ -266,7 +276,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     @Override
     public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
-        Set<EClassifier> possibleClassifiersList = getClassifiersForVariableWithPatternBody(patternBody, variable, 0,
+        Set<EClassifier> possibleClassifiersList = getPotentialClassifiersForVariableWithPatternBody(patternBody, variable, 0,
                 null);
         if (possibleClassifiersList.size() <= 1) {
             return possibleClassifiersList;
@@ -276,7 +286,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     }
 
     @Override
-    public EClassifier getClassifierForPatternParameterVariable(Variable variable) {
+    public EClassifier getExplicitClassifierForPatternParameterVariable(Variable variable) {
         if (variable instanceof ParameterRef) {
             Variable referredParameter = ((ParameterRef) variable).getReferredParam();
             return getClassifierForType(referredParameter.getType());
@@ -287,7 +297,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     private EClassifier getClassifierForVariableWithPatternBody(PatternBody patternBody, Variable variable,
             int recursionCallingLevel, Variable injectiveVariablePair) {
-        Set<EClassifier> possibleClassifiers = getClassifiersForVariableWithPatternBody(patternBody, variable,
+        Set<EClassifier> possibleClassifiers = getPotentialClassifiersForVariableWithPatternBody(patternBody, variable,
                 recursionCallingLevel, injectiveVariablePair);
         if (possibleClassifiers.isEmpty()) {
             return null;
@@ -295,7 +305,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
             return (EClassifier) possibleClassifiers.toArray()[0];
         } else {
             Set<EClassifier> minimizedClassifiers = minimizeClassifiersList(possibleClassifiers);
-            EClassifier classifier = getClassifierForPatternParameterVariable(variable);
+            EClassifier classifier = getExplicitClassifierForPatternParameterVariable(variable);
             if (classifier != null && minimizedClassifiers.contains(classifier)) {
                 return classifier;
             } else {
@@ -304,13 +314,13 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
         }
     }
 
-    private Set<EClassifier> getClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable,
+    private Set<EClassifier> getPotentialClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable,
             int recursionCallingLevel, Variable injectiveVariablePair) {
         Set<EClassifier> possibleClassifiersList = new HashSet<EClassifier>();
         EClassifier classifier = null;
 
-        // Calculate it with just the variable only (works only for parameters)
-        classifier = getClassifierForPatternParameterVariable(variable);
+        // Calculate explicit type with just the variable only (works only for parameters)
+        classifier = getExplicitClassifierForPatternParameterVariable(variable);
         if (classifier != null) {
             possibleClassifiersList.add(classifier);
         }
@@ -391,7 +401,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
                                 // In case of incorrect number of parameters we might check for non-existing parameters
                                 if (parameters.size() > parameterIndex) {
                                     Variable variableInCalledPattern = parameters.get(parameterIndex);
-                                    EClassifier variableClassifier = getClassifierForVariableWithPattern(pattern,
+                                    EClassifier variableClassifier = getClassifierForParameterVariable(pattern,
                                             variableInCalledPattern, recursionCallingLevel + 1);
                                     if (variableClassifier != null) {
                                         possibleClassifiersList.add(variableClassifier);

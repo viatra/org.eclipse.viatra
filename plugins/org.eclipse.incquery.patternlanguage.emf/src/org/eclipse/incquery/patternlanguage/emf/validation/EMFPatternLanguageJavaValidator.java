@@ -253,7 +253,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
                                 .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                     } else {
-                        EClassifier classifier = emfTypeProvider.getClassifierForPatternParameterVariable(variable);
+                        EClassifier classifier = emfTypeProvider.getExplicitClassifierForPatternParameterVariable(variable);
                         PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
                         if (classifier != null && possibleClassifiers.contains(classifier)
                                 && hasCommonSubType(patternModel, possibleClassifiers)) {
