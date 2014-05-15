@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.maven.incquerybuilder;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.incquery.maven.incquerybuilder.helper.ModelPair;
@@ -76,7 +78,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
     /**
      * The project itself. This parameter is set by maven.
      * 
-     * @parameter property="project"
+     * @parameter expression="${project}"
      * @readonly
      * @required
      */
@@ -85,7 +87,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
     /**
      * Project classpath.
      * 
-     * @parameter property="project.compileClasspathElements"
+     * @parameter default-value="${project.compileClasspathElements}"
      * @readonly
      * @required
      */
@@ -94,24 +96,24 @@ public class IncqueryBuilderMojo extends AbstractMojo {
     /**
      * Location of the generated source files.
      * 
-     * @parameter property="project.build.directory/xtext-temp"
+     * @parameter expression="project.build.directory/xtext-temp"
      */
     private String tmpClassDirectory;
 
     /**
      * File encoding argument for the generator.
      * 
-     * @parameter property="xtext.encoding" default-value="${project.build.sourceEncoding}"
+     * @parameter expression="${xtext.encoding}" default-value="${project.build.sourceEncoding}"
      */
     protected String encoding;
 
     /**
-     * @parameter property="maven.compiler.source" default-value="1.5"
+     * @parameter expression="${maven.compiler.source}" default-value="1.6"
      */
     private String compilerSourceLevel;
 
     /**
-     * @parameter property="maven.compiler.target" default-value="1.5"
+     * @parameter expression="${maven.compiler.target}" default-value="1.6"
      */
     private String compilerTargetLevel;
 
@@ -211,7 +213,11 @@ public class IncqueryBuilderMojo extends AbstractMojo {
      */
     private void registerModelPairs() {
         for (ModelPair modelPair : modelPairs) {
-            MavenBuilderGenmodelLoader.addGenmodel(modelPair.getModelNsUri(), modelPair.getGenmodelUri());
+            String genmodelUri = modelPair.getGenmodelUri();
+            if (URI.createURI(genmodelUri).isRelative()) {
+                genmodelUri = project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
+            }
+            MavenBuilderGenmodelLoader.addGenmodel(modelPair.getModelNsUri(), "file://" + genmodelUri);
         }
     }
 
