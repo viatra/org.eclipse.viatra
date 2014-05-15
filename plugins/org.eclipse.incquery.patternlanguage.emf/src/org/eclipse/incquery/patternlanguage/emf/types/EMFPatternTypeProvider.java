@@ -176,7 +176,9 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
 
     @Override
     public EClassifier getClassifierForVariable(Variable variable) {
+    	// XXX Why?
         EcoreUtil2.resolveAll(variable);
+
         EObject container = variable.eContainer();
         if (container instanceof Pattern) {
             return getClassifierForParameterVariable((Pattern) container, variable, 0);
@@ -276,7 +278,7 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
     }
 
     @Override
-    public Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
+    public Set<EClassifier> getIrreducibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
         Set<EClassifier> possibleClassifiersList = getPotentialClassifiersForVariableWithPatternBody(patternBody, variable, 0,
                 null);
         if (possibleClassifiersList.size() <= 1) {

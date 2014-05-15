@@ -235,7 +235,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     public void checkPatternVariablesType(Pattern pattern) {
         for (PatternBody patternBody : pattern.getBodies()) {
             for (Variable variable : patternBody.getVariables()) {
-                Set<EClassifier> possibleClassifiers = emfTypeProvider.getPossibleClassifiersForVariableInBody(
+                Set<EClassifier> possibleClassifiers = emfTypeProvider.getIrreducibleClassifiersForVariableInBody(
                         patternBody, variable);
                 // We only need to give warnings/errors if there is more possible classifiers
                 if (possibleClassifiers.size() > 1) {
@@ -253,12 +253,12 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
                                 .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                     } else {
-                        EClassifier classifier = emfTypeProvider.getExplicitClassifierForPatternParameterVariable(variable);
+                        EClassifier explicitType = emfTypeProvider.getExplicitClassifierForPatternParameterVariable(variable);
                         PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
-                        if (classifier != null && possibleClassifiers.contains(classifier)
+                        if (explicitType != null && possibleClassifiers.contains(explicitType)
                                 && hasCommonSubType(patternModel, possibleClassifiers)) {
                             warning("Ambiguous variable type defintions: " + classifierNamesSet
-                                    + ", the parameter type (" + classifier.getName() + ") is used now.", variable
+                                    + ", the parameter type (" + explicitType.getName() + ") is used now.", variable
                                     .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
                         } else {
                             boolean isParameter = false;

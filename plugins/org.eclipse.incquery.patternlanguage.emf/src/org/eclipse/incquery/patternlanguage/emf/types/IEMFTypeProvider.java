@@ -51,7 +51,7 @@ public interface IEMFTypeProvider {
      * @param variable
      * @return the list of possible classifiers computed from the constraints in the patternbody.
      */
-    Set<EClassifier> getPossibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable);
+    Set<EClassifier> getIrreducibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable);
 
     /**
      * @param variable
