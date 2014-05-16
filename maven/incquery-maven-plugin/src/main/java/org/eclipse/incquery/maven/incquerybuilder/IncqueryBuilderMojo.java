@@ -96,7 +96,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
     /**
      * Location of the generated source files.
      * 
-     * @parameter expression="project.build.directory/xtext-temp"
+     * @parameter expression="${project.build.directory}/xtext-temp"
      */
     private String tmpClassDirectory;
 
