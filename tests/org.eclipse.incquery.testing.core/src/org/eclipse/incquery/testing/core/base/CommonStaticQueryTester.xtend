@@ -23,7 +23,7 @@ abstract class CommonStaticQueryTester {
 	def testQuery(String queryFQN){
 		val sns = snapshot
 		val engine = getEngine(sns.EMFRootForSnapshot)
-		val IncQueryMatcher matcher = queryInputXMI.initializeMatcherFromModel(engine, queryFQN)
+		val IncQueryMatcher matcher = queryInput.initializeMatcherFromModel(engine, queryFQN)
 		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryFQN))
 		assertArrayEquals(results.logDifference,newHashSet,results)
 	}
@@ -35,7 +35,7 @@ abstract class CommonStaticQueryTester {
 	}
 
 	def testQuery(IncQueryEngine engine, IncQuerySnapshot sns, IQuerySpecification queryMF){
-		val IncQueryMatcher matcher = engine.getMatcher(queryMF)//queryInputXMI.initializeMatcherFromModel(sns.EMFRootForSnapshot, queryFQN)
+		val IncQueryMatcher matcher = engine.getMatcher(queryMF)
 		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryMF.fullyQualifiedName))
 		assertArrayEquals(results.logDifference,newHashSet,results)
 	}
@@ -47,7 +47,7 @@ abstract class CommonStaticQueryTester {
 	def snapshot() { // Creates new resource set
 		return snapshotURI.loadExpectedResultsFromUri as IncQuerySnapshot
 	}
-	def queryInputXMI() { // Creates new resource set
+	def queryInput() { // Creates new resource set
 		return queryInputEIQURI.loadPatternModelFromUri(injector, queryInputDependencyURIs) as PatternModel
 	}
 
