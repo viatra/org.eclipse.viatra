@@ -43,7 +43,10 @@ public class JoinOrderingHeuristics implements Comparator<JoinCandidate> {
 
                         // TODO main heuristic decisions
 
-                        && consider(preferLess(a.toString(), b.toString())));
+                        // tie breaking
+                        && consider(preferLess(a.getConsPrimary(), b.getConsPrimary(), TieBreaker.CONSTRAINT_LIST_COMPARATOR))
+                        && consider(preferLess(a.getConsSecondary(), b.getConsSecondary(), TieBreaker.CONSTRAINT_LIST_COMPARATOR))
+                        && consider(preferLess(System.identityHashCode(a), System.identityHashCode(b))));
             }
         }.compare();
 

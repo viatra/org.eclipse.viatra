@@ -62,7 +62,9 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
                         && consider(preferMore(degreeBound(a, bound1), degreeBound(b, bound2)))
                         && consider(preferLess(degreeFree(a, bound1), degreeFree(b, bound2)))
 
-                        && consider(preferLess(a.toString(), b.toString())));
+                        // tie breaking
+                        && consider(preferLess(a.getMonotonousID(), b.getMonotonousID())) // this is hopefully deterministic
+                        && consider(preferLess(System.identityHashCode(a), System.identityHashCode(b))));
             }
         }.compare();
     }
