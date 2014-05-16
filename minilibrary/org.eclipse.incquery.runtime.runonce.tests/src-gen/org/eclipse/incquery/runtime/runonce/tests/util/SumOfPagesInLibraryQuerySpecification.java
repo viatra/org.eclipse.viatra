@@ -1,9 +1,17 @@
 package org.eclipse.incquery.runtime.runonce.tests.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.runonce.tests.SumOfPagesInLibraryMatcher;
 
 /**
@@ -21,56 +29,56 @@ public final class SumOfPagesInLibraryQuerySpecification extends BaseGeneratedQu
    * 
    */
   public static SumOfPagesInLibraryQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
   @Override
   protected SumOfPagesInLibraryMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return SumOfPagesInLibraryMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.runtime.runonce.tests";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "org.eclipse.incquery.runtime.runonce.tests.sumOfPagesInLibrary";
     
   }
   
-  private SumOfPagesInLibraryQuerySpecification() throws IncQueryException {
-    super();
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("library","sumOfPages");
   }
   
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<SumOfPagesInLibraryQuerySpecification> {
-    @Override
-    public SumOfPagesInLibraryQuerySpecification get() throws IncQueryException {
-      return instance();
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("sumOfPages", "java.lang.Integer"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
+    Set<PBody> bodies = Sets.newLinkedHashSet();
+    {
+      PBody body = new PBody(this);
+      PVariable var_library = body.getOrCreateVariableByName("library");
+      PVariable var_sumOfPages = body.getOrCreateVariableByName("sumOfPages");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_library, "library"), 
+        new ExportedParameter(body, var_sumOfPages, "sumOfPages")
+      ));
+      
+      
+      new TypeBinary(body, CONTEXT, var_library, var_sumOfPages, getFeatureLiteral("http:///org/incquery/examples/library/1.0", "Library", "sumOfPages"), "http:///org/incquery/examples/library/1.0/Library.sumOfPages");
+      bodies.add(body);
     }
+    return bodies;
   }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {
     private final static SumOfPagesInLibraryQuerySpecification INSTANCE = make();
     
     public static SumOfPagesInLibraryQuerySpecification make() {
-      try {
-      	return new SumOfPagesInLibraryQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new SumOfPagesInLibraryQuerySpecification();					
       
     }
   }

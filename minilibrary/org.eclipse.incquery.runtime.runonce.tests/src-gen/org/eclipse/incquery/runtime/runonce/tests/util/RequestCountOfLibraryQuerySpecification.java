@@ -1,9 +1,17 @@
 package org.eclipse.incquery.runtime.runonce.tests.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.runonce.tests.RequestCountOfLibraryMatcher;
 
 /**
@@ -21,56 +29,56 @@ public final class RequestCountOfLibraryQuerySpecification extends BaseGenerated
    * 
    */
   public static RequestCountOfLibraryQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
   @Override
   protected RequestCountOfLibraryMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return RequestCountOfLibraryMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.runtime.runonce.tests";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "org.eclipse.incquery.runtime.runonce.tests.requestCountOfLibrary";
     
   }
   
-  private RequestCountOfLibraryQuerySpecification() throws IncQueryException {
-    super();
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("library","reqCount");
   }
   
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<RequestCountOfLibraryQuerySpecification> {
-    @Override
-    public RequestCountOfLibraryQuerySpecification get() throws IncQueryException {
-      return instance();
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("reqCount", "java.lang.Integer"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
+    Set<PBody> bodies = Sets.newLinkedHashSet();
+    {
+      PBody body = new PBody(this);
+      PVariable var_library = body.getOrCreateVariableByName("library");
+      PVariable var_reqCount = body.getOrCreateVariableByName("reqCount");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_library, "library"), 
+        new ExportedParameter(body, var_reqCount, "reqCount")
+      ));
+      
+      
+      new TypeBinary(body, CONTEXT, var_library, var_reqCount, getFeatureLiteral("http:///org/incquery/examples/library/1.0", "Library", "requestCount"), "http:///org/incquery/examples/library/1.0/Library.requestCount");
+      bodies.add(body);
     }
+    return bodies;
   }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {
     private final static RequestCountOfLibraryQuerySpecification INSTANCE = make();
     
     public static RequestCountOfLibraryQuerySpecification make() {
-      try {
-      	return new RequestCountOfLibraryQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new RequestCountOfLibraryQuerySpecification();					
       
     }
   }

@@ -28,14 +28,10 @@ import org.eclipse.incquery.examples.eiqlibrary.EIQLibraryPackage;
 import org.eclipse.incquery.examples.eiqlibrary.Library;
 import org.eclipse.incquery.examples.eiqlibrary.Writer;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.impl.RunOnceQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.junit.Test;
 
 /**
@@ -78,25 +74,6 @@ public class RunOnceTest {
         }
     }
     
-    /**
-     * Shows an example of using generic queries in a run-once engine.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testGenericQuery() {
-        Library library = prepareModel();
-        
-        try {
-            RunOnceQueryEngine engine = new RunOnceQueryEngine(rs);
-            IQuerySpecification<IncQueryMatcher<IPatternMatch>> specification = (IQuerySpecification<IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getOrCreateQuerySpecification(BooksWithMultipleAuthorsMatcher.querySpecification().getPattern());
-            Collection<IPatternMatch> allMatches = engine.getAllMatches(specification);
-            assertTrue(allMatches.size() == 2);
-        } catch (IncQueryException e) {
-            e.printStackTrace();
-            fail(e.getShortMessage());
-        }
-    }
-
     @Test
     public void testSimpleAttribute() {
         Library library = prepareModel();

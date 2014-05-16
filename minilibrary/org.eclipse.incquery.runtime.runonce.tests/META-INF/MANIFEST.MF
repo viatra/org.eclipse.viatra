@@ -9,5 +9,6 @@ Export-Package: org.eclipse.incquery.runtime.runonce.tests,
 Require-Bundle: org.eclipse.incquery.examples.library,
  org.eclipse.incquery.runtime,
  org.junit,
- org.eclipse.emf.ecore
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

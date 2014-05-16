@@ -14,7 +14,7 @@ import org.eclipse.incquery.runtime.runonce.tests.BooksWithMultipleAuthorsMatch;
 public abstract class BooksWithMultipleAuthorsProcessor implements IMatchProcessor<BooksWithMultipleAuthorsMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pBook the value of pattern parameter book in the currently processed match 
+   * @param pBook the value of pattern parameter book in the currently processed match
    * 
    */
   public abstract void process(final Book pBook);

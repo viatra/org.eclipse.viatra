@@ -15,8 +15,8 @@ import org.eclipse.incquery.runtime.runonce.tests.SingleAuthoredFirstBooksMatch;
 public abstract class SingleAuthoredFirstBooksProcessor implements IMatchProcessor<SingleAuthoredFirstBooksMatch> {
   /**
    * Defines the action that is to be executed on each match.
-   * @param pLibrary the value of pattern parameter library in the currently processed match 
-   * @param pFirstBook the value of pattern parameter firstBook in the currently processed match 
+   * @param pLibrary the value of pattern parameter library in the currently processed match
+   * @param pFirstBook the value of pattern parameter firstBook in the currently processed match
    * 
    */
   public abstract void process(final Library pLibrary, final Book pFirstBook);

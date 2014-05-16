@@ -1,9 +1,17 @@
 package org.eclipse.incquery.runtime.runonce.tests.util;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.runonce.tests.BookAuthorsMatcher;
 
 /**
@@ -21,56 +29,56 @@ public final class BookAuthorsQuerySpecification extends BaseGeneratedQuerySpeci
    * 
    */
   public static BookAuthorsQuerySpecification instance() throws IncQueryException {
-    try {
-    	return LazyHolder.INSTANCE;
-    } catch (ExceptionInInitializerError err) {
-    	processInitializerError(err);
-    	throw err;
-    }
+    return LazyHolder.INSTANCE;
     
   }
   
   @Override
   protected BookAuthorsMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     return BookAuthorsMatcher.on(engine);
-    
   }
   
   @Override
-  protected String getBundleName() {
-    return "org.eclipse.incquery.runtime.runonce.tests";
-    
-  }
-  
-  @Override
-  protected String patternName() {
+  public String getFullyQualifiedName() {
     return "org.eclipse.incquery.runtime.runonce.tests.bookAuthors";
     
   }
   
-  private BookAuthorsQuerySpecification() throws IncQueryException {
-    super();
+  @Override
+  public List<String> getParameterNames() {
+    return Arrays.asList("book","author");
   }
   
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<BookAuthorsQuerySpecification> {
-    @Override
-    public BookAuthorsQuerySpecification get() throws IncQueryException {
-      return instance();
+  @Override
+  public List<PParameter> getParameters() {
+    return Arrays.asList(new PParameter("book", "org.eclipse.incquery.examples.eiqlibrary.Book"),new PParameter("author", "org.eclipse.incquery.examples.eiqlibrary.Writer"));
+  }
+  
+  @Override
+  public Set<PBody> doGetContainedBodies() throws IncQueryException {
+    Set<PBody> bodies = Sets.newLinkedHashSet();
+    {
+      PBody body = new PBody(this);
+      PVariable var_book = body.getOrCreateVariableByName("book");
+      PVariable var_author = body.getOrCreateVariableByName("author");
+      body.setExportedParameters(Arrays.<ExportedParameter>asList(
+        new ExportedParameter(body, var_book, "book"), 
+        new ExportedParameter(body, var_author, "author")
+      ));
+      
+      
+      new TypeBinary(body, CONTEXT, var_book, var_author, getFeatureLiteral("http:///org/incquery/examples/library/1.0", "Book", "authors"), "http:///org/incquery/examples/library/1.0/Book.authors");
+      bodies.add(body);
     }
+    return bodies;
   }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {
     private final static BookAuthorsQuerySpecification INSTANCE = make();
     
     public static BookAuthorsQuerySpecification make() {
-      try {
-      	return new BookAuthorsQuerySpecification();
-      } catch (IncQueryException ex) {
-      	throw new RuntimeException	(ex);
-      }
+      return new BookAuthorsQuerySpecification();					
       
     }
   }
