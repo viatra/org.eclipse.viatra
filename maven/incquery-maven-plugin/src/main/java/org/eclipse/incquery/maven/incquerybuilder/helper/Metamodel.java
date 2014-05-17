@@ -11,13 +11,13 @@
 
 package org.eclipse.incquery.maven.incquerybuilder.helper;
 
-public class ModelPair {
+public class Metamodel {
 
     /**
      * @property
      * @required
      */
-    private String modelNsUri;
+    private String packageClass;
 
     /**
      * @property
@@ -25,12 +25,12 @@ public class ModelPair {
      */
     private String genmodelUri;
 
-    public String getModelNsUri() {
-        return modelNsUri;
+    public String getPackageClass() {
+        return packageClass;
     }
 
-    public void setModelNsUri(String modelNsUri) {
-        this.modelNsUri = modelNsUri;
+    public void setPackageClass(String packageClass) {
+        this.packageClass = packageClass;
     }
 
     public String getGenmodelUri() {
