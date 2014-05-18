@@ -16,3 +16,4 @@ Export-Package: org.eclipse.viatra2.emf.runtime.filters,
  org.eclipse.viatra2.emf.runtime.rules.eventdriven,
  org.eclipse.viatra2.emf.runtime.transformation.batch,
  org.eclipse.viatra2.emf.runtime.transformation.eventdriven
+Import-Package: org.apache.log4j;version="1.2.15"
