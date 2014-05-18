@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.handlers;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
@@ -17,6 +18,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.incquery.tooling.core.project.IncQueryNature;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 
 /**
@@ -49,6 +51,11 @@ public class IncQueryProjectVersionTester extends PropertyTester {
         return jdtIndex < xtextIndex || jdtIndex < iqIndex;
     }
 
+    private boolean hasLog4jDependency(IProject project) throws JavaModelException {
+        
+        return JavaCore.create(project).findType(Logger.class.getName()) == null;
+    }
+    
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         try {
@@ -58,9 +65,9 @@ public class IncQueryProjectVersionTester extends PropertyTester {
                     return true;
                 } else if (project.hasNature(IncQueryNature.NATURE_ID))
                      return project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH) != null
-                        || hasIncorrectBuildCommandOrdering(project);
+                        || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
             }
-        } catch (CoreException e) {
+        } catch (Exception e) {
             /*
              * In case of errors while reading the project descriptions no additional steps needed, safe to say we
              * cannot handle the project
@@ -68,5 +75,6 @@ public class IncQueryProjectVersionTester extends PropertyTester {
         }
         return false;
     }
+
 
 }

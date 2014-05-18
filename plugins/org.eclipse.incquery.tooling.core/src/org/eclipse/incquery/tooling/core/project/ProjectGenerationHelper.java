@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -62,6 +64,19 @@ import com.google.common.collect.Lists;
 public abstract class ProjectGenerationHelper {
 
     private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
+
+    private static final class IDToPackageImportTransformer implements Function<String, IPackageImportDescription> {
+        private final IBundleProjectService service;
+
+        private IDToPackageImportTransformer(IBundleProjectService service) {
+            this.service = service;
+        }
+
+        @Override
+        public IPackageImportDescription apply(String arg0) {
+            return service.newPackageImport(arg0, null, false);
+        }
+    }
 
     private static final class IDToRequireBundleTransformer implements Function<String, IRequiredBundleDescription> {
         private final IBundleProjectService service;
@@ -93,7 +108,8 @@ public abstract class ProjectGenerationHelper {
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
         List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore",
-                "org.eclipse.emf.transaction", IncQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
+                IncQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
+        List<String> importPackages = Lists.newArrayList("org.apache.log4j");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
         }
@@ -109,7 +125,7 @@ public abstract class ProjectGenerationHelper {
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(proj);
             IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
-            ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, service, bundleDesc, additionalBinIncludes);
+            ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, importPackages, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
             // Adding IncQuery-specific natures
             ProjectGenerationHelper.updateNatures(proj,
@@ -175,7 +191,7 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
-            fillProjectMetadata(project, dependencies, service, bundleDesc, additionalBinIncludes);
+            fillProjectMetadata(project, dependencies, Collections.<String>emptyList(), service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
         } finally {
             if (context != null && ref != null) {
@@ -194,7 +210,7 @@ public abstract class ProjectGenerationHelper {
      * @param service
      * @param bundleDesc
      */
-    public static void fillProjectMetadata(IProject project, final List<String> dependencies,
+    public static void fillProjectMetadata(IProject project, final List<String> dependencies, final List<String> packageImports,
             final IBundleProjectService service, IBundleProjectDescription bundleDesc,
             final IPath[] additionalBinIncludes) {
         bundleDesc.setBundleName(project.getName());
@@ -211,6 +227,10 @@ public abstract class ProjectGenerationHelper {
         IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
                 new IDToRequireBundleTransformer(service)).toArray(new IRequiredBundleDescription[dependencies.size()]);
         bundleDesc.setRequiredBundles(reqBundles);
+        IPackageImportDescription[] importArray = Lists.transform(packageImports,
+                new IDToPackageImportTransformer(service))
+                .toArray(new IPackageImportDescription[packageImports.size()]);
+        bundleDesc.setPackageImports(importArray);
     }
 
     /**
@@ -255,9 +275,20 @@ public abstract class ProjectGenerationHelper {
      * @throws CoreException
      */
     public static void ensureBundleDependencies(IProject project, final List<String> dependencies) throws CoreException {
-        ensureBundleDependencies(project, dependencies, new NullProgressMonitor());
+        ensureBundleDependencies(project, dependencies, Collections.<String>emptyList(), new NullProgressMonitor());
     }
 
+    /**
+     * Updates project manifest to ensure the selected package imports are set. Does not change existing
+     * package imports or required bundle declarations.
+     *
+     * @param project
+     * @param dependencies
+     * @throws CoreException
+     */
+    public static void ensurePackageImports(IProject project, final List<String> packageImports) throws CoreException {
+        ensureBundleDependencies(project, Collections.<String>emptyList(), packageImports, new NullProgressMonitor());
+    }
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
@@ -268,11 +299,11 @@ public abstract class ProjectGenerationHelper {
      * @param monitor
      * @throws CoreException
      */
-    public static void ensureBundleDependencies(IProject project, final List<String> dependencies,
+    public static void ensureBundleDependencies(IProject project, final List<String> dependencies, final List<String> importPackages,
             IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
         		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
-        if (dependencies.isEmpty()) {
+        if (dependencies.isEmpty() && importPackages.isEmpty()) {
             return;
         }
         BundleContext context = null;
@@ -282,7 +313,12 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
-            ensureBundleDependencies(service, bundleDesc, dependencies);
+            if (!dependencies.isEmpty()) {
+                ensureBundleDependencies(service, bundleDesc, dependencies);
+            }
+            if (!importPackages.isEmpty()) {
+                ensurePackageImports(service, bundleDesc, importPackages);
+            }
             bundleDesc.apply(monitor);
         } finally {
             if (context != null && ref != null) {
@@ -329,6 +365,30 @@ public abstract class ProjectGenerationHelper {
             bundleDesc.setRequiredBundles(Lists.transform(updatedDependencies, new IDToRequireBundleTransformer(service))
                     .toArray(new IRequiredBundleDescription[updatedDependencies.size()]));
         }
+    }
+    
+    /**
+     * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
+     * dependencies.
+     *
+     * @param service
+     * @param bundleDesc
+     * @param packageImports
+     */
+    static void ensurePackageImports(final IBundleProjectService service, IBundleProjectDescription bundleDesc,
+            final List<String> packageImports) {
+        IPackageImportDescription[] importArray = bundleDesc.getPackageImports();
+        List<IPackageImportDescription> importList = importArray == null ? Lists
+                .<IPackageImportDescription> newArrayList() : Arrays.asList(importArray);
+        List<String> newImports = Lists.newArrayList(packageImports);
+        for (IPackageImportDescription importDecl : importList) {
+            final String packageName = importDecl.getName();
+            if (packageImports.contains(packageName)) {
+                newImports.remove(packageName);
+            }
+        }
+        importList.addAll(Lists.transform(newImports, new IDToPackageImportTransformer(service)));
+        bundleDesc.setPackageImports(importList.toArray(new IPackageImportDescription[importList.size()]));
     }
 
     /**

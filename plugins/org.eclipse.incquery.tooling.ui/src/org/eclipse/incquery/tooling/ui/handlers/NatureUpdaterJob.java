@@ -182,6 +182,7 @@ class NatureUpdaterJob extends Job {
 
             removeGlobalEiq(project);
             removeExpressionExtensions(project);
+            ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String>of("org.apache.log4j"));
         } catch (CoreException e) {
             return new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
         }
