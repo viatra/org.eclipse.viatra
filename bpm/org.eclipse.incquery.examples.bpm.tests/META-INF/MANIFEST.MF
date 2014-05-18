@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.incquery.querybasedfeatures.runtime;bundle-version="
  org.eclipse.incquery.examples.bpm.incquery;bundle-version="0.7.0",
  com.google.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
