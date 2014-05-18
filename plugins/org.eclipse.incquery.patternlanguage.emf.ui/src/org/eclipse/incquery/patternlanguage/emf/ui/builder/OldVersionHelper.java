@@ -11,6 +11,7 @@
 package org.eclipse.incquery.patternlanguage.emf.ui.builder;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -82,22 +83,28 @@ public class OldVersionHelper {
     }
 
     private URI getCopiedURI(IProject project, IPath relativePath) throws JavaModelException {
-        if (!copiedURIMap.containsKey(relativePath)) {
-            IJavaProject javaProject = JavaCore.create(project);
-            IClasspathEntry sourceEntry = Iterators.find(Iterators.forArray(javaProject.getResolvedClasspath(true)),
-                    new SourceFolderFinder(relativePath));
-            IPath outputLocation = sourceEntry.getOutputLocation();
-            if (outputLocation == null) {
-                outputLocation = javaProject.getOutputLocation();
+        try {
+            if (!copiedURIMap.containsKey(relativePath)) {
+                IJavaProject javaProject = JavaCore.create(project);
+                IClasspathEntry sourceEntry = Iterators.find(
+                        Iterators.forArray(javaProject.getResolvedClasspath(true)),
+                        new SourceFolderFinder(relativePath));
+                IPath outputLocation = sourceEntry.getOutputLocation();
+                if (outputLocation == null) {
+                    outputLocation = javaProject.getOutputLocation();
+                }
+                IPath path = outputLocation.append(relativePath.makeRelativeTo(sourceEntry.getPath()));
+                URI copiedURI = (project.getWorkspace().getRoot().findMember(path) != null) ? URI
+                        .createPlatformResourceURI(path.toString(), true) : null;
+                if (copiedURI != null) {
+                    copiedURIMap.put(relativePath, copiedURI);
+                }
+                return copiedURI;
             }
-            IPath path = outputLocation.append(relativePath.makeRelativeTo(sourceEntry.getPath()));
-            URI copiedURI = (project.getWorkspace().getRoot().findMember(path) != null) ? URI.createPlatformResourceURI(path.toString(), true) : null;
-            if (copiedURI != null) {
-                copiedURIMap.put(relativePath, copiedURI);
-            }
-            return copiedURI;
+            return copiedURIMap.get(relativePath);
+        } catch (NoSuchElementException e) {
+            return null;
         }
-        return copiedURIMap.get(relativePath);
     }
 
     public Pattern findPattern(URI proxyURI) throws JavaModelException {
