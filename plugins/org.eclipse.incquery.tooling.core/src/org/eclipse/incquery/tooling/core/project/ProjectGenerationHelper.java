@@ -317,6 +317,8 @@ public abstract class ProjectGenerationHelper {
                     missingDependencies.remove(bundle.getName());
                 }
             }
+            bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service))
+                    .toArray(new IRequiredBundleDescription[missingDependencies.size()]));
         } else {
             // Since Kepler setRequiredBundles overwrites existing dependencies
             for (IRequiredBundleDescription bundle : requiredBundles) {
@@ -324,9 +326,9 @@ public abstract class ProjectGenerationHelper {
                     updatedDependencies.add(bundle.getName());
                 }
             }
+            bundleDesc.setRequiredBundles(Lists.transform(updatedDependencies, new IDToRequireBundleTransformer(service))
+                    .toArray(new IRequiredBundleDescription[updatedDependencies.size()]));
         }
-        bundleDesc.setRequiredBundles(Lists.transform(updatedDependencies, new IDToRequireBundleTransformer(service))
-                .toArray(new IRequiredBundleDescription[updatedDependencies.size()]));
     }
 
     /**
