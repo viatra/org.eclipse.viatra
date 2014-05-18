@@ -53,4 +53,5 @@ Export-Package: org.eclipse.incquery.tooling.ui,
  org.eclipse.incquery.tooling.ui.queryexplorer.handlers,
  org.eclipse.incquery.tooling.ui.queryexplorer.preference,
  org.eclipse.incquery.tooling.ui.queryexplorer.util
+Import-Package: org.apache.log4j;version="1.2.15"
 

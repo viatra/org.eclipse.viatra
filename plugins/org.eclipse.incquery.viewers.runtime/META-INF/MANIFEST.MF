@@ -25,3 +25,4 @@ Export-Package: org.eclipse.incquery.viewers.runtime,
  org.eclipse.incquery.viewers.runtime.model,
  org.eclipse.incquery.viewers.runtime.model.listeners,
  org.eclipse.incquery.viewers.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.zest"
+Import-Package: org.apache.log4j;version="1.2.15"

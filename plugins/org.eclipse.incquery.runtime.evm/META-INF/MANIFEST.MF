@@ -23,3 +23,4 @@ Export-Package: org.eclipse.incquery.runtime.evm.api,
  org.eclipse.incquery.runtime.evm.specific.scheduler,
  org.eclipse.incquery.runtime.evm.update
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Import-Package: org.apache.log4j;version="1.2.15"

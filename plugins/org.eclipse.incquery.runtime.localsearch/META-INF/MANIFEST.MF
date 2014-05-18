@@ -16,3 +16,4 @@ Export-Package: org.eclipse.incquery.runtime.localsearch,
  org.eclipse.incquery.runtime.localsearch.operations.check,
  org.eclipse.incquery.runtime.localsearch.operations.extend,
  org.eclipse.incquery.runtime.localsearch.plan
+Import-Package: org.apache.log4j;version="1.2.15"

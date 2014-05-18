@@ -20,3 +20,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.validation.runtime,
  org.eclipse.incquery.validation.runtime.annotation
+Import-Package: org.apache.log4j;version="1.2.15"
