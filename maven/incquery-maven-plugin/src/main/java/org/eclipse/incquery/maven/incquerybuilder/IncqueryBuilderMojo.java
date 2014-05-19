@@ -22,9 +22,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.incquery.maven.incquerybuilder.helper.ModelPair;
+import org.eclipse.incquery.maven.incquerybuilder.helper.Metamodel;
 import org.eclipse.incquery.maven.incquerybuilder.setup.EMFPatternLanguageMavenStandaloneSetup;
 import org.eclipse.incquery.maven.incquerybuilder.setup.MavenBuilderGenmodelLoader;
 import org.eclipse.xtext.maven.Language;
@@ -39,19 +40,12 @@ import org.eclipse.xtext.maven.XtextGenerator;
  * @requiresDependencyResolution compile
  */
 public class IncqueryBuilderMojo extends AbstractMojo {
-    /**
-     * FQN-s of the EPackage classes
-     * 
-     * @parameter
-     * @required
-     */
-    private List<String> ePackages;
 
     /**
      * @parameter
      * @required
      */
-    private List<ModelPair> modelPairs;
+    private List<Metamodel> metamodels;
 
     /**
      * the project relative path to the output directory
@@ -121,9 +115,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
 
         registerGenmodelExtension();
 
-        resolveEPackages();
-
-        registerModelPairs();
+        registerMetamodels();
 
         XtextGenerator generator = new XtextGenerator();
 
@@ -209,29 +201,20 @@ public class IncqueryBuilderMojo extends AbstractMojo {
     }
 
     /**
-     * Register user given metamodel NSURI and genmodel URI pairs
+     * Register user given metamodel NSURI (determining from the EPackage) and genmodel URI pairs
+     * @throws MojoExecutionException 
      */
-    private void registerModelPairs() {
-        for (ModelPair modelPair : modelPairs) {
-            String genmodelUri = modelPair.getGenmodelUri();
-            if (URI.createURI(genmodelUri).isRelative()) {
-                genmodelUri = project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
-            }
-            MavenBuilderGenmodelLoader.addGenmodel(modelPair.getModelNsUri(), "file://" + genmodelUri);
-        }
-    }
-
-    /**
-     * To access the eINSTANCE field of the user given EPackage classes
-     * 
-     * @throws MojoExecutionException
-     */
-    private void resolveEPackages() throws MojoExecutionException {
-        for (String fqnOfEPackageClass : ePackages) {
+    private void registerMetamodels() throws MojoExecutionException {
+        for (Metamodel metamodel : metamodels)
+        {
+            String fqnOfEPackageClass = null;
+            String metamodelNSURI = null;
             try {
 
+                fqnOfEPackageClass = metamodel.getPackageClass();
+                
                 Class<?> ePackageClass = Class.forName(fqnOfEPackageClass);
-
+                
                 Field instanceField = ePackageClass.getDeclaredField("eINSTANCE");
 
                 Class<?> instanceFieldType = instanceField.getType();
@@ -243,7 +226,8 @@ public class IncqueryBuilderMojo extends AbstractMojo {
                     throw new MojoExecutionException("Execution failed due to wrong type of eINSTANCE");
                 }
 
-                instanceField.get(null);
+                EPackage ePackage = (EPackage)instanceField.get(null);
+                metamodelNSURI = ePackage.getNsURI();
 
             } catch (ClassNotFoundException e) {
                 getLog().error("Couldn't find class " + fqnOfEPackageClass + " on the classpath.");
@@ -257,8 +241,16 @@ public class IncqueryBuilderMojo extends AbstractMojo {
             } catch (IllegalAccessException e) {
 
             }
+            
+            String genmodelUri = metamodel.getGenmodelUri();
+            if (URI.createURI(genmodelUri).isRelative()) {
+                genmodelUri = project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
+            }
+            
+            MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, "file://" + genmodelUri);
         }
     }
+
 
     /**
      * To register genmodel extension and according factory to the extension factory
