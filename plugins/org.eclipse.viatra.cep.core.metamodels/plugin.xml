@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated InternalModel -->
+      <package
+            uri="automaton.meta"
+            class="org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage"
+            genModel="models/InternalModel.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated InternalModel -->
+      <package
+            uri="cep.meta"
+            class="org.eclipse.viatra.cep.core.metamodels.events.EventsPackage"
+            genModel="models/InternalModel.genmodel"/>
+   </extension>
+
+</plugin>

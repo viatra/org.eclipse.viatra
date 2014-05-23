@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA-CEP Metamodels
+Bundle-SymbolicName: org.eclipse.viatra.cep.core.metamodels;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: Budapest University of Technology and Economics,
+ Fault Tolerant Systems Research Group
+Bundle-Localization: plugin
+Bundle-Activator: org.eclipse.viatra.cep.core.metamodels.internal.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.viatra.cep.core.metamodels.automaton,
+ org.eclipse.viatra.cep.core.metamodels.automaton.impl,
+ org.eclipse.viatra.cep.core.metamodels.automaton.util,
+ org.eclipse.viatra.cep.core.metamodels.events,
+ org.eclipse.viatra.cep.core.metamodels.events.impl,
+ org.eclipse.viatra.cep.core.metamodels.events.util
+Bundle-ActivationPolicy: lazy

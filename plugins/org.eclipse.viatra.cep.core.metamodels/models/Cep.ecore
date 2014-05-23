@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="events" nsURI="cep.meta" nsPrefix="org.eclipse.viatra.cep.core.metamodels">
+  <eClassifiers xsi:type="ecore:EClass" name="EventPattern" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="automaton" eType="ecore:EClass Automaton.ecore#//Automaton"
+        eOpposite="Automaton.ecore#//Automaton/eventPattern"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AtomicEventPattern" eSuperTypes="#//EventPattern">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexEventPattern" eSuperTypes="#//EventPattern">
+    <eOperations name="addCompositionEventPattern" lowerBound="1">
+      <eParameters name="compositionEventPattern" lowerBound="1" eType="#//EventPattern"/>
+    </eOperations>
+    <eOperations name="evaluateParameterBindigs" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eParameters name="event" lowerBound="1" eType="#//Event"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="compositionEvents" upperBound="-1"
+        eType="#//EventPattern" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" lowerBound="1"
+        eType="#//LogicalOperator" containment="true" eOpposite="#//LogicalOperator/eventPattern"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Event">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timestamp" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//IEventSource"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IEventSource" abstract="true" interface="true">
+    <eOperations name="getId" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Time">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="length" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" lowerBound="1"
+        eType="#//TimingOperator" eOpposite="#//TimingOperator/time"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexEventOperator" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LogicalOperator" abstract="true" eSuperTypes="#//ComplexEventOperator">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timing" eType="#//TimingOperator"
+        containment="true" eOpposite="#//TimingOperator/operator"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" lowerBound="1"
+        eType="#//ComplexEventPattern" eOpposite="#//ComplexEventPattern/operator"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OR" eSuperTypes="#//LogicalOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NEG" eSuperTypes="#//LogicalOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FOLLOWS" eSuperTypes="#//LogicalOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UNTIL" eSuperTypes="#//LogicalOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TimingOperator" abstract="true" eSuperTypes="#//ComplexEventOperator">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="time" lowerBound="1" eType="#//Time"
+        containment="true" eOpposite="#//Time/operator"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" lowerBound="1"
+        eType="#//LogicalOperator" eOpposite="#//LogicalOperator/timing"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WITHIN" eSuperTypes="#//TimingOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ATLEAST" eSuperTypes="#//TimingOperator"/>
+</ecore:EPackage>

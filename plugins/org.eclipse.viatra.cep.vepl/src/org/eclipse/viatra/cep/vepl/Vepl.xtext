@@ -1,0 +1,261 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2014, Istvan David, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Istvan David - initial API and implementation
+ *******************************************************************************/
+
+grammar org.eclipse.viatra.cep.vepl.Vepl with org.eclipse.xtext.xbase.Xbase
+
+import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage" as iqpl
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvmTypes
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate vepl "http://www.eclipse.org/viatra/cep/vepl/Vepl"
+
+EventModel:
+	packagedModel=PackagedModel
+;
+
+PackagedModel:
+	'package' name=QualifiedName
+	usages+=Usage*
+	modelElements+=ModelElement*	
+;
+
+DOUBLE returns ecore::EDouble:
+	('-')? INT('.' INT)?;
+
+Usage:
+	GenericUsage | PatternUsage
+;
+
+GenericUsage:
+	'uses' importedNamespace=QualifiedNameWithWildcard;
+	
+PatternUsage:
+	'uses-patterns' importedNamespace=QualifiedNameWithWildcard;
+
+ModelElement:
+	EventPattern | Rule | Source
+;
+
+/*******************************************MAIN MODEL ELEMENTS*******************************************/
+
+EventPattern:
+	AbstractAtomicEventPattern | ComplexEventPattern
+;
+
+AbstractAtomicEventPattern:
+	AtomicEventPattern | IQPatternEventPattern
+;
+	
+AtomicEventPattern:
+	'AtomicEvent' name=ID '('parameters=TypedParameterList?')' '{'
+		('source' ':' source=[Source])?
+		('staticBindings' staticBindings = XBlockExpression)?
+	'}'
+;
+	
+IQPatternEventPattern:
+	'IQPatternEvent' name=ID '('parameters=TypedParameterList?')' '{'
+		'iqPatternRef' ':' iqPatternRef=ParametrizedIncQueryPatternReference
+		'iqChangeType' ':' iqChangeType=IQPatternChangeType
+	'}'
+;
+
+ComplexEventPattern:
+	'ComplexEvent' name=ID '('parameters=TypedParameterList?')' '{'
+		('priority'':' priority=INT)?
+		('definition'':'complexEventExpression=ComplexEventExpression)?
+	'}'
+;
+
+Rule:
+	'Rule' name=ID '{'
+		'events' ':' eventPatterns+=[EventPattern] (', 'eventPatterns+=[EventPattern])*
+		('actionHandler' ':' actionHandler=QualifiedName)?
+		('action' action = XBlockExpression)?
+	'}'
+;
+
+
+/*******************************************BASIC EVENT TYPE ELEMENTS*******************************************/
+	
+	
+	
+/*******************************************IQ PATTERN ELEMENTS*******************************************/
+enum IQPatternChangeType:
+	NEW_MATCH_FOUND | EXISTING_MATCH_LOST 
+;
+/*******************************************IQ PATTERN ELEMENTS*******************************************/
+
+
+
+/*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
+TypedParameterList:
+	{TypedParameterList}
+	parameters+=TypedParameter (', ' parameters+=TypedParameter)*
+;
+
+TypedParameter:
+	{TypedParameter}
+	name=ID ':' type = JvmTypeReference
+;
+
+EventPatternParameterList:
+	{EventPatternParameterList}
+	parameters+=EventTypedParameter (', ' parameters+=EventTypedParameter)*
+;
+
+EventTypedParameter:
+	{EventTypedParameter}
+	name=ID ':' type=[EventPattern]
+;
+/*******************************************FUNCTION ARGUMEN PARAMETERS*******************************************/
+
+/*******************************************INCQUERY INTEGRATION*******************************************/
+ParametrizedIncQueryPatternReference:
+	iqpattern=[iqpl::Pattern]('('parameterList=PatternCallParameterList?')')?
+;
+/*******************************************INCQUERY INTEGRATION*******************************************/
+
+/*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+Multiplicity:
+	'{'multiplicity=INT'}'
+;
+
+Timewindow:
+	'['length=INT']'
+;
+
+EventTypedParameterWithMultiplicity:
+	eventPattern=[EventPattern]('('parameterList=PatternCallParameterList?')')? (multiplicity=Multiplicity)?
+;
+
+PatternCallParameterList:
+	{PatternCallParameterList}
+	parameters+=PatternCallParameter (', ' parameters+=PatternCallParameter)*
+;	
+
+PatternCallParameter:
+	{PatternCallParameter}
+	name=ID
+;
+
+ComplexEventExpression:
+	Expression | AugmentedExpression
+;
+
+AugmentedExpression:
+	TimedExpression | MultiplicityExpression | TimedMultiplicityExpression
+;
+
+TimedExpression:
+	'('expression=Expression')' timewindow=Timewindow
+;
+
+MultiplicityExpression:
+	'('expression=Expression')' multiplicity=Multiplicity
+;
+
+TimedMultiplicityExpression:
+	'('expression=Expression')' multiplicity=Multiplicity timewindow=Timewindow
+;
+
+Expression:
+	FollowsExpression | OrExpression | UntilExpression | AndExpression //| NegExpression //| RepeatExpression
+;
+
+FollowsExpression:
+	{FollowsExpression}
+	eventPatterns+=EventTypedParameterWithMultiplicity (followerExpressions+=FollowerExpression)+
+;
+
+FollowerExpression:
+	operator=FollowsOperator eventPattern=EventTypedParameterWithMultiplicity
+;
+
+OrExpression:
+	{OrExpression}
+	eventPatterns+=EventTypedParameterWithMultiplicity (alternatives+=AlternativeExpression)+
+;
+
+AlternativeExpression:
+	operator=OrOperator eventPattern=EventTypedParameterWithMultiplicity
+;
+
+NegExpression:
+	{NegExpression}
+	operator=NegOperator eventPattern=EventPattern
+;
+
+AndExpression:
+	{AndExpression}
+	eventPatterns+=EventTypedParameterWithMultiplicity (andedExpressions+=AndedExpression)+
+;
+
+AndedExpression:
+	operator=AndOperator eventPattern=EventTypedParameterWithMultiplicity
+;
+
+UntilExpression:
+	{UntilExpression}
+	fromEventPattern=EventTypedParameterWithMultiplicity operator=UntilOperator untilEventPattern=EventTypedParameterWithMultiplicity
+;
+
+FollowsOperator:
+	{FollowsOperator}
+	'->'
+;
+
+OrOperator:
+	{OrOperator}
+	'|'
+;
+
+NegOperator:
+	{NegOperator}
+	'^'
+;
+
+AndOperator:
+	{AndOperator}
+	'&'
+;
+
+UntilOperator:
+	{UntilOperator}
+	'~'
+;
+
+//RepeatOperator:
+//	{RepeatOperator}
+//	'&'
+//;
+//should be investigated in accordance to the multiplicity expressions
+
+
+//FollowsOperatorViaTW:
+//        '-[' timewindow=INT ']->'
+//;
+
+
+/*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+
+
+/*******************************************STRUCTURAL/INTEGRATION FEATURES*******************************************/
+Source:
+	'Source' name=ID '{'
+		('register' adapter+=Adapter)+
+	'}'
+;
+
+Adapter:
+	name=QualifiedName
+;
+/*******************************************STRUCTURAL/INTEGRATION FEATURES*******************************************/

@@ -1,0 +1,81 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2014, Istvan David, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Istvan David - initial API and implementation
+ *******************************************************************************/
+ 
+package org.eclipse.viatra.cep.core.engine.runtime
+
+import "cep.meta"
+import "automaton.meta"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern finishedAutomaton(automaton : Automaton, et : EventToken) {
+	Automaton.states(automaton, state);
+	find finalState(state, et);
+	EventToken.currentState(_, state);
+}
+
+pattern finalState(s : State, et : EventToken) {
+	State.label(s, label);
+	State.eventTokens(s, et);
+	check(label.equalsIgnoreCase("final"));
+}
+
+pattern latestEvent(e) {
+	InternalModel.latestEvent(_, e);
+}
+
+pattern preState(t, s) {
+	TypedTransition.preState(t, s);
+}
+
+pattern guardAtomicPattern(guard : Guard, atomicPattern : AtomicEventPattern) {
+	Guard.eventType(guard, atomicPattern);
+}
+
+pattern eventHandledByEventToken(et : EventToken, e : Event) {
+	EventToken.recordedEvents(et, e);
+}
+
+pattern eventHandledByState(s : State, e : Event) {
+	State.lastProcessedEvent(s, e);
+}
+
+pattern atomicPatternType(a : AtomicEventPattern, t : EString) {
+	AtomicEventPattern.type(a, t);
+}
+
+pattern enabledTransition(t : TypedTransition, et : EventToken, e : Event) {
+	find latestEvent(e);
+	Event.type(e, eventType);
+	TypedTransition.guard.eventType.type(t, eventType);
+	TypedTransition.preState.eventTokens(t, et);
+	TypedTransition.preState(t, ps);
+	neg find eventHandledByState(ps, e);
+}
+
+pattern tokenInTrapState(et : EventToken) {
+	TrapState.eventTokens(_, et);
+}
+
+pattern initState(s) {
+	InitState(s);
+}
+
+pattern partiallyMatchedEventPattern(et : EventToken, s : State) {
+	State.eventTokens(s, et);
+	neg find initState(s);
+}
+
+pattern epsilonTransitionBetweenStates(t : EpsilonTransition, s1 : State, s2 : State){
+	State.outTransitions(s1, t);
+	State.inTransitions(s2, t);
+}
+
+

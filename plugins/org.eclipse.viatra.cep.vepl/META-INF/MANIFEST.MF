@@ -1,0 +1,38 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA Event Processing Language (VEPL)
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Version: 0.0.1.qualifier
+Bundle-SymbolicName: org.eclipse.viatra.cep.vepl; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;resolution:=optional,
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
+ org.eclipse.emf.codegen.ecore;resolution:=optional,
+ org.eclipse.emf.mwe.utils;resolution:=optional,
+ org.eclipse.emf.mwe2.launch;resolution:=optional,
+ org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.viatra.cep.core.metamodels;bundle-version="0.0.1",
+ org.eclipse.viatra2.emf.runtime,
+ org.eclipse.viatra.cep.core;bundle-version="0.0.1"
+Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.viatra.cep.vepl,
+ org.eclipse.viatra.cep.vepl.services,
+ org.eclipse.viatra.cep.vepl.vepl,
+ org.eclipse.viatra.cep.vepl.vepl.impl,
+ org.eclipse.viatra.cep.vepl.vepl.util,
+ org.eclipse.viatra.cep.vepl.serializer,
+ org.eclipse.viatra.cep.vepl.parser.antlr,
+ org.eclipse.viatra.cep.vepl.parser.antlr.internal,
+ org.eclipse.viatra.cep.vepl.validation,
+ org.eclipse.viatra.cep.vepl.formatting,
+ org.eclipse.viatra.cep.vepl.jvmmodel

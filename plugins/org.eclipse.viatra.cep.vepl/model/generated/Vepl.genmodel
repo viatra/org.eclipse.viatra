@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.cep.vepl/src-gen" editDirectory="/org.eclipse.viatra.cep.vepl.edit/src"
+    editorDirectory="/org.eclipse.viatra.cep.vepl.editor/src" modelPluginID="org.eclipse.viatra.cep.vepl"
+    forceOverwrite="true" modelName="Vepl" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="org.eclipse.viatra.cep.vepl.edit"
+    editorPluginID="org.eclipse.viatra.cep.vepl.editor" runtimeVersion="2.9" usedGenPackages="../../../org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage ../../../org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types ../../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
+  <genPackages prefix="Vepl" basePackage="org.eclipse.viatra.cep.vepl" disposableProviderFactory="true"
+      fileExtensions="vepl" ecorePackage="Vepl.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//IQPatternChangeType">
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//IQPatternChangeType/NEW_MATCH_FOUND"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//IQPatternChangeType/EXISTING_MATCH_LOST"/>
+    </genEnums>
+    <genClasses ecoreClass="Vepl.ecore#//EventModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventModel/packagedModel"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//PackagedModel">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//PackagedModel/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PackagedModel/usages"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PackagedModel/modelElements"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Usage">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Usage/importedNamespace"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//GenericUsage"/>
+    <genClasses ecoreClass="Vepl.ecore#//PatternUsage"/>
+    <genClasses ecoreClass="Vepl.ecore#//ModelElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//ModelElement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//EventPattern">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventPattern/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//AbstractAtomicEventPattern"/>
+    <genClasses ecoreClass="Vepl.ecore#//AtomicEventPattern">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/source"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/staticBindings"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//IQPatternEventPattern">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//IQPatternEventPattern/iqPatternRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//IQPatternEventPattern/iqChangeType"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//ComplexEventPattern">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//ComplexEventPattern/priority"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventPattern/complexEventExpression"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Rule">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/eventPatterns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Rule/actionHandler"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/action"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TypedParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameterList/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TypedParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//TypedParameter/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameter/type"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//EventPatternParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventPatternParameterList/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//EventTypedParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//EventTypedParameter/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventTypedParameter/type"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//ParametrizedIncQueryPatternReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//ParametrizedIncQueryPatternReference/iqpattern"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ParametrizedIncQueryPatternReference/parameterList"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Multiplicity">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Multiplicity/multiplicity"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Timewindow">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Timewindow/length"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//EventTypedParameterWithMultiplicity">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventTypedParameterWithMultiplicity/eventPattern"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventTypedParameterWithMultiplicity/parameterList"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventTypedParameterWithMultiplicity/multiplicity"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//PatternCallParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PatternCallParameterList/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//PatternCallParameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//PatternCallParameter/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//ComplexEventExpression"/>
+    <genClasses ecoreClass="Vepl.ecore#//AugmentedExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AugmentedExpression/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TimedExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TimedExpression/timewindow"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//MultiplicityExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//MultiplicityExpression/multiplicity"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TimedMultiplicityExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TimedMultiplicityExpression/multiplicity"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TimedMultiplicityExpression/timewindow"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Expression"/>
+    <genClasses ecoreClass="Vepl.ecore#//FollowsExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//FollowsExpression/eventPatterns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//FollowsExpression/followerExpressions"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//FollowerExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//FollowerExpression/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//FollowerExpression/eventPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//OrExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//OrExpression/eventPatterns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//OrExpression/alternatives"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//AlternativeExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AlternativeExpression/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AlternativeExpression/eventPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//NegExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//NegExpression/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//NegExpression/eventPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//AndExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AndExpression/eventPatterns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AndExpression/andedExpressions"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//AndedExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AndedExpression/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AndedExpression/eventPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//UntilExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//UntilExpression/fromEventPattern"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//UntilExpression/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//UntilExpression/untilEventPattern"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//FollowsOperator"/>
+    <genClasses ecoreClass="Vepl.ecore#//OrOperator"/>
+    <genClasses ecoreClass="Vepl.ecore#//NegOperator"/>
+    <genClasses ecoreClass="Vepl.ecore#//AndOperator"/>
+    <genClasses ecoreClass="Vepl.ecore#//UntilOperator"/>
+    <genClasses ecoreClass="Vepl.ecore#//Source">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Source/adapter"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Adapter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Adapter/name"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
