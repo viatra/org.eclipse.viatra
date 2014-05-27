@@ -197,7 +197,7 @@ class PatternQuerySpecificationClassInferrer {
 			varArgs = true
 			body = [
 				if (isPublic) {
-					append('''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«p.positionConstant»]«ENDFOR»);''')
+					append('''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);''')
 				} else {
 					append('''throw new ''')
 					referClass(pattern, UnsupportedOperationException)
