@@ -4,11 +4,11 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import operation.queries.ChecklistEntryJobCorrespondenceMatch;
 import operation.queries.ChecklistEntryJobCorrespondenceMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -57,6 +57,16 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Job", "system.Job"));
+  }
+  
+  @Override
+  public ChecklistEntryJobCorrespondenceMatch newEmptyMatch() {
+    return ChecklistEntryJobCorrespondenceMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public ChecklistEntryJobCorrespondenceMatch newMatch(final Object... parameters) {
+    return ChecklistEntryJobCorrespondenceMatch.newMatch((operation.ChecklistEntry) parameters[0], (system.Job) parameters[1]);
   }
   
   @Override
@@ -109,15 +119,6 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<ChecklistEntryJobCorrespondenceQuerySpecification> {
-    @Override
-    public ChecklistEntryJobCorrespondenceQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

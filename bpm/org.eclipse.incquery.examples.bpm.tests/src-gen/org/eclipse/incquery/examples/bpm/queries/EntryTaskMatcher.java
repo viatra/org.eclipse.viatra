@@ -194,7 +194,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pEntry the fixed value of pattern parameter Entry, or null if not bound.
@@ -203,7 +203,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
    * 
    */
   public EntryTaskMatch newMatch(final ChecklistEntry pEntry, final Task pTask) {
-    return new EntryTaskMatch.Immutable(pEntry, pTask);
+    return EntryTaskMatch.newMatch(pEntry, pTask);
     
   }
   
@@ -286,7 +286,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   @Override
   protected EntryTaskMatch tupleToMatch(final Tuple t) {
     try {
-      return new EntryTaskMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_ENTRY), (process.Task) t.get(POSITION_TASK));
+      return EntryTaskMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_ENTRY), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -297,7 +297,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   @Override
   protected EntryTaskMatch arrayToMatch(final Object[] match) {
     try {
-      return new EntryTaskMatch.Immutable((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
+      return EntryTaskMatch.newMatch((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -308,7 +308,7 @@ public class EntryTaskMatcher extends BaseMatcher<EntryTaskMatch> {
   @Override
   protected EntryTaskMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new EntryTaskMatch.Mutable((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
+      return EntryTaskMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_ENTRY], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

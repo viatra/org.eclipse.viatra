@@ -24,78 +24,78 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface Checklist extends OperationElement {
-    /**
-     * Returns the value of the '<em><b>Entries</b></em>' containment reference list.
-     * The list contents are of type {@link operation.ChecklistEntry}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Entries</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Entries</em>' containment reference list.
-     * @see operation.OperationPackage#getChecklist_Entries()
-     * @model containment="true"
-     * @generated
-     */
-    EList<ChecklistEntry> getEntries();
+	/**
+	 * Returns the value of the '<em><b>Entries</b></em>' containment reference list.
+	 * The list contents are of type {@link operation.ChecklistEntry}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Entries</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Entries</em>' containment reference list.
+	 * @see operation.OperationPackage#getChecklist_Entries()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<ChecklistEntry> getEntries();
 
-    /**
-     * Returns the value of the '<em><b>Menu</b></em>' containment reference list.
-     * The list contents are of type {@link operation.MenuItem}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Menu</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Menu</em>' containment reference list.
-     * @see operation.OperationPackage#getChecklist_Menu()
-     * @model containment="true"
-     * @generated
-     */
-    EList<MenuItem> getMenu();
+	/**
+	 * Returns the value of the '<em><b>Menu</b></em>' containment reference list.
+	 * The list contents are of type {@link operation.MenuItem}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Menu</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Menu</em>' containment reference list.
+	 * @see operation.OperationPackage#getChecklist_Menu()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<MenuItem> getMenu();
 
-    /**
-     * Returns the value of the '<em><b>Process</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Process</em>' reference isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Process</em>' reference.
-     * @see operation.OperationPackage#getChecklist_Process()
-     * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
-     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='operation.queries.ChecklistProcessCorrespondence'"
-     * @generated
-     */
-    process.Process getProcess();
+	/**
+	 * Returns the value of the '<em><b>Process</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Process</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Process</em>' reference.
+	 * @see operation.OperationPackage#getChecklist_Process()
+	 * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='operation.queries.ChecklistProcessCorrespondence'"
+	 * @generated
+	 */
+	process.Process getProcess();
 
-    /**
-     * Returns the value of the '<em><b>Process Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Process Id</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Process Id</em>' attribute.
-     * @see #setProcessId(String)
-     * @see operation.OperationPackage#getChecklist_ProcessId()
-     * @model required="true"
-     * @generated
-     */
-    String getProcessId();
+	/**
+	 * Returns the value of the '<em><b>Process Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Process Id</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Process Id</em>' attribute.
+	 * @see #setProcessId(String)
+	 * @see operation.OperationPackage#getChecklist_ProcessId()
+	 * @model required="true"
+	 * @generated
+	 */
+	String getProcessId();
 
-    /**
-     * Sets the value of the '{@link operation.Checklist#getProcessId <em>Process Id</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Process Id</em>' attribute.
-     * @see #getProcessId()
-     * @generated
-     */
-    void setProcessId(String value);
+	/**
+	 * Sets the value of the '{@link operation.Checklist#getProcessId <em>Process Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Process Id</em>' attribute.
+	 * @see #getProcessId()
+	 * @generated
+	 */
+	void setProcessId(String value);
 
 } // Checklist

@@ -52,7 +52,17 @@ final class TaskKindQuerySpecification extends BaseGeneratedQuerySpecification<I
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("Kind", "java.lang.Object"));
+    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("Kind", "process.TaskKind"));
+  }
+  
+  @Override
+  public IPatternMatch newEmptyMatch() {
+    throw new UnsupportedOperationException();
+  }
+  
+  @Override
+  public IPatternMatch newMatch(final Object... parameters) {
+    throw new UnsupportedOperationException();
   }
   
   @Override

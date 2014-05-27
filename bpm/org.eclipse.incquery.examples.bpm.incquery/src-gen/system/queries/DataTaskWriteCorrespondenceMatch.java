@@ -100,6 +100,12 @@ public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch 
   }
   
   @Override
+  public DataTaskWriteCorrespondenceMatch toImmutable() {
+    return isMutable() ? newMatch(fData, fTask) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Data\"=" + prettyPrintValue(fData) + ", ");
@@ -151,8 +157,48 @@ public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch 
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static DataTaskWriteCorrespondenceMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pData the fixed value of pattern parameter Data, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static DataTaskWriteCorrespondenceMatch newMutableMatch(final Data pData, final Task pTask) {
+    return new Mutable(pData, pTask);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pData the fixed value of pattern parameter Data, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static DataTaskWriteCorrespondenceMatch newMatch(final Data pData, final Task pTask) {
+    return new Immutable(pData, pTask);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends DataTaskWriteCorrespondenceMatch {
+  private static final class Mutable extends DataTaskWriteCorrespondenceMatch {
     Mutable(final Data pData, final Task pTask) {
       super(pData, pTask);
       
@@ -166,7 +212,7 @@ public abstract class DataTaskWriteCorrespondenceMatch extends BasePatternMatch 
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends DataTaskWriteCorrespondenceMatch {
+  private static final class Immutable extends DataTaskWriteCorrespondenceMatch {
     Immutable(final Data pData, final Task pTask) {
       super(pData, pTask);
       

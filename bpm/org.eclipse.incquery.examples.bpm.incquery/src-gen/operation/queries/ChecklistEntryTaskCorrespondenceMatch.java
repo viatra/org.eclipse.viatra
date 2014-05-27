@@ -100,6 +100,12 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
   }
   
   @Override
+  public ChecklistEntryTaskCorrespondenceMatch toImmutable() {
+    return isMutable() ? newMatch(fCLE, fTask) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"CLE\"=" + prettyPrintValue(fCLE) + ", ");
@@ -151,8 +157,48 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static ChecklistEntryTaskCorrespondenceMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static ChecklistEntryTaskCorrespondenceMatch newMutableMatch(final ChecklistEntry pCLE, final Task pTask) {
+    return new Mutable(pCLE, pTask);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static ChecklistEntryTaskCorrespondenceMatch newMatch(final ChecklistEntry pCLE, final Task pTask) {
+    return new Immutable(pCLE, pTask);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends ChecklistEntryTaskCorrespondenceMatch {
+  private static final class Mutable extends ChecklistEntryTaskCorrespondenceMatch {
     Mutable(final ChecklistEntry pCLE, final Task pTask) {
       super(pCLE, pTask);
       
@@ -166,7 +212,7 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends ChecklistEntryTaskCorrespondenceMatch {
+  private static final class Immutable extends ChecklistEntryTaskCorrespondenceMatch {
     Immutable(final ChecklistEntry pCLE, final Task pTask) {
       super(pCLE, pTask);
       

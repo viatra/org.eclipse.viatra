@@ -209,7 +209,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pTask the fixed value of pattern parameter Task, or null if not bound.
@@ -219,7 +219,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
    * 
    */
   public TaskChecklistEntryJobCorrespondenceMatch newMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
-    return new TaskChecklistEntryJobCorrespondenceMatch.Immutable(pTask, pCLE, pJob);
+    return TaskChecklistEntryJobCorrespondenceMatch.newMatch(pTask, pCLE, pJob);
     
   }
   
@@ -340,7 +340,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) t.get(POSITION_TASK), (operation.ChecklistEntry) t.get(POSITION_CLE), (system.Job) t.get(POSITION_JOB));
+      return TaskChecklistEntryJobCorrespondenceMatch.newMatch((process.Task) t.get(POSITION_TASK), (operation.ChecklistEntry) t.get(POSITION_CLE), (system.Job) t.get(POSITION_JOB));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -351,7 +351,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new TaskChecklistEntryJobCorrespondenceMatch.Immutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
+      return TaskChecklistEntryJobCorrespondenceMatch.newMatch((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -362,7 +362,7 @@ public class TaskChecklistEntryJobCorrespondenceMatcher extends BaseMatcher<Task
   @Override
   protected TaskChecklistEntryJobCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new TaskChecklistEntryJobCorrespondenceMatch.Mutable((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
+      return TaskChecklistEntryJobCorrespondenceMatch.newMutableMatch((process.Task) match[POSITION_TASK], (operation.ChecklistEntry) match[POSITION_CLE], (system.Job) match[POSITION_JOB]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

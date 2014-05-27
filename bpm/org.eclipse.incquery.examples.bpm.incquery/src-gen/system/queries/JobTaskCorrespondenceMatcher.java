@@ -198,7 +198,7 @@ public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorresponde
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pJob the fixed value of pattern parameter Job, or null if not bound.
@@ -207,7 +207,7 @@ public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorresponde
    * 
    */
   public JobTaskCorrespondenceMatch newMatch(final Job pJob, final Task pTask) {
-    return new JobTaskCorrespondenceMatch.Immutable(pJob, pTask);
+    return JobTaskCorrespondenceMatch.newMatch(pJob, pTask);
     
   }
   
@@ -290,7 +290,7 @@ public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorresponde
   @Override
   protected JobTaskCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new JobTaskCorrespondenceMatch.Immutable((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
+      return JobTaskCorrespondenceMatch.newMatch((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -301,7 +301,7 @@ public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorresponde
   @Override
   protected JobTaskCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new JobTaskCorrespondenceMatch.Immutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+      return JobTaskCorrespondenceMatch.newMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -312,7 +312,7 @@ public class JobTaskCorrespondenceMatcher extends BaseMatcher<JobTaskCorresponde
   @Override
   protected JobTaskCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new JobTaskCorrespondenceMatch.Mutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+      return JobTaskCorrespondenceMatch.newMutableMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

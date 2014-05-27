@@ -197,7 +197,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
@@ -206,7 +206,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * 
    */
   public ChecklistEntryTaskCorrespondenceMatch newMatch(final ChecklistEntry pCLE, final Task pTask) {
-    return new ChecklistEntryTaskCorrespondenceMatch.Immutable(pCLE, pTask);
+    return ChecklistEntryTaskCorrespondenceMatch.newMatch(pCLE, pTask);
     
   }
   
@@ -289,7 +289,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new ChecklistEntryTaskCorrespondenceMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK));
+      return ChecklistEntryTaskCorrespondenceMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -300,7 +300,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new ChecklistEntryTaskCorrespondenceMatch.Immutable((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
+      return ChecklistEntryTaskCorrespondenceMatch.newMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -311,7 +311,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new ChecklistEntryTaskCorrespondenceMatch.Mutable((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
+      return ChecklistEntryTaskCorrespondenceMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

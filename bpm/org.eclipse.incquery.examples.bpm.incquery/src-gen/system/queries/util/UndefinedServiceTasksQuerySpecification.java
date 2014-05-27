@@ -7,7 +7,6 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -18,6 +17,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import system.queries.UndefinedServiceTasksMatch;
 import system.queries.UndefinedServiceTasksMatcher;
 import system.queries.util.TaskHasJobQuerySpecification;
 
@@ -62,6 +62,16 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   }
   
   @Override
+  public UndefinedServiceTasksMatch newEmptyMatch() {
+    return UndefinedServiceTasksMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public UndefinedServiceTasksMatch newMatch(final Object... parameters) {
+    return UndefinedServiceTasksMatch.newMatch((process.Task) parameters[0]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -86,15 +96,6 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<UndefinedServiceTasksQuerySpecification> {
-    @Override
-    public UndefinedServiceTasksQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

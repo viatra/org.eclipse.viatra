@@ -209,7 +209,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pSourceTask the fixed value of pattern parameter SourceTask, or null if not bound.
@@ -218,7 +218,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * 
    */
   public TransitiveAffectedTasksThroughDataMatch newMatch(final Task pSourceTask, final Task pAffectedTask) {
-    return new TransitiveAffectedTasksThroughDataMatch.Immutable(pSourceTask, pAffectedTask);
+    return TransitiveAffectedTasksThroughDataMatch.newMatch(pSourceTask, pAffectedTask);
     
   }
   
@@ -301,7 +301,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch tupleToMatch(final Tuple t) {
     try {
-      return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) t.get(POSITION_SOURCETASK), (process.Task) t.get(POSITION_AFFECTEDTASK));
+      return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) t.get(POSITION_SOURCETASK), (process.Task) t.get(POSITION_AFFECTEDTASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -312,7 +312,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatch(final Object[] match) {
     try {
-      return new TransitiveAffectedTasksThroughDataMatch.Immutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
+      return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -323,7 +323,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new TransitiveAffectedTasksThroughDataMatch.Mutable((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
+      return TransitiveAffectedTasksThroughDataMatch.newMutableMatch((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

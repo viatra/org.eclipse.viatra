@@ -100,6 +100,12 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
   }
   
   @Override
+  public JobInfoCorrespondenceMatch toImmutable() {
+    return isMutable() ? newMatch(fJob, fInfo) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Job\"=" + prettyPrintValue(fJob) + ", ");
@@ -151,8 +157,48 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static JobInfoCorrespondenceMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pJob the fixed value of pattern parameter Job, or null if not bound.
+   * @param pInfo the fixed value of pattern parameter Info, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static JobInfoCorrespondenceMatch newMutableMatch(final Job pJob, final RuntimeInformation pInfo) {
+    return new Mutable(pJob, pInfo);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pJob the fixed value of pattern parameter Job, or null if not bound.
+   * @param pInfo the fixed value of pattern parameter Info, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static JobInfoCorrespondenceMatch newMatch(final Job pJob, final RuntimeInformation pInfo) {
+    return new Immutable(pJob, pInfo);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends JobInfoCorrespondenceMatch {
+  private static final class Mutable extends JobInfoCorrespondenceMatch {
     Mutable(final Job pJob, final RuntimeInformation pInfo) {
       super(pJob, pInfo);
       
@@ -166,7 +212,7 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends JobInfoCorrespondenceMatch {
+  private static final class Immutable extends JobInfoCorrespondenceMatch {
     Immutable(final Job pJob, final RuntimeInformation pInfo) {
       super(pJob, pInfo);
       

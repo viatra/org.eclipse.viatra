@@ -196,7 +196,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pChecklist the fixed value of pattern parameter Checklist, or null if not bound.
@@ -205,7 +205,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * 
    */
   public ChecklistProcessCorrespondenceMatch newMatch(final Checklist pChecklist, final process.Process pProcess) {
-    return new ChecklistProcessCorrespondenceMatch.Immutable(pChecklist, pProcess);
+    return ChecklistProcessCorrespondenceMatch.newMatch(pChecklist, pProcess);
     
   }
   
@@ -288,7 +288,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) t.get(POSITION_CHECKLIST), (process.Process) t.get(POSITION_PROCESS));
+      return ChecklistProcessCorrespondenceMatch.newMatch((operation.Checklist) t.get(POSITION_CHECKLIST), (process.Process) t.get(POSITION_PROCESS));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -299,7 +299,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new ChecklistProcessCorrespondenceMatch.Immutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
+      return ChecklistProcessCorrespondenceMatch.newMatch((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -310,7 +310,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new ChecklistProcessCorrespondenceMatch.Mutable((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
+      return ChecklistProcessCorrespondenceMatch.newMutableMatch((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

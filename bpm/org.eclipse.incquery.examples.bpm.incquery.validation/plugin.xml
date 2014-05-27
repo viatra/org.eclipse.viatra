@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><plugin>
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
   <extension id="org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.org.eclipse.incquery.examples.bpm.incquery.validation.validation.constraint.system.queries.UndefinedServiceTasks" point="org.eclipse.incquery.validation.runtime.constraint">
     <constraint class="system.queries.UndefinedServiceTasksConstraint0" name="system.queries.UndefinedServiceTasks">
       <enabledForEditor editorId="process.presentation.ProcessEditorID"/>

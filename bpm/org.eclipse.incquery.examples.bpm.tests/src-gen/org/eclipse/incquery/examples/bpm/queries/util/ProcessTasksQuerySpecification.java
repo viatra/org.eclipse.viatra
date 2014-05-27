@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatch;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
@@ -52,6 +53,16 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Proc", "process.Process"),new PParameter("Task", "process.Activity"));
+  }
+  
+  @Override
+  public ProcessTasksMatch newEmptyMatch() {
+    return ProcessTasksMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public ProcessTasksMatch newMatch(final Object... parameters) {
+    return ProcessTasksMatch.newMatch((process.Process) parameters[0], (process.Activity) parameters[1]);
   }
   
   @Override

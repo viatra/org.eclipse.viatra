@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import operation.queries.IncorrectEntryInChecklistMatch;
 import operation.queries.IncorrectEntryInChecklistMatcher;
 import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
 import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
@@ -11,7 +12,6 @@ import operation.queries.util.TaskInProcessQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -64,6 +64,16 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   }
   
   @Override
+  public IncorrectEntryInChecklistMatch newEmptyMatch() {
+    return IncorrectEntryInChecklistMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public IncorrectEntryInChecklistMatch newMatch(final Object... parameters) {
+    return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) parameters[0], (process.Task) parameters[1], (process.Process) parameters[2]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -95,15 +105,6 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<IncorrectEntryInChecklistQuerySpecification> {
-    @Override
-    public IncorrectEntryInChecklistQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

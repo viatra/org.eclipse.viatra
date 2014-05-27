@@ -7,7 +7,6 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -15,6 +14,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTran
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import system.queries.TransitiveAffectedTasksThroughDataMatch;
 import system.queries.TransitiveAffectedTasksThroughDataMatcher;
 import system.queries.util.TasksAffectedThroughDataQuerySpecification;
 
@@ -59,6 +59,16 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
   }
   
   @Override
+  public TransitiveAffectedTasksThroughDataMatch newEmptyMatch() {
+    return TransitiveAffectedTasksThroughDataMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public TransitiveAffectedTasksThroughDataMatch newMatch(final Object... parameters) {
+    return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) parameters[0], (process.Task) parameters[1]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -78,15 +88,6 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<TransitiveAffectedTasksThroughDataQuerySpecification> {
-    @Override
-    public TransitiveAffectedTasksThroughDataQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

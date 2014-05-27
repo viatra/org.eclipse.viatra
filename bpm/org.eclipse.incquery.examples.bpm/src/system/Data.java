@@ -26,70 +26,70 @@ import process.Task;
  * @generated
  */
 public interface Data extends ResourceElement {
-    /**
-     * Returns the value of the '<em><b>Reading Task Ids</b></em>' attribute list.
-     * The list contents are of type {@link java.lang.String}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Reading Task Ids</em>' attribute list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Reading Task Ids</em>' attribute list.
-     * @see system.SystemPackage#getData_ReadingTaskIds()
-     * @model
-     * @generated
-     */
-    EList<String> getReadingTaskIds();
+	/**
+	 * Returns the value of the '<em><b>Reading Task Ids</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Reading Task Ids</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Reading Task Ids</em>' attribute list.
+	 * @see system.SystemPackage#getData_ReadingTaskIds()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getReadingTaskIds();
 
-    /**
-     * Returns the value of the '<em><b>Writing Task Ids</b></em>' attribute list.
-     * The list contents are of type {@link java.lang.String}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Writing Task Ids</em>' attribute list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Writing Task Ids</em>' attribute list.
-     * @see system.SystemPackage#getData_WritingTaskIds()
-     * @model
-     * @generated
-     */
-    EList<String> getWritingTaskIds();
+	/**
+	 * Returns the value of the '<em><b>Writing Task Ids</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Writing Task Ids</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Writing Task Ids</em>' attribute list.
+	 * @see system.SystemPackage#getData_WritingTaskIds()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getWritingTaskIds();
 
-    /**
-     * Returns the value of the '<em><b>Writing Task</b></em>' reference list.
-     * The list contents are of type {@link process.Task}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Writing Task</em>' reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Writing Task</em>' reference list.
-     * @see system.SystemPackage#getData_WritingTask()
-     * @model transient="true" changeable="false" volatile="true" derived="true"
-     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='system.queries.DataTaskWriteCorrespondence'"
-     * @generated
-     */
-    EList<Task> getWritingTask();
+	/**
+	 * Returns the value of the '<em><b>Writing Task</b></em>' reference list.
+	 * The list contents are of type {@link process.Task}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Writing Task</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Writing Task</em>' reference list.
+	 * @see system.SystemPackage#getData_WritingTask()
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='system.queries.DataTaskWriteCorrespondence'"
+	 * @generated
+	 */
+	EList<Task> getWritingTask();
 
-    /**
-     * Returns the value of the '<em><b>Reading Task</b></em>' reference list.
-     * The list contents are of type {@link process.Task}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Reading Task</em>' reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Reading Task</em>' reference list.
-     * @see system.SystemPackage#getData_ReadingTask()
-     * @model transient="true" changeable="false" volatile="true" derived="true"
-     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='system.queries.DataTaskReadCorrespondence'"
-     * @generated
-     */
-    EList<Task> getReadingTask();
+	/**
+	 * Returns the value of the '<em><b>Reading Task</b></em>' reference list.
+	 * The list contents are of type {@link process.Task}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Reading Task</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Reading Task</em>' reference list.
+	 * @see system.SystemPackage#getData_ReadingTask()
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='system.queries.DataTaskReadCorrespondence'"
+	 * @generated
+	 */
+	EList<Task> getReadingTask();
 
 } // Data

@@ -24,121 +24,121 @@ import system.SystemPackage;
  * @generated
  */
 public class SystemFactoryImpl extends EFactoryImpl implements SystemFactory {
-    /**
-     * Creates the default factory implementation.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static SystemFactory init() {
-        try {
-            SystemFactory theSystemFactory = (SystemFactory)EPackage.Registry.INSTANCE.getEFactory("http://system/1.0"); 
-            if (theSystemFactory != null) {
-                return theSystemFactory;
-            }
-        }
-        catch (Exception exception) {
-            EcorePlugin.INSTANCE.log(exception);
-        }
-        return new SystemFactoryImpl();
-    }
+	/**
+	 * Creates the default factory implementation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static SystemFactory init() {
+		try {
+			SystemFactory theSystemFactory = (SystemFactory)EPackage.Registry.INSTANCE.getEFactory(SystemPackage.eNS_URI);
+			if (theSystemFactory != null) {
+				return theSystemFactory;
+			}
+		}
+		catch (Exception exception) {
+			EcorePlugin.INSTANCE.log(exception);
+		}
+		return new SystemFactoryImpl();
+	}
 
-    /**
-     * Creates an instance of the factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public SystemFactoryImpl() {
-        super();
-    }
+	/**
+	 * Creates an instance of the factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SystemFactoryImpl() {
+		super();
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EObject create(EClass eClass) {
-        switch (eClass.getClassifierID()) {
-            case SystemPackage.SYSTEM: return createSystem();
-            case SystemPackage.INTERFACE: return createInterface();
-            case SystemPackage.JOB: return createJob();
-            case SystemPackage.DATA: return createData();
-            case SystemPackage.RESOURCE_ELEMENT: return createResourceElement();
-            default:
-                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-        }
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EObject create(EClass eClass) {
+		switch (eClass.getClassifierID()) {
+			case SystemPackage.SYSTEM: return createSystem();
+			case SystemPackage.INTERFACE: return createInterface();
+			case SystemPackage.JOB: return createJob();
+			case SystemPackage.DATA: return createData();
+			case SystemPackage.RESOURCE_ELEMENT: return createResourceElement();
+			default:
+				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public system.System createSystem() {
-        SystemImpl system = new SystemImpl();
-        return system;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public system.System createSystem() {
+		SystemImpl system = new SystemImpl();
+		return system;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Interface createInterface() {
-        InterfaceImpl interface_ = new InterfaceImpl();
-        return interface_;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Interface createInterface() {
+		InterfaceImpl interface_ = new InterfaceImpl();
+		return interface_;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Job createJob() {
-        JobImpl job = new JobImpl();
-        return job;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Job createJob() {
+		JobImpl job = new JobImpl();
+		return job;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Data createData() {
-        DataImpl data = new DataImpl();
-        return data;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Data createData() {
+		DataImpl data = new DataImpl();
+		return data;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ResourceElement createResourceElement() {
-        ResourceElementImpl resourceElement = new ResourceElementImpl();
-        return resourceElement;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ResourceElement createResourceElement() {
+		ResourceElementImpl resourceElement = new ResourceElementImpl();
+		return resourceElement;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public SystemPackage getSystemPackage() {
-        return (SystemPackage)getEPackage();
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SystemPackage getSystemPackage() {
+		return (SystemPackage)getEPackage();
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @deprecated
-     * @generated
-     */
-    @Deprecated
-    public static SystemPackage getPackage() {
-        return SystemPackage.eINSTANCE;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @deprecated
+	 * @generated
+	 */
+	@Deprecated
+	public static SystemPackage getPackage() {
+		return SystemPackage.eINSTANCE;
+	}
 
 } //SystemFactoryImpl

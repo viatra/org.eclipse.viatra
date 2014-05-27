@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.incquery.examples.bpm.queries.NextActivityMatch;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
@@ -52,6 +53,16 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Act", "process.Activity"),new PParameter("Next", "process.Activity"));
+  }
+  
+  @Override
+  public NextActivityMatch newEmptyMatch() {
+    return NextActivityMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public NextActivityMatch newMatch(final Object... parameters) {
+    return NextActivityMatch.newMatch((process.Activity) parameters[0], (process.Activity) parameters[1]);
   }
   
   @Override

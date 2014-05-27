@@ -7,7 +7,6 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -15,6 +14,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import system.queries.TasksAffectedThroughDataMatch;
 import system.queries.TasksAffectedThroughDataMatcher;
 import system.queries.util.DataTaskReadCorrespondenceQuerySpecification;
 import system.queries.util.DataTaskWriteCorrespondenceQuerySpecification;
@@ -60,6 +60,16 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
   }
   
   @Override
+  public TasksAffectedThroughDataMatch newEmptyMatch() {
+    return TasksAffectedThroughDataMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public TasksAffectedThroughDataMatch newMatch(final Object... parameters) {
+    return TasksAffectedThroughDataMatch.newMatch((process.Task) parameters[0], (process.Task) parameters[1]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -82,15 +92,6 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<TasksAffectedThroughDataQuerySpecification> {
-    @Override
-    public TasksAffectedThroughDataQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

@@ -3,30 +3,9 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.incquery.examples.bpm/src" modelPluginID="org.eclipse.incquery.examples.bpm"
     modelName="BPMCombinedModel" importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0"
     copyrightFields="false">
-  <foreignModel>derivedModel.ecore</foreignModel>
-  <genPackages prefix="Process" disposableProviderFactory="true" ecorePackage="process.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="process.ecore#//TaskKind">
-      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/user"/>
-      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/manual"/>
-      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/service"/>
-    </genEnums>
-    <genClasses ecoreClass="process.ecore#//Task">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//Task/kind"/>
-    </genClasses>
-    <genClasses ecoreClass="process.ecore#//Process">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference process.ecore#//Process/contents"/>
-    </genClasses>
-    <genClasses ecoreClass="process.ecore#//ProcessElement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//ProcessElement/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//ProcessElement/name"/>
-    </genClasses>
-    <genClasses ecoreClass="process.ecore#//Gateway"/>
-    <genClasses ecoreClass="process.ecore#//Activity">
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference process.ecore#//Activity/parent"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference process.ecore#//Activity/next"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference process.ecore#//Activity/previous"/>
-    </genClasses>
-  </genPackages>
+  <foreignModel>operation.ecore</foreignModel>
+  <foreignModel>system.ecore</foreignModel>
+  <foreignModel>process.ecore</foreignModel>
   <genPackages prefix="Operation" disposableProviderFactory="true" ecorePackage="operation.ecore#/">
     <genClasses ecoreClass="operation.ecore#//MenuItem">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute operation.ecore#//MenuItem/description"/>
@@ -80,6 +59,29 @@
     </genClasses>
     <genClasses ecoreClass="system.ecore#//ResourceElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute system.ecore#//ResourceElement/name"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Process" disposableProviderFactory="true" ecorePackage="process.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="process.ecore#//TaskKind">
+      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/user"/>
+      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/manual"/>
+      <genEnumLiterals ecoreEnumLiteral="process.ecore#//TaskKind/service"/>
+    </genEnums>
+    <genClasses ecoreClass="process.ecore#//Task">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//Task/kind"/>
+    </genClasses>
+    <genClasses ecoreClass="process.ecore#//Process">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference process.ecore#//Process/contents"/>
+    </genClasses>
+    <genClasses ecoreClass="process.ecore#//ProcessElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//ProcessElement/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute process.ecore#//ProcessElement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="process.ecore#//Gateway"/>
+    <genClasses ecoreClass="process.ecore#//Activity">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference process.ecore#//Activity/parent"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference process.ecore#//Activity/next"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference process.ecore#//Activity/previous"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

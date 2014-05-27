@@ -99,6 +99,12 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
   }
   
   @Override
+  public TasksAffectedThroughDataMatch toImmutable() {
+    return isMutable() ? newMatch(fSourceTask, fAffectedTask) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"SourceTask\"=" + prettyPrintValue(fSourceTask) + ", ");
@@ -150,8 +156,48 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static TasksAffectedThroughDataMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pSourceTask the fixed value of pattern parameter SourceTask, or null if not bound.
+   * @param pAffectedTask the fixed value of pattern parameter AffectedTask, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static TasksAffectedThroughDataMatch newMutableMatch(final Task pSourceTask, final Task pAffectedTask) {
+    return new Mutable(pSourceTask, pAffectedTask);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pSourceTask the fixed value of pattern parameter SourceTask, or null if not bound.
+   * @param pAffectedTask the fixed value of pattern parameter AffectedTask, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static TasksAffectedThroughDataMatch newMatch(final Task pSourceTask, final Task pAffectedTask) {
+    return new Immutable(pSourceTask, pAffectedTask);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends TasksAffectedThroughDataMatch {
+  private static final class Mutable extends TasksAffectedThroughDataMatch {
     Mutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
       
@@ -165,7 +211,7 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends TasksAffectedThroughDataMatch {
+  private static final class Immutable extends TasksAffectedThroughDataMatch {
     Immutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
       

@@ -119,6 +119,12 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
   }
   
   @Override
+  public IncorrectEntryInChecklistMatch toImmutable() {
+    return isMutable() ? newMatch(fChecklistEntry, fTask, fProcess) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"ChecklistEntry\"=" + prettyPrintValue(fChecklistEntry) + ", ");
@@ -174,8 +180,50 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static IncorrectEntryInChecklistMatch newEmptyMatch() {
+    return new Mutable(null, null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pChecklistEntry the fixed value of pattern parameter ChecklistEntry, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pProcess the fixed value of pattern parameter Process, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static IncorrectEntryInChecklistMatch newMutableMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+    return new Mutable(pChecklistEntry, pTask, pProcess);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pChecklistEntry the fixed value of pattern parameter ChecklistEntry, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pProcess the fixed value of pattern parameter Process, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static IncorrectEntryInChecklistMatch newMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+    return new Immutable(pChecklistEntry, pTask, pProcess);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends IncorrectEntryInChecklistMatch {
+  private static final class Mutable extends IncorrectEntryInChecklistMatch {
     Mutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);
       
@@ -189,7 +237,7 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends IncorrectEntryInChecklistMatch {
+  private static final class Immutable extends IncorrectEntryInChecklistMatch {
     Immutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);
       

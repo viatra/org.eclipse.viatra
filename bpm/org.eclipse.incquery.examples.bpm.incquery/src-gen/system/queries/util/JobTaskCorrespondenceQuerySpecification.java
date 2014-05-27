@@ -7,7 +7,6 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -15,6 +14,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParam
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import system.queries.JobTaskCorrespondenceMatch;
 import system.queries.JobTaskCorrespondenceMatcher;
 
 /**
@@ -58,6 +58,16 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
   }
   
   @Override
+  public JobTaskCorrespondenceMatch newEmptyMatch() {
+    return JobTaskCorrespondenceMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public JobTaskCorrespondenceMatch newMatch(final Object... parameters) {
+    return JobTaskCorrespondenceMatch.newMatch((system.Job) parameters[0], (process.Task) parameters[1]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -83,15 +93,6 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<JobTaskCorrespondenceQuerySpecification> {
-    @Override
-    public JobTaskCorrespondenceQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

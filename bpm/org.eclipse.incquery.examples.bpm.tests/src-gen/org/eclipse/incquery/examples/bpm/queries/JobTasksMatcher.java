@@ -194,7 +194,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pJob the fixed value of pattern parameter Job, or null if not bound.
@@ -203,7 +203,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
    * 
    */
   public JobTasksMatch newMatch(final Job pJob, final Task pTask) {
-    return new JobTasksMatch.Immutable(pJob, pTask);
+    return JobTasksMatch.newMatch(pJob, pTask);
     
   }
   
@@ -286,7 +286,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch tupleToMatch(final Tuple t) {
     try {
-      return new JobTasksMatch.Immutable((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
+      return JobTasksMatch.newMatch((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -297,7 +297,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch arrayToMatch(final Object[] match) {
     try {
-      return new JobTasksMatch.Immutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+      return JobTasksMatch.newMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -308,7 +308,7 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   @Override
   protected JobTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new JobTasksMatch.Mutable((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+      return JobTasksMatch.newMutableMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

@@ -120,6 +120,12 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
   }
   
   @Override
+  public TaskChecklistEntryJobCorrespondenceMatch toImmutable() {
+    return isMutable() ? newMatch(fTask, fCLE, fJob) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Task\"=" + prettyPrintValue(fTask) + ", ");
@@ -175,8 +181,50 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static TaskChecklistEntryJobCorrespondenceMatch newEmptyMatch() {
+    return new Mutable(null, null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pJob the fixed value of pattern parameter Job, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static TaskChecklistEntryJobCorrespondenceMatch newMutableMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
+    return new Mutable(pTask, pCLE, pJob);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pJob the fixed value of pattern parameter Job, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static TaskChecklistEntryJobCorrespondenceMatch newMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
+    return new Immutable(pTask, pCLE, pJob);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends TaskChecklistEntryJobCorrespondenceMatch {
+  private static final class Mutable extends TaskChecklistEntryJobCorrespondenceMatch {
     Mutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);
       
@@ -190,7 +238,7 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends TaskChecklistEntryJobCorrespondenceMatch {
+  private static final class Immutable extends TaskChecklistEntryJobCorrespondenceMatch {
     Immutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);
       

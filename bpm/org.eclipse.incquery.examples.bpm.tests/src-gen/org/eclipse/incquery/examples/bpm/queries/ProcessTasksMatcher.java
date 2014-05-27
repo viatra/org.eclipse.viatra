@@ -193,7 +193,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pProc the fixed value of pattern parameter Proc, or null if not bound.
@@ -202,7 +202,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
    * 
    */
   public ProcessTasksMatch newMatch(final process.Process pProc, final Activity pTask) {
-    return new ProcessTasksMatch.Immutable(pProc, pTask);
+    return ProcessTasksMatch.newMatch(pProc, pTask);
     
   }
   
@@ -285,7 +285,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch tupleToMatch(final Tuple t) {
     try {
-      return new ProcessTasksMatch.Immutable((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
+      return ProcessTasksMatch.newMatch((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -296,7 +296,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch arrayToMatch(final Object[] match) {
     try {
-      return new ProcessTasksMatch.Immutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+      return ProcessTasksMatch.newMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -307,7 +307,7 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   @Override
   protected ProcessTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new ProcessTasksMatch.Mutable((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+      return ProcessTasksMatch.newMutableMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

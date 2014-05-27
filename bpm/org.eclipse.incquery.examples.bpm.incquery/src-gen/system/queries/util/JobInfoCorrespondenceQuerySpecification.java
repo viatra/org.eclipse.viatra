@@ -7,13 +7,13 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import system.queries.JobInfoCorrespondenceMatch;
 import system.queries.JobInfoCorrespondenceMatcher;
 
 /**
@@ -57,6 +57,16 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   }
   
   @Override
+  public JobInfoCorrespondenceMatch newEmptyMatch() {
+    return JobInfoCorrespondenceMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public JobInfoCorrespondenceMatch newMatch(final Object... parameters) {
+    return JobInfoCorrespondenceMatch.newMatch((system.Job) parameters[0], (operation.RuntimeInformation) parameters[1]);
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {
@@ -81,15 +91,6 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
     }
     return bodies;
   }
-  
-  @SuppressWarnings("all")
-  public static class Provider implements IQuerySpecificationProvider<JobInfoCorrespondenceQuerySpecification> {
-    @Override
-    public JobInfoCorrespondenceQuerySpecification get() throws IncQueryException {
-      return instance();
-    }
-  }
-  
   
   @SuppressWarnings("all")
   private static class LazyHolder {

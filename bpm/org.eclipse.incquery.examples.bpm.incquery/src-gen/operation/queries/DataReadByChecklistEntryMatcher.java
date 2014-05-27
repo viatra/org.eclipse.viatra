@@ -208,7 +208,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
@@ -218,7 +218,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * 
    */
   public DataReadByChecklistEntryMatch newMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
-    return new DataReadByChecklistEntryMatch.Immutable(pCLE, pTask, pData);
+    return DataReadByChecklistEntryMatch.newMatch(pCLE, pTask, pData);
     
   }
   
@@ -339,7 +339,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
   @Override
   protected DataReadByChecklistEntryMatch tupleToMatch(final Tuple t) {
     try {
-      return new DataReadByChecklistEntryMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK), (system.Data) t.get(POSITION_DATA));
+      return DataReadByChecklistEntryMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK), (system.Data) t.get(POSITION_DATA));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -350,7 +350,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
   @Override
   protected DataReadByChecklistEntryMatch arrayToMatch(final Object[] match) {
     try {
-      return new DataReadByChecklistEntryMatch.Immutable((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
+      return DataReadByChecklistEntryMatch.newMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -361,7 +361,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
   @Override
   protected DataReadByChecklistEntryMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new DataReadByChecklistEntryMatch.Mutable((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
+      return DataReadByChecklistEntryMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

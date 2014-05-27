@@ -193,7 +193,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pAct the fixed value of pattern parameter Act, or null if not bound.
@@ -202,7 +202,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
    * 
    */
   public NextActivityMatch newMatch(final Activity pAct, final Activity pNext) {
-    return new NextActivityMatch.Immutable(pAct, pNext);
+    return NextActivityMatch.newMatch(pAct, pNext);
     
   }
   
@@ -285,7 +285,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch tupleToMatch(final Tuple t) {
     try {
-      return new NextActivityMatch.Immutable((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
+      return NextActivityMatch.newMatch((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -296,7 +296,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch arrayToMatch(final Object[] match) {
     try {
-      return new NextActivityMatch.Immutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+      return NextActivityMatch.newMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -307,7 +307,7 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   @Override
   protected NextActivityMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new NextActivityMatch.Mutable((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+      return NextActivityMatch.newMutableMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

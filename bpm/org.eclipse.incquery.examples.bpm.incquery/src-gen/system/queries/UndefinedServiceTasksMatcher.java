@@ -188,7 +188,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pTask the fixed value of pattern parameter Task, or null if not bound.
@@ -196,7 +196,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * 
    */
   public UndefinedServiceTasksMatch newMatch(final Task pTask) {
-    return new UndefinedServiceTasksMatch.Immutable(pTask);
+    return UndefinedServiceTasksMatch.newMatch(pTask);
     
   }
   
@@ -223,7 +223,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch tupleToMatch(final Tuple t) {
     try {
-      return new UndefinedServiceTasksMatch.Immutable((process.Task) t.get(POSITION_TASK));
+      return UndefinedServiceTasksMatch.newMatch((process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -234,7 +234,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatch(final Object[] match) {
     try {
-      return new UndefinedServiceTasksMatch.Immutable((process.Task) match[POSITION_TASK]);
+      return UndefinedServiceTasksMatch.newMatch((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -245,7 +245,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new UndefinedServiceTasksMatch.Mutable((process.Task) match[POSITION_TASK]);
+      return UndefinedServiceTasksMatch.newMutableMatch((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

@@ -120,6 +120,12 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   }
   
   @Override
+  public DataReadByChecklistEntryMatch toImmutable() {
+    return isMutable() ? newMatch(fCLE, fTask, fData) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"CLE\"=" + prettyPrintValue(fCLE) + ", ");
@@ -175,8 +181,50 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static DataReadByChecklistEntryMatch newEmptyMatch() {
+    return new Mutable(null, null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pData the fixed value of pattern parameter Data, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static DataReadByChecklistEntryMatch newMutableMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    return new Mutable(pCLE, pTask, pData);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @param pData the fixed value of pattern parameter Data, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static DataReadByChecklistEntryMatch newMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    return new Immutable(pCLE, pTask, pData);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends DataReadByChecklistEntryMatch {
+  private static final class Mutable extends DataReadByChecklistEntryMatch {
     Mutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
       super(pCLE, pTask, pData);
       
@@ -190,7 +238,7 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends DataReadByChecklistEntryMatch {
+  private static final class Immutable extends DataReadByChecklistEntryMatch {
     Immutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
       super(pCLE, pTask, pData);
       

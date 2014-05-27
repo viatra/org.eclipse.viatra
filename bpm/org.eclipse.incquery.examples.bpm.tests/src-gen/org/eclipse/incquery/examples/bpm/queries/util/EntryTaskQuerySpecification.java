@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatch;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
@@ -52,6 +53,16 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Entry", "operation.ChecklistEntry"),new PParameter("Task", "process.Task"));
+  }
+  
+  @Override
+  public EntryTaskMatch newEmptyMatch() {
+    return EntryTaskMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public EntryTaskMatch newMatch(final Object... parameters) {
+    return EntryTaskMatch.newMatch((operation.ChecklistEntry) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override

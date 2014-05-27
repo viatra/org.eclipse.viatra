@@ -210,7 +210,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pChecklistEntry the fixed value of pattern parameter ChecklistEntry, or null if not bound.
@@ -220,7 +220,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * 
    */
   public IncorrectEntryInChecklistMatch newMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
-    return new IncorrectEntryInChecklistMatch.Immutable(pChecklistEntry, pTask, pProcess);
+    return IncorrectEntryInChecklistMatch.newMatch(pChecklistEntry, pTask, pProcess);
     
   }
   
@@ -341,7 +341,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
   @Override
   protected IncorrectEntryInChecklistMatch tupleToMatch(final Tuple t) {
     try {
-      return new IncorrectEntryInChecklistMatch.Immutable((operation.ChecklistEntry) t.get(POSITION_CHECKLISTENTRY), (process.Task) t.get(POSITION_TASK), (process.Process) t.get(POSITION_PROCESS));
+      return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CHECKLISTENTRY), (process.Task) t.get(POSITION_TASK), (process.Process) t.get(POSITION_PROCESS));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -352,7 +352,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
   @Override
   protected IncorrectEntryInChecklistMatch arrayToMatch(final Object[] match) {
     try {
-      return new IncorrectEntryInChecklistMatch.Immutable((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
+      return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -363,7 +363,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
   @Override
   protected IncorrectEntryInChecklistMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new IncorrectEntryInChecklistMatch.Mutable((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
+      return IncorrectEntryInChecklistMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

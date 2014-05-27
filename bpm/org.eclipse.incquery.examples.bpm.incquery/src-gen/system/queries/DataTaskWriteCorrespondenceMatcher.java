@@ -197,7 +197,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pData the fixed value of pattern parameter Data, or null if not bound.
@@ -206,7 +206,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * 
    */
   public DataTaskWriteCorrespondenceMatch newMatch(final Data pData, final Task pTask) {
-    return new DataTaskWriteCorrespondenceMatch.Immutable(pData, pTask);
+    return DataTaskWriteCorrespondenceMatch.newMatch(pData, pTask);
     
   }
   
@@ -289,7 +289,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new DataTaskWriteCorrespondenceMatch.Immutable((system.Data) t.get(POSITION_DATA), (process.Task) t.get(POSITION_TASK));
+      return DataTaskWriteCorrespondenceMatch.newMatch((system.Data) t.get(POSITION_DATA), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -300,7 +300,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new DataTaskWriteCorrespondenceMatch.Immutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
+      return DataTaskWriteCorrespondenceMatch.newMatch((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -311,7 +311,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new DataTaskWriteCorrespondenceMatch.Mutable((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
+      return DataTaskWriteCorrespondenceMatch.newMutableMatch((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

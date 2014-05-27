@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.incquery.examples.bpm.queries.JobTasksMatch;
 import org.eclipse.incquery.examples.bpm.queries.JobTasksMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
@@ -52,6 +53,16 @@ public final class JobTasksQuerySpecification extends BaseGeneratedQuerySpecific
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Job", "system.Job"),new PParameter("Task", "process.Task"));
+  }
+  
+  @Override
+  public JobTasksMatch newEmptyMatch() {
+    return JobTasksMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public JobTasksMatch newMatch(final Object... parameters) {
+    return JobTasksMatch.newMatch((system.Job) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override

@@ -80,6 +80,12 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
   }
   
   @Override
+  public UndefinedServiceTasksMatch toImmutable() {
+    return isMutable() ? newMatch(fTask) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Task\"=" + prettyPrintValue(fTask));
@@ -127,8 +133,46 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static UndefinedServiceTasksMatch newEmptyMatch() {
+    return new Mutable(null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static UndefinedServiceTasksMatch newMutableMatch(final Task pTask) {
+    return new Mutable(pTask);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static UndefinedServiceTasksMatch newMatch(final Task pTask) {
+    return new Immutable(pTask);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends UndefinedServiceTasksMatch {
+  private static final class Mutable extends UndefinedServiceTasksMatch {
     Mutable(final Task pTask) {
       super(pTask);
       
@@ -142,7 +186,7 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends UndefinedServiceTasksMatch {
+  private static final class Immutable extends UndefinedServiceTasksMatch {
     Immutable(final Task pTask) {
       super(pTask);
       

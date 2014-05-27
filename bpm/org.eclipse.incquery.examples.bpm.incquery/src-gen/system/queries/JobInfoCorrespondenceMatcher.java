@@ -197,7 +197,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pJob the fixed value of pattern parameter Job, or null if not bound.
@@ -206,7 +206,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * 
    */
   public JobInfoCorrespondenceMatch newMatch(final Job pJob, final RuntimeInformation pInfo) {
-    return new JobInfoCorrespondenceMatch.Immutable(pJob, pInfo);
+    return JobInfoCorrespondenceMatch.newMatch(pJob, pInfo);
     
   }
   
@@ -289,7 +289,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return new JobInfoCorrespondenceMatch.Immutable((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
+      return JobInfoCorrespondenceMatch.newMatch((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -300,7 +300,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return new JobInfoCorrespondenceMatch.Immutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
+      return JobInfoCorrespondenceMatch.newMatch((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -311,7 +311,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new JobInfoCorrespondenceMatch.Mutable((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
+      return JobInfoCorrespondenceMatch.newMutableMatch((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
