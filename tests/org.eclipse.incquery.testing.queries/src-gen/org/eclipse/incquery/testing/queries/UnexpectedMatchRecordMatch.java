@@ -119,6 +119,12 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   }
   
   @Override
+  public UnexpectedMatchRecordMatch toImmutable() {
+    return isMutable() ? newMatch(fActualSet, fExpectedSet, fRecord) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"ActualSet\"=" + prettyPrintValue(fActualSet) + ", ");
@@ -174,8 +180,50 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static UnexpectedMatchRecordMatch newEmptyMatch() {
+    return new Mutable(null, null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pActualSet the fixed value of pattern parameter ActualSet, or null if not bound.
+   * @param pExpectedSet the fixed value of pattern parameter ExpectedSet, or null if not bound.
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static UnexpectedMatchRecordMatch newMutableMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+    return new Mutable(pActualSet, pExpectedSet, pRecord);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pActualSet the fixed value of pattern parameter ActualSet, or null if not bound.
+   * @param pExpectedSet the fixed value of pattern parameter ExpectedSet, or null if not bound.
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static UnexpectedMatchRecordMatch newMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
+    return new Immutable(pActualSet, pExpectedSet, pRecord);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends UnexpectedMatchRecordMatch {
+  private static final class Mutable extends UnexpectedMatchRecordMatch {
     Mutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
       super(pActualSet, pExpectedSet, pRecord);
       
@@ -189,7 +237,7 @@ public abstract class UnexpectedMatchRecordMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends UnexpectedMatchRecordMatch {
+  private static final class Immutable extends UnexpectedMatchRecordMatch {
     Immutable(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
       super(pActualSet, pExpectedSet, pRecord);
       

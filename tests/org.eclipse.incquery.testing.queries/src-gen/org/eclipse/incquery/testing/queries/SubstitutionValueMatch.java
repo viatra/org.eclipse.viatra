@@ -99,6 +99,12 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   }
   
   @Override
+  public SubstitutionValueMatch toImmutable() {
+    return isMutable() ? newMatch(fSubstitution, fValue) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Substitution\"=" + prettyPrintValue(fSubstitution) + ", ");
@@ -150,8 +156,48 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static SubstitutionValueMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pSubstitution the fixed value of pattern parameter Substitution, or null if not bound.
+   * @param pValue the fixed value of pattern parameter Value, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static SubstitutionValueMatch newMutableMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+    return new Mutable(pSubstitution, pValue);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pSubstitution the fixed value of pattern parameter Substitution, or null if not bound.
+   * @param pValue the fixed value of pattern parameter Value, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static SubstitutionValueMatch newMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
+    return new Immutable(pSubstitution, pValue);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends SubstitutionValueMatch {
+  private static final class Mutable extends SubstitutionValueMatch {
     Mutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
       super(pSubstitution, pValue);
       
@@ -165,7 +211,7 @@ public abstract class SubstitutionValueMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends SubstitutionValueMatch {
+  private static final class Immutable extends SubstitutionValueMatch {
     Immutable(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
       super(pSubstitution, pValue);
       

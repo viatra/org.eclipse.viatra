@@ -216,7 +216,7 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pSubstitution the fixed value of pattern parameter Substitution, or null if not bound.
@@ -225,7 +225,7 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
    * 
    */
   public SubstitutionValueMatch newMatch(final MatchSubstitutionRecord pSubstitution, final Object pValue) {
-    return new SubstitutionValueMatch.Immutable(pSubstitution, pValue);
+    return SubstitutionValueMatch.newMatch(pSubstitution, pValue);
     
   }
   
@@ -308,7 +308,7 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch tupleToMatch(final Tuple t) {
     try {
-      return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));
+      return SubstitutionValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) t.get(POSITION_SUBSTITUTION), (java.lang.Object) t.get(POSITION_VALUE));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -319,7 +319,7 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch arrayToMatch(final Object[] match) {
     try {
-      return new SubstitutionValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+      return SubstitutionValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -330,7 +330,7 @@ public class SubstitutionValueMatcher extends BaseMatcher<SubstitutionValueMatch
   @Override
   protected SubstitutionValueMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new SubstitutionValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
+      return SubstitutionValueMatch.newMutableMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) match[POSITION_SUBSTITUTION], (java.lang.Object) match[POSITION_VALUE]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

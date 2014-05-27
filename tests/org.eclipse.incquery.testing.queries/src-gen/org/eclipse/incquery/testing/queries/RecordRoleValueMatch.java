@@ -100,6 +100,12 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   }
   
   @Override
+  public RecordRoleValueMatch toImmutable() {
+    return isMutable() ? newMatch(fRecord, fRole) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Record\"=" + prettyPrintValue(fRecord) + ", ");
@@ -151,8 +157,48 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static RecordRoleValueMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @param pRole the fixed value of pattern parameter Role, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static RecordRoleValueMatch newMutableMatch(final MatchRecord pRecord, final RecordRole pRole) {
+    return new Mutable(pRecord, pRole);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
+   * @param pRole the fixed value of pattern parameter Role, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static RecordRoleValueMatch newMatch(final MatchRecord pRecord, final RecordRole pRole) {
+    return new Immutable(pRecord, pRole);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends RecordRoleValueMatch {
+  private static final class Mutable extends RecordRoleValueMatch {
     Mutable(final MatchRecord pRecord, final RecordRole pRole) {
       super(pRecord, pRole);
       
@@ -166,7 +212,7 @@ public abstract class RecordRoleValueMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends RecordRoleValueMatch {
+  private static final class Immutable extends RecordRoleValueMatch {
     Immutable(final MatchRecord pRecord, final RecordRole pRole) {
       super(pRecord, pRole);
       

@@ -212,7 +212,7 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pRecord the fixed value of pattern parameter Record, or null if not bound.
@@ -221,7 +221,7 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
    * 
    */
   public RecordRoleValueMatch newMatch(final MatchRecord pRecord, final RecordRole pRole) {
-    return new RecordRoleValueMatch.Immutable(pRecord, pRole);
+    return RecordRoleValueMatch.newMatch(pRecord, pRole);
     
   }
   
@@ -304,7 +304,7 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch tupleToMatch(final Tuple t) {
     try {
-      return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) t.get(POSITION_ROLE));
+      return RecordRoleValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD), (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) t.get(POSITION_ROLE));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -315,7 +315,7 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch arrayToMatch(final Object[] match) {
     try {
-      return new RecordRoleValueMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
+      return RecordRoleValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -326,7 +326,7 @@ public class RecordRoleValueMatcher extends BaseMatcher<RecordRoleValueMatch> {
   @Override
   protected RecordRoleValueMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new RecordRoleValueMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
+      return RecordRoleValueMatch.newMutableMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) match[POSITION_ROLE]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

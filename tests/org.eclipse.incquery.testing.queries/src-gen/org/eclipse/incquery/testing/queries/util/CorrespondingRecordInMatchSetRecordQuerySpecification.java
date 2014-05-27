@@ -61,6 +61,16 @@ final class CorrespondingRecordInMatchSetRecordQuerySpecification extends BaseGe
   }
   
   @Override
+  public IPatternMatch newEmptyMatch() {
+    throw new UnsupportedOperationException();
+  }
+  
+  @Override
+  public IPatternMatch newMatch(final Object... parameters) {
+    throw new UnsupportedOperationException();
+  }
+  
+  @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
     Set<PBody> bodies = Sets.newLinkedHashSet();
     {

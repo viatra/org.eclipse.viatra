@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.testing.queries.SubstitutionValueMatch;
 import org.eclipse.incquery.testing.queries.SubstitutionValueMatcher;
 
 /**
@@ -53,6 +54,16 @@ public final class SubstitutionValueQuerySpecification extends BaseGeneratedQuer
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Substitution", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord"),new PParameter("Value", "java.lang.Object"));
+  }
+  
+  @Override
+  public SubstitutionValueMatch newEmptyMatch() {
+    return SubstitutionValueMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public SubstitutionValueMatch newMatch(final Object... parameters) {
+    return SubstitutionValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord) parameters[0], (java.lang.Object) parameters[1]);
   }
   
   @Override

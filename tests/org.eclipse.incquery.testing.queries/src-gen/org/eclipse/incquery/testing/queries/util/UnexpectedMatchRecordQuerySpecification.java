@@ -16,6 +16,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatte
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatch;
 import org.eclipse.incquery.testing.queries.UnexpectedMatchRecordMatcher;
 import org.eclipse.incquery.testing.queries.util.CorrespondingRecordInMatchSetRecordQuerySpecification;
 
@@ -57,6 +58,16 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("ActualSet", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord"),new PParameter("ExpectedSet", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord"),new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"));
+  }
+  
+  @Override
+  public UnexpectedMatchRecordMatch newEmptyMatch() {
+    return UnexpectedMatchRecordMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public UnexpectedMatchRecordMatch newMatch(final Object... parameters) {
+    return UnexpectedMatchRecordMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) parameters[0], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) parameters[1], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) parameters[2]);
   }
   
   @Override

@@ -212,7 +212,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pActualSet the fixed value of pattern parameter ActualSet, or null if not bound.
@@ -222,7 +222,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
    * 
    */
   public UnexpectedMatchRecordMatch newMatch(final MatchSetRecord pActualSet, final MatchSetRecord pExpectedSet, final MatchRecord pRecord) {
-    return new UnexpectedMatchRecordMatch.Immutable(pActualSet, pExpectedSet, pRecord);
+    return UnexpectedMatchRecordMatch.newMatch(pActualSet, pExpectedSet, pRecord);
     
   }
   
@@ -343,7 +343,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
   @Override
   protected UnexpectedMatchRecordMatch tupleToMatch(final Tuple t) {
     try {
-      return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));
+      return UnexpectedMatchRecordMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_ACTUALSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) t.get(POSITION_EXPECTEDSET), (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) t.get(POSITION_RECORD));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -354,7 +354,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
   @Override
   protected UnexpectedMatchRecordMatch arrayToMatch(final Object[] match) {
     try {
-      return new UnexpectedMatchRecordMatch.Immutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
+      return UnexpectedMatchRecordMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -365,7 +365,7 @@ public class UnexpectedMatchRecordMatcher extends BaseMatcher<UnexpectedMatchRec
   @Override
   protected UnexpectedMatchRecordMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new UnexpectedMatchRecordMatch.Mutable((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
+      return UnexpectedMatchRecordMatch.newMutableMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_ACTUALSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord) match[POSITION_EXPECTEDSET], (org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) match[POSITION_RECORD]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

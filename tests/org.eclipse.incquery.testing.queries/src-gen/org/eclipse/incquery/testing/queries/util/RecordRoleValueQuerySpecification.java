@@ -14,6 +14,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParam
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.testing.queries.RecordRoleValueMatch;
 import org.eclipse.incquery.testing.queries.RecordRoleValueMatcher;
 
 /**
@@ -54,6 +55,16 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("Record", "org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord"),new PParameter("Role", "org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole"));
+  }
+  
+  @Override
+  public RecordRoleValueMatch newEmptyMatch() {
+    return RecordRoleValueMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public RecordRoleValueMatch newMatch(final Object... parameters) {
+    return RecordRoleValueMatch.newMatch((org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord) parameters[0], (org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole) parameters[1]);
   }
   
   @Override
