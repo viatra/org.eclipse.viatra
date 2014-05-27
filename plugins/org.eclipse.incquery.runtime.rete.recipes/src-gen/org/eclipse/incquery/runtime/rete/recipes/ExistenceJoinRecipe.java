@@ -25,7 +25,7 @@ public interface ExistenceJoinRecipe extends BetaRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe%> _leftParent = this.getLeftParent();\nreturn _leftParent.getArity();'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ExistenceJoinRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe%> _leftParent = _this.getLeftParent();\nreturn _leftParent.getArity();'"
    * @generated
    */
   int getArity();

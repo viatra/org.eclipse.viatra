@@ -83,7 +83,8 @@ public abstract class MultiParentNodeRecipeImpl extends ReteNodeRecipeImpl imple
    */
   public int getArity()
   {
-    EList<ReteNodeRecipe> _parents = this.getParents();
+    MultiParentNodeRecipe _this = this;
+    EList<ReteNodeRecipe> _parents = _this.getParents();
     ReteNodeRecipe _get = _parents.get(0);
     return _get.getArity();
   }

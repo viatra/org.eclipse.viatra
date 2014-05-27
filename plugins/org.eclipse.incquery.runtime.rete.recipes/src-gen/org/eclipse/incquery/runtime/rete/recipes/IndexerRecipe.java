@@ -55,7 +55,7 @@ public interface IndexerRecipe extends SingleParentNodeRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = this.getMask();\nreturn _mask.getSourceArity();'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = _this.getMask();\nreturn _mask.getSourceArity();'"
    * @generated
    */
   int getArity();

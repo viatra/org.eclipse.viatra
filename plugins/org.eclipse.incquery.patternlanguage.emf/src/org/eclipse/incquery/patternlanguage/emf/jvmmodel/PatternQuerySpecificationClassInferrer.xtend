@@ -73,6 +73,7 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
+import org.eclipse.incquery.runtime.api.IPatternMatch
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -102,15 +103,15 @@ class PatternQuerySpecificationClassInferrer {
   		return querySpecificationClass
   	}
 
-  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, true, builder)
+  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, SpecificationBuilder builder) {
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, matchClassRef, true, builder)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true)
   		querySpecificationClass.inferExpressions(pattern)
   	}
 
-  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, SpecificationBuilder builder) {
+  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, SpecificationBuilder builder) {
   		querySpecificationClass.visibility = JvmVisibility::DEFAULT
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, false, builder)
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, matchClassRef, false, builder)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false)
   		querySpecificationClass.inferExpressions(pattern)
   	}
@@ -118,7 +119,7 @@ class PatternQuerySpecificationClassInferrer {
 	/**
    	 * Infers methods for QuerySpecification class based on the input 'pattern'.
    	 */
-  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, boolean isPublic, SpecificationBuilder builder) {
+  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, boolean isPublic, SpecificationBuilder builder) {
   		val context = new EMFPatternMatcherContext(logger)
    		querySpecificationClass.members += pattern.toMethod("instance", types.createTypeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
@@ -170,6 +171,38 @@ class PatternQuerySpecificationClassInferrer {
 				referClass(pattern, typeof(Arrays))
 				append(
 					'''.asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);''')
+			]
+		]
+		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
+			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
+		[
+			visibility = JvmVisibility::PUBLIC
+			annotations += pattern.toAnnotation(typeof(Override))
+			body = [
+				if (isPublic) {
+					append('''return «pattern.matchClassName».newEmptyMatch();''')
+				} else {
+					append('''throw new ''')
+					referClass(pattern, UnsupportedOperationException)
+					append('''();''')
+				}
+			]
+		]
+		querySpecificationClass.members += pattern.toMethod("newMatch",
+			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
+		[
+			visibility = JvmVisibility::PUBLIC
+			annotations += pattern.toAnnotation(typeof(Override))
+			parameters += pattern.toParameter("parameters", pattern.newTypeRef(Object).addArrayTypeDimension)
+			varArgs = true
+			body = [
+				if (isPublic) {
+					append('''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«p.positionConstant»]«ENDFOR»);''')
+				} else {
+					append('''throw new ''')
+					referClass(pattern, UnsupportedOperationException)
+					append('''();''')
+				}
 			]
 		]
 		querySpecificationClass.members += pattern.toMethod("doGetContainedBodies",

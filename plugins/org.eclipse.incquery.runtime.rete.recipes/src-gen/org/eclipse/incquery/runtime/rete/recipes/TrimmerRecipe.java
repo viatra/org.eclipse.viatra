@@ -55,7 +55,7 @@ public interface TrimmerRecipe extends AlphaRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = this.getMask();\n<%org.eclipse.emf.common.util.EList%><<%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();\nreturn ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_sourceIndices, <%java.lang.Object%>.class)).length;'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.Mask%> _mask = _this.getMask();\n<%org.eclipse.emf.common.util.EList%><<%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();\nreturn ((<%java.lang.Object%>[])<%org.eclipse.xtext.xbase.lib.Conversions%>.unwrapArray(_sourceIndices, <%java.lang.Object%>.class)).length;'"
    * @generated
    */
   int getArity();

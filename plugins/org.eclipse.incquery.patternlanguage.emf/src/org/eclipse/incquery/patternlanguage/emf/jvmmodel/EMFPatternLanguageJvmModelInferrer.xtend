@@ -154,7 +154,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		associator.associate(pattern, processorClass)
 		acceptor.accept(matcherClass)
 		acceptor.accept(querySpecificationClass).initializeLater [
-			initializePublicSpecification(pattern, matcherClassRef, builder)
+			initializePublicSpecification(pattern, matcherClassRef, matchClassRef, builder)
 		]
 		acceptor.accept(processorClass)
 
@@ -172,7 +172,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			matcherClassRef)
 		associator.associatePrimary(pattern, querySpecificationClass)
 		acceptor.accept(querySpecificationClass).initializeLater [
-			initializePrivateSpecification(pattern, matcherClassRef, builder)
+			initializePrivateSpecification(pattern, matcherClassRef, null /* no match class */, builder)
 		]
 	}
    	/**

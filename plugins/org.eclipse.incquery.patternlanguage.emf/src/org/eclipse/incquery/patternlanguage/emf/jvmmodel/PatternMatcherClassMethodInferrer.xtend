@@ -113,10 +113,10 @@ class PatternMatcherClassMethodInferrer {
 					parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
    				}
    				body = [append('''
-   					return new ''')
+   					return ''')
 	   				serialize(matchClassReference, pattern)
 	   				append('''
-	   				.«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»);
+	   				.newMatch(«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»);
 	   				''')
    				]
 	   		]
@@ -211,7 +211,7 @@ class PatternMatcherClassMethodInferrer {
   	def inferTupleToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
    		appendable.append('''
    			try {
-   			  return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);
+   			  return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);
    			} catch(ClassCastException e) {''')
    		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in tuple not properly typed!", "e", appendable)
@@ -229,7 +229,7 @@ class PatternMatcherClassMethodInferrer {
   	def inferArrayToMatchMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   			  return new «pattern.matchClassName».«pattern.matchImmutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   			  return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
    		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)
@@ -246,7 +246,7 @@ class PatternMatcherClassMethodInferrer {
   	def inferArrayToMatchMutableMethodBody(Pattern pattern, ITreeAppendable appendable) {
   		appendable.append('''
    			try {
-   			  return new «pattern.matchClassName».«pattern.matchMutableInnerClassName»(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   			  return «pattern.matchClassName».newMutableMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {''')
    		appendable.increaseIndentation
    		inferErrorLogging("Element(s) in array not properly typed!", "e", appendable)

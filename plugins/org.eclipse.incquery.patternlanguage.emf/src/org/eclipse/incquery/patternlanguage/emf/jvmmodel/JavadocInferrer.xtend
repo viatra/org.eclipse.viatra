@@ -185,13 +185,28 @@ class JavadocInferrer {
 	'''
 
 	def javadocNewMatchMethod(Pattern pattern) '''
-		Returns a new (partial) Match object for the matcher.
+		Returns a new (partial) match.
 		This can be used e.g. to call the matcher with a partial match.
 		<p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
 		«FOR p : pattern.parameters»
 		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
 		«ENDFOR»
 		@return the (partial) match object.
+	'''
+	def javadocNewMutableMatchMethod(Pattern pattern) '''
+		Returns a mutable (partial) match.
+		Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+		
+		«FOR p : pattern.parameters»
+		@param «p.parameterName» the fixed value of pattern parameter «p.name», or null if not bound.
+		«ENDFOR»
+		@return the new, mutable (partial) match object.
+	'''
+	def javadocNewEmptyMatchMethod(Pattern pattern) '''
+		Returns an empty, mutable match.
+		Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+		
+		@return the empty match.
 	'''
 
 	def javadocGetAllValuesOfMethod(Variable parameter) '''

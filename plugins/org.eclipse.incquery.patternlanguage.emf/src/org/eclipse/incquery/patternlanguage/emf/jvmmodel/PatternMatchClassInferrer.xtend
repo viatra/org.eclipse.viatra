@@ -40,7 +40,8 @@ class PatternMatchClassInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject TypeReferences typeReference
 	@Inject extension IJvmModelAssociator associator
-
+	@Inject extension JavadocInferrer
+	
    	/**
    	 * Infers fields for Match class based on the input 'pattern'.
    	 */
@@ -236,6 +237,29 @@ class PatternMatchClassInferrer {
 				}
 			''')]
 		]
+		matchClass.members += pattern.toMethod("newEmptyMatch", typeReference.createTypeRef(matchClass)) [
+   			static = true
+   			documentation = pattern.javadocNewEmptyMatchMethod.toString
+   			body = [append('''
+   				return new Mutable(«FOR p : pattern.parameters SEPARATOR ", "»null«ENDFOR»);
+   			''')]
+   		]
+		matchClass.members += pattern.toMethod("newMutableMatch", typeReference.createTypeRef(matchClass)) [
+   			static = true
+   			parameters += pattern.parameters.map[toParameter(parameterName, calculateType)]
+   			documentation = pattern.javadocNewMutableMatchMethod.toString
+   			body = [append('''
+   				return new Mutable(«FOR p : pattern.parameters SEPARATOR ", "»«p.parameterName»«ENDFOR»);
+   			''')]
+   		]
+		matchClass.members += pattern.toMethod("newMatch", typeReference.createTypeRef(matchClass)) [
+   			static = true
+   			parameters += pattern.parameters.map[toParameter(parameterName, calculateType)]
+   			documentation = pattern.javadocNewMatchMethod.toString
+   			body = [append('''
+   				return new Immutable(«FOR p : pattern.parameters SEPARATOR ", "»«p.parameterName»«ENDFOR»);
+   			''')]
+   		]
   	}
 
    	/**
@@ -271,7 +295,7 @@ class PatternMatchClassInferrer {
    	 */
 	def makeMatchInnerClass(JvmDeclaredType matchClass, Pattern pattern, String innerClassName, boolean isMutable) {
 		pattern.toClass(innerClassName) [
-			visibility = JvmVisibility::DEFAULT
+			visibility = JvmVisibility::PRIVATE
 			static = true
 			final = true
 			superTypes += typeReference.createTypeRef(matchClass)

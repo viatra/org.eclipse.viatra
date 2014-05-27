@@ -51,7 +51,8 @@ public class CheckRecipeImpl extends ExpressionEnforcerRecipeImpl implements Che
    */
   public int getArity()
   {
-    ReteNodeRecipe _parent = this.getParent();
+    CheckRecipe _this = this;
+    ReteNodeRecipe _parent = _this.getParent();
     return _parent.getArity();
   }
 

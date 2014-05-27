@@ -123,7 +123,8 @@ public abstract class AggregatorRecipeImpl extends ReteNodeRecipeImpl implements
    */
   public int getArity()
   {
-    ProjectionIndexerRecipe _parent = this.getParent();
+    AggregatorRecipe _this = this;
+    ProjectionIndexerRecipe _parent = _this.getParent();
     Mask _mask = _parent.getMask();
     EList<Integer> _sourceIndices = _mask.getSourceIndices();
     int _length = ((Object[])Conversions.unwrapArray(_sourceIndices, Object.class)).length;

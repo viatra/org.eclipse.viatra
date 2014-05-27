@@ -29,10 +29,6 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     private final GenericQuerySpecification specification;
     private final Object[] array;
 
-    private GenericPatternMatch(GenericPatternMatcher matcher, Object[] array) {
-        this(matcher.getSpecification(), array);
-    }
-
     private GenericPatternMatch(GenericQuerySpecification specification, Object[] array) {
         super();
         this.specification = specification;
@@ -102,11 +98,47 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     public GenericQuerySpecification specification() {
         return specification;
     }
+    
+    /**
+     * Returns an empty, mutable match. 
+     * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 
+     * 
+     * @return the empty match
+     */
+    public static GenericPatternMatch newEmptyMatch(GenericQuerySpecification specification) {
+  	  return new Mutable(specification, new Object[specification.getParameters().size()]);
+    }
+
+    /**
+     * Returns a mutable (partial) match. 
+     * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 
+     * 
+     * @param parameters
+     *            the fixed value of pattern parameters, or null if not bound.
+     * @return the new, mutable (partial) match object.
+     */
+    public static GenericPatternMatch newMutableMatch(GenericQuerySpecification specification, Object... parameters) {
+  	  return new Mutable(specification, parameters);
+    }
+
+    /**
+     * Returns a new (partial) match. 
+     * This can be used e.g. to call the matcher with a partial match. 
+     * 
+     * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+     * 
+     * @param parameters
+     *            the fixed value of pattern parameters, or null if not bound.
+     * @return the (partial) match object.
+     */
+    public static GenericPatternMatch newMatch(GenericQuerySpecification specification, Object... parameters) {
+  	  return new Immutable(specification, Arrays.copyOf(parameters, parameters.length));
+    }
+    
 
     static final class Mutable extends GenericPatternMatch {
-
-		Mutable(GenericPatternMatcher matcher, Object[] array) {
-			super(matcher, array);
+		Mutable(GenericQuerySpecification specification, Object[] array) {
+			super(specification, array);
 		}
 
 		@Override
@@ -115,9 +147,8 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
 		}
     }
     static final class Immutable extends GenericPatternMatch {
-
-    	Immutable(GenericPatternMatcher matcher, Object[] array) {
-			super(matcher, array);
+    	Immutable(GenericQuerySpecification specification, Object[] array) {
+			super(specification, Arrays.copyOf(array, array.length));
 		}
 
 		@Override

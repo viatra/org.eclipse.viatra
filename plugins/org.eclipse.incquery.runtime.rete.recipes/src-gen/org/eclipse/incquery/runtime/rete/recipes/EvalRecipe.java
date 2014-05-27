@@ -24,7 +24,7 @@ public interface EvalRecipe extends ExpressionEnforcerRecipe
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @model kind="operation" unique="false"
-   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _parent = this.getParent();\nint _arity = _parent.getArity();\nreturn (1 + _arity);'"
+   *        annotation="http://www.eclipse.org/emf/2002/GenModel body='<%org.eclipse.incquery.runtime.rete.recipes.EvalRecipe%> _this = this;\n<%org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe%> _parent = _this.getParent();\nint _arity = _parent.getArity();\nreturn (1 + _arity);'"
    * @generated
    */
   int getArity();

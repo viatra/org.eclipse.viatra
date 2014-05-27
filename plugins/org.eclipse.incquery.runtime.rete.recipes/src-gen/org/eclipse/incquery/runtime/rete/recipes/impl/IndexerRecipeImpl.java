@@ -120,7 +120,8 @@ public abstract class IndexerRecipeImpl extends SingleParentNodeRecipeImpl imple
    */
   public int getArity()
   {
-    Mask _mask = this.getMask();
+    IndexerRecipe _this = this;
+    Mask _mask = _this.getMask();
     return _mask.getSourceArity();
   }
 

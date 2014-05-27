@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.patternlanguage.emf.specification;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -113,7 +112,8 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         }
     }
 
-    public final void setStatus(PQueryStatus newStatus) {
+    @Override
+	public final void setStatus(PQueryStatus newStatus) {
         Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
         super.setStatus(newStatus);
     }
@@ -183,6 +183,16 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         SpecificationBuilder converter = new SpecificationBuilder();
         return converter.getBodies(pattern, this);
     }
+
+	@Override
+	public GenericPatternMatch newEmptyMatch() {
+		return GenericPatternMatch.newEmptyMatch(this);
+	}
+
+	@Override
+	public GenericPatternMatch newMatch(Object... parameters) {
+		return GenericPatternMatch.newMatch(this, parameters);
+	}
 
     
 }

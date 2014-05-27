@@ -85,7 +85,8 @@ public class ConstantRecipeImpl extends ReteNodeRecipeImpl implements ConstantRe
    */
   public int getArity()
   {
-    EList<Object> _constantValues = this.getConstantValues();
+    ConstantRecipe _this = this;
+    EList<Object> _constantValues = _this.getConstantValues();
     return ((Object[])Conversions.unwrapArray(_constantValues, Object.class)).length;
   }
 

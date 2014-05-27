@@ -61,45 +61,28 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      */
     public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException;
 
-    // // EXPERIMENTAL
-    //
-    // /**
-    // * Initializes the pattern matcher over a given EMF root (recommended: Resource or ResourceSet).
-    // * If a pattern matcher is already constructed with the same root, only a lightweight reference is created.
-    // * The match set will be incrementally refreshed upon updates from the given EMF root and below.
-    // *
-    // * Note: if emfRoot is a resourceSet, the scope will include even those resources that are not part of the
-    // resourceSet but are referenced.
-    // * This is mainly to support nsURI-based instance-level references to registered EPackages.
-    // *
-    // * @param emfRoot the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or
-    // ResourceSet.
-    // * @param numThreads 0 for single-threaded execution (recommended),
-    // * or a positive number of separate threads of pattern matter execution (experimental).
-    // * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
-    // */
-    // public Matcher getMatcher(Notifier emfRoot, int numThreads) throws IncQueryRuntimeException;
+    
+    /**
+     * Returns an empty, mutable Match compatible with matchers of this query. 
+     * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 
+     * This can be used to call the matcher with a partial match 
+     *  even if the specific class of the matcher or the match is unknown.
+     * 
+     * @return the empty match
+     */
+    public abstract IPatternMatch newEmptyMatch();
 
-    // // EXPERIMENTAL
-    //
-    // /**
-    // * Initializes the pattern matcher over a given EMF transactional editing domain.
-    // * If a pattern matcher is already constructed with the same editing domain, only a lightweight reference is
-    // created.
-    // * The match set will be incrementally refreshed upon committed EMF transactions.
-    // * @param trDomain the EMF transactional editing domain over which the pattern matcher will operate.
-    // * @param numThreads 0 for single-threaded execution (recommended),
-    // * or a positive number of separate threads of pattern matter execution (experimental).
-    // * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
-    // */
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain) throws IncQueryRuntimeException;
-    // /**
-    // * Initializes the pattern matcher over a given EMF transactional editing domain.
-    // * If a pattern matcher is already constructed with the same editing domain, only a lightweight reference is
-    // created.
-    // * The match set will be incrementally refreshed upon committed EMF transactions.
-    // * @param trDomain the EMF transactional editing domain over which the pattern matcher will operate.
-    // * @throws IncQueryRuntimeException if an error occurs during pattern matcher creation
-    // */
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException;
+    /**
+     * Returns a new (partial) Match object compatible with matchers of this query. 
+     * This can be used e.g. to call the matcher with a partial
+     * match. 
+     * 
+     * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+     * 
+     * @param parameters
+     *            the fixed value of pattern parameters, or null if not bound.
+     * @return the (partial) match object.
+     */
+    public abstract IPatternMatch newMatch(Object... parameters);
+    
 }
