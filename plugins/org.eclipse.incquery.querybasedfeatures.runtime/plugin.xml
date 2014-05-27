@@ -8,38 +8,38 @@
             description="This annotation is used to mark a pattern as a query definition for a query-based feature."
             name="QueryBasedFeature">
          <annotationparameter
-               description="The name of the EStructuralFeature that the query will serve."
+               description="The name of the EStructuralFeature that the query will serve (default: pattern name)."
                mandatory="false"
                multiple="false"
                name="feature"
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="The name of the parameter that is the source of the derived feature."
+               description="The name of the parameter that is the source of the derived feature (default: type of first parameter)."
                mandatory="false"
                multiple="false"
                name="source"
                type="variablereference">
          </annotationparameter>
          <annotationparameter
-               description="The name"
+               description="The name of the parameter that is the target of the derived feature (default: type of second parameter)."
                mandatory="false"
                multiple="false"
                name="target"
                type="variablereference">
          </annotationparameter>
          <annotationparameter
-               description="Possible values: single, many, counter, sum, iteration (default: feature.isMany?many:single)"
+               description="Possible values: single, many, sum, iteration (default: feature.isMany?many:single)"
                mandatory="false"
                multiple="false"
                name="kind"
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="In case of single and many reference features, it is possible to disable the caching (this may free up some memory but result in slightly lowerr performance (default: true)."
+               description="If true, the old behavior is used, where the getter of the derived feature is overridden in the generated model code. Do not use, unless you really know what you are doing!"
                mandatory="false"
                multiple="false"
-               name="keepCache"
+               name="generateIntoModelCode"
                type="boolean">
          </annotationparameter>
       </annotation>

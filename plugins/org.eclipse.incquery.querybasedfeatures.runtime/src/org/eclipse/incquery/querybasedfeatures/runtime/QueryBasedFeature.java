@@ -123,12 +123,6 @@ public abstract class QueryBasedFeature {
             IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
-        if ((targetParamName == null) != (getKind() == QueryBasedFeatureKind.COUNTER)) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(
-                    "[QueryBasedFeature] Invalid configuration (no targetParamName needed for Counter)!");
-        }
-        // IPatternMatch partialMatch = matcher.newEmptyMatch();
-        // partialMatch.set(sourceParamName, source);
         this.dm = matcher.newDeltaMonitor(true);
         engineLifecycleListener = new EngineLifecycleListener();
         listener = new ModelUpdateListener();
@@ -137,7 +131,6 @@ public abstract class QueryBasedFeature {
     private void sendNotfications() {
         while (!notifications.isEmpty()) {
             ENotificationImpl remove = notifications.remove(0);
-            // engineForMatcher().getLogger().logError(this + " : " +remove.toString());
             ((Notifier) remove.getNotifier()).eNotify(remove);
         }
     }

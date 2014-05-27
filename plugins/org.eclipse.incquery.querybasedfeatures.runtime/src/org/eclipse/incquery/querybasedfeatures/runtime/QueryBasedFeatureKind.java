@@ -17,7 +17,7 @@ package org.eclipse.incquery.querybasedfeatures.runtime;
  *
  */
 public enum QueryBasedFeatureKind {
-    SINGLE_REFERENCE, MANY_REFERENCE, SUM, /** @deprecated Use <code>count find</code> in query definition instead!*/ COUNTER, ITERATION;
+    SINGLE_REFERENCE, MANY_REFERENCE, SUM, ITERATION;
     
     public static String getStringValue(QueryBasedFeatureKind kind) {
         if(SINGLE_REFERENCE.equals(kind)) {
@@ -26,8 +26,6 @@ public enum QueryBasedFeatureKind {
             return "many";
         } else if(SUM.equals(kind)) {
             return "sum";
-        } else if(COUNTER.equals(kind)) {
-            return "counter";
         } else if(ITERATION.equals(kind)) {
             return "iteration";
         } else {

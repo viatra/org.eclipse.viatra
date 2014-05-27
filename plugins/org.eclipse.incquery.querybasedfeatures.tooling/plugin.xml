@@ -5,7 +5,7 @@
          point="org.eclipse.incquery.tooling.core.generatorFragment">
       <fragment
             annotation="QueryBasedFeature"
-            fragment="org.eclipse.incquery.querybasedfeatures.tooling.DerivedFeatureGenerator">
+            fragment="org.eclipse.incquery.querybasedfeatures.tooling.QueryBasedFeatureGenerator">
       </fragment>
    </extension>
 </plugin>

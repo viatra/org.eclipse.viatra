@@ -34,15 +34,4 @@ public class QueryBasedFeatures {
         return new SumQueryBasedFeature(feature, QueryBasedFeatureKind.SUM);
     }
     
-    /**
-     * 
-     * @param feature
-     * @param keepCache
-     * @return
-     * @deprecated Use <code>count find</code> in query definition instead!
-     */
-    public static SumQueryBasedFeature newCounterFeature(EStructuralFeature feature) {
-        return new SumQueryBasedFeature(feature, QueryBasedFeatureKind.COUNTER);
-    }
-    
 }

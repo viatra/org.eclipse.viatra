@@ -177,9 +177,6 @@ public final class QueryBasedFeatureHelper {
             case SUM:
                 newFeature = QueryBasedFeatures.newSumFeature(feature);
                 break;
-            case COUNTER:
-                newFeature = QueryBasedFeatures.newCounterFeature(feature);
-                break;
             case ITERATION:
                 // fall-through
             default:

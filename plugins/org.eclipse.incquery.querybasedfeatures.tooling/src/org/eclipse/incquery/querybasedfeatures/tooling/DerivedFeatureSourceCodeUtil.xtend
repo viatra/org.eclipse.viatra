@@ -28,8 +28,6 @@ class DerivedFeatureSourceCodeUtil {
 				singleRefGetMethod(source,feature,pattern,sourceParamName,targetParamName,keepCache)
 			case QueryBasedFeatureKind::MANY_REFERENCE:
 				manyRefGetMethod(source,feature,pattern,sourceParamName,targetParamName,keepCache)
-			case QueryBasedFeatureKind::COUNTER:
-				counterGetMethod(source,feature,pattern,sourceParamName,targetParamName)
 			case QueryBasedFeatureKind::SUM:
 				sumGetMethod(source,feature,pattern,sourceParamName,targetParamName)			
 			case QueryBasedFeatureKind::ITERATION:
@@ -84,20 +82,6 @@ class DerivedFeatureSourceCodeUtil {
 						QueryBasedFeatureKind.MANY_REFERENCE,«keepCache», false);
 				}
 				return «feature.name»Handler.getManyReferenceValueAsEList(this);
-			}
-		}
-	'''
-	
-	def counterGetMethod(GenClass source, GenFeature feature,
-		Pattern pattern, String sourceParamName, String targetParamName)'''
-		«dummyCompUnitHeader»
-				if («feature.name»Handler == null) {
-					«feature.name»Handler = QueryBasedFeatureHelper.getQueryBasedFeatureHandler(this,
-						«source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
-						"«pattern.fullyQualifiedName»", "«sourceParamName»", null,
-						QueryBasedFeatureKind.COUNTER, true, false);
-				}
-				return «feature.name»Handler.getIntValue(this);
 			}
 		}
 	'''

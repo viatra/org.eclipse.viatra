@@ -191,8 +191,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                     return;
                 }
                 kind = QueryBasedFeatureKind.MANY_REFERENCE;
-            } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.COUNTER).equals(kindStr)
-                    || QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SUM).equals(kindStr)) {
+            } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.SUM).equals(kindStr)) {
                 if (!classifier.equals(EcorePackage.Literals.EINT)) {
                     validator
                             .error(String.format("Type of feature %s should be EInt for %s 'kind'.", featureName,
@@ -200,7 +199,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                                     METAMODEL_ISSUE_CODE);
                     return;
                 }
-                kind = QueryBasedFeatureKind.COUNTER;
+                kind = QueryBasedFeatureKind.SUM;
             } else if (QueryBasedFeatureKind.getStringValue(QueryBasedFeatureKind.ITERATION).equals(kindStr)) {
                 validator.warning("Don't forget to subclass QueryBasedFeature for iteration 'kind'.", ref,
                         PatternLanguagePackage.Literals.STRING_VALUE__VALUE, ANNOTATION_ISSUE_CODE);

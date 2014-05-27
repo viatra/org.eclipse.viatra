@@ -33,7 +33,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 public class SumQueryBasedFeature extends IterationQueryBasedFeature {
 
     private final Map<InternalEObject, Integer> counterMemory = new HashMap<InternalEObject, Integer>();
-    private final boolean countOnly;
 
     /**
      * @param feature
@@ -46,7 +45,6 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
             IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
         }
-        this.countOnly = QueryBasedFeatureKind.COUNTER.equals(kind);
     }
 
     @Override
@@ -54,9 +52,6 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
         InternalEObject source = getSourceValue(signature);
         Integer oldValue = getIntValue(source);
         Integer delta = (Integer) getTargetValue(signature);
-        if (delta == null && countOnly) {
-            delta = 1;
-        }
         if (delta != null && oldValue <= Integer.MAX_VALUE - delta) {
             int tempMemory = oldValue + delta;
             counterMemory.put(source, tempMemory);
@@ -75,9 +70,6 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
     protected ENotificationImpl lostMatchIteration(IPatternMatch signature) {
         InternalEObject source = getSourceValue(signature);
         Integer delta = (Integer) getTargetValue(signature);
-        if (delta == null && countOnly) {
-            delta = -1;
-        }
         Integer value = counterMemory.get(source);
         if (value == null) {
             IncQueryLoggingUtil
@@ -113,7 +105,7 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
 
     @Override
     public QueryBasedFeatureKind getKind() {
-        return countOnly ? QueryBasedFeatureKind.COUNTER : QueryBasedFeatureKind.SUM;
+        return QueryBasedFeatureKind.SUM;
     }
 
     @Override

@@ -12,15 +12,29 @@
 package org.eclipse.incquery.querybasedfeatures.tooling
 
 import com.google.inject.Inject
+import java.io.IOException
+import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
 import java.util.Map
-import org.apache.log4j.Logger
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
+import org.eclipse.emf.common.util.BasicEMap
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EcoreFactory
+import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
+import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
+import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
+import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
+import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.jdt.core.ICompilationUnit
 import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.jdt.core.JavaCore
@@ -33,7 +47,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit
 import org.eclipse.jdt.core.dom.ImportDeclaration
 import org.eclipse.jdt.core.dom.Javadoc
 import org.eclipse.jdt.core.dom.MethodDeclaration
-import org.eclipse.jdt.core.dom.Modifier$ModifierKeyword
+import org.eclipse.jdt.core.dom.Modifier
 import org.eclipse.jdt.core.dom.TagElement
 import org.eclipse.jdt.core.dom.TextElement
 import org.eclipse.jdt.core.dom.TypeDeclaration
@@ -41,36 +55,15 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite
 import org.eclipse.jface.text.Document
-import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
-import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
-import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
-import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.eclipse.xtext.xbase.lib.Pair
 import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
-import org.eclipse.emf.ecore.EcoreFactory
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.common.util.BasicEMap
-import java.util.ArrayList
-import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
+import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import java.io.IOException
-import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
-import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 
-class DerivedFeatureGenerator implements IGenerationFragment {
+class ModelCodeBasedGenerator {
 
-	@Inject IEiqGenmodelProvider provider
-	@Inject extension DerivedFeatureSourceCodeUtil
-	@Inject Logger logger
-	@Inject IErrorFeedback errorFeedback
-	@Inject extension ExtensionGenerator exGen
+	extension QueryBasedFeatureGenerator gen
+	
 	//@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 
 	/* usage: @DerivedFeature(
@@ -79,87 +72,37 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	 * 			target="Trg" (default: second parameter),
 	 * 			kind="single/many/counter/sum/iteration" (default: feature.isMany?many:single)
 	 * 			keepCache="true/false" (default: true)
-	 * 			disabled="true/false" (default: false)
 	 * 		  )
 	 */
-	private static String annotationLiteral 		= "QueryBasedFeature"
-	private static String DERIVED_EXTENSION_POINT 	= "org.eclipse.incquery.runtime.base.wellbehaving.derived.features"
 	private static String IMPORT_QUALIFIER 			= "org.eclipse.incquery.querybasedfeatures.runtime"
 	private static String FEATUREKIND_IMPORT		= "QueryBasedFeatureKind"
 	private static String HELPER_IMPORT 			= "QueryBasedFeatureHelper"
-	//private static String HANDLER_NAME 				= "IncqueryFeatureHandler"
 	private static String HANDLER_NAME 				= "IQueryBasedFeatureHandler"
 	private static String HANDLER_FIELD_SUFFIX 		= "Handler"
-	private static String DERIVED_ERROR_CODE		= "org.eclipse.incquery.runtime.querybasedfeature.error"
 
-	private static String DERIVED_EXTENSION_PREFIX 	= "extension.derived."
-	private static Map<String,QueryBasedFeatureKind> kinds = newHashMap(
-	  Pair::of("single", QueryBasedFeatureKind::SINGLE_REFERENCE),
-		Pair::of("many", QueryBasedFeatureKind::MANY_REFERENCE),
-		Pair::of("counter", QueryBasedFeatureKind::COUNTER),
-		Pair::of("sum", QueryBasedFeatureKind::SUM),
-		Pair::of("iteration", QueryBasedFeatureKind::ITERATION)
-	)
-
-
-
-/*   override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-    throw new UnsupportedOperationException("Auto-generated function stub")
+  new(QueryBasedFeatureGenerator generator) {
+    gen = generator
   }
-
-  override extensionContribution(Pattern pattern, ExtensionGenerator exGen) {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override getAdditionalBinIncludes() {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override getProjectDependencies() {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override getProjectPostfix() {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override getRemovableExtensions() {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-  override removeExtension(Pattern pattern) {
-    throw new UnsupportedOperationException("Auto-generated function stub")
-  }
-
-}*/
-
-	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-		processJavaFiles(pattern, true)
-	}
-
-	override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-		processJavaFiles(pattern, false)
-	}
-
-	def private processJavaFiles(Pattern pattern, boolean generate) {
-		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
+	
+	def protected processJavaFiles(Pattern pattern, Annotation annotation, boolean generate) {
 			try{
-				val parameters = pattern.processDerivedFeatureAnnotation(generate)
+				val parameters = pattern.processDerivedFeatureAnnotation(annotation, generate)
 
-				val pckg = parameters.get("package") as GenPackage
-				val source =  parameters.get("source") as EClass
-				val feature = parameters.get("feature") as EStructuralFeature
+				val pckg = provider.findGenPackage(pattern, parameters.ePackage)
+				if(pckg == null){
+          if(generate)
+            errorFeedback.reportError(pattern,"GenPackage not found!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+          throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
+        }
+				val source =  parameters.source
+				val feature = parameters.feature
 
 				val genSourceClass = pckg.findGenClassForSource(source, pattern)
 				val genFeature = genSourceClass.findGenFeatureForFeature(feature, pattern)
 
 				val javaProject = pckg.findJavaProject
 				if(javaProject == null){
-				  errorFeedback.reportError(pattern,"Model project for GenPackage " + pckg.NSURI + " not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+				  errorFeedback.reportError(pattern,"Model project for GenPackage " + pckg.NSURI + " not found!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
           throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Model project for GenPackage " + pckg.NSURI + " not found!")
 				}
 				val compunit = pckg.findJavaFile(genSourceClass, javaProject)
@@ -192,15 +135,15 @@ class DerivedFeatureGenerator implements IGenerationFragment {
                 feat.EAnnotations.remove(it)
               }
             ]
-  					val annotation = EcoreFactory::eINSTANCE.createEAnnotation
-  					annotation.source = QueryBasedFeatures::ANNOTATION_SOURCE
-            feat.EAnnotations.add(annotation)
+  					val ecoreAnnotation = EcoreFactory::eINSTANCE.createEAnnotation
+  					ecoreAnnotation.source = QueryBasedFeatures::ANNOTATION_SOURCE
+            feat.EAnnotations.add(ecoreAnnotation)
 
   				  // add entry ("patternFQN", pattern.fullyQualifiedName)
-  			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap$Entry<String,String>
+  			    val entry = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap.Entry<String,String>
   			    entry.key = QueryBasedFeatures::PATTERN_FQN_KEY
   			    entry.value = pattern.fullyQualifiedName
-  			    annotation.details.add(entry)
+  			    ecoreAnnotation.details.add(entry)
 					} catch(Exception e){
 					  logger.warn("Error happened when trying to edit Ecore file!", e)
 					}
@@ -237,8 +180,6 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				  logger.error(e.message,e);
 				}
 			}
-
-		}
 	}
 
 	def private findGenClassForSource(GenPackage pckg, EClass source, Pattern pattern){
@@ -347,7 +288,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 			//val handlerType = ast.newParameterizedType(ast.newSimpleType(ast.newSimpleName(HANDLER_NAME)))
 			//handlerType.typeArguments.add(ast.newSimpleType(ast.newSimpleName(feature.ecoreFeature.EType.name)))
 			handlerField.setType(handlerType)
-			handlerField.modifiers().add(ast.newModifier(Modifier$ModifierKeyword::PRIVATE_KEYWORD))
+			handlerField.modifiers().add(ast.newModifier(Modifier.ModifierKeyword::PRIVATE_KEYWORD))
 			val handlerTag = ast.newTagElement
 			val tagText = ast.newTextElement
 			tagText.text = "EMF-IncQuery handler for query-based feature "+feature.name
@@ -374,16 +315,16 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 	}
 
 	def private ensureGetterMethod(AST ast, Document document, TypeDeclaration type, ASTRewrite rewrite, ListRewrite bodyDeclListRewrite,
-		 GenClass sourceClass, GenFeature genFeature, Pattern pattern, Map<String,Object> parameters){
-		val sourceName =  parameters.get("sourceVar") as String
-		val targetName = parameters.get("targetVar") as String
-		val kind = parameters.get("kind") as QueryBasedFeatureKind
-		val keepCache = parameters.get("keepCache") as Boolean
+		 GenClass sourceClass, GenFeature genFeature, Pattern pattern, QueryBasedFeatureParameters parameters){
+		val sourceName =  parameters.sourceVar
+		val targetName = parameters.targetVar
+		val kind = parameters.kind
+		val keepCache = parameters.keepCache
 
 		val getMethod = findFeatureMethod(type, genFeature, "")
 		val getGenMethod = findFeatureMethod(type, genFeature, "Gen")
 
-		var methodSource = methodBody(sourceClass, genFeature, pattern, sourceName, targetName, kind, keepCache)
+		var methodSource = codeGen.methodBody(sourceClass, genFeature, pattern, sourceName, targetName, kind, keepCache)
 		var dummyMethod = processDummyComputationUnit(methodSource.toString)
 
 		if(getMethod != null){
@@ -455,7 +396,7 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 				bodyDeclListRewrite.remove(getMethod, null)
 			}
 		} else {
-			var methodSource = defaultMethod(genFeature.ecoreFeature.many)
+			var methodSource = codeGen.defaultMethod(genFeature.ecoreFeature.many)
 			var dummyMethod = processDummyComputationUnit(methodSource.toString)
 
 			if(getMethod != null){
@@ -591,231 +532,129 @@ class DerivedFeatureGenerator implements IGenerationFragment {
 		rewrite.replace(oldBody, newBody, null)
 	}
 
-	override extensionContribution(Pattern pattern) {
-		if (hasAnnotationLiteral(pattern, annotationLiteral)) {
-			// create wellbehaving extension using nsUri, classifier name and feature name
-			try{
-				val parameters = pattern.processDerivedFeatureAnnotation(false)
-				val wellbehaving = newArrayList(
-				contribExtension(pattern.derivedContributionId, DERIVED_EXTENSION_POINT) [
-					contribElement(it, "wellbehaving-derived-feature") [
-						contribAttribute(it, "package-nsUri", (parameters.get("package") as GenPackage).NSURI)
-						contribAttribute(it, "classifier-name", (parameters.get("source") as EClass).name)
-						contribAttribute(it, "feature-name", (parameters.get("feature") as EStructuralFeature).name)
-					]
-				]
-				)
-
-				return wellbehaving
-			} catch(IllegalArgumentException e){
-				logger.error(e.message)
-				return newArrayList
-			}
-
-		}
-		else {
-			return newArrayList
-		}
-	}
-
-	override removeExtension(Pattern pattern) {
-		newArrayList(
-			Pair::of(pattern.derivedContributionId, DERIVED_EXTENSION_POINT)
-		)
-	}
-
-	override getRemovableExtensions() {
-		newArrayList(
-			Pair::of(DERIVED_EXTENSION_PREFIX, DERIVED_EXTENSION_POINT)
-		)
-	}
-
-	def private hasAnnotationLiteral(Pattern pattern, String literal) {
-		for (a : pattern.annotations) {
-			if (a.name.matches(literal)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	def private derivedContributionId(Pattern pattern) {
-		DERIVED_EXTENSION_PREFIX+getFullyQualifiedName(pattern)
-	}
-
-
-	def private processDerivedFeatureAnnotation(Pattern pattern, boolean feedback){
-		val parameters = new HashMap<String,Object>
-		var sourceTmp = ""
-		var targetTmp = ""
-		var featureTmp = ""
-		var kindTmp = ""
-		var keepCacheTmp = true
-
-		if(pattern.parameters.size < 2){
-		  if(feedback)
-  		  errorFeedback.reportError(pattern,"Pattern has less than 2 parameters!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-			throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+" has less than 2 parameters!")
-		}
-
-		var Annotation annotation = null
-		for (a : pattern.annotations.filter([name.equalsIgnoreCase(annotationLiteral)])) {
-			//TODO sanitize multiple annotation handling
-			annotation = a
-			for (ap : a.parameters) {
-				if (ap.name.matches("source")) {
-					sourceTmp = (ap.value as VariableValue).value.getVar
-				} else if (ap.name.matches("target")) {
-					targetTmp = (ap.value as VariableValue).value.getVar
-				} else if (ap.name.matches("feature")) {
-					featureTmp = (ap.value as StringValue).value
-				} else if (ap.name.matches("kind")) {
-					kindTmp = (ap.value as StringValue).value
-				} else if (ap.name.matches("keepCache")) {
-					keepCacheTmp = (ap.value as BoolValue).value
-				}
-			}
-		}
-
-		if(featureTmp == ""){
-			//throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Feature not defined!")
-			featureTmp = pattern.name
-		}
-
-		if(sourceTmp == ""){
-			sourceTmp = pattern.parameters.get(0).name
-		}
-		if(!pattern.parameterPositionsByName.keySet.contains(sourceTmp)){
-		  if(feedback)
-		    errorFeedback.reportError(annotation,"No parameter for source " + sourceTmp +" !", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-			throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": No parameter for source " + sourceTmp +" !")
-		}
-
-		val sourcevar = pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp))
-		val sourceType = sourcevar.type
-		if(!(sourceType instanceof ClassType) || !((sourceType as ClassType).classname instanceof EClass)){
-			if(feedback)
-        errorFeedback.reportError(sourcevar,"Source " + sourceTmp +" is not EClass!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Source " + sourceTmp +" is not EClass!")
-		}
-		var source = (sourceType as ClassType).classname as EClass
-
-		parameters.put("sourceVar", sourceTmp)
-		parameters.put("source", source)
-		//parameters.put("sourceJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp)).calculateType)
-
-		if(source == null || source.EPackage == null){
-		  if(feedback)
-        errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-		  throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
-		}
-		val pckg = provider.findGenPackage(pattern, source.EPackage)
-		if(pckg == null){
-			if(feedback)
-        errorFeedback.reportError(sourcevar,"GenPackage not found!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
-		}
-		parameters.put("package", pckg)
-
-		val featureString = featureTmp
-		val features = source.EAllStructuralFeatures.filter[it.name == featureString]
-		if(features.size != 1){
-			if(feedback)
-        errorFeedback.reportError(annotation,"Feature " + featureTmp +" not found in class " + source.name +"!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" not found in class " + source.name +"!")
-		}
-		val feature = features.iterator.next
-		if(!(feature.derived && feature.transient && feature.volatile)){ //&& !feature.changeable
-			if(feedback)
-        errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
-		}
-		parameters.put("feature", feature)
-
-		if(kindTmp == ""){
-			if(feature.many){
-				kindTmp = "many"
-			} else {
-				kindTmp = "single"
-			}
-		}
-
-		if(kinds.empty){
-		  kinds.put("single", QueryBasedFeatureKind::SINGLE_REFERENCE)
-      kinds.put("many", QueryBasedFeatureKind::MANY_REFERENCE)
-      kinds.put("counter", QueryBasedFeatureKind::COUNTER)
-      kinds.put("sum", QueryBasedFeatureKind::SUM)
-      kinds.put("iteration", QueryBasedFeatureKind::ITERATION)
-		}
-
-		if(!kinds.keySet.contains(kindTmp)){
-			if(feedback)
-        errorFeedback.reportError(annotation,"Kind not set, or not in " + kinds.keySet + "!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Kind not set, or not in " + kinds.keySet + "!")
-		}
-		val kind = kinds.get(kindTmp)
-		parameters.put("kind", kind)
-
-		if(targetTmp == ""){
-			targetTmp = pattern.parameters.get(1).name
-		} else {
-			if(!pattern.parameterPositionsByName.keySet.contains(targetTmp)){
-			  if(feedback)
-          errorFeedback.reportError(annotation,"Target " + targetTmp +" not set or no such parameter!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-				throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" not set or no such parameter!")
-			}
-		}
-		/*val targetType = pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).type
-		if(!(targetType instanceof ClassType)){
-			//if(targetType instanceof )
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" is not EClassifier!")
-		}
-		val target = (targetType as ClassType).classname*/
-		parameters.put("targetVar", targetTmp)
-		//parameters.put("target", target)
-		//parameters.put("targetJVMRef", pattern.parameters.get(pattern.parameterPositionsByName.get(targetTmp)).calculateType)
-
-		/*val featureTarget = feature.EGenericType
-		target.ETypeParameters.forEach[
-			it.EBounds.forEach[
-				println(it)
-				if(featureTarget == it){
-					println("equal")
-				}
-			]
-		]*/
-
-		/*if(keepCacheTmp == ""){
-			keepCacheTmp = "true"
-		}
-		if(keepCacheTmp != "true" && keepCacheTmp != "false"){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": keepCache value must be true or false!")
-		}*/
-		//val keepCache = new Boolean(keepCacheTmp)
-		parameters.put("keepCache", keepCacheTmp)
-
-		/*if(disabledTmp == ""){
-			disabledTmp = "false"
-		}
-		if(disabledTmp != "true" && disabledTmp != "false"){
-			throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": disabled value must be true or false!")
-		}*/
-		//val disabled = new Boolean(disabledTmp)
-		//parameters.put("disabled", disabledTmp)
-
-		return parameters
-	}
-
-	override getAdditionalBinIncludes() {
-		return newArrayList()
-	}
-
-	override getProjectDependencies() {
-		return newArrayList()
-	}
-
-	override getProjectPostfix() {
-		return null
-	}
+//	def private processDerivedFeatureAnnotation(Pattern pattern, boolean feedback){
+//		val parameters = new HashMap<String,Object>
+//		var sourceTmp = ""
+//		var targetTmp = ""
+//		var featureTmp = ""
+//		var kindTmp = ""
+//		var keepCacheTmp = true
+//
+//		if(pattern.parameters.size < 2){
+//		  if(feedback)
+//  		  errorFeedback.reportError(pattern,"Pattern has less than 2 parameters!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//			throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+" has less than 2 parameters!")
+//		}
+//
+//		var Annotation annotation = null
+//		for (a : pattern.annotations.filter([name.equalsIgnoreCase(QueryBasedFeatureGenerator::ANNOTATION_LITERAL)])) {
+//			//TODO sanitize multiple annotation handling
+//			annotation = a
+//			for (ap : a.parameters) {
+//				if (ap.name.matches("source")) {
+//					sourceTmp = (ap.value as VariableValue).value.getVar
+//				} else if (ap.name.matches("target")) {
+//					targetTmp = (ap.value as VariableValue).value.getVar
+//				} else if (ap.name.matches("feature")) {
+//					featureTmp = (ap.value as StringValue).value
+//				} else if (ap.name.matches("kind")) {
+//					kindTmp = (ap.value as StringValue).value
+//				} else if (ap.name.matches("keepCache")) {
+//					keepCacheTmp = (ap.value as BoolValue).value
+//				}
+//			}
+//		}
+//
+//		if(featureTmp == ""){
+//			featureTmp = pattern.name
+//		}
+//
+//		if(sourceTmp == ""){
+//			sourceTmp = pattern.parameters.get(0).name
+//		}
+//		if(!pattern.parameterPositionsByName.keySet.contains(sourceTmp)){
+//		  if(feedback)
+//		    errorFeedback.reportError(annotation,"No parameter for source " + sourceTmp +" !", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//			throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": No parameter for source " + sourceTmp +" !")
+//		}
+//
+//		val sourcevar = pattern.parameters.get(pattern.parameterPositionsByName.get(sourceTmp))
+//		val sourceType = sourcevar.type
+//		if(!(sourceType instanceof ClassType) || !((sourceType as ClassType).classname instanceof EClass)){
+//			if(feedback)
+//        errorFeedback.reportError(sourcevar,"Source " + sourceTmp +" is not EClass!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Source " + sourceTmp +" is not EClass!")
+//		}
+//		var source = (sourceType as ClassType).classname as EClass
+//
+//		parameters.put("sourceVar", sourceTmp)
+//		parameters.put("source", source)
+//
+//		if(source == null || source.EPackage == null){
+//		  if(feedback)
+//        errorFeedback.reportError(sourcevar,"Source EClass or EPackage not found!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//		  throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Source EClass or EPackage not found!")
+//		}
+//		val pckg = provider.findGenPackage(pattern, source.EPackage)
+//		if(pckg == null){
+//			if(feedback)
+//        errorFeedback.reportError(sourcevar,"GenPackage not found!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": GenPackage not found!")
+//		}
+//		parameters.put("package", pckg)
+//
+//		val featureString = featureTmp
+//		val features = source.EAllStructuralFeatures.filter[it.name == featureString]
+//		if(features.size != 1){
+//			if(feedback)
+//        errorFeedback.reportError(annotation,"Feature " + featureTmp +" not found in class " + source.name +"!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" not found in class " + source.name +"!")
+//		}
+//		val feature = features.iterator.next
+//		if(!(feature.derived && feature.transient && feature.volatile)){ //&& !feature.changeable
+//			if(feedback)
+//        errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
+//		}
+//		parameters.put("feature", feature)
+//
+//		if(kindTmp == ""){
+//			if(feature.many){
+//				kindTmp = "many"
+//			} else {
+//				kindTmp = "single"
+//			}
+//		}
+//
+//    val kinds = QueryBasedFeatureGenerator::kinds
+//		if(kinds.empty){
+//		  kinds.put("single", QueryBasedFeatureKind::SINGLE_REFERENCE)
+//      kinds.put("many", QueryBasedFeatureKind::MANY_REFERENCE)
+//      kinds.put("sum", QueryBasedFeatureKind::SUM)
+//      kinds.put("iteration", QueryBasedFeatureKind::ITERATION)
+//		}
+//
+//		if(!kinds.keySet.contains(kindTmp)){
+//			if(feedback)
+//        errorFeedback.reportError(annotation,"Kind not set, or not in " + kinds.keySet + "!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Kind not set, or not in " + kinds.keySet + "!")
+//		}
+//		val kind = kinds.get(kindTmp)
+//		parameters.put("kind", kind)
+//
+//		if(targetTmp == ""){
+//			targetTmp = pattern.parameters.get(1).name
+//		} else {
+//			if(!pattern.parameterPositionsByName.keySet.contains(targetTmp)){
+//			  if(feedback)
+//          errorFeedback.reportError(annotation,"Target " + targetTmp +" not set or no such parameter!", QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+//				throw new IllegalArgumentException("Derived feature pattern "+pattern.fullyQualifiedName+": Target " + targetTmp +" not set or no such parameter!")
+//			}
+//		}
+//		parameters.put("targetVar", targetTmp)
+//		parameters.put("keepCache", keepCacheTmp)
+//
+//		return parameters
+//	}
 
 }
