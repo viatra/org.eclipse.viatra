@@ -156,6 +156,12 @@ class PatternMatchClassInferrer {
    				return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
    			''')]
    		]
+   		matchClass.members += pattern.toMethod("toImmutable", typeReference.createTypeRef(matchClass)) [
+   			annotations += pattern.toAnnotation(typeof (Override))
+   			body = [append('''
+   				return isMutable() ? newMatch(«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR») : this;
+   			''')]
+   		]
 		matchClass.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
 			annotations += pattern.toAnnotation(typeof (Override))
 			setBody = [

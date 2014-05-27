@@ -77,7 +77,13 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
      * @return a newly constructed array containing each parameter substitution of the match in order.
      */
     public Object[] toArray();
-
+    
+    /**
+     * Takes an immutable snapshot of this match.
+     * @return the match itself in case of immutable matches, an immutable copy in case of mutable ones.
+     */
+    public IPatternMatch toImmutable();
+    
     /** Prints the list of parameter-value pairs. */
     public String prettyPrint();
     

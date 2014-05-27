@@ -17,7 +17,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 
 /**
- * Generic signature object implementation. Please instantiate using {@link GenericPatternMatcher#newMatch(Object...)} or {@link GenericPatternMatcher#newEmptyMatch()}.
+ * Generic signature object implementation. 
  *
  * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
  *
@@ -135,6 +135,10 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
   	  return new Immutable(specification, Arrays.copyOf(parameters, parameters.length));
     }
     
+	@Override
+	public IPatternMatch toImmutable() {
+		return isMutable() ? newMatch(specification, array) : this;
+	}
 
     static final class Mutable extends GenericPatternMatch {
 		Mutable(GenericQuerySpecification specification, Object[] array) {
@@ -148,7 +152,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     }
     static final class Immutable extends GenericPatternMatch {
     	Immutable(GenericQuerySpecification specification, Object[] array) {
-			super(specification, Arrays.copyOf(array, array.length));
+			super(specification, array);
 		}
 
 		@Override
