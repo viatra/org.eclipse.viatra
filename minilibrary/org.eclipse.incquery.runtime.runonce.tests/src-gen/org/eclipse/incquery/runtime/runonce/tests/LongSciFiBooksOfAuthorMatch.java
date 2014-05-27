@@ -100,6 +100,12 @@ public abstract class LongSciFiBooksOfAuthorMatch extends BasePatternMatch {
   }
   
   @Override
+  public LongSciFiBooksOfAuthorMatch toImmutable() {
+    return isMutable() ? newMatch(fAuthor, fBook) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"author\"=" + prettyPrintValue(fAuthor) + ", ");
@@ -151,8 +157,48 @@ public abstract class LongSciFiBooksOfAuthorMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static LongSciFiBooksOfAuthorMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pAuthor the fixed value of pattern parameter author, or null if not bound.
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static LongSciFiBooksOfAuthorMatch newMutableMatch(final Writer pAuthor, final Book pBook) {
+    return new Mutable(pAuthor, pBook);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pAuthor the fixed value of pattern parameter author, or null if not bound.
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static LongSciFiBooksOfAuthorMatch newMatch(final Writer pAuthor, final Book pBook) {
+    return new Immutable(pAuthor, pBook);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends LongSciFiBooksOfAuthorMatch {
+  private static final class Mutable extends LongSciFiBooksOfAuthorMatch {
     Mutable(final Writer pAuthor, final Book pBook) {
       super(pAuthor, pBook);
       
@@ -166,7 +212,7 @@ public abstract class LongSciFiBooksOfAuthorMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends LongSciFiBooksOfAuthorMatch {
+  private static final class Immutable extends LongSciFiBooksOfAuthorMatch {
     Immutable(final Writer pAuthor, final Book pBook) {
       super(pAuthor, pBook);
       

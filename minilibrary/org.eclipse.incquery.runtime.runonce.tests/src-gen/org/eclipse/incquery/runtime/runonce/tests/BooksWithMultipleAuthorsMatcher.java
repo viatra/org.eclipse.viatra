@@ -186,7 +186,7 @@ public class BooksWithMultipleAuthorsMatcher extends BaseMatcher<BooksWithMultip
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pBook the fixed value of pattern parameter book, or null if not bound.
@@ -194,7 +194,7 @@ public class BooksWithMultipleAuthorsMatcher extends BaseMatcher<BooksWithMultip
    * 
    */
   public BooksWithMultipleAuthorsMatch newMatch(final Book pBook) {
-    return new BooksWithMultipleAuthorsMatch.Immutable(pBook);
+    return BooksWithMultipleAuthorsMatch.newMatch(pBook);
     
   }
   
@@ -221,7 +221,7 @@ public class BooksWithMultipleAuthorsMatcher extends BaseMatcher<BooksWithMultip
   @Override
   protected BooksWithMultipleAuthorsMatch tupleToMatch(final Tuple t) {
     try {
-      return new BooksWithMultipleAuthorsMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK));
+      return BooksWithMultipleAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -232,7 +232,7 @@ public class BooksWithMultipleAuthorsMatcher extends BaseMatcher<BooksWithMultip
   @Override
   protected BooksWithMultipleAuthorsMatch arrayToMatch(final Object[] match) {
     try {
-      return new BooksWithMultipleAuthorsMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
+      return BooksWithMultipleAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -243,7 +243,7 @@ public class BooksWithMultipleAuthorsMatcher extends BaseMatcher<BooksWithMultip
   @Override
   protected BooksWithMultipleAuthorsMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new BooksWithMultipleAuthorsMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
+      return BooksWithMultipleAuthorsMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

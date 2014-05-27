@@ -99,6 +99,12 @@ public abstract class RequestCountOfLibraryMatch extends BasePatternMatch {
   }
   
   @Override
+  public RequestCountOfLibraryMatch toImmutable() {
+    return isMutable() ? newMatch(fLibrary, fReqCount) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"library\"=" + prettyPrintValue(fLibrary) + ", ");
@@ -150,8 +156,48 @@ public abstract class RequestCountOfLibraryMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static RequestCountOfLibraryMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pReqCount the fixed value of pattern parameter reqCount, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static RequestCountOfLibraryMatch newMutableMatch(final Library pLibrary, final Integer pReqCount) {
+    return new Mutable(pLibrary, pReqCount);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pReqCount the fixed value of pattern parameter reqCount, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static RequestCountOfLibraryMatch newMatch(final Library pLibrary, final Integer pReqCount) {
+    return new Immutable(pLibrary, pReqCount);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends RequestCountOfLibraryMatch {
+  private static final class Mutable extends RequestCountOfLibraryMatch {
     Mutable(final Library pLibrary, final Integer pReqCount) {
       super(pLibrary, pReqCount);
       
@@ -165,7 +211,7 @@ public abstract class RequestCountOfLibraryMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends RequestCountOfLibraryMatch {
+  private static final class Immutable extends RequestCountOfLibraryMatch {
     Immutable(final Library pLibrary, final Integer pReqCount) {
       super(pLibrary, pReqCount);
       

@@ -193,7 +193,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
@@ -202,7 +202,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
    * 
    */
   public RequestCountOfLibraryMatch newMatch(final Library pLibrary, final Integer pReqCount) {
-    return new RequestCountOfLibraryMatch.Immutable(pLibrary, pReqCount);
+    return RequestCountOfLibraryMatch.newMatch(pLibrary, pReqCount);
     
   }
   
@@ -285,7 +285,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   @Override
   protected RequestCountOfLibraryMatch tupleToMatch(final Tuple t) {
     try {
-      return new RequestCountOfLibraryMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (java.lang.Integer) t.get(POSITION_REQCOUNT));
+      return RequestCountOfLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (java.lang.Integer) t.get(POSITION_REQCOUNT));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -296,7 +296,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   @Override
   protected RequestCountOfLibraryMatch arrayToMatch(final Object[] match) {
     try {
-      return new RequestCountOfLibraryMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_REQCOUNT]);
+      return RequestCountOfLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_REQCOUNT]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -307,7 +307,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   @Override
   protected RequestCountOfLibraryMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new RequestCountOfLibraryMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_REQCOUNT]);
+      return RequestCountOfLibraryMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_REQCOUNT]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

@@ -80,6 +80,12 @@ public abstract class BooksWithMultipleAuthorsMatch extends BasePatternMatch {
   }
   
   @Override
+  public BooksWithMultipleAuthorsMatch toImmutable() {
+    return isMutable() ? newMatch(fBook) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"book\"=" + prettyPrintValue(fBook));
@@ -127,8 +133,46 @@ public abstract class BooksWithMultipleAuthorsMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static BooksWithMultipleAuthorsMatch newEmptyMatch() {
+    return new Mutable(null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static BooksWithMultipleAuthorsMatch newMutableMatch(final Book pBook) {
+    return new Mutable(pBook);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static BooksWithMultipleAuthorsMatch newMatch(final Book pBook) {
+    return new Immutable(pBook);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends BooksWithMultipleAuthorsMatch {
+  private static final class Mutable extends BooksWithMultipleAuthorsMatch {
     Mutable(final Book pBook) {
       super(pBook);
       
@@ -142,7 +186,7 @@ public abstract class BooksWithMultipleAuthorsMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends BooksWithMultipleAuthorsMatch {
+  private static final class Immutable extends BooksWithMultipleAuthorsMatch {
     Immutable(final Book pBook) {
       super(pBook);
       

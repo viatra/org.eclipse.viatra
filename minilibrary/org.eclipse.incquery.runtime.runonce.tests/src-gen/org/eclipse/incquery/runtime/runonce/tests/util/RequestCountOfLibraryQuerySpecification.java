@@ -12,6 +12,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.runonce.tests.RequestCountOfLibraryMatch;
 import org.eclipse.incquery.runtime.runonce.tests.RequestCountOfLibraryMatcher;
 
 /**
@@ -52,6 +53,16 @@ public final class RequestCountOfLibraryQuerySpecification extends BaseGenerated
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("reqCount", "java.lang.Integer"));
+  }
+  
+  @Override
+  public RequestCountOfLibraryMatch newEmptyMatch() {
+    return RequestCountOfLibraryMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public RequestCountOfLibraryMatch newMatch(final Object... parameters) {
+    return RequestCountOfLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) parameters[0], (java.lang.Integer) parameters[1]);
   }
   
   @Override

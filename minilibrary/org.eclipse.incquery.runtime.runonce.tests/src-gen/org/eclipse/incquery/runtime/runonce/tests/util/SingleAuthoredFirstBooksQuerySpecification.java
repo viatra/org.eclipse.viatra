@@ -15,6 +15,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.runonce.tests.SingleAuthoredFirstBooksMatch;
 import org.eclipse.incquery.runtime.runonce.tests.SingleAuthoredFirstBooksMatcher;
 import org.eclipse.incquery.runtime.runonce.tests.util.BookAuthorsQuerySpecification;
 
@@ -56,6 +57,16 @@ public final class SingleAuthoredFirstBooksQuerySpecification extends BaseGenera
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("firstBook", "org.eclipse.incquery.examples.eiqlibrary.Book"));
+  }
+  
+  @Override
+  public SingleAuthoredFirstBooksMatch newEmptyMatch() {
+    return SingleAuthoredFirstBooksMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public SingleAuthoredFirstBooksMatch newMatch(final Object... parameters) {
+    return SingleAuthoredFirstBooksMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) parameters[0], (org.eclipse.incquery.examples.eiqlibrary.Book) parameters[1]);
   }
   
   @Override

@@ -195,7 +195,7 @@ public class SingleAuthoredFirstBooksMatcher extends BaseMatcher<SingleAuthoredF
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
@@ -204,7 +204,7 @@ public class SingleAuthoredFirstBooksMatcher extends BaseMatcher<SingleAuthoredF
    * 
    */
   public SingleAuthoredFirstBooksMatch newMatch(final Library pLibrary, final Book pFirstBook) {
-    return new SingleAuthoredFirstBooksMatch.Immutable(pLibrary, pFirstBook);
+    return SingleAuthoredFirstBooksMatch.newMatch(pLibrary, pFirstBook);
     
   }
   
@@ -287,7 +287,7 @@ public class SingleAuthoredFirstBooksMatcher extends BaseMatcher<SingleAuthoredF
   @Override
   protected SingleAuthoredFirstBooksMatch tupleToMatch(final Tuple t) {
     try {
-      return new SingleAuthoredFirstBooksMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_FIRSTBOOK));
+      return SingleAuthoredFirstBooksMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_FIRSTBOOK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -298,7 +298,7 @@ public class SingleAuthoredFirstBooksMatcher extends BaseMatcher<SingleAuthoredF
   @Override
   protected SingleAuthoredFirstBooksMatch arrayToMatch(final Object[] match) {
     try {
-      return new SingleAuthoredFirstBooksMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_FIRSTBOOK]);
+      return SingleAuthoredFirstBooksMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_FIRSTBOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -309,7 +309,7 @@ public class SingleAuthoredFirstBooksMatcher extends BaseMatcher<SingleAuthoredF
   @Override
   protected SingleAuthoredFirstBooksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new SingleAuthoredFirstBooksMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_FIRSTBOOK]);
+      return SingleAuthoredFirstBooksMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_FIRSTBOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchC
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.runonce.tests.BooksWithMultipleAuthorsMatch;
 import org.eclipse.incquery.runtime.runonce.tests.BooksWithMultipleAuthorsMatcher;
 import org.eclipse.incquery.runtime.runonce.tests.util.BookAuthorsQuerySpecification;
 
@@ -58,6 +59,16 @@ public final class BooksWithMultipleAuthorsQuerySpecification extends BaseGenera
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("book", "org.eclipse.incquery.examples.eiqlibrary.Book"));
+  }
+  
+  @Override
+  public BooksWithMultipleAuthorsMatch newEmptyMatch() {
+    return BooksWithMultipleAuthorsMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public BooksWithMultipleAuthorsMatch newMatch(final Object... parameters) {
+    return BooksWithMultipleAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) parameters[0]);
   }
   
   @Override

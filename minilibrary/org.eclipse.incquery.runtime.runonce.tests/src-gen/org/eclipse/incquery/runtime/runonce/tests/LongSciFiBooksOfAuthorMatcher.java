@@ -196,7 +196,7 @@ public class LongSciFiBooksOfAuthorMatcher extends BaseMatcher<LongSciFiBooksOfA
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pAuthor the fixed value of pattern parameter author, or null if not bound.
@@ -205,7 +205,7 @@ public class LongSciFiBooksOfAuthorMatcher extends BaseMatcher<LongSciFiBooksOfA
    * 
    */
   public LongSciFiBooksOfAuthorMatch newMatch(final Writer pAuthor, final Book pBook) {
-    return new LongSciFiBooksOfAuthorMatch.Immutable(pAuthor, pBook);
+    return LongSciFiBooksOfAuthorMatch.newMatch(pAuthor, pBook);
     
   }
   
@@ -288,7 +288,7 @@ public class LongSciFiBooksOfAuthorMatcher extends BaseMatcher<LongSciFiBooksOfA
   @Override
   protected LongSciFiBooksOfAuthorMatch tupleToMatch(final Tuple t) {
     try {
-      return new LongSciFiBooksOfAuthorMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Writer) t.get(POSITION_AUTHOR), (org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK));
+      return LongSciFiBooksOfAuthorMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Writer) t.get(POSITION_AUTHOR), (org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -299,7 +299,7 @@ public class LongSciFiBooksOfAuthorMatcher extends BaseMatcher<LongSciFiBooksOfA
   @Override
   protected LongSciFiBooksOfAuthorMatch arrayToMatch(final Object[] match) {
     try {
-      return new LongSciFiBooksOfAuthorMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
+      return LongSciFiBooksOfAuthorMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -310,7 +310,7 @@ public class LongSciFiBooksOfAuthorMatcher extends BaseMatcher<LongSciFiBooksOfA
   @Override
   protected LongSciFiBooksOfAuthorMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new LongSciFiBooksOfAuthorMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
+      return LongSciFiBooksOfAuthorMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR], (org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

@@ -15,6 +15,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParam
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.runonce.tests.LongSciFiBooksOfAuthorMatch;
 import org.eclipse.incquery.runtime.runonce.tests.LongSciFiBooksOfAuthorMatcher;
 
 /**
@@ -55,6 +56,16 @@ public final class LongSciFiBooksOfAuthorQuerySpecification extends BaseGenerate
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("author", "org.eclipse.incquery.examples.eiqlibrary.Writer"),new PParameter("book", "org.eclipse.incquery.examples.eiqlibrary.Book"));
+  }
+  
+  @Override
+  public LongSciFiBooksOfAuthorMatch newEmptyMatch() {
+    return LongSciFiBooksOfAuthorMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public LongSciFiBooksOfAuthorMatch newMatch(final Object... parameters) {
+    return LongSciFiBooksOfAuthorMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Writer) parameters[0], (org.eclipse.incquery.examples.eiqlibrary.Book) parameters[1]);
   }
   
   @Override

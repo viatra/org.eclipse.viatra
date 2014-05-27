@@ -12,6 +12,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.runonce.tests.BookAuthorsMatch;
 import org.eclipse.incquery.runtime.runonce.tests.BookAuthorsMatcher;
 
 /**
@@ -52,6 +53,16 @@ public final class BookAuthorsQuerySpecification extends BaseGeneratedQuerySpeci
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("book", "org.eclipse.incquery.examples.eiqlibrary.Book"),new PParameter("author", "org.eclipse.incquery.examples.eiqlibrary.Writer"));
+  }
+  
+  @Override
+  public BookAuthorsMatch newEmptyMatch() {
+    return BookAuthorsMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public BookAuthorsMatch newMatch(final Object... parameters) {
+    return BookAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) parameters[0], (org.eclipse.incquery.examples.eiqlibrary.Writer) parameters[1]);
   }
   
   @Override

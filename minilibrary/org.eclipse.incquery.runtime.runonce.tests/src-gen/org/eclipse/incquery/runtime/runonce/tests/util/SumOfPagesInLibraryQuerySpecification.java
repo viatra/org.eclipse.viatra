@@ -12,6 +12,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.runonce.tests.SumOfPagesInLibraryMatch;
 import org.eclipse.incquery.runtime.runonce.tests.SumOfPagesInLibraryMatcher;
 
 /**
@@ -52,6 +53,16 @@ public final class SumOfPagesInLibraryQuerySpecification extends BaseGeneratedQu
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("sumOfPages", "java.lang.Integer"));
+  }
+  
+  @Override
+  public SumOfPagesInLibraryMatch newEmptyMatch() {
+    return SumOfPagesInLibraryMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public SumOfPagesInLibraryMatch newMatch(final Object... parameters) {
+    return SumOfPagesInLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) parameters[0], (java.lang.Integer) parameters[1]);
   }
   
   @Override

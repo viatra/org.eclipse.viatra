@@ -99,6 +99,12 @@ public abstract class SumOfPagesInLibraryMatch extends BasePatternMatch {
   }
   
   @Override
+  public SumOfPagesInLibraryMatch toImmutable() {
+    return isMutable() ? newMatch(fLibrary, fSumOfPages) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"library\"=" + prettyPrintValue(fLibrary) + ", ");
@@ -150,8 +156,48 @@ public abstract class SumOfPagesInLibraryMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static SumOfPagesInLibraryMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pSumOfPages the fixed value of pattern parameter sumOfPages, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static SumOfPagesInLibraryMatch newMutableMatch(final Library pLibrary, final Integer pSumOfPages) {
+    return new Mutable(pLibrary, pSumOfPages);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pSumOfPages the fixed value of pattern parameter sumOfPages, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static SumOfPagesInLibraryMatch newMatch(final Library pLibrary, final Integer pSumOfPages) {
+    return new Immutable(pLibrary, pSumOfPages);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends SumOfPagesInLibraryMatch {
+  private static final class Mutable extends SumOfPagesInLibraryMatch {
     Mutable(final Library pLibrary, final Integer pSumOfPages) {
       super(pLibrary, pSumOfPages);
       
@@ -165,7 +211,7 @@ public abstract class SumOfPagesInLibraryMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends SumOfPagesInLibraryMatch {
+  private static final class Immutable extends SumOfPagesInLibraryMatch {
     Immutable(final Library pLibrary, final Integer pSumOfPages) {
       super(pLibrary, pSumOfPages);
       

@@ -193,7 +193,7 @@ public class SumOfPagesInLibraryMatcher extends BaseMatcher<SumOfPagesInLibraryM
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
@@ -202,7 +202,7 @@ public class SumOfPagesInLibraryMatcher extends BaseMatcher<SumOfPagesInLibraryM
    * 
    */
   public SumOfPagesInLibraryMatch newMatch(final Library pLibrary, final Integer pSumOfPages) {
-    return new SumOfPagesInLibraryMatch.Immutable(pLibrary, pSumOfPages);
+    return SumOfPagesInLibraryMatch.newMatch(pLibrary, pSumOfPages);
     
   }
   
@@ -285,7 +285,7 @@ public class SumOfPagesInLibraryMatcher extends BaseMatcher<SumOfPagesInLibraryM
   @Override
   protected SumOfPagesInLibraryMatch tupleToMatch(final Tuple t) {
     try {
-      return new SumOfPagesInLibraryMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (java.lang.Integer) t.get(POSITION_SUMOFPAGES));
+      return SumOfPagesInLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) t.get(POSITION_LIBRARY), (java.lang.Integer) t.get(POSITION_SUMOFPAGES));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -296,7 +296,7 @@ public class SumOfPagesInLibraryMatcher extends BaseMatcher<SumOfPagesInLibraryM
   @Override
   protected SumOfPagesInLibraryMatch arrayToMatch(final Object[] match) {
     try {
-      return new SumOfPagesInLibraryMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_SUMOFPAGES]);
+      return SumOfPagesInLibraryMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_SUMOFPAGES]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -307,7 +307,7 @@ public class SumOfPagesInLibraryMatcher extends BaseMatcher<SumOfPagesInLibraryM
   @Override
   protected SumOfPagesInLibraryMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new SumOfPagesInLibraryMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_SUMOFPAGES]);
+      return SumOfPagesInLibraryMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Library) match[POSITION_LIBRARY], (java.lang.Integer) match[POSITION_SUMOFPAGES]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;

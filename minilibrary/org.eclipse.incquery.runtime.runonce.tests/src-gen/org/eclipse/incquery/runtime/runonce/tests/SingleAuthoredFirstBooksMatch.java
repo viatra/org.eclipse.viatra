@@ -100,6 +100,12 @@ public abstract class SingleAuthoredFirstBooksMatch extends BasePatternMatch {
   }
   
   @Override
+  public SingleAuthoredFirstBooksMatch toImmutable() {
+    return isMutable() ? newMatch(fLibrary, fFirstBook) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"library\"=" + prettyPrintValue(fLibrary) + ", ");
@@ -151,8 +157,48 @@ public abstract class SingleAuthoredFirstBooksMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static SingleAuthoredFirstBooksMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pFirstBook the fixed value of pattern parameter firstBook, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static SingleAuthoredFirstBooksMatch newMutableMatch(final Library pLibrary, final Book pFirstBook) {
+    return new Mutable(pLibrary, pFirstBook);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pFirstBook the fixed value of pattern parameter firstBook, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static SingleAuthoredFirstBooksMatch newMatch(final Library pLibrary, final Book pFirstBook) {
+    return new Immutable(pLibrary, pFirstBook);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends SingleAuthoredFirstBooksMatch {
+  private static final class Mutable extends SingleAuthoredFirstBooksMatch {
     Mutable(final Library pLibrary, final Book pFirstBook) {
       super(pLibrary, pFirstBook);
       
@@ -166,7 +212,7 @@ public abstract class SingleAuthoredFirstBooksMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends SingleAuthoredFirstBooksMatch {
+  private static final class Immutable extends SingleAuthoredFirstBooksMatch {
     Immutable(final Library pLibrary, final Book pFirstBook) {
       super(pLibrary, pFirstBook);
       

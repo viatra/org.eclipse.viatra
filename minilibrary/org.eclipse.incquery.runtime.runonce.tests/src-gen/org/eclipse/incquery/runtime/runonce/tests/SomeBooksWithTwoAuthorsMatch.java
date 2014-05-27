@@ -100,6 +100,12 @@ public abstract class SomeBooksWithTwoAuthorsMatch extends BasePatternMatch {
   }
   
   @Override
+  public SomeBooksWithTwoAuthorsMatch toImmutable() {
+    return isMutable() ? newMatch(fLibrary, fBook) : this;
+    
+  }
+  
+  @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"library\"=" + prettyPrintValue(fLibrary) + ", ");
@@ -151,8 +157,48 @@ public abstract class SomeBooksWithTwoAuthorsMatch extends BasePatternMatch {
     
   }
   
+  /**
+   * Returns an empty, mutable match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @return the empty match.
+   * 
+   */
+  public static SomeBooksWithTwoAuthorsMatch newEmptyMatch() {
+    return new Mutable(null, null);
+    
+  }
+  
+  /**
+   * Returns a mutable (partial) match.
+   * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
+   * 
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the new, mutable (partial) match object.
+   * 
+   */
+  public static SomeBooksWithTwoAuthorsMatch newMutableMatch(final Library pLibrary, final Book pBook) {
+    return new Mutable(pLibrary, pBook);
+    
+  }
+  
+  /**
+   * Returns a new (partial) match.
+   * This can be used e.g. to call the matcher with a partial match.
+   * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+   * @param pLibrary the fixed value of pattern parameter library, or null if not bound.
+   * @param pBook the fixed value of pattern parameter book, or null if not bound.
+   * @return the (partial) match object.
+   * 
+   */
+  public static SomeBooksWithTwoAuthorsMatch newMatch(final Library pLibrary, final Book pBook) {
+    return new Immutable(pLibrary, pBook);
+    
+  }
+  
   @SuppressWarnings("all")
-  static final class Mutable extends SomeBooksWithTwoAuthorsMatch {
+  private static final class Mutable extends SomeBooksWithTwoAuthorsMatch {
     Mutable(final Library pLibrary, final Book pBook) {
       super(pLibrary, pBook);
       
@@ -166,7 +212,7 @@ public abstract class SomeBooksWithTwoAuthorsMatch extends BasePatternMatch {
   
   
   @SuppressWarnings("all")
-  static final class Immutable extends SomeBooksWithTwoAuthorsMatch {
+  private static final class Immutable extends SomeBooksWithTwoAuthorsMatch {
     Immutable(final Library pLibrary, final Book pBook) {
       super(pLibrary, pBook);
       

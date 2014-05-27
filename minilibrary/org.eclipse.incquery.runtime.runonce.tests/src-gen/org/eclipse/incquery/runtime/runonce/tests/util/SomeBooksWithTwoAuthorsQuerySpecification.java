@@ -15,6 +15,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.incquery.runtime.runonce.tests.SomeBooksWithTwoAuthorsMatch;
 import org.eclipse.incquery.runtime.runonce.tests.SomeBooksWithTwoAuthorsMatcher;
 import org.eclipse.incquery.runtime.runonce.tests.util.BookAuthorsQuerySpecification;
 
@@ -56,6 +57,16 @@ public final class SomeBooksWithTwoAuthorsQuerySpecification extends BaseGenerat
   @Override
   public List<PParameter> getParameters() {
     return Arrays.asList(new PParameter("library", "org.eclipse.incquery.examples.eiqlibrary.Library"),new PParameter("book", "org.eclipse.incquery.examples.eiqlibrary.Book"));
+  }
+  
+  @Override
+  public SomeBooksWithTwoAuthorsMatch newEmptyMatch() {
+    return SomeBooksWithTwoAuthorsMatch.newEmptyMatch();
+  }
+  
+  @Override
+  public SomeBooksWithTwoAuthorsMatch newMatch(final Object... parameters) {
+    return SomeBooksWithTwoAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Library) parameters[0], (org.eclipse.incquery.examples.eiqlibrary.Book) parameters[1]);
   }
   
   @Override

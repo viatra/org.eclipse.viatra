@@ -194,7 +194,7 @@ public class BookAuthorsMatcher extends BaseMatcher<BookAuthorsMatch> {
   }
   
   /**
-   * Returns a new (partial) Match object for the matcher.
+   * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
    * @param pBook the fixed value of pattern parameter book, or null if not bound.
@@ -203,7 +203,7 @@ public class BookAuthorsMatcher extends BaseMatcher<BookAuthorsMatch> {
    * 
    */
   public BookAuthorsMatch newMatch(final Book pBook, final Writer pAuthor) {
-    return new BookAuthorsMatch.Immutable(pBook, pAuthor);
+    return BookAuthorsMatch.newMatch(pBook, pAuthor);
     
   }
   
@@ -286,7 +286,7 @@ public class BookAuthorsMatcher extends BaseMatcher<BookAuthorsMatch> {
   @Override
   protected BookAuthorsMatch tupleToMatch(final Tuple t) {
     try {
-      return new BookAuthorsMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK), (org.eclipse.incquery.examples.eiqlibrary.Writer) t.get(POSITION_AUTHOR));
+      return BookAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) t.get(POSITION_BOOK), (org.eclipse.incquery.examples.eiqlibrary.Writer) t.get(POSITION_AUTHOR));
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in tuple not properly typed!",e);
       return null;
@@ -297,7 +297,7 @@ public class BookAuthorsMatcher extends BaseMatcher<BookAuthorsMatch> {
   @Override
   protected BookAuthorsMatch arrayToMatch(final Object[] match) {
     try {
-      return new BookAuthorsMatch.Immutable((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK], (org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR]);
+      return BookAuthorsMatch.newMatch((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK], (org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
@@ -308,7 +308,7 @@ public class BookAuthorsMatcher extends BaseMatcher<BookAuthorsMatch> {
   @Override
   protected BookAuthorsMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return new BookAuthorsMatch.Mutable((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK], (org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR]);
+      return BookAuthorsMatch.newMutableMatch((org.eclipse.incquery.examples.eiqlibrary.Book) match[POSITION_BOOK], (org.eclipse.incquery.examples.eiqlibrary.Writer) match[POSITION_AUTHOR]);
     } catch(ClassCastException e) {
       LOGGER.error("Element(s) in array not properly typed!",e);
       return null;
