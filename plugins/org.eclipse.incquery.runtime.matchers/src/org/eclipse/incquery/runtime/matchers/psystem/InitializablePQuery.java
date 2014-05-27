@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -30,6 +31,13 @@ public interface InitializablePQuery extends PQuery {
      * @param status the new status
      */
     void setStatus(PQueryStatus status);
+    
+    /**
+     * Adds a detected error. Only applicable if the pattern is still {@link PQueryStatus#UNINITIALIZED uninitialized}.
+     *
+     * @param problem the new problem
+     */
+	void addError(PProblem problem);
 
     /**
      * Sets up the bodies of the pattern. Only applicable if the pattern is still {@link PQueryStatus#UNINITIALIZED

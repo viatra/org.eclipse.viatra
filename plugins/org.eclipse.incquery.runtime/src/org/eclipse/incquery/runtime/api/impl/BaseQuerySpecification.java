@@ -12,6 +12,7 @@
 package org.eclipse.incquery.runtime.api.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
@@ -79,6 +81,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     }
 
     protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
+    protected List<PProblem> pProblems = new ArrayList<PProblem>();
     private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
 
     @Override
@@ -90,10 +93,19 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     protected void setStatus(PQueryStatus newStatus) {
         this.status = newStatus;
     }
+    protected void addError(PProblem problem) {
+        setStatus(PQueryStatus.ERROR);
+        pProblems.add(problem);
+    }
 
     @Override
     public PQueryStatus getStatus() {
         return status;
+    }
+    
+    @Override
+    public List<PProblem> getPProblems() {
+    	return Collections.unmodifiableList(pProblems);
     }
 
     @Override
@@ -172,10 +184,10 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
                 setStatus(PQueryStatus.OK);
             }
         } catch (IncQueryException e) {
-            setStatus(PQueryStatus.ERROR);
+            addError(new PProblem(e, e.getShortMessage()));
             throw new RuntimeException(e);
         } catch (RewriterException e) {
-            setStatus(PQueryStatus.ERROR);
+            addError(new PProblem(e));
             throw new RuntimeException(e);
         }
     }

@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
@@ -106,7 +107,7 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     public void initializeBodies(Set<PBody> bodies) throws QueryPlannerException {
         Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The bodies can only be set for uninitialized queries.");
         if (bodies.isEmpty()) {
-            setStatus(PQueryStatus.ERROR);
+            addError(new PProblem("No bodies specified for query"));
         } else {
             setBodies(bodies);
         }
@@ -117,6 +118,11 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
         super.setStatus(newStatus);
     }
+	@Override
+	public void addError(PProblem problem) {
+        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
+        super.addError(problem);
+	}
 
     public Pattern getPattern() {
         return pattern;
@@ -193,6 +199,7 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
 	public GenericPatternMatch newMatch(Object... parameters) {
 		return GenericPatternMatch.newMatch(this, parameters);
 	}
+
 
     
 }

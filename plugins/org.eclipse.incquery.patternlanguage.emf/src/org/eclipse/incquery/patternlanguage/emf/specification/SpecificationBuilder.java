@@ -34,9 +34,9 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -200,7 +200,7 @@ public class SpecificationBuilder {
                 	buildAnnotations(newPattern, specification, converter);
                 	buildBodies(newPattern, specification, converter);
             	} catch (IncQueryException e) {
-            		specification.setStatus(PQueryStatus.ERROR);
+            		specification.addError(new PProblem(e, e.getShortMessage()));
             	}
                 if (!PQueryStatus.ERROR.equals(specification.getStatus())) {
                     for (PQuery query : specification.getDirectReferredQueries()) {
@@ -214,7 +214,7 @@ public class SpecificationBuilder {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
                     GenericQuerySpecification rejected = new GenericQuerySpecification(rejectedPattern, true);
-                    rejected.setStatus(PQueryStatus.ERROR);
+                    rejected.addError( sanitizer.getProblemByPattern(rejectedPattern) );
                     patternMap.put(patternFqn, rejected);
                     patternNameMap.put(patternFqn, rejectedPattern);
                     newSpecifications.add(rejected);
@@ -224,7 +224,7 @@ public class SpecificationBuilder {
         IQuerySpecification<?> specification = patternMap.get(fqn);
         if (specification == null) {
             GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(pattern, true);
-            erroneousSpecification.setStatus(PQueryStatus.ERROR);
+            erroneousSpecification.addError( new PProblem("Unable to compile pattern due to an unspecified error") );
             patternMap.put(fqn, erroneousSpecification);
             patternNameMap.put(fqn, pattern);
             newSpecifications.add(erroneousSpecification);

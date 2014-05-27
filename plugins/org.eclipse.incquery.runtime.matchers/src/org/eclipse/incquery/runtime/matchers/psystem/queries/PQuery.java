@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
  * itself is defined as a (non-empty) set of {@link PBody} instances, the result is the disjunction of the single
  * {@link PBody} instances. </p>
  * <p>
- * A PQuery might be constructed from erroneous patterns or might be uninitialized - this is represented by its state.
+ * A PQuery might be constructed from erroneous patterns or might be uninitialized - this is represented by its status.
  * 
  * @author Zoltan Ujhelyi
  * @since 0.8.0
@@ -106,6 +106,15 @@ public interface PQuery {
      * @return
      */
     PQueryStatus getStatus();
+    
+    /**
+     * Returns a list describing the problems that were found in this query.
+     * 
+     * <p> TODO: formulate invariant connecting {@link #getPProblems()} and {@link #getStatus()}.
+     * 
+     * @return a non-null, but possibly empty list of problems
+     */
+    List<PProblem> getPProblems();
 
     /**
      * Before a modification operation is executed, a mutability check is performed (via the {@link #getStatus()}

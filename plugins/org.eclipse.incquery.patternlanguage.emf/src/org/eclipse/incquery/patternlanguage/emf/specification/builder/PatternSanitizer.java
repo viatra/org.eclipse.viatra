@@ -27,6 +27,7 @@ import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStatus;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 
 import com.google.inject.Injector;
 
@@ -49,6 +50,7 @@ public class PatternSanitizer {
     Set<Pattern> admittedPatterns = new HashSet<Pattern>();
     Set<Pattern> rejectedPatterns = new HashSet<Pattern>();
     Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
+    Map<Pattern, PProblem> problemsByPattern = new HashMap<Pattern, PProblem>();
 
     Logger logger;
 
@@ -128,7 +130,7 @@ public class PatternSanitizer {
         for (Pattern current : newPatterns) {
             if (current == null || current.eIsProxy()) {
                 nullPatternFound = true;
-                logger.error("Null pattern value");
+                problemsByPattern.put(current, new PProblem("Null/proxy pattern value"));
                 continue;
             }
 
@@ -137,13 +139,14 @@ public class PatternSanitizer {
                     || newPatternsByName.containsKey(fullyQualifiedName);
             if (duplicate) {
                 inadmissible.add(current);
-                logger.error("Duplicate (qualified) name of pattern: " + fullyQualifiedName);
+                problemsByPattern.put(current, new PProblem("Duplicate (qualified) name of pattern: " + fullyQualifiedName));
                 continue;
             } else {
                 newPatternsByName.put(fullyQualifiedName, current);
             }
         }
         //Updating list of rejected patterns
+        for (Pattern pattern : admittedPatterns) problemsByPattern.remove(pattern);
         rejectedPatterns.removeAll(admittedPatterns);
         rejectedPatterns.addAll(inadmissible);
 
@@ -210,6 +213,13 @@ public class PatternSanitizer {
     }
 
     /**
+     * @return a problem recorded for this pattern, if any
+     */
+    public PProblem getProblemByPattern(Pattern pattern) {
+		return problemsByPattern.get(pattern);
+	}
+
+	/**
      * @param fqn the fully qualified name of the pattern
      * @returns the admitted pattern with the given qualified name, or null of there is no such admitted pattern
      */
@@ -225,6 +235,7 @@ public class PatternSanitizer {
      */
     public void forgetPattern(Pattern pattern) {
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        problemsByPattern.remove(pattern);
         rejectedPatterns.remove(pattern);
         admittedPatterns.remove(pattern);
         patternsByName.remove(fqn);
