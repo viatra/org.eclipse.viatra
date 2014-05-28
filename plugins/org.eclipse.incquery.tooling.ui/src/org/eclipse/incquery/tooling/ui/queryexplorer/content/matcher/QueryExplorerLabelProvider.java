@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -100,6 +101,16 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
             if (!status.isOK()) {
                 return String.format("%s. For details, check the Error Log view.", status.getMessage());
             }
+        } else if (element instanceof PatternMatcherContent) {
+        	final List<PProblem> pProblems = ((PatternMatcherContent) element).getSpecification().getPProblems();
+			if (! pProblems.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("The following problems have been detected in the query specification: \n");
+				for (PProblem pProblem : pProblems) {
+					sb.append(String.format(" * %s\n", pProblem.getShortMessage()));
+				}
+				return sb.toString();
+			}
         }
         return super.getToolTipText(element);
     }

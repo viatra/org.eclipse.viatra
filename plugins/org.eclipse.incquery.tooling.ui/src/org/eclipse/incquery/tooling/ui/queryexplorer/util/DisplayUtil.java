@@ -210,7 +210,10 @@ public class DisplayUtil {
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
             String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
         if (matcher == null) {
-            return String.format("%s - %s", patternFqn, exceptionMessage);
+        	if (exceptionMessage != null)
+        		return String.format("%s - %s", patternFqn, exceptionMessage);
+        	else
+        		return String.format("%s - See mouseover text for query loading errors", patternFqn, exceptionMessage);
         } else {
             String matchString;
             switch (matchesSize) {

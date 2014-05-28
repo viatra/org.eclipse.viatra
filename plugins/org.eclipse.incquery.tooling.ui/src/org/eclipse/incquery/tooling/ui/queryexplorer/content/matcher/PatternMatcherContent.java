@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -60,12 +61,14 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         this.transformerFunction = new TransformerFunction(this);
         this.listChangeListener = new ListChangeListener();
 
-        try {
-            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
-        } catch (IncQueryException e) {
-            this.exceptionMessage = e.getShortMessage();
-        } catch (Exception e) {
-            this.exceptionMessage = e.getMessage();
+        if (specification.getStatus() != PQueryStatus.ERROR) {
+	        try {
+	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
+	        } catch (IncQueryException e) {
+	            this.exceptionMessage = e.getShortMessage();
+	        } catch (Exception e) {
+	            this.exceptionMessage = e.getMessage();
+	        }
         }
 
         this.generated = generated;
@@ -204,7 +207,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
      * @return true if matcher could be created
      */
     public boolean isCreated() {
-        return matcher != null;
+        return specification.getStatus() == PQueryStatus.OK && matcher != null;
     }
 
     @Override
