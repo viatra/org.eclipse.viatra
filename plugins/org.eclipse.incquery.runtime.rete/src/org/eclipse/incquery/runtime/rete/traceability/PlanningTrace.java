@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
  * <p> The recipe may be an auxiliary node; 
  *   see {@link CompiledSubPlan} if it represents the entire SubPlan instead.
  */
-public class PlanningTrace extends RecipeTraceInfo {
+public class PlanningTrace extends RecipeTraceInfo implements PatternTraceInfo {
 
 	protected SubPlan subPlan;
 	protected List<PVariable> variablesTuple;
