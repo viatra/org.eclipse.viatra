@@ -120,7 +120,9 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     }
 	@Override
 	public void addError(PProblem problem) {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
+        Preconditions.checkState(
+        		getStatus().equals(PQueryStatus.UNINITIALIZED) || getStatus().equals(PQueryStatus.ERROR), 
+        		"Errors can only be added to unitialized or erroneous queries.");
         super.addError(problem);
 	}
 

@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidationDiagnostics;
 import org.eclipse.incquery.patternlanguage.emf.validation.PatternSetValidator;
@@ -28,7 +32,10 @@ import org.eclipse.incquery.patternlanguage.emf.validation.PatternValidationStat
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
+import org.eclipse.xtext.validation.Issue;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
 /**
@@ -50,7 +57,7 @@ public class PatternSanitizer {
     Set<Pattern> admittedPatterns = new HashSet<Pattern>();
     Set<Pattern> rejectedPatterns = new HashSet<Pattern>();
     Map<String, Pattern> patternsByName = new HashMap<String, Pattern>();
-    Map<Pattern, PProblem> problemsByPattern = new HashMap<Pattern, PProblem>();
+    Multimap<Pattern, PProblem> problemsByPattern = HashMultimap.create();
 
     Logger logger;
 
@@ -93,19 +100,19 @@ public class PatternSanitizer {
         return admit(Collections.singletonList(pattern), skipPatternValidation);
     }
 
-    /**
-     * Admits new patterns, checking whether they all pass validation and name uniqueness checks. Referenced patterns
-     * likewise go through the checks. Transactional semantics: will only admit any patterns if none of them have any
-     * errors.
-     *
-     * @param patterns
-     *            the collection of patterns that should be validated together.
-     * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were
-     *         already admitted before)
-     */
-    public boolean admit(Collection<Pattern> patterns) {
-        return admit(patterns, false);
-    }
+//    /**
+//     * Admits new patterns, checking whether they all pass validation and name uniqueness checks. Referenced patterns
+//     * likewise go through the checks. Transactional semantics: will only admit any patterns if none of them have any
+//     * errors.
+//     *
+//     * @param patterns
+//     *            the collection of patterns that should be validated together.
+//     * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were
+//     *         already admitted before)
+//     */
+//    public boolean admit(Collection<Pattern> patterns) {
+//        return admit(patterns, false);
+//    }
 
     /**
      * Admits new patterns, checking whether they all pass validation and name uniqueness checks. Referenced patterns
@@ -118,7 +125,7 @@ public class PatternSanitizer {
      * @return false if the patterns were not possible to admit, true if they passed all validation checks (or were
      *         already admitted before)
      */
-    public boolean admit(Collection<Pattern> patterns, boolean skipPatternValidation) {
+    private boolean admit(Collection<Pattern> patterns, boolean skipPatternValidation) {
         Set<Pattern> newPatterns = getAllReferencedUnvalidatedPatterns(patterns);
         if (newPatterns.isEmpty())
             return true;
@@ -145,24 +152,67 @@ public class PatternSanitizer {
                 newPatternsByName.put(fullyQualifiedName, current);
             }
         }
-        //Updating list of rejected patterns
-        for (Pattern pattern : admittedPatterns) problemsByPattern.remove(pattern);
-        rejectedPatterns.removeAll(admittedPatterns);
-        rejectedPatterns.addAll(inadmissible);
-
-
+        
         boolean ok = !nullPatternFound && inadmissible.isEmpty();
-        if (!ok && !skipPatternValidation) {
-            Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
-            PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
-            PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
-            validatorResult.logErrors(logger);
-            ok = ok && !validatorResult.getStatus().equals(PatternValidationStatus.ERROR);
+        if (ok && !skipPatternValidation) {
+        	Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+        	PatternSetValidator validator = injector.getInstance(PatternSetValidator.class);
+        	PatternSetValidationDiagnostics validatorResult = validator.validate(newPatternsByName.values());
+        	if (logger != null) validatorResult.logErrors(logger);
+        	if (validatorResult.getStatus().equals(PatternValidationStatus.ERROR)) {        		
+        		ok = false;
+        		for (Pattern currentPattern : patterns) {
+        			Set<Pattern> indirectErrorsIn = new HashSet<Pattern>();
+        			
+        			// if the pattern is in a resource set, we can determine whether it contains the problem
+        			final ResourceSet resourceSet = 
+        					currentPattern.eResource() == null ? 
+        							null : currentPattern.eResource().getResourceSet();
+        			
+        			for (Issue error: validatorResult.getAllErrors()) {
+        				// is this the current pattern?
+        				final URI uriToProblem = error.getUriToProblem();
+						if (resourceSet != null && uriToProblem != null) {
+        					Resource errorResource = resourceSet.getResource(uriToProblem.trimFragment(), true);
+        					if (errorResource != null) {
+        						EObject errorLocation = errorResource.getEObject(uriToProblem.fragment());
+        						EObject errorContainer = errorLocation;
+        						while (errorContainer != null && !(errorContainer instanceof Pattern))
+        							errorContainer = errorContainer.eContainer();
+        						if (errorContainer != null) { // we have found the pattern that contains the error!
+        							if (!currentPattern.equals(errorContainer)) { 
+        								// the error is in a different pattern
+        								
+        								Pattern errorPattern = (Pattern) errorContainer;
+        								problemsByPattern.put(currentPattern, new PProblem(
+        										String.format("Query depends on erroneous pattern %s", 
+        												CorePatternLanguageHelper.getFullyQualifiedName(errorPattern))));
+        								inadmissible.add(currentPattern);
+        								
+        								// skip this error - do not indicate directly for this pattern 
+        								continue;
+        							}
+        						}
+        					}
+        				}
+        				
+        				// the detected error is directly in the current pattern, or so we assume
+        				problemsByPattern.put(currentPattern, new PProblem(error.getMessage()));
+        				inadmissible.add(currentPattern);
+        			}
+        		}
+        	}
         }
         if (ok) {
-            admittedPatterns.addAll(newPatterns);
-            patternsByName.putAll(newPatternsByName);
-        }
+        	admittedPatterns.addAll(newPatterns);
+        	patternsByName.putAll(newPatternsByName);
+        } 
+
+        //Updating list of rejected patterns                
+        for (Pattern pattern : admittedPatterns) problemsByPattern.removeAll(pattern);
+        rejectedPatterns.removeAll(admittedPatterns);
+        rejectedPatterns.addAll(inadmissible);        	
+
         return ok;
     }
 
@@ -215,7 +265,7 @@ public class PatternSanitizer {
     /**
      * @return a problem recorded for this pattern, if any
      */
-    public PProblem getProblemByPattern(Pattern pattern) {
+    public Collection<PProblem> getProblemByPattern(Pattern pattern) {
 		return problemsByPattern.get(pattern);
 	}
 
@@ -235,7 +285,7 @@ public class PatternSanitizer {
      */
     public void forgetPattern(Pattern pattern) {
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-        problemsByPattern.remove(pattern);
+        problemsByPattern.removeAll(pattern);
         rejectedPatterns.remove(pattern);
         admittedPatterns.remove(pattern);
         patternsByName.remove(fqn);

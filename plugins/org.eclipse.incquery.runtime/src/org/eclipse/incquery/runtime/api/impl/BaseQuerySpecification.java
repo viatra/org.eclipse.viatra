@@ -94,7 +94,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         this.status = newStatus;
     }
     protected void addError(PProblem problem) {
-        setStatus(PQueryStatus.ERROR);
+    	status = PQueryStatus.ERROR;
         pProblems.add(problem);
     }
 

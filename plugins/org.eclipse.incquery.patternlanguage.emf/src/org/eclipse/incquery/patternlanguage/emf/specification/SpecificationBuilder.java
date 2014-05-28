@@ -75,7 +75,7 @@ public class SpecificationBuilder {
                 }
             });
     private IPatternMatcherContext context = new EMFPatternMatcherContext(logger);
-    private PatternSanitizer sanitizer = new PatternSanitizer(logger);
+    private PatternSanitizer sanitizer = new PatternSanitizer(/*logger*/ null /* do not log all errors */);
 
     /**
      * Initializes a query builder with no previously known query specifications
@@ -209,12 +209,12 @@ public class SpecificationBuilder {
                 }
             }
         } else {
-            // TODO currently sanitizer logs errors to output - but erroneous specifications are created here
             for (Pattern rejectedPattern : sanitizer.getRejectedPatterns()) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
                     GenericQuerySpecification rejected = new GenericQuerySpecification(rejectedPattern, true);
-                    rejected.addError( sanitizer.getProblemByPattern(rejectedPattern) );
+                    for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
+                    	rejected.addError(problem);
                     patternMap.put(patternFqn, rejected);
                     patternNameMap.put(patternFqn, rejectedPattern);
                     newSpecifications.add(rejected);
