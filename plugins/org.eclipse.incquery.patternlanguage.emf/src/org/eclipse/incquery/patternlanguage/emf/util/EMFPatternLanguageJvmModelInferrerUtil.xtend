@@ -241,6 +241,20 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		javadocString = javadocString.replaceAll(">","{@literal >}")
   		return javadocString.trim
   	}
+  	/**
+  	 * Escapes the input to be usable in literal strings
+  	 */
+  	def escapeToQuotedString(String inputString) {
+  		var String string = inputString
+  		if (string.nullOrEmpty) {
+  			return ""
+  		}
+  		string = string.replace("\\", "\\\\")
+  		string = string.replace("\n", "\\n")
+  		string = string.replace("\t", "\\t")
+  		string = string.replace('"', "\\\"")
+  		return string.trim
+  	}
 
   	/**
   	 * Serializes EObject to a String representation. Escapes only the double qoutes.

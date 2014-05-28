@@ -74,6 +74,7 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -218,10 +219,13 @@ class PatternQuerySpecificationClassInferrer {
 						feedback.reportError(pattern, "Error building generic query specification",
 							EMFPatternLanguageJvmModelInferrer::SPECIFICATION_BUILDER_CODE, Severity::ERROR,
 							IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-					}
+					}					
 				} catch (Exception e) {
 					//If called with an inconsistent pattern, then no body will be built
-					appender.append('''Inconsistent pattern definition thrown exception «e.class.simpleName»  with message: «e.getMessage»''')
+					appender.append('''addError(new ''')
+					appender.referClass(pattern, PProblem)
+					appender.append('''("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));''')
+					//appender.append('''Inconsistent pattern definition thrown exception «e.class.simpleName»  with message: «e.getMessage»''')
 					// TODO smarter error reporting required
 					logger.warn("Error while building PBodies", e)
 					return
@@ -229,8 +233,16 @@ class PatternQuerySpecificationClassInferrer {
 				if (genericSpecification != null) {
 					appender.inferBodies(pattern, genericSpecification, context)
 					appender.inferAnnotations(pattern, genericSpecification)
+					genericSpecification.PProblems.forEach[
+						appender.append('''addError(new ''')
+						appender.referClass(pattern, PProblem)
+						appender.append('''("«shortMessage.escapeToQuotedString»"));''')
+					]
 				} else {
-					appender.append('''Cannot initialize PSystem from the pattern definition''')
+					//appender.append('''Cannot initialize PSystem from the pattern definition''')
+					appender.append('''addError(new ''')
+					appender.referClass(pattern, PProblem)
+					appender.append('''("Could not initialize query specification from the pattern definition"));''')
 				}
 				appender.append('''return bodies;''')
 			]
