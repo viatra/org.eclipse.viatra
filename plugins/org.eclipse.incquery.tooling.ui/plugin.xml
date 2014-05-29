@@ -205,7 +205,7 @@
             </reference>
          </activeWhen>
       </handler>
-<!--      <handler
+      <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
@@ -213,8 +213,8 @@
                   definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
             </reference>
          </activeWhen>
-      </handler> -->
-      <handler
+      </handler>
+ <!--     <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.loadmodel">
          <activeWhen>
@@ -222,7 +222,7 @@
                   definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
             </reference>
          </activeWhen>
-      </handler>
+      </handler> -->
       <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.attachmodel">
