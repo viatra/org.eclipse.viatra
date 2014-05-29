@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.tooling.core.generator.ExtensionData;
 import org.eclipse.xtext.xbase.lib.Pair;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -57,7 +58,13 @@ public class PluginXmlModifier {
     public void loadPluginXml(IProject project) throws CoreException {
         try {
             pluginXml = project.getFile("plugin.xml");
-            document = XmlDocumentHelper.loadDocument(pluginXml.getContents());
+            if (pluginXml.exists()) {
+                document = XmlDocumentHelper.loadDocument(pluginXml.getContents());
+            } else {
+                document = XmlDocumentHelper.getEmptyXmlDocument();
+                final Element root = document.createElement("plugin");
+                document.appendChild(root);
+            }
             loadExtensionData(document);
         } catch (SAXException e) {
             throw wrapException(e);
@@ -76,7 +83,11 @@ public class PluginXmlModifier {
     public void savePluginXml() throws CoreException {
         try {
             InputStream stream = XmlDocumentHelper.saveDocument(document);
-            pluginXml.setContents(stream, false, true, new NullProgressMonitor());
+            if (pluginXml.exists()) {
+                pluginXml.setContents(stream, false, true, new NullProgressMonitor());
+            } else {
+                pluginXml.create(stream, false, new NullProgressMonitor());
+            }
         } catch (TransformerException e) {
             throw wrapException(e);
         } catch (IOException e) {
