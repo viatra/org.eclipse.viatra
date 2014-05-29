@@ -111,7 +111,12 @@ public class PluginXmlModifier {
                 final ExtensionData oldData = oldList.get(0);
                 for (ExtensionData data : cell.getValue()) {
                     document.adoptNode(data.getNode());
-                    oldData.getNode().getParentNode().insertBefore(data.getNode(), oldData.getNode());
+                    Node parentNode = oldData.getNode().getParentNode();
+                    if (parentNode != null) {
+                    	parentNode.insertBefore(data.getNode(), oldData.getNode());
+                    } else {
+                    	document.getDocumentElement().appendChild(data.getNode());
+                    }
                 }
                 // Removing old items
                 for (ExtensionData data : oldList) {
@@ -195,6 +200,8 @@ public class PluginXmlModifier {
     }
 
     private void removeNode(Node nodeToRemove) {
-        nodeToRemove.getParentNode().removeChild(nodeToRemove);
+    	if (nodeToRemove.getParentNode() != null) {
+    		nodeToRemove.getParentNode().removeChild(nodeToRemove);   		
+    	}
     }
 }
