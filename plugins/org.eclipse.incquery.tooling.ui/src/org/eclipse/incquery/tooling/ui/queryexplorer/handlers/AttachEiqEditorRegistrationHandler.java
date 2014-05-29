@@ -127,7 +127,7 @@ public class AttachEiqEditorRegistrationHandler extends AbstractHandler {
 			if (resource!=null && resource.getErrors().isEmpty()) {
 				RuntimeMatcherRegistrator registrator = new RuntimeMatcherRegistrator(targetFile, resource);
 		        injector.injectMembers(registrator);
-		        Display.getDefault().asyncExec(registrator);
+		        Display.getDefault().syncExec(registrator);
 			}
 		}
     	
