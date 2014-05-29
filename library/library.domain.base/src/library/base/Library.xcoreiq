@@ -9,6 +9,8 @@
  *   Tamas Szabo - initial API and implementation
  *   Istvan Rath - minor modifications
  *******************************************************************************/
+@GenModel(editDirectory="/library.domain.base.edit/src")
+@GenModel(editorDirectory="/library.domain.base.editor/src")
 package library.base
 
 class Library {  

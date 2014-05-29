@@ -11,7 +11,8 @@
  *******************************************************************************/
 package library.viewers
 
-import "library"
+//import "library"
+import "http://eclipse.org/incquery/xcore/library"
 
 // Viewers patterns 
 

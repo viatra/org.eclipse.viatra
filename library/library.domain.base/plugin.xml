@@ -10,6 +10,14 @@
       </package>
    </extension>
    <extension
+         id="library.base.writerName"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
+            id="library.base.writerName">
+      </matcher>
+   </extension>
+   <extension
          id="extension.derived.name"
          point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
       <wellbehaving-derived-feature
@@ -17,14 +25,6 @@
             feature-name="name"
             package-nsUri="library.base">
       </wellbehaving-derived-feature>
-   </extension>
-   <extension
-         id="library.base.writerName"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.base.util.WriterNameQuerySpecification$Provider"
-            id="library.base.writerName">
-      </matcher>
    </extension>
 
 </plugin>
