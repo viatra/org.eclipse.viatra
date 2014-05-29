@@ -27,6 +27,7 @@ import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.common.types.JvmDeclaredType
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -38,15 +39,18 @@ class PatternGroupClassInferrer {
 	@Inject extension TypeReferences
 	@Inject extension JavadocInferrer
 
-	def inferPatternGroup(PatternModel model) {
-		if (model.patterns.size == 0) {
-			return null
-		}
-		val groupClass = model.toClass(model.groupClassName) [
+	def inferPatternGroupClass(PatternModel model) {
+		model.toClass(model.groupClassName) [
 			packageName = model.packageName
 			final = true
 			superTypes += model.newTypeRef(typeof (BaseGeneratedPatternGroup))
 		]
+	}
+		
+	def initializePatternGroup(JvmGenericType groupClass, PatternModel model) {
+		if (model.patterns.size == 0) {
+			return null
+		}
 		groupClass.documentation = model.javadocGroupClass.toString
 		groupClass.members += model.inferInstanceMethod(groupClass)
 		groupClass.members += model.inferInstanceField(groupClass)
