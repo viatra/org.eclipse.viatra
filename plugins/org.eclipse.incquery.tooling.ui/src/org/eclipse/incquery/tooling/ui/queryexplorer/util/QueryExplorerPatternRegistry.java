@@ -133,12 +133,13 @@ public class QueryExplorerPatternRegistry {
                 IQuerySpecification<?> spec = builder.getOrCreateSpecification(pattern, allCreatedSpecifications, false);
                 String patternFqn = spec.getFullyQualifiedName();
                 if (!patternNameMap.containsKey(patternFqn)) {
-                    Boolean annotationValue = getValueOfQueryExplorerAnnotation(spec);
-                    if (!(annotationValue != null && !annotationValue)) {
+                	// disable checks as per https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
+                    //Boolean annotationCheckedValue = getValueOfQueryExplorerCheckedAnnotation(spec);
                         patternNameMap.put(patternFqn, spec);
-                        activePatterns.add(spec);
-                        activeSpecifications.add(spec);
-                    }
+                    //  if (annotationCheckedValue) {
+                            activePatterns.add(spec);
+                    //  }    
+                      activeSpecifications.add(spec);
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
                             + "' already exists in the pattern registry.";
@@ -175,7 +176,7 @@ public class QueryExplorerPatternRegistry {
     }
 
     /**
-     * Sets the given pattern as active.
+     * Sets the given pattern as active ("checks on the Query Explorer").
      *
      * @param p
      *            the pattern instance
@@ -344,28 +345,69 @@ public class QueryExplorerPatternRegistry {
         return null;
     }
 
-    public static Boolean getValueOfQueryExplorerAnnotation(IQuerySpecification<?> query) {
+    /**
+     * returns True if the "@QueryExplorer" annotation with the checked=true parameter is present on a pattern
+     * @param query
+     * @return
+     */
+    /*
+    public static Boolean getValueOfQueryExplorerCheckedAnnotation(IQuerySpecification<?> query) {
         PAnnotation annotation = query.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
         if (annotation == null) {
             return null;
         } else {
-            Object displayValue = annotation.getFirstValue("display");
-            Object messageValue = annotation.getFirstValue("message");
-            return (displayValue != null && (Boolean)displayValue) ||
-            		(displayValue == null &&  messageValue != null) ||
-            		(annotation.getAllValues().size() == 0);
+            Object checkedValue = annotation.getFirstValue("checked");
+//            Object messageValue = annotation.getFirstValue("message");
+            return (
+            		(checkedValue != null && (Boolean)checkedValue) 
+  //          		||
+  //          		(checkedValue == null &&  messageValue != null) ||
+  //          		messageValue != null ||
+  //          		(annotation.getAllValues().size() == 0)
+            		);
         }
     }
-
+    */
+    
+    /**
+     * Returns true if the user declared "@QueryExplorer(checked=false)" on the pattern.
+     * @param query
+     * @return
+     */
+    public static boolean isQueryExplorerCheckedFalse(IQuerySpecification<?> query) {
+    	PAnnotation annotation = query.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
+        if (annotation != null) {
+        	 Object checkedValue = annotation.getFirstValue("checked");
+        	 if (checkedValue!=null) {
+        		 if (!(Boolean)checkedValue) return true;
+        	 }
+        }
+        return false;
+    }
+     
+    
+    
+    /**
+     * access the list of "generated" query specifications
+     * @return
+     */
     public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
         return ImmutableList.<IQuerySpecification<?>>builder().
                 addAll(Iterables.filter(QuerySpecificationRegistry.getContributedQuerySpecifications(), new Predicate<IQuerySpecification<?>>() {
-
+                	/*
             @Override
             public boolean apply(IQuerySpecification<?> query) {
                 Boolean annotationValue = getValueOfQueryExplorerAnnotation(query);
                 return annotationValue != null && annotationValue;
             }
+            */
+                	/* (non-Javadoc)
+                	 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+                	 */
+                	@Override
+                	public boolean apply(IQuerySpecification<?> input) {
+                		return true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700: make sure that all query specs appear
+                	}
         })).build();
     }
 

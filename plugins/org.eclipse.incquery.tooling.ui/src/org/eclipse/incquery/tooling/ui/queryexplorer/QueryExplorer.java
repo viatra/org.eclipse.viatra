@@ -330,20 +330,26 @@ public class QueryExplorer extends ViewPart {
         for (IQuerySpecification<?> pattern : QueryExplorerPatternRegistry.getGeneratedQuerySpecifications()) {
             String patternFqn = pattern.getFullyQualifiedName();
             QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern);
-            QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
+            
+            // check for QE annotation https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
+            boolean checkedFalse = QueryExplorerPatternRegistry.isQueryExplorerCheckedFalse(pattern); 
+            if (!checkedFalse) {
+            	QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
+            }            
+            
             patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
         }
 
         patternsTreeViewer.refresh();
         patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsTreeViewer);
     }
-
+/*
     private void initFileListener() {
         IResourceChangeListener listener = new QueryExplorerResourceChangeListener(injector);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
         // fix me this listener will never be removed
     }
-
+*/
     public PatternsViewerInput getPatternsViewerInput() {
         return patternsViewerInput;
     }

@@ -621,6 +621,14 @@
                mandatory="false"
                multiple="false"
                name="display"
+               deprecated="true"
+               type="boolean">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: &amp;quot;true&amp;quot; to be checked by default (triggering result set display) and &amp;quot;false&amp;quot; to not."
+               mandatory="false"
+               multiple="false"
+               name="checked"
                type="boolean">
          </annotationparameter>
          <annotationparameter
