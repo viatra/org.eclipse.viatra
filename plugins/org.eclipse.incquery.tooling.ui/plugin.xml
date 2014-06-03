@@ -223,7 +223,7 @@
             </reference>
          </activeWhen>
       </handler> -->
-      <handler
+<!--      <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
             commandId="org.eclipse.incquery.tooling.ui.attachmodel">
          <activeWhen>
@@ -231,7 +231,7 @@
                   definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
             </reference>
          </activeWhen>
-      </handler>
+      </handler> -->
       <handler
             class="org.eclipse.incquery.tooling.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.incquery.tooling.ui.queryexplorer.handlers.ShowLocationHandler"
             commandId="org.eclipse.incquery.tooling.ui.showlocation">
@@ -458,7 +458,7 @@
                </reference>
             </visibleWhen>
          </command>
-      	 <command
+<!--      	 <command
                commandId="org.eclipse.incquery.tooling.ui.attachmodel"
                style="push">
             <visibleWhen
@@ -467,7 +467,7 @@
                      definitionId="org.eclipse.incquery.tooling.ui.activepatterneditor">
                </reference>
             </visibleWhen>
-         </command>            
+         </command>            -->
          </menuContribution>
       <menuContribution
             allPopups="false"
@@ -534,11 +534,11 @@
             id="org.eclipse.incquery.tooling.ui.loadmodel"
             name="Load model">
       </command>
-      <command
+<!--      <command
             categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.attachmodel"
             name="Attach pattern model">
-      </command>
+      </command> -->
       <command
             categoryId="org.eclipse.incquery.tooling.category"
             id="org.eclipse.incquery.tooling.ui.showlocation"
