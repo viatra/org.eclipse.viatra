@@ -29,13 +29,10 @@ public class InstanceOfCheck extends CheckOperation {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.check.CheckOperation#check(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     protected boolean check(MatchingFrame frame) {
         if (frame.getValue(position) instanceof EObject) {
-            return clazz.equals(((EObject) frame.getValue(position)).eClass());
+            return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
         }
         return false;
     }
