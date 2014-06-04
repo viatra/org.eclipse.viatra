@@ -67,7 +67,7 @@ public class ContentChildren<E> extends AbstractObservableList {
 
     public boolean addChild(int position, E element) {
         ListDiffEntry diffentry = Diffs.createListDiffEntry(position, true, element);
-        boolean res = elements.add(element);
+        elements.add(position, element);
         final ListDiff diff = Diffs.createListDiff(diffentry);
         Realm realm = getRealm();
         Assert.isNotNull(realm, REALM_MUST_NOT_BE_NULL);
@@ -79,7 +79,8 @@ public class ContentChildren<E> extends AbstractObservableList {
                 }
             }
         });
-        return res;
+        // the add into the list will always be successful
+        return true;
     }
 
     public boolean removeChild(E element) {

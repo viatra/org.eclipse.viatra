@@ -219,14 +219,4 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     public Iterator<PatternMatchContent> getChildrenIterator() {
         return children.iterator();
     }
-
-    /**
-     * If the engine becomes tainted stop monitoring the matcher. This way the previous match set will remain stable and
-     * the user can still observe the contents.
-     */
-    // public void stopMonitoring() {
-    // ((PatternMatcherRootContent) parent).getKey().getEngine()
-    // .removeModelUpdateListener(modelUpdateListener);
-    // }
-
 }
