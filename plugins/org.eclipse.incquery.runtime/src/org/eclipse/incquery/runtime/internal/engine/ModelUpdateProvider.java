@@ -41,10 +41,6 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
     private final Multimap<ChangeLevel, IncQueryModelUpdateListener> listenerMap;
     private final Logger logger;
     
-    /**
-     * @param incQueryEngine TODO
-     * 
-     */
     public ModelUpdateProvider(AdvancedIncQueryEngine incQueryEngine, Logger logger) {
         super();
         this.incQueryEngine = incQueryEngine;

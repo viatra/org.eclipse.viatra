@@ -81,6 +81,7 @@ public class EMFModelConnector implements IModelConnector {
         workbenchPage.removePartListener(modelEditorPartListener);
         if (QueryExplorer.getInstance() != null) {
             QueryExplorer.getInstance().getRootContent().removePatternMatcherRoot(key);
+            QueryExplorer.getInstance().getModelConnectorMap().remove(key);
         }
     }
 

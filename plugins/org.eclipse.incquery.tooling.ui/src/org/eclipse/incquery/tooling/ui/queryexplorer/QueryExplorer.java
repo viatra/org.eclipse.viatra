@@ -18,9 +18,6 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
@@ -44,7 +41,6 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConsta
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DoubleClickListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
-import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerResourceChangeListener;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
