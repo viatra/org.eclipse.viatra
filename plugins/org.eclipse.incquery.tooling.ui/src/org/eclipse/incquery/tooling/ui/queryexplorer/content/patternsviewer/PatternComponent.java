@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer;
 
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
 /**
@@ -49,13 +50,22 @@ public abstract class PatternComponent {
     }
 
     /**
-     * Updates the checked state of the {@link PatternComponent} in the given {@link CheckboxTreeViewer} instance.
+     * Updates the checked state of this {@link PatternComponent} in the given {@link CheckboxTreeViewer} instance.
      * 
      * @param treeViewer
      *            the {@link CheckboxTreeViewer} instance
      * @return true if all children elements of the {@link PatternComponent} are checked, false otherwise
      */
     public abstract boolean updateSelection(CheckboxTreeViewer treeViewer);
+
+    /**
+     * Refreshes the "has children" state of this {@link PatternComponent} in the patterns viewer.
+     */
+    public void updateHasChildren() {
+        if (QueryExplorer.getInstance() != null) {
+            QueryExplorer.getInstance().getPatternsViewer().setHasChildren(this, false);
+        }
+    }
 
     /**
      * Returns the prefix of the fully qualified pattern name for the given component.

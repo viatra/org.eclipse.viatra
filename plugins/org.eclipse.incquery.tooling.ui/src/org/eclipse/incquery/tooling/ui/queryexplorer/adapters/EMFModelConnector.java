@@ -29,7 +29,6 @@ import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.ModelEditorPartListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -70,19 +69,12 @@ public class EMFModelConnector implements IModelConnector {
             workbenchPage = key.getEditorPart().getSite().getPage();
             modelEditorPartListener = new ModelEditorPartListener(this);
             workbenchPage.addPartListener(modelEditorPartListener);
-            if (QueryExplorer.getInstance() != null) {
-                QueryExplorer.getInstance().getRootContent().addPatternMatcherRoot(key);
-            }
         }
     }
 
     @Override
     public void unloadModel() {
         workbenchPage.removePartListener(modelEditorPartListener);
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getRootContent().removePatternMatcherRoot(key);
-            QueryExplorer.getInstance().getModelConnectorMap().remove(key);
-        }
     }
 
     @Override

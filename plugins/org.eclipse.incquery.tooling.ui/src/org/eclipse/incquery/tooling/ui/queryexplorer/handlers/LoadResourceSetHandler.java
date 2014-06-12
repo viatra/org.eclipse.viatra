@@ -33,8 +33,7 @@ public class LoadResourceSetHandler extends AbstractHandler {
         IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
         if (modelConnector instanceof EMFModelConnector) {
             modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCESET);
-            QueryExplorer.getInstance().getModelConnectorMap()
-                    .put(((EMFModelConnector) modelConnector).getKey(), modelConnector);
+            QueryExplorer.getInstance().load(((EMFModelConnector) modelConnector).getKey(), modelConnector);
         }
         return null;
     }

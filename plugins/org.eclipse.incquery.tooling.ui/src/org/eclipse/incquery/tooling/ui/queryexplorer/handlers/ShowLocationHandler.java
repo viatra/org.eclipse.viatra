@@ -52,7 +52,7 @@ public class ShowLocationHandler extends AbstractHandler {
             if (obj instanceof PatternMatchContent) {
                 PatternMatchContent pm = (PatternMatchContent) obj;
                 PatternMatcherRootContentKey key = pm.getParent().getParent().getKey();
-                QueryExplorer.getInstance().getModelConnectorMap().get(key).showLocation(pm.getLocationObjects());
+                QueryExplorer.getInstance().getModelConnector(key).showLocation(pm.getLocationObjects());
             } else if (obj instanceof PatternMatcherContent) {
                 PatternMatcherContent matcher = (PatternMatcherContent) obj;
                 if (matcher.getSpecification() != null) {

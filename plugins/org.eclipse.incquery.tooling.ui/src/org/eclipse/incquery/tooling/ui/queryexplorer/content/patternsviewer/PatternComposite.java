@@ -91,10 +91,10 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public PatternComponent addComponent(String patternFragment) {
-        if(patternFragment == null || "".equals(patternFragment)) {
+        if (patternFragment == null || "".equals(patternFragment)) {
             return null;
         }
-        
+
         String[] tokens = patternFragment.split("\\.");
 
         if (tokens.length == 1) {
@@ -227,7 +227,7 @@ public class PatternComposite extends PatternComponent {
      *            the pattern name fragment
      */
     public void removeComponent(String patternFragment) {
-        if(patternFragment == null || "".equals(patternFragment)) {
+        if (patternFragment == null || "".equals(patternFragment)) {
             return;
         }
 
@@ -277,7 +277,7 @@ public class PatternComposite extends PatternComponent {
 
     @Override
     public boolean updateSelection(CheckboxTreeViewer treeViewer) {
-        boolean allSelected = (this.children.size() > 0);
+        boolean allSelected = this.children.size() > 0;
 
         for (PatternComponent pc : this.children) {
             if (!pc.updateSelection(treeViewer)) {
@@ -288,6 +288,15 @@ public class PatternComposite extends PatternComponent {
         treeViewer.setChecked(this, allSelected);
 
         return allSelected;
+    }
+
+    // expanded state check is needed due to the lazy updates
+    @Override
+    public void updateHasChildren() {
+        if (QueryExplorer.getInstance() != null
+                && !QueryExplorer.getInstance().getPatternsViewer().getExpandedState(this)) {
+            QueryExplorer.getInstance().getPatternsViewer().setHasChildren(this, this.children.size() > 0);
+        }
     }
 
     @Override

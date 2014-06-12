@@ -29,7 +29,7 @@ public class UnloadModelHandler extends AbstractHandler {
         if (selection instanceof TreeSelection) {
             PatternMatcherRootContent root = (PatternMatcherRootContent) ((TreeSelection) selection)
                     .getFirstElement();
-            QueryExplorer.getInstance().getModelConnectorMap().get(root.getKey()).unloadModel();
+            QueryExplorer.getInstance().unload(root.getKey());
         }
 
         QueryExplorer.getInstance().clearTableViewer();

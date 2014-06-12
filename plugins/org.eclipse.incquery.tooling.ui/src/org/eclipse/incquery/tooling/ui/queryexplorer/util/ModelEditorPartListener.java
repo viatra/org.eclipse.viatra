@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
 import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -29,10 +30,10 @@ public class ModelEditorPartListener extends BasePartListener {
     @Override
     public void partClosed(IWorkbenchPart part) {
         if (part instanceof IEditorPart) {
-        	// also check if the closed editor belongs to our model connector
-        	if (part.equals(this.modelConnector.getOwner())) {
-        		modelConnector.unloadModel();
-        	}
+            // also check if the closed editor belongs to our model connector
+            if (part.equals(this.modelConnector.getOwner()) && QueryExplorer.getInstance() != null) {
+                QueryExplorer.getInstance().unload(modelConnector);
+            }
         }
     }
 

@@ -15,30 +15,33 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
+import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 public class ResetUIHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        QueryExplorer explorer = QueryExplorer.getInstance();
+        QueryExplorer queryExplorer = QueryExplorer.getInstance();
+        QueryExplorerPatternRegistry patternRegistry = QueryExplorerPatternRegistry.getInstance();
 
-        if (explorer != null) {
-            for (IModelConnector modelConnector : explorer.getModelConnectorMap().values()) {
-                modelConnector.unloadModel();
+        if (queryExplorer != null) {
+            for (PatternMatcherRootContentKey key : queryExplorer.getPatternMatcherRootContentKeys()) {
+                queryExplorer.unload(key);
             }
-            for (IQuerySpecification<?> specification : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
-                String patternFqn = specification.getFullyQualifiedName();
-                QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);
-                QueryExplorerPatternRegistry.getInstance().removeActivePattern(specification);
-                explorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+            for (IQuerySpecification<?> specification : patternRegistry.getActivePatterns()) {
+                if (!patternRegistry.isGenerated(specification)) {
+                    String patternFqn = specification.getFullyQualifiedName();
+                    patternRegistry.unregisterPattern(specification);
+                    patternRegistry.removeActivePattern(specification);
+                    queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
+                }
             }
 
             // refresh selection
-            explorer.getPatternsViewerInput().getGenericPatternsRoot().updateSelection(explorer.getPatternsViewer());
-            explorer.getPatternsViewer().refresh();
+            queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().updateSelection(queryExplorer.getPatternsViewer());
+            queryExplorer.getPatternsViewer().refresh();
         }
         return null;
     }

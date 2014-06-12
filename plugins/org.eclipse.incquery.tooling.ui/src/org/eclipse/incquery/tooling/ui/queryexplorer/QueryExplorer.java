@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,8 @@ public class QueryExplorer extends ViewPart {
 
     public static final String ID = "org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer";
 
-    private final Map<PatternMatcherRootContentKey, IModelConnector> modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
+    private final Map<PatternMatcherRootContentKey, IModelConnector> modelConnectorMap;
+    private final Map<IModelConnector, PatternMatcherRootContentKey> modelConnectorMapReversed;
 
     private TableViewer detailsTableViewer;
     private CheckboxTreeViewer patternsTreeViewer;
@@ -94,7 +96,7 @@ public class QueryExplorer extends ViewPart {
 
     private final RootContent treeViewerRootContent;
 
-    public static PatternsViewerInput patternsViewerInput = new PatternsViewerInput();
+    public static PatternsViewerInput patternsViewerInput;
 
     private FlyoutControlComposite patternsViewerFlyout;
     private FlyoutControlComposite detailsViewerFlyout;
@@ -116,6 +118,9 @@ public class QueryExplorer extends ViewPart {
     private String mementoPackagePresentation = "flat";
 
     public QueryExplorer() {
+        modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
+        modelConnectorMapReversed = new HashMap<IModelConnector, PatternMatcherRootContentKey>();
+        patternsViewerInput = new PatternsViewerInput();
         treeViewerRootContent = new RootContent();
         flatCP = new PatternsViewerFlatContentProvider();
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
@@ -127,8 +132,37 @@ public class QueryExplorer extends ViewPart {
         return treeViewerRootContent;
     }
 
-    public Map<PatternMatcherRootContentKey, IModelConnector> getModelConnectorMap() {
-        return modelConnectorMap;
+    public void load(PatternMatcherRootContentKey key, IModelConnector modelConnector) {
+        this.modelConnectorMap.put(key, modelConnector);
+        this.modelConnectorMapReversed.put(modelConnector, key);
+        treeViewerRootContent.addPatternMatcherRoot(key);
+    }
+
+    private void unload(PatternMatcherRootContentKey key, IModelConnector modelConnector) {
+        this.modelConnectorMapReversed.remove(modelConnector);
+        this.modelConnectorMap.remove(key);
+        treeViewerRootContent.removePatternMatcherRoot(key);
+        modelConnector.unloadModel();
+    }
+
+    public IModelConnector getModelConnector(PatternMatcherRootContentKey key) {
+        return this.modelConnectorMap.get(key);
+    }
+    
+    public Collection<PatternMatcherRootContentKey> getPatternMatcherRootContentKeys() {
+        return this.modelConnectorMap.keySet();
+    }
+
+    public void unload(IModelConnector modelConnector) {
+        if (this.modelConnectorMapReversed.containsKey(modelConnector)) {
+            this.unload(modelConnectorMapReversed.get(modelConnector), modelConnector);
+        }
+    }
+
+    public void unload(PatternMatcherRootContentKey key) {
+        if (this.modelConnectorMap.containsKey(key)) {
+            this.unload(key, modelConnectorMap.get(key));
+        }
     }
 
     public static QueryExplorer getInstance() {
@@ -270,7 +304,7 @@ public class QueryExplorer extends ViewPart {
         // Focus listening and selection providing
         getSite().setSelectionProvider(matcherTreeViewer);
 
-    	// removed listener due to new attach feature in https://bugs.eclipse.org/bugs/show_bug.cgi?id=429858
+        // removed listener due to new attach feature in https://bugs.eclipse.org/bugs/show_bug.cgi?id=429858
         // initFileListener();
         initPatternsViewerWithGeneratedPatterns();
     }
@@ -326,26 +360,25 @@ public class QueryExplorer extends ViewPart {
         for (IQuerySpecification<?> pattern : QueryExplorerPatternRegistry.getGeneratedQuerySpecifications()) {
             String patternFqn = pattern.getFullyQualifiedName();
             QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern);
-            
+
             // check for QE annotation https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
-            boolean checkedFalse = QueryExplorerPatternRegistry.isQueryExplorerCheckedFalse(pattern); 
+            boolean checkedFalse = QueryExplorerPatternRegistry.isQueryExplorerCheckedFalse(pattern);
             if (!checkedFalse) {
-            	QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
-            }            
-            
+                QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
+            }
+
             patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
         }
 
         patternsTreeViewer.refresh();
         patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsTreeViewer);
     }
-/*
-    private void initFileListener() {
-        IResourceChangeListener listener = new QueryExplorerResourceChangeListener(injector);
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
-        // fix me this listener will never be removed
-    }
-*/
+
+    /*
+     * private void initFileListener() { IResourceChangeListener listener = new
+     * QueryExplorerResourceChangeListener(injector); ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,
+     * IResourceChangeEvent.PRE_BUILD); // fix me this listener will never be removed }
+     */
     public PatternsViewerInput getPatternsViewerInput() {
         return patternsViewerInput;
     }
