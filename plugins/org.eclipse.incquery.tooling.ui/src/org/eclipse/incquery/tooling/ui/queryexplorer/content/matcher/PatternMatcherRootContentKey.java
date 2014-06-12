@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
+import java.lang.ref.WeakReference;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -19,38 +21,31 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * Instances of this class tie an {@link IEditorPart} and a {@link Notifier} together, which 
- * belong to a {@link RootContent} element in the {@link QueryExplorer}.
+ * Instances of this class tie an {@link IEditorPart} and a {@link Notifier} together, which belong to a
+ * {@link RootContent} element in the {@link QueryExplorer}.
  * 
  * @author Tamas Szabo (itemis AG)
- *
+ * 
  */
 public class PatternMatcherRootContentKey {
 
     private IEditorPart editorPart;
-    private Notifier notifier;
-    private AdvancedIncQueryEngine engine;
+    private WeakReference<Notifier> notifierReference;
+    private WeakReference<AdvancedIncQueryEngine> engineReference;
 
     public PatternMatcherRootContentKey(IEditorPart editor, Notifier notifier) {
         super();
         this.editorPart = editor;
-        this.notifier = notifier;
+        this.engineReference = new WeakReference<AdvancedIncQueryEngine>(null);
+        this.notifierReference = new WeakReference<Notifier>(notifier);
     }
 
     public IEditorPart getEditorPart() {
         return editorPart;
     }
 
-    public void setEditorPart(IEditorPart editor) {
-        this.editorPart = editor;
-    }
-
     public Notifier getNotifier() {
-        return notifier;
-    }
-
-    public void setNotifier(Notifier notifier) {
-        this.notifier = notifier;
+        return notifierReference.get();
     }
 
     @Override
@@ -61,7 +56,7 @@ public class PatternMatcherRootContentKey {
             return false;
         } else {
             PatternMatcherRootContentKey key = (PatternMatcherRootContentKey) obj;
-            return key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifier);
+            return key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifierReference);
         }
     }
 
@@ -69,7 +64,7 @@ public class PatternMatcherRootContentKey {
     public int hashCode() {
         int hash = 1;
         hash = hash * 17 + editorPart.hashCode();
-        hash = hash * 17 + notifier.hashCode();
+        hash = hash * 17 + (getNotifier() != null ? getNotifier().hashCode() : 0);
         return hash;
     }
 
@@ -80,21 +75,22 @@ public class PatternMatcherRootContentKey {
 
         int i = 0;
 
-        if (notifier instanceof ResourceSet) {
-            ResourceSet rs = (ResourceSet) notifier;
+        if (getNotifier() != null) {
+            if (getNotifier() instanceof ResourceSet) {
+                ResourceSet rs = (ResourceSet) getNotifier();
 
-            for (Resource r : rs.getResources()) {
-                sb.append(r.getURI().toString());
-                if (i != rs.getResources().size() - 1) {
-                    sb.append(", ");
+                for (Resource r : rs.getResources()) {
+                    sb.append(r.getURI().toString());
+                    if (i != rs.getResources().size() - 1) {
+                        sb.append(", ");
+                    }
                 }
+            } else if (getNotifier() instanceof Resource) {
+                sb.append(((Resource) getNotifier()).getURI().toString());
+            } else {
+                sb.append(getNotifier().toString());
             }
-        } else if (notifier instanceof Resource) {
-            sb.append(((Resource) notifier).getURI().toString());
-        } else {
-            sb.append(notifier.toString());
         }
-
         sb.append("]");
         sb.append("[");
         sb.append(editorPart.getEditorSite().getId());
@@ -103,11 +99,11 @@ public class PatternMatcherRootContentKey {
     }
 
     public AdvancedIncQueryEngine getEngine() {
-        return engine;
+        return engineReference.get();
     }
 
     public void setEngine(AdvancedIncQueryEngine engine) {
-        this.engine = engine;
+        this.engineReference = new WeakReference<AdvancedIncQueryEngine>(engine);
     }
 
 }
