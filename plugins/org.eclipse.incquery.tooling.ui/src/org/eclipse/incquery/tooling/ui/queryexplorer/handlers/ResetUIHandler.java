@@ -30,17 +30,21 @@ public class ResetUIHandler extends AbstractHandler {
             for (PatternMatcherRootContentKey key : queryExplorer.getPatternMatcherRootContentKeys()) {
                 queryExplorer.unload(key);
             }
+            
             for (IQuerySpecification<?> specification : patternRegistry.getActivePatterns()) {
                 if (!patternRegistry.isGenerated(specification)) {
-                    String patternFqn = specification.getFullyQualifiedName();
                     patternRegistry.unregisterPattern(specification);
                     patternRegistry.removeActivePattern(specification);
-                    queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(patternFqn);
                 }
             }
-
-            // refresh selection
-            queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().updateSelection(queryExplorer.getPatternsViewer());
+            
+            // select all of the generated patterns
+            queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().setCheckedState(true);
+            
+            // remove selection from the root of the generic contents
+            queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().clear();
+            queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().setCheckedState(false);
+            
             queryExplorer.getPatternsViewer().refresh();
         }
         return null;

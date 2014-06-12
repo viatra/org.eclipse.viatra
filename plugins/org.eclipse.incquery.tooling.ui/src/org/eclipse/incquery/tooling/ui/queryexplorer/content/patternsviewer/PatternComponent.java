@@ -11,13 +11,17 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 
 /**
  * A component inside the pattern hierarchy.
  * 
- * @author Tamas Szabo
+ * @author Tamas Szabo (itemis AG)
  * 
  */
 public abstract class PatternComponent {
@@ -27,7 +31,7 @@ public abstract class PatternComponent {
     protected PatternComposite parent;
 
     public PatternComponent() {
-        selected = false;
+        selected = true;
     }
 
     /**
@@ -39,32 +43,40 @@ public abstract class PatternComponent {
         return this.parent;
     }
 
-    /**
-     * Sets the selected state of the {@link PatternComponent}.
-     * 
-     * @param selected
-     *            the selected state
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public boolean getCheckedState() {
+        return this.selected;
     }
 
     /**
-     * Updates the checked state of this {@link PatternComponent} in the given {@link CheckboxTreeViewer} instance.
-     * 
-     * @param treeViewer
-     *            the {@link CheckboxTreeViewer} instance
-     * @return true if all children elements of the {@link PatternComponent} are checked, false otherwise
+     * Updates the checked and the "has children" states of this {@link PatternComponent} in the patterns viewer.
      */
-    public abstract boolean updateSelection(CheckboxTreeViewer treeViewer);
+    public abstract void updateHasChildren();
 
-    /**
-     * Refreshes the "has children" state of this {@link PatternComponent} in the patterns viewer.
-     */
-    public void updateHasChildren() {
-        if (QueryExplorer.getInstance() != null) {
-            QueryExplorer.getInstance().getPatternsViewer().setHasChildren(this, false);
+    public Collection<PatternComponent> setCheckedState(boolean checked) {
+        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
+
+        if (this.selected != checked) {
+            changedComponents.add(this);
+            this.selected = checked;
+            QueryExplorer.getInstance().getPatternsViewer().setChecked(this, checked);
         }
+
+        changedComponents.addAll(propagateSelectionStateDownwards());
+        if (this.getParent() != null) {
+            changedComponents.addAll(this.getParent().propagateSelectionStateUpwards());
+        }
+
+        return changedComponents;
+    }
+
+    protected Set<PatternComponent> propagateSelectionStateUpwards() {
+        // by default it does nothing
+        return Collections.emptySet();
+    }
+
+    protected Set<PatternComponent> propagateSelectionStateDownwards() {
+        // by default it does nothing
+        return Collections.emptySet();
     }
 
     /**

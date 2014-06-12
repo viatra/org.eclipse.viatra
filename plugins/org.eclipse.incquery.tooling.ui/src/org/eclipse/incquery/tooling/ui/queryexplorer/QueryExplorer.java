@@ -12,9 +12,12 @@
 package org.eclipse.incquery.tooling.ui.queryexplorer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -40,6 +43,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.Patt
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternsViewerInput;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateListener;
+import org.eclipse.incquery.tooling.ui.queryexplorer.util.CheckStateProvider;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DoubleClickListener;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.action.GroupMarker;
@@ -123,9 +127,9 @@ public class QueryExplorer extends ViewPart {
         patternsViewerInput = new PatternsViewerInput();
         treeViewerRootContent = new RootContent();
         flatCP = new PatternsViewerFlatContentProvider();
+        flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
-        flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
     }
 
     public RootContent getRootContent() {
@@ -150,7 +154,9 @@ public class QueryExplorer extends ViewPart {
     }
     
     public Collection<PatternMatcherRootContentKey> getPatternMatcherRootContentKeys() {
-        return this.modelConnectorMap.keySet();
+        Set<PatternMatcherRootContentKey> keys = new HashSet<PatternMatcherRootContentKey>();
+        keys.addAll(this.modelConnectorMap.keySet());
+        return Collections.unmodifiableSet(keys);
     }
 
     public void unload(IModelConnector modelConnector) {
@@ -255,6 +261,7 @@ public class QueryExplorer extends ViewPart {
         // patternsViewer configuration
         patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER
                 | SWT.MULTI);
+        patternsTreeViewer.setCheckStateProvider(new CheckStateProvider());
         patternsTreeViewer.addCheckStateListener(new CheckStateListener());
         setPackagePresentation(mementoPackagePresentation, false);
         patternsTreeViewer.setInput(patternsViewerInput);
@@ -371,15 +378,11 @@ public class QueryExplorer extends ViewPart {
         }
 
         patternsTreeViewer.refresh();
-        patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsTreeViewer);
+        patternsViewerInput.getGeneratedPatternsRoot().updateHasChildren();
+        patternsViewerInput.getGenericPatternsRoot().setCheckedState(false);
     }
 
-    /*
-     * private void initFileListener() { IResourceChangeListener listener = new
-     * QueryExplorerResourceChangeListener(injector); ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,
-     * IResourceChangeEvent.PRE_BUILD); // fix me this listener will never be removed }
-     */
-    public PatternsViewerInput getPatternsViewerInput() {
+    public PatternsViewerInput getPatternsViewerRoot() {
         return patternsViewerInput;
     }
 
@@ -411,8 +414,8 @@ public class QueryExplorer extends ViewPart {
         }
 
         if (update) {
-            patternsViewerInput.getGeneratedPatternsRoot().updateSelection(patternsTreeViewer);
-            patternsViewerInput.getGenericPatternsRoot().updateSelection(patternsTreeViewer);
+            patternsViewerInput.getGeneratedPatternsRoot().updateHasChildren();
+            patternsViewerInput.getGenericPatternsRoot().updateHasChildren();
         }
     }
 }

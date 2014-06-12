@@ -13,8 +13,10 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -36,6 +38,11 @@ public class PatternComposite extends PatternComponent {
         this.children = new ArrayList<PatternComponent>();
         this.fragmentMap = new HashMap<String, PatternComposite>();
         this.parent = parent;
+    }
+    
+    public void clear() {
+        this.children.clear();
+        this.fragmentMap.clear();
     }
 
     /**
@@ -99,7 +106,7 @@ public class PatternComposite extends PatternComponent {
 
         if (tokens.length == 1) {
             PatternLeaf leaf = new PatternLeaf(patternFragment, this);
-            leaf.setSelected(true);
+            leaf.selected = true;
             children.add(leaf);
             return leaf;
         } else {
@@ -167,7 +174,7 @@ public class PatternComposite extends PatternComponent {
         }
 
         if (this.getAllLeaves().size() == 0) {
-            QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot()
+            QueryExplorer.getInstance().getPatternsViewerRoot().getGenericPatternsRoot()
                     .removeComponent(getFullPatternNamePrefix());
         }
     }
@@ -189,35 +196,44 @@ public class PatternComposite extends PatternComponent {
         return result;
     }
 
-    /**
-     * Propagates element deselection upwards in the hierarchy.
-     */
-    public void propagateDeSelectionToTop() {
-        QueryExplorer.getInstance().getPatternsViewer().setChecked(this, false);
-        this.setSelected(false);
-        if (this.parent != null) {
-            this.parent.propagateDeSelectionToTop();
-        }
-    }
+    @Override
+    protected Set<PatternComponent> propagateSelectionStateUpwards() {
+        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
 
-    /**
-     * Propagates element selection upwards in the hierarchy.
-     */
-    public void propagateSelectionToTop(PatternComponent selected) {
         boolean allSelected = true;
-        for (PatternComponent component : children) {
-            if (!(component == selected) && (!QueryExplorer.getInstance().getPatternsViewer().getChecked(component))) {
+        for (PatternComponent child : children) {
+            if (!child.selected) {
                 allSelected = false;
             }
         }
 
-        if (allSelected) {
-            QueryExplorer.getInstance().getPatternsViewer().setChecked(this, true);
-            this.setSelected(true);
-            if (this.parent != null) {
-                this.parent.propagateSelectionToTop(this);
-            }
+        if (allSelected != this.selected) {
+            QueryExplorer.getInstance().getPatternsViewer().setChecked(this, allSelected);
+            this.selected = allSelected;
+            changedComponents.add(this);
         }
+
+        if (this.parent != null) {
+            changedComponents.addAll(this.parent.propagateSelectionStateUpwards());
+        }
+
+        return changedComponents;
+    }
+
+    @Override
+    protected Set<PatternComponent> propagateSelectionStateDownwards() {
+        Set<PatternComponent> changedComponents = new HashSet<PatternComponent>();
+
+        for (PatternComponent child : children) {
+            if (child.selected != this.selected) {
+                changedComponents.add(child);
+                child.selected = this.selected;
+                QueryExplorer.getInstance().getPatternsViewer().setChecked(child, this.selected);
+            }
+            changedComponents.addAll(child.propagateSelectionStateDownwards());
+        }
+
+        return changedComponents;
     }
 
     /**
@@ -276,26 +292,15 @@ public class PatternComposite extends PatternComponent {
     }
 
     @Override
-    public boolean updateSelection(CheckboxTreeViewer treeViewer) {
-        boolean allSelected = this.children.size() > 0;
-
-        for (PatternComponent pc : this.children) {
-            if (!pc.updateSelection(treeViewer)) {
-                allSelected = false;
-            }
-        }
-
-        treeViewer.setChecked(this, allSelected);
-
-        return allSelected;
-    }
-
-    // expanded state check is needed due to the lazy updates
-    @Override
     public void updateHasChildren() {
-        if (QueryExplorer.getInstance() != null
-                && !QueryExplorer.getInstance().getPatternsViewer().getExpandedState(this)) {
-            QueryExplorer.getInstance().getPatternsViewer().setHasChildren(this, this.children.size() > 0);
+        CheckboxTreeViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
+        if (patternsViewer.getExpandedState(this)) {
+            for (PatternComponent pc : this.children) {
+                pc.updateHasChildren();
+            }
+        } else {
+            //patternsViewer.setChecked(this, this.selected);
+            patternsViewer.setHasChildren(this, this.children.size() > 0);
         }
     }
 

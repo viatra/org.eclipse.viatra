@@ -50,7 +50,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
             }
         }
 
-        QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().purge();
+        QueryExplorer.getInstance().getPatternsViewerRoot().getGenericPatternsRoot().purge();
         QueryExplorer.getInstance().getPatternsViewer().refresh();
         return null;
     }
@@ -66,7 +66,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
         if (specification != null && !QueryExplorerPatternRegistry.getInstance().isGenerated(specification)) {
             List<IQuerySpecification<?>> removedSpecifications = QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);
             for (IQuerySpecification<?> removedSpecification : removedSpecifications) {
-            	QueryExplorer.getInstance().getPatternsViewerInput().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
+            	QueryExplorer.getInstance().getPatternsViewerRoot().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
 
             	//unregister patterns from observable roots
             	Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent().getChildrenIterator();

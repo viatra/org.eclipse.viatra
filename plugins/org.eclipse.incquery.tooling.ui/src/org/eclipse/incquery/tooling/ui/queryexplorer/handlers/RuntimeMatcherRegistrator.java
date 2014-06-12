@@ -60,21 +60,25 @@ public class RuntimeMatcherRegistrator implements Runnable {
     
     @Override
     public void run() {
-        final QueryExplorer queryExplorerInstance = QueryExplorer.getInstance();
-        if (queryExplorerInstance != null) {
+        final QueryExplorer queryExplorer = QueryExplorer.getInstance();
+        if (queryExplorer != null) {
             try {
-                final RootContent vr = queryExplorerInstance.getRootContent();
-                final PatternComposite viewerInput = queryExplorerInstance.getPatternsViewerInput()
+                final RootContent vr = queryExplorer.getRootContent();
+                final PatternComposite viewerInput = queryExplorer.getPatternsViewerRoot()
                         .getGenericPatternsRoot();
-                openPatternsViewerIfNoPreviousPatterns(queryExplorerInstance);
+                openPatternsViewerIfNoPreviousPatterns(queryExplorer);
                 // UNREGISTERING PATTERNS
                 unregisterPatternsFromMatcherTreeViewer(vr);
                 // remove labels from pattern registry for the corresponding pattern model
-                removeLabelsFromPatternRegistry(queryExplorerInstance, viewerInput);
+                removeLabelsFromPatternRegistry(queryExplorer, viewerInput);
                 // REGISTERING PATTERNS
                 Set<IQuerySpecification<?>> newPatterns;
                 newPatterns = registerPatternsFromPatternModel(vr);
-                setCheckedStatesOnNewPatterns(queryExplorerInstance, viewerInput, newPatterns);
+                setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
+                
+                queryExplorer.getPatternsViewer().refresh();
+                queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().updateHasChildren();
+                queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().updateHasChildren();
             } catch (IncQueryException e) {
                 throw new RuntimeException(e);
             }
@@ -92,12 +96,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.getPatternsViewer().refresh();
 
         for (final PatternComponent component : components) {
-            queryExplorerInstance.getPatternsViewer().setChecked(component, true);
-        }
-
-        // it is enough to just call selection propagation for one pattern
-        if (components.size() > 0) {
-            components.get(0).getParent().propagateSelectionToTop(components.get(0));
+            component.setCheckedState(true);
         }
     }
 
@@ -109,7 +108,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
             }
         }
 
-        queryExplorerInstance.getPatternsViewerInput().getGenericPatternsRoot().purge();
+        queryExplorerInstance.getPatternsViewerRoot().getGenericPatternsRoot().purge();
         queryExplorerInstance.getPatternsViewer().refresh();
     }
 

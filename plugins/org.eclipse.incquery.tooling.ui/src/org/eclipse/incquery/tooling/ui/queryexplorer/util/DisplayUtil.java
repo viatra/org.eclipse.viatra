@@ -368,15 +368,15 @@ public class DisplayUtil {
 
 
 						String fqn = CorePatternLanguageHelper.getFullyQualifiedName(oldPattern);
-                        queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().removeComponent(fqn);
-						queryExplorer.getPatternsViewerInput().getGenericPatternsRoot().purge();
+                        queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().removeComponent(fqn);
+						queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().purge();
 						//queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
 
 						queryRegistry.removeActivePattern(fqn);
 						it.prune();
         			}
         		}
-				queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerInput());
+				queryExplorer.getPatternsViewer().setInput(queryExplorer.getPatternsViewerRoot());
         		resource.unload();
         	}
 			resource.load(null);
