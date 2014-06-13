@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="EMFDesignSpace" nsURI="org.eclipse.viatra.dse.designspace.impl.emf"
+    nsPrefix="emf">
+  <eClassifiers xsi:type="ecore:EClass" name="DesignSpace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="states" upperBound="-1"
+        eType="#//State" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transitions" upperBound="-1"
+        eType="#//Transition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rootStates" upperBound="-1"
+        eType="#//State"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="State">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="#//POJO"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" eType="#//EMFInternalTraversalState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outTransitions" upperBound="-1"
+        eType="#//Transition" eOpposite="#//Transition/firedFrom"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inTransitions" upperBound="-1"
+        eType="#//Transition" eOpposite="#//Transition/resultsIn"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="threadsafeFacade" eType="#//POJO"
+        transient="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Transition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="#//POJO"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="firedFrom" lowerBound="1"
+        eType="#//State" eOpposite="#//State/outTransitions"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resultsIn" eType="#//State"
+        eOpposite="#//State/inTransitions"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ruleData" eType="#//POJO"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="threadsafeFacade" eType="#//POJO"
+        transient="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="POJO" instanceClassName="java.lang.Object"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="EMFInternalTraversalState">
+    <eLiterals name="NOT_YET_PROCESSED"/>
+    <eLiterals name="TRAVERSED" value="1"/>
+    <eLiterals name="CUT" value="2"/>
+    <eLiterals name="GOAL" value="3"/>
+  </eClassifiers>
+</ecore:EPackage>

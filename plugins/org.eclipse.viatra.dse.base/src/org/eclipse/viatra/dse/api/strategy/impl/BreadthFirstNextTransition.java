@@ -1,0 +1,156 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2014, Miklos Foldenyi, Andras Szabolcs Nagy, Abel Hegedus, Akos Horvath, Zoltan Ujhelyi and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *   Miklos Foldenyi - initial API and implementation
+ *   Andras Szabolcs Nagy - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.dse.api.strategy.impl;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
+import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.IState;
+import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
+
+public class BreadthFirstNextTransition implements INextTransition {
+
+    private class TransitionWrapper {
+        private ITransition transition;
+        private TrajectoryInfo trajectory;
+        private boolean isFirst = false;
+        private IState state;
+
+        public TransitionWrapper(ITransition transition, TrajectoryInfo trajectory, IState state) {
+            this.transition = transition;
+            this.trajectory = trajectory;
+            this.state = state;
+        }
+
+    }
+
+    private int maxDepth = Integer.MAX_VALUE;
+    private LinkedList<TransitionWrapper> transitions = new LinkedList<TransitionWrapper>();
+    private int actDepth = 0;
+    private int remainingTransitions = 0;
+    private int transitionsInNextLevel = 0;
+    private TransitionWrapper t;
+
+    public BreadthFirstNextTransition() {
+    }
+
+    public BreadthFirstNextTransition(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    @Override
+    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+
+        // note and TODO: this implementation depends on two other: don't
+        // backtrack at traversed state and unsatisfied constraints. Solution
+        // is, that the DSM has a notifier, that notifies, when an undo has
+        // happened.
+
+        // TODO: For some reason it keeps failing from time to time
+        // For me it failed at the level of 10 and 11, in the 2/3 of the time
+        if (actDepth > maxDepth) {
+            return null;
+        }
+
+        ITransition result = null;
+        DesignSpaceManager dsm = context.getDesignSpaceManager();
+        // clone trajectory, so we can get back to this state later.
+        TrajectoryInfo currentTrajectoryInfo = dsm.getTrajectoryInfo().clone();
+
+        Collection<? extends ITransition> transitionsFromCurrentState;
+
+        // If the state is already traversed, or is in cut or goal state -> no
+        // new transitions to add to the queue.
+        if (!dsm.getCurrentState().getTraversalState().equals(TraversalStateType.TRAVERSED)
+                || dsm.isNewModelStateAlreadyTraversed()) {
+            transitionsFromCurrentState = Collections.emptyList();
+        }
+        // Else get all transitions from this state.
+        else {
+            transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
+        }
+
+        // Add transitions to the queue
+        // System.out.println("Adding new transitions to the queue.");
+        boolean isFirst = true;
+        for (ITransition t : transitionsFromCurrentState) {
+            transitions.addLast(new TransitionWrapper(t, currentTrajectoryInfo, dsm.getCurrentState()));
+            if (isFirst) {
+                transitions.getLast().isFirst = true;
+                isFirst = false;
+            }
+        }
+
+        // Variables for calculating actual depth
+        --remainingTransitions;
+        transitionsInNextLevel += transitionsFromCurrentState.size();
+
+        if (transitions.isEmpty()) {
+            result = null;
+        } else if (!transitions.getFirst().isFirst) {
+            dsm.undoLastTransformation();
+            t = transitions.pollFirst();
+            result = t.transition;
+        } else {
+            // Go back to the root
+            for (int i = actDepth; i > 0; i--) {
+                dsm.undoLastTransformation();
+            }
+
+            t = transitions.pollFirst();
+
+            // Got to the parent state of the transition
+            LinkedList<ITransition> trajectory = t.trajectory.getTransitionTrajectory();
+            // if we will search in the next level, we should move forward once
+            // more, cause actDepth is incremented later.
+            int actTempDepth = actDepth + (remainingTransitions <= 0 ? 1 : 0);
+            for (int i = trajectory.size() - (actTempDepth - 1); i < trajectory.size(); i++) {
+                dsm.fireActivation(trajectory.get(i));
+            }
+
+            result = t.transition;
+        }
+        // Increment the actual depth if there are no more transitions in this
+        // level.
+        if (remainingTransitions <= 0) {
+            actDepth++;
+            remainingTransitions = transitionsInNextLevel;
+            transitionsInNextLevel = 0;
+        }
+
+        return result;
+
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    @Override
+    public void init(ThreadContext context) {
+    }
+
+    @Override
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+            boolean constraintsNotSatisfied) {
+    }
+
+}

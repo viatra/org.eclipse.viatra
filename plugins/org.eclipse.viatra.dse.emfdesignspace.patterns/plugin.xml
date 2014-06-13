@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="org.eclipse.viatra.dse.emfdesignspace.patterns.states"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.viatra.dse.emfdesignspace.patterns.util.StatesQuerySpecification$Provider"
+            id="org.eclipse.viatra.dse.emfdesignspace.patterns.states">
+      </matcher>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.dse.emfdesignspace.patterns.transitions"
+         point="org.eclipse.incquery.runtime.queryspecification">
+      <matcher
+            querySpecificationProvider="org.eclipse.viatra.dse.emfdesignspace.patterns.util.TransitionsQuerySpecification$Provider"
+            id="org.eclipse.viatra.dse.emfdesignspace.patterns.transitions">
+      </matcher>
+   </extension>
+
+</plugin>
