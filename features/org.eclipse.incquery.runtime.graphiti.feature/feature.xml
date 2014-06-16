@@ -4,8 +4,8 @@
       label="Graphiti Support for EMF-IncQuery (Incubation)"
       version="0.8.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
-      license-feature="org.eclipse.incquery.runtime.feature"
-      license-feature-version="0.8.0.qualifier">
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description>
       EMF-IncQuery Graphiti extensions. Validator and query browser support
