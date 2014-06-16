@@ -55,7 +55,7 @@ class PatternGroupClassInferrer {
 		groupClass.members += model.inferInstanceMethod(groupClass)
 		groupClass.members += model.inferInstanceField(groupClass)
 		groupClass.members += model.inferConstructor
-		for (pattern : model.patterns.filter[public]) {
+		for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
 			groupClass.members += pattern.inferSpecificationGetter(pattern.findInferredClass(typeof(BaseGeneratedQuerySpecification)))
 			groupClass.members += pattern.inferMatcherGetter(pattern.findInferredClass(typeof(BaseMatcher)))
 		}
