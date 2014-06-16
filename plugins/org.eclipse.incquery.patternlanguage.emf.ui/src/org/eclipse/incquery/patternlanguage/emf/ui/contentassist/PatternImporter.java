@@ -12,11 +12,16 @@ package org.eclipse.incquery.patternlanguage.emf.ui.contentassist;
 
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternImport;
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
+import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier;
@@ -39,36 +44,42 @@ import com.google.common.collect.Iterators;
  * 
  */
 final class PatternImporter extends ReplacementTextApplier {
-    private final Pattern pattern;
-    private ImportState importAvailable;
+    private final Pattern targetPattern;
+    private final String targetPackage;
+    private ImportState importStatus;
 
     private enum ImportState {
-        NONE, FOUND, CONFLICTING
+        NONE, SAMEPACKAGE, FOUND, CONFLICTING
     }
 
-    public PatternImporter(Pattern pattern) {
-        this.pattern = pattern;
+    public PatternImporter(Pattern targetPattern) {
+        this.targetPattern = targetPattern;
+        targetPackage = CorePatternLanguageHelper.getPackageName(targetPattern);
     }
 
     @Override
-    public void apply(IDocument document, ConfigurableCompletionProposal proposal) throws BadLocationException {
+    public void apply(final IDocument document, final ConfigurableCompletionProposal proposal) throws BadLocationException {
         if (document instanceof IXtextDocument) {
-            if (pattern == null || Strings.isNullOrEmpty(pattern.getName()))
+            IXtextDocument xtextDocument = (IXtextDocument) document;
+            if (targetPattern == null || Strings.isNullOrEmpty(targetPattern.getName()))
                 return;
-            importAvailable = ((IXtextDocument) document)
+            importStatus = ((IXtextDocument) document)
                     .readOnly(new IUnitOfWork<ImportState, XtextResource>() {
 
                         @Override
                         public ImportState exec(XtextResource state) throws Exception {
-                            final XImportSection importSection = (XImportSection) Iterators.find(
-                                    state.getAllContents(), Predicates.instanceOf(XImportSection.class), null);
+                            final PatternModel model = (PatternModel) Iterators.find(state.getAllContents(), Predicates.instanceOf(PatternModel.class));
+                            if (targetPackage.equals(model.getPackageName())) {
+                                return ImportState.SAMEPACKAGE;
+                            }
+                            final XImportSection importSection = model.getImportPackages();
                             PatternImport relatedImport = Iterables.find(importSection.getPatternImport(),
                                     new Predicate<PatternImport>() {
 
                                         @Override
                                         public boolean apply(PatternImport decl) {
-                                            return pattern.equals(decl.getPattern())
-                                                    || pattern.getName().equals(decl.getPattern().getName());
+                                            return targetPattern.equals(decl.getPattern())
+                                                    || targetPattern.getName().equals(decl.getPattern().getName());
                                         }
                                     }, null);
                             if (relatedImport == null) {
@@ -76,27 +87,38 @@ final class PatternImporter extends ReplacementTextApplier {
                                 return ImportState.NONE;
                             }
                             // Checking whether found pattern definition equals to different pattern
-                            if (pattern.equals(relatedImport.getPattern())) {
+                            if (targetPattern.equals(relatedImport.getPattern())) {
                                 return ImportState.FOUND;
                             } else {
                                 return ImportState.CONFLICTING;
                             }
                         }
                     });
-            super.apply(document, proposal);
-            if (importAvailable == ImportState.NONE) {
-                ((IXtextDocument) document).modify(new Void<XtextResource>() {
+            
+            DocumentRewriteSession rewriteSession = null;
+            try{
+            String replacementString = getActualReplacementString(proposal);
+            proposal.setCursorPosition(replacementString.length());
+            ReplaceEdit edit = new ReplaceEdit(proposal.getReplacementOffset(), proposal.getReplacementLength(), replacementString);
+            edit.apply(document);
+            if (importStatus == ImportState.NONE) {
+                xtextDocument.modify(new Void<XtextResource>() {
 
                     @Override
                     public void process(XtextResource state) throws Exception {
                         final XImportSection importSection = (XImportSection) Iterators.find(state.getAllContents(),
                                 Predicates.instanceOf(XImportSection.class), null);
                         PatternImport newImport = EMFPatternLanguageFactory.eINSTANCE.createPatternImport();
-                        newImport.setPattern(pattern);
+                        newImport.setPattern(targetPattern);
                         importSection.getPatternImport().add(newImport);
 
                     }
                 });
+            }
+            } finally {
+                if (rewriteSession!=null) {
+                    ((IDocumentExtension4)xtextDocument).stopRewriteSession(rewriteSession);
+                }
             }
         }
     }
@@ -104,10 +126,10 @@ final class PatternImporter extends ReplacementTextApplier {
     @Override
     public String getActualReplacementString(ConfigurableCompletionProposal proposal) {
         // Only use short name if import is available
-        if (importAvailable != ImportState.CONFLICTING) {
-            return pattern.getName();
+        if (importStatus != ImportState.CONFLICTING) {
+            return targetPattern.getName();
         } else {
-            return CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+            return CorePatternLanguageHelper.getFullyQualifiedName(targetPattern);
         }
     }
 }

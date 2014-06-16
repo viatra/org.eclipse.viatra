@@ -68,15 +68,23 @@ public final class CorePatternLanguageHelper {
     }
 
     /**
-     * Returns the name of the pattern, qualified by package name.
+     * Returns the name of the container package of the selected pattern
+     * @return a name of the pattern; never null, but may be empty string
      */
-    public static String getFullyQualifiedName(Pattern pattern) {
+    public static String getPackageName(Pattern pattern) {
         if(pattern == null || pattern.eIsProxy()) {
             return "";
         }
         PatternModel patternModel = (PatternModel) pattern.eContainer();
 
-        String packageName = (patternModel == null) ? null : patternModel.getPackageName();
+        return (patternModel == null) ? null : patternModel.getPackageName();
+    }
+    
+    /**
+     * Returns the name of the pattern, qualified by package name.
+     */
+    public static String getFullyQualifiedName(Pattern pattern) {
+        String packageName = getPackageName(pattern);
         if (packageName == null || packageName.isEmpty()) {
             return pattern.getName();
         } else {
