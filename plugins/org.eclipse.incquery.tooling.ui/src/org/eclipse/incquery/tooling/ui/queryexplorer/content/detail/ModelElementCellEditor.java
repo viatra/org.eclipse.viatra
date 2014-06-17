@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.detail;
 
+import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,23 +55,24 @@ public class ModelElementCellEditor extends CellEditor {
     private Button clearButton;
     private KeyListener keyListener;
     private Object value = null;
-    private Notifier root;
+    private WeakReference<Notifier> notifierReference;
     private Table table;
-    private PatternMatcherContent observableMatcher;
+    private WeakReference<PatternMatcherContent> patternMatcherContent;
 
     @Inject
-    DetailsViewerUtil tableViewerUtil;
+    private DetailsViewerUtil tableViewerUtil;
     private DialogCellLayout layout;
 
-    public ModelElementCellEditor(Table table, PatternMatcherContent observableMatcher) {
+    public ModelElementCellEditor(Table table, PatternMatcherContent patternMatcherContent) {
         super(table, SWT.NONE);
-        this.root = observableMatcher.getParent().getNotifier();
+        this.notifierReference = new WeakReference<Notifier>(patternMatcherContent.getParent().getNotifier());
         this.table = table;
-        this.observableMatcher = observableMatcher;
+        this.patternMatcherContent = new WeakReference<PatternMatcherContent>(patternMatcherContent);
     }
 
     private class DialogCellLayout extends Layout {
 
+        @Override
         public void layout(Composite editor, boolean force) {
             Rectangle bounds = editor.getClientArea();
             Point dialogButtonSize = dialogButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
@@ -84,6 +86,7 @@ public class ModelElementCellEditor extends CellEditor {
             dialogButton.setBounds(bounds.width - dialogButtonSize.x, 0, dialogButtonSize.x, bounds.height);
         }
 
+        @Override
         public Point computeSize(Composite editor, int wHint, int hHint, boolean force) {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
                 return new Point(wHint, hHint);
@@ -154,17 +157,19 @@ public class ModelElementCellEditor extends CellEditor {
              */
             public void widgetSelected(SelectionEvent event) {
                 TableItem selection = table.getSelection()[0];
-                MatcherConfiguration conf = (MatcherConfiguration) selection.getData();
-                if (!tableViewerUtil.isPrimitiveType(conf.getClazz())) {
-                    Object newValue = openDialogBox(editor, conf.getClazz());
+                MatcherConfiguration matcherConfiguration = (MatcherConfiguration) selection.getData();
+                if (!tableViewerUtil.isPrimitiveType(matcherConfiguration.getClazz())) {
+                    Object newValue = openDialogBox(editor, matcherConfiguration.getClazz());
 
                     if (newValue != null) {
                         boolean newValidState = isCorrect(newValue);
                         if (newValidState) {
                             markDirty();
                             doSetValue(newValue);
-                            conf.setFilter(newValue);
-                            observableMatcher.setFilter(getFilter(table));
+                            matcherConfiguration.setFilter(newValue);
+                            if (patternMatcherContent.get() != null) {
+                                patternMatcherContent.get().setFilter(getFilter(table));
+                            }
                         } else {
                             // try to insert the current value into the error message.
                             setErrorMessage(MessageFormat.format(getErrorMessage(),
@@ -184,7 +189,9 @@ public class ModelElementCellEditor extends CellEditor {
                 inputText.setText("");
                 value = "";
                 conf.setFilter("");
-                observableMatcher.setFilter(getFilter(table));
+                if (patternMatcherContent.get() != null) {
+                    patternMatcherContent.get().setFilter(getFilter(table));
+                }
             }
         });
 
@@ -229,14 +236,15 @@ public class ModelElementCellEditor extends CellEditor {
 
                     String newValue = inputText.getText();
                     TableItem ti = table.getSelection()[0];
-                    MatcherConfiguration conf = (MatcherConfiguration) ti.getData();
+                    MatcherConfiguration matcherConfiguration = (MatcherConfiguration) ti.getData();
 
-                    if (tableViewerUtil.isValidValue(conf.getClazz(), newValue)) {
+                    if (tableViewerUtil.isValidValue(matcherConfiguration.getClazz(), newValue)) {
                         inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-                        conf.setFilter(inputText.getText());
+                        matcherConfiguration.setFilter(inputText.getText());
                         value = inputText.getText();
-                        // set restriction for observable matcher
-                        observableMatcher.setFilter(getFilter(table));
+                        if (patternMatcherContent.get() != null) {
+                            patternMatcherContent.get().setFilter(getFilter(table));
+                        }
                     } else {
                         inputText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                     }
@@ -266,7 +274,7 @@ public class ModelElementCellEditor extends CellEditor {
                 .getActiveWorkbenchWindow().getShell(), new ModelElementListDialogLabelProvider());
         listDialog.setTitle("Model element selection");
         listDialog.setMessage("Select a model element (* = any string, ? = any char):");
-        Object[] input = getElements(this.root, restriction);
+        Object[] input = getElements(this.notifierReference.get(), restriction);
         listDialog.setElements(input);
         listDialog.open();
         Object[] result = listDialog.getResult();
@@ -291,9 +299,11 @@ public class ModelElementCellEditor extends CellEditor {
     private Object[] getFilter(Table table) {
         Object[] result = new Object[table.getItems().length];
 
-        int i = 0;
-        for (String parameterName : observableMatcher.getMatcher().getParameterNames()) {
-            result[i++] = getParameterFilter(table, parameterName);
+        if (patternMatcherContent.get() != null) {
+            int i = 0;
+            for (String parameterName : patternMatcherContent.get().getMatcher().getParameterNames()) {
+                result[i++] = getParameterFilter(table, parameterName);
+            }
         }
 
         return result;
@@ -314,8 +324,8 @@ public class ModelElementCellEditor extends CellEditor {
         TreeIterator<EObject> iterator = null;
         EObject obj = null;
 
-        if (root instanceof EObject) {
-            iterator = ((EObject) root).eAllContents();
+        if (inputElement instanceof EObject) {
+            iterator = ((EObject) inputElement).eAllContents();
 
             while (iterator.hasNext()) {
                 obj = iterator.next();
@@ -323,8 +333,8 @@ public class ModelElementCellEditor extends CellEditor {
                     result.add(obj);
                 }
             }
-        } else if (root instanceof Resource) {
-            iterator = ((Resource) root).getAllContents();
+        } else if (inputElement instanceof Resource) {
+            iterator = ((Resource) inputElement).getAllContents();
 
             while (iterator.hasNext()) {
                 obj = iterator.next();
@@ -332,8 +342,8 @@ public class ModelElementCellEditor extends CellEditor {
                     result.add(obj);
                 }
             }
-        } else if (root instanceof ResourceSet) {
-            for (Resource res : ((ResourceSet) root).getResources()) {
+        } else if (inputElement instanceof ResourceSet) {
+            for (Resource res : ((ResourceSet) inputElement).getResources()) {
                 iterator = res.getAllContents();
                 while (iterator.hasNext()) {
                     obj = iterator.next();
@@ -369,9 +379,7 @@ public class ModelElementCellEditor extends CellEditor {
     @Override
     public void dispose() {
         super.dispose();
-        if (layout != null) {
-            layout = null;
-        }
+        this.layout = null;
     }
 
 }

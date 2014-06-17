@@ -331,7 +331,6 @@ public class QueryExplorer extends ViewPart {
         public void handleValueChange(ValueChangeEvent event) {
             Object value = event.getObservableValue().getValue();
 
-            tableViewerUtil.clearTableViewerColumns(detailsTableViewer);
             clearTableViewer();
 
             if (value instanceof PatternMatcherContent) {

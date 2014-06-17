@@ -72,8 +72,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 // remove labels from pattern registry for the corresponding pattern model
                 removeLabelsFromPatternRegistry(queryExplorer, viewerInput);
                 // REGISTERING PATTERNS
-                Set<IQuerySpecification<?>> newPatterns;
-                newPatterns = registerPatternsFromPatternModel(vr);
+                Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr);
                 setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
                 
                 queryExplorer.getPatternsViewer().refresh();
@@ -146,8 +145,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 root.unregisterPattern(pattern);
                 root.updateHasChildren();
             }
-            // final IncQueryEngine engine =
-            // EngineManager.getInstance().getIncQueryEngineIfExists(root.getNotifier());
+            // wipe the engine after unregistration
             final AdvancedIncQueryEngine engine = root.getKey().getEngine();
             if (engine != null) {
                 engine.wipe();

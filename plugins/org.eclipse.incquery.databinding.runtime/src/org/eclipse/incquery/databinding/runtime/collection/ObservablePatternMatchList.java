@@ -118,6 +118,12 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     }
     
     @Override
+    public void clear() {
+        this.cache.clear();
+        this.updater.matchToItem.clear();
+    }
+    
+    @Override
     public Object getElementType() {
         if (updater.converter != null) {
             return Object.class;

@@ -134,12 +134,18 @@ public class DetailsViewerUtil {
     }
 
     public void clearTableViewerColumns(TableViewer viewer) {
-
         if (viewer.getContentProvider() != null) {
             viewer.setInput(null);
         }
         while (viewer.getTable().getColumnCount() > 0) {
+            // calling dispose will decrement the column count of the table
             viewer.getTable().getColumns()[0].dispose();
+        }
+
+        if (viewer.getCellEditors() != null) {
+            for (CellEditor cellEditor : viewer.getCellEditors()) {
+                cellEditor.dispose();
+            }
         }
 
         viewer.refresh();

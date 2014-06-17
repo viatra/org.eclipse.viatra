@@ -48,12 +48,15 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
         }
     }
 
+    @Override
     public void dispose() {
         if (affectedValues != null) {
             for (IObservableValue val : affectedValues) {
                 val.removeValueChangeListener(listener);
             }
         }
+        this.match = null;
+        this.listener = null;
     }
 
     private class ParameterValueChangedListener implements IValueChangeListener {

@@ -83,9 +83,6 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             ObservablePatternMatchCollectionBuilder<IPatternMatch> builder = ObservablePatternMatchCollectionBuilder.create((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
             builder.setComparator(matchComparator).setConverter(transformerFunction).setFilter(filter);
             children = builder.setEngine(engine).buildList();
-//            
-//            children = new ObservablePatternMatchList(specification, engine, transformerFunction, matchComparator,
-//                    filter);
             children.addListChangeListener(listChangeListener);
             // label needs to be set explicitly, in case of no matches setText will not be invoked at all
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
@@ -95,6 +92,16 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             setText(DisplayUtil.getMessage(null, 0, specification.getFullyQualifiedName(),
                     isGenerated(), isFiltered(), exceptionMessage));
         }
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.matcher = null;
+        this.specification = null;
+        this.children.removeListChangeListener(listChangeListener);
+        this.children.clear();
+        this.listChangeListener = null;
     }
 
     private class ListChangeListener implements IListChangeListener {

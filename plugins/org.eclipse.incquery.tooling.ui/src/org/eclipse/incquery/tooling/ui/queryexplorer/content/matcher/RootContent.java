@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
@@ -70,15 +69,8 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
 
     public void removePatternMatcherRoot(PatternMatcherRootContentKey key) {
         if (mapping.containsKey(key)) {
-            // Notifier notifier = key.getNotifier();
-            // disposing IncQueryEngine instance associated to the given Notifier
-            // EngineManager.getInstance().disposeEngine(notifier);
             PatternMatcherRootContent root = this.mapping.get(key);
             root.dispose();
-            AdvancedIncQueryEngine engine = root.getKey().getEngine();
-            if (engine != null) {
-                engine.dispose();
-            }
             this.mapping.remove(key);
             this.children.removeChild(root);
         }

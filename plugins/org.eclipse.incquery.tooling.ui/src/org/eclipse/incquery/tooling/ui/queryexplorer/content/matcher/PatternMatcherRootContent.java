@@ -118,6 +118,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
             engine.removeLifecycleListener(taintListener);
+            engine.dispose();
         }
     }
 
