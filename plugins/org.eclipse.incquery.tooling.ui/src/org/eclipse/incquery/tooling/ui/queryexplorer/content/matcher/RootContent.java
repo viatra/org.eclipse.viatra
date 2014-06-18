@@ -71,8 +71,10 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
         if (mapping.containsKey(key)) {
             PatternMatcherRootContent root = this.mapping.get(key);
             root.dispose();
-            this.mapping.remove(key);
             this.children.removeChild(root);
+            // this call makes sure that the children observable list is disposed even if lazy propagation is used
+            if (!root.getChildren().isDisposed()) root.getChildren().dispose();
+            this.mapping.remove(key);
         }
     }
 

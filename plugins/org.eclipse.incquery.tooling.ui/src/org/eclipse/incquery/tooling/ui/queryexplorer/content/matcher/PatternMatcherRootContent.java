@@ -143,11 +143,12 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     }
 
     public void removeMatcher(String patternFqn) {
-        // if the pattern is first deactivated then removed, than the matcher corresponding matcher is disposed
         PatternMatcherContent matcher = this.mapping.get(patternFqn);
         if (matcher != null) {
             matcher.dispose();
             this.children.removeChild(matcher);
+            // this call makes sure that the children observable list is disposed even if lazy propagation is used
+            if (!matcher.getChildren().isDisposed()) matcher.getChildren().dispose();
             this.mapping.remove(patternFqn);
         }
     }
