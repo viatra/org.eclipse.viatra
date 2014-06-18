@@ -32,6 +32,7 @@ public abstract class CompositeContent<ParentType, ChildType extends BaseContent
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void dispose() {
         if (getChildren() != null) {
             for (int i = 0; i < getChildren().size(); i++) {
@@ -48,14 +49,25 @@ public abstract class CompositeContent<ParentType, ChildType extends BaseContent
      */
     public void updateHasChildren() {
         // only perform it for items which are not expanded, ClassCastException will be thrown otherwise
+        // due to the lazy tree content provider
         if (QueryExplorer.getInstance() != null
                 && !QueryExplorer.getInstance().getMatcherTreeViewer().getExpandedState(this)) {
             QueryExplorer.getInstance().getMatcherTreeViewer().setHasChildren(this, getChildren().size() > 0);
         }
     }
 
+    /**
+     * Returns an iterator on the child elements.
+     * 
+     * @return the iterator on the child elements
+     */
     public abstract Iterator<ChildType> getChildrenIterator();
 
+    /**
+     * Returns the {@link IObservableList} of child elements.
+     *  
+     * @return the observable list of child elements
+     */
     public abstract IObservableList getChildren();
 
 }

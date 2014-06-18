@@ -31,6 +31,11 @@ public abstract class BaseContent<ParentType> {
         this.parent = parent;
     }
 
+    /**
+     * Updates the label of the content and also refreshes the representation in the {@link QueryExplorer} for this content. 
+     * 
+     * @param text the new label
+     */
     public void setText(String text) {
         this.text = text;
         String[] properties = new String[] { "text" };
@@ -39,12 +44,29 @@ public abstract class BaseContent<ParentType> {
         }
     }
 
+    /**
+     * Returns the label that will be displayed in the {@link QueryExplorer} for this content.
+     * 
+     * @return the label of the content
+     */
     public String getText() {
         return this.text;
     }
 
+    /**
+     * Disposes of this content. It is the method's responsibility to call dispose on all child elements.
+     * 
+     * Important: do NOT call dispose on the children observable collection as it will be invoked 
+     * when the observable tree viewer processes the list diffs. This implementation should only release those resources 
+     * (matchers / engines / etc) which are directly bound to this content.   
+     */
     public abstract void dispose();
 
+    /**
+     * Returns the parent content of this content.
+     *  
+     * @return the parent content
+     */
     public ParentType getParent() {
         return parent;
     }
