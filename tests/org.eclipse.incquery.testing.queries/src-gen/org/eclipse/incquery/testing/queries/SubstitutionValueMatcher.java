@@ -28,7 +28,7 @@ import org.eclipse.incquery.testing.queries.util.SubstitutionValueQuerySpecifica
  * 
  * <p>Original source:
  * <code><pre>
- * {@literal @}QueryExplorer(display = false)
+ * {@literal @}QueryExplorer(checked = false)
  * {@literal @}QueryBasedFeature(feature = "derivedValue")
  * pattern SubstitutionValue(
  * 	Substitution : MatchSubstitutionRecord,

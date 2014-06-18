@@ -21,282 +21,282 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.*;
  */
 public class EIQSnapshotFactoryImpl extends EFactoryImpl implements EIQSnapshotFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public static EIQSnapshotFactory init() {
-		try {
-			EIQSnapshotFactory theEIQSnapshotFactory = (EIQSnapshotFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/incquery/snapshot"); 
-			if (theEIQSnapshotFactory != null) {
-				return theEIQSnapshotFactory;
-			}
-		}
-		catch (Exception exception) {
-			EcorePlugin.INSTANCE.log(exception);
-		}
-		return new EIQSnapshotFactoryImpl();
-	}
+        try {
+            EIQSnapshotFactory theEIQSnapshotFactory = (EIQSnapshotFactory)EPackage.Registry.INSTANCE.getEFactory(EIQSnapshotPackage.eNS_URI);
+            if (theEIQSnapshotFactory != null) {
+                return theEIQSnapshotFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new EIQSnapshotFactoryImpl();
+    }
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EIQSnapshotFactoryImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-			case EIQSnapshotPackage.MATCH_SET_RECORD: return createMatchSetRecord();
-			case EIQSnapshotPackage.MATCH_RECORD: return createMatchRecord();
-			case EIQSnapshotPackage.EMF_SUBSTITUTION: return createEMFSubstitution();
-			case EIQSnapshotPackage.INT_SUBSTITUTION: return createIntSubstitution();
-			case EIQSnapshotPackage.LONG_SUBSTITUTION: return createLongSubstitution();
-			case EIQSnapshotPackage.DOUBLE_SUBSTITUTION: return createDoubleSubstitution();
-			case EIQSnapshotPackage.FLOAT_SUBSTITUTION: return createFloatSubstitution();
-			case EIQSnapshotPackage.BOOLEAN_SUBSTITUTION: return createBooleanSubstitution();
-			case EIQSnapshotPackage.STRING_SUBSTITUTION: return createStringSubstitution();
-			case EIQSnapshotPackage.DATE_SUBSTITUTION: return createDateSubstitution();
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION: return createEnumSubstitution();
-			case EIQSnapshotPackage.MISCELLANEOUS_SUBSTITUTION: return createMiscellaneousSubstitution();
-			case EIQSnapshotPackage.INC_QUERY_SNAPSHOT: return createIncQuerySnapshot();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eClass.getClassifierID()) {
+            case EIQSnapshotPackage.MATCH_SET_RECORD: return createMatchSetRecord();
+            case EIQSnapshotPackage.MATCH_RECORD: return createMatchRecord();
+            case EIQSnapshotPackage.EMF_SUBSTITUTION: return createEMFSubstitution();
+            case EIQSnapshotPackage.INT_SUBSTITUTION: return createIntSubstitution();
+            case EIQSnapshotPackage.LONG_SUBSTITUTION: return createLongSubstitution();
+            case EIQSnapshotPackage.DOUBLE_SUBSTITUTION: return createDoubleSubstitution();
+            case EIQSnapshotPackage.FLOAT_SUBSTITUTION: return createFloatSubstitution();
+            case EIQSnapshotPackage.BOOLEAN_SUBSTITUTION: return createBooleanSubstitution();
+            case EIQSnapshotPackage.STRING_SUBSTITUTION: return createStringSubstitution();
+            case EIQSnapshotPackage.DATE_SUBSTITUTION: return createDateSubstitution();
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION: return createEnumSubstitution();
+            case EIQSnapshotPackage.MISCELLANEOUS_SUBSTITUTION: return createMiscellaneousSubstitution();
+            case EIQSnapshotPackage.INC_QUERY_SNAPSHOT: return createIncQuerySnapshot();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
-		switch (eDataType.getClassifierID()) {
-			case EIQSnapshotPackage.INPUT_SPECIFICATION:
-				return createInputSpecificationFromString(eDataType, initialValue);
-			case EIQSnapshotPackage.RECORD_ROLE:
-				return createRecordRoleFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eDataType.getClassifierID()) {
+            case EIQSnapshotPackage.INPUT_SPECIFICATION:
+                return createInputSpecificationFromString(eDataType, initialValue);
+            case EIQSnapshotPackage.RECORD_ROLE:
+                return createRecordRoleFromString(eDataType, initialValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
-		switch (eDataType.getClassifierID()) {
-			case EIQSnapshotPackage.INPUT_SPECIFICATION:
-				return convertInputSpecificationToString(eDataType, instanceValue);
-			case EIQSnapshotPackage.RECORD_ROLE:
-				return convertRecordRoleToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eDataType.getClassifierID()) {
+            case EIQSnapshotPackage.INPUT_SPECIFICATION:
+                return convertInputSpecificationToString(eDataType, instanceValue);
+            case EIQSnapshotPackage.RECORD_ROLE:
+                return convertRecordRoleToString(eDataType, instanceValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public MatchSetRecord createMatchSetRecord() {
-		MatchSetRecordImpl matchSetRecord = new MatchSetRecordImpl();
-		return matchSetRecord;
-	}
+        MatchSetRecordImpl matchSetRecord = new MatchSetRecordImpl();
+        return matchSetRecord;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public MatchRecord createMatchRecord() {
-		MatchRecordImpl matchRecord = new MatchRecordImpl();
-		return matchRecord;
-	}
+        MatchRecordImpl matchRecord = new MatchRecordImpl();
+        return matchRecord;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EMFSubstitution createEMFSubstitution() {
-		EMFSubstitutionImpl emfSubstitution = new EMFSubstitutionImpl();
-		return emfSubstitution;
-	}
+        EMFSubstitutionImpl emfSubstitution = new EMFSubstitutionImpl();
+        return emfSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public IntSubstitution createIntSubstitution() {
-		IntSubstitutionImpl intSubstitution = new IntSubstitutionImpl();
-		return intSubstitution;
-	}
+        IntSubstitutionImpl intSubstitution = new IntSubstitutionImpl();
+        return intSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public LongSubstitution createLongSubstitution() {
-		LongSubstitutionImpl longSubstitution = new LongSubstitutionImpl();
-		return longSubstitution;
-	}
+        LongSubstitutionImpl longSubstitution = new LongSubstitutionImpl();
+        return longSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public DoubleSubstitution createDoubleSubstitution() {
-		DoubleSubstitutionImpl doubleSubstitution = new DoubleSubstitutionImpl();
-		return doubleSubstitution;
-	}
+        DoubleSubstitutionImpl doubleSubstitution = new DoubleSubstitutionImpl();
+        return doubleSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public FloatSubstitution createFloatSubstitution() {
-		FloatSubstitutionImpl floatSubstitution = new FloatSubstitutionImpl();
-		return floatSubstitution;
-	}
+        FloatSubstitutionImpl floatSubstitution = new FloatSubstitutionImpl();
+        return floatSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public BooleanSubstitution createBooleanSubstitution() {
-		BooleanSubstitutionImpl booleanSubstitution = new BooleanSubstitutionImpl();
-		return booleanSubstitution;
-	}
+        BooleanSubstitutionImpl booleanSubstitution = new BooleanSubstitutionImpl();
+        return booleanSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public StringSubstitution createStringSubstitution() {
-		StringSubstitutionImpl stringSubstitution = new StringSubstitutionImpl();
-		return stringSubstitution;
-	}
+        StringSubstitutionImpl stringSubstitution = new StringSubstitutionImpl();
+        return stringSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public DateSubstitution createDateSubstitution() {
-		DateSubstitutionImpl dateSubstitution = new DateSubstitutionImpl();
-		return dateSubstitution;
-	}
+        DateSubstitutionImpl dateSubstitution = new DateSubstitutionImpl();
+        return dateSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EnumSubstitution createEnumSubstitution() {
-		EnumSubstitutionImpl enumSubstitution = new EnumSubstitutionImpl();
-		return enumSubstitution;
-	}
+        EnumSubstitutionImpl enumSubstitution = new EnumSubstitutionImpl();
+        return enumSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public MiscellaneousSubstitution createMiscellaneousSubstitution() {
-		MiscellaneousSubstitutionImpl miscellaneousSubstitution = new MiscellaneousSubstitutionImpl();
-		return miscellaneousSubstitution;
-	}
+        MiscellaneousSubstitutionImpl miscellaneousSubstitution = new MiscellaneousSubstitutionImpl();
+        return miscellaneousSubstitution;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public IncQuerySnapshot createIncQuerySnapshot() {
-		IncQuerySnapshotImpl incQuerySnapshot = new IncQuerySnapshotImpl();
-		return incQuerySnapshot;
-	}
+        IncQuerySnapshotImpl incQuerySnapshot = new IncQuerySnapshotImpl();
+        return incQuerySnapshot;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public InputSpecification createInputSpecificationFromString(EDataType eDataType, String initialValue) {
-		InputSpecification result = InputSpecification.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
+        InputSpecification result = InputSpecification.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public String convertInputSpecificationToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
+        return instanceValue == null ? null : instanceValue.toString();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public RecordRole createRecordRoleFromString(EDataType eDataType, String initialValue) {
-		RecordRole result = RecordRole.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
+        RecordRole result = RecordRole.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public String convertRecordRoleToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
+        return instanceValue == null ? null : instanceValue.toString();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EIQSnapshotPackage getEIQSnapshotPackage() {
-		return (EIQSnapshotPackage)getEPackage();
-	}
+        return (EIQSnapshotPackage)getEPackage();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
+     * @deprecated
+     * @generated
+     */
 	@Deprecated
 	public static EIQSnapshotPackage getPackage() {
-		return EIQSnapshotPackage.eINSTANCE;
-	}
+        return EIQSnapshotPackage.eINSTANCE;
+    }
 
 } //EIQSnapshotFactoryImpl

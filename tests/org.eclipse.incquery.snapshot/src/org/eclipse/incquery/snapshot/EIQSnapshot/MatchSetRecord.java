@@ -26,71 +26,71 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface MatchSetRecord extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Pattern Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Pattern Qualified Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Pattern Qualified Name</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Pattern Qualified Name</em>' attribute.
-	 * @see #setPatternQualifiedName(String)
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_PatternQualifiedName()
-	 * @model
-	 * @generated
-	 */
+     * @return the value of the '<em>Pattern Qualified Name</em>' attribute.
+     * @see #setPatternQualifiedName(String)
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_PatternQualifiedName()
+     * @model
+     * @generated
+     */
 	String getPatternQualifiedName();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getPatternQualifiedName <em>Pattern Qualified Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getPatternQualifiedName <em>Pattern Qualified Name</em>}' attribute.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Pattern Qualified Name</em>' attribute.
-	 * @see #getPatternQualifiedName()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Pattern Qualified Name</em>' attribute.
+     * @see #getPatternQualifiedName()
+     * @generated
+     */
 	void setPatternQualifiedName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Matches</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord}.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Matches</b></em>' containment reference list.
+     * The list contents are of type {@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord}.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Matches</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Matches</em>' containment reference list.
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_Matches()
-	 * @model containment="true" ordered="false"
-	 * @generated
-	 */
+     * @return the value of the '<em>Matches</em>' containment reference list.
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_Matches()
+     * @model containment="true" ordered="false"
+     * @generated
+     */
 	EList<MatchRecord> getMatches();
 
 	/**
-	 * Returns the value of the '<em><b>Filter</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Filter</b></em>' containment reference.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Filter</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Filter</em>' containment reference.
-	 * @see #setFilter(MatchRecord)
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_Filter()
-	 * @model containment="true"
-	 * @generated
-	 */
+     * @return the value of the '<em>Filter</em>' containment reference.
+     * @see #setFilter(MatchRecord)
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord_Filter()
+     * @model containment="true"
+     * @generated
+     */
 	MatchRecord getFilter();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getFilter <em>Filter</em>}' containment reference.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getFilter <em>Filter</em>}' containment reference.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Filter</em>' containment reference.
-	 * @see #getFilter()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Filter</em>' containment reference.
+     * @see #getFilter()
+     * @generated
+     */
 	void setFilter(MatchRecord value);
 
 } // MatchSetRecord

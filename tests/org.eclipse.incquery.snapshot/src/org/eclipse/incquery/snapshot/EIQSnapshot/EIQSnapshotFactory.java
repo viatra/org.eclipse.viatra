@@ -14,137 +14,137 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface EIQSnapshotFactory extends EFactory {
 	/**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	EIQSnapshotFactory eINSTANCE = org.eclipse.incquery.snapshot.EIQSnapshot.impl.EIQSnapshotFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Match Set Record</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Match Set Record</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Match Set Record</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Match Set Record</em>'.
+     * @generated
+     */
 	MatchSetRecord createMatchSetRecord();
 
 	/**
-	 * Returns a new object of class '<em>Match Record</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Match Record</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Match Record</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Match Record</em>'.
+     * @generated
+     */
 	MatchRecord createMatchRecord();
 
 	/**
-	 * Returns a new object of class '<em>EMF Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>EMF Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>EMF Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>EMF Substitution</em>'.
+     * @generated
+     */
 	EMFSubstitution createEMFSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Int Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Int Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Int Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Int Substitution</em>'.
+     * @generated
+     */
 	IntSubstitution createIntSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Long Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Long Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Long Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Long Substitution</em>'.
+     * @generated
+     */
 	LongSubstitution createLongSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Double Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Double Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Double Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Double Substitution</em>'.
+     * @generated
+     */
 	DoubleSubstitution createDoubleSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Float Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Float Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Float Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Float Substitution</em>'.
+     * @generated
+     */
 	FloatSubstitution createFloatSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Boolean Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Boolean Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Boolean Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Boolean Substitution</em>'.
+     * @generated
+     */
 	BooleanSubstitution createBooleanSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>String Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>String Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>String Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>String Substitution</em>'.
+     * @generated
+     */
 	StringSubstitution createStringSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Date Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Date Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Date Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Date Substitution</em>'.
+     * @generated
+     */
 	DateSubstitution createDateSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Enum Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Enum Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Enum Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Enum Substitution</em>'.
+     * @generated
+     */
 	EnumSubstitution createEnumSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Miscellaneous Substitution</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Miscellaneous Substitution</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Miscellaneous Substitution</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Miscellaneous Substitution</em>'.
+     * @generated
+     */
 	MiscellaneousSubstitution createMiscellaneousSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Inc Query Snapshot</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Inc Query Snapshot</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Inc Query Snapshot</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Inc Query Snapshot</em>'.
+     * @generated
+     */
 	IncQuerySnapshot createIncQuerySnapshot();
 
 	/**
-	 * Returns the package supported by this factory.
-	 * <!-- begin-user-doc -->
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the package supported by this factory.
-	 * @generated
-	 */
+     * @return the package supported by this factory.
+     * @generated
+     */
 	EIQSnapshotPackage getEIQSnapshotPackage();
 
 } //EIQSnapshotFactory

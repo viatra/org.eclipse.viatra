@@ -10,6 +10,8 @@ Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot,
  org.eclipse.incquery.snapshot.EIQSnapshot.impl,
  org.eclipse.incquery.snapshot.EIQSnapshot.util
 Require-Bundle: org.eclipse.incquery.runtime,
- org.eclipse.incquery.querybasedfeatures.runtime
+ org.eclipse.incquery.querybasedfeatures.runtime,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

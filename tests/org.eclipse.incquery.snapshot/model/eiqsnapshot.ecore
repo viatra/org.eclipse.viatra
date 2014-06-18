@@ -2,6 +2,9 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="EIQSnapshot" nsURI="http://www.eclipse.org/incquery/snapshot"
     nsPrefix="eiqSnapshot">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+    <details key="settingDelegates" value="org.eclipse.incquery.querybasedfeature"/>
+  </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="MatchSetRecord">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="patternQualifiedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="matches" ordered="false"
@@ -53,8 +56,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EnumSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueLiteral" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="enumType" eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EEnum"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueLiteral" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="enumType" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EEnum"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MiscellaneousSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
@@ -63,9 +66,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="matchSetRecords" upperBound="-1"
         eType="#//MatchSetRecord" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoots" upperBound="-1"
-        eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EObject"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputSpecification" eType="#//InputSpecification"
-        defaultValueLiteral=""/>
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputSpecification" eType="#//InputSpecification"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="InputSpecification">
     <eLiterals name="Unset" value="-1" literal="Unset"/>

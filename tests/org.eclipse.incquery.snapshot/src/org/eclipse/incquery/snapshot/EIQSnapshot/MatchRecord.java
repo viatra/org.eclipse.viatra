@@ -25,37 +25,37 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface MatchRecord extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Substitutions</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord}.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Substitutions</b></em>' containment reference list.
+     * The list contents are of type {@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord}.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Substitutions</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Substitutions</em>' containment reference list.
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchRecord_Substitutions()
-	 * @model containment="true"
-	 * @generated
-	 */
+     * @return the value of the '<em>Substitutions</em>' containment reference list.
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchRecord_Substitutions()
+     * @model containment="true"
+     * @generated
+     */
 	EList<MatchSubstitutionRecord> getSubstitutions();
 
 	/**
-	 * Returns the value of the '<em><b>Role</b></em>' attribute.
-	 * The literals are from the enumeration {@link org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole}.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Role</b></em>' attribute.
+     * The literals are from the enumeration {@link org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole}.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Role</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Role</em>' attribute.
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole
-	 * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchRecord_Role()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='org.eclipse.viatra2.emf.incquery.testing.queries.RecordRoleValue'"
-	 * @generated
-	 */
+     * @return the value of the '<em>Role</em>' attribute.
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole
+     * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchRecord_Role()
+     * @model transient="true" changeable="false" volatile="true" derived="true"
+     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='org.eclipse.incquery.testing.queries.RecordRoleValue'"
+     * @generated
+     */
 	RecordRole getRole();
 
 } // MatchRecord

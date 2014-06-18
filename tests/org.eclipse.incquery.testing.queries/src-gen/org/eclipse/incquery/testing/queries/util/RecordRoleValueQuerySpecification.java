@@ -82,7 +82,7 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       
       
       new TypeBinary(body, CONTEXT, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "filter"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.filter");
-      new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Filter"));
+      new ConstantValue(body, var_Role, getEnumLiteral("http://www.eclipse.org/incquery/snapshot", "RecordRole", "Filter").getInstance());
       bodies.add(body);
     }
     {
@@ -97,12 +97,12 @@ public final class RecordRoleValueQuerySpecification extends BaseGeneratedQueryS
       
       
       new TypeBinary(body, CONTEXT, var__MS, var_Record, getFeatureLiteral("http://www.eclipse.org/incquery/snapshot", "MatchSetRecord", "matches"), "http://www.eclipse.org/incquery/snapshot/MatchSetRecord.matches");
-      new ConstantValue(body, var_Role, org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole.get("Match"));
+      new ConstantValue(body, var_Role, getEnumLiteral("http://www.eclipse.org/incquery/snapshot", "RecordRole", "Match").getInstance());
       bodies.add(body);
     }
     {
       PAnnotation annotation = new PAnnotation("QueryExplorer");
-      annotation.addAttribute("display",false);
+      annotation.addAttribute("checked",false);
       addAnnotation(annotation);
     }
     {

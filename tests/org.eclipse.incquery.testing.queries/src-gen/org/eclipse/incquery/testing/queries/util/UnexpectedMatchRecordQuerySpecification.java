@@ -97,7 +97,7 @@ public final class UnexpectedMatchRecordQuerySpecification extends BaseGenerated
     }
     {
       PAnnotation annotation = new PAnnotation("QueryExplorer");
-      annotation.addAttribute("display",false);
+      annotation.addAttribute("checked",false);
       addAnnotation(annotation);
     }
     return bodies;

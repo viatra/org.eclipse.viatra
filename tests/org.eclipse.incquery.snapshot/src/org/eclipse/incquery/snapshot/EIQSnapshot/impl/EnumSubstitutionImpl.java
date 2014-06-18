@@ -29,196 +29,196 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.EnumSubstitution;
  */
 public class EnumSubstitutionImpl extends MatchSubstitutionRecordImpl implements EnumSubstitution {
 	/**
-	 * The default value of the '{@link #getValueLiteral() <em>Value Literal</em>}' attribute.
-	 * <!-- begin-user-doc -->
+     * The default value of the '{@link #getValueLiteral() <em>Value Literal</em>}' attribute.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getValueLiteral()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getValueLiteral()
+     * @generated
+     * @ordered
+     */
 	protected static final String VALUE_LITERAL_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getValueLiteral() <em>Value Literal</em>}' attribute.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getValueLiteral() <em>Value Literal</em>}' attribute.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getValueLiteral()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getValueLiteral()
+     * @generated
+     * @ordered
+     */
 	protected String valueLiteral = VALUE_LITERAL_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getEnumType() <em>Enum Type</em>}' reference.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getEnumType() <em>Enum Type</em>}' reference.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getEnumType()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getEnumType()
+     * @generated
+     * @ordered
+     */
 	protected EEnum enumType;
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	protected EnumSubstitutionImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	protected EClass eStaticClass() {
-		return EIQSnapshotPackage.Literals.ENUM_SUBSTITUTION;
-	}
+        return EIQSnapshotPackage.Literals.ENUM_SUBSTITUTION;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public String getValueLiteral() {
-		return valueLiteral;
-	}
+        return valueLiteral;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public void setValueLiteral(String newValueLiteral) {
-		String oldValueLiteral = valueLiteral;
-		valueLiteral = newValueLiteral;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL, oldValueLiteral, valueLiteral));
-	}
+        String oldValueLiteral = valueLiteral;
+        valueLiteral = newValueLiteral;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL, oldValueLiteral, valueLiteral));
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EEnum getEnumType() {
-		if (enumType != null && enumType.eIsProxy()) {
-			InternalEObject oldEnumType = (InternalEObject)enumType;
-			enumType = (EEnum)eResolveProxy(oldEnumType);
-			if (enumType != oldEnumType) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE, oldEnumType, enumType));
-			}
-		}
-		return enumType;
-	}
+        if (enumType != null && enumType.eIsProxy()) {
+            InternalEObject oldEnumType = (InternalEObject)enumType;
+            enumType = (EEnum)eResolveProxy(oldEnumType);
+            if (enumType != oldEnumType) {
+                if (eNotificationRequired())
+                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE, oldEnumType, enumType));
+            }
+        }
+        return enumType;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EEnum basicGetEnumType() {
-		return enumType;
-	}
+        return enumType;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public void setEnumType(EEnum newEnumType) {
-		EEnum oldEnumType = enumType;
-		enumType = newEnumType;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE, oldEnumType, enumType));
-	}
+        EEnum oldEnumType = enumType;
+        enumType = newEnumType;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE, oldEnumType, enumType));
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
-				return getValueLiteral();
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
-				if (resolve) return getEnumType();
-				return basicGetEnumType();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+        switch (featureID) {
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
+                return getValueLiteral();
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
+                if (resolve) return getEnumType();
+                return basicGetEnumType();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
-				setValueLiteral((String)newValue);
-				return;
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
-				setEnumType((EEnum)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+        switch (featureID) {
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
+                setValueLiteral((String)newValue);
+                return;
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
+                setEnumType((EEnum)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
-				setValueLiteral(VALUE_LITERAL_EDEFAULT);
-				return;
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
-				setEnumType((EEnum)null);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+        switch (featureID) {
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
+                setValueLiteral(VALUE_LITERAL_EDEFAULT);
+                return;
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
+                setEnumType((EEnum)null);
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
-				return VALUE_LITERAL_EDEFAULT == null ? valueLiteral != null : !VALUE_LITERAL_EDEFAULT.equals(valueLiteral);
-			case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
-				return enumType != null;
-		}
-		return super.eIsSet(featureID);
-	}
+        switch (featureID) {
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__VALUE_LITERAL:
+                return VALUE_LITERAL_EDEFAULT == null ? valueLiteral != null : !VALUE_LITERAL_EDEFAULT.equals(valueLiteral);
+            case EIQSnapshotPackage.ENUM_SUBSTITUTION__ENUM_TYPE:
+                return enumType != null;
+        }
+        return super.eIsSet(featureID);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+        if (eIsProxy()) return super.toString();
 
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (valueLiteral: ");
-		result.append(valueLiteral);
-		result.append(')');
-		return result.toString();
-	}
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (valueLiteral: ");
+        result.append(valueLiteral);
+        result.append(')');
+        return result.toString();
+    }
 
 } //EnumSubstitutionImpl

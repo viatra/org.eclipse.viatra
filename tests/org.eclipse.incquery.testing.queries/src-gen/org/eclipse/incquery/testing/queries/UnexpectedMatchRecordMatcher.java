@@ -29,7 +29,7 @@ import org.eclipse.incquery.testing.queries.util.UnexpectedMatchRecordQuerySpeci
  * 
  * <p>Original source:
  * <code><pre>
- * {@literal @}QueryExplorer(display = false)
+ * {@literal @}QueryExplorer(checked = false)
  * pattern UnexpectedMatchRecord(
  * 	ActualSet : MatchSetRecord,
  * 	ExpectedSet : MatchSetRecord,
