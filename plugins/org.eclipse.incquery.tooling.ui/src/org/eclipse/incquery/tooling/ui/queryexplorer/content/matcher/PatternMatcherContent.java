@@ -101,7 +101,6 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         this.matcher = null;
         this.specification = null;
         this.children.removeListChangeListener(listChangeListener);
-        this.children.clear();
         this.listChangeListener = null;
     }
 

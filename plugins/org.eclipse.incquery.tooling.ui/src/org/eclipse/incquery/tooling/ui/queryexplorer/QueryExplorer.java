@@ -137,9 +137,11 @@ public class QueryExplorer extends ViewPart {
     }
 
     public void load(PatternMatcherRootContentKey key, IModelConnector modelConnector) {
-        this.modelConnectorMap.put(key, modelConnector);
-        this.modelConnectorMapReversed.put(modelConnector, key);
-        treeViewerRootContent.addPatternMatcherRoot(key);
+        if (!this.modelConnectorMap.containsKey(key)) {
+            this.modelConnectorMap.put(key, modelConnector);
+            this.modelConnectorMapReversed.put(modelConnector, key);
+            treeViewerRootContent.addPatternMatcherRoot(key);
+        }
     }
 
     private void unload(PatternMatcherRootContentKey key, IModelConnector modelConnector) {

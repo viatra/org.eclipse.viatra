@@ -57,15 +57,22 @@ public class PatternMatcherRootContentKey {
         } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         } else {
-            PatternMatcherRootContentKey key = (PatternMatcherRootContentKey) obj;
-            return key.getEditorPart().equals(editorPart) && key.getNotifier().equals(notifierReference);
+            PatternMatcherRootContentKey that = (PatternMatcherRootContentKey) obj;
+            if (!this.getEditorPart().equals(that.getEditorPart())) {
+                return false;
+            }
+            else {
+                Notifier n1 = this.getNotifier();
+                Notifier n2 = that.getNotifier();
+                return (n1 != null && n2 != null && n1.equals(n2));
+            }
         }
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = hash * 17 + editorPart.hashCode();
+        hash = hash * 17 + editorPart.getClass().hashCode();
         hash = hash * 17 + (getNotifier() != null ? getNotifier().hashCode() : 0);
         return hash;
     }
