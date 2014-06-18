@@ -115,6 +115,19 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     protected Set<Object> getWrappedSet() {
         return cache;
     }
+    
+    @Override
+    public synchronized void dispose() {
+        ruleEngine.removeRule(specification,matchFilter);
+        clear();
+        super.dispose();
+    }
+    
+    @Override
+    public void clear() {
+        this.cache.clear();
+        this.updater.matchToItem.clear();
+    }
 
     /**
      * @return the specification

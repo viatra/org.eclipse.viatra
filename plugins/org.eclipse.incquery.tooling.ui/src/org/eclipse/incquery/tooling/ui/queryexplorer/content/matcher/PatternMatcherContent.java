@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -54,7 +55,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private MatchComparator matchComparator;
     private IListChangeListener listChangeListener;
 
-    public PatternMatcherContent(PatternMatcherRootContent parent, IncQueryEngine engine,
+    public PatternMatcherContent(PatternMatcherRootContent parent, IncQueryEngine engine, RuleEngine ruleEngine, 
             final IQuerySpecification<?> specification, boolean generated) {
         super(parent);
         this.specification = specification;
@@ -82,7 +83,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             
             ObservablePatternMatchCollectionBuilder<IPatternMatch> builder = ObservablePatternMatchCollectionBuilder.create((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
             builder.setComparator(matchComparator).setConverter(transformerFunction).setFilter(filter);
-            children = builder.setEngine(engine).buildList();
+            children = builder.setEngine(ruleEngine).buildList();
             children.addListChangeListener(listChangeListener);
             // label needs to be set explicitly, in case of no matches setText will not be invoked at all
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),

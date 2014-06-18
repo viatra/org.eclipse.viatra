@@ -27,6 +27,9 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
+import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
@@ -62,9 +65,11 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
 
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine == null) {
-            key.setEngine(createEngine());
-        }
-        if (engine != null) {
+            engine = createEngine();
+            key.setEngine(engine);
+            RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+                    Schedulers.getIQEngineSchedulerFactory(engine));
+            key.setRuleEngine(ruleEngine);
             engine.addLifecycleListener(taintListener);
         }
     }
@@ -86,10 +91,41 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         }
     }
 
-    public void addMatcher(IncQueryEngine engine, IQuerySpecification<?> specification, boolean generated) {
+    public void registerPattern(final IQuerySpecification<?>... patterns) {
+        IncQueryEngine engine = null;
+        try {
+            engine = key.getEngine();
+    
+            if (engine.getBaseIndex().isInWildcardMode()) {
+                addMatchersForPatterns(patterns);
+            } else {
+                engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() {
+                        addMatchersForPatterns(patterns);
+                        return null;
+                    }
+                });
+            }
+            contentStatus = Status.OK_STATUS;
+        } catch (IncQueryException ex) {
+            reportMatcherError("Cannot initialize pattern matcher engine.", ex);
+        } catch (InvocationTargetException e) {
+            reportMatcherError("Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause());
+        }
+    }
+
+    private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
+        for (IQuerySpecification<?> query : queries) {
+            boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
+            addMatcher(key.getEngine(), key.getRuleEngine(), query, isGenerated);
+        }
+    }
+
+    public void addMatcher(IncQueryEngine engine, RuleEngine ruleEngine, IQuerySpecification<?> specification, boolean generated) {
         String fqn = specification.getFullyQualifiedName();
 
-        PatternMatcherContent pm = new PatternMatcherContent(this, engine, specification,
+        PatternMatcherContent pm = new PatternMatcherContent(this, engine, ruleEngine, specification,
                 generated);
         this.mapping.put(fqn, pm);
 
@@ -100,6 +136,10 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             // generic matchers are inserted in the list according to the order in the eiq file
             this.children.addChild(pm);
         }
+    }
+
+    public void unregisterPattern(IQuerySpecification<?> specification) {
+        removeMatcher(specification.getFullyQualifiedName());
     }
 
     public void removeMatcher(String patternFqn) {
@@ -115,6 +155,10 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     @Override
     public void dispose() {
         super.dispose();
+        RuleEngine ruleEngine = key.getRuleEngine();
+        if(ruleEngine != null) {
+            ruleEngine.dispose();
+        }
         AdvancedIncQueryEngine engine = key.getEngine();
         if (engine != null) {
             engine.removeLifecycleListener(taintListener);
@@ -139,30 +183,6 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         return this.key.getNotifier();
     }
 
-    public void registerPattern(final IQuerySpecification<?>... patterns) {
-        IncQueryEngine engine = null;
-        try {
-            engine = key.getEngine();
-
-            if (engine.getBaseIndex().isInWildcardMode()) {
-                addMatchersForPatterns(patterns);
-            } else {
-                engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        addMatchersForPatterns(patterns);
-                        return null;
-                    }
-                });
-            }
-            contentStatus = Status.OK_STATUS;
-        } catch (IncQueryException ex) {
-            reportMatcherError("Cannot initialize pattern matcher engine.", ex);
-        } catch (InvocationTargetException e) {
-            reportMatcherError("Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause());
-        }
-    }
-
     private void reportMatcherError(String message, Throwable t) {
         if (t != null) {
             contentStatus = new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID,
@@ -175,17 +195,6 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         getParent().getViewer().refresh(this);
     }
     
-    private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
-        for (IQuerySpecification<?> query : queries) {
-            boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
-            addMatcher(key.getEngine(), query, isGenerated);
-        }
-    }
-
-    public void unregisterPattern(IQuerySpecification<?> specification) {
-        removeMatcher(specification.getFullyQualifiedName());
-    }
-
     private class ContentEngineTaintListener implements IncQueryEngineLifecycleListener {
 
         @Override
@@ -199,10 +208,12 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
 
         @Override
         public void engineWiped() {
+            // TODO handle wipe
         }
 
         @Override
         public void engineDisposed() {
+            // TODO handle dipsose
         }
         
     }

@@ -122,6 +122,13 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         this.cache.clear();
         this.updater.matchToItem.clear();
     }
+
+    @Override
+    public synchronized void dispose() {
+        ruleEngine.removeRule(specification,matchFilter);
+        clear();
+        super.dispose();
+    }
     
     @Override
     public Object getElementType() {

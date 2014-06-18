@@ -179,7 +179,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
     }
 
     private void checkBuilderConfiguration() {
-        Preconditions.checkState(ruleEngine != null || incQueryEngine != null, "(IncQuery or Rule) Engine not set!");
+        Preconditions.checkState(!(ruleEngine == null && incQueryEngine == null), "(IncQuery or Rule) Engine not set!");
         Preconditions.checkState(specification != null || matcher != null, "Matcher or QuerySpecification not set!");
     }
 
