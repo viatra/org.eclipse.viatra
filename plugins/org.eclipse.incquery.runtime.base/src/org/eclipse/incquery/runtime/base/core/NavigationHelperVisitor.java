@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.base.core;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -255,19 +254,25 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     @Override
     public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
     	if (isInsertion) { // only attempt to resolve proxies if they are inserted
-    		tryResolveReference(source, reference, position);
+//    		final Object result = source.eGet(reference, true);
+//    		if (reference.isMany()) {
+//    			// no idea which element to get, have to iterate through
+//    			for (EObject touch : (Iterable<EObject>) result);         			
+//    		}
+    		if (navigationHelper.isFeatureResolveIgnored(reference)) 
+    			return; // skip resolution; would be ignored anyways 
+    		if (position != null && reference.isMany()) {
+    			// there is added value in doing the resolution now, when we know the position
+    			// this may save an iteration through the EList if successful
+    			EObject touch = 
+    					((java.util.List<EObject>) source.eGet(reference, true)).get(position);
+    			// if resolution successful, no further action needed
+    			if (!touch.eIsProxy()) return;
+    		}
+    		// otherwise, attempt resolution later, at the end of the coalesced traversal block
+    		navigationHelper.delayedProxyResolutions.put(source, reference);
     	}
     }
-	private void tryResolveReference(EObject source, EReference reference, Integer position) {
-		final Object result = source.eGet(reference, true);
-		if (reference.isMany()) {
-			if (position != null) { // we know which element to get - should be more efficient
-				((List<EObject>) result).get(position);
-			} else { // no idea which element to get, have to iterate through
-				for (EObject touch : (Iterable<EObject>) result);         			
-			}
-		}
-	}
     
 	protected Object toKey(EStructuralFeature feature) {
 		return store.toKey(feature);

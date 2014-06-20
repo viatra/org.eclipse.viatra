@@ -55,6 +55,8 @@ import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
@@ -96,6 +98,17 @@ public class NavigationHelperImpl implements NavigationHelper {
      * EDataTypes (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
     protected Set<Object> delayedDataTypes;
+    
+    
+    /**
+     * Features per EObject to be resolved later (towards the end of a coalescing period when no Resources are loading)
+     */
+    protected Multimap<EObject, EReference> delayedProxyResolutions = LinkedHashMultimap.create();
+    /**
+     * Reasources that are currently loading, implying the proxy resolution attempts should be delayed
+     */
+    protected Set<Resource> resolutionDelayingResources = new HashSet<Resource>();
+    
     
     /**
      * These global listeners will be called after updates.
@@ -984,11 +997,24 @@ public class NavigationHelperImpl implements NavigationHelper {
         	try {
         		try {
         			delayTraversals = true;
+        			
         			V result = callable.call();
         			if (firstRun) {
         				firstRun = false;
         				finalResult = result; 
         			}
+        			
+        			// are there proxies left to be resolved? are we allowed to resolve them now?
+        			while((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
+        				// pop first entry
+        				final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
+						final Entry<EObject, EReference> toResolve = entries.iterator().next();
+        				entries.remove(toResolve);
+        				
+        				// see if we can resolve proxies
+        				comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
+        			}
+        			
         		} finally {
         			delayTraversals = false;
         			callable = null;
@@ -1042,7 +1068,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return finalResult;
     }
-
+    
     private void traverse(final NavigationHelperVisitor visitor) {
         for (Notifier root : modelRoots) {
             comprehension.traverseModel(visitor, root);

@@ -270,4 +270,22 @@ public class EMFModelComprehension {
             traverseFeatureInternalSimple(visitor, source, emulated, target, null);
     }
 
+    /**
+     * Can be called to attempt to resolve a reference pointing to one or more proxies, using eGet().
+     */
+	public void tryResolveReference(EObject source, EReference reference) {
+		final Object result = source.eGet(reference, true);
+		if (reference.isMany()) {
+			// no idea which element to get, have to iterate through
+			for (EObject touch : (Iterable<EObject>) result);         			
+		}
+	}
+	
+    /**
+     * Finds out whether the Resource is currently loading 
+     */
+	public boolean isLoading(Resource resource) {
+		return !resource.isLoaded() || ((Resource.Internal)resource).isLoading();
+	}
+
 }

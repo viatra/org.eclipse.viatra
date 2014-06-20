@@ -207,26 +207,41 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     @Override
     public void notifyChanged(final Notification notification) {
         try {
-            super.notifyChanged(notification);
+            this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                	NavigationHelperContentAdapter.super.notifyChanged(notification);
 
-            final Object oFeature = notification.getFeature();
-            final Object oNotifier = notification.getNotifier();
-            if (oNotifier instanceof EObject && oFeature instanceof EStructuralFeature) {
-                final EObject notifier = (EObject) oNotifier;
-                final EStructuralFeature feature = (EStructuralFeature) oFeature;
-                
-                final boolean notifyLightweightObservers = handleNotification(notification, notifier, feature);
-                
-                if(notifyLightweightObservers) {
-                    notifyLightweightObservers(notifier, feature, notification);
+                	final Object oFeature = notification.getFeature();
+                	final Object oNotifier = notification.getNotifier();
+                    if (oNotifier instanceof EObject && oFeature instanceof EStructuralFeature) {
+                        final EObject notifier = (EObject) oNotifier;
+                        final EStructuralFeature feature = (EStructuralFeature) oFeature;
+                        
+                        final boolean notifyLightweightObservers = handleNotification(notification, notifier, feature);
+                        
+                        if(notifyLightweightObservers) {
+                            notifyLightweightObservers(notifier, feature, notification);
+                        }
+                    } else if (oNotifier instanceof Resource) {
+                    	if (notification.getFeatureID(Resource.class) == Resource.RESOURCE__IS_LOADED) {
+                    		final Resource resource = (Resource) oNotifier;
+                    		if (comprehension.isLoading(resource))
+                    			navigationHelper.resolutionDelayingResources.add(resource);
+                    		else 
+                    			navigationHelper.resolutionDelayingResources.remove(resource);                    		
+                    	}
+                    }
+                    return null;
                 }
-            }
+            });
+        } catch (final InvocationTargetException ex) {
+            processingFatal(ex.getCause(), "handling the following update notification: " + notification);
         } catch (final Exception ex) {
-            processingFatal(ex, "handle the following update notification: " + notification);
+            processingFatal(ex, "handling the following update notification: " + notification);
         }
 
         notifyBaseIndexChangeListeners();
-
     }
 
     @SuppressWarnings("deprecation")
@@ -267,6 +282,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             break;
         case Notification.RESOLVE:
         	if (navigationHelper.isFeatureResolveIgnored(feature)) break; // otherwise same as SET
+        	if (!feature.isMany()) { // if single-valued, can be removed from delayed resolutions
+        		navigationHelper.delayedProxyResolutions.remove(notifier, feature);
+        	}
+        	// fall-through
         case Notification.UNSET:
         case Notification.SET:
             featureUpdate(false, notifier, feature, oldValue, position);
@@ -301,9 +320,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 public Void call() throws Exception {
                     if (notifier instanceof EObject) {
                         comprehension.traverseObject(visitor(true), (EObject) notifier);
+                    } else if (notifier instanceof Resource) {
+                    	Resource resource = (Resource) notifier;
+                    	if (comprehension.isLoading(resource))
+                    		navigationHelper.resolutionDelayingResources.add(resource);
                     }
                     // the notification listener is really added AFTER traversing the object, 
-                    // so that if a proxy is resolved due to the traversal, we do not get about it   
+                    // so that if a proxy is resolved due to the traversal, we do not get notified about it   
                     NavigationHelperContentAdapter.super.addAdapter(notifier);
                     return null;
                 }
@@ -325,7 +348,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 @Override
                 public Void call() throws Exception {
                     if (notifier instanceof EObject) {
-                        comprehension.traverseObject(visitor(false), (EObject) notifier);
+                        final EObject eObject = (EObject) notifier;
+						comprehension.traverseObject(visitor(false), eObject);
+                        navigationHelper.delayedProxyResolutions.removeAll(eObject);
+                    } else if (notifier instanceof Resource) {
+                        navigationHelper.resolutionDelayingResources.remove(notifier);
                     }
                     NavigationHelperContentAdapter.super.removeAdapter(notifier);
                     return null;
