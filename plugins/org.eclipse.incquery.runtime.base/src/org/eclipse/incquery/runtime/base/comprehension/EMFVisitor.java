@@ -100,18 +100,18 @@ public class EMFVisitor {
         return false;
     }
 
-    /**
-     * @return
-     */
-    public boolean forceProxyResolution() {
-        return true;
-    }
-
 	/**
 	 * @return if objects should be visited before their outgoing edges
 	 */
 	public boolean preOrder() {
 		return preOrder;
+	}
+
+	/**
+	 * Called after visiting the reference, if the target is a proxy. 
+     * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
+	 */
+	public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
 	}
 
 }

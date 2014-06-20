@@ -234,16 +234,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             final EStructuralFeature feature) {
         final Object oldValue = notification.getOldValue();
         final Object newValue = notification.getNewValue();
+        final int positionInt = notification.getPosition();
+        final Integer position = positionInt == Notification.NO_INDEX ? null : positionInt;
         final int eventType = notification.getEventType();
         boolean notifyLightweightObservers = false;
-        switch (eventType) {
+		switch (eventType) {
         case Notification.ADD:
-            featureUpdate(true, notifier, feature, newValue);
+            featureUpdate(true, notifier, feature, newValue, position);
             notifyLightweightObservers = true;
             break;
         case Notification.ADD_MANY:
             for (final Object newElement : (Collection<?>) newValue) {
-                featureUpdate(true, notifier, feature, newElement);
+                featureUpdate(true, notifier, feature, newElement, position);
             }
             notifyLightweightObservers = true;
             break;
@@ -252,12 +254,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         case Notification.MOVE:
             break; // currently no support for ordering
         case Notification.REMOVE:
-            featureUpdate(false, notifier, feature, oldValue);
+            featureUpdate(false, notifier, feature, oldValue, position);
             notifyLightweightObservers = true;
             break;
         case Notification.REMOVE_MANY:
             for (final Object oldElement : (Collection<?>) oldValue) {
-                featureUpdate(false, notifier, feature, oldElement);
+                featureUpdate(false, notifier, feature, oldElement, position);
             }
             notifyLightweightObservers = true;
             break;
@@ -267,10 +269,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         	if (navigationHelper.isFeatureResolveIgnored(feature)) break; // otherwise same as SET
         case Notification.UNSET:
         case Notification.SET:
-            featureUpdate(false, notifier, feature, oldValue);
-            featureUpdate(true, notifier, feature, newValue);
+            featureUpdate(false, notifier, feature, oldValue, position);
+            featureUpdate(true, notifier, feature, newValue, position);
             notifyLightweightObservers = true;
-            break;
         default:
             break;
         }
@@ -284,9 +285,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature, final Object value) {
+    private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature, final Object value, final Integer position) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
-        comprehension.traverseFeature(visitor(isInsertion), notifier, feature, value);
+        comprehension.traverseFeature(visitor(isInsertion), notifier, feature, value, position);
     }
 
     @Override
@@ -945,14 +946,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         oldValues.removeAll(newValues);
         if(!oldValues.isEmpty()) {
             for (Object ov : oldValues) {
-                comprehension.traverseFeature(removalVisitor, source, feature, ov);
+                comprehension.traverseFeature(removalVisitor, source, feature, ov, null);
             }
             ENotificationImpl removeNotification = new ENotificationImpl(internalEObject, Notification.REMOVE_MANY, feature, oldValues, null);
             notifyLightweightObservers(source, feature, removeNotification);
         }
         if(!newValueSet.isEmpty()) {
             for (Object nv : newValueSet) {
-                comprehension.traverseFeature(insertionVisitor, source, feature, nv);
+                comprehension.traverseFeature(insertionVisitor, source, feature, nv, null);
             }
             ENotificationImpl addNotification = new ENotificationImpl(internalEObject, Notification.ADD_MANY, feature, null, newValueSet);
             notifyLightweightObservers(source, feature, addNotification);
@@ -964,8 +965,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         Object oldValue = Iterables.getFirst(oldValues, null);
         if(!Objects.equal(oldValue,newValue)) {
             // value changed
-            comprehension.traverseFeature(removalVisitor, source, feature, oldValue);
-            comprehension.traverseFeature(insertionVisitor, source, feature, newValue);
+            comprehension.traverseFeature(removalVisitor, source, feature, oldValue, null);
+            comprehension.traverseFeature(insertionVisitor, source, feature, newValue, null);
             ENotificationImpl notification = new ENotificationImpl(internalEObject, Notification.SET, feature, oldValue, newValue);
             notifyLightweightObservers(source, feature, notification);
         }

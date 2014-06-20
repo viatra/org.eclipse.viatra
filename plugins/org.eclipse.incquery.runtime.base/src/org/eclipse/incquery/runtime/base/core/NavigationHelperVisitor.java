@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.base.core;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -252,9 +253,21 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     }
 
     @Override
-    public boolean forceProxyResolution() {
-        return isInsertion;
+    public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
+    	if (isInsertion) { // only attempt to resolve proxies if they are inserted
+    		tryResolveReference(source, reference, position);
+    	}
     }
+	private void tryResolveReference(EObject source, EReference reference, Integer position) {
+		final Object result = source.eGet(reference, true);
+		if (reference.isMany()) {
+			if (position != null) { // we know which element to get - should be more efficient
+				((List<EObject>) result).get(position);
+			} else { // no idea which element to get, have to iterate through
+				for (EObject touch : (Iterable<EObject>) result);         			
+			}
+		}
+	}
     
 	protected Object toKey(EStructuralFeature feature) {
 		return store.toKey(feature);

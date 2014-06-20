@@ -167,13 +167,14 @@ public class EMFModelComprehension {
 
             if (feature.isMany()) {
                 Collection<?> targets = (Collection<?>) source.eGet(feature);
+                int position = 0;
                 for (Object target : targets) {
-                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
+                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, position++);
                 }
             } else {
                 Object target = source.eGet(feature);
                 if (target != null)
-                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
+                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, null);
             }
         }
         if (!visitor.preOrder()) visitor.visitElement(source);
@@ -186,28 +187,35 @@ public class EMFModelComprehension {
                         .pruneSubtrees(source) || ((EReference) feature).getEOpposite() != null));
     }
 
-    public void traverseFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target) {
+    /**
+     * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
+     */
+    public void traverseFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature, Object target, Integer position) {
         if (target == null)
             return;
         if (untraversableDirectly(feature))
             return;
-        traverseFeatureInternalSimple(visitor, source, feature, target);
+        traverseFeatureInternalSimple(visitor, source, feature, target, position);
     }
 
+    /**
+     * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
+     */
     private void traverseFeatureInternalSimple(EMFVisitor visitor, EObject source, EStructuralFeature feature,
-            Object target) {
+            Object target, Integer position) {
         final boolean visitorPrunes = visitor.pruneFeature(feature);
         if (visitorPrunes && !unprunableFeature(visitor, source, feature))
             return;
 
-        traverseFeatureInternal(visitor, source, feature, target, visitorPrunes);
+        traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, position);
     }
 
     /**
      * @pre target != null
+     * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
      */
     private void traverseFeatureInternal(EMFVisitor visitor, EObject source, EStructuralFeature feature,
-            Object target, boolean visitorPrunes) {
+            Object target, boolean visitorPrunes, Integer position) {
         if (feature instanceof EAttribute) {
             if (!visitorPrunes)
                 visitor.visitAttribute(source, (EAttribute) feature, target);
@@ -244,18 +252,12 @@ public class EMFModelComprehension {
             						reference.getName(), reference.getEContainingClass().getInstanceTypeName(),
             						targetObject, source));
             	}
-            	//visitor.visitProxyReference(source, reference, target);
-            	if (visitor.forceProxyResolution()) { 
-            		// TODO delay?   
-            		final Object result = source.eGet(reference, true);
-            		if (feature.isMany()) {
-            			for (EObject touch : (Iterable<EObject>) result);         			
-            		}
-            	}
+            	visitor.visitProxyReference(source, reference, targetObject, position);
             }
         }
 
     }
+
 
     /**
      * Emulates a derived edge, if it is not visited otherwise
@@ -265,7 +267,7 @@ public class EMFModelComprehension {
     private void emulateUntraversableFeature(EMFVisitor visitor, EObject source,
             final EStructuralFeature emulated, final Object target) {
         if (untraversableDirectly(emulated))
-            traverseFeatureInternalSimple(visitor, source, emulated, target);
+            traverseFeatureInternalSimple(visitor, source, emulated, target, null);
     }
 
 }
