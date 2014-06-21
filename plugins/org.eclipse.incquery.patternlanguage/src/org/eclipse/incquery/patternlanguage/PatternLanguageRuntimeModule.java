@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.naming.PatternNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
+import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Provides;
 
@@ -34,5 +36,9 @@ public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntime
 
     public Class<? extends PatternAnnotationProvider> bindPatternAnnotationProvider() {
         return PatternAnnotationProvider.class;
+    }
+    
+    public Class<? extends ITypeProvider> bindITypeProvider() {
+        return XbaseBatchTypeProvider.class;
     }
 }
