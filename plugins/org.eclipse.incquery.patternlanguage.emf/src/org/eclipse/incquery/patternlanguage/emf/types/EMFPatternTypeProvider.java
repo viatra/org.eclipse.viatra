@@ -65,7 +65,7 @@ import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.resource.CompilerPhases;
 import org.eclipse.xtext.xbase.XExpression;
-import org.eclipse.xtext.xbase.typing.XbaseTypeProvider;
+import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -80,7 +80,7 @@ import com.google.inject.Singleton;
  */
 @Singleton
 @SuppressWarnings("restriction")
-public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTypeProvider {
+public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IEMFTypeProvider {
 
     @Inject
     private TypeReferences typeReferences;
@@ -100,12 +100,12 @@ public class EMFPatternTypeProvider extends XbaseTypeProvider implements IEMFTyp
      * org.eclipse.xtext.common.types.JvmIdentifiableElement, boolean)
      */
     @Override
-    protected JvmTypeReference typeForIdentifiable(JvmIdentifiableElement identifiable, boolean rawType) {
+    public JvmTypeReference getTypeForIdentifiable(JvmIdentifiableElement identifiable) {
         if (identifiable instanceof Variable) {
             Variable variable = (Variable) identifiable;
             return getVariableType(variable);
         }
-        return super.typeForIdentifiable(identifiable, rawType);
+        return super.getTypeForIdentifiable(identifiable);
     }
 
     @Override

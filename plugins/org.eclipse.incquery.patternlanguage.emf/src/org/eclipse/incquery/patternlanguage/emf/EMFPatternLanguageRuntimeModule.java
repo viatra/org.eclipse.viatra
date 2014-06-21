@@ -17,7 +17,6 @@ import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmMo
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageImportNamespaceProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
-import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
@@ -79,13 +78,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return PatternLanguageResourceDescriptionStrategy.class;
     }
 
-    @Override
-    public Class<? extends IScopeProvider> bindIScopeProvider() {
-        return EMFPatternLanguageScopeProvider.class;
-    }
-
     // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-    @Override
     public Class<? extends ITypeProvider> bindITypeProvider() {
         return EMFPatternTypeProvider.class;
     }
