@@ -206,9 +206,9 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     }
                     currentValue = new HashSet<EObject>();
                     Collection<? extends Object> targets = (Collection<? extends Object>) source.eGet(derivedFeature);
+                    int position = 0;
                     for (Object target : targets) {
-                        
-                        comprehension.traverseFeature(visitor, source, derivedFeature, target);
+                        comprehension.traverseFeature(visitor, source, derivedFeature, target, position++);
                     }
                     if (currentValue instanceof Collection<?> && oldValue instanceof Collection<?>) {
                         ((Collection<?>) oldValue).removeAll((Collection<?>) currentValue);
@@ -218,7 +218,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
                     }
                 } else {
                     Object target = source.eGet(derivedFeature);
-                    comprehension.traverseFeature(visitor, source, derivedFeature, target);
+                    comprehension.traverseFeature(visitor, source, derivedFeature, target, null);
                 }
             }
         } catch (Exception ex) {
