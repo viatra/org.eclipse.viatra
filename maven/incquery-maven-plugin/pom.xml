@@ -6,7 +6,7 @@
 	<name>EMF-IncQuery Maven Plug-in</name>
 	
     <properties>
-    		<xtend.compiler.version>2.5.3</xtend.compiler.version>
+    		<xtend.compiler.version>2.6.0</xtend.compiler.version>
     </properties>
 
 	<dependencies>
