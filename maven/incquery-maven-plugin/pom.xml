@@ -5,10 +5,6 @@
 	<packaging>maven-plugin</packaging>
 	<name>EMF-IncQuery Maven Plug-in</name>
 	
-    <properties>
-    		<xtend.compiler.version>2.6.0</xtend.compiler.version>
-    </properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
