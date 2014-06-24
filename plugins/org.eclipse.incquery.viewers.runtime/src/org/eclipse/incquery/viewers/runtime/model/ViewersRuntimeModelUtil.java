@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 
 /**
  * @author istvanrath
@@ -19,31 +18,16 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
  */
 public class ViewersRuntimeModelUtil {
 
-	public static boolean isItemPattern(Pattern p) {
-		for (Annotation a : p.getAnnotations()) {
-			if (a.getName().equals(Item.ANNOTATION_ID)) {
-				return true;
-			}
-		}
-		return false;
+	public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
+		return querySpecification.getFirstAnnotationByName(Item.ANNOTATION_ID) != null;
 	}
 	
-	public static boolean isEdgePattern(Pattern p) {
-		for (Annotation a : p.getAnnotations()) {
-			if (a.getName().equals(Edge.ANNOTATION_ID)) {
-				return true;
-			}
-		}
-		return false;
+	public static boolean isEdgeQuerySpecification(IQuerySpecification<?> querySpecification) {
+	    return querySpecification.getFirstAnnotationByName(Edge.ANNOTATION_ID) != null;
 	}
 	
-	public static boolean isContainmentPattern(Pattern p) {
-		for (Annotation a : p.getAnnotations()) {
-			if (a.getName().equals(Containment.ANNOTATION_ID)) {
-				return true;
-			}
-		}
-		return false;
+	public static boolean isContainmentQuerySpecification(IQuerySpecification<?> querySpecification) {
+	    return querySpecification.getFirstAnnotationByName(Containment.ANNOTATION_ID) != null;
 	}
 	
 }

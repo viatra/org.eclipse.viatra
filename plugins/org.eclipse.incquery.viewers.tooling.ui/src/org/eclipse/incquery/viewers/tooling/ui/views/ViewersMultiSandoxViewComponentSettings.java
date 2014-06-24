@@ -13,8 +13,6 @@ package org.eclipse.incquery.viewers.tooling.ui.views;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
@@ -168,16 +166,16 @@ public class ViewersMultiSandoxViewComponentSettings {
 		
 		@Override
     	public String getText(Object element) {
-    		if (element instanceof Pattern) {
-    			Pattern p = (Pattern) element;
-    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
-    				return "Item : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    		if (element instanceof IQuerySpecification) {
+    		    IQuerySpecification<?> qs = (IQuerySpecification<?>) element;
+    			if (ViewersRuntimeModelUtil.isItemQuerySpecification(qs)) {
+    				return "Item : " + qs.getFullyQualifiedName();
     			}
-    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
-    				return "Edge : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    			else if (ViewersRuntimeModelUtil.isEdgeQuerySpecification(qs)) {
+    				return "Edge : " + qs.getFullyQualifiedName();
     			}
-    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
-    				return "Containment : " + CorePatternLanguageHelper.getFullyQualifiedName(p);
+    			else if (ViewersRuntimeModelUtil.isContainmentQuerySpecification(qs)) {
+    				return "Containment : " + qs.getFullyQualifiedName();
     			}
     		}
     		return super.getText(element);
@@ -185,18 +183,18 @@ public class ViewersMultiSandoxViewComponentSettings {
 		
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof Pattern) {
-    			Pattern p = (Pattern) element;
-    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
-    				return itemIcon;
-    			}
-    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
-    				return edgeIcon;
-    			}
-    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
-    				return contIcon;
-    			}
-    		}
+		    if (element instanceof IQuerySpecification) {
+		        IQuerySpecification<?> qs = (IQuerySpecification<?>) element;
+		        if (ViewersRuntimeModelUtil.isItemQuerySpecification(qs)) {
+		            return itemIcon;
+		        }
+		        else if (ViewersRuntimeModelUtil.isEdgeQuerySpecification(qs)) {
+		            return edgeIcon;
+		        }
+		        else if (ViewersRuntimeModelUtil.isContainmentQuerySpecification(qs)) {
+		            return contIcon;
+		        }
+		    }
 			return super.getImage(element);
 		}
 		
@@ -212,18 +210,18 @@ public class ViewersMultiSandoxViewComponentSettings {
 	class PatternListComparator extends ViewerComparator {
 		@Override
     	public int category(Object element) {
-			if (element instanceof Pattern) {
-    			Pattern p = (Pattern) element;
-    			if (ViewersRuntimeModelUtil.isItemPattern(p)) {
-    				return 0;
-    			}
-    			else if (ViewersRuntimeModelUtil.isEdgePattern(p)) {
-    				return 1;
-    			}
-    			else if (ViewersRuntimeModelUtil.isContainmentPattern(p)) {
-    				return 2;
-    			}
-    		}
+		    if (element instanceof IQuerySpecification) {
+		        IQuerySpecification<?> qs = (IQuerySpecification<?>) element;
+		        if (ViewersRuntimeModelUtil.isItemQuerySpecification(qs)) {
+		            return 0;
+		        }
+		        else if (ViewersRuntimeModelUtil.isEdgeQuerySpecification(qs)) {
+		            return 1;
+		        }
+		        else if (ViewersRuntimeModelUtil.isContainmentQuerySpecification(qs)) {
+		            return 2;
+		        }
+		    }
     		return super.category(element);
     	}
 
