@@ -11,8 +11,6 @@
 
 package org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher;
 
-import java.lang.ref.WeakReference;
-
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -31,15 +29,14 @@ import org.eclipse.ui.IEditorPart;
 public class PatternMatcherRootContentKey {
 
     private IEditorPart editorPart;
-    private WeakReference<Notifier> notifierReference;
-    private WeakReference<AdvancedIncQueryEngine> engineReference;
-    private WeakReference<RuleEngine> ruleEngineReference;
+    private Notifier notifier;
+    private AdvancedIncQueryEngine engine = null;
+    private RuleEngine ruleEngine = null;
 
     public PatternMatcherRootContentKey(IEditorPart editor, Notifier notifier) {
         super();
         this.editorPart = editor;
-        this.engineReference = new WeakReference<AdvancedIncQueryEngine>(null);
-        this.notifierReference = new WeakReference<Notifier>(notifier);
+        this.notifier= notifier;
     }
 
     public IEditorPart getEditorPart() {
@@ -47,7 +44,7 @@ public class PatternMatcherRootContentKey {
     }
 
     public Notifier getNotifier() {
-        return notifierReference.get();
+        return notifier;
     }
 
     @Override
@@ -108,19 +105,19 @@ public class PatternMatcherRootContentKey {
     }
 
     public AdvancedIncQueryEngine getEngine() {
-        return engineReference.get();
+        return engine;
     }
 
     public void setEngine(AdvancedIncQueryEngine engine) {
-        this.engineReference = new WeakReference<AdvancedIncQueryEngine>(engine);
+        this.engine = engine;
     }
     
     public RuleEngine getRuleEngine() {
-        return ruleEngineReference.get();
+        return ruleEngine;
     }
     
     public void setRuleEngine(RuleEngine ruleEngine) {
-        ruleEngineReference = new WeakReference<RuleEngine>(ruleEngine);
+        this.ruleEngine = ruleEngine;
     }
 
 }

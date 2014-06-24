@@ -44,7 +44,6 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -262,7 +261,7 @@ public class DisplayUtil {
             if (p.getFullyQualifiedName().matches(patternName)) {
                 pattern = p;
 
-                PAnnotation annotation = p.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
+                PAnnotation annotation = p.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
                 if (annotation == null) {
                     // Try with deprecated PatternUI annotation
                     annotation = p.getFirstAnnotationByName(PATTERNUI_ANNOTATION);

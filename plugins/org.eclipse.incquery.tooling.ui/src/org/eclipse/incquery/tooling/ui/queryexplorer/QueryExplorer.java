@@ -88,7 +88,10 @@ public class QueryExplorer extends ViewPart {
     private static final String PACKAGE_PRESENTATION_STATE = "packagePresentationState";
     private static final String PATTERNS_VIEWER_FLYOUT_STATE = "patternsViewerFlyoutState";
     private static final String DETAILS_VIEW_FLYOUT_STATE = "detailsViewFlyoutState";
-
+    
+    public static final String QUERY_EXPLORER_ANNOTATION = "QueryExplorer";
+    public static final String QUERY_EXPLORER_CHECKED_PARAMETER = "checked";
+    
     public static final String ID = "org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer";
 
     private final Map<PatternMatcherRootContentKey, IModelConnector> modelConnectorMap;
@@ -375,7 +378,8 @@ public class QueryExplorer extends ViewPart {
                 QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
             }
 
-            patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
+            PatternComponent component = patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
+            component.setCheckedState(!checkedFalse);
         }
 
         patternsTreeViewer.refresh();

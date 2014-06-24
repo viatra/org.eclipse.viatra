@@ -28,12 +28,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.runtime.IExtensions;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 
@@ -344,30 +344,6 @@ public class QueryExplorerPatternRegistry {
         }
         return null;
     }
-
-    /**
-     * returns True if the "@QueryExplorer" annotation with the checked=true parameter is present on a pattern
-     * @param query
-     * @return
-     */
-    /*
-    public static Boolean getValueOfQueryExplorerCheckedAnnotation(IQuerySpecification<?> query) {
-        PAnnotation annotation = query.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
-        if (annotation == null) {
-            return null;
-        } else {
-            Object checkedValue = annotation.getFirstValue("checked");
-//            Object messageValue = annotation.getFirstValue("message");
-            return (
-            		(checkedValue != null && (Boolean)checkedValue) 
-  //          		||
-  //          		(checkedValue == null &&  messageValue != null) ||
-  //          		messageValue != null ||
-  //          		(annotation.getAllValues().size() == 0)
-            		);
-        }
-    }
-    */
     
     /**
      * Returns true if the user declared "@QueryExplorer(checked=false)" on the pattern.
@@ -375,9 +351,9 @@ public class QueryExplorerPatternRegistry {
      * @return
      */
     public static boolean isQueryExplorerCheckedFalse(IQuerySpecification<?> query) {
-    	PAnnotation annotation = query.getFirstAnnotationByName(IExtensions.QUERY_EXPLORER_ANNOTATION);
+    	PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
         if (annotation != null) {
-        	 Object checkedValue = annotation.getFirstValue("checked");
+        	 Object checkedValue = annotation.getFirstValue(QueryExplorer.QUERY_EXPLORER_CHECKED_PARAMETER);
         	 if (checkedValue!=null) {
         		 if (!(Boolean)checkedValue) return true;
         	 }
