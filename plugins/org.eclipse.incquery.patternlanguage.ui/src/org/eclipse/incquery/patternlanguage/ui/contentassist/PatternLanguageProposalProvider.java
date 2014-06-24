@@ -27,8 +27,12 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.xbase.XbasePackage;
+import org.eclipse.xtext.xbase.typesystem.IExpressionScope;
+import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
@@ -108,6 +112,11 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
     @Override
     protected void createLocalVariableAndImplicitProposals(EObject context, Anchor anchor,
             ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
+        String prefix = contentAssistContext.getPrefix();
+        if (prefix.length() > 0 && !Character.isJavaIdentifierStart(prefix.charAt(0))) {
+            return;
+        }
+        
         final PatternBody body = EcoreUtil2.getContainerOfType(context, PatternBody.class);
         for (Variable v : body.getVariables()) {
             if (!v.getName().startsWith("_")) {
@@ -115,7 +124,9 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
                 acceptor.accept(proposal);
             }
         }
-        super.createLocalVariableAndImplicitProposals(context, anchor, contentAssistContext, acceptor);
+        
+        Function<IEObjectDescription, ICompletionProposal> proposalFactory = getProposalFactory(getFeatureCallRuleName(), contentAssistContext);
+        proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);        
     }
     
     
