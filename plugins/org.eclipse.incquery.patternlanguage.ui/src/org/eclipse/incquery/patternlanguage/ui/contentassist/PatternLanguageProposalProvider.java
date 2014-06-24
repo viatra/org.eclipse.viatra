@@ -13,9 +13,12 @@ package org.eclipse.incquery.patternlanguage.ui.contentassist;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -24,6 +27,7 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
@@ -100,4 +104,19 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
                 getProposalFactory(ruleCall.getRule().getName(), context));
 
     }
+
+    @Override
+    protected void createLocalVariableAndImplicitProposals(EObject context, Anchor anchor,
+            ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
+        final PatternBody body = EcoreUtil2.getContainerOfType(context, PatternBody.class);
+        for (Variable v : body.getVariables()) {
+            if (!v.getName().startsWith("_")) {
+                ICompletionProposal proposal = createCompletionProposal(v.getName(), contentAssistContext);
+                acceptor.accept(proposal);
+            }
+        }
+        super.createLocalVariableAndImplicitProposals(context, anchor, contentAssistContext, acceptor);
+    }
+    
+    
 }
