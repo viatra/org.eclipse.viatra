@@ -40,7 +40,6 @@ class PatternMatchProcessorClassInferrer {
   			abstract = true
   			superTypes += pattern.newTypeRef(typeof(IMatchProcessor), cloneWithProxies(matchClassRef))
   		]
-  		processorClass.inferProcessorClassMethods(pattern, matchClassRef)
   		return processorClass
   	}
 
@@ -48,7 +47,7 @@ class PatternMatchProcessorClassInferrer {
    	 * Infers methods for Processor class based on the input 'pattern'.
    	 */
   	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmTypeReference matchClassRef) {
-  		processorClass.members += pattern.toMethod("process", null) [
+  		processorClass.members += processorClass.toMethod("process", null) [
   			returnType = pattern.newTypeRef(Void::TYPE)
 			documentation = pattern.javadocProcessMethod.toString
 			abstract = true
@@ -56,10 +55,10 @@ class PatternMatchProcessorClassInferrer {
 				it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
 			}
 		]
-		processorClass.members += pattern.toMethod("process", null) [
+		processorClass.members += processorClass.toMethod("process", null) [
 			returnType = pattern.newTypeRef(Void::TYPE)
-			annotations += pattern.toAnnotation(typeof (Override))
-			parameters += pattern.toParameter("match", cloneWithProxies(matchClassRef))
+			annotations += processorClass.toAnnotation(typeof (Override))
+			parameters += processorClass.toParameter("match", cloneWithProxies(matchClassRef))
 			body = [it.append('''
 				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
 			''')]

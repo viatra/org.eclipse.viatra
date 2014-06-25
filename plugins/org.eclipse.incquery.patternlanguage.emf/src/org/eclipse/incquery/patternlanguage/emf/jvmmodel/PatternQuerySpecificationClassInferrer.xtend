@@ -122,7 +122,7 @@ class PatternQuerySpecificationClassInferrer {
    	 */
   	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, boolean isPublic, SpecificationBuilder builder) {
   		val context = new EMFPatternMatcherContext(logger)
-   		querySpecificationClass.members += pattern.toMethod("instance", types.createTypeRef(querySpecificationClass)) [
+   		querySpecificationClass.members += querySpecificationClass.toMethod("instance", types.createTypeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
@@ -132,10 +132,10 @@ class PatternQuerySpecificationClassInferrer {
 			''')]
 		]
 
-  		querySpecificationClass.members += pattern.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
+  		querySpecificationClass.members += querySpecificationClass.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
 			visibility = JvmVisibility::PROTECTED
-			annotations += pattern.toAnnotation(typeof (Override))
-			parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+			annotations += querySpecificationClass.toAnnotation(typeof (Override))
+			parameters += querySpecificationClass.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			body = if (isPublic) [
 				append('''return «pattern.matcherClassName».on(engine);''')
@@ -145,17 +145,17 @@ class PatternQuerySpecificationClassInferrer {
 				append('''();''')
 			]
 		]
-		querySpecificationClass.members += pattern.toMethod("getFullyQualifiedName", pattern.newTypeRef(typeof (String))) [
+		querySpecificationClass.members += querySpecificationClass.toMethod("getFullyQualifiedName", pattern.newTypeRef(typeof (String))) [
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof (Override))
+			annotations += querySpecificationClass.toAnnotation(typeof (Override))
 			body = [append('''
 				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
 			''')]
 		]
-		querySpecificationClass.members += pattern.toMethod("getParameterNames",
+		querySpecificationClass.members += querySpecificationClass.toMethod("getParameterNames",
 			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(String)))) [
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof(Override))
+			annotations += querySpecificationClass.toAnnotation(typeof(Override))
 			body = [
 				append('''return ''')
 				referClass(pattern, typeof(Arrays))
@@ -163,10 +163,10 @@ class PatternQuerySpecificationClassInferrer {
 					'''.asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);''')
 			]
 		]
-		querySpecificationClass.members += pattern.toMethod("getParameters",
+		querySpecificationClass.members += querySpecificationClass.toMethod("getParameters",
 			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof(Override))
+			annotations += querySpecificationClass.toAnnotation(typeof(Override))
 			body = [
 				append('''return ''')
 				referClass(pattern, typeof(Arrays))
@@ -174,11 +174,11 @@ class PatternQuerySpecificationClassInferrer {
 					'''.asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);''')
 			]
 		]
-		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
+		querySpecificationClass.members += querySpecificationClass.toMethod("newEmptyMatch",
 			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
 		[
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof(Override))
+			annotations += querySpecificationClass.toAnnotation(typeof(Override))
 			body = [
 				if (isPublic) {
 					append('''return «pattern.matchClassName».newEmptyMatch();''')
@@ -189,12 +189,12 @@ class PatternQuerySpecificationClassInferrer {
 				}
 			]
 		]
-		querySpecificationClass.members += pattern.toMethod("newMatch",
+		querySpecificationClass.members += querySpecificationClass.toMethod("newMatch",
 			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
 		[
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof(Override))
-			parameters += pattern.toParameter("parameters", pattern.newTypeRef(Object).addArrayTypeDimension)
+			annotations += querySpecificationClass.toAnnotation(typeof(Override))
+			parameters += querySpecificationClass.toParameter("parameters", pattern.newTypeRef(Object).addArrayTypeDimension)
 			varArgs = true
 			body = [
 				if (isPublic) {
@@ -206,10 +206,10 @@ class PatternQuerySpecificationClassInferrer {
 				}
 			]
 		]
-		querySpecificationClass.members += pattern.toMethod("doGetContainedBodies",
+		querySpecificationClass.members += querySpecificationClass.toMethod("doGetContainedBodies",
 			pattern.newTypeRef(typeof(Set), pattern.newTypeRef(typeof(PBody)))) [
 			visibility = JvmVisibility::PUBLIC
-			annotations += pattern.toAnnotation(typeof(Override))
+			annotations += querySpecificationClass.toAnnotation(typeof(Override))
 			exceptions += pattern.newTypeRef(typeof(IncQueryException))
 			body = [ appender |
 				var IQuerySpecification<?> genericSpecification
@@ -298,15 +298,15 @@ class PatternQuerySpecificationClassInferrer {
    	 * Infers inner class for QuerySpecification class based on the input 'pattern'.
    	 */
   	def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic) {
-   		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
+   		querySpecificationClass.members += querySpecificationClass.toClass(pattern.querySpecificationHolderClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
-			members += pattern.toField("INSTANCE", types.createTypeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
+			members += querySpecificationClass.toField("INSTANCE", types.createTypeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
 				final = true
 				static = true
 				initializer = [append('''make()''')];
 			]
-			it.members += pattern.toMethod("make", types.createTypeRef(querySpecificationClass)) [
+			it.members += querySpecificationClass.toMethod("make", types.createTypeRef(querySpecificationClass)) [
 				visibility = JvmVisibility::PUBLIC
 				static = true
 				body = [append('''

@@ -45,13 +45,13 @@ class PatternMatcherClassInferrer {
    	 */
    	def inferFields(JvmDeclaredType matchClass, Pattern pattern) {
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += variable.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
+   			matchClass.members += matchClass.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
 	 			static = true
 	 			final = true
    				initializer = [append('''«pattern.parameters.indexOf(variable)»''')]
    			]
    		}
-   		matchClass.members += pattern.toField("LOGGER", pattern.newTypeRef(typeof(Logger))) [
+   		matchClass.members += matchClass.toField("LOGGER", pattern.newTypeRef(typeof(Logger))) [
    			static = true
    			final = true
    			initializer = [
@@ -66,11 +66,11 @@ class PatternMatcherClassInferrer {
    	 * NOTE: queryDefinition() will be inferred later, in EMFPatternLanguageJvmModelInferrer
    	 */
    	def inferStaticMethods(JvmGenericType type, Pattern pattern, JvmGenericType matcherClass) {
-   		matcherClass.members += pattern.toMethod("on", types.createTypeRef(matcherClass)) [
+   		matcherClass.members += matcherClass.toMethod("on", types.createTypeRef(matcherClass)) [
    			static = true
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherStaticOnEngine.toString
-			parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+			parameters += type.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			body = [append('''
 				// check if matcher already exists
@@ -90,12 +90,12 @@ class PatternMatcherClassInferrer {
    	 * Infers constructors for Matcher class based on the input 'pattern'.
    	 */
    	def inferConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
-   		matcherClass.members += pattern.toConstructor [
+   		matcherClass.members += matcherClass.toConstructor [
    			simpleName = pattern.matcherClassName
-			annotations += pattern.toAnnotation(typeof (Deprecated))
+			annotations += matcherClass.toAnnotation(typeof (Deprecated))
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorNotifier.toString
-			parameters += pattern.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
+			parameters += matcherClass.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			body = [
 				append('''this(''')
@@ -104,12 +104,12 @@ class PatternMatcherClassInferrer {
 			]
 		]
 
-		matcherClass.members += pattern.toConstructor [
+		matcherClass.members += matcherClass.toConstructor [
 			simpleName = pattern.matcherClassName
-			annotations += pattern.toAnnotation(typeof (Deprecated))
+			annotations += matcherClass.toAnnotation(typeof (Deprecated))
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorEngine.toString
-			parameters += pattern.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
+			parameters += matcherClass.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			body = [append('''super(engine, querySpecification());''')]
 		]

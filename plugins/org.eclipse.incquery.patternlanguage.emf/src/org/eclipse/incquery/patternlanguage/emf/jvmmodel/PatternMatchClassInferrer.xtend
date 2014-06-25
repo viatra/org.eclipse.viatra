@@ -49,7 +49,7 @@ class PatternMatchClassInferrer {
    		for (Variable variable : pattern.parameters) {
    			matchClass.members += variable.toField(variable.fieldName, variable.calculateType)
    		}
-		matchClass.members += pattern.toField("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
+		matchClass.members += matchClass.toField("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
  			static = true
    			initializer = [append('''makeImmutableList(«FOR variable : pattern.parameters SEPARATOR ', '»"«variable.name»"«ENDFOR»)''')]
    		]
@@ -59,7 +59,7 @@ class PatternMatchClassInferrer {
    	 * Infers constructors for Match class based on the input 'pattern'.
    	 */
    	def inferMatchClassConstructors(JvmDeclaredType matchClass, Pattern pattern) {
-   		matchClass.members += pattern.toConstructor() [
+   		matchClass.members += matchClass.toConstructor() [
    			simpleName = pattern.matchClassName
    			visibility = JvmVisibility::PRIVATE //DEFAULT
    			for (Variable variable : pattern.parameters) {
@@ -78,9 +78,9 @@ class PatternMatchClassInferrer {
    	 * Infers getters for Match class based on the input 'pattern'.
    	 */
    	def inferMatchClassGetters(JvmDeclaredType matchClass, Pattern pattern) {
-		matchClass.members += pattern.toMethod("get", pattern.newTypeRef(typeof (Object))) [
-   			annotations += pattern.toAnnotation(typeof (Override))
-   			parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
+		matchClass.members += matchClass.toMethod("get", pattern.newTypeRef(typeof (Object))) [
+   			annotations += matchClass.toAnnotation(typeof (Override))
+   			parameters += matchClass.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
    			body = [append('''
    				«FOR variable : pattern.parameters»
    				if ("«variable.name»".equals(parameterName)) return this.«variable.fieldName»;
@@ -103,11 +103,11 @@ class PatternMatchClassInferrer {
    	 * Infers setters for Match class based on the input 'pattern'.
    	 */
    	def inferMatchClassSetters(JvmDeclaredType matchClass, Pattern pattern) {
-   		matchClass.members += pattern.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
-   			returnType = pattern.newTypeRef(Boolean::TYPE)
-   			annotations += pattern.toAnnotation(typeof (Override))
-   			parameters += pattern.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
-   			parameters += pattern.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
+   		matchClass.members += matchClass.toMethod("set", pattern.newTypeRef(typeof (boolean))) [
+   			returnType = matchClass.newTypeRef(Boolean::TYPE)
+   			annotations += matchClass.toAnnotation(typeof (Override))
+   			parameters += matchClass.toParameter("parameterName", pattern.newTypeRef(typeof (String)))
+   			parameters += matchClass.toParameter("newValue", pattern.newTypeRef(typeof (Object)))
    			body = [append('''
    				if (!isMutable()) throw new java.lang.UnsupportedOperationException();
    				«FOR variable : pattern.parameters»
@@ -122,9 +122,9 @@ class PatternMatchClassInferrer {
    			''')]
    		]
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += variable.toMethod(variable.setterMethodName, null) [
-   				returnType = pattern.newTypeRef(Void::TYPE)
-   				parameters += pattern.toParameter(variable.parameterName, variable.calculateType)
+   			matchClass.members += matchClass.toMethod(variable.setterMethodName, null) [
+   				returnType = matchClass.newTypeRef(Void::TYPE)
+   				parameters += matchClass.toParameter(variable.parameterName, variable.calculateType)
    				body = [append('''
    					if (!isMutable()) throw new java.lang.UnsupportedOperationException();
    					this.«variable.fieldName» = «variable.parameterName»;
@@ -137,33 +137,33 @@ class PatternMatchClassInferrer {
    	 * Infers methods for Match class based on the input 'pattern'.
    	 */
    	def inferMatchClassMethods(JvmDeclaredType matchClass, Pattern pattern, JvmParameterizedTypeReference querySpecificationClassRef) {
-   		matchClass.members += pattern.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
-   			annotations += pattern.toAnnotation(typeof (Override))
+   		matchClass.members += matchClass.toMethod("patternName", pattern.newTypeRef(typeof(String))) [
+   			annotations += matchClass.toAnnotation(typeof (Override))
    			body = [append('''
    				return "«pattern.fullyQualifiedName»";
    			''')]
    		]
 		// add extra methods like equals, hashcode, toArray, parameterNames
-		matchClass.members += pattern.toMethod("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
-   			annotations += pattern.toAnnotation(typeof (Override))
+		matchClass.members += matchClass.toMethod("parameterNames", pattern.newTypeRef(typeof (List), pattern.newRawTypeRef(typeof (String)))) [
+   			annotations += matchClass.toAnnotation(typeof (Override))
    			body = [append('''
    				return «pattern.matchClassName».parameterNames;
    			''')]
    		]
-   		matchClass.members += pattern.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
-   			annotations += pattern.toAnnotation(typeof (Override))
+   		matchClass.members += matchClass.toMethod("toArray", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension) [
+   			annotations += matchClass.toAnnotation(typeof (Override))
    			body = [append('''
    				return new Object[]{«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR»};
    			''')]
    		]
-   		matchClass.members += pattern.toMethod("toImmutable", typeReference.createTypeRef(matchClass)) [
-   			annotations += pattern.toAnnotation(typeof (Override))
+   		matchClass.members += matchClass.toMethod("toImmutable", typeReference.createTypeRef(matchClass)) [
+   			annotations += matchClass.toAnnotation(typeof (Override))
    			body = [append('''
    				return isMutable() ? newMatch(«FOR variable : pattern.parameters SEPARATOR ', '»«variable.fieldName»«ENDFOR») : this;
    			''')]
    		]
-		matchClass.members += pattern.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
-			annotations += pattern.toAnnotation(typeof (Override))
+		matchClass.members += matchClass.toMethod("prettyPrint", pattern.newTypeRef(typeof (String))) [
+			annotations += matchClass.toAnnotation(typeof (Override))
 			setBody = [
 				if (pattern.parameters.empty)
 					append('''return "[]";''')
@@ -175,8 +175,8 @@ class PatternMatchClassInferrer {
 				return result.toString();
 			''')]
 		]
-		matchClass.members += pattern.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
-			annotations += pattern.toAnnotation(typeof (Override))
+		matchClass.members += matchClass.toMethod("hashCode", pattern.newTypeRef(typeof (int))) [
+			annotations += matchClass.toAnnotation(typeof (Override))
 			body = [append('''
 				final int prime = 31;
 				int result = 1;
@@ -186,9 +186,9 @@ class PatternMatchClassInferrer {
 				return result;
 			''')]
 		]
-		matchClass.members += pattern.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
-			annotations += pattern.toAnnotation(typeof (Override))
-			parameters += pattern.toParameter("obj", pattern.newTypeRef(typeof (Object)))
+		matchClass.members += matchClass.toMethod("equals", pattern.newTypeRef(typeof (boolean))) [
+			annotations += matchClass.toAnnotation(typeof (Override))
+			parameters += matchClass.toParameter("obj", pattern.newTypeRef(typeof (Object)))
 			body = [append('''
 				if (this == obj)
 					return true;
@@ -224,8 +224,8 @@ class PatternMatchClassInferrer {
 				«ENDIF»
 				return true;''')]
 		]
-		matchClass.members += pattern.toMethod("specification", querySpecificationClassRef) [
-			annotations += pattern.toAnnotation(typeof (Override))
+		matchClass.members += matchClass.toMethod("specification", querySpecificationClassRef) [
+			annotations += matchClass.toAnnotation(typeof (Override))
 			body = [
 				append('''
 				try {
@@ -243,24 +243,24 @@ class PatternMatchClassInferrer {
 				}
 			''')]
 		]
-		matchClass.members += pattern.toMethod("newEmptyMatch", typeReference.createTypeRef(matchClass)) [
+		matchClass.members += matchClass.toMethod("newEmptyMatch", typeReference.createTypeRef(matchClass)) [
    			static = true
    			documentation = pattern.javadocNewEmptyMatchMethod.toString
    			body = [append('''
    				return new Mutable(«FOR p : pattern.parameters SEPARATOR ", "»null«ENDFOR»);
    			''')]
    		]
-		matchClass.members += pattern.toMethod("newMutableMatch", typeReference.createTypeRef(matchClass)) [
+		matchClass.members += matchClass.toMethod("newMutableMatch", typeReference.createTypeRef(matchClass)) [
    			static = true
-   			parameters += pattern.parameters.map[toParameter(parameterName, calculateType)]
+   			parameters += pattern.parameters.map[matchClass.toParameter(parameterName, calculateType)]
    			documentation = pattern.javadocNewMutableMatchMethod.toString
    			body = [append('''
    				return new Mutable(«FOR p : pattern.parameters SEPARATOR ", "»«p.parameterName»«ENDFOR»);
    			''')]
    		]
-		matchClass.members += pattern.toMethod("newMatch", typeReference.createTypeRef(matchClass)) [
+		matchClass.members += matchClass.toMethod("newMatch", typeReference.createTypeRef(matchClass)) [
    			static = true
-   			parameters += pattern.parameters.map[toParameter(parameterName, calculateType)]
+   			parameters += pattern.parameters.map[matchClass.toParameter(parameterName, calculateType)]
    			documentation = pattern.javadocNewMatchMethod.toString
    			body = [append('''
    				return new Immutable(«FOR p : pattern.parameters SEPARATOR ", "»«p.parameterName»«ENDFOR»);
@@ -300,13 +300,13 @@ class PatternMatchClassInferrer {
    	 * Infers a single inner class for Match class
    	 */
 	def makeMatchInnerClass(JvmDeclaredType matchClass, Pattern pattern, String innerClassName, boolean isMutable) {
-		pattern.toClass(innerClassName) [
+		matchClass.toClass(innerClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
 			final = true
 			superTypes += typeReference.createTypeRef(matchClass)
 
-			members+= pattern.toConstructor() [
+			members+= matchClass.toConstructor() [
 	   			simpleName = innerClassName
 	   			visibility = JvmVisibility::DEFAULT
 	   			for (Variable variable : pattern.parameters) {
@@ -317,7 +317,7 @@ class PatternMatchClassInferrer {
 	   				super(«FOR variable : pattern.parameters SEPARATOR ", "»«variable.parameterName»«ENDFOR»);
 	   			''')]
 			]
-			members += pattern.toMethod("isMutable", pattern.newTypeRef(typeof (boolean))) [
+			members += matchClass.toMethod("isMutable", pattern.newTypeRef(typeof (boolean))) [
 				visibility = JvmVisibility::PUBLIC
 				annotations += pattern.toAnnotation(typeof (Override))
 				body = [append('''return «isMutable»;''')]

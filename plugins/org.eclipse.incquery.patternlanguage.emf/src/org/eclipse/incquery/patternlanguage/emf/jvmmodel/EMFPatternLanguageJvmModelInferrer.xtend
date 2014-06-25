@@ -156,7 +156,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		acceptor.accept(querySpecificationClass).initializeLater [
 			initializePublicSpecification(pattern, matcherClassRef, matchClassRef, builder)
 		]
-		acceptor.accept(processorClass)
+		acceptor.accept(processorClass).initializeLater[
+			processorClass.inferProcessorClassMethods(pattern, matchClassRef)
+		]
 
 	}
 
