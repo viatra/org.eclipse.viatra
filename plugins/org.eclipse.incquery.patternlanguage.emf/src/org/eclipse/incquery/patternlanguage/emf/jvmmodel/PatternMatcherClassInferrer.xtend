@@ -41,17 +41,17 @@ class PatternMatcherClassInferrer {
 
 
    	/**
-   	 * Infers fields for Match class based on the input 'pattern'.
+   	 * Infers fields for Matcher class based on the input 'pattern'.
    	 */
-   	def inferFields(JvmDeclaredType matchClass, Pattern pattern) {
+   	def inferFields(JvmDeclaredType matcherClass, Pattern pattern) {
    		for (Variable variable : pattern.parameters) {
-   			matchClass.members += matchClass.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
+   			matcherClass.members += matcherClass.toField(variable.positionConstant, pattern.newTypeRef(typeof (int)))[
 	 			static = true
 	 			final = true
    				initializer = [append('''«pattern.parameters.indexOf(variable)»''')]
    			]
    		}
-   		matchClass.members += matchClass.toField("LOGGER", pattern.newTypeRef(typeof(Logger))) [
+   		matcherClass.members += matcherClass.toField("LOGGER", pattern.newTypeRef(typeof(Logger))) [
    			static = true
    			final = true
    			initializer = [

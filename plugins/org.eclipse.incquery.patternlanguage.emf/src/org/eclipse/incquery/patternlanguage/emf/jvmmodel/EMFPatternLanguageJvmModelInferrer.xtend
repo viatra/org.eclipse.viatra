@@ -120,7 +120,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			inferMatchClassGetters(pattern)
 			inferMatchClassSetters(pattern)
 			inferMatchClassMethods(pattern, querySpecificationClassRef)
-			inferCheckBodies(pattern)
 			inferMatchInnerClasses(pattern)
 		]
 

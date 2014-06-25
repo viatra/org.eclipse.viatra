@@ -268,26 +268,6 @@ class PatternMatchClassInferrer {
    		]
   	}
 
-   	/**
-   	 * Infers an equals method based on the 'pattern' parameter.
-   	 */
-   	def equalsMethodBody(Pattern pattern, ITreeAppendable appendable) {
-   	}
-
-	def inferCheckBodies(JvmDeclaredType matchClass, Pattern pattern) {
-//		var i=1;
-//		for (body : pattern.bodies) {
-//			for (variable : body.variables) {
-//				matchClass.members += variable.toField(variable.name, variable.calculateType)
-//			}
-//			for (CheckConstraint constraint : body.constraints.filter(typeof(CheckConstraint))) {
-//				matchClass.members += pattern.toMethod("check" + i, pattern.newTypeRef(typeof(Boolean))) [
-//					it.body = constraint.expression
-//				]
-//			}
-//		}
-	}
-
  	/**
    	 * Infers inner classes for Match class based on the input 'pattern'.
    	 */
