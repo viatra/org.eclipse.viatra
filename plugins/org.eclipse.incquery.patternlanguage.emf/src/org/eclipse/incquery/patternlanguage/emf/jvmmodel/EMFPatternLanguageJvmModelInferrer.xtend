@@ -188,12 +188,12 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	   	try {
 	   		val builder = new SpecificationBuilder
    			val groupClass = model.inferPatternGroupClass
-   			acceptor.accept(groupClass).initializeLater[
-   				initializePatternGroup(model)
-   			]
    			for (pattern : model.patterns){
    				pattern.infer(acceptor, builder, isPrelinkingPhase)
    			}
+   			acceptor.accept(groupClass).initializeLater[
+   				initializePatternGroup(model)
+   			]
 	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
    			model.associatePrimary(groupClass)
    		} catch (IllegalArgumentException e){
