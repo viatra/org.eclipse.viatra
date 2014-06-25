@@ -17,9 +17,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.XImportSectio
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
@@ -94,8 +92,6 @@ final class PatternImporter extends ReplacementTextApplier {
                         }
                     });
             
-            DocumentRewriteSession rewriteSession = null;
-            try{
             String replacementString = getActualReplacementString(proposal);
             proposal.setCursorPosition(replacementString.length());
             ReplaceEdit edit = new ReplaceEdit(proposal.getReplacementOffset(), proposal.getReplacementLength(), replacementString);
@@ -113,11 +109,6 @@ final class PatternImporter extends ReplacementTextApplier {
 
                     }
                 });
-            }
-            } finally {
-                if (rewriteSession!=null) {
-                    ((IDocumentExtension4)xtextDocument).stopRewriteSession(rewriteSession);
-                }
             }
         }
     }

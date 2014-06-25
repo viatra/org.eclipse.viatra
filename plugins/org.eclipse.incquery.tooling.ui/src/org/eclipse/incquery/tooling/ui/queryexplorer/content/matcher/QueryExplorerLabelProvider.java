@@ -107,7 +107,7 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
 				StringBuilder sb = new StringBuilder();
 				sb.append("The following problems have been detected in the query specification: \n");
 				for (PProblem pProblem : pProblems) {
-					sb.append(String.format(" * %s\n", pProblem.getShortMessage()));
+					sb.append(String.format(" * %s%n", pProblem.getShortMessage()));
 				}
 				return sb.toString();
 			}

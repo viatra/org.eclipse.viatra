@@ -212,7 +212,7 @@ public class DisplayUtil {
         	if (exceptionMessage != null)
         		return String.format("%s - %s", patternFqn, exceptionMessage);
         	else
-        		return String.format("%s - See mouseover text for query loading errors", patternFqn, exceptionMessage);
+        		return String.format("%s - See mouseover text for query loading errors", patternFqn);
         } else {
             String matchString;
             switch (matchesSize) {

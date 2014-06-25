@@ -162,8 +162,6 @@ public class PatternSanitizer {
         	if (validatorResult.getStatus().equals(PatternValidationStatus.ERROR)) {        		
         		ok = false;
         		for (Pattern currentPattern : patterns) {
-        			Set<Pattern> indirectErrorsIn = new HashSet<Pattern>();
-        			
         			// if the pattern is in a resource set, we can determine whether it contains the problem
         			final ResourceSet resourceSet = 
         					currentPattern.eResource() == null ? 
