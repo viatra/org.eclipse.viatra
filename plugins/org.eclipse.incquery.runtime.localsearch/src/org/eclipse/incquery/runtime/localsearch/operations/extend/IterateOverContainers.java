@@ -32,7 +32,7 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
     /**
      * A helper iterator for transitively traversing a parent of an object
      */
-    private final class ParentIterator implements Iterator<EObject> {
+    private final static class ParentIterator implements Iterator<EObject> {
         private EObject current;
 
         public ParentIterator(EObject source) {

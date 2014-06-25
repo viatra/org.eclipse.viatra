@@ -22,7 +22,6 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 public class ContainmentCheck extends CheckOperation {
 
     Integer childPosition, containerPosition;
-    EStructuralFeature feature;
     private boolean transitive;
 
     public ContainmentCheck(int childPosition, int containerPosition, boolean transitive) {

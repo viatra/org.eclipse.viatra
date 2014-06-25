@@ -49,7 +49,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         Object targetValue = frame.get(targetPosition);
-        LinkedHashSet<Object> sourcesToEvaluate = Sets.newLinkedHashSet();
+        Set<Object> sourcesToEvaluate = Sets.newLinkedHashSet();
         sourcesToEvaluate.add(frame.get(sourcePosition));
         Set<Object> sourceEvaluated = Sets.newHashSet();
         do {

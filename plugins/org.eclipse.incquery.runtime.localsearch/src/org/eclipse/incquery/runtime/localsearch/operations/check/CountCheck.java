@@ -18,8 +18,6 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 
-import com.google.common.collect.Iterators;
-
 /**
  * Calculates the count of matches for a called matcher
  * 
