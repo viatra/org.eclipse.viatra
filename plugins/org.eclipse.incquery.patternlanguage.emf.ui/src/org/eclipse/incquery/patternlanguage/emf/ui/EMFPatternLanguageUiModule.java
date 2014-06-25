@@ -30,6 +30,7 @@ import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedb
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.incquery.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
+import org.eclipse.incquery.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
 import org.eclipse.incquery.patternlanguage.emf.ui.types.GenModelBasedTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
@@ -47,6 +48,7 @@ import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodel
 import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
@@ -198,5 +200,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     
     public Class<? extends ExtensionGenerator> bindExtensionGenerator() {
         return ExtensionGenerator.class;
+    }
+    
+    @Override
+    public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+        return EMFPatternLanguageTypeProviderFactory.class;
     }
 }
