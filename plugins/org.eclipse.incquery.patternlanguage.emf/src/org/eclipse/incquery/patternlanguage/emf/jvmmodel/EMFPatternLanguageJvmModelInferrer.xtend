@@ -132,7 +132,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		]
 
 		// add querySpecification() field to Matcher class
-		matcherClass.members += pattern.toMethod("querySpecification",
+		matcherClass.members += matcherClass.toMethod("querySpecification",
 			pattern.newTypeRef(typeof(IQuerySpecification), cloneWithProxies(matcherClassRef))) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
