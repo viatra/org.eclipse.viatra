@@ -111,6 +111,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val querySpecificationClassRef = querySpecificationClass.createTypeRef
 		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClassRef)
 
+		acceptor.accept(querySpecificationClass).initializeLater [
+			initializePublicSpecification(pattern, matcherClassRef, matchClassRef, builder)
+		]
+		acceptor.accept(processorClass).initializeLater[
+			processorClass.inferProcessorClassMethods(pattern, matchClassRef)
+		]
+
 		acceptor.accept(matchClass).initializeLater [
 			documentation = pattern.javadocMatchClass.toString
 			abstract = true
@@ -151,13 +158,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		associator.associate(pattern, matcherClass)
 		associator.associate(pattern, querySpecificationClass)
 		associator.associate(pattern, processorClass)
-		acceptor.accept(matcherClass)
-		acceptor.accept(querySpecificationClass).initializeLater [
-			initializePublicSpecification(pattern, matcherClassRef, matchClassRef, builder)
-		]
-		acceptor.accept(processorClass).initializeLater[
-			processorClass.inferProcessorClassMethods(pattern, matchClassRef)
-		]
 
 	}
 
