@@ -10,10 +10,11 @@ Export-Package: library.base,
  library.base.impl,
  library.base.util
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.transaction,
  org.eclipse.incquery.runtime,
- org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.xbase.lib;visibility:=reexport,
  org.eclipse.emf.ecore.xcore.lib;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.log4j

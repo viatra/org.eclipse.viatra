@@ -9,7 +9,7 @@
  *   Tamas Szabo - initial API and implementation
  *   Istvan Rath - minor modifications
  *******************************************************************************/
-@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
+//@Ecore(nsPrefix="library", nsURI="http://eclipse.org/incquery/xcore/library")
 @GenModel(editDirectory="/library.edit/src")
 @GenModel(editorDirectory="/library.editor/src")
 package library

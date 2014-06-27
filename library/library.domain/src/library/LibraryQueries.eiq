@@ -11,8 +11,8 @@
  *******************************************************************************/
 package library
 
-import "http://eclipse.org/incquery/xcore/library"
-//import "library"
+//import "http://eclipse.org/incquery/xcore/library"
+import "library"
 
 // ***** relationships ********
 /*
