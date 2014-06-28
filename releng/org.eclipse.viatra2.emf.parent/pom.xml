@@ -34,7 +34,8 @@
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.4.2</xtend.compiler.version>
 		<incquery.repository.url>http://download.eclipse.org/incquery/updates/integration</incquery.repository.url>
-		<!-- Sonar -->
+		<incquery.compiler.version>0.8.0-SNAPSHOT</incquery.compiler.version>
+    <!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
