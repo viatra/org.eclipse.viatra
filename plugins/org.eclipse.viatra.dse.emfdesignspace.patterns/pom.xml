@@ -50,7 +50,7 @@
           <outputDirectory>src-gen</outputDirectory>
           <metamodels>
             <metamodel>
-              <packageClass>EMFDesignSpace.EMFDesignSpacePackage</packageClass>
+              <packageClass>org.eclipse.viatra.dse.emf.designspace.EMFDesignSpacePackage</packageClass>
               <genmodelUri>../org.eclipse.viatra.dse.emfdesignspace.model/model/emfdesignspace.genmodel</genmodelUri>
             </metamodel>
           </metamodels>
