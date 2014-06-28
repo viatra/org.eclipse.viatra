@@ -201,6 +201,15 @@
 			</modules>
 		</profile>
 	</profiles>
+	<pluginRepositories>
+    <pluginRepository>
+      <id>incquery-snapshots</id>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
+    </pluginRepository>
+  </pluginRepositories>
 	<repositories>
 		<repository>
 			<id>incquery.update</id>
