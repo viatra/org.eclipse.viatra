@@ -19,6 +19,7 @@
     <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.model</module>
     <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.patterns</module>
     <module>../../plugins/org.eclipse.viatra.dse.genetic</module>
+    <module>../../plugins/org.eclipse.viatra.dse.monitor</module>
 		
 		<module>../../releng/org.eclipse.viatra2.emf.target</module>
 	</modules>
