@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra2.emf.runtime.feature"
-      label="VIATRA2 EMF Engine"
+      label="VIATRA EMF Engine"
       version="0.7.0.qualifier"
-      provider-name="Eclipse VIATRA2 Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.incquery.runtime.feature"
       license-feature-version="0.8.0.qualifier">
 
    <description url="http://www.example.com/description">
-      VIATRA2 EMF Support
+      VIATRA EMF Support
    </description>
 
    <copyright url="http://www.example.com/copyright">

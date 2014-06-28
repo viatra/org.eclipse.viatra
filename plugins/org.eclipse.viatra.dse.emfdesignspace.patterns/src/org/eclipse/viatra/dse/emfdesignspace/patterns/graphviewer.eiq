@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.emfdesignspace.patterns
 
-import "org.eclipse.viatra.dse.designspace.impl.emf";
+import "http://eclipse.org/viatra/emf/dse/designspace"
 
 @Item(item = S, label = "$S.id$")
 pattern states(S : State) {

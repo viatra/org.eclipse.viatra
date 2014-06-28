@@ -9,8 +9,8 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated emfdesignspace -->
       <package
-            uri="org.eclipse.viatra.dse.designspace.impl.emf"
-            class="EMFDesignSpace.EMFDesignSpacePackage"
+            uri="http://eclipse.org/viatra/emf/dse/designspace"
+            class="org.eclipse.viatra.dse.emf.designspace.EMFDesignSpacePackage"
             genModel="model/emfdesignspace.genmodel"/>
    </extension>
 

@@ -27,11 +27,11 @@ import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
+import org.eclipse.viatra.dse.emf.designspace.DesignSpace;
+import org.eclipse.viatra.dse.emf.designspace.EMFDesignSpaceFactory;
+import org.eclipse.viatra.dse.emf.designspace.State;
+import org.eclipse.viatra.dse.emf.designspace.Transition;
 
-import EMFDesignSpace.DesignSpace;
-import EMFDesignSpace.EMFDesignSpaceFactory;
-import EMFDesignSpace.State;
-import EMFDesignSpace.Transition;
 
 public class EMFDesignSpace implements IDesignSpace {
 

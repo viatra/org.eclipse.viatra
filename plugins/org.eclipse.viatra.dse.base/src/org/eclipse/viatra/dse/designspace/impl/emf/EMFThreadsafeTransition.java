@@ -14,9 +14,9 @@ import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
+import org.eclipse.viatra.dse.emf.designspace.State;
+import org.eclipse.viatra.dse.emf.designspace.Transition;
 
-import EMFDesignSpace.State;
-import EMFDesignSpace.Transition;
 
 /**
  * The class that provides the implementation for the {@link ITransition} interface in the EMF based

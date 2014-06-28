@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.viatra.dse.emf.designspace.Transition;
 
-import EMFDesignSpace.Transition;
 
 /**
  * Helper class that implements the {@link List} interface to provide a thread safe gateway to the underlying

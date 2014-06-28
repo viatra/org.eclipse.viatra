@@ -14,9 +14,8 @@ import java.util.Collection;
 
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IState;
-
-import EMFDesignSpace.EMFInternalTraversalState;
-import EMFDesignSpace.State;
+import org.eclipse.viatra.dse.emf.designspace.EMFInternalTraversalState;
+import org.eclipse.viatra.dse.emf.designspace.State;
 
 /**
  * The class that provides the implementation for the {@link IState} interface in the EMF based {@link IDesignSpace}

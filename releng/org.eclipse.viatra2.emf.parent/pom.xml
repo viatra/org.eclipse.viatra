@@ -11,6 +11,15 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.emf.runtime</module>
+		<module>../../plugins/org.eclipse.viatra.dse.base</module>
+    <module>../../plugins/org.eclipse.viatra.dse.api</module>
+    <module>../../plugins/org.eclipse.viatra.dse.dependencygraph</module>
+    <module>../../plugins/org.eclipse.viatra.dse.designspace</module>
+    <module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
+    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.model</module>
+    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.patterns</module>
+    <module>../../plugins/org.eclipse.viatra.dse.genetic</module>
+		
 		<module>../../releng/org.eclipse.viatra2.emf.target</module>
 	</modules>
 	<properties>
@@ -156,12 +165,12 @@
 	<distributionManagement>
 		<repository>
 			<id>repo.eclipse.org</id>
-			<name>VIATRA2 Project Repository - Releases</name>
+			<name>VIATRA Project Repository - Releases</name>
 			<url>https://repo.eclipse.org/content/repositories/viatra2-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>repo.eclipse.org</id>
-			<name>VIATRA2 Project Repository - Snapshots</name>
+			<name>VIATRA Project Repository - Snapshots</name>
 			<url>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
@@ -175,6 +184,7 @@
 			</activation>
 			<modules>
 				<module>../../features/org.eclipse.viatra2.emf.runtime.feature</module>
+        <module>../../features/org.eclipse.viatra.dse.feature</module>
 				<module>../../releng/org.eclipse.viatra2.emf.update</module>
 			</modules>
 		</profile>
