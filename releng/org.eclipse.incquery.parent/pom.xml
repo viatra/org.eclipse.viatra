@@ -277,6 +277,11 @@
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 				<module>../../releng/org.eclipse.incquery.update</module>
 				<module>../../releng/org.eclipse.incquery.update.extras</module>
+				<module>../../plugins/org.eclipse.incquery.xcore.model</module>
+				<module>../../plugins/org.eclipse.incquery.xcore</module>
+				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
+				<module>../../plugins/org.eclipse.incquery.xcore.ui</module>
+				<module>../../features/org.eclipse.incquery.xcore.feature</module>
 			</modules>
 		</profile>
 		<profile>
@@ -344,45 +349,6 @@
 								<phase>verify</phase>
 							</execution>
 						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>xcore</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>xcore</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<modules>
-				<module>../../plugins/org.eclipse.incquery.xcore.model</module>
-				<module>../../plugins/org.eclipse.incquery.xcore</module>
-				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
-				<module>../../plugins/org.eclipse.incquery.xcore.ui</module>
-				<module>../../features/org.eclipse.incquery.xcore.feature</module>
-				<module>../../releng/org.eclipse.incquery.update.xcore</module>
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<resolver>p2</resolver>
-							<target>
-								<artifact>
-									<groupId>org.eclipse.incquery</groupId>
-									<artifactId>org.eclipse.incquery.target</artifactId>
-									<version>${project.version}</version>
-									<classifier>xtext25</classifier>
-								</artifact>
-							</target>
-							<ignoreTychoRepositories>true</ignoreTychoRepositories>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
