@@ -55,61 +55,74 @@ final class PatternImporter extends ReplacementTextApplier {
     }
 
     @Override
-    public void apply(final IDocument document, final ConfigurableCompletionProposal proposal) throws BadLocationException {
+    public void apply(final IDocument document, final ConfigurableCompletionProposal proposal)
+            throws BadLocationException {
         if (document instanceof IXtextDocument) {
             IXtextDocument xtextDocument = (IXtextDocument) document;
             if (targetPattern == null || Strings.isNullOrEmpty(targetPattern.getName()))
                 return;
-            importStatus = ((IXtextDocument) document)
-                    .readOnly(new IUnitOfWork<ImportState, XtextResource>() {
+            importStatus = ((IXtextDocument) document).readOnly(new IUnitOfWork<ImportState, XtextResource>() {
 
-                        @Override
-                        public ImportState exec(XtextResource state) throws Exception {
-                            final PatternModel model = (PatternModel) Iterators.find(state.getAllContents(), Predicates.instanceOf(PatternModel.class));
-                            if (targetPackage.equals(model.getPackageName())) {
-                                return ImportState.SAMEPACKAGE;
-                            }
-                            final XImportSection importSection = model.getImportPackages();
-                            PatternImport relatedImport = Iterables.find(importSection.getPatternImport(),
-                                    new Predicate<PatternImport>() {
+                @Override
+                public ImportState exec(XtextResource state) throws Exception {
+                    final PatternModel model = (PatternModel) Iterators.find(state.getAllContents(),
+                            Predicates.instanceOf(PatternModel.class));
+                    if (targetPackage.equals(model.getPackageName())) {
+                        return ImportState.SAMEPACKAGE;
+                    }
+                    final XImportSection importSection = model.getImportPackages();
+                    PatternImport relatedImport = Iterables.find(importSection.getPatternImport(),
+                            new Predicate<PatternImport>() {
 
-                                        @Override
-                                        public boolean apply(PatternImport decl) {
-                                            return targetPattern.equals(decl.getPattern())
-                                                    || targetPattern.getName().equals(decl.getPattern().getName());
-                                        }
-                                    }, null);
-                            if (relatedImport == null) {
+                                @Override
+                                public boolean apply(PatternImport decl) {
+                                    return targetPattern.equals(decl.getPattern())
+                                            || targetPattern.getName().equals(decl.getPattern().getName());
+                                }
+                            }, null);
+                    if (relatedImport == null) {
 
-                                return ImportState.NONE;
-                            }
-                            // Checking whether found pattern definition equals to different pattern
-                            if (targetPattern.equals(relatedImport.getPattern())) {
-                                return ImportState.FOUND;
-                            } else {
-                                return ImportState.CONFLICTING;
-                            }
-                        }
-                    });
-            
-            String replacementString = getActualReplacementString(proposal);
-            proposal.setCursorPosition(replacementString.length());
-            ReplaceEdit edit = new ReplaceEdit(proposal.getReplacementOffset(), proposal.getReplacementLength(), replacementString);
+                        return ImportState.NONE;
+                    }
+                    // Checking whether found pattern definition equals to different pattern
+                    if (targetPattern.equals(relatedImport.getPattern())) {
+                        return ImportState.FOUND;
+                    } else {
+                        return ImportState.CONFLICTING;
+                    }
+                }
+            });
+
+            String replacementString = getActualReplacementString(proposal) + "();";
+            ReplaceEdit edit = new ReplaceEdit(proposal.getReplacementOffset(), proposal.getReplacementLength(),
+                    replacementString);
             edit.apply(document);
+            //+2 is used to put the cursor inside the parentheses
+            int cursorOffset = getActualReplacementString(proposal).length() + 2;
             if (importStatus == ImportState.NONE) {
                 xtextDocument.modify(new Void<XtextResource>() {
 
                     @Override
                     public void process(XtextResource state) throws Exception {
-                        final XImportSection importSection = (XImportSection) Iterators.find(state.getAllContents(),
+                        XImportSection importSection = (XImportSection) Iterators.find(state.getAllContents(),
                                 Predicates.instanceOf(XImportSection.class), null);
+                        if (importSection.getImportDeclarations().size() + importSection.getPackageImport().size()
+                                + importSection.getPatternImport().size() == 0) {
+                            //Empty import sections need to be replaced to generate white space after the package declaration
+                            XImportSection newSection = EMFPatternLanguageFactory.eINSTANCE.createXImportSection();
+                            ((PatternModel) importSection.eContainer()).setImportPackages(newSection);
+                            importSection = newSection;
+                        }
                         PatternImport newImport = EMFPatternLanguageFactory.eINSTANCE.createPatternImport();
                         newImport.setPattern(targetPattern);
                         importSection.getPatternImport().add(newImport);
 
                     }
                 });
+                //Two new lines + "import " + pattern fqn
+                cursorOffset += 2 + 7 + CorePatternLanguageHelper.getFullyQualifiedName(targetPattern).length();
             }
+            proposal.setCursorPosition(cursorOffset);
         }
     }
 
