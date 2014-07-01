@@ -131,7 +131,7 @@ class PatternGroupClassInferrer {
 		groupClass.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
-			parameters += model.toParameter("engine", model.newTypeRef(typeof (IncQueryEngine)))
+			parameters += matcherClass.toParameter("engine", model.newTypeRef(typeof (IncQueryEngine)))
 			body = [
 				append('''return ''')
 				serialize(matcherClass.createTypeRef, model)
