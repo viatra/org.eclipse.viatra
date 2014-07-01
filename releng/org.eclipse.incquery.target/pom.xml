@@ -31,11 +31,6 @@
 									<type>target</type>
 									<classifier>default</classifier>
 								</artifact>
-								<artifact>
-									<file>xtext25.target</file>
-									<type>target</type>
-									<classifier>xtext25</classifier>
-								</artifact>
 							</artifacts>
 						</configuration>
 					</execution>
