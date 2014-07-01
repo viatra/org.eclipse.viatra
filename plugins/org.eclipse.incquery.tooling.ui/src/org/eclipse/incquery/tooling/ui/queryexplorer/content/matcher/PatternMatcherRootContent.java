@@ -148,7 +148,8 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             matcher.dispose();
             this.children.removeChild(matcher);
             // this call makes sure that the children observable list is disposed even if lazy propagation is used
-            if (!matcher.getChildren().isDisposed()) matcher.getChildren().dispose();
+            IObservableList observableList = matcher.getChildren();
+            if (observableList != null && !observableList.isDisposed()) observableList.dispose();
             this.mapping.remove(patternFqn);
         }
     }
