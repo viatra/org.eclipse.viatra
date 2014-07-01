@@ -18,11 +18,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -64,6 +66,12 @@ import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.resource.IContainer;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
@@ -75,6 +83,7 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -100,7 +109,7 @@ import com.google.inject.Provider;
 public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
 
     public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
-    public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern ";
+    public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern %s (the shadowing pattern is in %s)";
     public static final String UNKNOWN_ANNOTATION_ATTRIBUTE = "Undefined annotation attribute ";
     public static final String MISSING_ANNOTATION_ATTRIBUTE = "Required attribute missing ";
     public static final String ANNOTATION_PARAMETER_TYPE_ERROR = "Invalid parameter type %s. Expected %s";
@@ -126,6 +135,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Inject
     private IResourceScopeCache cache;
+    @Inject
+    private LiveShadowedResourceDescriptions resourceDescriptions;
+    @Inject
+    private IQualifiedNameProvider nameProvider;
+    @Inject
+    private IContainer.Manager containerManager;
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -228,24 +243,40 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check
     public void checkPatterns(PatternModel model) {
-        if (model.getPatterns() != null && !model.getPatterns().isEmpty()) {
+        resourceDescriptions.setContext(model);
+        if (model.getPatterns() != null) {
             // TODO: more precise calculation is needed for duplicate patterns
             // (number and type of pattern parameters)
-            for (int i = 0; i < model.getPatterns().size(); ++i) {
-                Pattern leftPattern = model.getPatterns().get(i);
-                String leftPatternName = leftPattern.getName();
-                for (int j = i + 1; j < model.getPatterns().size(); ++j) {
-                    Pattern rightPattern = model.getPatterns().get(j);
-                    String rightPatternName = rightPattern.getName();
-                    if (leftPatternName.equalsIgnoreCase(rightPatternName)) {
-                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + leftPatternName, leftPattern,
-                                PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
-                        error(DUPLICATE_PATTERN_DEFINITION_MESSAGE + rightPatternName, rightPattern,
-                                PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+            for (Pattern pattern : model.getPatterns()) {
+                QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+                final Iterable<IEObjectDescription> shadowingPatternDescriptions = resourceDescriptions.getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
+                for (IEObjectDescription shadowingPatternDescription : shadowingPatternDescriptions) {
+                    EObject shadowingPattern = shadowingPatternDescription.getEObjectOrProxy();
+                    if (shadowingPattern != pattern) {
+                        URI resourceUri = pattern.eResource().getURI();
+                        URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); // not using shadowingPattern because it might be proxy
+                        IResourceDescription resourceDescription = resourceDescriptions.getResourceDescription(resourceUri);
+                        IResourceDescription otherResourceDescription = resourceDescriptions.getResourceDescription(otherResourceUri);
+                        List<IContainer> visible = containerManager.getVisibleContainers(resourceDescription, resourceDescriptions);
+                        List<IContainer> visibleFromOther = containerManager.getVisibleContainers(otherResourceDescription, resourceDescriptions);
+                        if (Iterables.any(visible, contains(otherResourceDescription)) || Iterables.any(visibleFromOther, contains(resourceDescription))) {
+                            String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true), otherResourceUri.toFileString());
+                            error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName, otherResourcePath), pattern,
+                                    PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private static Predicate<IContainer> contains(final IResourceDescription resourceDescription) {
+        return new Predicate<IContainer>() {
+            @Override
+            public boolean apply(IContainer container) {
+                return Iterables.contains(container.getResourceDescriptions(), resourceDescription);
+            }
+        };
     }
 
     @Check
