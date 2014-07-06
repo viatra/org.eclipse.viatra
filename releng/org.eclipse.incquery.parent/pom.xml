@@ -237,7 +237,6 @@
 				<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
-				<module>../../plugins/org.eclipse.incquery.tooling.generator.sampleui</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
