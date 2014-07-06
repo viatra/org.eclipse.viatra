@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Viewers - Zest support (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.viewers.runtime.zest
-Bundle-Version: 0.8.0.qualifier
+Bundle-Version: 0.9.0.qualifier
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

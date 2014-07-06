@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Zest Support for Viewers Tooling
 Bundle-SymbolicName: org.eclipse.incquery.viewers.tooling.ui.zest;singleton:=true
-Bundle-Version: 0.8.0.qualifier
+Bundle-Version: 0.9.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Eclipse EMF-IncQuery
 Require-Bundle: org.eclipse.core.runtime,
