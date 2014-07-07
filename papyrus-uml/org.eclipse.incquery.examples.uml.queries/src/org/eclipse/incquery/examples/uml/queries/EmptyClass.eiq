@@ -57,3 +57,10 @@ pattern emptyClass(cl : Class) {
 pattern nonEmptyClass(cl : Class) {
 	neg find emptyClass(cl);
 }
+
+// flattener test queries
+pattern hasPropertyOrOperation(cl) {
+	find hasOperation(cl,_);
+} or {
+	find hasProperty(cl,_);
+}
