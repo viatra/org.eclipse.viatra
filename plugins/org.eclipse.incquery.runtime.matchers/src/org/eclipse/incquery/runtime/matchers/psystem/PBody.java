@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
@@ -47,6 +48,7 @@ public class PBody {
     private Map<Object, PVariable> variablesByName;
     private Set<PConstraint> constraints;
     private int nextVirtualNodeID;
+    private PDisjunction containerDisjunction;
 
     public PBody(PQuery query) {
         super();
@@ -227,4 +229,25 @@ public class PBody {
             Preconditions.checkState(status.equals(PQueryStatus.UNINITIALIZED));
         }
     }
+
+    /**
+     * Returns the disjunction the body is contained with. This disjunction may either be the
+     * {@link PQuery#getDisjunctBodies() canonical disjunction of the corresponding query} or something equivalent.
+     * 
+     * @return the container disjunction of the body. Can be null if body is not in a disjunction yet.
+     */
+    public PDisjunction getContainerDisjunction() {
+        return containerDisjunction;
+    }
+
+    /**
+     * @param containerDisjunction the containerDisjunction to set
+     */
+    public void setContainerDisjunction(PDisjunction containerDisjunction) {
+        Preconditions.checkArgument(query.equals(containerDisjunction.getQuery()), "Disjunction of pattern %s incompatible with body %s", containerDisjunction.getQuery().getFullyQualifiedName(), query.getFullyQualifiedName());
+        Preconditions.checkState(this.containerDisjunction == null, "Disjunction is already set.");
+        this.containerDisjunction = containerDisjunction;
+    }
+    
+    
 }

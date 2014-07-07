@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -36,7 +37,12 @@ public class PDisjunction {
     public PDisjunction(PQuery query, Set<PBody> bodies) {
         super();
         this.query = query;
-        this.bodies = ImmutableSet.copyOf(bodies);
+        final Builder<PBody> builder = ImmutableSet.builder();
+        for (PBody body : bodies) {
+            body.setContainerDisjunction(this);
+            builder.add(body);
+        }
+        this.bodies = builder.build();
     }
 
     /**
