@@ -74,8 +74,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         Set<PBody> flattenedBodies = Sets.<PBody>newHashSet();
         for (PBody pBody : bodies) {
             // OR connection between the bodies
-            PDisjunction flattenedDisjunction = doFlatten(pBody);
-            flattenedBodies.addAll(flattenedDisjunction.getBodies());
+            flattenedBodies.addAll(doFlatten(pBody));
         }
         return new PDisjunction(pQuery, flattenedBodies);
     }
@@ -89,11 +88,10 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return the flattened equivalent of the given pBody
      * @throws Exception
      */
-    private PDisjunction doFlatten(PBody pBody) throws Exception {
-
+    private Set<PBody> doFlatten(PBody pBody) throws Exception {
 
         Set<PConstraint> constraints = pBody.getConstraints();
-        
+
         // If the received pBody should not be flattened, return it alone.
         if (!isFlatteningNeeded(constraints)) {
             return prepareFlatPBody(pBody);
@@ -128,7 +126,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param flattenedCalls 
      * @return
      */
-    private PDisjunction createFlatPDisjunction(PBody pBody, List<PDisjunction> flattenedDisjunctions, List<PositivePatternCall> flattenedCalls) {
+    private Set<PBody> createFlatPDisjunction(PBody pBody, List<PDisjunction> flattenedDisjunctions, List<PositivePatternCall> flattenedCalls) {
         PQuery pQuery = pBody.getPattern();
         
         // The members of this set are sets containing bodies in disjunction
@@ -154,15 +152,15 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         }
         
         // Create a new (flattened) PDisjunction referring to the corresponding query and return it
-        return new PDisjunction(pBody.getPattern(),conjunctedBodies);
+        return conjunctedBodies;
     }
 
-    private PDisjunction prepareFlatPBody(PBody pBody) {
+    private Set<PBody> prepareFlatPBody(PBody pBody) {
         Set<PBody> bodySet = Sets.newHashSet();
         // Copy here with hierarchical variable renaming
         FlattenerCopier flattenerCopier = copyBody(pBody, new HierarchicalName());
         bodySet.add(flattenerCopier.getCopiedBody());
-        return new PDisjunction(pBody.getPattern(), bodySet);
+        return bodySet;
     }
 
     private boolean isFlatteningNeeded(Set<PConstraint> constraints) {
@@ -200,7 +198,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         }
         return result;
     }
-
+    
     /**
      * Helper function to copy a PBody object. Creates a new copier.
      * 
