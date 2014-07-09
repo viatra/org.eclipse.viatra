@@ -20,7 +20,7 @@ import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 
 /**
  * @author Gabor Bergmann

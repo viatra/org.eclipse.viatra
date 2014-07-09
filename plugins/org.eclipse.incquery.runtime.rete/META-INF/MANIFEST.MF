@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.incquery.runtime.base.itc;bundle-version="0.8.0";vis
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.runtime.rete.boundary,
- org.eclipse.incquery.runtime.rete.collections,
  org.eclipse.incquery.runtime.rete.construction,
  org.eclipse.incquery.runtime.rete.construction.basiclinear,
  org.eclipse.incquery.runtime.rete.construction.plancompiler,

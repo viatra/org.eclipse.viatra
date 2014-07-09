@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.base.itc.alg.incscc.IncSCCAlg;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;

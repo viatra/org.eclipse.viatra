@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Supplier;

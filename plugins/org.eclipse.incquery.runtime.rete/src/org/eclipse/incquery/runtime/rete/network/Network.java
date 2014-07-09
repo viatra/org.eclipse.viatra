@@ -22,8 +22,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.remote.Address;

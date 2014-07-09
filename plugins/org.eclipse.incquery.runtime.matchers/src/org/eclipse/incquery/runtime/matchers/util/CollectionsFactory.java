@@ -8,7 +8,7 @@
  * Contributors:
  *   Istvan Rath - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.rete.collections;
+package org.eclipse.incquery.runtime.matchers.util;
 
 //import gnu.trove.map.hash.THashMap;
 //import gnu.trove.set.hash.THashSet;

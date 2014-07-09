@@ -9,13 +9,11 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.rete.util;
+package org.eclipse.incquery.runtime.matchers.util;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 
 /**
  * @author Gabor Bergmann

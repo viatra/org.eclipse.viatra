@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;

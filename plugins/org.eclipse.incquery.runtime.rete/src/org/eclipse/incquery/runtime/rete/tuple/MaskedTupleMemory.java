@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 
 /**
  * @author Gabor Bergmann

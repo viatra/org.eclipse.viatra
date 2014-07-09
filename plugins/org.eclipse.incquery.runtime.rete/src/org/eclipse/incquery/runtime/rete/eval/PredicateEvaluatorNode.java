@@ -16,8 +16,8 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;

@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
 
 /**

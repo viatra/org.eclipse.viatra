@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.collections.CollectionsFactory;
+import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 
 /**
  * Multiset for tuples. Can contain duplicate occurrences of the same matching.
