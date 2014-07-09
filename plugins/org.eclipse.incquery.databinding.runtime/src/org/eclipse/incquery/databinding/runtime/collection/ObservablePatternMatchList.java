@@ -53,6 +53,10 @@ import com.google.common.collect.Sets;
  * instantiated using either an existing {@link IncQueryMatcher}, or an {@link IQuerySpecification} and either a
  * {@link IncQueryEngine} or {@link ExecutionSchema}.
  * 
+ * <p>
+ * Note that a converter can be used for the list, in which case the type of list items may be different from
+ * the generic type parameter Match.
+ * 
  * @author Abel Hegedus
  * 
  */
@@ -132,6 +136,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     
     @Override
     public Object getElementType() {
+        // XXX we cannot get the class of the generic parameter or the return type of the converter
         if (updater.converter != null) {
             return Object.class;
         }
@@ -164,6 +169,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         getterCalled();
         if (updater.converter != null) {
             final Iterator<Match> iterator = cache.iterator();
+            // XXX the Iterator type is object as we have no idea what item type is used by the converter
             return new Iterator<Object>() {
 
                 @Override

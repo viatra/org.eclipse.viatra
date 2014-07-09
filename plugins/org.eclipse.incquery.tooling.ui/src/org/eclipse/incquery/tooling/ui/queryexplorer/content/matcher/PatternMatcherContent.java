@@ -38,7 +38,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
  * @author Tamas Szabo (itemis AG)
  * 
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked" })
 public class PatternMatcherContent extends CompositeContent<PatternMatcherRootContent, PatternMatchContent> {
 
     private static final String KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION = "The key attribute of OrderBy annotation must look like \"ClassName.AttributeName\"!";
@@ -50,7 +50,10 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private String exceptionMessage;
     private IQuerySpecification<?> specification;
     private IncQueryMatcher<IPatternMatch> matcher;
-    private ObservablePatternMatchList children;
+    /**
+     * XXX Note that the generic type is not the same as the type of the items in the list
+     */
+    private ObservablePatternMatchList<IPatternMatch> children;
     private TransformerFunction transformerFunction;
     private MatchComparator matchComparator;
     private IListChangeListener listChangeListener;
@@ -226,6 +229,10 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 
     @Override
     public Iterator<PatternMatchContent> getChildrenIterator() {
+        /*
+         *  XXX the iterator is Iterator<Object> but its contents are guaranteed to be PatternMatchContent,
+         *  only compiles because of raw types and works due to type erasure on generic collections
+         */
         return children.iterator();
     }
 }
