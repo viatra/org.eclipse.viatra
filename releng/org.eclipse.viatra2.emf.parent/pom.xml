@@ -11,15 +11,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra2.emf.runtime</module>
-		<module>../../plugins/org.eclipse.viatra.dse.base</module>
-    <module>../../plugins/org.eclipse.viatra.dse.api</module>
-    <module>../../plugins/org.eclipse.viatra.dse.dependencygraph</module>
-    <module>../../plugins/org.eclipse.viatra.dse.designspace</module>
-    <module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
-    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.model</module>
-    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.patterns</module>
-    <module>../../plugins/org.eclipse.viatra.dse.genetic</module>
-    <module>../../plugins/org.eclipse.viatra.dse.monitor</module>
 		
 		<module>../../releng/org.eclipse.viatra2.emf.target</module>
 	</modules>
@@ -185,6 +176,16 @@
 				</property>
 			</activation>
 			<modules>
+				<module>../../plugins/org.eclipse.viatra.dse.base</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.api</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.dependencygraph</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.designspace</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.model</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.patterns</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.genetic</module>
+		    <module>../../plugins/org.eclipse.viatra.dse.monitor</module>
+			
 				<module>../../features/org.eclipse.viatra2.emf.runtime.feature</module>
         <module>../../features/org.eclipse.viatra.dse.feature</module>
 				<module>../../releng/org.eclipse.viatra2.emf.update</module>
