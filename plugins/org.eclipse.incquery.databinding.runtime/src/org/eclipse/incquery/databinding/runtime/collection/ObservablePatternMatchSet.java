@@ -81,7 +81,11 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 
                 @Override
                 public void setFilter(EventFilter<Match> filter) {
-                    matchFilter = filter;
+                    if(filter == null) {
+                        matchFilter = specification.createEmptyFilter();
+                    } else {
+                        matchFilter = filter;
+                    }
                 }
 
                 @Override
