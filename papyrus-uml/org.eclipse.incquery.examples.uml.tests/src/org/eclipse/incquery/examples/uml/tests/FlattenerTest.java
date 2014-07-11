@@ -58,7 +58,6 @@ public class FlattenerTest {
     public void compareMatches() throws Exception{
         // Load the UML model
         ResourceSet rs = new ResourceSetImpl();
-        // TODO eliminate URI
         Resource model = rs.getResource(URI.createPlatformPluginURI("org.eclipse.incquery.examples.uml.evm/testmodels/Testmodel.uml", false), true);
         // Create an engine
         IncQueryEngine engine = IncQueryEngine.on(model);
@@ -71,24 +70,18 @@ public class FlattenerTest {
         CompareQueryTester.assertQueriesEquivalent(engine, querySpecification, flattenedQuerySpecification);
     }
 
-    /**
-     * Helper method to print the result of a flattening - no matching is done
-     * 
-     * @throws Exception
-     */
-    public void printFlattenedDisjunction() throws Exception {
-        IQuerySpecification<?> query = querySpecification;
-        PDisjunction flattenedDisjunction = flatten(query);
-        printDisjunction(flattenedDisjunction);
-    }
-
     private PDisjunction flatten(PQuery query) throws Exception {
         PQueryFlattener flattener = new PQueryFlattener();
         PDisjunction flattenedDisjunction = flattener.flatten(query);
         return flattenedDisjunction;
     }
 
-    private void printDisjunction(PDisjunction flattenedDisjunction) {
+    /**
+     * Helper method to print the result of a flattening - no matching is done
+     * 
+     * @throws Exception
+     */
+    public static void printDisjunction(PDisjunction flattenedDisjunction) {
         Set<PBody> bodies = flattenedDisjunction.getBodies();
         int i = 0;
         
