@@ -124,7 +124,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
     @Override
     public void clear() {
         this.cache.clear();
-        this.updater.matchToItem.clear();
+        this.updater.clear();
     }
 
     @Override
@@ -241,7 +241,7 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         protected static final String DATA_BINDING_REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
         protected final Function<Match, ?> converter;
         protected final Comparator<Match> comparator;
-        protected final Map<Match, Object> matchToItem;
+        protected final Map<Match, Object> matchToItem = new HashMap<Match, Object>();
         protected ListDiff nextDiff = null;
         private List<Match> oldCache = null;
         private Set<Match> removed;
@@ -249,10 +249,8 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
         public ListCollectionUpdate(Function<Match, ?> converter, Comparator<Match> comparator) {
             if (converter != null) {
                 this.converter = converter;
-                matchToItem = new HashMap<Match, Object>();
             } else {
                 this.converter = null;
-                matchToItem = null;
             }
             this.comparator = comparator;
         }
@@ -379,6 +377,11 @@ public class ObservablePatternMatchList<Match extends IPatternMatch> extends Abs
             nextDiff = null; 
             oldCache = null;
             removed = null;
+        }
+
+        @Override
+        public void clear() {
+            this.matchToItem.clear();
         }
     }
 }

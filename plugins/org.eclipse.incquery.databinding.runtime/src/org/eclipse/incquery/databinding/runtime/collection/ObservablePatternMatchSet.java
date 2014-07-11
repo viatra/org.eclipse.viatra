@@ -126,7 +126,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     @Override
     public void clear() {
         this.cache.clear();
-        this.updater.matchToItem.clear();
+        this.updater.clear();
     }
 
     /**
@@ -140,15 +140,13 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
         
         private static final String DATA_BINDING_REALM_MUST_NOT_BE_NULL = "Data binding Realm must not be null";
         protected final Function<Match, ?> converter;
-        protected final Map<Match, Object> matchToItem;
+        protected final Map<Match, Object> matchToItem = new HashMap<Match, Object>();
         
         public SetCollectionUpdate(Function<Match, ?> converter) {
             if(converter != null) {
                 this.converter = converter;
-                matchToItem = new HashMap<Match, Object>();
             } else {
                 this.converter = null;
-                matchToItem = null;
             }
         }
         
@@ -195,6 +193,11 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
 				    }
 				}
 			});
+        }
+
+        @Override
+        public void clear() {
+            this.matchToItem.clear();
         }
     
     }

@@ -37,4 +37,9 @@ public interface IObservablePatternMatchCollectionUpdate<Match extends IPatternM
      */
     void removeMatch(Match match);
 
+    /**
+     * Called when the collection is cleared to clean up internal fields.
+     */
+    void clear();
+    
 }
