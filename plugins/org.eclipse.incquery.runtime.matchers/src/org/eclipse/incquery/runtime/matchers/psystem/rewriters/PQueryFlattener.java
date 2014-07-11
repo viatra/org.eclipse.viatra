@@ -157,8 +157,8 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 
     private Set<PBody> prepareFlatPBody(PBody pBody) {
         Set<PBody> bodySet = Sets.newHashSet();
-        // Copy here with hierarchical variable renaming
-        FlattenerCopier flattenerCopier = copyBody(pBody, new HierarchicalName());
+        // the copying of the body here is necessary for only one containing PDisjunction can be assigned to a PBody
+        FlattenerCopier flattenerCopier = copyBody(pBody);
         bodySet.add(flattenerCopier.getCopiedBody());
         return bodySet;
     }
@@ -197,6 +197,16 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             result = Sets.cartesianProduct(setsToCombine);
         }
         return result;
+    }
+    
+    /**
+     * Helper function to copy a PBody object as-is. Creates a new copier.
+     * 
+     * @param pBody
+     * @return
+     */
+    private FlattenerCopier copyBody(PBody pBody) {
+        return copyBody(pBody, new SameName());
     }
     
     /**
