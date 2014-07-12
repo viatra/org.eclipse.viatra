@@ -248,6 +248,7 @@
 				<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.localsearch.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>

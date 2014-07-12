@@ -27,6 +27,16 @@ public class NACOperation extends CheckOperation {
 
     PQuery calledQuery;
     LocalSearchMatcher matcher;
+    
+    /**
+     * This matcher is only available after the onInitialize() is called
+     * 
+     * @return the matcher used for the NAC
+     */
+    public LocalSearchMatcher getCalledMatcher() {
+        return matcher;
+    }
+
     Map<Integer, Integer> frameMapping;
 
     public NACOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping) {

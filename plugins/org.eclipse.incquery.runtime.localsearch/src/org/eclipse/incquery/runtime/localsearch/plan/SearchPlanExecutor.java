@@ -17,20 +17,39 @@ import java.util.List;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
  */
 public class SearchPlanExecutor {
-    private int currentOperation;
 
+    private int currentOperation;
     SearchPlan plan;
     private List<ISearchOperation> operations;
     private ISearchContext context;
+    private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
+
+    public int getCurrentOperation() {
+        return currentOperation;
+    }
+    
+    public SearchPlan getSearchPlan() {
+        return plan;
+    }
+    
+    public void addAdapters(List<ILocalSearchAdapter> adapter) {
+        this.adapters.addAll(adapter);
+    }
+
+    public void removeAdapters(List<ILocalSearchAdapter> adapter) {
+        this.adapters.removeAll(adapter);
+    }
 
     public SearchPlanExecutor(SearchPlan plan, ISearchContext context) {
         Preconditions.checkArgument(context != null, "Context cannot be null");
@@ -40,6 +59,18 @@ public class SearchPlanExecutor {
         this.currentOperation = -1;
 	}
     
+    private void planStarted() {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.planStarted(plan, currentOperation);
+        }
+    }
+
+    private void planFinished() {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.planFinished(plan, currentOperation);
+        }
+    }
+
     private void init(MatchingFrame frame) throws LocalSearchException {
         if (currentOperation == -1) {
             currentOperation++;
@@ -49,9 +80,11 @@ public class SearchPlanExecutor {
         } else {
             throw new LocalSearchException(LocalSearchException.PLAN_EXECUTION_ERROR);
         }
+        operationSelected(frame);
     }
-	
-	/**
+
+
+    /**
      * Calculates the cost of the search plan.
 	 */
 	public double cost() {
@@ -60,20 +93,37 @@ public class SearchPlanExecutor {
 	}
 
     public boolean execute(MatchingFrame frame) throws LocalSearchException {
+        planStarted();
         int upperBound = operations.size() - 1;
         init(frame);
         while (currentOperation >= 0 && currentOperation <= upperBound) {
             if (operations.get(currentOperation).execute(frame, context)) {
+                operationExecuted(frame);
                 currentOperation++;
                 if (currentOperation <= upperBound) {
                     operations.get(currentOperation).onInitialize(frame, context);
                 }
             } else {
+                operationExecuted(frame);
                 operations.get(currentOperation).onBacktrack(frame, context);
                 currentOperation--;
             }
+            operationSelected(frame);
         }
+        planFinished();
         return (currentOperation > upperBound);
+    }
+    
+    private void operationExecuted(MatchingFrame frame) {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.operationExecuted(this, currentOperation, frame);
+        }
+    }
+    
+    private void operationSelected(MatchingFrame frame) {
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.operationSelected(this, currentOperation, frame);
+        }
     }
     
     public void resetPlan() {
@@ -85,4 +135,5 @@ public class SearchPlanExecutor {
             System.out.println("[" + i + "]\t" + operations.get(i).toString());
         }
     }
+
 }
