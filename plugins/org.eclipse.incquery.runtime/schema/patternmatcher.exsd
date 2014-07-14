@@ -19,7 +19,6 @@
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <choice>
-               <element ref="matcher"/>
                <element ref="group"/>
             </choice>
          </sequence>
@@ -44,28 +43,6 @@
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="matcher">
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="querySpecificationProvider" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A generated query specification for the pattern
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider"/>
                </appInfo>
             </annotation>
          </attribute>

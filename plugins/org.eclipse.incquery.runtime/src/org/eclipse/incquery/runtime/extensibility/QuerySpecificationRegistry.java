@@ -71,9 +71,7 @@ public final class QuerySpecificationRegistry {
 
                 IConfigurationElement[] els = ext.getConfigurationElements();
                 for (IConfigurationElement el : els) {
-                    if (el.getName().equals("matcher")) {
-                        prepareQuerySpecification(specifications, duplicates, el);
-                    } else if (el.getName().equals("group")) {
+                    if (el.getName().equals("group")) {
                         prepareQueryGroup(specifications, duplicates, el);
                     } else {
                         IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
@@ -112,28 +110,6 @@ public final class QuerySpecificationRegistry {
             // TODO error logging for the user interface
             IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing group: "
-                            + id + "! " + e.getMessage(), e);
-        }
-    }
-
-    private static void prepareQuerySpecification(
-            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
-            Set<String> duplicates, IConfigurationElement el) {
-        String id = null;
-        try {
-            id = el.getAttribute("id");
-            @SuppressWarnings("unchecked")
-            IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> provider = (IQuerySpecificationProvider<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>) el
-                    .createExecutableExtension("querySpecificationProvider");
-            loadQuerySpecification(specifications, duplicates, el, provider.get());
-        } catch (Throwable e) {
-            // If there are serious compilation errors in the file loaded by the query registry, an error is thrown
-            if (id == null) {
-                id = "undefined in plugin.xml";
-            }
-            // TODO error logging for the user interface
-            IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
-                    "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing ID: "
                             + id + "! " + e.getMessage(), e);
         }
     }

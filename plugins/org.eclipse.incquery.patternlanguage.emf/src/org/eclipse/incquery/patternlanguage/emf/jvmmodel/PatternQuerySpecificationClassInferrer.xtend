@@ -38,7 +38,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
 import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext
 import org.eclipse.incquery.runtime.exception.IncQueryException
-import org.eclipse.incquery.runtime.extensibility.IQuerySpecificationProvider
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
 import org.eclipse.incquery.runtime.matchers.psystem.PBody
