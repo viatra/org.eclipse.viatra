@@ -46,6 +46,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import org.eclipse.xtext.util.Strings;
+import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider;
 
 import com.google.inject.Inject;
 
@@ -54,7 +55,7 @@ import com.google.inject.Inject;
  * 
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class EMFPatternLanguageLabelProvider extends DefaultEObjectLabelProvider {
+public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
 
     @Inject
     public EMFPatternLanguageLabelProvider(AdapterFactoryLabelProvider delegate) {

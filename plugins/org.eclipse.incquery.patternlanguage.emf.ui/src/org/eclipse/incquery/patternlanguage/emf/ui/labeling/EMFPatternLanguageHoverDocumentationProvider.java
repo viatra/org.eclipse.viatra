@@ -18,6 +18,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PackageImport
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
@@ -72,6 +73,27 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         } else if (object instanceof VariableReference) {
             VariableReference reference = (VariableReference) object;
             return calculateVariableHover(reference.getVariable());
+        } else if (object instanceof Pattern) {
+            Pattern pattern = (Pattern) object;
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.computeDocumentation(pattern));
+            sb.append("<p><strong>Parameters:</strong></p>");
+            sb.append("<ul>");
+            for (Variable variable : pattern.getParameters()) {
+                sb.append("<li>");
+                sb.append("<strong>Parameter</strong> ");
+                sb.append(variable.getName());
+                final EClassifier emfType = emfTypeProvider.getClassifierForVariable(variable);
+                if (emfType != null) {
+                    sb.append(": ");
+                    sb.append("<i>");
+                    sb.append(getTypeString(emfType));
+                    sb.append("</i>");
+                }
+                sb.append("</li>");
+            }
+            sb.append("</ul>");
+            return sb.toString();
         }
         return super.computeDocumentation(object);
     }
@@ -88,10 +110,20 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         if (emfType == null) {
             emfTypeString = "Not applicable";
         } else {
-            final String packageUri = emfType.getEPackage() != null ? "(<i>" + emfType.getEPackage().getNsURI() + "</i>)" : "";
-            emfTypeString = String.format("%s %s", emfType.getName(), packageUri);
+            emfTypeString = getTypeString(emfType);
         }
         return String.format("<b>EMF Type</b>: %s<br /><b>Java Type</b>: %s", emfTypeString, javaTypeString);
+    }
+
+    /**
+     * @param emfType
+     * @return
+     */
+    private String getTypeString(EClassifier emfType) {
+        String emfTypeString;
+        final String packageUri = emfType.getEPackage() != null ? "(<i>" + emfType.getEPackage().getNsURI() + "</i>)" : "";
+        emfTypeString = String.format("%s %s", emfType.getName(), packageUri);
+        return emfTypeString;
     }
 
 }
