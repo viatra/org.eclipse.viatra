@@ -65,6 +65,7 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
                 return Collections.emptyList();
             }
             String typename = ((ILeafNode) node).getText();
+            typename = (typename.startsWith("^")) ? typename.substring(1) : typename;
             EEnumLiteral literal = type.getEEnumLiteralByLiteral(typename);
             if (literal == null) {
                 literal = type.getEEnumLiteral(typename);
