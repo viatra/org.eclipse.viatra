@@ -90,16 +90,6 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         EClass sourceClass = (EClass) sourceClassifier;
 
-        // if resource is not writable, the generation will fail
-        Resource resource = sourceClass.getEPackage().eResource();
-        URI uri = resource.getURI();
-        // only file and platform resource URIs are considered safely writable
-        if(!(uri.isFile() || uri.isPlatformResource())) {
-            validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
-                    PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
-            return;
-        }
-        
         // 3. pattern name or "feature" is a feature of Source
         String featureName = null;
         EObject contextForFeature = null;
@@ -241,6 +231,17 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                 }
             }
         }
+        
+        // 7. if resource is not writable, the generation will fail
+        Resource resource = sourceClass.getEPackage().eResource();
+        URI uri = resource.getURI();
+        // only file and platform resource URIs are considered safely writable
+        if(!(uri.isFile() || uri.isPlatformResource())) {
+            validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
+                    PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+            return;
+        }
+        
 
     }
 

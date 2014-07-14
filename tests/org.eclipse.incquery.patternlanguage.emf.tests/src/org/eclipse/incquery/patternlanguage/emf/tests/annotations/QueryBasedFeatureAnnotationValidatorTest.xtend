@@ -16,6 +16,7 @@ import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -23,8 +24,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.querybasedfeatures.runtime.util.validation.QueryBasedFeaturePatternValidator
-
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -54,7 +53,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern(p);
 			}'
 		) 
-		tester.validate(model).assertError(QueryBasedFeaturePatternValidator::PATTERN_ISSUE_CODE);
+		val validationResult = tester.validate(model)
+    validationResult.assertError(QueryBasedFeaturePatternValidator::PATTERN_ISSUE_CODE);
 	}
 	
 	@Test
@@ -68,7 +68,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern.bodies(p, pb);
 			}'
 		) 
-		tester.validate(model).assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
+		val validationResult = tester.validate(model)
+    validationResult.assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
 	}
 	
 	@Test
@@ -82,7 +83,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern.bodies(p, pb);
 			}'
 		) 
-		tester.validate(model).assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
+		val validationResult = tester.validate(model)
+    validationResult.assertError(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE);
 	}
 	
 	@Test
@@ -96,7 +98,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 				Pattern.bodies(p, pb);
 			}'
 		) 
-		tester.validate(model).assertAll(getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
+		val validationResult = tester.validate(model)
+    validationResult.assertAll(getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
 		  getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
 		  getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE)
 		);
@@ -113,7 +116,8 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 				PatternBody.variables(pb, v);
 			}'
 		) 
-		tester.validate(model).assertError(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE);
+		val validationResult = tester.validate(model)
+    validationResult.assertError(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE);
 	}
 	
 }

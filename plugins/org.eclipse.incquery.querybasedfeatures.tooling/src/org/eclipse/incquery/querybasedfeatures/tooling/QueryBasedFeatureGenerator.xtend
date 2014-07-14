@@ -219,6 +219,22 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     }
     parameters.ePackage = pckg
 
+    // if resource is not writable, the generation will fail
+    val resource = pckg.eResource();
+    val uri = resource.getURI();
+    // only file and platform resource URIs are considered safely writable
+    if (!(uri.isFile() || uri.isPlatformResource())) {
+      val message = String.format(
+        "Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!",
+        source.getName(),
+        uri.toString()
+      )
+      errorFeedback.reportError(sourcevar, message, DERIVED_ERROR_CODE, Severity::ERROR,
+        IErrorFeedback::FRAGMENT_ERROR_TYPE);
+      throw new IllegalArgumentException(
+        "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
+    }
+
     val featureString = featureTmp
     val features = source.EAllStructuralFeatures.filter[it.name == featureString]
     if(features.size != 1){
