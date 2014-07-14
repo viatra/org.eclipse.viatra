@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime.util.validation;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -88,6 +90,16 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         EClass sourceClass = (EClass) sourceClassifier;
 
+        // if resource is not writable, the generation will fail
+        Resource resource = sourceClass.getEPackage().eResource();
+        URI uri = resource.getURI();
+        // only file and platform resource URIs are considered safely writable
+        if(!(uri.isFile() || uri.isPlatformResource())) {
+            validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
+                    PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+            return;
+        }
+        
         // 3. pattern name or "feature" is a feature of Source
         String featureName = null;
         EObject contextForFeature = null;
