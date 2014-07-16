@@ -28,16 +28,27 @@ public class SimpleFitnessCalculator implements IFitnessCalculator {
     @Override
     public void calculateFitness(GeneticSharedObject sharedObject, ThreadContext context, InstanceData instance) {
 
-        // Calculate violations
-        instance.sumOfConstraintViolationMeauserement = 0;
-        IncQueryEngine incqueryEngine = context.getIncqueryEngine();
-        instance.violations = new HashMap<String, Integer>();
-        for (SoftConstraint softConstraint : sharedObject.softConstraints) {
-            instance.violations.put(softConstraint.getName(), softConstraint.getNumberOfMatches(incqueryEngine));
-            instance.sumOfConstraintViolationMeauserement += softConstraint.getViolationMeasurement(incqueryEngine);
-        }
+        calculateSoftConstraintViolations(sharedObject, context, instance);
 
-        // Calculate trajectory objectives
+        Map<String, Double> objectives = calculateTrajectoryObjectives(sharedObject, instance);
+
+        calculateObjectivesOnModel(sharedObject, context, objectives);
+
+        Logger logger = context.getDesignSpaceManager().getLogger();
+        logger.debug(objectives.toString() + " violations: " + instance.sumOfConstraintViolationMeauserement);
+
+        instance.objectives = objectives;
+    }
+
+    private void calculateObjectivesOnModel(GeneticSharedObject sharedObject, ThreadContext context,
+            Map<String, Double> objectives) {
+        if (sharedObject.modelObjectivesCalculator != null) {
+            Map<String, Double> modelObjectiveValues = sharedObject.modelObjectivesCalculator.calculate(context);
+            addMaps(objectives, modelObjectiveValues);
+        }
+    }
+
+    private Map<String, Double> calculateTrajectoryObjectives(GeneticSharedObject sharedObject, InstanceData instance) {
         Map<String, Double> objectives = new HashMap<String, Double>();
         for (String objective : sharedObject.comparators.keySet()) {
             objectives.put(objective, 0d);
@@ -48,13 +59,18 @@ public class SimpleFitnessCalculator implements IFitnessCalculator {
             addMaps(objectives, activationCosts);
             addMaps(objectives, ruleCosts);
         }
-        Map<String, Double> modelObjectiveValues = sharedObject.modelObjectivesCalculator.calculate(context);
-        addMaps(objectives, modelObjectiveValues);
+        return objectives;
+    }
 
-        Logger logger = context.getDesignSpaceManager().getLogger();
-        logger.debug(objectives.toString() + " violations: " + instance.sumOfConstraintViolationMeauserement);
-
-        instance.objectives = objectives;
+    private void calculateSoftConstraintViolations(GeneticSharedObject sharedObject, ThreadContext context,
+            InstanceData instance) {
+        instance.sumOfConstraintViolationMeauserement = 0;
+        IncQueryEngine incqueryEngine = context.getIncqueryEngine();
+        instance.violations = new HashMap<String, Integer>();
+        for (SoftConstraint softConstraint : sharedObject.softConstraints) {
+            instance.violations.put(softConstraint.getName(), softConstraint.getNumberOfMatches(incqueryEngine));
+            instance.sumOfConstraintViolationMeauserement += softConstraint.getViolationMeasurement(incqueryEngine);
+        }
     }
 
     private void addMaps(Map<String, Double> baseMap, Map<String, Double> addMap) {
