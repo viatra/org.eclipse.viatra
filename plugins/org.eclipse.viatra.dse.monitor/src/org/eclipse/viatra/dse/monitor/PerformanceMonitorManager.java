@@ -66,13 +66,13 @@ public class PerformanceMonitorManager {
     }
 
     public static void startTimer(String name) {
-        Stopwatch stopwatch = new Stopwatch();
-        timers.put(name, stopwatch);
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        timers.put(name + Thread.currentThread().getId(), stopwatch);
         stopwatch.start();
     }
 
     public static void endTimer(String name) {
-        Stopwatch stopwatch = timers.get(name);
+        Stopwatch stopwatch = timers.get(name + Thread.currentThread().getId());
         if (stopwatch != null) {
             stopwatch.stop();
             addMeasurementToTimer(stopwatch.elapsedTime(TimeUnit.NANOSECONDS), name);
