@@ -4,8 +4,8 @@
       label="VIATRA DSE framework"
       version="0.7.0.qualifier"
       provider-name="Eclipse VIATRA Project"
-      license-feature="org.eclipse.incquery.runtime.feature"
-      license-feature-version="0.8.0.qualifier">
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
       VIATRA DSE framework
