@@ -33,7 +33,9 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.7.0.201403182114</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.6.0</xtend.compiler.version>
+		<xtend.compiler.version>2.6.2</xtend.compiler.version>
+		<xcore.version>1.2.0</xcore.version>
+		<xcore.lib.version>1.1.0</xcore.lib.version>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>

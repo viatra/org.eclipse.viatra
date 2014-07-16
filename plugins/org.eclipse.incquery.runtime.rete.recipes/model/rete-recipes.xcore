@@ -1,4 +1,5 @@
 @Ecore(nsURI="http://www.eclipse.org/incquery/rete/recipes")
+@GenModel(modelDirectory="/org.eclipse.incquery.runtime.rete.recipes/src-gen", updateClasspath="false", complianceLevel="6.0", importerID="org.eclipse.emf.importer.ecore", forceOverwrite="true")
 package org.eclipse.incquery.runtime.rete.recipes
 
 // TODO missing things:
@@ -52,7 +53,7 @@ abstract class MultiParentNodeRecipe extends ReteNodeRecipe {
 	op int getArity() {
 		// not recursion-friendly
 		//Preconditions::checkState(parents.transform[arity].asSet.size == 1);
-		parents.get(0).getArity()
+		parents.get(0).arity
 	}	
 }
 
@@ -193,7 +194,7 @@ class TransitiveClosureRecipe extends AlphaRecipe {
  * Abstract base class for nodes that implement filtering operations.
  */
 abstract class FilterRecipe extends AlphaRecipe { 
-	op int getArity() {parent.getArity()}	
+	op int getArity() {parent.arity}	
 }
 class InequalityFilterRecipe extends FilterRecipe {
 	Index subject
@@ -245,14 +246,14 @@ abstract class ExpressionEnforcerRecipe extends AlphaRecipe {
  * only passes tuples for which the result is true.
  */
 class CheckRecipe extends ExpressionEnforcerRecipe {
-		op int getArity() {parent.getArity()}	
+		op int getArity() {parent.arity}
 }
 /*
  * Computes the result of expression evaluation and suffixes the result
  * to output tuples as the last element.
  */
 class EvalRecipe extends ExpressionEnforcerRecipe {
-		op int getArity() {1 + parent.getArity()}	
+		op int getArity() {1 + parent.arity	}
 }
 
 
@@ -281,7 +282,7 @@ class CountAggregatorRecipe extends AggregatorRecipe {}
  */
 class JoinRecipe extends BetaRecipe {
 	contains Mask rightParentComplementaryMask
-	op int getArity() {leftParent.getArity() + rightParent.getArity() - /*common columns count once*/rightParent.mask.sourceIndices.length}		
+	op int getArity() {leftParent.arity+ rightParent.arity- /*common columns count once*/rightParent.mask.sourceIndices.length}		
 }
 
 /*
@@ -290,7 +291,7 @@ class JoinRecipe extends BetaRecipe {
  * See http://en.wikipedia.org/wiki/Relational_algebra
  */
 abstract class ExistenceJoinRecipe extends BetaRecipe  {
-	op int getArity() {leftParent.getArity()}		
+	op int getArity() {leftParent.arity}		
 }
 
 /*
