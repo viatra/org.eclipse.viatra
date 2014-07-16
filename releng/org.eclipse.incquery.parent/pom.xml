@@ -248,6 +248,7 @@
 				<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 				<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.validation.core</module>
 				<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 				<module>../../plugins/org.eclipse.incquery.validation.tooling</module>

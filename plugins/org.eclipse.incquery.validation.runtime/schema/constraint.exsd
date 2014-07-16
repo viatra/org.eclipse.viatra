@@ -58,7 +58,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.incquery.validation.runtime.Constraint:"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.validation.core.api.IConstraintSpecification"/>
                </appinfo>
             </annotation>
          </attribute>
