@@ -15,8 +15,8 @@
 		<module>../../releng/org.eclipse.viatra2.emf.target</module>
 	</modules>
 	<properties>
-		<tycho.version>0.18.1</tycho.version>
-		<tycho.extras.version>0.18.1</tycho.extras.version>
+		<tycho.version>0.20.0</tycho.version>
+		<tycho.extras.version>0.20.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra2/org.eclipse.viatra2.emf.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=gmt&amp;component=VIATRA2</eclipse.bugzillaUrl>
@@ -26,7 +26,7 @@
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.6.1</xtend.compiler.version>
 		<incquery.repository.url>http://download.eclipse.org/incquery/updates/integration</incquery.repository.url>
-		<incquery.compiler.version>0.8.0-SNAPSHOT</incquery.compiler.version>
+		<incquery.compiler.version>0.9.0-SNAPSHOT</incquery.compiler.version>
     <!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
