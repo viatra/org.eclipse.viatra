@@ -198,6 +198,16 @@
 			<name>repo.eclipse.org Plug-in repository</name>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
+		<pluginRepository>
+			<id>incquery-snapshots</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<url>https://repo.eclipse.org/content/repositories/emf-incquery/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
 		<repository>
