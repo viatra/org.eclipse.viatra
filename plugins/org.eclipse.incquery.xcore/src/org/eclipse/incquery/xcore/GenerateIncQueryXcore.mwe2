@@ -99,6 +99,7 @@ Workflow {
 			
 			fragment = xbase.XbaseGeneratorFragment {
 				generateXtendInferrer = false
+				skipExportedPackage = true
 			}
 			
 			fragment = contentAssist.JavaBasedContentAssistFragment {}
