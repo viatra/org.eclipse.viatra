@@ -8,6 +8,7 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
 </listAttribute>
+<booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="src/org/eclipse/incquery/patternlanguage/emf/GenerateEMFPatternLanguage.mwe2"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.incquery.patternlanguage.emf"/>
