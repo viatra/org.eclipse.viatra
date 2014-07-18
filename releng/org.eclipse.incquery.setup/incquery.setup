@@ -163,6 +163,8 @@
           id="org.eclipse.sdk.feature.group"/>
       <requirement
           id="org.eclipse.xtext.sdk.feature.group"/>
+      <requirement
+          id="de.itemis.xtext.antlr.feature.feature.group"/>
       <repositoryList
           name="Dependencies">
         <repository
@@ -173,6 +175,8 @@
             url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
         <repository
             url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+        <repository
+            url="http://download.itemis.com/updates/releases"/>
       </repositoryList>
     </targlet>
     <targlet
@@ -382,19 +386,23 @@
       <setupTask
           xsi:type="launching:LaunchTask"
           id="launch.incquery.generator.model"
-          launcher="EMF-IncQuery_GenerateGeneratorModel"/>
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateGeneratorModel.launch"/>
       <setupTask
           xsi:type="launching:LaunchTask"
           id="launch.incqeury.generator.patternlanguage"
-          launcher="EMF-IncQuery_GeneratePatternLanguage"/>
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GeneratePatternLanguage.launch"/>
       <setupTask
           xsi:type="launching:LaunchTask"
           id="launch.incqeury.generator.patternlanguage.emf"
-          launcher="EMF-IncQuery_GenerateEMFPatternLanguage"/>
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateEMFPatternLanguage.launch"/>
       <setupTask
           xsi:type="launching:LaunchTask"
           id="launch.incqeury.generator.xcore"
-          launcher="EMF-IncQuery_GenerateIncQueryXcore"/>
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateIncQueryXcore.launch"/>
     </setupTask>
   </stream>
   <stream name="0.8-maintenance">
@@ -420,6 +428,14 @@
       <query
           summary="Unspecified Version"
           url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;version=unspecified"/>
+    </setupTask>
+    <setupTask
+        xsi:type="mylyn:MylynBuildsTask"
+        serverURL="https://hudson.eclipse.org/incquery"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <buildPlan
+          name="incquery-maintenance-0.8.0"/>
     </setupTask>
     <setupTask
         xsi:type="setup.p2:P2Task">
