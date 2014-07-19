@@ -22,9 +22,9 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -229,11 +229,11 @@ public final class IncQueryObservables {
 
             if (objectTokens.length == 2) {
                 o = match.get(objectTokens[0]);
-                feature = DatabindingAdapterUtil.getFeature(o, objectTokens[1]);
+                feature = EMFPatternLanguageHelper.getFeature(o, objectTokens[1]);
             }
             if (objectTokens.length == 1) {
                 o = match.get(objectTokens[0]);
-                feature = DatabindingAdapterUtil.getFeature(o, "name");
+                feature = EMFPatternLanguageHelper.getFeature(o, "name");
             }
             if (o != null && feature != null) {
                 val = EMFProperties.value(feature).observe(o);

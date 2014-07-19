@@ -14,7 +14,7 @@ package org.eclipse.incquery.validation.runtime;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
@@ -42,7 +42,7 @@ public class MarkerUpdaterJob implements IMatchProcessor<IPatternMatch> {
         IMarker marker = adapter.getMarker(match);
         if (marker != null) {
             try {
-                marker.setAttribute(IMarker.MESSAGE, DatabindingAdapterUtil.getMessage(match, constraint.getMessage()));
+                marker.setAttribute(IMarker.MESSAGE, EMFPatternLanguageHelper.getMessage(match, constraint.getMessage()));
             } catch (CoreException e) {
                 logger.error("Error during marker update!", e);
             }

@@ -14,7 +14,7 @@ import java.util.Comparator;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
@@ -43,12 +43,12 @@ public class MatchComparator implements Comparator<IPatternMatch> {
     public int compare(IPatternMatch match1, IPatternMatch match2) {
         try {
             EObject obj = (EObject) match1.get(clazz);
-            EStructuralFeature feature = DatabindingAdapterUtil.getFeature(obj, attribute);
+            EStructuralFeature feature = EMFPatternLanguageHelper.getFeature(obj, attribute);
             Object value1 = obj.eGet(feature);
 
             if (value1 instanceof Comparable) {
                 EObject compObj = (EObject) match2.get(clazz);
-                EStructuralFeature compFeature = DatabindingAdapterUtil.getFeature(compObj, attribute);
+                EStructuralFeature compFeature = EMFPatternLanguageHelper.getFeature(compObj, attribute);
                 Object value2 = compObj.eGet(compFeature);
                 return ((Comparable) value1).compareTo(value2) * (ascending ? 1 : -1);
             }

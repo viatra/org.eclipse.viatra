@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.dialog;
 
-import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapterUtil;
+import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
@@ -87,7 +87,7 @@ public class PatternMatchDialogLabelProvider implements ILabelProvider {
         if (element instanceof IPatternMatch) {
             String message = DisplayUtil.getMessage((IPatternMatch) element);//, true);
             if (message != null) {
-                return DatabindingAdapterUtil.getMessage((IPatternMatch) element, message);
+                return EMFPatternLanguageHelper.getMessage((IPatternMatch) element, message);
             } else {
                 return element.toString();
             }
