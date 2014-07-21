@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.List;
+import java.util.Random;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -31,6 +32,7 @@ public class DepthFirstNextTransition implements INextTransition {
     private int baseDepth = 0;
     private int initMaxDepth = Integer.MAX_VALUE;
     private SharedData sharedData;
+    private Random random = new Random();
 
     public DepthFirstNextTransition() {
     }
@@ -80,7 +82,9 @@ public class DepthFirstNextTransition implements INextTransition {
             context.getGlobalContext().tryStartNewThread(context);
         }
 
-        return transitions.iterator().next();
+        int index = random.nextInt(transitions.size());
+
+        return transitions.get(index);
     }
 
     @Override
