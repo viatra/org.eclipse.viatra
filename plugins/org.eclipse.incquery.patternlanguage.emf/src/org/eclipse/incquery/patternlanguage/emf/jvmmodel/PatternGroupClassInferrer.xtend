@@ -115,7 +115,7 @@ class PatternGroupClassInferrer {
 
 	def JvmOperation inferSpecificationGetter(Pattern model, JvmGenericType groupClass, JvmGenericType specificationClass) {
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
-		groupClass.toMethod("get" + model.name.toFirstUpper, specificationClass.createTypeRef) [
+		model.toMethod("get" + model.name.toFirstUpper, specificationClass.createTypeRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
 			body = [
@@ -128,7 +128,7 @@ class PatternGroupClassInferrer {
 	
 	def JvmOperation inferMatcherGetter(Pattern model, JvmGenericType groupClass, JvmGenericType matcherClass) {
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
-		groupClass.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
+		model.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
 			parameters += matcherClass.toParameter("engine", model.newTypeRef(typeof (IncQueryEngine)))
