@@ -16,6 +16,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
@@ -34,7 +35,7 @@ public class SimpleFitnessCalculator implements IFitnessCalculator {
 
         calculateObjectivesOnModel(sharedObject, context, objectives);
 
-        Logger logger = context.getDesignSpaceManager().getLogger();
+        Logger logger = Logger.getLogger(DesignSpaceManager.class);
         logger.debug(objectives.toString() + " violations: " + instance.sumOfConstraintViolationMeauserement);
 
         instance.objectives = objectives;

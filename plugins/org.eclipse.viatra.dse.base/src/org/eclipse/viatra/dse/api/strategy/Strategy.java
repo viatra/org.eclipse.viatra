@@ -73,7 +73,6 @@ public class Strategy implements IStrategy {
     @Override
     public void run() {
         try {
-            logger.debug("Strategy started.");
 
             // init is called here, not in the constructor, because of
             // performance
@@ -88,6 +87,8 @@ public class Strategy implements IStrategy {
 
             DesignSpaceManager designSpaceManager = threadContext.getDesignSpaceManager();
             Guidance guidance = threadContext.getGuidance();
+
+            logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
 
             // do the exploration until {@link StrategyBase#solutionFound}
             // returns
@@ -118,9 +119,11 @@ public class Strategy implements IStrategy {
                 designSpaceManager.fireActivation(transition);
                 PerformanceMonitorManager.endTimer(FIRE_ACTIVATION_TIMER);
 
-                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
-
                 IState newState = designSpaceManager.getCurrentState();
+
+                logger.debug("Transition fired: " + transition.getId() + " State: " + newState.getId());
+
+                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
 
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
                 boolean isGoalState = false;
@@ -138,6 +141,8 @@ public class Strategy implements IStrategy {
                         areConstraintsSatisfied = false;
                     }
 
+                    logger.debug("State is already traversed.");
+
                     strategyBase.traversedStateFound(threadContext, traversalState);
 
                 } else {
@@ -148,6 +153,8 @@ public class Strategy implements IStrategy {
                         // if it is a goal state
                         Map<String, Double> measurements = strategyBase.isGoalState(threadContext);
                         if (measurements != null) {
+
+                            logger.debug("Goal state.");
 
                             isGoalState = true;
                             Solution solution = globalContext.getSolutionStore().newSolution(threadContext,
@@ -184,6 +191,7 @@ public class Strategy implements IStrategy {
                     // if the global constraints are not satisfied
                     else {
                         newState.setTraversalState(TraversalStateType.CUT);
+                        logger.debug("Constraints are not satisfied.");
                     }
                     newState.setProcessed(); // TODO there is one in addState
                 }

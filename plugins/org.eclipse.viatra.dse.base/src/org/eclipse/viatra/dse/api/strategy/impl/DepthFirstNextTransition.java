@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -33,6 +34,7 @@ public class DepthFirstNextTransition implements INextTransition {
     private int initMaxDepth = Integer.MAX_VALUE;
     private SharedData sharedData;
     private Random random = new Random();
+    private Logger logger = Logger.getLogger(this.getClass());
 
     public DepthFirstNextTransition() {
     }
@@ -73,6 +75,9 @@ public class DepthFirstNextTransition implements INextTransition {
                 return null;
             }
 
+            logger.debug("Backtracking as there aren't anymore transitions from this state: "
+                    + dsm.getCurrentState().getId());
+
             PerformanceMonitorManager.startTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
             transitions = dsm.getUntraversedTransitionsFromCurrentState();
             PerformanceMonitorManager.endTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
@@ -83,14 +88,19 @@ public class DepthFirstNextTransition implements INextTransition {
         }
 
         int index = random.nextInt(transitions.size());
+        ITransition transition = transitions.get(index);
 
-        return transitions.get(index);
+        logger.debug("Next transition: " + transition.getId());
+
+        return transition;
     }
 
     @Override
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied) {
         if (isAlreadyTraversed || isGoalState || constraintsNotSatisfied) {
+            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + isGoalState
+                    + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }

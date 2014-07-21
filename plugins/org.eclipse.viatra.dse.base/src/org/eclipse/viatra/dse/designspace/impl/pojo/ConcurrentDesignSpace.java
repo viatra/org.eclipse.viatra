@@ -70,7 +70,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
             if (sourceTransition != null && !state.getIncomingTransitions().contains(sourceTransition)) {
                 sourceTransition.setResultsIn(state);
                 state.addInTransition((Transition) sourceTransition);
-                logger.debug(" Arrived to state " + state.getId() + " " + state);
                 fireTransitionFiredEvent(sourceTransition);
             }
             return false;
@@ -102,8 +101,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
             }
             // finish modifying shared data
             state.setProcessed();
-
-            logger.debug(" New state with id " + state.getId() + " " + state);
 
             cache.put(newStateId, state);
             numberOfTransitions.addAndGet(outgoingTransitionIds.size());
@@ -291,22 +288,22 @@ public class ConcurrentDesignSpace implements IDesignSpace {
     }
 
     private void fireTransitionFiredEvent(ITransition transition) {
-        logger.debug(" Transition fired with id " + transition.getFiredFrom().getId() + ":" + transition.getId()
-                + " with result id " + transition.getResultsIn().getId());
+        logger.debug("Transition fired from " + transition.getFiredFrom().getId() + " with id " + transition.getId()
+                + " and resulted in " + transition.getResultsIn().getId());
         for (IDesignSpaceChangeHandler handler : changeHandlers) {
             handler.transitionFired(transition);
         }
     }
 
     private void fireNewStateEvent(IState state) {
-        logger.debug(" Created state with id " + state.getId() + " " + state);
+        logger.debug("Created state with id " + state.getId());
         for (IDesignSpaceChangeHandler handler : changeHandlers) {
             handler.newStateAdded(state);
         }
     }
 
     private void fireNewTransitionEvent(ITransition transition) {
-        logger.debug(" State with id " + transition.getFiredFrom().getId() + " received new out transition "
+        logger.debug("New transition from " + transition.getFiredFrom().getId() + " with id "
                 + transition.getId());
         for (IDesignSpaceChangeHandler handler : changeHandlers) {
             handler.newTransitionAdded(transition);

@@ -99,7 +99,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         this.trajectory = new TrajectoryInfo(rootState, trajectory);
 
-        getLogger().debug("DesignSpaceManager initialized with root (" + rootState.getId() + ")");
+        logger.debug("DesignSpaceManager initialized with root (" + rootState.getId() + ")");
     }
 
     @Override
@@ -146,7 +146,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             iRuleApplicationNumberChanged.increment(transition.getTransitionMetaData().rule, ruleEngine);
         }
 
-        getLogger().debug("Fired Transition (" + transition + ") from " + previousState.getId() + " to " + newStateId);
+        logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to " + newStateId);
     }
 
     public ITransition getTransitionByActivation(Activation<?> activation) {
@@ -168,12 +168,14 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
                 return act;
             }
         }
-        // Throw detailes error message:
-        String errorMsg = "A retrieved Transition SHOULD have a matching Activation. Maybe the state serializer is faulty? Or You are in the wrong state.";
-        errorMsg += "\nTransition Id: " + transition.getId();
-        errorMsg += "\nFrom State Id: " + transition.getFiredFrom().getId();
-        errorMsg += "\nActual State Id: " + getCurrentState().getId();
-        errorMsg += "\nAvailable Transition Ids:";
+
+        String errorMsg = "A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.";
+        errorMsg += "\nSought transition: " + transition.getId();
+        Object firedFromId = transition.getFiredFrom().getId();
+        errorMsg += "\nTransition's source: " + firedFromId;
+        Object currentStateId = getCurrentState().getId();
+        errorMsg += "\nCurrent state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId);
+        errorMsg += "\nAvailable transitions:";
         for (Activation<?> act : ruleEngine.getConflictingActivations()) {
             IPatternMatch match = (IPatternMatch) act.getAtom();
             Object code = generateMatchCode(match);
@@ -287,7 +289,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         // the crawler root)
         if (!trajectory.canStepBack()) {
             // return false indicating that the undo was not executed
-            getLogger().debug("Failed undo request. Cannot undo.");
+            logger.debug("Failed undo request. Cannot undo.");
             return false;
         }
 
@@ -307,7 +309,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             iRuleApplicationNumberChanged.decrement(lastTransition.getTransitionMetaData().rule, ruleEngine);
         }
 
-        getLogger().debug(
+        logger.debug(
                 "Successul undo from " + lastTransition.getResultsIn().getId() + " transition "
                         + lastTransition.getId() + " to " + lastTransition.getFiredFrom().getId());
 
@@ -374,12 +376,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         try {
             designSpace.saveDesignSpace("designSpace.txt");
         } catch (IOException e) {
-            getLogger().error("Saving designspace failed", e);
+            logger.error("Saving designspace failed", e);
         }
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
 }
