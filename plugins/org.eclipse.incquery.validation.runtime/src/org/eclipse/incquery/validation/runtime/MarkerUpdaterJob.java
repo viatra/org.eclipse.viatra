@@ -14,9 +14,9 @@ package org.eclipse.incquery.validation.runtime;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
 
 /**
  * The job is used to update a problem marker in the Problems View of Eclipse. It is associated to the rule that is
@@ -42,7 +42,7 @@ public class MarkerUpdaterJob implements IMatchProcessor<IPatternMatch> {
         IMarker marker = adapter.getMarker(match);
         if (marker != null) {
             try {
-                marker.setAttribute(IMarker.MESSAGE, EMFPatternLanguageHelper.getMessage(match, constraint.getMessage()));
+                marker.setAttribute(IMarker.MESSAGE, IncQueryRuntimeHelper.getMessage(match, constraint.getMessage()));
             } catch (CoreException e) {
                 logger.error("Error during marker update!", e);
             }

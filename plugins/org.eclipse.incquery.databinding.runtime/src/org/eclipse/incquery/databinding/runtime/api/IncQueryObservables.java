@@ -24,11 +24,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
 
 import com.google.common.collect.Lists;
 
@@ -229,11 +229,11 @@ public final class IncQueryObservables {
 
             if (objectTokens.length == 2) {
                 o = match.get(objectTokens[0]);
-                feature = EMFPatternLanguageHelper.getFeature(o, objectTokens[1]);
+                feature = IncQueryRuntimeHelper.getFeature(o, objectTokens[1]);
             }
             if (objectTokens.length == 1) {
                 o = match.get(objectTokens[0]);
-                feature = EMFPatternLanguageHelper.getFeature(o, "name");
+                feature = IncQueryRuntimeHelper.getFeature(o, "name");
             }
             if (o != null && feature != null) {
                 val = EMFProperties.value(feature).observe(o);

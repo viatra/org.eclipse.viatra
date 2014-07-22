@@ -16,8 +16,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -41,7 +41,7 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
         this.message = DisplayUtil.getMessage(match);
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
-            setText(EMFPatternLanguageHelper.getMessage(match, message));
+            setText(IncQueryRuntimeHelper.getMessage(match, message));
             affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
         } else {
             this.text = match.toString();
@@ -62,7 +62,7 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
     private class ParameterValueChangedListener implements IValueChangeListener {
         @Override
         public void handleValueChange(ValueChangeEvent event) {
-            setText(EMFPatternLanguageHelper.getMessage(match, message));
+            setText(IncQueryRuntimeHelper.getMessage(match, message));
         }
     }
 

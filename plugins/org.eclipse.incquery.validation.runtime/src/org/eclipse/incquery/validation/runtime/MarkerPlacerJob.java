@@ -20,10 +20,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
+import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
 
 /**
  * The job is used to create a problem marker in the Problems View of Eclipse upon constraint violation. It is
@@ -70,7 +70,7 @@ public class MarkerPlacerJob implements IMatchProcessor<IPatternMatch> {
                         BasePatternMatch.prettyPrintValue(location));
                 marker.setAttribute(IMarker.LOCATION, locationString);
                 marker.setAttribute(EValidator.URI_ATTRIBUTE, EcoreUtil.getURI(location).toString());
-                marker.setAttribute(IMarker.MESSAGE, EMFPatternLanguageHelper.getMessage(match, constraint.getMessage()));
+                marker.setAttribute(IMarker.MESSAGE, IncQueryRuntimeHelper.getMessage(match, constraint.getMessage()));
                 adapter.addMarker(match, marker);
             } catch (CoreException e) {
                 logger.error("Error during marker initialization!", e);
