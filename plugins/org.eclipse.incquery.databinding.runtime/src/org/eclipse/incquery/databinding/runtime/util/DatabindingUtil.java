@@ -21,11 +21,6 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
  */
 public class DatabindingUtil {
 
-     /**
-     * @deprecated Use {@link IncQueryObservables#OBSERVABLEVALUE_ANNOTATION} instead
-     */
-    public static final String OBSERVABLEVALUE_ANNOTATION = IncQueryObservables.OBSERVABLEVALUE_ANNOTATION;
-
     /**
      * @deprecated Use {@link IncQueryObservables#getDatabindingAdapter(IQuerySpecification<?>)} instead
      */

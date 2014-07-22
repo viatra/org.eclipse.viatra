@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
+import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
@@ -308,7 +309,7 @@ public class DisplayUtil {
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
 //        } else {
-            return DatabindingUtil.getDatabindingAdapter(pattern);
+            return IncQueryObservables.getDatabindingAdapter(pattern);
 //        }
     }
 
