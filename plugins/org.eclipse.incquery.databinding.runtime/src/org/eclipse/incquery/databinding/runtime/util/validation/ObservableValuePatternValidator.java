@@ -25,6 +25,8 @@ import com.google.inject.Inject;
 /**
  * A validator for observable value annotations
  * 
+ * <p/>Note that this class uses the optional dependency org.eclipse.incquery.patternlanguage.emf!
+ * 
  * @author Zoltan Ujhelyi
  * 
  */

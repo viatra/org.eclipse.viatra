@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Abel Hegedus, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.incquery.validation.runtime.annotation;
 
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
@@ -11,6 +21,14 @@ import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 
 import com.google.inject.Inject;
 
+/**
+ * A validator for validation annotations
+ * 
+ * <p/>Note that this class uses the optional dependency org.eclipse.incquery.patternlanguage.emf!
+ * 
+ * @author Abel Hegedus
+ * 
+ */
 public class ConstraintAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.validation.";
