@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
-import org.eclipse.incquery.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 
@@ -27,7 +26,7 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
     private final Map<String, ObservableDefinition> parameterMap;
 
     public GenericDatabindingAdapter(IQuerySpecification<?> query) {
-        this.parameterMap = DatabindingUtil.calculateObservableValues(query);
+        this.parameterMap = IncQueryObservables.calculateObservableValues(query);
     }
 
     @Override

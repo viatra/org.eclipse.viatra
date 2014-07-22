@@ -14,7 +14,7 @@ package org.eclipse.incquery.databinding.runtime.adapter;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.databinding.runtime.util.DatabindingUtil;
+import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
@@ -28,9 +28,9 @@ import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
 public final class DatabindingAdapterUtil {
 
     /**
-     * @deprecated Use {@link DatabindingUtil#OBSERVABLEVALUE_ANNOTATION} instead
+     * @deprecated Use {@link IncQueryObservables#OBSERVABLEVALUE_ANNOTATION} instead
      */
-    public static final String OBSERVABLEVALUE_ANNOTATION = DatabindingUtil.OBSERVABLEVALUE_ANNOTATION;
+    public static final String OBSERVABLEVALUE_ANNOTATION = IncQueryObservables.OBSERVABLEVALUE_ANNOTATION;
 
     private DatabindingAdapterUtil() {
     }
@@ -55,6 +55,6 @@ public final class DatabindingAdapterUtil {
      * @deprecated Use {@link DatabindingUtil#calculateObservableValues(IQuerySpecification<?>)} instead
      */
     public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
-        return DatabindingUtil.calculateObservableValues(query);
+        return IncQueryObservables.calculateObservableValues(query);
     }
 }

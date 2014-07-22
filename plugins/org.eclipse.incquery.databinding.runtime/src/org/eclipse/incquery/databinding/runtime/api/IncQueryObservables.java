@@ -12,6 +12,7 @@ package org.eclipse.incquery.databinding.runtime.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -22,6 +23,10 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
+import org.eclipse.incquery.databinding.runtime.adapter.GenericDatabindingAdapter;
+import org.eclipse.incquery.databinding.runtime.adapter.ObservableDefinition;
+import org.eclipse.incquery.databinding.runtime.adapter.ObservableDefinition.ObservableType;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -29,8 +34,11 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Utility class for observing EMF-IncQuery related objects, such as match sets, match parameters.
@@ -40,6 +48,7 @@ import com.google.common.collect.Lists;
  */
 public final class IncQueryObservables {
 
+    public static final String OBSERVABLEVALUE_ANNOTATION = "ObservableValue";
     /**
      * Hidden constructor for utility class
      */
@@ -248,13 +257,74 @@ public final class IncQueryObservables {
         return val;
     }
 
+    /**
+     * Returns an {@link IObservableValue} that observes the pattern match and converts it to the given expression.
+     * 
+     */
     public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression) {
         return getObservableLabelFeature(match, expression, null);
     }
+    
+    /**
+     * Returns an {@link IObservableValue} that observes the pattern match and converts it to the given expression.
+     * The given container is also stored in the created {@link ObservableLabelFeature}.
+     * 
+     */
     public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression,
             Object container) {
         ComputedValue value = new ObservableLabelFeature(match, expression, container);
         return value;
+    }
+
+    /**
+     * Returns a {@link DatabindingAdapter} that can be used to observe details of pattern matches.
+     * 
+     * @param query
+     * @return
+     */
+    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(IQuerySpecification<?> query) {
+        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(query);
+        return adapter;
+    }
+
+    /**
+     * Calculates the list of {@link ObservableDefinition}s from a query. 
+     * 
+     * @param pattern
+     * @return
+     */
+    public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
+        Map<String, ObservableDefinition> propertyMap = Maps.newHashMap();
+        for (String v : query.getParameterNames()) {
+            ObservableDefinition def = new ObservableDefinition(v, v,
+                    ObservableType.OBSERVABLE_FEATURE);
+            propertyMap.put(v, def);
+        }
+        for (PAnnotation annotation : query.getAnnotationsByName(OBSERVABLEVALUE_ANNOTATION)) {
+            String name = (String) annotation.getFirstValue("name");
+            String expr = (String) annotation.getFirstValue("expression");
+            String label = (String) annotation.getFirstValue("labelExpression");
+            if (name == null) {
+                Preconditions.checkArgument(expr == null && label == null,
+                        "Name attribute must not be empty");
+                continue;
+            }
+            Preconditions.checkArgument(expr != null ^ label != null,
+                    "Either expression or label expression attribute must not be empty.");
+            String obsExpr = null;
+            ObservableType type;
+            if (expr != null) {
+                obsExpr = expr;
+                type = ObservableType.OBSERVABLE_FEATURE;
+            } else {// if (labelRef != null)
+                obsExpr = label;
+                type = ObservableType.OBSERVABLE_LABEL;
+            }
+            ObservableDefinition def = new ObservableDefinition(name, obsExpr, type);
+    
+            propertyMap.put(name, def);
+        }
+        return propertyMap;
     }
 
 }
