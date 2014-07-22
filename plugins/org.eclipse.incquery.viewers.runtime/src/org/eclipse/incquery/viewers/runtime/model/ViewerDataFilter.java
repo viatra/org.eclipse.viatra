@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchSet;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -98,9 +97,9 @@ public class ViewerDataFilter {
      * 
      * @param pattern
      */
-    public void removeFilter(Pattern pattern) {
+    public void removeFilter(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern) {
         Preconditions.checkArgument(filterDefinitions.containsKey(pattern),
-                "Filter undefined for pattern " + pattern.getName());
+                "Filter undefined for pattern " + pattern.getFullyQualifiedName());
         filterDefinitions.remove(pattern);
     }
 

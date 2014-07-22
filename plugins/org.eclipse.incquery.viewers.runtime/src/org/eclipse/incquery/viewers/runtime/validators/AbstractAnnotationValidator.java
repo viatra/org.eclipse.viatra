@@ -22,6 +22,10 @@ import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import com.google.inject.Inject;
 
 /**
+ * A validator for viewer annotations
+ * 
+ * <p/>Note that this class uses the optional dependency org.eclipse.incquery.patternlanguage.emf!
+ * 
  * @author Zoltan Ujhelyi
  *
  */

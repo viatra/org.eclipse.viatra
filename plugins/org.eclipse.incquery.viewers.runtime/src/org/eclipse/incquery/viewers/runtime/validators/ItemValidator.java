@@ -29,6 +29,8 @@ import com.google.common.collect.Lists;
 /**
  * A validator for Item objects
  * 
+ * <p/>Note that this class uses the optional dependency org.eclipse.incquery.patternlanguage.emf!
+ * 
  * @author Zoltan Ujhelyi
  * 
  */

@@ -17,6 +17,8 @@ import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 /**
  * A validator for Item objects
  * 
+ * <p/>Note that this class uses the optional dependency org.eclipse.incquery.patternlanguage.emf!
+ * 
  * @author Zoltan Ujhelyi
  * 
  */

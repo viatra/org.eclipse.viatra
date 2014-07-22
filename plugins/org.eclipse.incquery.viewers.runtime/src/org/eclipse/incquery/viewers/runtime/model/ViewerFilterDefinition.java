@@ -12,7 +12,6 @@ package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Collection;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -35,7 +34,7 @@ public class ViewerFilterDefinition {
     Collection<IPatternMatch> filterMatches;
 
     /**
-     * @param pattern the {@link Pattern} this filter configuration is attached to
+     * @param pattern the {@link IQuerySpecification} this filter configuration is attached to
      * @param semantics {@link IncQueryFilterSemantics} prescribing how this configuration should be interpreted
      * @param singleFilterMatch mandatory for SINGLE {@link IncQueryFilterSemantics}
      * @param filterMatches mandatory for non-SINGLE {@link IncQueryFilterSemantics}
