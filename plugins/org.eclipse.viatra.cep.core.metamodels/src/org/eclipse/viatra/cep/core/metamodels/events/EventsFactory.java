@@ -49,15 +49,6 @@ public interface EventsFactory extends EFactory {
     Event createEvent();
 
     /**
-     * Returns a new object of class '<em>Time</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Time</em>'.
-     * @generated
-     */
-    Time createTime();
-
-    /**
      * Returns a new object of class '<em>OR</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -94,22 +85,22 @@ public interface EventsFactory extends EFactory {
     UNTIL createUNTIL();
 
     /**
-     * Returns a new object of class '<em>WITHIN</em>'.
+     * Returns a new object of class '<em>AND</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return a new object of class '<em>WITHIN</em>'.
+     * @return a new object of class '<em>AND</em>'.
      * @generated
      */
-    WITHIN createWITHIN();
+    AND createAND();
 
     /**
-     * Returns a new object of class '<em>ATLEAST</em>'.
+     * Returns a new object of class '<em>Time Window</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return a new object of class '<em>ATLEAST</em>'.
+     * @return a new object of class '<em>Time Window</em>'.
      * @generated
      */
-    ATLEAST createATLEAST();
+    TimeWindow createTimeWindow();
 
     /**
      * Returns the package supported by this factory.

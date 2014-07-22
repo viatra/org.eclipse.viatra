@@ -19,6 +19,12 @@ import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 
+/**
+ * EVM {@link EventSourceSpecification} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class CepEventSourceSpecification implements EventSourceSpecification<IObservableComplexEventPattern> {
 
     private Automaton automaton;

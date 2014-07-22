@@ -17,8 +17,21 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
+/**
+ * Standard data structure for associating {@link EventPattern}s with {@link Job}s to be executed when patterns get
+ * matched.
+ * 
+ * @author Istvan David
+ * 
+ */
 public interface ICepRule {
+    /**
+     * @return the {@link EventPattern}s of the rule
+     */
     List<EventPattern> getEventPatterns();
 
+    /**
+     * @return the {@link Job} to be executed when patterns get matched
+     */
     Job<IObservableComplexEventPattern> getJob();
 }

@@ -67,6 +67,8 @@ public class AutomatonFactoryImpl extends EFactoryImpl implements AutomatonFacto
             case AutomatonPackage.TYPED_TRANSITION: return createTypedTransition();
             case AutomatonPackage.EPSILON_TRANSITION: return createEpsilonTransition();
             case AutomatonPackage.GUARD: return createGuard();
+            case AutomatonPackage.WITHIN: return createWithin();
+            case AutomatonPackage.HOLDS_FOR: return createHoldsFor();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -200,6 +202,26 @@ public class AutomatonFactoryImpl extends EFactoryImpl implements AutomatonFacto
     public Guard createGuard() {
         GuardImpl guard = new GuardImpl();
         return guard;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Within createWithin() {
+        WithinImpl within = new WithinImpl();
+        return within;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public HoldsFor createHoldsFor() {
+        HoldsForImpl holdsFor = new HoldsForImpl();
+        return holdsFor;
     }
 
     /**

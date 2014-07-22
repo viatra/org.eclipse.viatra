@@ -16,7 +16,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.UNTIL;
  *
  * @generated
  */
-public class UNTILImpl extends LogicalOperatorImpl implements UNTIL {
+public class UNTILImpl extends ComplexEventOperatorImpl implements UNTIL {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

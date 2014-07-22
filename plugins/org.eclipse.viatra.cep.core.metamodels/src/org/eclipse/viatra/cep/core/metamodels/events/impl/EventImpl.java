@@ -11,8 +11,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
+import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
-import org.eclipse.viatra.cep.core.metamodels.events.IEventSource;
 
 /**
  * <!-- begin-user-doc -->
@@ -78,7 +78,7 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * @generated
      * @ordered
      */
-    protected IEventSource source;
+    protected EventSource source;
 
     /**
      * <!-- begin-user-doc -->
@@ -146,10 +146,10 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * <!-- end-user-doc -->
      * @generated
      */
-    public IEventSource getSource() {
+    public EventSource getSource() {
         if (source != null && source.eIsProxy()) {
             InternalEObject oldSource = (InternalEObject)source;
-            source = (IEventSource)eResolveProxy(oldSource);
+            source = (EventSource)eResolveProxy(oldSource);
             if (source != oldSource) {
                 if (eNotificationRequired())
                     eNotify(new ENotificationImpl(this, Notification.RESOLVE, EventsPackage.EVENT__SOURCE, oldSource, source));
@@ -163,7 +163,7 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * <!-- end-user-doc -->
      * @generated
      */
-    public IEventSource basicGetSource() {
+    public EventSource basicGetSource() {
         return source;
     }
 
@@ -172,8 +172,8 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setSource(IEventSource newSource) {
-        IEventSource oldSource = source;
+    public void setSource(EventSource newSource) {
+        EventSource oldSource = source;
         source = newSource;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.EVENT__SOURCE, oldSource, source));
@@ -213,7 +213,7 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
                 setTimestamp((Long)newValue);
                 return;
             case EventsPackage.EVENT__SOURCE:
-                setSource((IEventSource)newValue);
+                setSource((EventSource)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -234,7 +234,7 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
                 setTimestamp(TIMESTAMP_EDEFAULT);
                 return;
             case EventsPackage.EVENT__SOURCE:
-                setSource((IEventSource)null);
+                setSource((EventSource)null);
                 return;
         }
         super.eUnset(featureID);

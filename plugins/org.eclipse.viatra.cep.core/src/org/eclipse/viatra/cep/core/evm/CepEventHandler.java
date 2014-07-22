@@ -18,6 +18,12 @@ import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
 import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 
+/**
+ * EVM {@link EventHandler} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class CepEventHandler implements EventHandler<IObservableComplexEventPattern> {
 
     private EmptyEventFilter emptyFilter;

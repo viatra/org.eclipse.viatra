@@ -8,7 +8,6 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
-import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
@@ -23,6 +22,5 @@ public interface InternalModelValidator {
 
     boolean validateAutomata(EList<Automaton> value);
     boolean validateLatestEvent(Event value);
-    boolean validateEventTokens(EList<EventToken> value);
     boolean validateContext(EventContext value);
 }

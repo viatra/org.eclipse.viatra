@@ -9,8 +9,17 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.vepl.jvmmodel;
+package org.eclipse.viatra.cep.core.api.rules;
 
-public enum AtomicPatternFqnPurpose {
-	PATTERN, EVENT, IQDTO;
+import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+
+/**
+ * Interface to implement by handlers of actions (defined in rules associated with event patterns).
+ * 
+ * @author Istvan David
+ *
+ */
+public interface IActionHandler {
+    void handle(Activation<? extends IObservableComplexEventPattern> activation);
 }

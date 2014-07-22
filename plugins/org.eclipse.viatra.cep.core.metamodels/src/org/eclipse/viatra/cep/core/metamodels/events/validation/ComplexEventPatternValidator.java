@@ -6,8 +6,9 @@ package org.eclipse.viatra.cep.core.metamodels.events.validation;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
-import org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator;
+import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
 
 /**
  * A sample validator interface for {@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern}.
@@ -19,5 +20,6 @@ public interface ComplexEventPatternValidator {
     boolean validate();
 
     boolean validateCompositionEvents(EList<EventPattern> value);
-    boolean validateOperator(LogicalOperator value);
+    boolean validateOperator(ComplexEventOperator value);
+    boolean validateTimeWindow(TimeWindow value);
 }

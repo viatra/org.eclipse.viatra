@@ -14,6 +14,7 @@ package org.eclipse.viatra.cep.core.engine;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Adapter;
@@ -33,7 +34,7 @@ import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedSc
 import org.eclipse.incquery.runtime.evm.update.UpdateCompleteProvider;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.engine.compiler.Compiler;
-import org.eclipse.viatra.cep.core.engine.runtime.ModelHandlingWithViatraApi2;
+import org.eclipse.viatra.cep.core.engine.runtime.ModelHandlingRules;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.EventProcessingStrategyFactory;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.IEventProcessingStrategy;
 import org.eclipse.viatra.cep.core.evm.CepRealm;
@@ -116,16 +117,16 @@ public class DefaultEventModelManager implements IEventModelManager {
     }
 
     private void initializeLowLevelModelHandling() {
-        ModelHandlingWithViatraApi2 mhrViatraApi2 = new ModelHandlingWithViatraApi2(this);
+        ModelHandlingRules mhrViatraApi2 = new ModelHandlingRules(this);
         mhrViatraApi2.registerRulesWithCustomPriorities();
     }
 
     public void initializeAutomatons() {
-        for (InitState is : initStatesForAutomata.values()) {
-            if (is.getEventTokens().isEmpty()) {
+        for (Entry<Automaton, InitState> entry : initStatesForAutomata.entrySet()) {
+            if (entry.getValue().getEventTokens().isEmpty()) {
                 EventToken token = AutomatonFactory.eINSTANCE.createEventToken();
-                token.setCurrentState(is);
-                model.getEventTokens().add(token);
+                token.setCurrentState(entry.getValue());
+                entry.getKey().getEventTokens().add(token);
             }
         }
     }
@@ -147,7 +148,7 @@ public class DefaultEventModelManager implements IEventModelManager {
         strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE, null);
         model.setLatestEvent(event);
         cepUpdateCompleteProvider.latestEventHandled();
-        strategy.handleSmResets(model, AutomatonFactory.eINSTANCE);
+        strategy.handleAutomatonResets(model, AutomatonFactory.eINSTANCE);
     }
 
     public ExecutionSchema createExecutionSchema() {
@@ -195,8 +196,8 @@ public class DefaultEventModelManager implements IEventModelManager {
     }
 
     @Override
-    public void fireTransition(TypedTransition transition, EventToken token, Event event) {
-        strategy.fireTransition(transition, token, event);
+    public void fireTransition(TypedTransition transition, EventToken token) {
+        strategy.fireTransition(transition, token);
     }
 
     @Override

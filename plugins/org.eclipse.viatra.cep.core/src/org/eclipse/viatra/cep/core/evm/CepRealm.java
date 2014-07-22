@@ -19,6 +19,12 @@ import org.eclipse.viatra.cep.core.api.patterns.ObservedComplexEventPattern;
 
 import com.google.common.collect.Sets;
 
+/**
+ * EVM {@link EventRealm} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class CepRealm implements EventRealm {
 
     private Set<CepEventSource> sources = Sets.newHashSet();

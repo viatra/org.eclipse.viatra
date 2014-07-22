@@ -84,12 +84,12 @@ public interface Event extends EObject {
      * </p>
      * <!-- end-user-doc -->
      * @return the value of the '<em>Source</em>' reference.
-     * @see #setSource(IEventSource)
+     * @see #setSource(EventSource)
      * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getEvent_Source()
      * @model
      * @generated
      */
-    IEventSource getSource();
+    EventSource getSource();
 
     /**
      * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.Event#getSource <em>Source</em>}' reference.
@@ -99,6 +99,6 @@ public interface Event extends EObject {
      * @see #getSource()
      * @generated
      */
-    void setSource(IEventSource value);
+    void setSource(EventSource value);
 
 } // Event

@@ -13,5 +13,5 @@ package org.eclipse.viatra.cep.core.metamodels.events;
  * @model
  * @generated
  */
-public interface UNTIL extends LogicalOperator {
+public interface UNTIL extends ComplexEventOperator {
 } // UNTIL

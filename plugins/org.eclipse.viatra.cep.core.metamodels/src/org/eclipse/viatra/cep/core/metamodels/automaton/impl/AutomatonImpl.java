@@ -20,7 +20,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
+import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
@@ -34,6 +36,8 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getStates <em>States</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getEventPattern <em>Event Pattern</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getEventTokens <em>Event Tokens</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getTimedZones <em>Timed Zones</em>}</li>
  * </ul>
  * </p>
  *
@@ -59,6 +63,26 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
      * @ordered
      */
     protected EventPattern eventPattern;
+
+    /**
+     * The cached value of the '{@link #getEventTokens() <em>Event Tokens</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getEventTokens()
+     * @generated
+     * @ordered
+     */
+    protected EList<EventToken> eventTokens;
+
+    /**
+     * The cached value of the '{@link #getTimedZones() <em>Timed Zones</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTimedZones()
+     * @generated
+     * @ordered
+     */
+    protected EList<TimedZone> timedZones;
 
     /**
      * <!-- begin-user-doc -->
@@ -156,6 +180,30 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<EventToken> getEventTokens() {
+        if (eventTokens == null) {
+            eventTokens = new EObjectContainmentEList<EventToken>(EventToken.class, this, AutomatonPackage.AUTOMATON__EVENT_TOKENS);
+        }
+        return eventTokens;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<TimedZone> getTimedZones() {
+        if (timedZones == null) {
+            timedZones = new EObjectContainmentEList<TimedZone>(TimedZone.class, this, AutomatonPackage.AUTOMATON__TIMED_ZONES);
+        }
+        return timedZones;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -179,6 +227,10 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
                 return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
             case AutomatonPackage.AUTOMATON__EVENT_PATTERN:
                 return basicSetEventPattern(null, msgs);
+            case AutomatonPackage.AUTOMATON__EVENT_TOKENS:
+                return ((InternalEList<?>)getEventTokens()).basicRemove(otherEnd, msgs);
+            case AutomatonPackage.AUTOMATON__TIMED_ZONES:
+                return ((InternalEList<?>)getTimedZones()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -196,6 +248,10 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
             case AutomatonPackage.AUTOMATON__EVENT_PATTERN:
                 if (resolve) return getEventPattern();
                 return basicGetEventPattern();
+            case AutomatonPackage.AUTOMATON__EVENT_TOKENS:
+                return getEventTokens();
+            case AutomatonPackage.AUTOMATON__TIMED_ZONES:
+                return getTimedZones();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -216,6 +272,14 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
             case AutomatonPackage.AUTOMATON__EVENT_PATTERN:
                 setEventPattern((EventPattern)newValue);
                 return;
+            case AutomatonPackage.AUTOMATON__EVENT_TOKENS:
+                getEventTokens().clear();
+                getEventTokens().addAll((Collection<? extends EventToken>)newValue);
+                return;
+            case AutomatonPackage.AUTOMATON__TIMED_ZONES:
+                getTimedZones().clear();
+                getTimedZones().addAll((Collection<? extends TimedZone>)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -234,6 +298,12 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
             case AutomatonPackage.AUTOMATON__EVENT_PATTERN:
                 setEventPattern((EventPattern)null);
                 return;
+            case AutomatonPackage.AUTOMATON__EVENT_TOKENS:
+                getEventTokens().clear();
+                return;
+            case AutomatonPackage.AUTOMATON__TIMED_ZONES:
+                getTimedZones().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -250,6 +320,10 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
                 return states != null && !states.isEmpty();
             case AutomatonPackage.AUTOMATON__EVENT_PATTERN:
                 return eventPattern != null;
+            case AutomatonPackage.AUTOMATON__EVENT_TOKENS:
+                return eventTokens != null && !eventTokens.isEmpty();
+            case AutomatonPackage.AUTOMATON__TIMED_ZONES:
+                return timedZones != null && !timedZones.isEmpty();
         }
         return super.eIsSet(featureID);
     }

@@ -15,6 +15,12 @@ import org.eclipse.incquery.runtime.evm.api.event.Event;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 
+/**
+ * EVM {@link Event} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class CepEvent implements Event<IObservableComplexEventPattern> {
 
     private CepEventType type;

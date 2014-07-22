@@ -18,8 +18,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.viatra.cep.core.api.engine.CEPEngine;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
+/**
+ * Steam of {@link Event}s to be processed by the {@link CEPEngine}.
+ * 
+ * <p>
+ * The {@link EventStream} leverages the notification mechanism of EMF, therefore it is an extension to the
+ * {@link EObjectImpl} type.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class EventStream extends EObjectImpl {
     private Queue<Event> queue = new ConcurrentLinkedQueue<Event>();
 
@@ -29,7 +40,7 @@ public class EventStream extends EObjectImpl {
 
     /**
      * Adds an {@link Event} to the {@link EventQueue}. Every new Event is published to the interested adapters via
-     * EMF's notification mechanism. For example see {@link EventPatternRegistry}.
+     * EMF's notification mechanism.
      * 
      * @param event
      *            the {@link Event} to be added

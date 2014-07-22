@@ -4,25 +4,25 @@ package org.eclipse.viatra.cep.core.metamodels.events.impl;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.viatra.cep.core.metamodels.events.AND;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
-import org.eclipse.viatra.cep.core.metamodels.events.WITHIN;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>WITHIN</b></em>'.
+ * An implementation of the model object '<em><b>AND</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class WITHINImpl extends TimingOperatorImpl implements WITHIN {
+public class ANDImpl extends ComplexEventOperatorImpl implements AND {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected WITHINImpl() {
+    protected ANDImpl() {
         super();
     }
 
@@ -33,7 +33,7 @@ public class WITHINImpl extends TimingOperatorImpl implements WITHIN {
      */
     @Override
     protected EClass eStaticClass() {
-        return EventsPackage.Literals.WITHIN;
+        return EventsPackage.Literals.AND;
     }
 
-} //WITHINImpl
+} //ANDImpl

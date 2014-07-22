@@ -9,11 +9,10 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.api;
+package org.eclipse.viatra.cep.core.api.patterns;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl;
 
-public interface IActionHandler {
-    void handle(Activation<? extends IObservableComplexEventPattern> activation);
+public abstract class AnonymousComplexEventPattern extends ComplexEventPatternImpl {
+    
 }

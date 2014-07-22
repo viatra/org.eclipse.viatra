@@ -13,6 +13,12 @@ package org.eclipse.viatra.cep.core.evm;
 
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 
+/**
+ * EVM {@link EventType} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public enum CepEventType implements EventType {
     APPEARED, DISAPPEARED
 }

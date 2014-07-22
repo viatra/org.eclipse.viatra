@@ -4,7 +4,7 @@
  */
 package org.eclipse.viatra.cep.core.metamodels.events.validation;
 
-import org.eclipse.viatra.cep.core.metamodels.events.IEventSource;
+import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
 
 /**
  * A sample validator interface for {@link org.eclipse.viatra.cep.core.metamodels.events.Event}.
@@ -17,5 +17,5 @@ public interface EventValidator {
 
     boolean validateType(String value);
     boolean validateTimestamp(long value);
-    boolean validateSource(IEventSource value);
+    boolean validateSource(EventSource value);
 }

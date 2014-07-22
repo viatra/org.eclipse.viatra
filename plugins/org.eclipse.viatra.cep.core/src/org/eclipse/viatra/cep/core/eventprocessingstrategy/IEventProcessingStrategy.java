@@ -12,20 +12,34 @@
 package org.eclipse.viatra.cep.core.eventprocessingstrategy;
 
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
+import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
-import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
+/**
+ * Interface for event processing strategies. An event processing strategy is derived from an {@link EventContext} and
+ * should take care of the following tasks at runtime:
+ * <ul>
+ * <li>firing enabled transitions;
+ * <li>recreate {@link EventToken}s in the {@link InitState} of {@link Automaton}s, depending on the semantics of the
+ * {@link EventContext};
+ * <li>handle situations when resetting the {@link Automaton}s is required by the semantics of the {@link EventContext}.
+ * </ul>
+ * 
+ * @author Istvan David
+ * 
+ */
 public interface IEventProcessingStrategy {
     EventContext getContext();
 
-    void fireTransition(Transition t, EventToken et, Event e);
+    void fireTransition(Transition transition, EventToken eventTokenToMove);
 
     void handleInitTokenCreation(InternalModel model, final AutomatonFactory factory,
             IObservableComplexEventPattern observedComplexEventPattern);
 
-    void handleSmResets(InternalModel model, final AutomatonFactory factory);
+    void handleAutomatonResets(InternalModel model, final AutomatonFactory factory);
 }

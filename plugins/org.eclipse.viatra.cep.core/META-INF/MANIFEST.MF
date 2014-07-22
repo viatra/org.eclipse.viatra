@@ -4,26 +4,27 @@ Bundle-Name: VIATRA-CEP Core
 Bundle-SymbolicName: org.eclipse.viatra.cep.core;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: org.eclipse.viatra.cep.core.internal.Activator
-Export-Package: org.eclipse.viatra.cep.core.api,
- org.eclipse.viatra.cep.core.api.engine,
+Bundle-Vendor: Budapest University of Technology and Economics
+Export-Package: org.eclipse.viatra.cep.core.api.engine,
  org.eclipse.viatra.cep.core.api.events,
  org.eclipse.viatra.cep.core.api.evm,
  org.eclipse.viatra.cep.core.api.patterns,
  org.eclipse.viatra.cep.core.api.rules,
+ org.eclipse.viatra.cep.core.engine.compiler,
  org.eclipse.viatra.cep.core.engine.runtime,
  org.eclipse.viatra.cep.core.engine.runtime.util,
  org.eclipse.viatra.cep.core.streams
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.core.runtime,
- org.apache.log4j,
+ org.apache.log4j;visibility:=reexport,
  com.google.guava,
- org.eclipse.viatra.cep.core.metamodels,
+ org.eclipse.viatra.cep.core.metamodels;visibility:=reexport,
  org.eclipse.incquery.runtime.evm;visibility:=reexport,
  org.eclipse.incquery.runtime;visibility:=reexport,
  org.eclipse.viatra2.emf.runtime;visibility:=reexport,
  org.eclipse.xtend.lib,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.emf.ecore.xmi
+ org.eclipse.emf.ecore.xmi,
+ com.google.inject;bundle-version="3.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group

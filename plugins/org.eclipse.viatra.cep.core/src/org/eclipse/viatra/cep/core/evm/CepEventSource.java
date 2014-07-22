@@ -21,6 +21,12 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 
 import com.google.common.collect.Sets;
 
+/**
+ * EVM {@link EventSource} implementation.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class CepEventSource implements EventSource<IObservableComplexEventPattern> {
 
     private CepRealm realm;

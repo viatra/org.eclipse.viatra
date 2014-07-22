@@ -13,5 +13,5 @@ package org.eclipse.viatra.cep.core.metamodels.events;
  * @model
  * @generated
  */
-public interface NEG extends LogicalOperator {
+public interface NEG extends ComplexEventOperator {
 } // NEG

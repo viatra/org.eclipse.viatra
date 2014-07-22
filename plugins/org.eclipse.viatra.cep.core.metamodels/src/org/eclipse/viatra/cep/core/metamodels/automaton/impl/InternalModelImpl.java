@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
-import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
@@ -35,7 +34,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getAutomata <em>Automata</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getLatestEvent <em>Latest Event</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getEventTokens <em>Event Tokens</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
@@ -62,16 +60,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
      * @ordered
      */
     protected Event latestEvent;
-
-    /**
-     * The cached value of the '{@link #getEventTokens() <em>Event Tokens</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getEventTokens()
-     * @generated
-     * @ordered
-     */
-    protected EList<EventToken> eventTokens;
 
     /**
      * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -172,18 +160,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<EventToken> getEventTokens() {
-        if (eventTokens == null) {
-            eventTokens = new EObjectContainmentEList<EventToken>(EventToken.class, this, AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS);
-        }
-        return eventTokens;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EventContext getContext() {
         return context;
     }
@@ -212,8 +188,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
                 return ((InternalEList<?>)getAutomata()).basicRemove(otherEnd, msgs);
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 return basicSetLatestEvent(null, msgs);
-            case AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS:
-                return ((InternalEList<?>)getEventTokens()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -230,8 +204,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
                 return getAutomata();
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 return getLatestEvent();
-            case AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS:
-                return getEventTokens();
             case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
                 return getContext();
         }
@@ -254,10 +226,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 setLatestEvent((Event)newValue);
                 return;
-            case AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS:
-                getEventTokens().clear();
-                getEventTokens().addAll((Collection<? extends EventToken>)newValue);
-                return;
             case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
                 setContext((EventContext)newValue);
                 return;
@@ -279,9 +247,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 setLatestEvent((Event)null);
                 return;
-            case AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS:
-                getEventTokens().clear();
-                return;
             case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
                 setContext(CONTEXT_EDEFAULT);
                 return;
@@ -301,8 +266,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
                 return automata != null && !automata.isEmpty();
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 return latestEvent != null;
-            case AutomatonPackage.INTERNAL_MODEL__EVENT_TOKENS:
-                return eventTokens != null && !eventTokens.isEmpty();
             case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
                 return context != CONTEXT_EDEFAULT;
         }

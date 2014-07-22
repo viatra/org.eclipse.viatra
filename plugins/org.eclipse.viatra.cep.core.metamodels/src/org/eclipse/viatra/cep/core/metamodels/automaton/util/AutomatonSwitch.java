@@ -137,6 +137,26 @@ public class AutomatonSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case AutomatonPackage.TIMED_ZONE: {
+                TimedZone timedZone = (TimedZone)theEObject;
+                T result = caseTimedZone(timedZone);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case AutomatonPackage.WITHIN: {
+                Within within = (Within)theEObject;
+                T result = caseWithin(within);
+                if (result == null) result = caseTimedZone(within);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case AutomatonPackage.HOLDS_FOR: {
+                HoldsFor holdsFor = (HoldsFor)theEObject;
+                T result = caseHoldsFor(holdsFor);
+                if (result == null) result = caseTimedZone(holdsFor);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             default: return defaultCase(theEObject);
         }
     }
@@ -303,6 +323,51 @@ public class AutomatonSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseGuard(Guard object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Timed Zone</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Timed Zone</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseTimedZone(TimedZone object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Within</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Within</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseWithin(Within object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Holds For</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Holds For</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseHoldsFor(HoldsFor object) {
         return null;
     }
 

@@ -11,11 +11,78 @@
 
 package org.eclipse.viatra.cep.core.engine.compiler;
 
-import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra.cep.core.metamodels.events.AND;
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
+import org.eclipse.viatra.cep.core.metamodels.events.NEG;
+
+import com.google.common.base.Preconditions;
+
+/**
+ * Precompiler functionality to map the non-core complex event operators to core operators in a compilation step prior
+ * to the actual {@link Compiler} is being invoked.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class Precompiler {
 
+    /**
+     * Translates the non-core {@link ComplexEventOperator}s of an {@link EventPattern} into core operators.
+     * 
+     * @param eventPattern
+     *            the {@link EventPattern} to be translated
+     * @return the translated {@link EventPattern}
+     */
     public EventPattern unfoldEventPattern(EventPattern eventPattern) {
-        return eventPattern;
+        if (!(eventPattern instanceof ComplexEventPattern)) {
+            return eventPattern;
+        }
+
+        ComplexEventOperator operator = ((ComplexEventPattern) eventPattern).getOperator();
+
+        Preconditions.checkArgument(operator != null);
+
+        if (operator instanceof AND) {
+            return unfoldAnd((ComplexEventPattern) eventPattern);
+        } else if (operator instanceof NEG) {
+            return unfoldNEG((ComplexEventPattern) eventPattern);
+        } else {
+            return eventPattern;
+        }
+    }
+
+    private EventPattern unfoldAnd(ComplexEventPattern originalPattern) {
+        Preconditions.checkArgument(originalPattern.getOperator() instanceof AND);
+
+        List<EventPattern> compositionEvents = originalPattern.getCompositionEvents();
+
+        Preconditions.checkArgument(compositionEvents != null && !compositionEvents.isEmpty());
+
+        ComplexEventPattern newPattern = EventsFactory.eINSTANCE.createComplexEventPattern();
+        newPattern.setId(originalPattern.getId());
+        newPattern.setOperator(EventsFactory.eINSTANCE.createOR());
+
+        for (final List<EventPattern> permutation : new Permutations<EventPattern>().getAll(compositionEvents)) {
+            ComplexEventPattern innerPattern = EventsFactory.eINSTANCE.createComplexEventPattern();
+            innerPattern.setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
+            for (EventPattern eventPattern : permutation) {
+                EObject copy = new EcoreUtil.Copier().copy(eventPattern);
+                innerPattern.getCompositionEvents().add((EventPattern) copy);
+            }
+            newPattern.getCompositionEvents().add(innerPattern);
+        }
+
+        return newPattern;
+    }
+
+    private EventPattern unfoldNEG(ComplexEventPattern eventPattern) {
+        throw new UnsupportedOperationException();
     }
 }

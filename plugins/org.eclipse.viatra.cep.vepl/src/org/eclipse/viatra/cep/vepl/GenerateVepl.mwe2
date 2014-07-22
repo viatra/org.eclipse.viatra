@@ -47,13 +47,13 @@ Workflow {
     }
     
 //    component = DirectoryCleaner {
-//    	directory = "${runtimeProject}.tests/src-gen"
+//    	directory = "../tests/${runtimeProject}.tests/src-gen"
 //    }
     
     component = Generator {
     	pathRtProject = runtimeProject
     	pathUiProject = "${runtimeProject}.ui"
-    	//pathTestProject = "${runtimeProject}.tests"
+//    	pathTestProject = "../tests/${runtimeProject}.tests"
     	projectNameRt = projectName
     	projectNameUi = "${projectName}.ui"
     	encoding = encoding

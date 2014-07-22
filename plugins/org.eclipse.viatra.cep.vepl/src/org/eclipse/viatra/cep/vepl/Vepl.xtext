@@ -77,7 +77,7 @@ ComplexEventPattern:
 
 Rule:
 	'Rule' name=ID '{'
-		'events' ':' eventPatterns+=[EventPattern] (', 'eventPatterns+=[EventPattern])*
+		'events' ':' eventPatterns+=ParameterizedPatternCall (','eventPatterns+=ParameterizedPatternCall)*
 		('actionHandler' ':' actionHandler=QualifiedName)?
 		('action' action = XBlockExpression)?
 	'}'
@@ -99,24 +99,14 @@ enum IQPatternChangeType:
 /*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
 TypedParameterList:
 	{TypedParameterList}
-	parameters+=TypedParameter (', ' parameters+=TypedParameter)*
+	parameters+=TypedParameter (',' parameters+=TypedParameter)*
 ;
 
 TypedParameter:
 	{TypedParameter}
 	name=ID ':' type = JvmTypeReference
 ;
-
-EventPatternParameterList:
-	{EventPatternParameterList}
-	parameters+=EventTypedParameter (', ' parameters+=EventTypedParameter)*
-;
-
-EventTypedParameter:
-	{EventTypedParameter}
-	name=ID ':' type=[EventPattern]
-;
-/*******************************************FUNCTION ARGUMEN PARAMETERS*******************************************/
+/*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
 
 /*******************************************INCQUERY INTEGRATION*******************************************/
 ParametrizedIncQueryPatternReference:
@@ -133,60 +123,68 @@ Timewindow:
 	'['length=INT']'
 ;
 
-EventTypedParameterWithMultiplicity:
-	eventPattern=[EventPattern]('('parameterList=PatternCallParameterList?')')? (multiplicity=Multiplicity)?
-;
-
-PatternCallParameterList:
-	{PatternCallParameterList}
-	parameters+=PatternCallParameter (', ' parameters+=PatternCallParameter)*
-;	
-
 PatternCallParameter:
 	{PatternCallParameter}
 	name=ID
 ;
 
+PatternCallParameterList:
+	{PatternCallParameterList}
+	parameters+=PatternCallParameter (',' parameters+=PatternCallParameter)*
+;
+
+ParameterizedPatternCall:
+	eventPattern=[EventPattern]('('parameterList=PatternCallParameterList?')')?
+;
+
+ComplexExpressionAtom:
+	patternCall=ParameterizedPatternCall (multiplicity=Multiplicity)?
+;
+
+TailExpressionAtom:
+	operator=ComplexEventOperator expressionAtom=ComplexExpressionAtom
+;
+
+
 ComplexEventExpression:
-	Expression | AugmentedExpression
+	PlainExpression | AugmentedExpression
+;
+
+PlainExpression:
+	{PlainExpression}
+	headExpressionAtom=ComplexExpressionAtom (tailExpressionAtoms+=TailExpressionAtom)+
 ;
 
 AugmentedExpression:
-	TimedExpression | MultiplicityExpression | TimedMultiplicityExpression
+	'('expression=PlainExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
 ;
 
-TimedExpression:
-	'('expression=Expression')' timewindow=Timewindow
+/*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+
+
+/*******************************************OPERATORS*******************************************/
+ComplexEventOperator:
+	FollowsOperator | OrOperator | UntilOperator | AndOperator //| NegOperator
 ;
 
-MultiplicityExpression:
-	'('expression=Expression')' multiplicity=Multiplicity
+FollowsOperator:
+	{ComplexOperator}
+	'->'
 ;
 
-TimedMultiplicityExpression:
-	'('expression=Expression')' multiplicity=Multiplicity timewindow=Timewindow
+OrOperator:
+	{OrOperator}
+	'OR'
 ;
 
-Expression:
-	FollowsExpression | OrExpression | UntilExpression | AndExpression //| NegExpression //| RepeatExpression
+AndOperator:
+	{AndOperator}
+	'AND'
 ;
 
-FollowsExpression:
-	{FollowsExpression}
-	eventPatterns+=EventTypedParameterWithMultiplicity (followerExpressions+=FollowerExpression)+
-;
-
-FollowerExpression:
-	operator=FollowsOperator eventPattern=EventTypedParameterWithMultiplicity
-;
-
-OrExpression:
-	{OrExpression}
-	eventPatterns+=EventTypedParameterWithMultiplicity (alternatives+=AlternativeExpression)+
-;
-
-AlternativeExpression:
-	operator=OrOperator eventPattern=EventTypedParameterWithMultiplicity
+UntilOperator:
+	{UntilOperator}
+	'U'
 ;
 
 NegExpression:
@@ -194,58 +192,11 @@ NegExpression:
 	operator=NegOperator eventPattern=EventPattern
 ;
 
-AndExpression:
-	{AndExpression}
-	eventPatterns+=EventTypedParameterWithMultiplicity (andedExpressions+=AndedExpression)+
-;
-
-AndedExpression:
-	operator=AndOperator eventPattern=EventTypedParameterWithMultiplicity
-;
-
-UntilExpression:
-	{UntilExpression}
-	fromEventPattern=EventTypedParameterWithMultiplicity operator=UntilOperator untilEventPattern=EventTypedParameterWithMultiplicity
-;
-
-FollowsOperator:
-	{FollowsOperator}
-	'->'
-;
-
-OrOperator:
-	{OrOperator}
-	'|'
-;
-
 NegOperator:
 	{NegOperator}
-	'^'
+	'NEG'
 ;
-
-AndOperator:
-	{AndOperator}
-	'&'
-;
-
-UntilOperator:
-	{UntilOperator}
-	'~'
-;
-
-//RepeatOperator:
-//	{RepeatOperator}
-//	'&'
-//;
-//should be investigated in accordance to the multiplicity expressions
-
-
-//FollowsOperatorViaTW:
-//        '-[' timewindow=INT ']->'
-//;
-
-
-/*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+/*******************************************OPERATORS*******************************************/
 
 
 /*******************************************STRUCTURAL/INTEGRATION FEATURES*******************************************/

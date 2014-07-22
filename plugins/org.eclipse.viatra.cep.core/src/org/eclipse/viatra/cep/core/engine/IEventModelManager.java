@@ -23,7 +23,6 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
-import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.streams.EventStream;
 
 public interface IEventModelManager {
@@ -49,7 +48,7 @@ public interface IEventModelManager {
 
     void registerNewEventStream(EventStream newEventStream);
 
-    void fireTransition(TypedTransition transition, EventToken token, Event event);
+    void fireTransition(TypedTransition transition, EventToken token);
 
     void callbackOnFiredToken(Transition t, EventToken eventTokenToMove);
 

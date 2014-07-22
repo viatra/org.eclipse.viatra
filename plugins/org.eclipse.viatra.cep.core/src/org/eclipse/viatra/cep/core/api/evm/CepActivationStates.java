@@ -12,7 +12,15 @@
 package org.eclipse.viatra.cep.core.api.evm;
 
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
+/**
+ * EVM {@link ActivationState}s of an {@link EventPattern}. The states capture states when a rule engine should consider
+ * a given {@link EventPattern} being activated or not - e.g. when the pattern gets matched.
+ * 
+ * @author Istvan David
+ * 
+ */
 public enum CepActivationStates implements ActivationState {
     INACTIVE, ACTIVE;
 

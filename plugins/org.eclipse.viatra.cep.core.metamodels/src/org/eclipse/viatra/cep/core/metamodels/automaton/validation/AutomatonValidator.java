@@ -6,7 +6,9 @@ package org.eclipse.viatra.cep.core.metamodels.automaton.validation;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
+import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
@@ -21,4 +23,6 @@ public interface AutomatonValidator {
 
     boolean validateStates(EList<State> value);
     boolean validateEventPattern(EventPattern value);
+    boolean validateEventTokens(EList<EventToken> value);
+    boolean validateTimedZones(EList<TimedZone> value);
 }

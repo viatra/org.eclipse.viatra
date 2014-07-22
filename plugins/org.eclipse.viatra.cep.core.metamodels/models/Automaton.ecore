@@ -6,8 +6,6 @@
         eType="#//Automaton" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="latestEvent" eType="ecore:EClass Cep.ecore#//Event"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokens" upperBound="-1"
-        eType="#//EventToken" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" lowerBound="1"
         eType="#//EventContext"/>
   </eClassifiers>
@@ -16,6 +14,10 @@
         eType="#//State" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" lowerBound="1"
         eType="ecore:EClass Cep.ecore#//EventPattern" eOpposite="Cep.ecore#//EventPattern/automaton"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokens" upperBound="-1"
+        eType="#//EventToken" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timedZones" upperBound="-1"
+        eType="#//TimedZone" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EventToken">
     <eStructuralFeatures xsi:type="ecore:EReference" name="currentState" eType="#//State"
@@ -32,6 +34,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokens" upperBound="-1"
         eType="#//EventToken" eOpposite="#//EventToken/currentState"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lastProcessedEvent" eType="ecore:EClass Cep.ecore#//Event"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inStateOf" eType="#//TimedZone"
+        eOpposite="#//TimedZone/inState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outStateOf" eType="#//TimedZone"
+        eOpposite="#//TimedZone/outState"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InitState" eSuperTypes="#//State"/>
   <eClassifiers xsi:type="ecore:EClass" name="FinalState" eSuperTypes="#//State"/>
@@ -60,4 +66,13 @@
     <eLiterals name="IMMEDIATE" value="3"/>
     <eLiterals name="STRICT_IMMEDIATE" value="4"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TimedZone" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inState" lowerBound="1"
+        eType="#//State" eOpposite="#//State/inStateOf"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outState" lowerBound="1"
+        eType="#//State" eOpposite="#//State/outStateOf"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Within" eSuperTypes="#//TimedZone"/>
+  <eClassifiers xsi:type="ecore:EClass" name="HoldsFor" eSuperTypes="#//TimedZone"/>
 </ecore:EPackage>

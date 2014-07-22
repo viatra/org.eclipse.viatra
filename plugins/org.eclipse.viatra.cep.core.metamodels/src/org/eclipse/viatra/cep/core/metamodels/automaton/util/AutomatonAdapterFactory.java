@@ -112,6 +112,18 @@ public class AutomatonAdapterFactory extends AdapterFactoryImpl {
                 return createGuardAdapter();
             }
             @Override
+            public Adapter caseTimedZone(TimedZone object) {
+                return createTimedZoneAdapter();
+            }
+            @Override
+            public Adapter caseWithin(Within object) {
+                return createWithinAdapter();
+            }
+            @Override
+            public Adapter caseHoldsFor(HoldsFor object) {
+                return createHoldsForAdapter();
+            }
+            @Override
             public Adapter defaultCase(EObject object) {
                 return createEObjectAdapter();
             }
@@ -282,6 +294,48 @@ public class AutomatonAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createGuardAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone <em>Timed Zone</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone
+     * @generated
+     */
+    public Adapter createTimedZoneAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Within <em>Within</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Within
+     * @generated
+     */
+    public Adapter createWithinAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.HoldsFor <em>Holds For</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.HoldsFor
+     * @generated
+     */
+    public Adapter createHoldsForAdapter() {
         return null;
     }
 

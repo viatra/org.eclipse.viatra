@@ -78,4 +78,17 @@ pattern epsilonTransitionBetweenStates(t : EpsilonTransition, s1 : State, s2 : S
 	State.inTransitions(s2, t);
 }
 
+pattern tokenEntersTimedZone(et : EventToken, s: State, tz : TimedZone){
+	EventToken.currentState(et, s);
+	State.inStateOf(s, tz);
+}
 
+pattern tokenLeavesTimedZone(et : EventToken, s: State, tz : TimedZone){
+	EventToken.currentState(et, s);
+	State.outStateOf(s, tz);
+}
+
+pattern tokenInTimedZone(et : EventToken, s: State, tz : TimedZone){
+	EventToken.currentState(et, s);
+	State.inStateOf(s, tz);
+}

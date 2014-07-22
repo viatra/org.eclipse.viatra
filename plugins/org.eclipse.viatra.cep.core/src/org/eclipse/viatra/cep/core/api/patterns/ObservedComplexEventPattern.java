@@ -11,8 +11,22 @@
 
 package org.eclipse.viatra.cep.core.api.patterns;
 
+import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
+import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
+/**
+ * An {@link EventPattern} instance that got matched, i.e. the related {@link EventToken} got into the
+ * {@link FinalState} of the appropriate {@link Automaton}.
+ * 
+ * <p>
+ * An object of this type should be instantiated at runtime when an {@link EventPattern} is placed into the
+ * {@link FinalState}.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class ObservedComplexEventPattern implements IObservableComplexEventPattern {
 
     private EventPattern observablePattern;

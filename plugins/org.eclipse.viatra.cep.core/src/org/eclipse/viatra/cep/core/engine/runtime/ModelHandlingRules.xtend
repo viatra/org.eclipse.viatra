@@ -8,17 +8,16 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.core.engine.runtime
 
 import java.util.ArrayList
 import java.util.Map
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers
-import org.eclipse.viatra.cep.core.api.patterns.InTrapComplexEventPattern
 import org.eclipse.viatra.cep.core.api.patterns.ObservedComplexEventPattern
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
+import org.eclipse.viatra.cep.core.engine.timing.TimingTable
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
@@ -28,13 +27,15 @@ import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformati
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.RuleOrderBasedFixedPriorityResolver
 
-class ModelHandlingWithViatraApi2 {
-	extension EventDrivenTransformationRuleFactory ruleFactory = new EventDrivenTransformationRuleFactory
+import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
+
+class ModelHandlingRules {
+
+	val EventDrivenTransformationRuleFactory ruleFactory = new EventDrivenTransformationRuleFactory
+	val logger = LoggerUtils::instance.logger
 
 	@Property IEventModelManager eventModelManager;
 	@Property Map<RuleSpecification<?>, Integer> modelHandlers;
-
-	val logger = LoggerUtils::instance.logger
 
 	new(IEventModelManager eventModelManager) {
 		this.eventModelManager = eventModelManager;
@@ -44,7 +45,9 @@ class ModelHandlingWithViatraApi2 {
 		new EventDrivenTransformationRuleGroup(
 			createEnabledTransitionRule,
 			createFinishedAutomatonRule,
-			createTokenInTrapStateRule
+			createTokenInTrapStateRule,
+			createTokenEntersTimedZoneRule,
+			createTokenLeavesTimedZoneRule
 		)
 	}
 
@@ -56,7 +59,12 @@ class ModelHandlingWithViatraApi2 {
 		val fixedPriorityResolver = ConflictResolvers.createFixedPriorityResolver();
 		fixedPriorityResolver.setPriority(createEnabledTransitionRule.ruleSpecification, 100)
 		fixedPriorityResolver.setPriority(createFinishedAutomatonRule.ruleSpecification, 50)
-		fixedPriorityResolver.setPriority(createTokenInTrapStateRule.ruleSpecification, 0)
+		fixedPriorityResolver.setPriority(createTokenInTrapStateRule.ruleSpecification, 10)
+		fixedPriorityResolver.setPriority(createTokenEntersTimedZoneRule.ruleSpecification, 5)
+		fixedPriorityResolver.setPriority(
+			createTokenLeavesTimedZoneRule.ruleSpecification,
+			1
+		)
 
 		EventDrivenTransformation.forResource(eventModelManager.resourceSet).addRules(rules).
 			setConflictResolver(fixedPriorityResolver).create()
@@ -72,18 +80,18 @@ class ModelHandlingWithViatraApi2 {
 
 	val createEnabledTransitionRule = ruleFactory.createRule().name("enabled transition rule").precondition(
 		EnabledTransitionMatcher::querySpecification).action [
-		var eventPattern = ((t.eContainer() as State).eContainer() as Automaton).getEventPattern();
+		var eventPattern = ((t.eContainer() as State).eContainer() as Automaton).eventPattern
 		if (eventPattern instanceof ParameterizableComplexEventPattern) {
 			if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindigs(e))) {
-				return;
+				return
 			}
 		}
-		eventModelManager.fireTransition(t, et, e)
+		eventModelManager.fireTransition(t, et)
 	].build
 
 	val createFinishedAutomatonRule = ruleFactory.createRule().name("finished automaton rule").precondition(
 		FinishedAutomatonMatcher::querySpecification).action [
-		eventModelManager.finalStatesForAutomata.get(automaton).eventTokens.remove(0)
+		automaton.finalState.eventTokens.remove(0)
 		var observedPattern = new ObservedComplexEventPattern(automaton.eventPattern)
 		eventModelManager.callbackOnPatternRecognition(observedPattern)
 		eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
@@ -98,9 +106,23 @@ class ModelHandlingWithViatraApi2 {
 		logger.debug(
 			String::format("Event token found in the trap state for pattern %s.",
 				(et.currentState.eContainer as Automaton).eventPattern.id));
-		var eventPattern = (currentState.eContainer() as Automaton).getEventPattern();
-		var failedPattern = new InTrapComplexEventPattern(eventPattern)
-		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
+		//		var eventPattern = (currentState.eContainer() as Automaton).getEventPattern();
+		//		var failedPattern = new InTrapComplexEventPattern(eventPattern)
+		//		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
 		currentState.eventTokens.clear
 	].build
+
+	val createTokenEntersTimedZoneRule = ruleFactory.createRule().name("token enters timed zone rule").
+		precondition(TokenEntersTimedZoneMatcher::querySpecification).action [
+			TimingTable.instance.enterTimedZone(tz, et)
+		].build
+
+	val createTokenLeavesTimedZoneRule = ruleFactory.createRule().name("token leaves timed zone rule").
+		precondition(TokenLeavesTimedZoneMatcher::querySpecification).action [
+			val canLeave = TimingTable.instance.leaveTimedZone(tz, et);
+			if (!canLeave) {
+				val automaton = et.eContainer as Automaton
+				et.setCurrentState(automaton.trapState)
+			}
+		].build
 }

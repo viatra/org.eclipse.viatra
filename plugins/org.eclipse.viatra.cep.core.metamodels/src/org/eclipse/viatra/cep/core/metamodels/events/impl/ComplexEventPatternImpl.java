@@ -19,11 +19,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
-import org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator;
+import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,6 +35,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getCompositionEvents <em>Composition Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getOperator <em>Operator</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getTimeWindow <em>Time Window</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,7 +60,17 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * @generated
      * @ordered
      */
-    protected LogicalOperator operator;
+    protected ComplexEventOperator operator;
+
+    /**
+     * The cached value of the '{@link #getTimeWindow() <em>Time Window</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTimeWindow()
+     * @generated
+     * @ordered
+     */
+    protected TimeWindow timeWindow;
 
     /**
      * <!-- begin-user-doc -->
@@ -96,7 +108,7 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public LogicalOperator getOperator() {
+    public ComplexEventOperator getOperator() {
         return operator;
     }
 
@@ -105,8 +117,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public NotificationChain basicSetOperator(LogicalOperator newOperator, NotificationChain msgs) {
-        LogicalOperator oldOperator = operator;
+    public NotificationChain basicSetOperator(ComplexEventOperator newOperator, NotificationChain msgs) {
+        ComplexEventOperator oldOperator = operator;
         operator = newOperator;
         if (eNotificationRequired()) {
             ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR, oldOperator, newOperator);
@@ -120,13 +132,13 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setOperator(LogicalOperator newOperator) {
+    public void setOperator(ComplexEventOperator newOperator) {
         if (newOperator != operator) {
             NotificationChain msgs = null;
             if (operator != null)
-                msgs = ((InternalEObject)operator).eInverseRemove(this, EventsPackage.LOGICAL_OPERATOR__EVENT_PATTERN, LogicalOperator.class, msgs);
+                msgs = ((InternalEObject)operator).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR, null, msgs);
             if (newOperator != null)
-                msgs = ((InternalEObject)newOperator).eInverseAdd(this, EventsPackage.LOGICAL_OPERATOR__EVENT_PATTERN, LogicalOperator.class, msgs);
+                msgs = ((InternalEObject)newOperator).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR, null, msgs);
             msgs = basicSetOperator(newOperator, msgs);
             if (msgs != null) msgs.dispatch();
         }
@@ -139,10 +151,42 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public void addCompositionEventPattern(EventPattern compositionEventPattern) {
-        // TODO: implement this method
-        // Ensure that you remove @generated or mark it @generated NOT
-        throw new UnsupportedOperationException();
+    public TimeWindow getTimeWindow() {
+        return timeWindow;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain basicSetTimeWindow(TimeWindow newTimeWindow, NotificationChain msgs) {
+        TimeWindow oldTimeWindow = timeWindow;
+        timeWindow = newTimeWindow;
+        if (eNotificationRequired()) {
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, oldTimeWindow, newTimeWindow);
+            if (msgs == null) msgs = notification; else msgs.add(notification);
+        }
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setTimeWindow(TimeWindow newTimeWindow) {
+        if (newTimeWindow != timeWindow) {
+            NotificationChain msgs = null;
+            if (timeWindow != null)
+                msgs = ((InternalEObject)timeWindow).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, null, msgs);
+            if (newTimeWindow != null)
+                msgs = ((InternalEObject)newTimeWindow).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, null, msgs);
+            msgs = basicSetTimeWindow(newTimeWindow, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, newTimeWindow, newTimeWindow));
     }
 
     /**
@@ -162,28 +206,14 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * @generated
      */
     @Override
-    public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-        switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
-                if (operator != null)
-                    msgs = ((InternalEObject)operator).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR, null, msgs);
-                return basicSetOperator((LogicalOperator)otherEnd, msgs);
-        }
-        return super.eInverseAdd(otherEnd, featureID, msgs);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
             case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
                 return ((InternalEList<?>)getCompositionEvents()).basicRemove(otherEnd, msgs);
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return basicSetOperator(null, msgs);
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
+                return basicSetTimeWindow(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -200,6 +230,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
                 return getCompositionEvents();
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return getOperator();
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
+                return getTimeWindow();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -218,7 +250,10 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
                 getCompositionEvents().addAll((Collection<? extends EventPattern>)newValue);
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
-                setOperator((LogicalOperator)newValue);
+                setOperator((ComplexEventOperator)newValue);
+                return;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
+                setTimeWindow((TimeWindow)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -236,7 +271,10 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
                 getCompositionEvents().clear();
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
-                setOperator((LogicalOperator)null);
+                setOperator((ComplexEventOperator)null);
+                return;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
+                setTimeWindow((TimeWindow)null);
                 return;
         }
         super.eUnset(featureID);
@@ -254,6 +292,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
                 return compositionEvents != null && !compositionEvents.isEmpty();
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return operator != null;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
+                return timeWindow != null;
         }
         return super.eIsSet(featureID);
     }
@@ -266,9 +306,6 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
         switch (operationID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN___ADD_COMPOSITION_EVENT_PATTERN__EVENTPATTERN:
-                addCompositionEventPattern((EventPattern)arguments.get(0));
-                return null;
             case EventsPackage.COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT:
                 return evaluateParameterBindigs((Event)arguments.get(0));
         }

@@ -24,27 +24,59 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Default implementation of the {@link ICepRule} interface.
+ * 
+ * @author Istvan David
+ * 
+ */
 public class DefaultCepRule implements ICepRule {
     private static final Logger logger = LoggerUtils.getInstance().getLogger();
 
     private List<EventPattern> eventPatterns = Lists.newArrayList();
     private Job<IObservableComplexEventPattern> job;
 
+    /**
+     * Creates a new rule with the specified {@link EventPattern}s and {@link Job}.
+     * 
+     * @param eventPatterns
+     *            the {@link EventPattern}s the rule should be activated upon
+     * @param job
+     *            the {@link Job} to be executed when patterns get matched
+     */
     public DefaultCepRule(List<EventPattern> eventPatterns, Job<IObservableComplexEventPattern> job) {
         this.eventPatterns = eventPatterns;
         this.job = job;
     }
 
+    /**
+     * Creates a new rule with the specified {@link EventPattern}s and a default {@link Job}.
+     * 
+     * @param eventPatterns
+     *            the {@link EventPattern}s the rule should be activated upon
+     */
     public DefaultCepRule(List<EventPattern> eventPatterns) {
         this(eventPatterns, getDefaultJob());
     }
 
-    public void addEventPattern(EventPattern eventPattern) {
-        eventPatterns.add(eventPattern);
-    }
-
+    /**
+     * Associates a list of {@link EventPattern}s with the rule.
+     * 
+     * @param eventPatterns
+     *            the patterns to be included into the rule
+     */
     public void addEventPatterns(List<EventPattern> eventPatterns) {
         this.eventPatterns.addAll(eventPatterns);
+    }
+
+    /**
+     * Associates a single {@link EventPattern} with the rule.
+     * 
+     * @param eventPattern
+     *            the pattern to be included into the rule
+     */
+    public void addEventPattern(EventPattern eventPattern) {
+        eventPatterns.add(eventPattern);
     }
 
     @Override
@@ -57,7 +89,10 @@ public class DefaultCepRule implements ICepRule {
         return job;
     }
 
-    public static Job<IObservableComplexEventPattern> getDefaultJob() {
+    /**
+     * @return default {@link Job} that logs diagnostic information on the console.
+     */
+    private static Job<IObservableComplexEventPattern> getDefaultJob() {
         return new Job<IObservableComplexEventPattern>(CepActivationStates.ACTIVE) {
 
             protected void execute(Activation<? extends IObservableComplexEventPattern> activation, Context context) {

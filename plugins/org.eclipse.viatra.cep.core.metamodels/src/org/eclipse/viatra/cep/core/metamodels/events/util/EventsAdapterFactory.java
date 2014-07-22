@@ -84,20 +84,12 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createEventAdapter();
             }
             @Override
-            public Adapter caseIEventSource(IEventSource object) {
-                return createIEventSourceAdapter();
-            }
-            @Override
-            public Adapter caseTime(Time object) {
-                return createTimeAdapter();
+            public Adapter caseEventSource(EventSource object) {
+                return createEventSourceAdapter();
             }
             @Override
             public Adapter caseComplexEventOperator(ComplexEventOperator object) {
                 return createComplexEventOperatorAdapter();
-            }
-            @Override
-            public Adapter caseLogicalOperator(LogicalOperator object) {
-                return createLogicalOperatorAdapter();
             }
             @Override
             public Adapter caseOR(OR object) {
@@ -116,16 +108,12 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createUNTILAdapter();
             }
             @Override
-            public Adapter caseTimingOperator(TimingOperator object) {
-                return createTimingOperatorAdapter();
+            public Adapter caseAND(AND object) {
+                return createANDAdapter();
             }
             @Override
-            public Adapter caseWITHIN(WITHIN object) {
-                return createWITHINAdapter();
-            }
-            @Override
-            public Adapter caseATLEAST(ATLEAST object) {
-                return createATLEASTAdapter();
+            public Adapter caseTimeWindow(TimeWindow object) {
+                return createTimeWindowAdapter();
             }
             @Override
             public Adapter defaultCase(EObject object) {
@@ -204,30 +192,16 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.IEventSource <em>IEvent Source</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventSource <em>Event Source</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.IEventSource
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventSource
      * @generated
      */
-    public Adapter createIEventSourceAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.Time <em>Time</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.Time
-     * @generated
-     */
-    public Adapter createTimeAdapter() {
+    public Adapter createEventSourceAdapter() {
         return null;
     }
 
@@ -242,20 +216,6 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createComplexEventOperatorAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator <em>Logical Operator</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator
-     * @generated
-     */
-    public Adapter createLogicalOperatorAdapter() {
         return null;
     }
 
@@ -316,44 +276,30 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimingOperator <em>Timing Operator</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.AND <em>AND</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimingOperator
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AND
      * @generated
      */
-    public Adapter createTimingOperatorAdapter() {
+    public Adapter createANDAdapter() {
         return null;
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.WITHIN <em>WITHIN</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow <em>Time Window</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.WITHIN
+     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
      * @generated
      */
-    public Adapter createWITHINAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.ATLEAST <em>ATLEAST</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ATLEAST
-     * @generated
-     */
-    public Adapter createATLEASTAdapter() {
+    public Adapter createTimeWindowAdapter() {
         return null;
     }
 

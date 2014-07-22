@@ -16,19 +16,30 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance;
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * An extension of the {@link ComplexEventPattern} type that additionally captures parameters of the pattern and
+ * provides functionality to evaluate parameter bindings at runtime.
+ * 
+ * <p>
+ * In event processing scenarios where parameter binding is involved, event patterns should extend this superclass.
+ * 
+ * @author Istvan David
+ * 
+ */
 public abstract class ParameterizableComplexEventPattern extends ComplexEventPatternImpl {
     private Map<String, Object> paramValues = Maps.newHashMap();
     private List<ParameterizableEventInstance> observedEvents = Lists.newArrayList();
 
     protected boolean evaluateParamBinding(Map<String, Object> params) {
         if (params.isEmpty()) {
-            return false;
+            return true;
         }
         for (Entry<String, Object> param : params.entrySet()) {
             if (!(evaluateParamBinding(param.getKey(), param.getValue()))) {

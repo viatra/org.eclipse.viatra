@@ -16,7 +16,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.NEG;
  *
  * @generated
  */
-public class NEGImpl extends LogicalOperatorImpl implements NEG {
+public class NEGImpl extends ComplexEventOperatorImpl implements NEG {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

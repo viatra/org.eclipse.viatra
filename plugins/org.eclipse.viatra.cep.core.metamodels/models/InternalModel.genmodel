@@ -18,12 +18,13 @@
     <genClasses ecoreClass="Automaton.ecore#//InternalModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/automata"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/latestEvent"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/eventTokens"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//InternalModel/context"/>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//Automaton">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//Automaton/states"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//Automaton/eventPattern"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//Automaton/eventTokens"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//Automaton/timedZones"/>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//EventToken">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/currentState"/>
@@ -35,6 +36,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//State/label"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//State/eventTokens"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//State/lastProcessedEvent"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//State/inStateOf"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//State/outStateOf"/>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//InitState"/>
     <genClasses ecoreClass="Automaton.ecore#//FinalState"/>
@@ -51,6 +54,13 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//Guard/eventType"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Automaton.ecore#//Guard/transition"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="Automaton.ecore#//TimedZone">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//TimedZone/inState"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//TimedZone/outState"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//TimedZone/time"/>
+    </genClasses>
+    <genClasses ecoreClass="Automaton.ecore#//Within"/>
+    <genClasses ecoreClass="Automaton.ecore#//HoldsFor"/>
   </genPackages>
   <genPackages prefix="Events" basePackage="org.eclipse.viatra.cep.core.metamodels"
       disposableProviderFactory="true" ecorePackage="Cep.ecore#/">
@@ -64,9 +74,7 @@
     <genClasses ecoreClass="Cep.ecore#//ComplexEventPattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/compositionEvents"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/operator"/>
-      <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/addCompositionEventPattern">
-        <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/addCompositionEventPattern/compositionEventPattern"/>
-      </genOperations>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timeWindow"/>
       <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/evaluateParameterBindigs">
         <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindigs/event"/>
       </genOperations>
@@ -76,27 +84,17 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Event/timestamp"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//Event/source"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="Cep.ecore#//IEventSource">
-      <genOperations ecoreOperation="Cep.ecore#//IEventSource/getId"/>
-    </genClasses>
-    <genClasses ecoreClass="Cep.ecore#//Time">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Time/length"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//Time/operator"/>
+    <genClasses image="false" ecoreClass="Cep.ecore#//EventSource">
+      <genOperations ecoreOperation="Cep.ecore#//EventSource/getId"/>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//ComplexEventOperator"/>
-    <genClasses image="false" ecoreClass="Cep.ecore#//LogicalOperator">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//LogicalOperator/timing"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//LogicalOperator/eventPattern"/>
-    </genClasses>
     <genClasses ecoreClass="Cep.ecore#//OR"/>
     <genClasses ecoreClass="Cep.ecore#//NEG"/>
     <genClasses ecoreClass="Cep.ecore#//FOLLOWS"/>
     <genClasses ecoreClass="Cep.ecore#//UNTIL"/>
-    <genClasses ecoreClass="Cep.ecore#//TimingOperator">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//TimingOperator/time"/>
-      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//TimingOperator/operator"/>
+    <genClasses ecoreClass="Cep.ecore#//AND"/>
+    <genClasses ecoreClass="Cep.ecore#//TimeWindow">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//TimeWindow/time"/>
     </genClasses>
-    <genClasses ecoreClass="Cep.ecore#//WITHIN"/>
-    <genClasses ecoreClass="Cep.ecore#//ATLEAST"/>
   </genPackages>
 </genmodel:GenModel>

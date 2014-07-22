@@ -112,6 +112,24 @@ public interface AutomatonFactory extends EFactory {
     Guard createGuard();
 
     /**
+     * Returns a new object of class '<em>Within</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Within</em>'.
+     * @generated
+     */
+    Within createWithin();
+
+    /**
+     * Returns a new object of class '<em>Holds For</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Holds For</em>'.
+     * @generated
+     */
+    HoldsFor createHoldsFor();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

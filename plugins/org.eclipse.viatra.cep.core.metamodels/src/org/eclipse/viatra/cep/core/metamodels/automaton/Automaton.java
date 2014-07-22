@@ -18,6 +18,8 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getStates <em>States</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventPattern <em>Event Pattern</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventTokens <em>Event Tokens</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTimedZones <em>Timed Zones</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,5 +71,37 @@ public interface Automaton extends EObject {
      * @generated
      */
     void setEventPattern(EventPattern value);
+
+    /**
+     * Returns the value of the '<em><b>Event Tokens</b></em>' containment reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Event Tokens</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Event Tokens</em>' containment reference list.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getAutomaton_EventTokens()
+     * @model containment="true"
+     * @generated
+     */
+    EList<EventToken> getEventTokens();
+
+    /**
+     * Returns the value of the '<em><b>Timed Zones</b></em>' containment reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Timed Zones</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Timed Zones</em>' containment reference list.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getAutomaton_TimedZones()
+     * @model containment="true"
+     * @generated
+     */
+    EList<TimedZone> getTimedZones();
 
 } // Automaton

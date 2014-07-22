@@ -86,22 +86,13 @@ public interface AutomatonPackage extends EPackage {
     int INTERNAL_MODEL__LATEST_EVENT = 1;
 
     /**
-     * The feature id for the '<em><b>Event Tokens</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int INTERNAL_MODEL__EVENT_TOKENS = 2;
-
-    /**
      * The feature id for the '<em><b>Context</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int INTERNAL_MODEL__CONTEXT = 3;
+    int INTERNAL_MODEL__CONTEXT = 2;
 
     /**
      * The number of structural features of the '<em>Internal Model</em>' class.
@@ -110,7 +101,7 @@ public interface AutomatonPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int INTERNAL_MODEL_FEATURE_COUNT = 4;
+    int INTERNAL_MODEL_FEATURE_COUNT = 3;
 
     /**
      * The number of operations of the '<em>Internal Model</em>' class.
@@ -150,13 +141,31 @@ public interface AutomatonPackage extends EPackage {
     int AUTOMATON__EVENT_PATTERN = 1;
 
     /**
+     * The feature id for the '<em><b>Event Tokens</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AUTOMATON__EVENT_TOKENS = 2;
+
+    /**
+     * The feature id for the '<em><b>Timed Zones</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AUTOMATON__TIMED_ZONES = 3;
+
+    /**
      * The number of structural features of the '<em>Automaton</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int AUTOMATON_FEATURE_COUNT = 2;
+    int AUTOMATON_FEATURE_COUNT = 4;
 
     /**
      * The number of operations of the '<em>Automaton</em>' class.
@@ -269,13 +278,31 @@ public interface AutomatonPackage extends EPackage {
     int STATE__LAST_PROCESSED_EVENT = 4;
 
     /**
+     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STATE__IN_STATE_OF = 5;
+
+    /**
+     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STATE__OUT_STATE_OF = 6;
+
+    /**
      * The number of structural features of the '<em>State</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int STATE_FEATURE_COUNT = 5;
+    int STATE_FEATURE_COUNT = 7;
 
     /**
      * The number of operations of the '<em>State</em>' class.
@@ -340,6 +367,24 @@ public interface AutomatonPackage extends EPackage {
      * @ordered
      */
     int INIT_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
+
+    /**
+     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INIT_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
+
+    /**
+     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INIT_STATE__OUT_STATE_OF = STATE__OUT_STATE_OF;
 
     /**
      * The number of structural features of the '<em>Init State</em>' class.
@@ -415,6 +460,24 @@ public interface AutomatonPackage extends EPackage {
     int FINAL_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
 
     /**
+     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FINAL_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
+
+    /**
+     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FINAL_STATE__OUT_STATE_OF = STATE__OUT_STATE_OF;
+
+    /**
      * The number of structural features of the '<em>Final State</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -486,6 +549,24 @@ public interface AutomatonPackage extends EPackage {
      * @ordered
      */
     int TRAP_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
+
+    /**
+     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TRAP_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
+
+    /**
+     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TRAP_STATE__OUT_STATE_OF = STATE__OUT_STATE_OF;
 
     /**
      * The number of structural features of the '<em>Trap State</em>' class.
@@ -699,6 +780,171 @@ public interface AutomatonPackage extends EPackage {
     int GUARD_OPERATION_COUNT = 0;
 
     /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.TimedZoneImpl <em>Timed Zone</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.TimedZoneImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getTimedZone()
+     * @generated
+     */
+    int TIMED_ZONE = 11;
+
+    /**
+     * The feature id for the '<em><b>In State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TIMED_ZONE__IN_STATE = 0;
+
+    /**
+     * The feature id for the '<em><b>Out State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TIMED_ZONE__OUT_STATE = 1;
+
+    /**
+     * The feature id for the '<em><b>Time</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TIMED_ZONE__TIME = 2;
+
+    /**
+     * The number of structural features of the '<em>Timed Zone</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TIMED_ZONE_FEATURE_COUNT = 3;
+
+    /**
+     * The number of operations of the '<em>Timed Zone</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TIMED_ZONE_OPERATION_COUNT = 0;
+
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.WithinImpl <em>Within</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.WithinImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getWithin()
+     * @generated
+     */
+    int WITHIN = 12;
+
+    /**
+     * The feature id for the '<em><b>In State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int WITHIN__IN_STATE = TIMED_ZONE__IN_STATE;
+
+    /**
+     * The feature id for the '<em><b>Out State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int WITHIN__OUT_STATE = TIMED_ZONE__OUT_STATE;
+
+    /**
+     * The feature id for the '<em><b>Time</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int WITHIN__TIME = TIMED_ZONE__TIME;
+
+    /**
+     * The number of structural features of the '<em>Within</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int WITHIN_FEATURE_COUNT = TIMED_ZONE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of operations of the '<em>Within</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int WITHIN_OPERATION_COUNT = TIMED_ZONE_OPERATION_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.HoldsForImpl <em>Holds For</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.HoldsForImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getHoldsFor()
+     * @generated
+     */
+    int HOLDS_FOR = 13;
+
+    /**
+     * The feature id for the '<em><b>In State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int HOLDS_FOR__IN_STATE = TIMED_ZONE__IN_STATE;
+
+    /**
+     * The feature id for the '<em><b>Out State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int HOLDS_FOR__OUT_STATE = TIMED_ZONE__OUT_STATE;
+
+    /**
+     * The feature id for the '<em><b>Time</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int HOLDS_FOR__TIME = TIMED_ZONE__TIME;
+
+    /**
+     * The number of structural features of the '<em>Holds For</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int HOLDS_FOR_FEATURE_COUNT = TIMED_ZONE_FEATURE_COUNT + 0;
+
+    /**
+     * The number of operations of the '<em>Holds For</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int HOLDS_FOR_OPERATION_COUNT = TIMED_ZONE_OPERATION_COUNT + 0;
+
+    /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventContext <em>Event Context</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -706,7 +952,7 @@ public interface AutomatonPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getEventContext()
      * @generated
      */
-    int EVENT_CONTEXT = 11;
+    int EVENT_CONTEXT = 14;
 
 
     /**
@@ -740,17 +986,6 @@ public interface AutomatonPackage extends EPackage {
      * @generated
      */
     EReference getInternalModel_LatestEvent();
-
-    /**
-     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEventTokens <em>Event Tokens</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Event Tokens</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEventTokens()
-     * @see #getInternalModel()
-     * @generated
-     */
-    EReference getInternalModel_EventTokens();
 
     /**
      * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getContext <em>Context</em>}'.
@@ -794,6 +1029,28 @@ public interface AutomatonPackage extends EPackage {
      * @generated
      */
     EReference getAutomaton_EventPattern();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventTokens <em>Event Tokens</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Event Tokens</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventTokens()
+     * @see #getAutomaton()
+     * @generated
+     */
+    EReference getAutomaton_EventTokens();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTimedZones <em>Timed Zones</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Timed Zones</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTimedZones()
+     * @see #getAutomaton()
+     * @generated
+     */
+    EReference getAutomaton_TimedZones();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken <em>Event Token</em>}'.
@@ -891,6 +1148,28 @@ public interface AutomatonPackage extends EPackage {
      * @generated
      */
     EReference getState_LastProcessedEvent();
+
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf <em>In State Of</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>In State Of</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf()
+     * @see #getState()
+     * @generated
+     */
+    EReference getState_InStateOf();
+
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf <em>Out State Of</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Out State Of</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf()
+     * @see #getState()
+     * @generated
+     */
+    EReference getState_OutStateOf();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InitState <em>Init State</em>}'.
@@ -1018,6 +1297,69 @@ public interface AutomatonPackage extends EPackage {
     EReference getGuard_Transition();
 
     /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone <em>Timed Zone</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Timed Zone</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone
+     * @generated
+     */
+    EClass getTimedZone();
+
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getInState <em>In State</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>In State</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getInState()
+     * @see #getTimedZone()
+     * @generated
+     */
+    EReference getTimedZone_InState();
+
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getOutState <em>Out State</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Out State</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getOutState()
+     * @see #getTimedZone()
+     * @generated
+     */
+    EReference getTimedZone_OutState();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getTime <em>Time</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Time</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getTime()
+     * @see #getTimedZone()
+     * @generated
+     */
+    EAttribute getTimedZone_Time();
+
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Within <em>Within</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Within</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Within
+     * @generated
+     */
+    EClass getWithin();
+
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.HoldsFor <em>Holds For</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Holds For</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.HoldsFor
+     * @generated
+     */
+    EClass getHoldsFor();
+
+    /**
      * Returns the meta object for enum '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventContext <em>Event Context</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1077,14 +1419,6 @@ public interface AutomatonPackage extends EPackage {
         EReference INTERNAL_MODEL__LATEST_EVENT = eINSTANCE.getInternalModel_LatestEvent();
 
         /**
-         * The meta object literal for the '<em><b>Event Tokens</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference INTERNAL_MODEL__EVENT_TOKENS = eINSTANCE.getInternalModel_EventTokens();
-
-        /**
          * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1117,6 +1451,22 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference AUTOMATON__EVENT_PATTERN = eINSTANCE.getAutomaton_EventPattern();
+
+        /**
+         * The meta object literal for the '<em><b>Event Tokens</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference AUTOMATON__EVENT_TOKENS = eINSTANCE.getAutomaton_EventTokens();
+
+        /**
+         * The meta object literal for the '<em><b>Timed Zones</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference AUTOMATON__TIMED_ZONES = eINSTANCE.getAutomaton_TimedZones();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl <em>Event Token</em>}' class.
@@ -1193,6 +1543,22 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference STATE__LAST_PROCESSED_EVENT = eINSTANCE.getState_LastProcessedEvent();
+
+        /**
+         * The meta object literal for the '<em><b>In State Of</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference STATE__IN_STATE_OF = eINSTANCE.getState_InStateOf();
+
+        /**
+         * The meta object literal for the '<em><b>Out State Of</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference STATE__OUT_STATE_OF = eINSTANCE.getState_OutStateOf();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InitStateImpl <em>Init State</em>}' class.
@@ -1303,6 +1669,60 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference GUARD__TRANSITION = eINSTANCE.getGuard_Transition();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.TimedZoneImpl <em>Timed Zone</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.TimedZoneImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getTimedZone()
+         * @generated
+         */
+        EClass TIMED_ZONE = eINSTANCE.getTimedZone();
+
+        /**
+         * The meta object literal for the '<em><b>In State</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference TIMED_ZONE__IN_STATE = eINSTANCE.getTimedZone_InState();
+
+        /**
+         * The meta object literal for the '<em><b>Out State</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference TIMED_ZONE__OUT_STATE = eINSTANCE.getTimedZone_OutState();
+
+        /**
+         * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute TIMED_ZONE__TIME = eINSTANCE.getTimedZone_Time();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.WithinImpl <em>Within</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.WithinImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getWithin()
+         * @generated
+         */
+        EClass WITHIN = eINSTANCE.getWithin();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.HoldsForImpl <em>Holds For</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.HoldsForImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl#getHoldsFor()
+         * @generated
+         */
+        EClass HOLDS_FOR = eINSTANCE.getHoldsFor();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventContext <em>Event Context</em>}' enum.

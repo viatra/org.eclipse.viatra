@@ -18,7 +18,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getAutomata <em>Automata</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getLatestEvent <em>Latest Event</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEventTokens <em>Event Tokens</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
@@ -69,22 +68,6 @@ public interface InternalModel extends EObject {
      * @generated
      */
     void setLatestEvent(Event value);
-
-    /**
-     * Returns the value of the '<em><b>Event Tokens</b></em>' containment reference list.
-     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Event Tokens</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Event Tokens</em>' containment reference list.
-     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getInternalModel_EventTokens()
-     * @model containment="true"
-     * @generated
-     */
-    EList<EventToken> getEventTokens();
 
     /**
      * Returns the value of the '<em><b>Context</b></em>' attribute.

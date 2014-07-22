@@ -14,12 +14,13 @@ Package automaton <automaton.meta>
   Class InternalModel
     Reference automata : Automaton<<0..*>>
     Reference latestEvent : Event
-    Reference eventTokens : EventToken<<0..*>>
     Attribute context : EventContext<<1..1>>
 
   Class Automaton
     Reference states : State<<0..*>>
     Reference eventPattern : EventPattern<<1..1>>
+    Reference eventTokens : EventToken<<0..*>>
+    Reference timedZones : TimedZone<<0..*>>
 
   Class EventToken
     Reference currentState : State
@@ -31,6 +32,8 @@ Package automaton <automaton.meta>
     Attribute label : EString
     Reference eventTokens : EventToken<<0..*>>
     Reference lastProcessedEvent : Event
+    Reference inStateOf : TimedZone
+    Reference outStateOf : TimedZone
 
   Class InitState -> State
 
@@ -51,6 +54,15 @@ Package automaton <automaton.meta>
     Reference eventType : AtomicEventPattern<<1..1>>
     Reference transition : TypedTransition<<1..1>>
 
+  Class TimedZone
+    Reference inState : State<<1..1>>
+    Reference outState : State<<1..1>>
+    Attribute time : ELong<<1..1>>
+
+  Class Within -> TimedZone
+
+  Class HoldsFor -> TimedZone
+
   Enum EventContext
     Literal CHRONICLE = 0
     Literal RECENT = 1
@@ -69,40 +81,29 @@ Package events <cep.meta>
 
   Class ComplexEventPattern -> EventPattern
     Reference compositionEvents : EventPattern<<0..*>>
-    Reference operator : LogicalOperator<<1..1>>
-    Operation addCompositionEventPattern(EventPattern<<1..1>>) : void<<1..1>>
+    Reference operator : ComplexEventOperator<<1..1>>
+    Reference timeWindow : TimeWindow
     Operation evaluateParameterBindigs(Event<<1..1>>) : EBoolean<<1..1>>
 
   Class Event
     Attribute type : EString<<1..1>>
     Attribute timestamp : ELong<<1..1>>
-    Reference source : IEventSource
+    Reference source : EventSource
 
-  Class IEventSource
+  Class EventSource
     Operation getId() : EString<<1..1>>
-
-  Class Time
-    Attribute length : ELong<<1..1>>
-    Reference operator : TimingOperator<<1..1>>
 
   Class ComplexEventOperator
 
-  Class LogicalOperator -> ComplexEventOperator
-    Reference timing : TimingOperator
-    Reference eventPattern : ComplexEventPattern<<1..1>>
+  Class OR -> ComplexEventOperator
 
-  Class OR -> LogicalOperator
+  Class NEG -> ComplexEventOperator
 
-  Class NEG -> LogicalOperator
+  Class FOLLOWS -> ComplexEventOperator
 
-  Class FOLLOWS -> LogicalOperator
+  Class UNTIL -> ComplexEventOperator
 
-  Class UNTIL -> LogicalOperator
+  Class AND -> ComplexEventOperator
 
-  Class TimingOperator -> ComplexEventOperator
-    Reference time : Time<<1..1>>
-    Reference operator : LogicalOperator<<1..1>>
-
-  Class WITHIN -> TimingOperator
-
-  Class ATLEAST -> TimingOperator
+  Class TimeWindow
+    Attribute time : ELong<<1..1>>

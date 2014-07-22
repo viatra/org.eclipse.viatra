@@ -13,5 +13,5 @@ package org.eclipse.viatra.cep.core.metamodels.events;
  * @model
  * @generated
  */
-public interface FOLLOWS extends LogicalOperator {
+public interface FOLLOWS extends ComplexEventOperator {
 } // FOLLOWS

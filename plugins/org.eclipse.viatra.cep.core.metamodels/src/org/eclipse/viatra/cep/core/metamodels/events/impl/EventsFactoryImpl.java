@@ -59,13 +59,12 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
             case EventsPackage.ATOMIC_EVENT_PATTERN: return createAtomicEventPattern();
             case EventsPackage.COMPLEX_EVENT_PATTERN: return createComplexEventPattern();
             case EventsPackage.EVENT: return createEvent();
-            case EventsPackage.TIME: return createTime();
             case EventsPackage.OR: return createOR();
             case EventsPackage.NEG: return createNEG();
             case EventsPackage.FOLLOWS: return createFOLLOWS();
             case EventsPackage.UNTIL: return createUNTIL();
-            case EventsPackage.WITHIN: return createWITHIN();
-            case EventsPackage.ATLEAST: return createATLEAST();
+            case EventsPackage.AND: return createAND();
+            case EventsPackage.TIME_WINDOW: return createTimeWindow();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -99,16 +98,6 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
     public Event createEvent() {
         EventImpl event = new EventImpl();
         return event;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Time createTime() {
-        TimeImpl time = new TimeImpl();
-        return time;
     }
 
     /**
@@ -156,9 +145,9 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public WITHIN createWITHIN() {
-        WITHINImpl within = new WITHINImpl();
-        return within;
+    public AND createAND() {
+        ANDImpl and = new ANDImpl();
+        return and;
     }
 
     /**
@@ -166,9 +155,9 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public ATLEAST createATLEAST() {
-        ATLEASTImpl atleast = new ATLEASTImpl();
-        return atleast;
+    public TimeWindow createTimeWindow() {
+        TimeWindowImpl timeWindow = new TimeWindowImpl();
+        return timeWindow;
     }
 
     /**

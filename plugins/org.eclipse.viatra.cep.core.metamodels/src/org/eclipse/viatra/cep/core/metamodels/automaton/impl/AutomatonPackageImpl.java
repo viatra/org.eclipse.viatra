@@ -18,12 +18,15 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
+import org.eclipse.viatra.cep.core.metamodels.automaton.HoldsFor;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
+import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
+import org.eclipse.viatra.cep.core.metamodels.automaton.Within;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
 
@@ -112,6 +115,27 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * @generated
      */
     private EClass guardEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass timedZoneEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass withinEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass holdsForEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -218,17 +242,8 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getInternalModel_EventTokens() {
-        return (EReference)internalModelEClass.getEStructuralFeatures().get(2);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EAttribute getInternalModel_Context() {
-        return (EAttribute)internalModelEClass.getEStructuralFeatures().get(3);
+        return (EAttribute)internalModelEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -256,6 +271,24 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      */
     public EReference getAutomaton_EventPattern() {
         return (EReference)automatonEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getAutomaton_EventTokens() {
+        return (EReference)automatonEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getAutomaton_TimedZones() {
+        return (EReference)automatonEClass.getEStructuralFeatures().get(3);
     }
 
     /**
@@ -337,6 +370,24 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      */
     public EReference getState_LastProcessedEvent() {
         return (EReference)stateEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getState_InStateOf() {
+        return (EReference)stateEClass.getEStructuralFeatures().get(5);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getState_OutStateOf() {
+        return (EReference)stateEClass.getEStructuralFeatures().get(6);
     }
 
     /**
@@ -452,6 +503,60 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getTimedZone() {
+        return timedZoneEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getTimedZone_InState() {
+        return (EReference)timedZoneEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getTimedZone_OutState() {
+        return (EReference)timedZoneEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getTimedZone_Time() {
+        return (EAttribute)timedZoneEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getWithin() {
+        return withinEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getHoldsFor() {
+        return holdsForEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EEnum getEventContext() {
         return eventContextEEnum;
     }
@@ -487,12 +592,13 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         internalModelEClass = createEClass(INTERNAL_MODEL);
         createEReference(internalModelEClass, INTERNAL_MODEL__AUTOMATA);
         createEReference(internalModelEClass, INTERNAL_MODEL__LATEST_EVENT);
-        createEReference(internalModelEClass, INTERNAL_MODEL__EVENT_TOKENS);
         createEAttribute(internalModelEClass, INTERNAL_MODEL__CONTEXT);
 
         automatonEClass = createEClass(AUTOMATON);
         createEReference(automatonEClass, AUTOMATON__STATES);
         createEReference(automatonEClass, AUTOMATON__EVENT_PATTERN);
+        createEReference(automatonEClass, AUTOMATON__EVENT_TOKENS);
+        createEReference(automatonEClass, AUTOMATON__TIMED_ZONES);
 
         eventTokenEClass = createEClass(EVENT_TOKEN);
         createEReference(eventTokenEClass, EVENT_TOKEN__CURRENT_STATE);
@@ -504,6 +610,8 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         createEAttribute(stateEClass, STATE__LABEL);
         createEReference(stateEClass, STATE__EVENT_TOKENS);
         createEReference(stateEClass, STATE__LAST_PROCESSED_EVENT);
+        createEReference(stateEClass, STATE__IN_STATE_OF);
+        createEReference(stateEClass, STATE__OUT_STATE_OF);
 
         initStateEClass = createEClass(INIT_STATE);
 
@@ -523,6 +631,15 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         guardEClass = createEClass(GUARD);
         createEReference(guardEClass, GUARD__EVENT_TYPE);
         createEReference(guardEClass, GUARD__TRANSITION);
+
+        timedZoneEClass = createEClass(TIMED_ZONE);
+        createEReference(timedZoneEClass, TIMED_ZONE__IN_STATE);
+        createEReference(timedZoneEClass, TIMED_ZONE__OUT_STATE);
+        createEAttribute(timedZoneEClass, TIMED_ZONE__TIME);
+
+        withinEClass = createEClass(WITHIN);
+
+        holdsForEClass = createEClass(HOLDS_FOR);
 
         // Create enums
         eventContextEEnum = createEEnum(EVENT_CONTEXT);
@@ -564,17 +681,20 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         trapStateEClass.getESuperTypes().add(this.getState());
         typedTransitionEClass.getESuperTypes().add(this.getTransition());
         epsilonTransitionEClass.getESuperTypes().add(this.getTransition());
+        withinEClass.getESuperTypes().add(this.getTimedZone());
+        holdsForEClass.getESuperTypes().add(this.getTimedZone());
 
         // Initialize classes, features, and operations; add parameters
         initEClass(internalModelEClass, InternalModel.class, "InternalModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getInternalModel_Automata(), this.getAutomaton(), null, "automata", null, 0, -1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getInternalModel_LatestEvent(), theEventsPackage.getEvent(), null, "latestEvent", null, 0, 1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getInternalModel_EventTokens(), this.getEventToken(), null, "eventTokens", null, 0, -1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getInternalModel_Context(), this.getEventContext(), "context", null, 1, 1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(automatonEClass, Automaton.class, "Automaton", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getAutomaton_States(), this.getState(), null, "states", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getAutomaton_EventPattern(), theEventsPackage.getEventPattern(), theEventsPackage.getEventPattern_Automaton(), "eventPattern", null, 1, 1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getAutomaton_EventTokens(), this.getEventToken(), null, "eventTokens", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getAutomaton_TimedZones(), this.getTimedZone(), null, "timedZones", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(eventTokenEClass, EventToken.class, "EventToken", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEventToken_CurrentState(), this.getState(), this.getState_EventTokens(), "currentState", null, 0, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -586,6 +706,8 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEAttribute(getState_Label(), ecorePackage.getEString(), "label", null, 0, 1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getState_EventTokens(), this.getEventToken(), this.getEventToken_CurrentState(), "eventTokens", null, 0, -1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getState_LastProcessedEvent(), theEventsPackage.getEvent(), null, "lastProcessedEvent", null, 0, 1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getState_InStateOf(), this.getTimedZone(), this.getTimedZone_InState(), "inStateOf", null, 0, 1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getState_OutStateOf(), this.getTimedZone(), this.getTimedZone_OutState(), "outStateOf", null, 0, 1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(initStateEClass, InitState.class, "InitState", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -605,6 +727,15 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEClass(guardEClass, Guard.class, "Guard", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getGuard_EventType(), theEventsPackage.getAtomicEventPattern(), null, "eventType", null, 1, 1, Guard.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getGuard_Transition(), this.getTypedTransition(), this.getTypedTransition_Guard(), "transition", null, 1, 1, Guard.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(timedZoneEClass, TimedZone.class, "TimedZone", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getTimedZone_InState(), this.getState(), this.getState_InStateOf(), "inState", null, 1, 1, TimedZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getTimedZone_OutState(), this.getState(), this.getState_OutStateOf(), "outState", null, 1, 1, TimedZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getTimedZone_Time(), ecorePackage.getELong(), "time", null, 1, 1, TimedZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(withinEClass, Within.class, "Within", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(holdsForEClass, HoldsFor.class, "HoldsFor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         // Initialize enums and add enum literals
         initEEnum(eventContextEEnum, EventContext.class, "EventContext");

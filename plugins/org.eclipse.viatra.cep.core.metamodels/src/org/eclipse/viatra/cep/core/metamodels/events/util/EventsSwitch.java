@@ -92,15 +92,9 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.IEVENT_SOURCE: {
-                IEventSource iEventSource = (IEventSource)theEObject;
-                T result = caseIEventSource(iEventSource);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case EventsPackage.TIME: {
-                Time time = (Time)theEObject;
-                T result = caseTime(time);
+            case EventsPackage.EVENT_SOURCE: {
+                EventSource eventSource = (EventSource)theEObject;
+                T result = caseEventSource(eventSource);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -110,17 +104,9 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.LOGICAL_OPERATOR: {
-                LogicalOperator logicalOperator = (LogicalOperator)theEObject;
-                T result = caseLogicalOperator(logicalOperator);
-                if (result == null) result = caseComplexEventOperator(logicalOperator);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case EventsPackage.OR: {
                 OR or = (OR)theEObject;
                 T result = caseOR(or);
-                if (result == null) result = caseLogicalOperator(or);
                 if (result == null) result = caseComplexEventOperator(or);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -128,7 +114,6 @@ public class EventsSwitch<T> extends Switch<T> {
             case EventsPackage.NEG: {
                 NEG neg = (NEG)theEObject;
                 T result = caseNEG(neg);
-                if (result == null) result = caseLogicalOperator(neg);
                 if (result == null) result = caseComplexEventOperator(neg);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -136,7 +121,6 @@ public class EventsSwitch<T> extends Switch<T> {
             case EventsPackage.FOLLOWS: {
                 FOLLOWS follows = (FOLLOWS)theEObject;
                 T result = caseFOLLOWS(follows);
-                if (result == null) result = caseLogicalOperator(follows);
                 if (result == null) result = caseComplexEventOperator(follows);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -144,31 +128,20 @@ public class EventsSwitch<T> extends Switch<T> {
             case EventsPackage.UNTIL: {
                 UNTIL until = (UNTIL)theEObject;
                 T result = caseUNTIL(until);
-                if (result == null) result = caseLogicalOperator(until);
                 if (result == null) result = caseComplexEventOperator(until);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.TIMING_OPERATOR: {
-                TimingOperator timingOperator = (TimingOperator)theEObject;
-                T result = caseTimingOperator(timingOperator);
-                if (result == null) result = caseComplexEventOperator(timingOperator);
+            case EventsPackage.AND: {
+                AND and = (AND)theEObject;
+                T result = caseAND(and);
+                if (result == null) result = caseComplexEventOperator(and);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.WITHIN: {
-                WITHIN within = (WITHIN)theEObject;
-                T result = caseWITHIN(within);
-                if (result == null) result = caseTimingOperator(within);
-                if (result == null) result = caseComplexEventOperator(within);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case EventsPackage.ATLEAST: {
-                ATLEAST atleast = (ATLEAST)theEObject;
-                T result = caseATLEAST(atleast);
-                if (result == null) result = caseTimingOperator(atleast);
-                if (result == null) result = caseComplexEventOperator(atleast);
+            case EventsPackage.TIME_WINDOW: {
+                TimeWindow timeWindow = (TimeWindow)theEObject;
+                T result = caseTimeWindow(timeWindow);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -237,32 +210,17 @@ public class EventsSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>IEvent Source</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Event Source</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>IEvent Source</em>'.
+     * @return the result of interpreting the object as an instance of '<em>Event Source</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseIEventSource(IEventSource object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Time</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Time</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseTime(Time object) {
+    public T caseEventSource(EventSource object) {
         return null;
     }
 
@@ -278,21 +236,6 @@ public class EventsSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseComplexEventOperator(ComplexEventOperator object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>Logical Operator</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Logical Operator</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseLogicalOperator(LogicalOperator object) {
         return null;
     }
 
@@ -357,47 +300,32 @@ public class EventsSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Timing Operator</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>AND</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Timing Operator</em>'.
+     * @return the result of interpreting the object as an instance of '<em>AND</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseTimingOperator(TimingOperator object) {
+    public T caseAND(AND object) {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>WITHIN</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Time Window</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>WITHIN</em>'.
+     * @return the result of interpreting the object as an instance of '<em>Time Window</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseWITHIN(WITHIN object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>ATLEAST</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>ATLEAST</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseATLEAST(ATLEAST object) {
+    public T caseTimeWindow(TimeWindow object) {
         return null;
     }
 

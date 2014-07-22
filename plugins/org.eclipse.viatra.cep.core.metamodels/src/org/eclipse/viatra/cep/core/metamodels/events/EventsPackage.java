@@ -205,22 +205,22 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_PATTERN__OPERATOR = EVENT_PATTERN_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Time Window</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int COMPLEX_EVENT_PATTERN__TIME_WINDOW = EVENT_PATTERN_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>Complex Event Pattern</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN_FEATURE_COUNT = EVENT_PATTERN_FEATURE_COUNT + 2;
-
-    /**
-     * The operation id for the '<em>Add Composition Event Pattern</em>' operation.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int COMPLEX_EVENT_PATTERN___ADD_COMPOSITION_EVENT_PATTERN__EVENTPATTERN = EVENT_PATTERN_OPERATION_COUNT + 0;
+    int COMPLEX_EVENT_PATTERN_FEATURE_COUNT = EVENT_PATTERN_FEATURE_COUNT + 3;
 
     /**
      * The operation id for the '<em>Evaluate Parameter Bindigs</em>' operation.
@@ -229,7 +229,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT = EVENT_PATTERN_OPERATION_COUNT + 1;
+    int COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT = EVENT_PATTERN_OPERATION_COUNT + 0;
 
     /**
      * The number of operations of the '<em>Complex Event Pattern</em>' class.
@@ -238,7 +238,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN_OPERATION_COUNT = EVENT_PATTERN_OPERATION_COUNT + 2;
+    int COMPLEX_EVENT_PATTERN_OPERATION_COUNT = EVENT_PATTERN_OPERATION_COUNT + 1;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl <em>Event</em>}' class.
@@ -296,23 +296,23 @@ public interface EventsPackage extends EPackage {
     int EVENT_OPERATION_COUNT = 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.IEventSource <em>IEvent Source</em>}' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventSourceImpl <em>Event Source</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.IEventSource
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getIEventSource()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventSourceImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventSource()
      * @generated
      */
-    int IEVENT_SOURCE = 4;
+    int EVENT_SOURCE = 4;
 
     /**
-     * The number of structural features of the '<em>IEvent Source</em>' class.
+     * The number of structural features of the '<em>Event Source</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int IEVENT_SOURCE_FEATURE_COUNT = 0;
+    int EVENT_SOURCE_FEATURE_COUNT = 0;
 
     /**
      * The operation id for the '<em>Get Id</em>' operation.
@@ -321,62 +321,16 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int IEVENT_SOURCE___GET_ID = 0;
+    int EVENT_SOURCE___GET_ID = 0;
 
     /**
-     * The number of operations of the '<em>IEvent Source</em>' class.
+     * The number of operations of the '<em>Event Source</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int IEVENT_SOURCE_OPERATION_COUNT = 1;
-
-    /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeImpl <em>Time</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTime()
-     * @generated
-     */
-    int TIME = 5;
-
-    /**
-     * The feature id for the '<em><b>Length</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int TIME__LENGTH = 0;
-
-    /**
-     * The feature id for the '<em><b>Operator</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int TIME__OPERATOR = 1;
-
-    /**
-     * The number of structural features of the '<em>Time</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int TIME_FEATURE_COUNT = 2;
-
-    /**
-     * The number of operations of the '<em>Time</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int TIME_OPERATION_COUNT = 0;
+    int EVENT_SOURCE_OPERATION_COUNT = 1;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventOperatorImpl <em>Complex Event Operator</em>}' class.
@@ -386,7 +340,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getComplexEventOperator()
      * @generated
      */
-    int COMPLEX_EVENT_OPERATOR = 6;
+    int COMPLEX_EVENT_OPERATOR = 5;
 
     /**
      * The number of structural features of the '<em>Complex Event Operator</em>' class.
@@ -407,52 +361,6 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_OPERATOR_OPERATION_COUNT = 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.LogicalOperatorImpl <em>Logical Operator</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.LogicalOperatorImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getLogicalOperator()
-     * @generated
-     */
-    int LOGICAL_OPERATOR = 7;
-
-    /**
-     * The feature id for the '<em><b>Timing</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LOGICAL_OPERATOR__TIMING = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LOGICAL_OPERATOR__EVENT_PATTERN = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 1;
-
-    /**
-     * The number of structural features of the '<em>Logical Operator</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LOGICAL_OPERATOR_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 2;
-
-    /**
-     * The number of operations of the '<em>Logical Operator</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LOGICAL_OPERATOR_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
-
-    /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ORImpl <em>OR</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -460,25 +368,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getOR()
      * @generated
      */
-    int OR = 8;
-
-    /**
-     * The feature id for the '<em><b>Timing</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int OR__TIMING = LOGICAL_OPERATOR__TIMING;
-
-    /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int OR__EVENT_PATTERN = LOGICAL_OPERATOR__EVENT_PATTERN;
+    int OR = 6;
 
     /**
      * The number of structural features of the '<em>OR</em>' class.
@@ -487,7 +377,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int OR_FEATURE_COUNT = LOGICAL_OPERATOR_FEATURE_COUNT + 0;
+    int OR_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
 
     /**
      * The number of operations of the '<em>OR</em>' class.
@@ -496,7 +386,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int OR_OPERATION_COUNT = LOGICAL_OPERATOR_OPERATION_COUNT + 0;
+    int OR_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.NEGImpl <em>NEG</em>}' class.
@@ -506,25 +396,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getNEG()
      * @generated
      */
-    int NEG = 9;
-
-    /**
-     * The feature id for the '<em><b>Timing</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int NEG__TIMING = LOGICAL_OPERATOR__TIMING;
-
-    /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int NEG__EVENT_PATTERN = LOGICAL_OPERATOR__EVENT_PATTERN;
+    int NEG = 7;
 
     /**
      * The number of structural features of the '<em>NEG</em>' class.
@@ -533,7 +405,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int NEG_FEATURE_COUNT = LOGICAL_OPERATOR_FEATURE_COUNT + 0;
+    int NEG_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
 
     /**
      * The number of operations of the '<em>NEG</em>' class.
@@ -542,7 +414,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int NEG_OPERATION_COUNT = LOGICAL_OPERATOR_OPERATION_COUNT + 0;
+    int NEG_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.FOLLOWSImpl <em>FOLLOWS</em>}' class.
@@ -552,25 +424,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getFOLLOWS()
      * @generated
      */
-    int FOLLOWS = 10;
-
-    /**
-     * The feature id for the '<em><b>Timing</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int FOLLOWS__TIMING = LOGICAL_OPERATOR__TIMING;
-
-    /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int FOLLOWS__EVENT_PATTERN = LOGICAL_OPERATOR__EVENT_PATTERN;
+    int FOLLOWS = 8;
 
     /**
      * The number of structural features of the '<em>FOLLOWS</em>' class.
@@ -579,7 +433,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int FOLLOWS_FEATURE_COUNT = LOGICAL_OPERATOR_FEATURE_COUNT + 0;
+    int FOLLOWS_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
 
     /**
      * The number of operations of the '<em>FOLLOWS</em>' class.
@@ -588,7 +442,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int FOLLOWS_OPERATION_COUNT = LOGICAL_OPERATOR_OPERATION_COUNT + 0;
+    int FOLLOWS_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.UNTILImpl <em>UNTIL</em>}' class.
@@ -598,25 +452,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getUNTIL()
      * @generated
      */
-    int UNTIL = 11;
-
-    /**
-     * The feature id for the '<em><b>Timing</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int UNTIL__TIMING = LOGICAL_OPERATOR__TIMING;
-
-    /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int UNTIL__EVENT_PATTERN = LOGICAL_OPERATOR__EVENT_PATTERN;
+    int UNTIL = 9;
 
     /**
      * The number of structural features of the '<em>UNTIL</em>' class.
@@ -625,7 +461,7 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int UNTIL_FEATURE_COUNT = LOGICAL_OPERATOR_FEATURE_COUNT + 0;
+    int UNTIL_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
 
     /**
      * The number of operations of the '<em>UNTIL</em>' class.
@@ -634,145 +470,72 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int UNTIL_OPERATION_COUNT = LOGICAL_OPERATOR_OPERATION_COUNT + 0;
+    int UNTIL_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimingOperatorImpl <em>Timing Operator</em>}' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl <em>AND</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimingOperatorImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimingOperator()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAND()
      * @generated
      */
-    int TIMING_OPERATOR = 12;
+    int AND = 10;
 
     /**
-     * The feature id for the '<em><b>Time</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int TIMING_OPERATOR__TIME = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Operator</b></em>' container reference.
+     * The number of structural features of the '<em>AND</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TIMING_OPERATOR__OPERATOR = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 1;
+    int AND_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
 
     /**
-     * The number of structural features of the '<em>Timing Operator</em>' class.
+     * The number of operations of the '<em>AND</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TIMING_OPERATOR_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 2;
+    int AND_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
-     * The number of operations of the '<em>Timing Operator</em>' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl <em>Time Window</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimeWindow()
+     * @generated
+     */
+    int TIME_WINDOW = 11;
+
+    /**
+     * The feature id for the '<em><b>Time</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TIMING_OPERATOR_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
+    int TIME_WINDOW__TIME = 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.WITHINImpl <em>WITHIN</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.WITHINImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getWITHIN()
-     * @generated
-     */
-    int WITHIN = 13;
-
-    /**
-     * The feature id for the '<em><b>Time</b></em>' containment reference.
+     * The number of structural features of the '<em>Time Window</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int WITHIN__TIME = TIMING_OPERATOR__TIME;
+    int TIME_WINDOW_FEATURE_COUNT = 1;
 
     /**
-     * The feature id for the '<em><b>Operator</b></em>' container reference.
+     * The number of operations of the '<em>Time Window</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int WITHIN__OPERATOR = TIMING_OPERATOR__OPERATOR;
-
-    /**
-     * The number of structural features of the '<em>WITHIN</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int WITHIN_FEATURE_COUNT = TIMING_OPERATOR_FEATURE_COUNT + 0;
-
-    /**
-     * The number of operations of the '<em>WITHIN</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int WITHIN_OPERATION_COUNT = TIMING_OPERATOR_OPERATION_COUNT + 0;
-
-    /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ATLEASTImpl <em>ATLEAST</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.ATLEASTImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getATLEAST()
-     * @generated
-     */
-    int ATLEAST = 14;
-
-    /**
-     * The feature id for the '<em><b>Time</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ATLEAST__TIME = TIMING_OPERATOR__TIME;
-
-    /**
-     * The feature id for the '<em><b>Operator</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ATLEAST__OPERATOR = TIMING_OPERATOR__OPERATOR;
-
-    /**
-     * The number of structural features of the '<em>ATLEAST</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ATLEAST_FEATURE_COUNT = TIMING_OPERATOR_FEATURE_COUNT + 0;
-
-    /**
-     * The number of operations of the '<em>ATLEAST</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ATLEAST_OPERATION_COUNT = TIMING_OPERATOR_OPERATION_COUNT + 0;
+    int TIME_WINDOW_OPERATION_COUNT = 0;
 
 
     /**
@@ -861,14 +624,15 @@ public interface EventsPackage extends EPackage {
     EReference getComplexEventPattern_Operator();
 
     /**
-     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#addCompositionEventPattern(org.eclipse.viatra.cep.core.metamodels.events.EventPattern) <em>Add Composition Event Pattern</em>}' operation.
+     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow <em>Time Window</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the '<em>Add Composition Event Pattern</em>' operation.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#addCompositionEventPattern(org.eclipse.viatra.cep.core.metamodels.events.EventPattern)
+     * @return the meta object for the containment reference '<em>Time Window</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow()
+     * @see #getComplexEventPattern()
      * @generated
      */
-    EOperation getComplexEventPattern__AddCompositionEventPattern__EventPattern();
+    EReference getComplexEventPattern_TimeWindow();
 
     /**
      * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindigs(org.eclipse.viatra.cep.core.metamodels.events.Event) <em>Evaluate Parameter Bindigs</em>}' operation.
@@ -924,56 +688,24 @@ public interface EventsPackage extends EPackage {
     EReference getEvent_Source();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.IEventSource <em>IEvent Source</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventSource <em>Event Source</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for class '<em>IEvent Source</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.IEventSource
+     * @return the meta object for class '<em>Event Source</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventSource
      * @generated
      */
-    EClass getIEventSource();
+    EClass getEventSource();
 
     /**
-     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.IEventSource#getId() <em>Get Id</em>}' operation.
+     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.EventSource#getId() <em>Get Id</em>}' operation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for the '<em>Get Id</em>' operation.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.IEventSource#getId()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventSource#getId()
      * @generated
      */
-    EOperation getIEventSource__GetId();
-
-    /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Time <em>Time</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Time</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.Time
-     * @generated
-     */
-    EClass getTime();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.Time#getLength <em>Length</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Length</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.Time#getLength()
-     * @see #getTime()
-     * @generated
-     */
-    EAttribute getTime_Length();
-
-    /**
-     * Returns the meta object for the container reference '{@link org.eclipse.viatra.cep.core.metamodels.events.Time#getOperator <em>Operator</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the container reference '<em>Operator</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.Time#getOperator()
-     * @see #getTime()
-     * @generated
-     */
-    EReference getTime_Operator();
+    EOperation getEventSource__GetId();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator <em>Complex Event Operator</em>}'.
@@ -984,38 +716,6 @@ public interface EventsPackage extends EPackage {
      * @generated
      */
     EClass getComplexEventOperator();
-
-    /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator <em>Logical Operator</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Logical Operator</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator
-     * @generated
-     */
-    EClass getLogicalOperator();
-
-    /**
-     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator#getTiming <em>Timing</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Timing</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator#getTiming()
-     * @see #getLogicalOperator()
-     * @generated
-     */
-    EReference getLogicalOperator_Timing();
-
-    /**
-     * Returns the meta object for the container reference '{@link org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator#getEventPattern <em>Event Pattern</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the container reference '<em>Event Pattern</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.LogicalOperator#getEventPattern()
-     * @see #getLogicalOperator()
-     * @generated
-     */
-    EReference getLogicalOperator_EventPattern();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.OR <em>OR</em>}'.
@@ -1058,56 +758,35 @@ public interface EventsPackage extends EPackage {
     EClass getUNTIL();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimingOperator <em>Timing Operator</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.AND <em>AND</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Timing Operator</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimingOperator
+     * @return the meta object for class '<em>AND</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AND
      * @generated
      */
-    EClass getTimingOperator();
+    EClass getAND();
 
     /**
-     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.TimingOperator#getTime <em>Time</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow <em>Time Window</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Time</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimingOperator#getTime()
-     * @see #getTimingOperator()
+     * @return the meta object for class '<em>Time Window</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
      * @generated
      */
-    EReference getTimingOperator_Time();
+    EClass getTimeWindow();
 
     /**
-     * Returns the meta object for the container reference '{@link org.eclipse.viatra.cep.core.metamodels.events.TimingOperator#getOperator <em>Operator</em>}'.
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime <em>Time</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the container reference '<em>Operator</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimingOperator#getOperator()
-     * @see #getTimingOperator()
+     * @return the meta object for the attribute '<em>Time</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime()
+     * @see #getTimeWindow()
      * @generated
      */
-    EReference getTimingOperator_Operator();
-
-    /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.WITHIN <em>WITHIN</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>WITHIN</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.WITHIN
-     * @generated
-     */
-    EClass getWITHIN();
-
-    /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.ATLEAST <em>ATLEAST</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>ATLEAST</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ATLEAST
-     * @generated
-     */
-    EClass getATLEAST();
+    EAttribute getTimeWindow_Time();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -1203,12 +882,12 @@ public interface EventsPackage extends EPackage {
         EReference COMPLEX_EVENT_PATTERN__OPERATOR = eINSTANCE.getComplexEventPattern_Operator();
 
         /**
-         * The meta object literal for the '<em><b>Add Composition Event Pattern</b></em>' operation.
+         * The meta object literal for the '<em><b>Time Window</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EOperation COMPLEX_EVENT_PATTERN___ADD_COMPOSITION_EVENT_PATTERN__EVENTPATTERN = eINSTANCE.getComplexEventPattern__AddCompositionEventPattern__EventPattern();
+        EReference COMPLEX_EVENT_PATTERN__TIME_WINDOW = eINSTANCE.getComplexEventPattern_TimeWindow();
 
         /**
          * The meta object literal for the '<em><b>Evaluate Parameter Bindigs</b></em>' operation.
@@ -1253,14 +932,14 @@ public interface EventsPackage extends EPackage {
         EReference EVENT__SOURCE = eINSTANCE.getEvent_Source();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.IEventSource <em>IEvent Source</em>}' class.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventSourceImpl <em>Event Source</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.IEventSource
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getIEventSource()
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventSourceImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventSource()
          * @generated
          */
-        EClass IEVENT_SOURCE = eINSTANCE.getIEventSource();
+        EClass EVENT_SOURCE = eINSTANCE.getEventSource();
 
         /**
          * The meta object literal for the '<em><b>Get Id</b></em>' operation.
@@ -1268,33 +947,7 @@ public interface EventsPackage extends EPackage {
          * <!-- end-user-doc -->
          * @generated
          */
-        EOperation IEVENT_SOURCE___GET_ID = eINSTANCE.getIEventSource__GetId();
-
-        /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeImpl <em>Time</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTime()
-         * @generated
-         */
-        EClass TIME = eINSTANCE.getTime();
-
-        /**
-         * The meta object literal for the '<em><b>Length</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute TIME__LENGTH = eINSTANCE.getTime_Length();
-
-        /**
-         * The meta object literal for the '<em><b>Operator</b></em>' container reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference TIME__OPERATOR = eINSTANCE.getTime_Operator();
+        EOperation EVENT_SOURCE___GET_ID = eINSTANCE.getEventSource__GetId();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventOperatorImpl <em>Complex Event Operator</em>}' class.
@@ -1305,32 +958,6 @@ public interface EventsPackage extends EPackage {
          * @generated
          */
         EClass COMPLEX_EVENT_OPERATOR = eINSTANCE.getComplexEventOperator();
-
-        /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.LogicalOperatorImpl <em>Logical Operator</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.LogicalOperatorImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getLogicalOperator()
-         * @generated
-         */
-        EClass LOGICAL_OPERATOR = eINSTANCE.getLogicalOperator();
-
-        /**
-         * The meta object literal for the '<em><b>Timing</b></em>' containment reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference LOGICAL_OPERATOR__TIMING = eINSTANCE.getLogicalOperator_Timing();
-
-        /**
-         * The meta object literal for the '<em><b>Event Pattern</b></em>' container reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference LOGICAL_OPERATOR__EVENT_PATTERN = eINSTANCE.getLogicalOperator_EventPattern();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ORImpl <em>OR</em>}' class.
@@ -1373,50 +1000,32 @@ public interface EventsPackage extends EPackage {
         EClass UNTIL = eINSTANCE.getUNTIL();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimingOperatorImpl <em>Timing Operator</em>}' class.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl <em>AND</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimingOperatorImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimingOperator()
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAND()
          * @generated
          */
-        EClass TIMING_OPERATOR = eINSTANCE.getTimingOperator();
+        EClass AND = eINSTANCE.getAND();
 
         /**
-         * The meta object literal for the '<em><b>Time</b></em>' containment reference feature.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl <em>Time Window</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimeWindow()
          * @generated
          */
-        EReference TIMING_OPERATOR__TIME = eINSTANCE.getTimingOperator_Time();
+        EClass TIME_WINDOW = eINSTANCE.getTimeWindow();
 
         /**
-         * The meta object literal for the '<em><b>Operator</b></em>' container reference feature.
+         * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EReference TIMING_OPERATOR__OPERATOR = eINSTANCE.getTimingOperator_Operator();
-
-        /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.WITHINImpl <em>WITHIN</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.WITHINImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getWITHIN()
-         * @generated
-         */
-        EClass WITHIN = eINSTANCE.getWITHIN();
-
-        /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ATLEASTImpl <em>ATLEAST</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.ATLEASTImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getATLEAST()
-         * @generated
-         */
-        EClass ATLEAST = eINSTANCE.getATLEAST();
+        EAttribute TIME_WINDOW__TIME = eINSTANCE.getTimeWindow_Time();
 
     }
 

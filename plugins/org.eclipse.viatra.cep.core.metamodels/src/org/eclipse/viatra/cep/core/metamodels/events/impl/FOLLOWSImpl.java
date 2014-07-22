@@ -16,7 +16,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS;
  *
  * @generated
  */
-public class FOLLOWSImpl extends LogicalOperatorImpl implements FOLLOWS {
+public class FOLLOWSImpl extends ComplexEventOperatorImpl implements FOLLOWS {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

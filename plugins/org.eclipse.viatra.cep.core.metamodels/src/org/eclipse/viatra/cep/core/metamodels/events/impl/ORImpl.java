@@ -16,7 +16,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.OR;
  *
  * @generated
  */
-public class ORImpl extends LogicalOperatorImpl implements OR {
+public class ORImpl extends ComplexEventOperatorImpl implements OR {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

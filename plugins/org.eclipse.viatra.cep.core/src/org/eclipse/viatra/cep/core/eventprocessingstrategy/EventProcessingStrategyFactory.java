@@ -14,13 +14,18 @@ package org.eclipse.viatra.cep.core.eventprocessingstrategy;
 import org.eclipse.viatra.cep.core.engine.IEventModelManager;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 
+/**
+ * Factory class for obtaining an {@link IEventProcessingStrategy}.
+ * 
+ * @author Istvan David
+ * 
+ */
 public final class EventProcessingStrategyFactory {
 
     private EventProcessingStrategyFactory() {
     };
 
-    public static IEventProcessingStrategy getStrategy(EventContext context,
-            IEventModelManager eventModelManager) {
+    public static IEventProcessingStrategy getStrategy(EventContext context, IEventModelManager eventModelManager) {
         if (context == null) { // return default
             return new ChronicleStrategy(eventModelManager);
         }
