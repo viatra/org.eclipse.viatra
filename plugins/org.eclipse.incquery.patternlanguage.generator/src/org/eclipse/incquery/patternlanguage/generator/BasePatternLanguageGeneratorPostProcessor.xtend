@@ -171,7 +171,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 				(org.eclipse.incquery.patternlanguage.patternLanguage.Pattern) container;
 				for (org.eclipse.incquery.patternlanguage.patternLanguage.Variable var : pattern.getParameters()) {
 					if (var.getName() != null && var.getName().equals(getVar())) {
-						var.getReferences().add(this);
+						setVariable(var);
 					}
 				}
 			}
