@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -49,9 +50,11 @@ public class ParallelBFSNextTransition implements INextTransition {
         public volatile boolean isAllExplored = false;
     }
 
-    SharedData sharedData;
+    private SharedData sharedData;
 
     private int initMaxDepth = Integer.MAX_VALUE;
+
+    private Logger logger = Logger.getLogger(this.getClass());
 
     public ParallelBFSNextTransition() {
     }
@@ -100,10 +103,17 @@ public class ParallelBFSNextTransition implements INextTransition {
         List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
         do {
             if (!transitions.isEmpty()) {
-                return transitions.get(0);
+
+                ITransition transition = transitions.get(0);
+                logger.debug("Next transition: " + transition.getId());
+                return transition;
+
             } else {
                 TrajectoryWrapper next = sharedData.pullQueue.poll();
                 if (next == null) {
+
+                    logger.debug("Reachd barrier of depth of " + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot());
+
                     int position = sharedData.numOfThreadsAtBarrier.incrementAndGet();
                     if (position == sharedData.maxNumberOfThreads) {
                         if (sharedData.pushQueue.size() == 0) {
@@ -140,10 +150,14 @@ public class ParallelBFSNextTransition implements INextTransition {
                         dsm.fireActivation(t);
                     }
 
+                    logger.debug("Moved to state: " + dsm.getCurrentState().getId());
+
                 }
                 transitions = dsm.getUntraversedTransitionsFromCurrentState();
             }
         } while (!sharedData.isAllExplored);
+
+        logger.debug("Design space is explored.");
 
         return null;
 

@@ -90,7 +90,9 @@ public class DepthFirstNextTransition implements INextTransition {
         int index = random.nextInt(transitions.size());
         ITransition transition = transitions.get(index);
 
-        logger.debug("Next transition: " + transition.getId());
+        logger.debug("Depth: " + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() +
+                " Next transition: " + transition.getId() +
+                " From state: " + transition.getFiredFrom().getId());
 
         return transition;
     }
