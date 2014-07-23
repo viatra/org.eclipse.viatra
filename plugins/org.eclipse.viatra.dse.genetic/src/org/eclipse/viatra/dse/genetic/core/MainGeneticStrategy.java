@@ -39,7 +39,9 @@ import org.eclipse.viatra.dse.util.EMFHelper;
 public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
     enum GeneticStrategyState {
-        FIRST_POPULATION, CREATING_NEW_POPULATION, STOPPING
+        FIRST_POPULATION,
+        CREATING_NEW_POPULATION,
+        STOPPING
     }
 
     private GeneticSharedObject sharedObject;
@@ -80,6 +82,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
         sharedObject.instancesToBeChecked = new ArrayBlockingQueue<InstanceData>(sharedObject.sizeOfPopulation, false);
 
         sharedObject.initialPopulationSelector.setChildStore(this);
+        sharedObject.initialPopulationSelector.setInitialPopulationSize(sharedObject.sizeOfPopulation);
         sharedObject.initialPopulationSelector.init(context);
 
         logger.debug("MainGeneticStratgey is inited");
@@ -132,7 +135,9 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                     if (random.nextFloat() < sharedObject.chanceOfMutationInsteadOfCrossover) {
                         List<IMutateTrajectory> mutatiors = sharedObject.mutatiors;
                         int rnd = random.nextInt(mutatiors.size());
-                        InstanceData child = mutatiors.get(rnd).mutate(parent1, context);
+                        IMutateTrajectory mutator = mutatiors.get(rnd);
+                        sharedObject.mutationUsed(mutator);
+                        InstanceData child = mutator.mutate(parent1, context);
                         if (child.trajectory.isEmpty()) {
                             throw new DSEException("Mutation operator (at crossover) "
                                     + mutatiors.get(rnd).getClass().getSimpleName() + " returned an empty trajectory.");
@@ -158,6 +163,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                         List<ICrossoverTrajectories> crossovers = sharedObject.crossovers;
                         int rnd = random.nextInt(crossovers.size());
                         ICrossoverTrajectories crossover = crossovers.get(rnd);
+                        sharedObject.crossoverUsed(crossover);
                         Collection<InstanceData> result = crossover.crossover(Arrays.asList(parent1, parent1), context);
                         logger.debug("Crossover parent1: " + parent1 + " parent2: " + parent2);
                         for (InstanceData child : result) {
@@ -173,14 +179,20 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                     // Check the created children and make it feasible by the worker threads
                     for (Iterator<InstanceData> iterator = tempChildren.iterator(); iterator.hasNext();) {
                         InstanceData child = iterator.next();
-                        if (child.trajectory.size() > 1 && !isDuplication(child, parentPopulation)
-                                && !isDuplication(child, alreadyTriedChildren)) {
+                        boolean isDuplicationInParent = isDuplication(child, parentPopulation);
+                        boolean isDuplicationInAlreadyTrieds = isDuplication(child, alreadyTriedChildren);
+
+                        if (child.trajectory.size() > 1 && !isDuplicationInParent && !isDuplicationInAlreadyTrieds) {
                             boolean queueIsNotFull = sharedObject.instancesToBeChecked.offer(child);
                             if (queueIsNotFull) {
                                 alreadyTriedChildren.add(child);
                                 logger.debug("Child to try: " + child.toString());
                             }
                         }
+                        if (isDuplicationInParent || isDuplicationInAlreadyTrieds) {
+                            sharedObject.numOfDuplications++;
+                        }
+
                         iterator.remove();
                     }
 

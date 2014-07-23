@@ -37,6 +37,7 @@ public class PatternWithCardinality {
         this.cardinality = cardinality;
         this.cardinalityType = cardinalityType;
         this.metaData = metaData;
+        this.name = querySpecification.getFullyQualifiedName();
     }
 
     public PatternWithCardinality(

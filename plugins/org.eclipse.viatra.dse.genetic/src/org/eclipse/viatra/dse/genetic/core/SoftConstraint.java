@@ -23,12 +23,12 @@ public class SoftConstraint extends PatternWithCardinality {
     private final double weight;
 
     public SoftConstraint(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification) {
-        this("", querySpecification, 1);
+        this(querySpecification.getFullyQualifiedName(), querySpecification, 1);
     }
 
     public SoftConstraint(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification,
             double weight) {
-        this("", querySpecification, weight);
+        this(querySpecification.getFullyQualifiedName(), querySpecification, weight);
     }
 
     public SoftConstraint(String name,
