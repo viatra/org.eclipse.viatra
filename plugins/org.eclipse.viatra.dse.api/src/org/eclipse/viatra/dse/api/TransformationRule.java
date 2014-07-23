@@ -68,7 +68,7 @@ public class TransformationRule<P extends IPatternMatch> extends RuleSpecificati
         this.matchProcessor = matchProcessor;
         this.metaData = metaData;
 
-        this.name = "rule" + new Random().nextInt();
+        this.name = querySpecification.getFullyQualifiedName() + "Rule";
     }
 
     public TransformationRule(IQuerySpecification<? extends IncQueryMatcher<P>> querySpecification,
