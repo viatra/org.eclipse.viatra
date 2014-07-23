@@ -39,15 +39,19 @@
 					<outputDirectory>src-gen</outputDirectory>
 					<metamodels>
 						<metamodel>
-							<packageClass>org.eclipse.viatra.dse.emf.designspace.EMFDesignSpacePackage</packageClass>
-							<genmodelUri>../org.eclipse.viatra.dse.emfdesignspace.model/model/emfdesignspace.genmodel</genmodelUri>
+							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
+							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
+						</metamodel>
+						<metamodel>
+							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
+							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.eclipse.viatra2</groupId>
-						<artifactId>org.eclipse.viatra.dse.emfdesignspace.model</artifactId>
+						<artifactId>org.eclipse.viatra.cep.core.metamodels</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 				</dependencies>
