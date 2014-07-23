@@ -62,5 +62,19 @@ public class GeneticSharedObject {
 
     // Result
     public Map<InstanceData, SolutionTrajectory> bestSolutions = new ConcurrentHashMap<InstanceData, SolutionTrajectory>();
+    public Map<IMutateTrajectory, Integer> mutationApplications = new HashMap<IMutateTrajectory, Integer>();
+    public Map<ICrossoverTrajectories, Integer> crossoverApplications = new HashMap<ICrossoverTrajectories, Integer>();
+    public AtomicInteger numOfCorrections = new AtomicInteger(0);
+    public int numOfDuplications = 0;
+
+    public void mutationUsed(IMutateTrajectory mutator) {
+        Integer integer = mutationApplications.get(mutator);
+        mutationApplications.put(mutator, integer + 1);
+    }
+
+    public void crossoverUsed(ICrossoverTrajectories crossover) {
+        Integer integer = crossoverApplications.get(crossover);
+        crossoverApplications.put(crossover, integer + 1);
+    }
 
 }

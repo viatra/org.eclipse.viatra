@@ -104,6 +104,7 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void addMutatitor(IMutateTrajectory mutatior, int weight) {
+        configuration.mutationApplications.put(mutatior, 0);
         for (int i = 0; i < weight; ++i) {
             configuration.mutatiors.add(mutatior);
         }
@@ -114,6 +115,7 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void addCrossover(ICrossoverTrajectories crossover, int weight) {
+        configuration.crossoverApplications.put(crossover, 0);
         for (int i = 0; i < weight; ++i) {
             configuration.crossovers.add(crossover);
         }

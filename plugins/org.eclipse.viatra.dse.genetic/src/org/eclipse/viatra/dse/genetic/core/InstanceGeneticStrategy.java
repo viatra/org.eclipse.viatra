@@ -25,7 +25,10 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 public class InstanceGeneticStrategy implements INextTransition {
 
     private enum WorkerState {
-        NEXT_INSTANCE, MAKING_FEASIBLE, MUTATION, FITNESS_CALCULATION;
+        NEXT_INSTANCE,
+        MAKING_FEASIBLE,
+        MUTATION,
+        FITNESS_CALCULATION;
     }
 
     private GeneticSharedObject sharedObject;
@@ -34,6 +37,8 @@ public class InstanceGeneticStrategy implements INextTransition {
     private GlobalContext gc;
 
     private WorkerState state;
+
+    private boolean correctionWasNeeded = false;
 
     @Override
     public void init(ThreadContext context) {
@@ -65,6 +70,7 @@ public class InstanceGeneticStrategy implements INextTransition {
             if (state == WorkerState.NEXT_INSTANCE) {
 
                 actInstanceData = null;
+                correctionWasNeeded = false;
 
                 while (actInstanceData == null) {
                     try {
@@ -120,6 +126,10 @@ public class InstanceGeneticStrategy implements INextTransition {
 
                     if (!wasFeasibleTransition) {
                         actInstanceData.trajectory.remove(depthFromRoot);
+                        if (!correctionWasNeeded) {
+                            sharedObject.numOfCorrections.incrementAndGet();
+                            correctionWasNeeded = true;
+                        }
                     }
                 }
 
