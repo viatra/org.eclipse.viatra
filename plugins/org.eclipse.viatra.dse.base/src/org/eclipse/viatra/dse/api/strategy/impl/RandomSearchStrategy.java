@@ -109,7 +109,9 @@ public class RandomSearchStrategy implements INextTransition {
     @Override
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied) {
-
+        if (constraintsNotSatisfied) {
+            dsm.undoLastTransformation();
+        }
     }
 
     private static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {
