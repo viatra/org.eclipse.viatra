@@ -24,4 +24,13 @@ public interface IInitialPopulationSelector extends INextTransition {
      */
     void setChildStore(IStoreChild store);
 
+    /**
+     * Sets the populations size in the initialization phase. The engine expects this amount of child from the
+     * implementation of this interface via the {@link IStoreChild} implementation.
+     * 
+     * @param populationSize
+     *            Expected number of children.
+     */
+    void setPopulationSize(int populationSize);
+
 }

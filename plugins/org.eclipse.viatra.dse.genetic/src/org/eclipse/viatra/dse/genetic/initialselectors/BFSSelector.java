@@ -14,6 +14,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -34,17 +35,23 @@ public class BFSSelector implements IInitialPopulationSelector {
     private int minDepthOfFirstPopulation;
     private int initialSizeOfPopulation;
     private int foundInstances = 0;
+    private float chanceOfSelection = 1;
 
     private IStoreChild store;
 
+    private Random random = new Random();
+
     public BFSSelector() {
-        this.minDepthOfFirstPopulation = 2;
-        this.initialSizeOfPopulation = 30;
+        this(2, 1);
     }
 
-    public BFSSelector(int minDepthOfFirstPopulation, int initialSizeOfPopulation) {
+    public BFSSelector(float chanceOfSelection) {
+        this(chanceOfSelection, 2);
+    }
+
+    public BFSSelector(float chanceOfSelection, int minDepthOfFirstPopulation) {
         this.minDepthOfFirstPopulation = minDepthOfFirstPopulation;
-        this.initialSizeOfPopulation = initialSizeOfPopulation;
+        this.chanceOfSelection = chanceOfSelection;
     }
 
     @Override
@@ -75,12 +82,14 @@ public class BFSSelector implements IInitialPopulationSelector {
 
                 // Create child if certain depth is reached
                 if (minDepthOfFirstPopulation <= trajectory.getDepthFromRoot()) {
-                    store.addChild(context);
-                    ++foundInstances;
 
-                    // Start workers when population is ready
-                    if (initialSizeOfPopulation <= foundInstances) {
-                        return null;
+                    if (random.nextFloat() < chanceOfSelection) {
+                        store.addChild(context);
+                        ++foundInstances;
+                        // Start workers when population is ready
+                        if (initialSizeOfPopulation <= foundInstances) {
+                            return null;
+                        }
                     }
 
                 }
@@ -116,6 +125,11 @@ public class BFSSelector implements IInitialPopulationSelector {
     @Override
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied) {
+    }
+
+    @Override
+    public void setPopulationSize(int populationSize) {
+        initialSizeOfPopulation = populationSize;
     }
 
 }

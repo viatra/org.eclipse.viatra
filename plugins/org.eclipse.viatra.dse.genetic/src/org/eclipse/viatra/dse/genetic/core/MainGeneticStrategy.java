@@ -82,7 +82,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
         sharedObject.instancesToBeChecked = new ArrayBlockingQueue<InstanceData>(sharedObject.sizeOfPopulation, false);
 
         sharedObject.initialPopulationSelector.setChildStore(this);
-        sharedObject.initialPopulationSelector.setInitialPopulationSize(sharedObject.sizeOfPopulation);
+        sharedObject.initialPopulationSelector.setPopulationSize(sharedObject.sizeOfPopulation);
         sharedObject.initialPopulationSelector.init(context);
 
         logger.debug("MainGeneticStratgey is inited");
