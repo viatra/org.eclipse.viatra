@@ -31,6 +31,7 @@ import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageH
 import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.incquery.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
+import org.eclipse.incquery.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.types.GenModelBasedTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
@@ -50,6 +51,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+import org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
@@ -205,5 +207,10 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
         return EMFPatternLanguageTypeProviderFactory.class;
+    }
+    
+    @Override
+    public Class<? extends AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+        return EMFPatternLanguageTypeScopeProvider.class;
     }
 }
