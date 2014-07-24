@@ -13,16 +13,13 @@ package org.eclipse.viatra.dse.genetic.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -30,6 +27,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
@@ -54,6 +52,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     private Random random = new Random();
 
     private Logger logger = Logger.getLogger(MainGeneticStrategy.class);
+    private GeneticDebugger geneticDebugger = new GeneticDebugger(false);
 
     @Override
     public void init(ThreadContext context) {
@@ -110,14 +109,21 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 logger.debug(sharedObject.actNumberOfPopulation + ". population, selecting");
 
                 // Selection
-                if (sharedObject.actNumberOfPopulation < sharedObject.maxNumberOfPopulation) {
-                    parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                            sharedObject.comparators, sharedObject.sizeOfPopulation, false);
-                } else {
-                    List<InstanceData> bestSolutions = sharedObject.selector.selectNextPopulation(parentPopulation,
-                            sharedObject.comparators, sharedObject.sizeOfPopulation, true);
+                boolean isLastPopulation = sharedObject.actNumberOfPopulation >= sharedObject.maxNumberOfPopulation;
+
+                parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
+                        sharedObject.comparators, sharedObject.sizeOfPopulation,
+                        isLastPopulation && !geneticDebugger.isDebug());
+
+                geneticDebugger.debug(parentPopulation);
+
+                for (InstanceData instanceData : parentPopulation) {
+                    instanceData.survive++;
+                }
+
+                if (isLastPopulation) {
                     sharedObject.addInstanceToBestSolutions.set(true);
-                    for (InstanceData instanceData : bestSolutions) {
+                    for (InstanceData instanceData : parentPopulation) {
                         sharedObject.instancesToBeChecked.offer(instanceData);
                     }
                     state = GeneticStrategyState.STOPPING;
@@ -311,6 +317,14 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
         InstanceData instance = new InstanceData(trajectory);
         sharedObject.fitnessCalculator.calculateFitness(sharedObject, context, instance);
         parentPopulation.add(instance);
+    }
+
+    public void setGeneticDebugger(GeneticDebugger geneticDebugger) {
+        this.geneticDebugger = geneticDebugger;
+    }
+
+    public GeneticDebugger getGeneticDebugger() {
+        return geneticDebugger;
     }
 
 }

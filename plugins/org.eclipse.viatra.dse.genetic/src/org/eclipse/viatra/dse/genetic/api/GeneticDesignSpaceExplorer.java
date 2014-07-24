@@ -26,6 +26,7 @@ import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
 import org.eclipse.viatra.dse.genetic.core.SoftConstraint;
+import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IFitnessCalculator;
@@ -37,6 +38,7 @@ import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 
 public class GeneticDesignSpaceExplorer {
 
+    private final MainGeneticStrategy MAIN_GENETIC_STRATEGY = new MainGeneticStrategy();
     private DesignSpaceExplorer dse;
     private GeneticSharedObject configuration;
     private Guidance guidance;
@@ -149,7 +151,7 @@ public class GeneticDesignSpaceExplorer {
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
-        dse.startExploration(new StrategyBase(new MainGeneticStrategy()), waitForTermination);
+        dse.startExploration(new StrategyBase(MAIN_GENETIC_STRATEGY), waitForTermination);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
@@ -165,7 +167,7 @@ public class GeneticDesignSpaceExplorer {
             dse.setGuidance(guidance);
         }
 
-        dse.startExploration(new StrategyBase(new MainGeneticStrategy()), false);
+        dse.startExploration(new StrategyBase(MAIN_GENETIC_STRATEGY), false);
 
         double start = System.nanoTime() / 1000000;
         do {
@@ -230,5 +232,9 @@ public class GeneticDesignSpaceExplorer {
 
     public Map<InstanceData, SolutionTrajectory> getSolutions() {
         return configuration.bestSolutions;
+    }
+
+    public void setDebugger(GeneticDebugger geneticDebugger) {
+        MAIN_GENETIC_STRATEGY.setGeneticDebugger(geneticDebugger);
     }
 }
