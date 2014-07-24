@@ -124,7 +124,9 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 if (isLastPopulation) {
                     sharedObject.addInstanceToBestSolutions.set(true);
                     for (InstanceData instanceData : parentPopulation) {
-                        sharedObject.instancesToBeChecked.offer(instanceData);
+                        if (instanceData.rank == 1) {
+                            sharedObject.instancesToBeChecked.offer(instanceData);
+                        }
                     }
                     state = GeneticStrategyState.STOPPING;
                     continue;
