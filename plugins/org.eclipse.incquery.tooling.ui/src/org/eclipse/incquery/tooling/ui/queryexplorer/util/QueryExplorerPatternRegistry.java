@@ -21,11 +21,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -75,7 +80,8 @@ public class QueryExplorerPatternRegistry {
     }
 
     protected QueryExplorerPatternRegistry() {
-        registeredPatterModels = Multimaps.newListMultimap(Maps.<IFile, Collection<IQuerySpecification<?>>>newHashMap(),
+        registeredPatterModels = Multimaps.newListMultimap(
+                Maps.<IFile, Collection<IQuerySpecification<?>>> newHashMap(),
                 new Supplier<List<IQuerySpecification<?>>>() {
 
                     @Override
@@ -103,11 +109,12 @@ public class QueryExplorerPatternRegistry {
      *            the pattern instance to be unregistered
      */
     public List<IQuerySpecification<?>> unregisterPattern(IQuerySpecification<?> specification) {
-    	List<IQuerySpecification<?>> removedSpecifications = Lists.newArrayList();
-    	removedSpecifications.add(specification);
+        List<IQuerySpecification<?>> removedSpecifications = Lists.newArrayList();
+        removedSpecifications.add(specification);
         patternNameMap.remove(specification.getFullyQualifiedName());
         Set<IQuerySpecification<?>> forgottenSpecifications = builder.forgetSpecificationTransitively(specification);
-        for (IQuerySpecification<?> other : Iterables.filter(forgottenSpecifications, Predicates.not(Predicates.<IQuerySpecification<?>>equalTo(specification)))) {
+        for (IQuerySpecification<?> other : Iterables.filter(forgottenSpecifications,
+                Predicates.not(Predicates.<IQuerySpecification<?>> equalTo(specification)))) {
             removedSpecifications.addAll(unregisterPattern(other));
         }
         return removedSpecifications;
@@ -123,23 +130,25 @@ public class QueryExplorerPatternRegistry {
      * @return the list of patterns registered
      * @throws IncQueryException
      */
-    public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel) throws IncQueryException {
+    public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel)
+            throws IncQueryException {
         List<IQuerySpecification<?>> allCreatedSpecifications = Lists.newArrayList();
         Set<IQuerySpecification<?>> activeSpecifications = Sets.newLinkedHashSet();
 
         if (patternModel != null) {
             List<IStatus> warnings = new ArrayList<IStatus>();
             for (Pattern pattern : patternModel.getPatterns()) {
-                IQuerySpecification<?> spec = builder.getOrCreateSpecification(pattern, allCreatedSpecifications, false);
+                IQuerySpecification<?> spec = builder
+                        .getOrCreateSpecification(pattern, allCreatedSpecifications, false);
                 String patternFqn = spec.getFullyQualifiedName();
                 if (!patternNameMap.containsKey(patternFqn)) {
-                	// disable checks as per https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
-                    //Boolean annotationCheckedValue = getValueOfQueryExplorerCheckedAnnotation(spec);
-                        patternNameMap.put(patternFqn, spec);
-                    //  if (annotationCheckedValue) {
-                            activePatterns.add(spec);
-                    //  }    
-                      activeSpecifications.add(spec);
+                    // disable checks as per https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
+                    // Boolean annotationCheckedValue = getValueOfQueryExplorerCheckedAnnotation(spec);
+                    patternNameMap.put(patternFqn, spec);
+                    // if (annotationCheckedValue) {
+                    activePatterns.add(spec);
+                    // }
+                    activeSpecifications.add(spec);
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
                             + "' already exists in the pattern registry.";
@@ -168,10 +177,24 @@ public class QueryExplorerPatternRegistry {
             }
         }
 
-        if (!allCreatedSpecifications.isEmpty()) {
-            this.registeredPatterModels.putAll(file, allCreatedSpecifications);
+        for (IQuerySpecification<?> createdSpecification : allCreatedSpecifications) {
+            if (createdSpecification instanceof GenericQuerySpecification) {
+                GenericQuerySpecification genericSpecification = (GenericQuerySpecification) createdSpecification;
+                if (EcoreUtil.isAncestor(patternModel, genericSpecification.getPattern())) {
+                    this.registeredPatterModels.put(file, createdSpecification);
+                } else {
+                    final URI uri = genericSpecification.getPattern().eResource().getURI();
+                    if (uri.isPlatformResource()) {
+                        final IFile dependentFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(uri.toPlatformString(true)));
+                        if (dependentFile.exists()) {
+                            this.registeredPatterModels.put(dependentFile, genericSpecification);
+                        }
+                    }
+                    
+                }
+            }
         }
-        
+
         return Collections.unmodifiableSet(activeSpecifications);
     }
 
@@ -197,7 +220,7 @@ public class QueryExplorerPatternRegistry {
      */
     public List<IQuerySpecification<?>> getRegisteredPatternsForFile(IFile file) {
         final List<IQuerySpecification<?>> list = registeredPatterModels.get(file);
-        return list == null ? Collections.<IQuerySpecification<?>>emptyList() : Collections.unmodifiableList(list);
+        return list == null ? Collections.<IQuerySpecification<?>> emptyList() : Collections.unmodifiableList(list);
     }
 
     /**
@@ -224,14 +247,15 @@ public class QueryExplorerPatternRegistry {
         if (patterns != null) {
             for (IQuerySpecification<?> p : patterns) {
                 try {
-                String patternFqn = p.getFullyQualifiedName();
-                if (activePatterns.remove(p)) {
-                    removedPatterns.add(p);
-                }
-                patternNameMap.remove(patternFqn);
-                builder.forgetSpecificationTransitively(p);
+                    String patternFqn = p.getFullyQualifiedName();
+                    if (activePatterns.remove(p)) {
+                        removedPatterns.add(p);
+                    }
+                    patternNameMap.remove(patternFqn);
+                    builder.forgetSpecificationTransitively(p);
                 } catch (Exception e) {
-                    logger.log(new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, "Error while unregistering the pattern", e));
+                    logger.log(new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID,
+                            "Error while unregistering the pattern", e));
                 }
             }
         }
@@ -252,6 +276,7 @@ public class QueryExplorerPatternRegistry {
     public void removeActivePattern(String patternFqn) {
         removeActivePattern(getPatternByFqn(patternFqn));
     }
+
     /**
      * Returns the pattern associated with the given fully qualified name.
      *
@@ -309,13 +334,12 @@ public class QueryExplorerPatternRegistry {
 
     /**
      * Return a list of all known patterns.
+     * 
      * @return a union of getGeneratedPatterns and getGenericPatterns
      */
     public List<IQuerySpecification<?>> getAllPatterns() {
-        return ImmutableList.<IQuerySpecification<?>>builder().
-                addAll(getGeneratedQuerySpecifications()).
-                addAll(getGenericQuerySpecifications()).
-                build();
+        return ImmutableList.<IQuerySpecification<?>> builder().addAll(getGeneratedQuerySpecifications())
+                .addAll(getGenericQuerySpecifications()).build();
     }
 
     /**
@@ -344,47 +368,51 @@ public class QueryExplorerPatternRegistry {
         }
         return null;
     }
-    
+
     /**
      * Returns true if the user declared "@QueryExplorer(checked=false)" on the pattern.
+     * 
      * @param query
      * @return
      */
     public static boolean isQueryExplorerCheckedFalse(IQuerySpecification<?> query) {
-    	PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
+        PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
         if (annotation != null) {
-        	 Object checkedValue = annotation.getFirstValue(QueryExplorer.QUERY_EXPLORER_CHECKED_PARAMETER);
-        	 if (checkedValue!=null) {
-        		 if (!(Boolean)checkedValue) return true;
-        	 }
+            Object checkedValue = annotation.getFirstValue(QueryExplorer.QUERY_EXPLORER_CHECKED_PARAMETER);
+            if (checkedValue != null) {
+                if (!(Boolean) checkedValue)
+                    return true;
+            }
         }
         return false;
     }
-     
-    
-    
+
     /**
      * access the list of "generated" query specifications
+     * 
      * @return
      */
     public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
-        return ImmutableList.<IQuerySpecification<?>>builder().
-                addAll(Iterables.filter(QuerySpecificationRegistry.getContributedQuerySpecifications(), new Predicate<IQuerySpecification<?>>() {
-                	/*
-            @Override
-            public boolean apply(IQuerySpecification<?> query) {
-                Boolean annotationValue = getValueOfQueryExplorerAnnotation(query);
-                return annotationValue != null && annotationValue;
-            }
-            */
-                	/* (non-Javadoc)
-                	 * @see com.google.common.base.Predicate#apply(java.lang.Object)
-                	 */
-                	@Override
-                	public boolean apply(IQuerySpecification<?> input) {
-                		return true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700: make sure that all query specs appear
-                	}
-        })).build();
+        return ImmutableList
+                .<IQuerySpecification<?>> builder()
+                .addAll(Iterables.filter(QuerySpecificationRegistry.getContributedQuerySpecifications(),
+                        new Predicate<IQuerySpecification<?>>() {
+                            /*
+                             * @Override public boolean apply(IQuerySpecification<?> query) { Boolean annotationValue =
+                             * getValueOfQueryExplorerAnnotation(query); return annotationValue != null &&
+                             * annotationValue; }
+                             */
+                            /*
+                             * (non-Javadoc)
+                             * 
+                             * @see com.google.common.base.Predicate#apply(java.lang.Object)
+                             */
+                            @Override
+                            public boolean apply(IQuerySpecification<?> input) {
+                                return true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700: make sure that all
+                                             // query specs appear
+                            }
+                        })).build();
     }
 
 }
