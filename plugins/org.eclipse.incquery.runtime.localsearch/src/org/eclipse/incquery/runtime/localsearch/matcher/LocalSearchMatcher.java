@@ -55,7 +55,7 @@ public class LocalSearchMatcher {
 
         @Override
         public boolean hasNext() {
-            if (frameReturned) {
+            if (!frameReturned) {
                 return true;
             }
             try {
