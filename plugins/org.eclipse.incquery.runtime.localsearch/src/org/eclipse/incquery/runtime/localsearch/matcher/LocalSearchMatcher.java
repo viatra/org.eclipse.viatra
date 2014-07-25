@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.localsearch.matcher;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.MatchingTable;
@@ -37,12 +38,14 @@ public class LocalSearchMatcher {
         private UnmodifiableIterator<SearchPlanExecutor> iterator;
         private SearchPlanExecutor currentPlan;
         private MatchingFrame frame;
+        private boolean frameReturned;
 
         public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame) {
             this.frame = initialFrame.clone();
             Preconditions.checkArgument(plan.size() > 0);
             iterator = plan.iterator();
             getNextPlan();
+            frameReturned = true;
         }
 
         private void getNextPlan() {
@@ -52,11 +55,15 @@ public class LocalSearchMatcher {
 
         @Override
         public boolean hasNext() {
+            if (frameReturned) {
+                return true;
+            }
             try {
                 boolean foundMatch = currentPlan.execute(frame);
                 while ((!foundMatch) && iterator.hasNext()) {
                     getNextPlan();
                     foundMatch = currentPlan.execute(frame);
+                    frameReturned = false;
                 }
                 return foundMatch;
             } catch (LocalSearchException e) {
@@ -66,6 +73,10 @@ public class LocalSearchMatcher {
 
         @Override
         public MatchingFrame next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("No more matches available.");
+            }
+            frameReturned = true;
             return frame.clone();
         }
 
