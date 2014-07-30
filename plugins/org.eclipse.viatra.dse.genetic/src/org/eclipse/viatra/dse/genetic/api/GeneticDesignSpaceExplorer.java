@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
@@ -97,8 +96,13 @@ public class GeneticDesignSpaceExplorer {
         configuration.modelObjectivesCalculator = calculator;
     }
 
-    public void setMutationChanceAtCrossover(float propability) {
-        configuration.chanceOfMutationInsteadOfCrossover = propability;
+    public void setMutationChanceAtCrossover(float baseChance) {
+        setMutationChanceAtCrossover(baseChance, 0.0f);
+    }
+
+    public void setMutationChanceAtCrossover(float baseChance, float multiplierForAdaptivity) {
+        configuration.chanceOfMutationInsteadOfCrossover = baseChance;
+        configuration.mutationChanceMultiplier = multiplierForAdaptivity;
     }
 
     public void addMutatitor(IMutateTrajectory mutatior) {

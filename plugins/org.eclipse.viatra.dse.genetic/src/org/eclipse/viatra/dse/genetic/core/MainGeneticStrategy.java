@@ -136,11 +136,21 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 ArrayList<InstanceData> tempChildren = new ArrayList<InstanceData>();
                 ArrayList<InstanceData> alreadyTriedChildren = new ArrayList<InstanceData>();
                 Iterator<InstanceData> mainIterator = parentPopulation.iterator();
+
+                int paretoFrontSize = 0;
+                for (InstanceData instanceData : parentPopulation) {
+                    if (instanceData.rank == 1) {
+                        paretoFrontSize++;
+                    }
+                }
+
+                float mutationChance = sharedObject.mutationChanceMultiplier * paretoFrontSize
+                        / parentPopulation.size() + sharedObject.chanceOfMutationInsteadOfCrossover;
                 while (mainIterator.hasNext()) {
                     InstanceData parent1 = mainIterator.next();
 
                     // Mutation (crossover with one parent)
-                    if (random.nextFloat() < sharedObject.chanceOfMutationInsteadOfCrossover) {
+                    if (random.nextFloat() < mutationChance) {
                         List<IMutateTrajectory> mutatiors = sharedObject.mutatiors;
                         int rnd = random.nextInt(mutatiors.size());
                         IMutateTrajectory mutator = mutatiors.get(rnd);
@@ -161,7 +171,6 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                         if (parent1.equals(parent2)) {
                             if (p1Index + 1 < parentPopulation.size()) {
                                 parent2 = parentPopulation.get(p1Index + 1);
-                                ;
                             } else {
                                 parent2 = parentPopulation.get(0);
                             }

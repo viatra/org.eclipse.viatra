@@ -39,6 +39,7 @@ public class GeneticSharedObject {
     public int maxNumberOfPopulation = 50;
     public int actNumberOfPopulation = 1;
     public float chanceOfMutationInsteadOfCrossover = 0.2f;
+    public float mutationChanceMultiplier = 0.0f;
     public int workerThreads = 0;
 
     public List<SoftConstraint> softConstraints = new ArrayList<SoftConstraint>();
