@@ -28,6 +28,8 @@ public class GeneticDebugger {
     private boolean debug = false;
     private int iteration = 1;
     private ArrayList<String> orderedObjectives;
+    private ArrayList<String> orderedSoftConstraints;
+    private String csvName;
 
     public GeneticDebugger(boolean isDebugEnabled) {
         this.debug = isDebugEnabled;
@@ -41,10 +43,10 @@ public class GeneticDebugger {
 
         PrintWriter out = null;
         try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(runId + ".csv", true)));
+            out = new PrintWriter(new BufferedWriter(new FileWriter(csvName + ".csv", true)));
 
             if (iteration <= 1) {
-                orderedObjectives = printHeader(populationToDebug, out);
+                printHeader(populationToDebug, out);
             }
 
             for (InstanceData instanceData : populationToDebug) {
@@ -61,6 +63,11 @@ public class GeneticDebugger {
                 sb.append(instanceData.sumOfConstraintViolationMeauserement);
                 sb.append(';');
 
+                for (String key : orderedSoftConstraints) {
+                    sb.append(instanceData.violations.get(key));
+                    sb.append(';');
+                }
+
                 for (String key : orderedObjectives) {
                     sb.append(instanceData.objectives.get(key));
                     sb.append(';');
@@ -75,7 +82,7 @@ public class GeneticDebugger {
             }
 
         } catch (IOException e) {
-            Logger.getLogger(getClass()).error("Couldn't write file " + runId + ".", e);
+            Logger.getLogger(getClass()).error("Couldn't write file " + csvName + ".", e);
         } finally {
             out.close();
         }
@@ -84,19 +91,28 @@ public class GeneticDebugger {
 
     }
 
-    private ArrayList<String> printHeader(List<InstanceData> populationToDebug, PrintWriter out) {
+    private void printHeader(List<InstanceData> populationToDebug, PrintWriter out) {
         StringBuilder sb = new StringBuilder();
         sb.append("ConfigId;RunId;Iteration;Length;SoftConstraints;");
+
         InstanceData individual = populationToDebug.get(0);
+
+        Set<String> softConstraints = individual.violations.keySet();
+        orderedSoftConstraints = new ArrayList<String>(softConstraints);
+        for (String softConstraint : orderedSoftConstraints) {
+            sb.append(softConstraint);
+            sb.append(';');
+        }
+
         Set<String> objectives = individual.objectives.keySet();
-        ArrayList<String> orderedObjectives = new ArrayList<String>(objectives);
+        orderedObjectives = new ArrayList<String>(objectives);
         for (String objective : orderedObjectives) {
             sb.append(objective);
             sb.append(';');
         }
+
         sb.append("FrontIndex;Survive");
         out.println(sb.toString());
-        return orderedObjectives;
     }
 
     public void setConfigId(int configId) {
@@ -109,6 +125,11 @@ public class GeneticDebugger {
 
     public boolean isDebug() {
         return debug;
+    }
+
+    public void setCsvName(String csvName) {
+        this.csvName = csvName;
+
     }
 
 }

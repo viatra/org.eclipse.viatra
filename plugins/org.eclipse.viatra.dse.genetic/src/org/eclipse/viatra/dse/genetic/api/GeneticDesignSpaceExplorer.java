@@ -141,13 +141,6 @@ public class GeneticDesignSpaceExplorer {
 
     public void startExploration(boolean waitForTermination) {
 
-        if (configuration.crossovers.isEmpty()) {
-            throw new DSEException("There is no crossover operation registered.");
-        }
-        if (configuration.mutatiors.isEmpty()) {
-            throw new DSEException("There is no mutation operation registered.");
-        }
-
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
@@ -155,13 +148,6 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
-
-        if (configuration.crossovers.isEmpty()) {
-            throw new DSEException("There is no crossover operation registered.");
-        }
-        if (configuration.mutatiors.isEmpty()) {
-            throw new DSEException("There is no mutation operation registered.");
-        }
 
         if (guidance != null) {
             dse.setGuidance(guidance);

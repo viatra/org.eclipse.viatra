@@ -51,7 +51,7 @@ public abstract class BaseTestRunner {
 
     public abstract String getResultsHeader();
 
-    public abstract String runTestWithConfig(Row configRow, BaseResult result, int configId, int runId)
+    public abstract String runTestWithConfig(Row configRow, BaseResult result, int configId, int runId, int debugCsvId)
             throws IncQueryException;
 
     public void runTests() throws IOException, IncQueryException {
@@ -70,6 +70,7 @@ public abstract class BaseTestRunner {
             int i = 1;
             int times = 0;
             int maxTimes = 1;
+            int debugCsvFileId = 1;
             for (String line; (line = br.readLine()) != null;) {
 
                 Row configRow = new Row(configKeysInOrder);
@@ -98,7 +99,7 @@ public abstract class BaseTestRunner {
                     long memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
                     BaseResult result = new BaseResult();
-                    String stringResult = runTestWithConfig(configRow, result, i, times);
+                    String stringResult = runTestWithConfig(configRow, result, i, times, debugCsvFileId++);
 
                     long memAfter = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 

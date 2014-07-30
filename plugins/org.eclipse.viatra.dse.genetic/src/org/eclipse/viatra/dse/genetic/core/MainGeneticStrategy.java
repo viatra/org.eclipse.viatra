@@ -179,7 +179,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                                 throw new DSEException("Crossover operation " + crossover.getClass().getSimpleName()
                                         + " returned an empty trajectory.");
                             }
-                            logger.debug("  Child" + child);
+                            logger.debug("  Child: " + child);
                             tempChildren.add(child);
                         }
                     }

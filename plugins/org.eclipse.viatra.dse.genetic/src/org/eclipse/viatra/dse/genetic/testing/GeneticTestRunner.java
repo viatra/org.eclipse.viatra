@@ -31,6 +31,7 @@ import org.eclipse.viatra.dse.genetic.crossovers.OnePointCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.PermutationEncodingCrossover;
 import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.initialselectors.BFSSelector;
+import org.eclipse.viatra.dse.genetic.initialselectors.FixedPrioritySelector;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.mutations.AddRandomTransitionMutation;
@@ -42,14 +43,21 @@ import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutati
 public abstract class GeneticTestRunner extends BaseTestRunner {
 
     // Config
-    private static final String MODEL_PATH = "ModelPath";
+    private static final String MODEL_PATH = "InitialModelPath";
     private static final String TIMEOUT = "Timeout[s]";
     private static final String POPULATION_SIZE = "PopulationSize";
     private static final String MUTATION_RATE = "MutationRate";
-    private static final String BFS_SELECTION_RATE = "BfsSelectionRate";
+    private static final String INITIAL_SELECTOR = "InitialSelector";
+    private static final String INITIAL_SELECTION_RATE = "InitialSelectionRate";
     private static final String ITERATIONS = "Iterations";
-    private static final String CROSSOVER = "Crossover";
-    private static final String MUTATION = "Mutation";
+    private static final String CUT_AND_SPLICE_CROSSOVER = "CutAndSpliceCrossover";
+    private static final String SINGLE_POINT_CROSSOVER = "SinglePointCrossover";
+    private static final String PERMUTATION_CROSSOVER = "PermutationCrossover";
+    private static final String ADD_MUTATION = "AddMutation";
+    private static final String ADD_BY_PRIORITY_MUTATION = "AddByPriorityMutation";
+    private static final String MODIFY_MUTATION = "ModifyMutation";
+    private static final String MODIFY_BY_PRIORITY_MUTATION = "ModifyByPriorityMutation";
+    private static final String DELETE_MUTATION = "DeleteMutation";
 
     // Results
     private static final String SOLUTIONS = "Solutions";
@@ -60,6 +68,15 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     private List<String> resultKeysInOrder;
     private boolean isFirstRun = true;
+    private FixedPrioritySelector fixedPrioritySelector;
+
+    public GeneticTestRunner() {
+        this(null);
+    }
+
+    public GeneticTestRunner(FixedPrioritySelector fixedPrioritySelector) {
+        this.fixedPrioritySelector = fixedPrioritySelector;
+    }
 
     public abstract GeneticDesignSpaceExplorer createGdse() throws IncQueryException;
 
@@ -72,10 +89,10 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         for (String key : gdse.getGeneticSharedObject().comparators.keySet()) {
             resultKeysInOrder.add(AVG + key);
         }
-        for (IMutateTrajectory mutator : gdse.getGeneticSharedObject().mutatiors) {
+        for (IMutateTrajectory mutator : gdse.getGeneticSharedObject().mutationApplications.keySet()) {
             resultKeysInOrder.add(mutator.getClass().getSimpleName());
         }
-        for (ICrossoverTrajectories crossover : gdse.getGeneticSharedObject().crossovers) {
+        for (ICrossoverTrajectories crossover : gdse.getGeneticSharedObject().crossoverApplications.keySet()) {
             resultKeysInOrder.add(crossover.getClass().getSimpleName());
         }
         resultKeysInOrder.add(NUMBER_OF_DUPLICATIONS);
@@ -94,13 +111,15 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     }
 
     @Override
-    public String runTestWithConfig(Row configRow, BaseResult result, int configId, int runId) throws IncQueryException {
+    public String runTestWithConfig(Row configRow, BaseResult result, int configId, int runId, int debugCsvId)
+            throws IncQueryException {
 
         GeneticDesignSpaceExplorer gdse = createGdse();
 
         GeneticDebugger geneticDebugger = new GeneticDebugger(true);
         geneticDebugger.setConfigId(configId);
         geneticDebugger.setRunId(runId);
+        geneticDebugger.setCsvName(Integer.toString(debugCsvId));
         gdse.setDebugger(geneticDebugger);
 
         registerXMISerailizer();
@@ -117,36 +136,33 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         int sizeOfPopulation = configRow.getValueAsInteger(POPULATION_SIZE);
         gdse.setSizeOfPopulation(sizeOfPopulation);
 
-        float BfsSelectionRate = configRow.getValueAsFloat(BFS_SELECTION_RATE);
-        gdse.setInitialPopulationSelector(new BFSSelector(BfsSelectionRate));
-
-        String crossoverDef = configRow.getValueAsString(CROSSOVER);
-        String[] crossovers = crossoverDef.split("\\+");
-        for (String crossover : crossovers) {
-            if ("CutAndSplice".equals(crossover) || "2".equals(crossover) || "2P".equals(crossover)) {
-                gdse.addCrossover(new CutAndSpliceCrossover());
-            } else if ("SinglePoint".equals(crossover) || "1".equals(crossover) || "1P".equals(crossover)) {
-                gdse.addCrossover(new OnePointCrossover());
-            } else if ("Permutation".equals(crossover) || "P".equals(crossover)) {
-                gdse.addCrossover(new PermutationEncodingCrossover());
-            }
+        String initialSelector = configRow.getValueAsString(INITIAL_SELECTOR);
+        float initialSelectionRate = configRow.getValueAsFloat(INITIAL_SELECTION_RATE);
+        if ("BFS".equals(initialSelector)) {
+            gdse.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
+        } else if ("Priority".equals(initialSelector)) {
+            gdse.setInitialPopulationSelector(fixedPrioritySelector);
+        } else {
+            throw new GeneticConfigurationException("No such initial selector: " + initialSelector);
         }
 
-        String mutationDef = configRow.getValueAsString(MUTATION);
-        String[] mutations = mutationDef.split("\\+");
-        for (String mutation : mutations) {
-            if ("Add".equals(mutation)) {
-                gdse.addMutatitor(new AddRandomTransitionMutation());
-            } else if ("AddByPriority".equals(mutation)) {
-                gdse.addMutatitor(new AddTransitionByPriorityMutation());
-            } else if ("Delete".equals(mutation)) {
-                gdse.addMutatitor(new DeleteRandomTransitionMutation());
-            } else if ("Modify".equals(mutation)) {
-                gdse.addMutatitor(new ModifyRandomTransitionMutation());
-            } else if ("ModifyByPriority".equals(mutation)) {
-                gdse.addMutatitor(new ModifyTransitionByPriorityMutation());
-            }
-        }
+        int cutAndSplice = configRow.getValueAsInteger(CUT_AND_SPLICE_CROSSOVER);
+        int singlePoint = configRow.getValueAsInteger(SINGLE_POINT_CROSSOVER);
+        int permutation = configRow.getValueAsInteger(PERMUTATION_CROSSOVER);
+        gdse.addCrossover(new CutAndSpliceCrossover(), cutAndSplice);
+        gdse.addCrossover(new OnePointCrossover(), singlePoint);
+        gdse.addCrossover(new PermutationEncodingCrossover(), permutation);
+
+        int add = configRow.getValueAsInteger(ADD_MUTATION);
+        int addByPriority = configRow.getValueAsInteger(ADD_BY_PRIORITY_MUTATION);
+        int delete = configRow.getValueAsInteger(DELETE_MUTATION);
+        int modify = configRow.getValueAsInteger(MODIFY_MUTATION);
+        int modifyByPriority = configRow.getValueAsInteger(MODIFY_BY_PRIORITY_MUTATION);
+        gdse.addMutatitor(new AddRandomTransitionMutation(), add);
+        gdse.addMutatitor(new AddTransitionByPriorityMutation(), addByPriority);
+        gdse.addMutatitor(new DeleteRandomTransitionMutation(), delete);
+        gdse.addMutatitor(new ModifyRandomTransitionMutation(), modify);
+        gdse.addMutatitor(new ModifyTransitionByPriorityMutation(), modifyByPriority);
 
         long timeout = configRow.getValueAsLong(TIMEOUT);
 

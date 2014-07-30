@@ -27,7 +27,6 @@ public class InstanceData {
     public volatile Map<String, Integer> violations;
     public volatile Map<String, Double> objectives;
 
-    public boolean wasunfeseable = false;
     public int survive = 0;
 
     public InstanceData(List<ITransition> initialTrajectory) {

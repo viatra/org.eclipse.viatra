@@ -44,23 +44,28 @@ public class Row {
     }
 
     public String getValueAsString(String key) {
-        return map.get(key);
+        String value = map.get(key);
+        if (value == null) {
+            throw new GeneticConfigurationException("Couldn't find the key '" + key
+                    + "'. Probably it is missing from the config file.");
+        }
+        return value;
     }
 
     public int getValueAsInteger(String key) {
-        return Integer.parseInt(map.get(key));
+        return Integer.parseInt(getValueAsString(key));
     }
 
     public long getValueAsLong(String key) {
-        return Long.parseLong(map.get(key));
+        return Long.parseLong(getValueAsString(key));
     }
 
     public float getValueAsFloat(String key) {
-        return Float.parseFloat(map.get(key));
+        return Float.parseFloat(getValueAsString(key));
     }
 
     public double getValueAsDouble(String key) {
-        return Double.parseDouble(map.get(key));
+        return Double.parseDouble(getValueAsString(key));
     }
 
     public String headerString() {
