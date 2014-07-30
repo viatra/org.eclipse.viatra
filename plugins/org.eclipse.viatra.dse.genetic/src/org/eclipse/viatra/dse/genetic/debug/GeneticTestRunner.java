@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.genetic.api.GeneticDesignSpaceExplorer;
+import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.crossovers.CutAndSpliceCrossover;
@@ -49,7 +50,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     private static final String ADAPTIVE_MUTATION_MULTIPLIER = "AdaptiveMutationMultiplier";
     private static final String INITIAL_SELECTOR = "InitialSelector";
     private static final String INITIAL_SELECTION_RATE = "InitialSelectionRate";
-    private static final String ITERATIONS = "Iterations";
+    private static final String STOP_CONDITION = "StopCondition";
+    private static final String STOP_CONDITION_NUMBER = "StopConditionNumber";
     private static final String CUT_AND_SPLICE_CROSSOVER = "CutAndSpliceCrossover";
     private static final String SINGLE_POINT_CROSSOVER = "SinglePointCrossover";
     private static final String PERMUTATION_CROSSOVER = "PermutationCrossover";
@@ -134,7 +136,11 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         float mutationMultiplier = configRow.getValueAsFloat(ADAPTIVE_MUTATION_MULTIPLIER);
         gdse.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
 
-        gdse.setNumberOfPopulation(configRow.getValueAsInteger(ITERATIONS));
+        String valueAsString = configRow.getValueAsString(STOP_CONDITION);
+        System.out.println(valueAsString);
+        StopCondition stopCondition = StopCondition.valueOf(valueAsString);
+        int stopConditionNumber = configRow.getValueAsInteger(STOP_CONDITION_NUMBER);
+        gdse.setStopCondition(stopCondition, stopConditionNumber);
 
         int sizeOfPopulation = configRow.getValueAsInteger(POPULATION_SIZE);
         gdse.setSizeOfPopulation(sizeOfPopulation);

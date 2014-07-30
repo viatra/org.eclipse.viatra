@@ -76,8 +76,9 @@ public class GeneticDesignSpaceExplorer {
         configuration.sizeOfPopulation = sizeOfPopulation;
     }
 
-    public void setNumberOfPopulation(int numberOfPopulation) {
-        configuration.maxNumberOfPopulation = numberOfPopulation;
+    public void setStopCondition(StopCondition stopCondition, int stopConditionNumber) {
+        configuration.stopCondition = stopCondition;
+        configuration.stopConditionNumber = stopConditionNumber;
     }
 
     public void addSoftConstraint(SoftConstraint softConstraint) {

@@ -27,6 +27,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
@@ -53,6 +54,9 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
     private Logger logger = Logger.getLogger(MainGeneticStrategy.class);
     private GeneticDebugger geneticDebugger = new GeneticDebugger(false);
+
+    private double actualBestSoftConstraint = Double.MAX_VALUE;
+    private int noBetterSolutionForXIterations = 0;
 
     @Override
     public void init(ThreadContext context) {
@@ -108,9 +112,27 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
                 logger.debug(sharedObject.actNumberOfPopulation + ". population, selecting");
 
-                // Selection
-                boolean isLastPopulation = sharedObject.actNumberOfPopulation >= sharedObject.maxNumberOfPopulation;
+                boolean isLastPopulation = false;
+                switch (sharedObject.stopCondition) {
+                case CANT_FIND_BETTER:
+                    // Intended, check after selection
+                    break;
+                case GOOD_ENOUGH_SOLUTION:
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.sumOfConstraintViolationMeauserement < sharedObject.stopConditionNumber) {
+                            isLastPopulation = true;
+                            break;
+                        }
+                    }
+                    break;
+                case ITERATIONS:
+                    isLastPopulation = sharedObject.actNumberOfPopulation >= sharedObject.stopConditionNumber;
+                    break;
+                default:
+                    break;
+                }
 
+                // Selection
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
                         sharedObject.comparators, sharedObject.sizeOfPopulation,
                         isLastPopulation && !geneticDebugger.isDebug());
@@ -119,6 +141,21 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
                 for (InstanceData instanceData : parentPopulation) {
                     instanceData.survive++;
+                }
+
+                if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.rank == 1
+                                && !(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
+                            noBetterSolutionForXIterations++;
+                            if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
+                                isLastPopulation = true;
+                            }
+                        } else {
+                            actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
+                        }
+                        break;
+                    }
                 }
 
                 if (isLastPopulation) {

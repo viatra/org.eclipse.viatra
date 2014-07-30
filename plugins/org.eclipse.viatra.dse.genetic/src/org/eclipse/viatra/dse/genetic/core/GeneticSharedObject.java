@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.fintesscalculators.SimpleFitnessCalculator;
 import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
@@ -36,11 +37,12 @@ public class GeneticSharedObject {
 
     // Configuration
     public int sizeOfPopulation = 4;
-    public int maxNumberOfPopulation = 50;
     public int actNumberOfPopulation = 1;
     public float chanceOfMutationInsteadOfCrossover = 0.2f;
     public float mutationChanceMultiplier = 0.0f;
     public int workerThreads = 0;
+    public StopCondition stopCondition = StopCondition.ITERATIONS;
+    public int stopConditionNumber;
 
     public List<SoftConstraint> softConstraints = new ArrayList<SoftConstraint>();
     public Map<String, Comparator<InstanceData>> comparators = new HashMap<String, Comparator<InstanceData>>();
