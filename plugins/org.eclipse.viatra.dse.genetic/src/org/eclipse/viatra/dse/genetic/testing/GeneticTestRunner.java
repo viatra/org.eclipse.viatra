@@ -47,6 +47,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     private static final String TIMEOUT = "Timeout[s]";
     private static final String POPULATION_SIZE = "PopulationSize";
     private static final String MUTATION_RATE = "MutationRate";
+    private static final String ADAPTIVE_MUTATION_MULTIPLIER = "AdaptiveMutationMultiplier";
     private static final String INITIAL_SELECTOR = "InitialSelector";
     private static final String INITIAL_SELECTION_RATE = "InitialSelectionRate";
     private static final String ITERATIONS = "Iterations";
@@ -130,7 +131,10 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         gdse.setStartingModel(root);
 
-        gdse.setMutationChanceAtCrossover(configRow.getValueAsFloat(MUTATION_RATE));
+        float mutationChance = configRow.getValueAsFloat(MUTATION_RATE);
+        float mutationMultiplier = configRow.getValueAsFloat(ADAPTIVE_MUTATION_MULTIPLIER);
+        gdse.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
+
         gdse.setNumberOfPopulation(configRow.getValueAsInteger(ITERATIONS));
 
         int sizeOfPopulation = configRow.getValueAsInteger(POPULATION_SIZE);
