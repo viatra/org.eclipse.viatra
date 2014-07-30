@@ -8,7 +8,7 @@
  *   Miklos Foldenyi - initial API and implementation
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.genetic.testing;
+package org.eclipse.viatra.dse.genetic.debug;
 
 import java.util.HashMap;
 import java.util.List;

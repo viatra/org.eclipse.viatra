@@ -8,7 +8,7 @@
  *   Miklos Foldenyi - initial API and implementation
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.genetic.testing;
+package org.eclipse.viatra.dse.genetic.debug;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,6 @@ import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.crossovers.CutAndSpliceCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.OnePointCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.PermutationEncodingCrossover;
-import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.initialselectors.BFSSelector;
 import org.eclipse.viatra.dse.genetic.initialselectors.FixedPrioritySelector;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
