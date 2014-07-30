@@ -33,32 +33,50 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         // TODO question: is it bad, if the initial child already has those
         // rules from parent2?
 
-        InstanceData parent1 = parents.get(0);
-        InstanceData parent2 = parents.get(1);
+        List<ITransition> parent1 = parents.get(0).trajectory;
+        List<ITransition> parent2 = parents.get(1).trajectory;
 
-        if (parent1.trajectory.size() < 2 || parent2.trajectory.size() < 2) {
-            throw new DSEException("Cannot crossover with empty or one long parent trajectoris");
+        
+        
+        if (parent1.size() < 2 || parent2.size() < 2) {
+            throw new DSEException("Cannot crossover with empty or one long parent trajectories");
         }
 
-        int index = random.nextInt(parent1.trajectory.size() - 1) + 1;
+        int shorterSize = parent1.size() > parent2.size() ? parent2.size() : parent1.size();
+        
+        int index = random.nextInt(shorterSize - 1) + 1;
 
-        List<ITransition> child = new ArrayList<ITransition>(parent1.trajectory.subList(0, index));
-
-        outerLoop: for (ITransition transition : parent2.trajectory) {
+        List<ITransition> child1 = new ArrayList<ITransition>(parent1.subList(0, index));
+        outerLoop: for (ITransition transition : parent2) {
 
             TransformationRule<? extends IPatternMatch> ruleToAdd = transition.getTransitionMetaData().rule;
 
-            for (ITransition childTransition : child) {
+            for (ITransition childTransition : child1) {
                 TransformationRule<? extends IPatternMatch> childRule = childTransition.getTransitionMetaData().rule;
                 if (ruleToAdd.equals(childRule)) {
                     continue outerLoop;
                 }
             }
 
-            child.add(transition);
+            child1.add(transition);
         }
 
-        return Arrays.asList(new InstanceData(child));
+        ArrayList<ITransition> child2 = new ArrayList<ITransition>(parent2.subList(0, index));
+        outerLoop: for (ITransition transition : parent1) {
+            
+            TransformationRule<? extends IPatternMatch> ruleToAdd = transition.getTransitionMetaData().rule;
+            
+            for (ITransition childTransition : child2) {
+                TransformationRule<? extends IPatternMatch> childRule = childTransition.getTransitionMetaData().rule;
+                if (ruleToAdd.equals(childRule)) {
+                    continue outerLoop;
+                }
+            }
+            
+            child2.add(transition);
+        }
+
+        return Arrays.asList(new InstanceData(child1), new InstanceData(child2));
     }
 
     @Override
@@ -68,7 +86,7 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
 
     @Override
     public int numberOfCreatedChilds() {
-        return 1;
+        return 2;
     }
 
 }
