@@ -143,8 +143,6 @@ public class Strategy implements IStrategy {
 
                     logger.debug("State is already traversed.");
 
-                    strategyBase.traversedStateFound(threadContext, traversalState);
-
                 } else {
                     // if the global constraints are satisfied
                     areConstraintsSatisfied = strategyBase.checkConstraints(threadContext);

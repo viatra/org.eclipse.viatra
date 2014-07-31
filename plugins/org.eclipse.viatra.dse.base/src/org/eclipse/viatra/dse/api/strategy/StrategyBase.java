@@ -13,54 +13,54 @@ package org.eclipse.viatra.dse.api.strategy;
 import java.util.Map;
 
 import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.impl.SimpleStrategyComponent;
+import org.eclipse.viatra.dse.api.strategy.impl.CheckAllConstraints;
+import org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals;
+import org.eclipse.viatra.dse.api.strategy.impl.ConfigurableSoultionFound;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.ExecutationType;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ITraversedStateFound;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
-/**
- * This class is a holder class that stores the building blocks of an exploration strategy.
- */
 public class StrategyBase {
 
-    private ICheckConstraints iCheckConstraints;
-    private ICheckGoalState iCheckGoalState;
+    private ICheckConstraints constraintsChecker;
+    private ICheckGoalState goalStateChecker;
     private INextTransition iNextTransition;
-    private ISolutionFound iSolutionFound;
-    private ITraversedStateFound iTraversedStateFound;
 
-    private final static SimpleStrategyComponent dummy = new SimpleStrategyComponent();
+    private ISolutionFound solutionFoundHandler;
 
     public StrategyBase(INextTransition iNextTransition) {
-        this(dummy, dummy, iNextTransition, dummy, dummy);
-    }
-
-    public StrategyBase(INextTransition iNextTransition, ICheckGoalState iCheckGoalState) {
-        this(dummy, iCheckGoalState, iNextTransition, dummy, dummy);
-    }
-
-    public StrategyBase(INextTransition iNextTransition, ICheckGoalState iCheckGoalState, ISolutionFound iSolutionFound) {
-        this(dummy, iCheckGoalState, iNextTransition, iSolutionFound, dummy);
-    }
-
-    public StrategyBase(INextTransition iNextTransition, ICheckGoalState iCheckGoalState,
-            ISolutionFound iSolutionFound, ICheckConstraints iCheckConstraints) {
-        this(iCheckConstraints, iCheckGoalState, iNextTransition, iSolutionFound, dummy);
-    }
-
-    public StrategyBase(ICheckConstraints iCheckConstraints, ICheckGoalState iCheckGoalState,
-            INextTransition iNextTransition, ISolutionFound iSolutionFound, ITraversedStateFound iTraversedStateFound) {
-        this.iCheckConstraints = iCheckConstraints;
-        this.iCheckGoalState = iCheckGoalState;
         this.iNextTransition = iNextTransition;
-        this.iSolutionFound = iSolutionFound;
-        this.iTraversedStateFound = iTraversedStateFound;
+        constraintsChecker = new CheckAllConstraints();
+        goalStateChecker = new CheckAllGoals();
+        solutionFoundHandler = new ConfigurableSoultionFound(1);
+    }
+
+    public void setConstraintsChecker(ICheckConstraints iCheckConstraints) {
+        this.constraintsChecker = iCheckConstraints;
+    }
+
+    public void setGoalStateChecker(ICheckGoalState iCheckGoalState) {
+        this.goalStateChecker = iCheckGoalState;
+    }
+
+    public ICheckConstraints getConstraintsChecker() {
+        return constraintsChecker;
+    }
+
+    public ICheckGoalState getGoalStateChecker() {
+        return goalStateChecker;
+    }
+
+    public void setSolutionFoundHandler(ISolutionFound solutionFoundHandler) {
+        this.solutionFoundHandler = solutionFoundHandler;
+    }
+
+    public ISolutionFound getSolutionFoundHandler() {
+        return solutionFoundHandler;
     }
 
     /**
@@ -69,7 +69,7 @@ public class StrategyBase {
      * @see ICheckConstraints#checkConstraints(ThreadContext)
      */
     public boolean checkConstraints(ThreadContext context) {
-        return iCheckConstraints.checkConstraints(context);
+        return constraintsChecker.checkConstraints(context);
     }
 
     /**
@@ -78,7 +78,7 @@ public class StrategyBase {
      * @see ICheckGoalState#isGoalState(ThreadContext)
      */
     public Map<String, Double> isGoalState(ThreadContext context) {
-        return iCheckGoalState.isGoalState(context);
+        return goalStateChecker.isGoalState(context);
     }
 
     /**
@@ -117,15 +117,7 @@ public class StrategyBase {
      * @see ISolutionFound#solutionFound(ThreadContext, Solution)
      */
     public ExecutationType solutionFound(ThreadContext context, Solution solution) {
-        return iSolutionFound.solutionFound(context, solution);
+        return solutionFoundHandler.solutionFound(context, solution);
     }
 
-    /**
-     * Delegates the call to {@link ITraversedStateFound#traversedStateFound(ThreadContext, TraversalStateType)} .
-     * 
-     * @see ITraversedStateFound#traversedStateFound(ThreadContext, TraversalStateType)
-     */
-    public void traversedStateFound(ThreadContext context, IState.TraversalStateType traversalState) {
-        iTraversedStateFound.traversedStateFound(context, traversalState);
-    }
 }

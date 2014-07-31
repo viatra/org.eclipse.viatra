@@ -12,8 +12,10 @@ package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
-import org.eclipse.viatra.dse.api.strategy.StrategyBuildingBlocksManager;
-import org.eclipse.viatra.dse.api.strategy.impl.SimpleStrategyComponent;
+import org.eclipse.viatra.dse.api.strategy.impl.ConfigurableSoultionFound;
+import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition;
+import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition;
+import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSNextTransition;
 
 /**
  * Helper class for instantiating Strategies. To implement a new strategy use the {@link Strategy} class.
@@ -26,38 +28,51 @@ public final class Strategies {
     private Strategies() {
     }
 
-    private static final String BACKTRACK_WHEN_TRAVERSED_STATE_FOUND = "BacktrackWhenTraversedStateFound";
-    private static final String CHECK_ALL_GOAL_PATTERN = "CheckAllGoalPattern";
-    private static final String DEPTH_FIRST_NEXT_TRANSITION = "DepthFirstNextTransition";
-    private static final String FIXED_PRIORITY_NEXT_TRANSITION = "FixedPriorityNextTransition";
-    private static final String STOP_AT_FIRST_SOLUTION_FOUND = "StopAtFirstSolutionFound";
-    private static final String FIND_ALL_SOLUTIONS = "FindAllSolutions";
-
-    public static StrategyBase createSimpleDepthFirstStrategy() {
-        return new StrategyBase(new SimpleStrategyComponent(),
-                StrategyBuildingBlocksManager.INSTANCE.createCheckGoalStateByName(CHECK_ALL_GOAL_PATTERN),
-                StrategyBuildingBlocksManager.INSTANCE.createNextTransitionByName(DEPTH_FIRST_NEXT_TRANSITION),
-                StrategyBuildingBlocksManager.INSTANCE.createSolutionFoundByName(STOP_AT_FIRST_SOLUTION_FOUND),
-                StrategyBuildingBlocksManager.INSTANCE
-                        .createTraversedStateFoundByName(BACKTRACK_WHEN_TRAVERSED_STATE_FOUND));
+    public static StrategyBase createDFSStrategy() {
+        return createDFSStrategy(0, 0);
     }
 
-    public static StrategyBase createSimpleDepthFirstAllSolutionsStrategy() {
-        return new StrategyBase(new SimpleStrategyComponent(),
-                StrategyBuildingBlocksManager.INSTANCE.createCheckGoalStateByName(CHECK_ALL_GOAL_PATTERN),
-                StrategyBuildingBlocksManager.INSTANCE.createNextTransitionByName(DEPTH_FIRST_NEXT_TRANSITION),
-                StrategyBuildingBlocksManager.INSTANCE.createSolutionFoundByName(FIND_ALL_SOLUTIONS),
-                StrategyBuildingBlocksManager.INSTANCE
-                        .createTraversedStateFoundByName(BACKTRACK_WHEN_TRAVERSED_STATE_FOUND));
+    public static StrategyBase createDFSStrategy(int numOfSolutionsToFind) {
+        return createDFSStrategy(numOfSolutionsToFind, 0);
+    }
+
+    public static StrategyBase createDFSStrategy(int numOfSolutionsToFind, int depthLimit) {
+        StrategyBase strategyBase = new StrategyBase(new DepthFirstNextTransition(depthLimit));
+        strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
+        return strategyBase;
     }
 
     public static StrategyBase createFixedPriorityStrategy() {
-        return new StrategyBase(new SimpleStrategyComponent(),
-                StrategyBuildingBlocksManager.INSTANCE.createCheckGoalStateByName(CHECK_ALL_GOAL_PATTERN),
-                StrategyBuildingBlocksManager.INSTANCE.createNextTransitionByName(FIXED_PRIORITY_NEXT_TRANSITION),
-                StrategyBuildingBlocksManager.INSTANCE.createSolutionFoundByName(STOP_AT_FIRST_SOLUTION_FOUND),
-                StrategyBuildingBlocksManager.INSTANCE
-                        .createTraversedStateFoundByName(BACKTRACK_WHEN_TRAVERSED_STATE_FOUND));
+        return createFixedPriorityStrategy(0, 0, true);
     }
 
+    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind) {
+        return createFixedPriorityStrategy(numOfSolutionsToFind, 0, true);
+    }
+
+    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit) {
+        return createFixedPriorityStrategy(numOfSolutionsToFind, depthLimit, true);
+    }
+
+    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit,
+            boolean tryHigherPriorityFirst) {
+        StrategyBase strategyBase = new StrategyBase(new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
+                depthLimit));
+        strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
+        return strategyBase;
+    }
+
+    public static StrategyBase createBFSStrategy() {
+        return createBFSStrategy(0, 0);
+    }
+
+    public static StrategyBase createBFSStrategy(int numOfSolutionsToFind) {
+        return createBFSStrategy(numOfSolutionsToFind, 0);
+    }
+
+    public static StrategyBase createBFSStrategy(int numOfSolutionsToFind, int depthLimit) {
+        StrategyBase strategyBase = new StrategyBase(new ParallelBFSNextTransition(depthLimit));
+        strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
+        return strategyBase;
+    }
 }

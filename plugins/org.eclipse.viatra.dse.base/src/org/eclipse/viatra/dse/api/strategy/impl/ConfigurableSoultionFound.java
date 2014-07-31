@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -22,24 +24,24 @@ import org.eclipse.viatra.dse.base.ThreadContext;
  */
 public class ConfigurableSoultionFound implements ISolutionFound {
 
-    private int waitForXSolutions = 0;
-    private int actNumberOfSolutions = 0;
+    private AtomicInteger waitForXSolutions;
+    private AtomicInteger actNumberOfSolutions = new AtomicInteger(0);
 
     public ConfigurableSoultionFound() {
+        this(0);
     }
 
     public ConfigurableSoultionFound(int waitForXSolutions) {
-        this.waitForXSolutions = waitForXSolutions;
+        this.waitForXSolutions = new AtomicInteger(waitForXSolutions);
     }
 
     @Override
     public ExecutationType solutionFound(ThreadContext context, Solution solution) {
 
-        if (waitForXSolutions == 0) {
+        if (waitForXSolutions.get() == 0) {
             return ExecutationType.CONTINUE;
         } else {
-            actNumberOfSolutions++;
-            if (waitForXSolutions <= actNumberOfSolutions) {
+            if (waitForXSolutions.get() <= actNumberOfSolutions.incrementAndGet()) {
                 return ExecutationType.STOP_ALL;
             } else {
                 return ExecutationType.CONTINUE;
@@ -47,20 +49,20 @@ public class ConfigurableSoultionFound implements ISolutionFound {
         }
     }
 
-    public int getWaitForXSolutions() {
+    public AtomicInteger getWaitForXSolutions() {
         return waitForXSolutions;
     }
 
     public void setWaitForXSolutions(int waitForXSolutions) {
-        this.waitForXSolutions = waitForXSolutions;
+        this.waitForXSolutions.set(waitForXSolutions);
     }
 
-    public int getActNumberOfSolutions() {
+    public AtomicInteger getActNumberOfSolutions() {
         return actNumberOfSolutions;
     }
 
     public void setActNumberOfSolutions(int actNumberOfSolutions) {
-        this.actNumberOfSolutions = actNumberOfSolutions;
+        this.actNumberOfSolutions.set(actNumberOfSolutions);
     }
 
 }
