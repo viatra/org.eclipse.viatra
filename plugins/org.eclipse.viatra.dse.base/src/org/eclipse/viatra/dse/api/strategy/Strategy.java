@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.Executation
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
-public class StrategyBase {
+public class Strategy {
 
     private ICheckConstraints constraintsChecker;
     private ICheckGoalState goalStateChecker;
@@ -32,7 +32,7 @@ public class StrategyBase {
 
     private ISolutionFound solutionFoundHandler;
 
-    public StrategyBase(INextTransition iNextTransition) {
+    public Strategy(INextTransition iNextTransition) {
         this.iNextTransition = iNextTransition;
         constraintsChecker = new CheckAllConstraints();
         goalStateChecker = new CheckAllGoals();

@@ -11,7 +11,7 @@
 package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.impl.ConfigurableSoultionFound;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition;
@@ -28,50 +28,50 @@ public final class Strategies {
     private Strategies() {
     }
 
-    public static StrategyBase createDFSStrategy() {
+    public static Strategy createDFSStrategy() {
         return createDFSStrategy(0, 0);
     }
 
-    public static StrategyBase createDFSStrategy(int numOfSolutionsToFind) {
+    public static Strategy createDFSStrategy(int numOfSolutionsToFind) {
         return createDFSStrategy(numOfSolutionsToFind, 0);
     }
 
-    public static StrategyBase createDFSStrategy(int numOfSolutionsToFind, int depthLimit) {
-        StrategyBase strategyBase = new StrategyBase(new DepthFirstNextTransition(depthLimit));
+    public static Strategy createDFSStrategy(int numOfSolutionsToFind, int depthLimit) {
+        Strategy strategyBase = new Strategy(new DepthFirstNextTransition(depthLimit));
         strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
         return strategyBase;
     }
 
-    public static StrategyBase createFixedPriorityStrategy() {
+    public static Strategy createFixedPriorityStrategy() {
         return createFixedPriorityStrategy(0, 0, true);
     }
 
-    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind) {
+    public static Strategy createFixedPriorityStrategy(int numOfSolutionsToFind) {
         return createFixedPriorityStrategy(numOfSolutionsToFind, 0, true);
     }
 
-    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit) {
+    public static Strategy createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit) {
         return createFixedPriorityStrategy(numOfSolutionsToFind, depthLimit, true);
     }
 
-    public static StrategyBase createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit,
+    public static Strategy createFixedPriorityStrategy(int numOfSolutionsToFind, int depthLimit,
             boolean tryHigherPriorityFirst) {
-        StrategyBase strategyBase = new StrategyBase(new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
+        Strategy strategyBase = new Strategy(new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
                 depthLimit));
         strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
         return strategyBase;
     }
 
-    public static StrategyBase createBFSStrategy() {
+    public static Strategy createBFSStrategy() {
         return createBFSStrategy(0, 0);
     }
 
-    public static StrategyBase createBFSStrategy(int numOfSolutionsToFind) {
+    public static Strategy createBFSStrategy(int numOfSolutionsToFind) {
         return createBFSStrategy(numOfSolutionsToFind, 0);
     }
 
-    public static StrategyBase createBFSStrategy(int numOfSolutionsToFind, int depthLimit) {
-        StrategyBase strategyBase = new StrategyBase(new ParallelBFSNextTransition(depthLimit));
+    public static Strategy createBFSStrategy(int numOfSolutionsToFind, int depthLimit) {
+        Strategy strategyBase = new Strategy(new ParallelBFSNextTransition(depthLimit));
         strategyBase.setSolutionFoundHandler(new ConfigurableSoultionFound(numOfSolutionsToFind));
         return strategyBase;
     }

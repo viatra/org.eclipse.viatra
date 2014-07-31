@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
@@ -41,7 +41,7 @@ import org.eclipse.viatra.dse.guidance.Guidance;
 public class ThreadContext {
 
     private final GlobalContext globalContext;
-    private final StrategyBase strategyBase;
+    private final Strategy strategyBase;
     private/* final */IExplorerThread strategy;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
@@ -69,7 +69,7 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, StrategyBase strategyBase, TransactionalEditingDomain ted,
+    public ThreadContext(final GlobalContext globalContext, Strategy strategyBase, TransactionalEditingDomain ted,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
         this.strategyBase = strategyBase;
@@ -180,7 +180,7 @@ public class ThreadContext {
         this.guidance = guidance;
     }
 
-    public StrategyBase getStrategyBase() {
+    public Strategy getStrategyBase() {
         return strategyBase;
     }
 

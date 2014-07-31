@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
@@ -73,7 +73,7 @@ public class GlobalContext {
      * Starts a new thread to explore the design space.
      * 
      * @param strategyBase
-     *            The {@link StrategyBase}.
+     *            The {@link Strategy}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
      * @param cloneModel
@@ -81,7 +81,7 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, StrategyBase strategyBase) {
+            boolean cloneModel, Strategy strategyBase) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
@@ -148,7 +148,7 @@ public class GlobalContext {
      * Starts a new thread to explore the design space.
      * 
      * @param strategyBase
-     *            The {@link StrategyBase}.
+     *            The {@link Strategy}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
@@ -157,7 +157,7 @@ public class GlobalContext {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategyBase());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, StrategyBase strategyBase) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Strategy strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 

@@ -20,7 +20,7 @@ import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
@@ -149,7 +149,7 @@ public class GeneticDesignSpaceExplorer {
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
-        dse.startExploration(new StrategyBase(MAIN_GENETIC_STRATEGY), waitForTermination);
+        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), waitForTermination);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
@@ -158,7 +158,7 @@ public class GeneticDesignSpaceExplorer {
             dse.setGuidance(guidance);
         }
 
-        dse.startExploration(new StrategyBase(MAIN_GENETIC_STRATEGY), false);
+        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), false);
 
         double start = System.nanoTime() / 1000000;
         do {

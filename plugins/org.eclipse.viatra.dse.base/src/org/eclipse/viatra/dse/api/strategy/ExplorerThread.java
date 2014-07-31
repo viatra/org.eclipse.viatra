@@ -45,7 +45,7 @@ public class ExplorerThread implements IExplorerThread {
 
     private final ThreadContext threadContext;
     private GlobalContext globalContext;
-    private final StrategyBase strategyBase;
+    private final Strategy strategyBase;
     private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final Logger logger = Logger.getLogger(this.getClass());

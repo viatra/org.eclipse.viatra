@@ -31,7 +31,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -274,7 +274,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(StrategyBase strategyBase, boolean waitForTermination) throws DSEException {
+    public void startExploration(Strategy strategyBase, boolean waitForTermination) throws DSEException {
         initExploration(strategyBase);
 
         // wait until all threads exit
@@ -304,7 +304,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(StrategyBase strategyBase, int waitInMilliseconds) throws DSEException {
+    public void startExploration(Strategy strategyBase, int waitInMilliseconds) throws DSEException {
         initExploration(strategyBase);
 
         try {
@@ -330,7 +330,7 @@ public class DesignSpaceExplorer {
         } while (true);
     }
 
-    private void initExploration(StrategyBase strategyBase) {
+    private void initExploration(Strategy strategyBase) {
         checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
         checkArgument(strategyBase != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
