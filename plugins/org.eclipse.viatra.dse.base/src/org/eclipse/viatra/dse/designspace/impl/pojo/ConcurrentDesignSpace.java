@@ -27,16 +27,13 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
+import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
-import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 
 public class ConcurrentDesignSpace implements IDesignSpace {
 
-    private static final int CACHE_SIZE = 1000;
-
-    private final ConcurrentHashMap<Object, State> objectToStateMap = new ConcurrentHashMap<Object, State>(64, 0.75f, 4);
-    private final ConcurrentHashMap<Object, State> cache = new ConcurrentHashMap<Object, State>(CACHE_SIZE, 0.75f, 8);
+    private final ConcurrentHashMap<Object, State> objectToStateMap = new ConcurrentHashMap<Object, State>(64, 0.75f, 1);
     private final AtomicReference<State> rootState = new AtomicReference<State>();
     private final AtomicLong numberOfTransitions = new AtomicLong(0);
 
@@ -79,11 +76,14 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         // create new state
         state = new State(newStateId);
         // set outgoing transitios
+        Transition[] outTransitions = new Transition[outgoingTransitionIds.keySet().size()];
+        int i = 0;
         for (Object transitionId : outgoingTransitionIds.keySet()) {
             Transition t = new Transition(transitionId, state, outgoingTransitionIds.get(transitionId));
-            state.addOutTransition(t);
+            outTransitions[i++] = t;
             fireNewTransitionEvent(t); // TODO this can be faulty if race is lost. Is this needed?
         }
+        state.setOutTransitions(outTransitions);
         // set incoming transition
         if (sourceTransition != null) {
             state.addInTransition((Transition) sourceTransition);
@@ -102,7 +102,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
             // finish modifying shared data
             state.setProcessed();
 
-            cache.put(newStateId, state);
             numberOfTransitions.addAndGet(outgoingTransitionIds.size());
 
             fireNewStateEvent(state);
@@ -127,19 +126,7 @@ public class ConcurrentDesignSpace implements IDesignSpace {
 
     @Override
     public State getStateById(final Object id) {
-        State state = cache.get(id);
-        if (state == null) {
-            state = objectToStateMap.get(id);
-            if (state == null) {
-                return null;
-            }
-            // refresh cache
-            if (cache.size() > CACHE_SIZE) {
-                cache.clear();
-            }
-            cache.put(id, state);
-        }
-        return state;
+        return objectToStateMap.get(id);
     }
 
     /**
@@ -303,8 +290,7 @@ public class ConcurrentDesignSpace implements IDesignSpace {
     }
 
     private void fireNewTransitionEvent(ITransition transition) {
-        logger.debug("New transition from " + transition.getFiredFrom().getId() + " with id "
-                + transition.getId());
+        logger.debug("New transition from " + transition.getFiredFrom().getId() + " with id " + transition.getId());
         for (IDesignSpaceChangeHandler handler : changeHandlers) {
             handler.newTransitionAdded(transition);
         }

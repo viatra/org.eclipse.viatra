@@ -137,7 +137,6 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         gdse.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
 
         String valueAsString = configRow.getValueAsString(STOP_CONDITION);
-        System.out.println(valueAsString);
         StopCondition stopCondition = StopCondition.valueOf(valueAsString);
         int stopConditionNumber = configRow.getValueAsInteger(STOP_CONDITION_NUMBER);
         gdse.setStopCondition(stopCondition, stopConditionNumber);
