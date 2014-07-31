@@ -96,17 +96,17 @@ class PatternMatcherClassMethodInferrer {
    					return rawForOneArbitraryMatch(new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»}, processor);''')
    				]
    			]
-   			type.members += type.toMethod("newFilteredDeltaMonitor", pattern.newTypeRef(typeof(DeltaMonitor), cloneWithProxies(matchClassReference))) [
-   				documentation = pattern.javadocNewFilteredDeltaMonitorMethod.toString
-    			parameters += type.toParameter("fillAtStart", pattern.newTypeRef(typeof (boolean)))
-   				for (parameter : pattern.parameters){
-					parameters += type.toParameter(parameter.parameterName, parameter.calculateType)
-   				}
-   				annotations += type.toAnnotation(typeof (Deprecated))
-   				body = [append('''
-   					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
-   				]
-   			]
+//   			type.members += type.toMethod("newFilteredDeltaMonitor", pattern.newTypeRef(typeof(DeltaMonitor), cloneWithProxies(matchClassReference))) [
+//   				documentation = pattern.javadocNewFilteredDeltaMonitorMethod.toString
+//    			parameters += type.toParameter("fillAtStart", pattern.newTypeRef(typeof (boolean)))
+//   				for (parameter : pattern.parameters){
+//					parameters += type.toParameter(parameter.parameterName, parameter.calculateType)
+//   				}
+//   				annotations += type.toAnnotation(typeof (Deprecated))
+//   				body = [append('''
+//   					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
+//   				]
+//   			]
    			type.members += type.toMethod("newMatch", cloneWithProxies(matchClassReference)) [
     			documentation = pattern.javadocNewMatchMethod.toString
    				for (parameter : pattern.parameters){

@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
-
 /**
  * Interface for an EMF-IncQuery matcher associated with a graph pattern.
  * 
@@ -164,47 +162,19 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
     // CHANGE MONITORING
     // attach delta monitor for high-level change detection
 
-    // MOVED TO  ADVANCED INCQUERY ENGINE
+    // MOVED TO ADVANCED INCQUERY ENGINE
     //public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
 
     // MOVED TO ADVANCED INCQUERY ENGINE
     //public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
+    
+    // USE {@link IMatchUpdateListener} or EVM instead
+	//    @Deprecated
+	//	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
 
-    /**
-     * Registers a new delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes (delta) in
-     * the set of pattern matches from now on. It can also be reset to track changes from a later point in time, and
-     * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
-     * 
-     * @param fillAtStart
-     *            if true, all current matches are reported as new match events; if false, the delta monitor starts
-     *            empty.
-     * @return the delta monitor.
-     * @deprecated 
-     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
-     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
-     */
-    @Deprecated
-	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
-
-    /**
-     * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
-     * (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the
-     * given fixed values of some parameters. It can also be reset to track changes from a later point in time, and
-     * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
-     * 
-     * @param fillAtStart
-     *            if true, all current matches are reported as new match events; if false, the delta monitor starts
-     *            empty.
-     * @param partialMatch
-     *            a partial match of the pattern where each non-null field binds the corresponding pattern parameter to
-     *            a fixed value.
-     * @return the delta monitor.
-     * @deprecated 
-     *  use the Databinding API through IncQueryObservables in org.eclipse.incquery.databinding.runtime,
-     *  or the advanced features available in {@link AdvancedIncQueryEngine}!
-     */
-    @Deprecated
-	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
+    // USE {@link IMatchUpdateListener} or EVM instead
+	//    @Deprecated
+	//	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
 
     // MOVED TO INCQUERY ENGINE
     //public boolean addCallbackAfterUpdates(Runnable callback);

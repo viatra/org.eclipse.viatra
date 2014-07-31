@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -28,9 +27,7 @@ import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 
 import com.google.common.base.Preconditions;
 
@@ -46,8 +43,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     // FIELDS AND CONSTRUCTOR
 
     protected IncQueryEngine engine;
-    protected RetePatternMatcher patternMatcher;
-    protected ReteEngine reteEngine;
+    private RetePatternMatcher patternMatcher;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
     public BaseMatcher(IncQueryEngine engine,
@@ -58,7 +54,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
         this.patternMatcher = accessMatcher(engineImpl, querySpecification);
-        this.reteEngine = engineImpl.getReteEngine();
         engineImpl.reportMatcherInitialized(querySpecification, this);
     }
 
@@ -281,88 +276,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     }
 
     // with input binding as pattern-specific parameters: not declared in interface
-
-    /**
-     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
-     */
-    @Deprecated
-	@Override
-    public DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart) {
-        DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
-            @Override
-            public Match statelessConvert(Tuple t) {
-                return tupleToMatch(t);
-            }
-        };
-        patternMatcher.connect(dm, fillAtStart);
-        return dm;
-    }
-
-    /**
-     * Registers a new filtered delta monitor on this pattern matcher. The DeltaMonitor can be used to track changes
-     * (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the
-     * given fixed values of some parameters. It can also be reset to track changes from a later point in time, and
-     * changes can even be acknowledged on an individual basis. See {@link DeltaMonitor} for details.
-     *
-     * @param fillAtStart
-     *            if true, all current matches are reported as new match events; if false, the delta monitor starts
-     *            empty.
-     * @param parameters
-     *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
-     * @return the delta monitor.
-     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
-     */
-    @Deprecated
-	protected DeltaMonitor<Match> rawNewFilteredDeltaMonitor(boolean fillAtStart, final Object[] parameters) {
-        final int length = parameters.length;
-        DeltaMonitor<Match> dm = new DeltaMonitor<Match>(reteEngine.getReteNet().getHeadContainer()) {
-            @Override
-            public boolean statelessFilter(Tuple tuple) {
-                for (int i = 0; i < length; ++i) {
-                    final Object positionalFilter = parameters[i];
-                    if (positionalFilter != null && !positionalFilter.equals(tuple.get(i)))
-                        return false;
-                }
-                return true;
-            }
-
-            @Override
-            public Match statelessConvert(Tuple t) {
-                return tupleToMatch(t);
-            }
-        };
-        patternMatcher.connect(dm, fillAtStart);
-        return dm;
-    }
-
-    /**
-     * @deprecated use {@link IMatchUpdateListener} or EVM instead!
-     */
-    @Deprecated
-	@Override
-    public DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch) {
-        return rawNewFilteredDeltaMonitor(fillAtStart, partialMatch.toArray());
-    }
-
-//    @Override
-//    public boolean addCallbackAfterUpdates(Runnable callback) {
-//        return baseIndex.getAfterUpdateCallbacks().add(callback);
-//    }
-//
-//    @Override
-//    public boolean removeCallbackAfterUpdates(Runnable callback) {
-//        return baseIndex.getAfterUpdateCallbacks().remove(callback);
-//    }
-//
-//    @Override
-//    public boolean addCallbackAfterWipes(Runnable callback) {
-//        return engine.getAfterWipeCallbacks().add(callback);
-//    }
-//
-//    @Override
-//    public boolean removeCallbackAfterWipes(Runnable callback) {
-//        return engine.getAfterWipeCallbacks().remove(callback);
-//    }
 
 
     @Override
