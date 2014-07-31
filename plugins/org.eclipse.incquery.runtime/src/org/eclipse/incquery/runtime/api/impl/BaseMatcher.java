@@ -24,10 +24,10 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 
 import com.google.common.base.Preconditions;
 
@@ -43,7 +43,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
     // FIELDS AND CONSTRUCTOR
 
     protected IncQueryEngine engine;
-    private RetePatternMatcher patternMatcher;
+    private IQueryResultProvider backend;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
     public BaseMatcher(IncQueryEngine engine,
@@ -53,13 +53,13 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         this.engine = engine;
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
-        this.patternMatcher = accessMatcher(engineImpl, querySpecification);
+        this.backend = accessMatcher(engineImpl, querySpecification);
         engineImpl.reportMatcherInitialized(querySpecification, this);
     }
 
     // HELPERS
 
-    private RetePatternMatcher accessMatcher(IncQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
+    private IQueryResultProvider accessMatcher(IncQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
         Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
         Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
@@ -92,13 +92,6 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         return fEmptyArray;
     }
 
-    private boolean[] notNull(Object[] parameters) {
-        boolean[] notNull = new boolean[parameters.length];
-        for (int i = 0; i < parameters.length; ++i)
-            notNull[i] = parameters[i] != null;
-        return notNull;
-    }
-
     // REFLECTION
 
     @Override
@@ -127,8 +120,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return matches represented as a Match object.
      */
     protected Collection<Match> rawGetAllMatches(Object[] parameters) {
-        List<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
-        List<Match> matches = new ArrayList<Match>();
+        Collection<? extends Tuple> m = backend.getAllMatches(parameters);
+        Collection<Match> matches = new ArrayList<Match>();
         // clones the tuples into a match object to protect the Tuples from modifications outside of the ReteMatcher
         for (Tuple t : m)
             matches.add(tupleToMatch(t));
@@ -157,7 +150,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return a match represented as a Match object, or null if no match is found.
      */
     protected Match rawGetOneArbitraryMatch(Object[] parameters) {
-        Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
+        Tuple t = backend.getOneArbitraryMatch(parameters);
         if (t != null)
             return tupleToMatch(t);
         else
@@ -180,7 +173,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return true if the input is a valid (partial) match of the pattern.
      */
     protected boolean rawHasMatch(Object[] parameters) {
-        return patternMatcher.count(parameters, notNull(parameters)) > 0;
+        return backend.countMatches(parameters) > 0;
     }
 
     @Override
@@ -204,7 +197,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      * @return the number of pattern matches found.
      */
     protected int rawCountMatches(Object[] parameters) {
-        return patternMatcher.count(parameters, notNull(parameters));
+        return backend.countMatches(parameters);
     }
 
     @Override
@@ -225,7 +218,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      *            the action that will process each pattern match.
      */
     protected void rawForEachMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        List<Tuple> m = patternMatcher.matchAll(parameters, notNull(parameters));
+        Collection<? extends Tuple> m = backend.getAllMatches(parameters);
         // clones the tuples into match objects to protect the Tuples from modifications outside of the ReteMatcher
         for (Tuple t : m)
             processor.process(tupleToMatch(t));
@@ -266,7 +259,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
      *         not invoked
      */
     protected boolean rawForOneArbitraryMatch(Object[] parameters, IMatchProcessor<? super Match> processor) {
-        Tuple t = patternMatcher.matchOne(parameters, notNull(parameters));
+        Tuple t = backend.getOneArbitraryMatch(parameters);
         if (t != null) {
             processor.process(tupleToMatch(t));
             return true;

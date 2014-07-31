@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -32,7 +33,7 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
  * @author Gabor Bergmann
  *
  */
-public class RetePatternMatcher extends TransformerNode {
+public class RetePatternMatcher extends TransformerNode implements IQueryResultProvider {
 
     protected ReteEngine engine;
     protected InputConnector inputConnector;
@@ -309,5 +310,28 @@ public class RetePatternMatcher extends TransformerNode {
         }
 
     }
+
+    
+    private boolean[] notNull(Object[] parameters) {
+        boolean[] notNull = new boolean[parameters.length];
+        for (int i = 0; i < parameters.length; ++i)
+            notNull[i] = parameters[i] != null;
+        return notNull;
+    }
+    
+	@Override
+	public int countMatches(Object[] parameters) {
+		return count(parameters, notNull(parameters));
+	}
+
+	@Override
+	public Tuple getOneArbitraryMatch(Object[] parameters) {
+		return matchOne(parameters, notNull(parameters));
+	}
+
+	@Override
+	public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
+		return matchAll(parameters, notNull(parameters));
+	}
 
 }
