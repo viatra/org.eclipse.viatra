@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
@@ -42,7 +42,7 @@ public class ThreadContext {
 
     private final GlobalContext globalContext;
     private final StrategyBase strategyBase;
-    private/* final */IStrategy strategy;
+    private/* final */IExplorerThread strategy;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
     private TransactionalEditingDomain ted;
@@ -184,11 +184,11 @@ public class ThreadContext {
         return strategyBase;
     }
 
-    public IStrategy getStrategy() {
+    public IExplorerThread getStrategy() {
         return strategy;
     }
 
-    public void setStrategy(IStrategy strategy) {
+    public void setStrategy(IExplorerThread strategy) {
         this.strategy = strategy;
     }
 

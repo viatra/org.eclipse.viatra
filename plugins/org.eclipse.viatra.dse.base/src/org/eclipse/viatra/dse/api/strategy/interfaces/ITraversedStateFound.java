@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
-import org.eclipse.viatra.dse.api.strategy.Strategy;
+import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 
 /**
  * This interface is the part of the strategy building blocks. Defines a method which is called by the
- * {@link Strategy#execute()} if an already traversed state has been found.
+ * {@link ExplorerThread#execute()} if an already traversed state has been found.
  * 
  * @author Andras Szabolcs Nagy
  */

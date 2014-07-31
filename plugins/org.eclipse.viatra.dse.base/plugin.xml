@@ -9,22 +9,6 @@
    <extension-point id="org.eclipse.viatra.dse.ruledependency.resolver" name="RuleDependencyResolver" schema="schema/org.eclipse.viatra.dse.ruledependency.resolver.exsd"/>
    <extension-point id="org.eclipse.viatra.dse.ruledependency.occurrence" name="Occurrence" schema="schema/org.eclipse.viatra.dse.ruledependency.occurrence.exsd"/>
    <extension
-         point="org.eclipse.viatra.dse.api.strategy.solutionfound">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.StopAtFirstSolutionFound"
-            id="org.eclipse.viatra.dse.api.strategy.impl.StopAtFirstSolutionFound"
-            name="StopAtFirstSolutionFound">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.traversedstatefound">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.BacktrackWhenTraversedStateFound"
-            id="org.eclipse.viatra.dse.api.strategy.impl.BacktrackWhenTraversedStateFound"
-            name="BacktrackWhenTraversedStateFound">
-      </client>
-   </extension>
-   <extension
          point="org.eclipse.viatra.dse.api.strategy.nexttransition">
       <client
             class="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition"
@@ -33,35 +17,11 @@
       </client>
    </extension>
    <extension
-         point="org.eclipse.viatra.dse.api.strategy.checkconstraints">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.UndoWhenOneConstraintIsNotSatisfied"
-            id="org.eclipse.viatra.dse.api.strategy.impl.UndoWhenOneConstraintIsNotSatisfied"
-            name="UndoWhenOneConstraintIsNotSatisfied">
-      </client>
-   </extension>
-   <extension
          point="org.eclipse.viatra.dse.api.strategy.checkgoalstate">
       <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.SimpleStrategyComponent"
+            class="org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals"
             id="org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoalPattern"
             name="CheckAllGoalPattern">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.solutionfound">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.SimpleStrategyComponent"
-            id="org.eclipse.viatra.dse.FindAllSolutions"
-            name="FindAllSolutions">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.nexttransition">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.GuidedNextTransition"
-            id="org.eclipse.viatra.dse.base.GuidedNextTransition"
-            name="GuidedNextTransition">
       </client>
    </extension>
    <extension

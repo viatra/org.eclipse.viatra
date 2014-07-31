@@ -20,7 +20,7 @@ import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.ExecutationType;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -36,7 +36,7 @@ import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
  * @author Andras Szabolcs Nagy
  * 
  */
-public class Strategy implements IStrategy {
+public class ExplorerThread implements IExplorerThread {
 
     private static final String STATE_EVALUATION = "stateEvaluation";
     private static final String FIRE_ACTIVATION_TIMER = "fireActivationTimer";
@@ -50,7 +50,7 @@ public class Strategy implements IStrategy {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    public Strategy(final ThreadContext context) {
+    public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
         this.strategyBase = context.getStrategyBase();
     }

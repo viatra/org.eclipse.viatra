@@ -14,5 +14,5 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 
 public interface IStrategyFactory {
 
-    IStrategy createStrategy(ThreadContext context);
+    IExplorerThread createStrategy(ThreadContext context);
 }

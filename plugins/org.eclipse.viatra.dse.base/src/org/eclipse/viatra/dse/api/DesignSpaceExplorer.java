@@ -32,7 +32,7 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -474,7 +474,7 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Returns true if the {@link IStrategy strategy} decided to stop, and all the threads finished their work.
+     * Returns true if the {@link IExplorerThread strategy} decided to stop, and all the threads finished their work.
      * 
      * @return true if the process has finished, false otherwise.
      */

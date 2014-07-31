@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 public class StrategyFactory implements IStrategyFactory {
 
     @Override
-    public IStrategy createStrategy(ThreadContext context) {
-        return new Strategy(context);
+    public IExplorerThread createStrategy(ThreadContext context) {
+        return new ExplorerThread(context);
     }
 
 }

@@ -21,10 +21,10 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
+import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -53,7 +53,7 @@ public class GlobalContext {
 
     private volatile ExplorationProcessState state = ExplorationProcessState.NOT_STARTED;
     private IStrategyFactory strategyFactory = new StrategyFactory();
-    private final Set<IStrategy> runningThreads = new HashSet<IStrategy>();
+    private final Set<IExplorerThread> runningThreads = new HashSet<IExplorerThread>();
     private DSEThreadPool threadPool = new DSEThreadPool();
     private int numberOfStartedThreads = 0;
     private IDesignSpace designSpace;
@@ -78,9 +78,9 @@ public class GlobalContext {
      *            The model to clone. Hint: context.getTed()
      * @param cloneModel
      *            It should be true in most cases.
-     * @return The newly created {@link Strategy}. Null if the number of the current strategies reached their maximum.
+     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
      */
-    public synchronized IStrategy tryStartNewThread(ThreadContext originalThreadContext, EObject root,
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
             boolean cloneModel, StrategyBase strategyBase) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
@@ -115,7 +115,7 @@ public class GlobalContext {
                 newThreadContext = originalThreadContext;
             }
             // TODO : clone undo list? slave strategy can't go further back...
-            IStrategy strategy = strategyFactory.createStrategy(newThreadContext);
+            IExplorerThread strategy = strategyFactory.createStrategy(newThreadContext);
             newThreadContext.setStrategy(strategy);
 
             boolean isSuccessful = threadPool.tryStartNewStrategy(strategy);
@@ -151,25 +151,25 @@ public class GlobalContext {
      *            The {@link StrategyBase}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
-     * @return The newly created {@link Strategy}. Null if the number of the current strategies reached their maximum.
+     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
      */
-    public synchronized IStrategy tryStartNewThread(ThreadContext originalThreadContext) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategyBase());
     }
 
-    public synchronized IStrategy tryStartNewThread(ThreadContext originalThreadContext, StrategyBase strategyBase) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, StrategyBase strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 
-    public synchronized IStrategy tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
         return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategyBase());
     }
 
-    public synchronized IStrategy tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
         return tryStartNewThread(originalThreadContext, root, true, originalThreadContext.getStrategyBase());
     }
 
-    public synchronized void strategyFinished(IStrategy strategy) {
+    public synchronized void strategyFinished(IExplorerThread strategy) {
         runningThreads.remove(strategy);
 
         if (logger.isDebugEnabled()) {
@@ -209,7 +209,7 @@ public class GlobalContext {
         if (state == ExplorationProcessState.RUNNING) {
             state = ExplorationProcessState.STOPPING;
             logger.debug("Stopping all threads.");
-            for (IStrategy strategy : runningThreads) {
+            for (IExplorerThread strategy : runningThreads) {
                 strategy.stopRunning();
             }
         }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.strategy.StrategyBase;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -101,7 +101,7 @@ public class RandomSearchStrategy implements INextTransition {
         return null;
     }
 
-    private IStrategy tryStartNewThread(ThreadContext context) {
+    private IExplorerThread tryStartNewThread(ThreadContext context) {
         return gc
                 .tryStartNewThread(context, context.getModelRoot(), true, new StrategyBase(new RandomSearchStrategy()));
     }
