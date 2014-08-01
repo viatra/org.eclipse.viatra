@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.incquery.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -38,12 +39,11 @@ import com.google.common.base.Preconditions;
  *
  * @param <Match>
  */
-public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQueryMatcher<Match> {
+public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResultWrapper implements IncQueryMatcher<Match> {
 
     // FIELDS AND CONSTRUCTOR
 
     protected IncQueryEngine engine;
-    private IQueryResultProvider backend;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
     public BaseMatcher(IncQueryEngine engine,
@@ -63,12 +63,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
         Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
-            return engine.getReteEngine().accessMatcher(specification);
+            return engine.getResultProvider(specification);
         } catch (QueryPlannerException e) {
             throw new IncQueryException(e);
         }
     }
-
 
     // ARRAY-BASED INTERFACE
 

@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.rete.eval;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
@@ -304,7 +305,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
     /**
      * @return the engine
      */
-    public ReteEngine getEngine() {
+    public IQueryBackend getEngine() {
         return engine;
     }
 

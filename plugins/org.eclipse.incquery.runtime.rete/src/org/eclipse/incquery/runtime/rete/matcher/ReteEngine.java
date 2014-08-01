@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -36,7 +38,7 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
  * @author Gabor Bergmann
  *
  */
-public class ReteEngine {
+public class ReteEngine implements IQueryBackend {
 
     protected Network reteNet;
     protected final int reteThreads;
@@ -477,5 +479,16 @@ public class ReteEngine {
     		throw new IllegalStateException("Trying to use a Rete engine that has been disposed or has not yet been initialized.");
 
     }
+    
+    @Override
+    public IQueryResultProvider getResultProvider(PQuery query) throws QueryPlannerException {
+    	return accessMatcher(query);
+    }
+
+
+	@Override
+	public void dispose() {
+		killEngine();
+	}
 
 }

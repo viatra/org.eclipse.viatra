@@ -14,8 +14,10 @@ package org.eclipse.incquery.runtime.internal.apiimpl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
@@ -40,15 +42,17 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.context.EMFPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.incquery.runtime.internal.boundary.CallbackNode;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.matcher.RetePatternMatcher;
 import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
@@ -85,11 +89,12 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	/**
      * The RETE pattern matcher component of the EMF-IncQuery engine.
      */
-    private ReteEngine reteEngine = null;
+    private IQueryBackend reteEngine = null;
 
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
     private Logger logger;
+	private boolean disposed = false;
     
     /**
      * EXPERIMENTAL
@@ -251,7 +256,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * TODO make it package visible only
      */
     @Override
-	public ReteEngine getReteEngine() throws IncQueryException {
+	public IQueryBackend getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
             // if uninitialized, don't initialize yet
             getBaseIndexInternal(false);
@@ -280,7 +285,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 
     
 
-    private ReteEngine buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
+    private IQueryBackend buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
         ReteEngine engine;
         engine = new ReteEngine(context, reteThreads);
         ReteRecipeCompiler compiler = new ReteRecipeCompiler(Options.builderMethod.layoutStrategy(), context);
@@ -298,6 +303,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         			String.format("Cannot dispose() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
         }
         wipe();
+        
+        this.disposed = true;
         
         // called before base index disposal to allow removal of base listeners
         lifecycleProvider.engineDisposed();
@@ -318,8 +325,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         	throw new UnsupportedOperationException(
         			String.format("Cannot wipe() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
         }
+        // TODO generalize for each query backend
         if (reteEngine != null) {
-            reteEngine.killEngine();
+            reteEngine.dispose();
             reteEngine = null;
         }
         matchers.clear();
@@ -380,44 +388,70 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         // return isAdvanced; ???
     }
 
+	private <Match extends IPatternMatch> IQueryResultProvider getUnderlyingResultProvider(
+			final BaseMatcher<Match> matcher) throws QueryPlannerException {
+		//IQueryResultProvider resultProvider = reteEngine.accessMatcher(matcher.getSpecification());
+		return matcher.backend;
+	}
 
     @Override
-	public <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,
-            IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+	public <Match extends IPatternMatch> void addMatchUpdateListener(final IncQueryMatcher<Match> matcher,
+            final IMatchUpdateListener<? super Match> listener, boolean fireNow) {
         checkArgument(listener != null, "Cannot add null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
-        checkArgument(reteEngine != null, "Cannot register listener on matcher of disposed engine!");
-        //((BaseMatcher<Match>)matcher).addCallbackOnMatchUpdate(listener, fireNow);
+        checkArgument(!disposed, "Cannot register listener on matcher of disposed engine!");
+
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
-        final CallbackNode<Match> callbackNode = new CallbackNode<Match>(reteEngine.getReteNet().getHeadContainer(),
-                this, logger, listener) {
-            @Override
-            public Match statelessConvert(Tuple t) {
-                //return bm.tupleToMatch(t);
-                return bm.newMatch(t.getElements());
-            }
-        };
+        final IUpdateable updateDispatcher = new IUpdateable() {
+			@Override
+			public void update(Tuple updateElement, boolean isInsertion) {
+		        Match match = null; 
+		        try {
+		        	match = bm.newMatch(updateElement.getElements());
+		            if (isInsertion)
+		                listener.notifyAppearance(match);
+		            else
+		                listener.notifyDisappearance(match);
+		        } catch (Throwable e) { // NOPMD
+		            if (e instanceof Error)
+		                throw (Error) e;
+		            logger.warn(String.format(
+		                            "The incremental pattern matcher encountered an error during %s a callback on %s of match %s of pattern %s. Error message: %s. (Developer note: %s in %s callback)",
+		                            match == null ? "preparing" : "invoking",
+		                            isInsertion ? "insertion" : "removal", 
+		                            match == null ? updateElement.toString() : match.prettyPrint(),
+		                            matcher.getPatternName(), 
+		                            e.getMessage(), e.getClass().getSimpleName(), listener), e);
+		        }
+	            
+			}
+		};
+        
         try {
-            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getSpecification());
-            patternMatcher.connect(callbackNode, listener, fireNow);
+            IQueryResultProvider resultProvider = getUnderlyingResultProvider(bm);
+            resultProvider.addUpdateListener(updateDispatcher, listener, fireNow);
         } catch (QueryPlannerException e) {
-            logger.error("Could not access matcher " + matcher.getPatternName(), e);
+            logger.error("Error while adding listener " + listener + " to the matcher of " + matcher.getPatternName(), e);
         }
     }
+
     
     @Override
 	public <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot remove listener from matcher of different engine!");
-        checkArgument(reteEngine != null, "Cannot remove listener from matcher of disposed engine!");
+        checkArgument(!disposed, "Cannot remove listener from matcher of disposed engine!");
         //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
+        
+        final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
+        
         try {
-            RetePatternMatcher patternMatcher = reteEngine.accessMatcher(matcher.getSpecification());
-            patternMatcher.disconnectByTag(listener);
+            IQueryResultProvider resultProvider = getUnderlyingResultProvider(bm);
+            resultProvider.removeUpdateListener(listener);
         } catch (Exception e) {
-            logger.error("Could not access matcher " + matcher.getPatternName(), e);
+            logger.error("Error while removing listener " + listener + " from the matcher of " + matcher.getPatternName(), e);
         }
     }
     
@@ -440,6 +474,53 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
         lifecycleProvider.removeListener(listener);
     }
+
+    /**
+     * Returns an internal interface towards the query backend to feed the matcher with results. 
+     * @throws QueryPlannerException
+     * @throws IncQueryException
+     */
+	public IQueryResultProvider getResultProvider(PQuery query)
+			throws QueryPlannerException, IncQueryException 
+	{
+        checkArgument(!disposed, "Cannot evaluate query on disposed engine!");
+        
+		// TODO: there could be different ways for selecting a backend for this query
+		final IQueryBackend backend = getReteEngine();
+		
+		return backend.getResultProvider(query);
+	}
+
+	/**
+	 * Prepares backends for providing results for the given queries.
+	 * @param patterns a set of patterns to prepare at once
+	 * @throws IncQueryException 
+	 * @throws QueryPlannerException 
+	 */
+	public void prepareBackendsCoalesced(final Set<PQuery> patterns) throws QueryPlannerException, IncQueryException {
+		// TODO maybe do some smarter preparation per backend?
+        try {
+			baseIndex.coalesceTraversals(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					for (PQuery pQuery : patterns) {
+						getResultProvider(pQuery);
+					}
+					return null;
+				}
+			});
+        } catch (InvocationTargetException ex) {
+            final Throwable cause = ex.getCause();
+            if (cause instanceof QueryPlannerException)
+                throw (QueryPlannerException) cause;
+            if (cause instanceof IncQueryException)
+                throw (IncQueryException) cause;
+            if (cause instanceof RuntimeException)
+                throw (RuntimeException) cause;
+            assert (false);
+        }
+		
+	}
 
     // /**
     // * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.

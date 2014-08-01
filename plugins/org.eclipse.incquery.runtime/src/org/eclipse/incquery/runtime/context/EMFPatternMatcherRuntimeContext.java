@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
@@ -206,7 +207,7 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     }
 
     @Override
-    public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(ReteEngine engine) {
+    public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(IQueryBackend engine) {
         // No ASMFunctions, use DUMMY
         return new IPredicateTraceListener() {
             @Override

@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
 import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 
@@ -36,7 +37,7 @@ public interface IPatternMatcherRuntimeContext extends IPatternMatcherContext {
     /**
      * @pre: boundary, disconnectables initialised
      */
-    IPredicateTraceListener subscribePatternMatcherForTraceInfluences(ReteEngine engine);
+    IPredicateTraceListener subscribePatternMatcherForTraceInfluences(IQueryBackend engine);
 
     Object ternaryEdgeTarget(Object relation);
 

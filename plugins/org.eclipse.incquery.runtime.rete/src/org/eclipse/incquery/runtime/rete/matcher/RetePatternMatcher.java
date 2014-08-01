@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -26,6 +28,7 @@ import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Production;
 import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.remote.Address;
+import org.eclipse.incquery.runtime.rete.single.CallbackNode;
 import org.eclipse.incquery.runtime.rete.single.TransformerNode;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 
@@ -332,6 +335,28 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 	@Override
 	public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
 		return matchAll(parameters, notNull(parameters));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider#getQueryBackend()
+	 */
+	@Override
+	public IQueryBackend getQueryBackend() {
+		return engine;
+	}
+
+	@Override
+	public void addUpdateListener(
+			final IUpdateable listener,
+			final Object listenerTag,
+			boolean fireNow) {
+		final CallbackNode callbackNode = new CallbackNode(this.reteContainer, listener);
+		connect(callbackNode, listenerTag, fireNow);
+	}
+	
+	@Override
+	public void removeUpdateListener(Object listenerTag) {
+		disconnectByTag(listenerTag);
 	}
 
 }

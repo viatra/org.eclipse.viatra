@@ -15,7 +15,7 @@ import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
-import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 
 /**
  * Advanced interface to an EMF-IncQuery incremental evaluation engine.
@@ -332,6 +332,6 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * @noreference for internal use only
      */
-    public abstract ReteEngine getReteEngine() throws IncQueryException;
+    public abstract IQueryBackend getReteEngine() throws IncQueryException;
 
 }

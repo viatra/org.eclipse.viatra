@@ -16,7 +16,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * Interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
+ * Internal interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
  *
  * @author Bergmann Gábor

@@ -56,7 +56,7 @@ public abstract class BasePatternGroup implements IQueryGroup {
             Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
                     .join(erroneousPatterns));
             final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
-            engineImpl.getReteEngine().buildMatchersCoalesced(patterns);
+            engineImpl.prepareBackendsCoalesced(patterns);
         } catch (QueryPlannerException e) {
             throw new IncQueryException(e);
         }
