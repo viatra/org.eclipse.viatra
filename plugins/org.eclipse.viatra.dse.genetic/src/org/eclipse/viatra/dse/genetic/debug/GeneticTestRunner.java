@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.genetic.api.GeneticDesignSpaceExplorer;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
@@ -70,19 +71,25 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     private List<String> resultKeysInOrder;
     private boolean isFirstRun = true;
-    private FixedPrioritySelector fixedPrioritySelector;
+    private List<PatternWithCardinality> goals;
 
     public GeneticTestRunner() {
         this(null);
     }
 
-    public GeneticTestRunner(FixedPrioritySelector fixedPrioritySelector) {
-        this.fixedPrioritySelector = fixedPrioritySelector;
+    public GeneticTestRunner(List<PatternWithCardinality> goals) {
+        this.goals = goals;
     }
 
-    public abstract GeneticDesignSpaceExplorer createGdse() throws IncQueryException;
+    public abstract GeneticDesignSpaceExplorer createGdse(Row configRow) throws IncQueryException;
 
     public abstract void registerXMISerailizer();
+
+    public abstract List<String> getCustomResultColumns();
+
+    public abstract void addResults(Row configRow, Row resultsRow);
+
+    public abstract GeneticDebugger getGeneticDebugger();
 
     private void addKeysToResultHeader(GeneticDesignSpaceExplorer gdse) {
         resultKeysInOrder = new ArrayList<String>();
@@ -99,6 +106,13 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         }
         resultKeysInOrder.add(NUMBER_OF_DUPLICATIONS);
         resultKeysInOrder.add(NUMBER_OF_CORRECTIONS);
+
+        List<String> customResultColumns = getCustomResultColumns();
+        if (customResultColumns != null) {
+            for (String key : customResultColumns) {
+                resultKeysInOrder.add(key);
+            }
+        }
     }
 
     @Override
@@ -113,15 +127,17 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     }
 
     @Override
-    public String runTestWithConfig(Row configRow, BaseResult result, int configId, int runId, int debugCsvId)
-            throws IncQueryException {
+    public String runTestWithConfig(Row configRow, BaseResult result) throws IncQueryException {
 
-        GeneticDesignSpaceExplorer gdse = createGdse();
+        GeneticDesignSpaceExplorer gdse = createGdse(configRow);
 
-        GeneticDebugger geneticDebugger = new GeneticDebugger(true);
-        geneticDebugger.setConfigId(configId);
-        geneticDebugger.setRunId(runId);
-        geneticDebugger.setCsvName(Integer.toString(debugCsvId));
+        GeneticDebugger geneticDebugger = getGeneticDebugger();
+        if (geneticDebugger == null) {
+            geneticDebugger = new GeneticDebugger(true);
+        }
+        geneticDebugger.setConfigId(result.configId);
+        geneticDebugger.setRunId(result.runId);
+        geneticDebugger.setCsvName(result.configId + "-" + result.runId);
         gdse.setDebugger(geneticDebugger);
 
         registerXMISerailizer();
@@ -149,7 +165,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         if ("BFS".equals(initialSelector)) {
             gdse.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
         } else if ("Priority".equals(initialSelector)) {
-            gdse.setInitialPopulationSelector(fixedPrioritySelector);
+            gdse.setInitialPopulationSelector(new FixedPrioritySelector(goals));
         } else {
             throw new GeneticConfigurationException("No such initial selector: " + initialSelector);
         }
@@ -234,6 +250,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
             }
         }
+
+        addResults(configRow, resultsRow);
 
         return resultsRow.resultString();
     }

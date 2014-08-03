@@ -145,16 +145,18 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
                     for (InstanceData instanceData : parentPopulation) {
-                        if (instanceData.rank == 1
-                                && !(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
-                            noBetterSolutionForXIterations++;
-                            if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
-                                isLastPopulation = true;
+                        if (instanceData.rank == 1) {
+                            if (!(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
+                                noBetterSolutionForXIterations++;
+                                if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
+                                    isLastPopulation = true;
+                                }
+                            } else {
+                                noBetterSolutionForXIterations = 0;
+                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
                             }
-                        } else {
-                            actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
+                            break;
                         }
-                        break;
                     }
                 }
 

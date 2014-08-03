@@ -17,9 +17,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
+
+import com.google.common.base.Stopwatch;
 
 public class GeneticDebugger {
 
@@ -30,9 +33,18 @@ public class GeneticDebugger {
     private ArrayList<String> orderedObjectives;
     private ArrayList<String> orderedSoftConstraints;
     private String csvName;
+    private Stopwatch stopwatch;
 
     public GeneticDebugger(boolean isDebugEnabled) {
         this.debug = isDebugEnabled;
+        stopwatch = Stopwatch.createStarted();
+    }
+
+    public List<String> getCustomColumns() {
+        return null;
+    }
+
+    public void appendCustomResults(StringBuilder sb, InstanceData instanceData) {
     }
 
     public void debug(List<InstanceData> populationToDebug) {
@@ -40,6 +52,9 @@ public class GeneticDebugger {
         if (!debug) {
             return;
         }
+
+        stopwatch.stop();
+        long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
         PrintWriter out = null;
         try {
@@ -57,6 +72,8 @@ public class GeneticDebugger {
                 sb.append(runId);
                 sb.append(';');
                 sb.append(iteration);
+                sb.append(';');
+                sb.append(elapsedTime);
                 sb.append(';');
                 sb.append(instanceData.trajectory.size());
                 sb.append(';');
@@ -78,6 +95,8 @@ public class GeneticDebugger {
                 sb.append(instanceData.survive);
                 sb.append(';');
 
+                appendCustomResults(sb, instanceData);
+
                 out.println(sb.toString());
             }
 
@@ -89,11 +108,13 @@ public class GeneticDebugger {
 
         iteration++;
 
+        stopwatch = Stopwatch.createStarted();
+
     }
 
     private void printHeader(List<InstanceData> populationToDebug, PrintWriter out) {
         StringBuilder sb = new StringBuilder();
-        sb.append("ConfigId;RunId;Iteration;Length;SoftConstraints;");
+        sb.append("ConfigId;RunId;Iteration;RunTime[ms];Length;SoftConstraints;");
 
         InstanceData individual = populationToDebug.get(0);
 
@@ -112,6 +133,14 @@ public class GeneticDebugger {
         }
 
         sb.append("FrontIndex;Survive");
+
+        if (getCustomColumns() != null) {
+            for (String column : getCustomColumns()) {
+                sb.append(';');
+                sb.append(column);
+            }
+        }
+
         out.println(sb.toString());
     }
 
