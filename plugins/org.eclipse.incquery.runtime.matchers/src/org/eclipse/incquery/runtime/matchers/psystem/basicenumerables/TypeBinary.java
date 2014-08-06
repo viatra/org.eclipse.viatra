@@ -28,12 +28,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
  */
 public class TypeBinary extends TypeConstraint implements ITypeInfoProviderConstraint {
     private final IPatternMatcherContext context;
-    private PVariable source; private PVariable target;
     public TypeBinary(PBody pSystem,
             IPatternMatcherContext context, PVariable source, PVariable target, Object typeKey, String typeString) {
         super(pSystem, new FlatTuple(source, target), typeKey, typeString);
-        this.source = source;
-        this.target = target;
         this.context = context;
     }
 
@@ -50,9 +47,9 @@ public class TypeBinary extends TypeConstraint implements ITypeInfoProviderConst
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
-    		result.put(Collections.singleton(source), Collections.singleton(target));
+    		result.put(Collections.singleton(getVariableInTuple(0)), Collections.singleton(getVariableInTuple(1)));
     	if (context.isBinaryEdgeMultiplicityOneTo(supplierKey))
-    		result.put(Collections.singleton(target), Collections.singleton(source));
+    		result.put(Collections.singleton(getVariableInTuple(1)), Collections.singleton(getVariableInTuple(0)));
 		return result;
     }
 

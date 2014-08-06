@@ -30,15 +30,11 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
  */
 public class TypeTernary extends TypeConstraint implements ITypeInfoProviderConstraint {
     private final IPatternMatcherContext context;
-    private PVariable edge; private PVariable source; private PVariable target;
 
     public TypeTernary(PBody pSystem,
             IPatternMatcherContext context, PVariable edge, PVariable source, PVariable target,
             Object supplierKey, String typeString) {
         super(pSystem, new FlatTuple(edge, source, target), supplierKey, typeString);
-        this.edge = edge;
-        this.source = source;
-        this.target = target;
         this.context = context;
     }
 
@@ -55,6 +51,9 @@ public class TypeTernary extends TypeConstraint implements ITypeInfoProviderCons
 
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	PVariable edge = getVariableInTuple(0);
+    	PVariable source = getVariableInTuple(1);
+    	PVariable target = getVariableInTuple(2);    	
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(edge), new HashSet<PVariable>(Arrays.asList(new PVariable[]{source,target})));
     	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
