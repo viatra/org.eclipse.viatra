@@ -38,7 +38,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
-
+    
     @Fix(EMFIssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Prefix Identifier", "Adds a ^ prefix to the identifier", null, new IModification() {
@@ -51,6 +51,21 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
         });
     }
 
+    @Fix(EMFIssueCodes.MISSING_PARAMETER_TYPE)
+    public void inferMissingParameterType(final Issue issue, IssueResolutionAcceptor acceptor) {
+        for (final String data : issue.getData()) {
+            acceptor.accept(issue, "Insert type '" + data + "'", "Declares the inferred type " + data + " for the variable", null, new IModification() {
+
+                @Override
+                public void apply(IModificationContext context) throws Exception {
+                    IXtextDocument document = context.getXtextDocument();
+                    document.replace(issue.getOffset() + issue.getLength(), 0, " : " + data);
+                }
+                
+            });
+        }
+    }
+    
     @Fix(EMFIssueCodes.MISSING_PACKAGE_IMPORT)
     public void addMissingPackageImport(final Issue issue, IssueResolutionAcceptor acceptor) {
         

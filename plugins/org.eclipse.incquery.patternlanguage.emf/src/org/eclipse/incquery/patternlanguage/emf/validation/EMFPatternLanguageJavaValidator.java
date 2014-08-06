@@ -755,4 +755,30 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
         }
     }
+
+    @Check
+    public void checkMissingParameterTypes(Variable variable) {
+        if (variable.eContainer() instanceof Pattern && variable.getType() == null) {
+            Pattern pattern = (Pattern) variable.eContainer();
+            Set<EClassifier> possibleTypes = Sets.newHashSet();
+            for (PatternBody body : pattern.getBodies()) {
+                possibleTypes.addAll(emfTypeProvider.getIrreducibleClassifiersForVariableInBody(body, variable));
+            }
+            Iterable<String> typeNames = Iterables.transform(Iterables.filter(possibleTypes, EClass.class),
+                    new Function<EClassifier, String>() {
+
+                        @Override
+                        public String apply(EClassifier input) {
+                            return input.getName();
+                        }
+
+                    });
+
+            String[] issueData = Iterables.toArray(typeNames, String.class);
+            if (issueData.length > 0) {
+                info("Type not defined for variable " + variable.getName(),
+                        PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE, issueData);
+            }
+        }
+    }
 }
