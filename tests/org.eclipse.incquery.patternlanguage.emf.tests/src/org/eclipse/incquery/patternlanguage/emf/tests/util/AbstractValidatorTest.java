@@ -11,8 +11,11 @@
 
 package org.eclipse.incquery.patternlanguage.emf.tests.util;
 
+import static org.eclipse.emf.common.util.Diagnostic.INFO;
+
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.DiagnosticPredicate;
+import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.Pred;
 
 public abstract class AbstractValidatorTest{
 
@@ -21,5 +24,8 @@ public abstract class AbstractValidatorTest{
 	}
 	protected DiagnosticPredicate getWarningCode(String issueId) {
 		return AssertableDiagnostics.warningCode(issueId);
+	}
+	protected DiagnosticPredicate getInfoCode(String issueId) {
+	    return new Pred(INFO, null, issueId, null);
 	}
 }

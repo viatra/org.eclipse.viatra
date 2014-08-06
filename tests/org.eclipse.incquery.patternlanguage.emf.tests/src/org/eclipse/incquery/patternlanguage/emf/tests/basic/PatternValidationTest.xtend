@@ -11,22 +11,21 @@
 
 package org.eclipse.incquery.patternlanguage.emf.tests.basic
 
-import org.eclipse.xtext.junit4.XtextRunner
-import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.junit.Test
-import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import static org.junit.Assert.*
-import org.eclipse.xtext.junit4.validation.ValidatorTester
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import com.google.inject.Injector
-import org.junit.Before
+import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidatorTester
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -70,7 +69,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern(Pattern);
 			}
 		')
-		tester.validate(model).assertWarning(IssueCodes::UNUSED_PRIVATE_PATTERN, "The pattern 'unusedPrivatePattern'")
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -82,7 +81,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern(_Pattern);
 			}
 		')
-		tester.validate(model).assertError(EMFIssueCodes::SINGLEUSE_PARAMETER)
+		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SINGLEUSE_PARAMETER), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -95,7 +94,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern.name(p, _p);
 			}
 		''')
-		tester.validate(model).assertWarning(IssueCodes::DUBIUS_VARIABLE_NAME)
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -108,6 +107,6 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern.name(p, _P);
 			}
 		''')
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 }

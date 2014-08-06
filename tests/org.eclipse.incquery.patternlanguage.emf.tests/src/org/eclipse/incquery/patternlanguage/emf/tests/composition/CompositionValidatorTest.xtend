@@ -93,7 +93,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}	
 	@Test
@@ -111,7 +112,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	@Test
 	def void testTooMuchParameters() {
@@ -158,7 +159,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				neg find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING);
+		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
 						   p: Pattern is a positive reference.")

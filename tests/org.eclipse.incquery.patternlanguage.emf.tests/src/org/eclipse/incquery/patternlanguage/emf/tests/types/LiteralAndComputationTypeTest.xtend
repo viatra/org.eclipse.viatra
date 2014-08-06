@@ -56,11 +56,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern CountFind(X) = {
+			pattern CountFind(X : EClass) = {
 				EClass(X);
 				10 == count find Good(X);
 			}
@@ -75,11 +75,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern InnerCountFind(X) = {
+			pattern InnerCountFind(X : EClass) = {
 				EClass(X);
 				10 == count find Good(count find Good(X));
 			}
@@ -93,11 +93,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern DoubleCountFind(X) = {
+			pattern DoubleCountFind(X : EClass) = {
 				EClass(X);
 				count find Good(X) == count find Good(X);
 			}
@@ -112,11 +112,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern NormalFind(X) = {
+			pattern NormalFind(X : EClass) = {
 				EClass(X);
 				find Good(X);
 			}
@@ -131,11 +131,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern NormalFindError(X) = {
+			pattern NormalFindError(X : EClass) = {
 				EClass(X);
 				find Good(10);
 			}
@@ -149,11 +149,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern ConstantWarning1(X) = {
+			pattern ConstantWarning1(X : EClass) = {
 				EClass(X);
 				10 == 20;
 			}
@@ -168,11 +168,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern ConstantWarning2(X) = {
+			pattern ConstantWarning2(X : EClass) = {
 				EClass(X);
 				"apple" == "orange";
 			}
@@ -187,11 +187,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern ConstantMismatchError(X) = {
+			pattern ConstantMismatchError(X : EClass) = {
 				EClass(X);
 				"apple" == 10;
 			}
@@ -208,11 +208,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern ConstantComputationMismatchError(X) = {
+			pattern ConstantComputationMismatchError(X : EClass) = {
 				EClass(X);
 				"test" == count find Good(X);
 			}
@@ -226,7 +226,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern ConstantInPathExpressionGood(X) = {
+			pattern ConstantInPathExpressionGood(X : EClass) = {
 				EClass.name(X, "Name");
 			}
 		') as PatternModel
@@ -240,7 +240,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern ConstantInPathExpressionMismatch(X) = {
+			pattern ConstantInPathExpressionMismatch(X : EClass) = {
 				EClass.name(X, 10);
 			}
 		') as PatternModel
@@ -253,11 +253,11 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good(X) {
+			pattern Good(X : EClass) {
 				EClass(X);
 			}
 
-			pattern CountFindInPathExpressionMismatch(X) = {
+			pattern CountFindInPathExpressionMismatch(X : EClass) = {
 				EClass.name(X, count find Good(_));
 			}
 		') as PatternModel

@@ -78,7 +78,8 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		')
 		tester.validate(model).assertAll(
 			getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -99,7 +100,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 
 	@Test
@@ -119,7 +120,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 
 	@Test
@@ -156,6 +157,6 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 				check(c2 >= 2);
 			}*/
 		''')
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 }
