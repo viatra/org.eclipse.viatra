@@ -33,6 +33,7 @@ import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
  * 
  * @author Abel Hegedus
  * 
+ * 
  */
 public class BaseIndexOptions {
 
@@ -72,18 +73,22 @@ public class BaseIndexOptions {
         this.wildcardMode = wildcardMode;
     }
 
-    public void setDynamicEMFMode(boolean dynamicEMFMode) {
-        this.dynamicEMFMode = dynamicEMFMode;
+    public BaseIndexOptions withDynamicEMFMode(boolean dynamicEMFMode) {
+    	BaseIndexOptions result = copy();
+        result.dynamicEMFMode = dynamicEMFMode;
+        return result;
     }
 
     /**
      * Adds an object-level filter to the indexer. Warning - object-level indexing can increase indexing time
-     * noticeably. If possibly, use {@link #setResourceFilterConfiguration(IBaseIndexResourceFilter)} instead.
+     * noticeably. If possibly, use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead.
      * 
      * @param filter
      */
-    public void setObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
-        this.notifierFilterConfiguration = filter;
+    public BaseIndexOptions withObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
+    	BaseIndexOptions result = copy();
+        result.notifierFilterConfiguration = filter;
+        return result;
     }
 
     /**
@@ -98,8 +103,10 @@ public class BaseIndexOptions {
      * 
      * @param filter
      */
-    public void setResourceFilterConfiguration(IBaseIndexResourceFilter filter) {
-        this.resourceFilterConfiguration = filter;
+    public BaseIndexOptions withResourceFilterConfiguration(IBaseIndexResourceFilter filter) {
+    	BaseIndexOptions result = copy();
+        result.resourceFilterConfiguration = filter;
+        return result;
     }
 
     /**
@@ -123,9 +130,11 @@ public class BaseIndexOptions {
         return traverseOnlyWellBehavingDerivedFeatures;
     }
 
-    public void setWildcardMode(boolean wildcardMode) {
-        this.wildcardMode = wildcardMode;
-    }
+    public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
+    	BaseIndexOptions result = copy();
+        result.wildcardMode = wildcardMode;
+        return result;
+   }
 
     /**
      * @return whether the base index option has wildcard mode set
@@ -147,5 +156,57 @@ public class BaseIndexOptions {
         baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
         return baseIndexOptions;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (dynamicEMFMode ? 1231 : 1237);
+		result = prime
+				* result
+				+ ((notifierFilterConfiguration == null) ? 0
+						: notifierFilterConfiguration.hashCode());
+		result = prime
+				* result
+				+ ((resourceFilterConfiguration == null) ? 0
+						: resourceFilterConfiguration.hashCode());
+		result = prime * result
+				+ (traverseOnlyWellBehavingDerivedFeatures ? 1231 : 1237);
+		result = prime * result + (wildcardMode ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof BaseIndexOptions))
+			return false;
+		BaseIndexOptions other = (BaseIndexOptions) obj;
+		if (dynamicEMFMode != other.dynamicEMFMode)
+			return false;
+		if (notifierFilterConfiguration == null) {
+			if (other.notifierFilterConfiguration != null)
+				return false;
+		} else if (!notifierFilterConfiguration
+				.equals(other.notifierFilterConfiguration))
+			return false;
+		if (resourceFilterConfiguration == null) {
+			if (other.resourceFilterConfiguration != null)
+				return false;
+		} else if (!resourceFilterConfiguration
+				.equals(other.resourceFilterConfiguration))
+			return false;
+		if (traverseOnlyWellBehavingDerivedFeatures != other.traverseOnlyWellBehavingDerivedFeatures)
+			return false;
+		if (wildcardMode != other.wildcardMode)
+			return false;
+		return true;
+	}
+    
+    
+    
 
 }

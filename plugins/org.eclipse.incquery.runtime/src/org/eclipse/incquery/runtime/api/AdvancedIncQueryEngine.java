@@ -100,9 +100,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      */
     public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode)
             throws IncQueryException {
-        BaseIndexOptions baseIndexOptions = new BaseIndexOptions();
-        baseIndexOptions.setWildcardMode(wildcardMode);
-        return createUnmanagedEngine(emfScopeRoot, baseIndexOptions);
+        return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions().withWildcardMode(wildcardMode));
     }
 
     /**
