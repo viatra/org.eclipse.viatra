@@ -48,9 +48,6 @@ class PatternGroupClassInferrer {
 	}
 		
 	def initializePatternGroup(JvmGenericType groupClass, PatternModel model) {
-		if (model.patterns.size == 0) {
-			return null
-		}
 		groupClass.documentation = model.javadocGroupClass.toString
 		groupClass.members += model.inferInstanceMethod(groupClass)
 		groupClass.members += model.inferInstanceField(groupClass)
