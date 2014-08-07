@@ -65,6 +65,8 @@ public class LocalSearchMatcher {
                 while ((!foundMatch) && iterator.hasNext()) {
                     getNextPlan();
                     foundMatch = currentPlan.execute(frame);
+                }
+                if (foundMatch) {
                     frameReturned = false;
                 }
                 return foundMatch;
