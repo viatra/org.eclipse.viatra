@@ -11,18 +11,19 @@
 package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 
 /**
- * Advanced interface to an EMF-IncQuery incremental evaluation engine.
+ * Advanced interface to an IncQuery incremental evaluation engine.
  * 
  * <p>
  * You can create a new, private, unmanaged {@link AdvancedIncQueryEngine} instance using
- * {@link #createUnmanagedEngine(Notifier)}. Additionally, you can access the advanced interface on any
+ * {@link #createUnmanagedEngine(IncQueryScope)}. Additionally, you can access the advanced interface on any
  * {@link IncQueryEngine} by {@link AdvancedIncQueryEngine#from(IncQueryEngine)}.
  * 
  * <p>
@@ -33,7 +34,7 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
  * instance. For instance, a (non-managed) engine can be disposed in order to detach from the EMF model and stop
  * listening on update notifications. The indexes built previously in the engine can then be garbage collected, even if
  * the model itself is retained. Total lifecycle control is only available for private, unmanaged engines (created using
- * {@link #createUnmanagedEngine(Notifier)}); a managed engine (obtained via {@link IncQueryEngine#on(Notifier)}) is
+ * {@link #createUnmanagedEngine(IncQueryScope)}); a managed engine (obtained via {@link IncQueryEngine#on(IncQueryScope)}) is
  * shared among clients and can not be disposed or wiped.
  * <li>You can add and remove listeners to receive notification when the model or the match sets change.
  * <li>You can add and remove listeners to receive notification on engine lifecycle events, such as creation of new
@@ -68,8 +69,10 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @throws IncQueryException
      * 
-     * @see {@link #createUnmanagedEngine(Notifier, boolean, boolean)} for performance tuning and dynamic EMF options.
+     * @see {@link #createUnmanagedEngine(Notifier, BaseIndexOptions)} for performance tuning and dynamic EMF options.
+     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
+    @Deprecated
     public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions());
     }
@@ -93,11 +96,13 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      *            the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or
      *            ResourceSet.
      * @param wildcardMode
-     *            specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for
+     *            specifies whether the base index should be built in wildcard mode. See {@link BaseIndexOptions} for
      *            the explanation of wildcard mode. Defaults to false.
      * @return the advanced interface to a newly created unmanaged engine
      * @throws IncQueryException
+     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
+    @Deprecated
     public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode)
             throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions().withWildcardMode(wildcardMode));
@@ -122,14 +127,16 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      *            the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or
      *            ResourceSet.
      * @param wildcardMode
-     *            specifies whether the base index should be built in wildcard mode. See {@link NavigationHelper} for
+     *            specifies whether the base index should be built in wildcard mode. See {@link BaseIndexOptions} for
      *            the explanation of wildcard mode. Defaults to false.
      * @param dynamicEMFMode
-     *            specifies whether the base index should be built in dynamic EMF mode. See {@link NavigationHelper} for
+     *            specifies whether the base index should be built in dynamic EMF mode. See {@link BaseIndexOptions} for
      *            the explanation of dynamic EMF mode. Defaults to false.
      * @return the advanced interface to a newly created unmanaged engine
      * @throws IncQueryException
+     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
+    @Deprecated
     public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode,
             boolean dynamicEMFMode) throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions(dynamicEMFMode, wildcardMode));
@@ -155,20 +162,47 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      *            ResourceSet.
      * @param options
      *            specifies how the base index is built, including wildcard mode (defaults to false) and dynamic EMF
-     *            mode (defaults to false). See {@link NavigationHelper} for the explanation of wildcard mode and
+     *            mode (defaults to false). See {@link BaseIndexOptions} for the explanation of wildcard mode and
      *            dynamic EMF mode.
      * @return the advanced interface to a newly created unmanaged engine
+     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
+    @Deprecated
     public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, BaseIndexOptions options)
             throws IncQueryException {
-        return new IncQueryEngineImpl(null, emfScopeRoot, options);
+        return new IncQueryEngineImpl(null, new EMFScope(emfScopeRoot, options));
+    }
+    
+    /**
+     * Creates a new unmanaged IncQuery engine to evaluate queries over a given scope specified by an {@link IncQueryScope}.
+     * 
+     * <p> Repeated invocations will return different instances, so other clients are unable to independently access 
+     * and influence the returned engine. Note that unmanaged engines do not benefit from some performance improvements 
+     * that stem from sharing incrementally maintained indices and caches between multiple clients using the same managed 
+     * engine instance.
+     * 
+     * <p>
+     * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
+     * {@link AdvancedIncQueryEngine}.
+     * 
+     * <p>
+     * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+     * 
+     * @param scope 
+     * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
+     * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
+     * @return the advanced interface to a newly created unmanaged engine
+     */
+    public static AdvancedIncQueryEngine createUnmanagedEngine(IncQueryScope scope)
+            throws IncQueryException {
+        return new IncQueryEngineImpl(null, scope);
     }
 
     /**
      * Provides access to a given existing engine through the advanced interface.
      * 
      * <p>
-     * Caveat: if the referenced engine is managed (i.e. created via {@link IncQueryEngine#on(Notifier)}), the advanced
+     * Caveat: if the referenced engine is managed (i.e. created via {@link IncQueryEngine#on(IncQueryScope)}), the advanced
      * methods {@link #dispose()} and {@link #wipe()} will not be allowed.
      * 
      * @param engine
@@ -254,16 +288,16 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
-     * {@link IncQueryEngine#on(Notifier)}.
+     * {@link IncQueryEngine#on(IncQueryScope)}.
      * 
      * <p>
      * If the engine is managed, there may be other clients using it, as all calls to
-     * {@link IncQueryEngine#on(Notifier)} return the same managed engine instance for a given scope root. Therefore the
+     * {@link IncQueryEngine#on(IncQueryScope)} return the same managed engine instance for a given scope root. Therefore the
      * destructive methods {@link #wipe()} and {@link #dispose()} are not allowed.
      * 
      * <p>
      * On the other hand, if the engine is unmanaged (i.e. a private instance created using
-     * {@link #createUnmanagedEngine(Notifier)}), then {@link #wipe()} and {@link #dispose()} can be called. If you
+     * {@link #createUnmanagedEngine(IncQueryScope)}), then {@link #wipe()} and {@link #dispose()} can be called. If you
      * explicitly share a private, unmanaged engine between multiple sites, register a callback using
      * {@link #addLifecycleListener(IncQueryEngineLifecycleListener)} to learn when another client has called these
      * destructive methods.

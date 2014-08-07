@@ -9,21 +9,22 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.context;
+package org.eclipse.incquery.runtime.emf;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
-import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
@@ -67,15 +68,15 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
 
 	private final NavigationHelper baseIndex;
     private BaseIndexListener listener;
-    private IncQueryEngineImpl iqEngine;
+    private IncQueryEngine iqEngine;
 
     /**
      * Notifier must be EObject, Resource or ResourceSet
      * 
      * @param notifier
      */
-    public EMFPatternMatcherRuntimeContext(IncQueryEngineImpl iqEngine, NavigationHelper baseIndex) {
-        super(iqEngine.getLogger());
+    public EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine, Logger logger, NavigationHelper baseIndex) {
+        super(logger);
         this.iqEngine = iqEngine;
         this.baseIndex = baseIndex;
         // this.waitingVisitors = new ArrayList<EMFVisitor>();

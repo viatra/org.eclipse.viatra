@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.context;
+package org.eclipse.incquery.runtime.emf;
 
 import java.util.Collection;
 import java.util.Collections;

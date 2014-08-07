@@ -17,7 +17,7 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 

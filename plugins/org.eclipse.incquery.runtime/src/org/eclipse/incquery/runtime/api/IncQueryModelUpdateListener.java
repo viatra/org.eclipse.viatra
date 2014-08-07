@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.api;
 
 
 /**
- * Listener interface for model changes affecting different levels of the EMF-IncQuery architecture.
+ * Listener interface for model changes affecting different levels of the IncQuery architecture.
  * 
  * @author Abel Hegedus
  *

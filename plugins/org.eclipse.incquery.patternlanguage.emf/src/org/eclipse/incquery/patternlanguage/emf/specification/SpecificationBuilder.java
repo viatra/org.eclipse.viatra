@@ -27,7 +27,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
+import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;

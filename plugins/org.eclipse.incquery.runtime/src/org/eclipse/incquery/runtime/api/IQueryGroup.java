@@ -37,7 +37,7 @@ public interface IQueryGroup {
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
      * @param engine
-     *            the existing EMF-IncQuery engine in which the matchers will be created.
+     *            the existing IncQuery engine in which the matchers will be created.
      * @throws IncQueryException
      *             if there was an error in preparing the engine
      */

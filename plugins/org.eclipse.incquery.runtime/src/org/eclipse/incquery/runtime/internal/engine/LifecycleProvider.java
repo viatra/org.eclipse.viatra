@@ -46,7 +46,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
 //                        function.apply(listener);
 //                    } catch (Exception ex) {
 //                        logger.error(
-//                                "EMF-IncQuery encountered an error in delivering notification to listener "
+//                                "IncQuery encountered an error in delivering notification to listener "
 //                                        + listener + ".", ex);
 //                    }
 //                }
@@ -61,7 +61,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                         listener.matcherInstantiated(matcher);
                     } catch (Exception ex) {
                         logger.error(
-                                "EMF-IncQuery encountered an error in delivering matcher initialization notification to listener "
+                                "IncQuery encountered an error in delivering matcher initialization notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -82,7 +82,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                         listener.engineBecameTainted(description, t);
                     } catch (Exception ex) {
                         logger.error(
-                                "EMF-IncQuery encountered an error in delivering engine tainted notification to listener "
+                                "IncQuery encountered an error in delivering engine tainted notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -103,7 +103,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                         listener.engineWiped();
                     } catch (Exception ex) {
                         logger.error(
-                                "EMF-IncQuery encountered an error in delivering engine wiped notification to listener "
+                                "IncQuery encountered an error in delivering engine wiped notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -124,7 +124,7 @@ public final class LifecycleProvider extends ListenerContainer<IncQueryEngineLif
                         listener.engineDisposed();
                     } catch (Exception ex) {
                         logger.error(
-                                "EMF-IncQuery encountered an error in delivering engine disposed notification to listener "
+                                "IncQuery encountered an error in delivering engine disposed notification to listener "
                                         + listener + ".", ex);
                     }
                 }

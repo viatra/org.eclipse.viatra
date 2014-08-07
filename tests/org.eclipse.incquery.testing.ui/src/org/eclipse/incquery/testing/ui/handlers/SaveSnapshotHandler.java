@@ -104,7 +104,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			logger.error("Cannot save snapshot without IncQueryEngine!");
 			return;
 		}
-		ResourceSet resourceSet = getResourceSetForNotifier(engine.getScope());
+		ResourceSet resourceSet = getResourceSetForNotifier(engine.getEMFRoot());
 		if(resourceSet == null) {
 			logger.error("Cannot save snapshot, models not in ResourceSet!");
 			return;
@@ -168,7 +168,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	private boolean validateInputSpecification(IncQueryEngine engine, IncQuerySnapshot snapshot) {
 		if(snapshot.getInputSpecification() != null) {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
-			Notifier matcherRoot = engine.getScope();
+			Notifier matcherRoot = engine.getEMFRoot();
 			if(matcherRoot != root) {
 				logger.error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
 				return false;

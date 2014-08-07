@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.base.api;
 import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
 
+import com.google.common.base.Objects;
+
 /**
  * The base index options indicate how the indices are built.
  * 
@@ -207,6 +209,27 @@ public class BaseIndexOptions {
 	}
     
     
-    
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	appendModifier(sb, dynamicEMFMode, DYNAMIC_EMF_MODE_DEFAULT, "dynamicEMF");
+    	appendModifier(sb, wildcardMode, WILDCARD_MODE_DEFAULT, "wildcard");
+    	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
+    	appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
+    	appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
+    	final String result = sb.toString();
+		return result.isEmpty() ? "defaults" : result;
+    }
+
+	private static void appendModifier(StringBuilder sb, Object actualValue, Object expectedValue, String switchName) {
+		if (Objects.equal(expectedValue, actualValue)) {
+			// silent
+		} else {
+			sb.append(Boolean.FALSE.equals(actualValue) ? '-' : '+');
+			sb.append(switchName);
+			if (! (actualValue instanceof Boolean)) 
+				sb.append(actualValue);
+		}
+	}
 
 }

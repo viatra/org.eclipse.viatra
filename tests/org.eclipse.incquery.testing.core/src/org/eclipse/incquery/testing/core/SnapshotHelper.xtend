@@ -51,7 +51,7 @@ class SnapshotHelper {
 	 * Returns the model root that was used by the given matcher.
 	 */
 	def getModelRootsForMatcher(IncQueryMatcher matcher){
-		val root = matcher.engine.getScope
+		val root = matcher.engine.getEMFRoot
 		if(root instanceof EObject){
 			return newArrayList(root as EObject)
 		} else if(root instanceof Resource){
@@ -71,7 +71,7 @@ class SnapshotHelper {
 	 * Returns the input specification for the given matcher.
 	 */
 	def getInputspecificationForMatcher(IncQueryMatcher matcher){
-		val root = matcher.engine.getScope
+		val root = matcher.engine.getEMFRoot
 		if(root instanceof EObject){
 			InputSpecification::EOBJECT
 		} else if(root instanceof Resource){

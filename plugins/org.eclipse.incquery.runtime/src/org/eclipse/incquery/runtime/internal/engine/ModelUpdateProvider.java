@@ -149,7 +149,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
                             listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {
                             logger.error(
-                                    "EMF-IncQuery encountered an error in delivering model update notification to listener "
+                                    "IncQuery encountered an error in delivering model update notification to listener "
                                             + listener + ".", ex);
                         }
                     }

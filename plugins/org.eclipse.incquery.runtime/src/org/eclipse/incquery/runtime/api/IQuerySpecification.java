@@ -55,7 +55,7 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * The match set will be incrementally refreshed upon updates.
      *
      * @param engine
-     *            the existing EMF-IncQuery engine in which this matcher will be created.
+     *            the existing IncQuery engine in which this matcher will be created.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
      */

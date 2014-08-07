@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**

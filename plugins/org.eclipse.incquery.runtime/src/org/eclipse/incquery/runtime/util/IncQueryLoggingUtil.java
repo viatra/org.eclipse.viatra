@@ -17,7 +17,7 @@ import org.apache.log4j.PatternLayout;
 import com.google.common.base.Preconditions;
 
 /**
- * Centralized logger of the EMF-IncQuery runtime.
+ * Centralized logger of the IncQuery runtime.
  * @author Bergmann Gabor
  *
  */
@@ -42,14 +42,14 @@ public class IncQueryLoggingUtil {
 	            defaultRuntimeLogger = Logger.getLogger(parentLogger.getName() + ".runtime");
 	        }
 	        if (defaultRuntimeLogger == null)
-	            throw new AssertionError("Configuration error: unable to create default EMF-IncQuery runtime logger.");
+	            throw new AssertionError("Configuration error: unable to create default IncQuery runtime logger.");
 	    }
 
 	    return defaultRuntimeLogger;
 	}
 	
 	/**
-	 * Provides a class-specific logger that also stores the global logger settings of the EMF-IncQuery runtime
+	 * Provides a class-specific logger that also stores the global logger settings of the IncQuery runtime
 	 * @param clazz
 	 * @return
 	 */

@@ -96,17 +96,13 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         try {
             engine = key.getEngine();
     
-            if (engine.getBaseIndex().isInWildcardMode()) {
-                addMatchersForPatterns(patterns);
-            } else {
-                engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
-                    @Override
-                    public Void call() {
-                        addMatchersForPatterns(patterns);
-                        return null;
-                    }
-                });
-            }
+            engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    addMatchersForPatterns(patterns);
+                    return null;
+                }
+            });
             contentStatus = Status.OK_STATUS;
         } catch (IncQueryException ex) {
             reportMatcherError("Cannot initialize pattern matcher engine.", ex);

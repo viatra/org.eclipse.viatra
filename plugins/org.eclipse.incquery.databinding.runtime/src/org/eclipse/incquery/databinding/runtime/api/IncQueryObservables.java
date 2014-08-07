@@ -33,7 +33,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 import com.google.common.base.Preconditions;

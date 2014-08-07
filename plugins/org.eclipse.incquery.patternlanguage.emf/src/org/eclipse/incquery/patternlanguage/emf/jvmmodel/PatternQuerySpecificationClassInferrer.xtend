@@ -36,7 +36,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
@@ -73,7 +72,7 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.runtime.api.IPatternMatch
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblemimport org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext
 
 /**
  * {@link IQuerySpecification} implementation inferrer.

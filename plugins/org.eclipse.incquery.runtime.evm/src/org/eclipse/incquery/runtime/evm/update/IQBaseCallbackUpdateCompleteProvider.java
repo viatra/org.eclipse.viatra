@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.update;
 
+import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
 import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
@@ -25,28 +26,28 @@ import com.google.common.base.Preconditions;
 public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider {
 
     private final IncQueryBaseIndexChangeListener modelUpdateListener;
-    private final NavigationHelper helper;
+    private final IBaseIndex index;
 
     /**
-     * Creates a new provider for the given {@link NavigationHelper}.
+     * Creates a new provider for the given {@link IBaseIndex}.
      */
-    public IQBaseCallbackUpdateCompleteProvider(final NavigationHelper helper) {
+    public IQBaseCallbackUpdateCompleteProvider(final IBaseIndex index) {
         super();
-        Preconditions.checkNotNull(helper, "Cannot create provider with null helper!");
+        Preconditions.checkNotNull(index, "Cannot create provider with null helper!");
         this.modelUpdateListener = new BaseIndexListener();
-        this.helper = helper;
+        this.index = index;
     }
 
     @Override
     protected void firstListenerAdded() {
         super.firstListenerAdded();
-        helper.addBaseIndexChangeListener(modelUpdateListener);
+        index.addBaseIndexChangeListener(modelUpdateListener);
     }
     
     @Override
     protected void lastListenerRemoved() {
         super.lastListenerRemoved();
-        helper.removeBaseIndexChangeListener(modelUpdateListener);
+        index.removeBaseIndexChangeListener(modelUpdateListener);
     }
     
     /**

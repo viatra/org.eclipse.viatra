@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Interface for an EMF-IncQuery matcher associated with a graph pattern.
+ * Interface for an IncQuery matcher associated with a graph pattern.
  * 
  * @param <Match>
  *            the IPatternMatch type representing a single match of this pattern.

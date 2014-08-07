@@ -84,7 +84,7 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
     	}
 		IncQueryEngine engine = getEngine();
 		if (engine!=null) {
-			this.configuration.setModel(engine.getScope());
+			this.configuration.setModel(engine.getEMFRoot());
 			state = IncQueryViewerDataModel.newViewerState(
 					engine, 
 	    			this.configuration.getPatterns(), 

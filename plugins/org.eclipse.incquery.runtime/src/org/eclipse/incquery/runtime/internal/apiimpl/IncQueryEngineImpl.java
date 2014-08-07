@@ -21,9 +21,6 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -34,12 +31,11 @@ import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
-import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
+import org.eclipse.incquery.runtime.api.scope.IEngineContext;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
-import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
@@ -74,20 +70,31 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     /**
      * The model to which the engine is attached.
      */
-    private final Notifier emfRoot;
-    private final Map<IQuerySpecification<? extends IncQueryMatcher<?>>, IncQueryMatcher<?>> matchers;
-
+    private final IncQueryScope scope;
+//    private final Notifier emfRoot;
+    
     /**
-     * The base index keeping track of basic EMF contents of the model.
+     * The context of the engine, provided by the scope.
      */
-    private NavigationHelper baseIndex;
+    private IEngineContext engineContext;
+    
     /**
-     * Whether to initialize the base index in wildcard mode.
-     * Whether to initialize the base index in dynamic EMF mode.
+     * Initialized matchers for each query
      */
-	private final BaseIndexOptions options;
+    private final Map<IQuerySpecification<? extends IncQueryMatcher<?>>, IncQueryMatcher<?>> matchers
+    		= Maps.newHashMap();
+    
+//    /**
+//     * The base index keeping track of basic EMF contents of the model.
+//     */
+//    private NavigationHelper baseIndex;
+//    /**
+//     * Whether to initialize the base index in wildcard mode.
+//     * Whether to initialize the base index in dynamic EMF mode.
+//     */
+//	private final BaseIndexOptions options;
 	/**
-     * The RETE pattern matcher component of the EMF-IncQuery engine.
+     * The RETE pattern matcher component of the IncQuery engine.
      */
     private IQueryBackend reteEngine = null;
 
@@ -108,23 +115,18 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, Notifier emfRoot, BaseIndexOptions options) throws IncQueryException {
+    public IncQueryEngineImpl(IncQueryEngineManager manager, IncQueryScope scope) throws IncQueryException {
         super();
         this.manager = manager;
-        this.emfRoot = emfRoot;
-        this.options = options.copy();
-        this.matchers = Maps.newHashMap();
+        this.scope = scope;
         this.lifecycleProvider = new LifecycleProvider(this, getLogger());
         this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
-        if (!(emfRoot instanceof EObject || emfRoot instanceof Resource || emfRoot instanceof ResourceSet))
-            throw new IncQueryException(IncQueryException.INVALID_EMFROOT
-                    + (emfRoot == null ? "(null)" : emfRoot.getClass().getName()),
-                    IncQueryException.INVALID_EMFROOT_SHORT);
+        this.engineContext = scope.createEngineContext(this, getLogger());
     }
 
     @Override
-	public Notifier getScope() {
-        return emfRoot;
+	public Notifier getEMFRoot() {
+        return ((EMFScope)scope).getScopeRoot();
     }
     
     @Override
@@ -157,64 +159,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         }
     }
 
-    /**
-     * Internal accessor for the base index.
-     * 
-     * @return the baseIndex the NavigationHelper maintaining the base index
-     * @throws IncQueryException
-     *             if the base index could not be constructed
-     */
-    protected NavigationHelper getBaseIndexInternal() throws IncQueryException {
-        return getBaseIndexInternal(true);
-    }
-
-    /**
-     * Internal accessor for the base index.
-     * 
-     * @return the baseIndex the NavigationHelper maintaining the base index
-     * @throws IncQueryException
-     *             if the base index could not be initialized
-     * @throws IncQueryBaseException
-     *             if the base index could not be constructed
-     */
-    protected NavigationHelper getBaseIndexInternal(boolean initNow) throws IncQueryException {
-        if (baseIndex == null) {
-            try {
-                // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this
-                // reentrantly
-                synchronized (this) {
-                    baseIndex = IncQueryBaseFactory.getInstance().createNavigationHelper(null, options,
-                            getLogger());
-                    baseIndex.addIndexingErrorListener(taintListener);
-                }
-            } catch (IncQueryBaseException e) {
-                throw new IncQueryException("Could not create EMF-IncQuery base index", "Could not create base index",
-                        e);
-            }
-
-            if (initNow) {
-                initBaseIndex();
-            }
-
-        }
-        return baseIndex;
-    }
-
-    /**
-     * @throws IncQueryException
-     */
-    private synchronized void initBaseIndex() throws IncQueryException {
-        try {
-            baseIndex.addRoot(getScope());
-        } catch (IncQueryBaseException e) {
-            throw new IncQueryException("Could not initialize EMF-IncQuery base index",
-                    "Could not initialize base index", e);
-        }
-    }
-
     @Override
-	public NavigationHelper getBaseIndex() throws IncQueryException {
-        return getBaseIndexInternal();
+	public IBaseIndex getBaseIndex() throws IncQueryException {
+        return engineContext.getBaseIndex();
     }
 
 	public final Logger getLogger() {
@@ -223,7 +170,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
             logger = Logger.getLogger(IncQueryLoggingUtil.getLogger(IncQueryEngine.class).getName() + "." + hash);
             if (logger == null)
                 throw new AssertionError(
-                        "Configuration error: unable to create EMF-IncQuery runtime logger for engine " + hash);
+                        "Configuration error: unable to create IncQuery runtime logger for engine " + hash);
         }
         return logger;
     }
@@ -250,7 +197,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     }
 
     /**
-     * Provides access to the internal RETE pattern matcher component of the EMF-IncQuery engine.
+     * Provides access to the internal RETE pattern matcher component of the IncQuery engine.
      * 
      * @noreference A typical user would not need to call this method.
      * TODO make it package visible only
@@ -258,26 +205,14 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public IQueryBackend getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
-            // if uninitialized, don't initialize yet
-            getBaseIndexInternal(false);
-
-            EMFPatternMatcherRuntimeContext context = new EMFPatternMatcherRuntimeContext(this, baseIndex);
-            // if (emfRoot instanceof EObject)
-            // context = new EMFPatternMatcherRuntimeContext.ForEObject<Pattern>((EObject)emfRoot, this);
-            // else if (emfRoot instanceof Resource)
-            // context = new EMFPatternMatcherRuntimeContext.ForResource<Pattern>((Resource)emfRoot, this);
-            // else if (emfRoot instanceof ResourceSet)
-            // context = new EMFPatternMatcherRuntimeContext.ForResourceSet<Pattern>((ResourceSet)emfRoot, this);
-            // else throw new IncQueryRuntimeException(IncQueryRuntimeException.INVALID_EMFROOT);
-
-            synchronized (this) {
-                reteEngine = buildReteEngineInternal(context);
-            }
-
-            // lazy initialization now,
-            initBaseIndex();
-
-            // if (reteEngine != null) engines.put(emfRoot, new WeakReference<ReteEngine<String>>(engine));
+        	engineContext.withoutBaseIndexInitializationDo(new Runnable() {
+				@Override
+				public void run() {
+		            synchronized (this) {
+		                reteEngine = buildReteEngineInternal(engineContext.getRuntimeContext());
+		            }
+				}
+			});
         }
         return reteEngine;
 
@@ -300,7 +235,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     public void dispose() {
         if (manager != null) {
         	throw new UnsupportedOperationException(
-        			String.format("Cannot dispose() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
+        			String.format("Cannot dispose() managed IncQuery engine. Attempted for scope %s.", scope));
         }
         wipe();
         
@@ -310,12 +245,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         lifecycleProvider.engineDisposed();
         
         try{
-	        if (baseIndex != null) {
-	            baseIndex.dispose();
-	        }
+	        engineContext.dispose();
         } catch (IllegalStateException ex) {
         	getLogger().warn(
-        			"The base index could not be disposed along with the EMF-InQuery engine, as there are still active listeners on it.");
+        			"The base index could not be disposed along with the InQuery engine, as there are still active listeners on it.");
         }
     }
 
@@ -323,7 +256,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     public void wipe() {
         if (manager != null) {
         	throw new UnsupportedOperationException(
-        			String.format("Cannot wipe() managed EMF-IncQuery engine. Attempted for notifier %s.", emfRoot));
+        			String.format("Cannot wipe() managed IncQuery engine. Attempted for scope %s.", scope));
         }
         // TODO generalize for each query backend
         if (reteEngine != null) {
@@ -500,7 +433,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public void prepareBackendsCoalesced(final Set<PQuery> patterns) throws QueryPlannerException, IncQueryException {
 		// TODO maybe do some smarter preparation per backend?
         try {
-			baseIndex.coalesceTraversals(new Callable<Void>() {
+			engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
 					for (PQuery pQuery : patterns) {
@@ -522,8 +455,13 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 		
 	}
 
+	@Override
+	public IncQueryScope getScope() {
+		return scope;
+	}
+
     // /**
-    // * EXPERIMENTAL: Creates an EMF-IncQuery engine that executes post-commit, or retrieves an already existing one.
+    // * EXPERIMENTAL: Creates an IncQuery engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate
     // * @param reteThreads experimental feature; 0 is recommended
     // * @return a new or previously existing engine

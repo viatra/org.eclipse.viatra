@@ -256,7 +256,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 								}
 							} catch (Exception ex) {
 								//engine.getLogger().logError(					
-								//		"EMF-IncQuery encountered an error in processing the EMF model. ",
+								//		"IncQuery encountered an error in processing the EMF model. ",
 								//	ex); 
 								return null;
 							}

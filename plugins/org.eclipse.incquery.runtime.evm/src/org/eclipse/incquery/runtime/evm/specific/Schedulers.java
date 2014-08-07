@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.evm.specific;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
 import org.eclipse.incquery.runtime.evm.specific.scheduler.TimedScheduler.TimedSchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.evm.update.IQBaseCallbackUpdateCompleteProvider;
@@ -41,7 +41,8 @@ public final class Schedulers {
      * @return
      * @deprecated Change parameter to NavigationHelper (e.g. engine.getBaseIndex()) or use getIQEngineSchedulerFactory
      */
-    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IncQueryEngine engine) {
+    @Deprecated
+	public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IncQueryEngine engine) {
         try {
             return getIQBaseSchedulerFactory(engine.getBaseIndex());
         } catch (IncQueryException e) {
@@ -57,9 +58,9 @@ public final class Schedulers {
      * @param navigationHelper
      * @return
      */
-    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final NavigationHelper navigationHelper) {
+    public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IBaseIndex index) {
         IQBaseCallbackUpdateCompleteProvider provider;
-        provider = new IQBaseCallbackUpdateCompleteProvider(navigationHelper);
+        provider = new IQBaseCallbackUpdateCompleteProvider(index);
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
     

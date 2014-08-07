@@ -14,10 +14,11 @@ Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant S
 Export-Package: org.eclipse.incquery.runtime,
  org.eclipse.incquery.runtime.api,
  org.eclipse.incquery.runtime.api.impl,
- org.eclipse.incquery.runtime.context,
+ org.eclipse.incquery.runtime.api.scope,
+ org.eclipse.incquery.runtime.emf,
+ org.eclipse.incquery.runtime.emf.helper,
  org.eclipse.incquery.runtime.exception,
  org.eclipse.incquery.runtime.extensibility,
- org.eclipse.incquery.runtime.helper,
  org.eclipse.incquery.runtime.util
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"

@@ -11,7 +11,7 @@
 package org.eclipse.incquery.tooling.ui.dialog;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.jface.resource.ImageRegistry;

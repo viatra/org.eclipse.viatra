@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 
 /**
  * The job is used to update a problem marker in the Problems View of Eclipse. It is associated to the rule that is

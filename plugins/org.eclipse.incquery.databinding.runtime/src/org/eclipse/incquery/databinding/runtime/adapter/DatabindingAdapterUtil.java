@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.api.IncQueryObservables;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.helper.IncQueryRuntimeHelper;
+import org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper;
 
 /**
  * @deprecated This class has been deprecated after 0.8.0, can be removed completely later.
