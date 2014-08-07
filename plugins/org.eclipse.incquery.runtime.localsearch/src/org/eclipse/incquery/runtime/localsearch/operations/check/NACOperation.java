@@ -15,7 +15,9 @@ import java.util.Map.Entry;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * @author Zoltan Ujhelyi
@@ -23,25 +25,29 @@ import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
  */
 public class NACOperation extends CheckOperation {
 
-    LocalSearchMatcher calledMatcher;
+    PQuery calledQuery;
+    LocalSearchMatcher matcher;
     Map<Integer, Integer> frameMapping;
 
-    public NACOperation(LocalSearchMatcher calledMatcher, Map<Integer, Integer> frameMapping) {
+    public NACOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping) {
         super();
-        this.calledMatcher = calledMatcher;
+        this.calledQuery = calledQuery;
         this.frameMapping = frameMapping;
     }
+    
+    @Override
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        super.onInitialize(frame, context);
+        matcher = context.getMatcher(calledQuery);
+    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.check.CheckOperation#check(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
+        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
         }
-        return !calledMatcher.hasMatch(mappedFrame);
+        return !matcher.hasMatch(mappedFrame);
     }
 
 }

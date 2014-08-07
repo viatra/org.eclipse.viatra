@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Sets;
 
@@ -28,24 +29,31 @@ import com.google.common.collect.Sets;
  */
 public class BinaryTransitiveClosureCheck extends CheckOperation {
 
-    private LocalSearchMatcher calledMatcher;
+    private PQuery calledQuery;
+    private LocalSearchMatcher matcher;
     private int sourcePosition;
     private int targetPosition;
 
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
      * 
-     * @param calledMatcher
+     * @param calledQuery
      * @param sourcePosition
      * @param targetPosition
      */
-    public BinaryTransitiveClosureCheck(LocalSearchMatcher calledMatcher, int sourcePosition, int targetPosition) {
+    public BinaryTransitiveClosureCheck(PQuery calledQuery, int sourcePosition, int targetPosition) {
         super();
-        this.calledMatcher = calledMatcher;
+        this.calledQuery = calledQuery;
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
     }
 
+    @Override
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        super.onInitialize(frame, context);
+        matcher = context.getMatcher(calledQuery);
+    }
+    
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         Object targetValue = frame.get(targetPosition);
@@ -55,9 +63,9 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
         do {
             Object currentValue = sourcesToEvaluate.iterator().next();
             sourcesToEvaluate.remove(currentValue);
-            final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
+            final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
             mappedFrame.setValue(0, currentValue);
-            for (MatchingFrame match : calledMatcher.getAllMatches(mappedFrame)) {
+            for (MatchingFrame match : matcher.getAllMatches(mappedFrame)) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {
                     return true;

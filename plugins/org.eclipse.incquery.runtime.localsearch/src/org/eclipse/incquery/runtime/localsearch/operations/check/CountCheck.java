@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * Calculates the count of matches for a called matcher
@@ -26,29 +27,31 @@ import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
  */
 public class CountCheck extends CheckOperation {
 
-    LocalSearchMatcher calledMatcher;
+    private PQuery calledQuery;
+    private LocalSearchMatcher matcher;
     Map<Integer, Integer> frameMapping;
     private int position;
 
-    public CountCheck(LocalSearchMatcher calledMatcher, Map<Integer, Integer> frameMapping, int position) {
+    public CountCheck(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
         super();
-        this.calledMatcher = calledMatcher;
+        this.calledQuery = calledQuery;
         this.frameMapping = frameMapping;
         this.position = position;
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        
+        super.onInitialize(frame, context);
+        matcher = context.getMatcher(calledQuery);
     }
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
+        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
         }
-        int count = calledMatcher.countMatches(mappedFrame);
+        int count = matcher.countMatches(mappedFrame);
         return ((Integer)frame.getValue(position)) == count;
     }
 

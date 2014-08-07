@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
 
@@ -28,17 +29,18 @@ import com.google.common.collect.Iterators;
  */
 public class CountOperation extends ExtendOperation<Integer> {
 
-    LocalSearchMatcher calledMatcher;
+    PQuery calledQuery;
     Map<Integer, Integer> frameMapping;
 
-    public CountOperation(LocalSearchMatcher calledMatcher, Map<Integer, Integer> frameMapping, int position) {
+    public CountOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
         super(position);
-        this.calledMatcher = calledMatcher;
+        this.calledQuery = calledQuery;
         this.frameMapping = frameMapping;
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        LocalSearchMatcher calledMatcher = context.getMatcher(calledQuery);
         final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
