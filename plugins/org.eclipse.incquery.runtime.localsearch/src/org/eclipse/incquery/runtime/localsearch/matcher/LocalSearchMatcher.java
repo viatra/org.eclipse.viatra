@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.MatchingTable;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -32,6 +33,7 @@ public class LocalSearchMatcher {
     private ImmutableList<SearchPlanExecutor> plan;
     private int frameSize;
     private int keySize;
+    private PQuery query;
 
     private static class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
 
@@ -86,11 +88,13 @@ public class LocalSearchMatcher {
      * If a descendant initializes a matcher using the default constructor, it is expected that it also calls the
      * {@link #setPlan(SearchPlanExecutor)} and {@link #setFramesize(int)} methods manually.
      */
-    protected LocalSearchMatcher() {
+    protected LocalSearchMatcher(PQuery query) {
+        Preconditions.checkArgument(query != null, "Cannot initialize matcher with null query.");
+        this.query = query;
     }
 
-    public LocalSearchMatcher(SearchPlanExecutor plan, int keySize, int framesize) {
-        super();
+    public LocalSearchMatcher(PQuery query, SearchPlanExecutor plan, int keySize, int framesize) {
+        this(query);
         this.keySize = keySize;
         this.plan = ImmutableList.of(plan);
         this.frameSize = framesize;
@@ -159,5 +163,13 @@ public class LocalSearchMatcher {
             results.put(frame.getKey(), frame);
         }
         return ImmutableList.copyOf(results.iterator());
+    }
+    
+    /**
+     * Returns the query specification this matcher used as source for the implementation
+     * @return never null
+     */
+    public PQuery getQuerySpecification() {
+        return query;
     }
 }
