@@ -37,4 +37,18 @@ public class InstanceOfCheck extends CheckOperation {
         return false;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("InstanceOfCheck(");
+        builder.append(position + ", ");
+
+        String name = clazz.getName();
+        String packageNsUri = clazz.getEPackage().getNsURI();
+        builder.append("getClassifierLiteral(\"" + packageNsUri + "\", \"" + name + "\")");
+
+        builder.append(")");
+        return builder.toString();
+    }
+    
 }

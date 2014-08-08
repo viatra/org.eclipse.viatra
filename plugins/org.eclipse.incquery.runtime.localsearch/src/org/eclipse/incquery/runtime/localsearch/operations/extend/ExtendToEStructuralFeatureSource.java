@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Collection;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -44,6 +45,20 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
         // + values.size());
         it = values
                 .iterator();
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ExtendToEStructuralFeatureSource(");
+        builder.append(position + ", " + targetPosition+ ", ");
+        
+        EClass container = feature.getEContainingClass();
+        String packageNsUri = container.getEPackage().getNsURI();
+        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + feature.getName() + "\")");
+        
+        builder.append(")");
+        return builder.toString();
     }
 
 }

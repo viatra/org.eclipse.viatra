@@ -123,9 +123,17 @@ public class LocalSearchMatcher {
     }
 
     public LocalSearchMatcher(PQuery query, SearchPlanExecutor plan, int keySize, int framesize) {
+        this(query,ImmutableList.of(plan),keySize,framesize);
+    }
+    
+    public LocalSearchMatcher(PQuery query, SearchPlanExecutor[] plan, int keySize, int framesize) {
+        this(query,ImmutableList.copyOf(plan),keySize,framesize);
+    }
+
+    protected LocalSearchMatcher(PQuery query, ImmutableList<SearchPlanExecutor> plan, int keySize, int framesize) {
         this(query);
         this.keySize = keySize;
-        this.plan = ImmutableList.of(plan);
+        this.plan = plan;
         this.frameSize = framesize;
         this.adapters = Lists.newLinkedList(adapters);
     }

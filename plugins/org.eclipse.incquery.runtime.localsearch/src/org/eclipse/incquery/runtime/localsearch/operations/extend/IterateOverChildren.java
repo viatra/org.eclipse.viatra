@@ -50,5 +50,14 @@ public class IterateOverChildren extends ExtendOperation<EObject> {
             it = source.eContents().iterator();
         }
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IterateOverChildren(");
+        builder.append(position + ", " + sourcePosition + ", " + transitive);
+        builder.append(")");
+        return builder.toString();
+    }
 
 }

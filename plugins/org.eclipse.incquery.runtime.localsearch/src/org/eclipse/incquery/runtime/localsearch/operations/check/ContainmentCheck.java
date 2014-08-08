@@ -46,5 +46,15 @@ public class ContainmentCheck extends CheckOperation {
             throw new LocalSearchException(LocalSearchException.TYPE_ERROR, e);
         }
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ContainmentCheck(");
+        builder.append(childPosition + ", " + containerPosition + ", " + transitive);
+        builder.append(")");
+        return builder.toString();
+    }
+
 
 }

@@ -42,5 +42,18 @@ public class InequalityCheck extends CheckOperation {
         }
         return !source.equals(target);
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("InequalityCheck(");
+        builder.append(sourceLocation + ", " + targetLocation);
+        builder.append(")");
+        return builder.toString();
+    }
+
 
 }
