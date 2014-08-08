@@ -564,19 +564,19 @@ public interface NavigationHelper {
      * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
      * e.g. to check model contents. Not intended for general use.
      * 
-     * <p/> See {@link #removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * <p/> See {@link #removeBaseIndexChangeListener(EMFBaseIndexChangeListener)}
      * @param listener
      */
-    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    public void addBaseIndexChangeListener(EMFBaseIndexChangeListener listener);
     
     /**
      * Removes a registered listener.
      * 
-     * <p/> See {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * <p/> See {@link #addBaseIndexChangeListener(EMFBaseIndexChangeListener)}
      * 
      * @param listener
      */
-    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    public void removeBaseIndexChangeListener(EMFBaseIndexChangeListener listener);
     
     /**
      * Adds an additional EMF model root.
@@ -685,12 +685,12 @@ public interface NavigationHelper {
      * @returns true if the listener was not already added
      * @since 0.8.0
      */
-    boolean addIndexingErrorListener(IIndexingErrorListener listener);
+    boolean addIndexingErrorListener(IEMFIndexingErrorListener listener);
     /**
      * Removes a listener for internal errors in the index
      * @param listener
      * @returns true if the listener was successfully removed (e.g. it did exist)
      * @since 0.8.0
      */
-    boolean removeIndexingErrorListener(IIndexingErrorListener listener);
+    boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener);
 }

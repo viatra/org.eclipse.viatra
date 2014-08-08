@@ -8,19 +8,15 @@
  * Contributors:
  *   Bergmann Gabor - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.internal.apiimpl;
+package org.eclipse.incquery.runtime.api.scope;
 
-import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.scope.IEngineContext;
-import org.eclipse.incquery.runtime.api.scope.IIndexingErrorListener;
 
 /**
- * Internal interface for a Scope to reveal model contents to the engine.
- * 
+ * Listener interface for lightweight observation of changes in edges leaving from given source instance elements.
  * @author Bergmann Gabor
  *
  */
-public abstract class EngineContextFactory {
-	protected abstract IEngineContext createEngineContext(IncQueryEngine engine, IIndexingErrorListener errorListener, Logger logger);
+public interface IInstanceObserver {
+    void notifyBinaryChanged(Object sourceElement, Object edgeType);
+    void notifyTernaryChanged(Object sourceElement, Object edgeType);
 }

@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.scope.IEngineContext;
+import org.eclipse.incquery.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -112,8 +113,8 @@ public class EMFScope extends IncQueryScope {
 	}
 
 	@Override
-	protected IEngineContext createEngineContext(IncQueryEngine engine, Logger logger) {
-		return new EMFEngineContext(this, engine, logger);
+	protected IEngineContext createEngineContext(IncQueryEngine engine, IIndexingErrorListener errorListener, Logger logger) {
+		return new EMFEngineContext(this, engine, errorListener, logger);
 	}
 	
 }

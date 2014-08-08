@@ -12,12 +12,9 @@ package org.eclipse.incquery.runtime.evm.specific.event;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
+import org.eclipse.incquery.runtime.api.scope.IInstanceObserver;
 import org.eclipse.incquery.runtime.evm.notification.AttributeMonitor;
 
 import com.google.common.collect.HashMultimap;
@@ -30,63 +27,70 @@ import com.google.common.collect.Multimap;
  */
 public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extends AttributeMonitor<MatchType> {
 
-    private LightweightEObjectObserver observer;
-    private Multimap<EObject, MatchType> observedMultimap;
-    private NavigationHelper navigationHelper;
+    private IInstanceObserver observer;
+    private Multimap<Object, MatchType> observedMultimap;
+    private IBaseIndex index;
     
     /**
      * 
      */
-    public LightweightAttributeMonitor(NavigationHelper helper) {
+    public LightweightAttributeMonitor(IBaseIndex index) {
         super();
-        this.navigationHelper = helper;
-        this.observer = new LightweightEObjectObserver() {
-            
-            @Override
-            public void notifyFeatureChanged(EObject host, EStructuralFeature feature, Notification notification) {
-                Collection<MatchType> matches = observedMultimap.get(host);
+        this.index = index;
+        this.observer = new IInstanceObserver() {
+        	@Override
+        	public void notifyBinaryChanged(Object sourceElement,
+        			Object edgeType) {
+                Collection<MatchType> matches = observedMultimap.get(sourceElement);
                 for (MatchType matchType : matches) {
                     notifyListeners(matchType);
                 }
-            }
+        	}
+        	
+        	@Override
+            public void notifyTernaryChanged(Object sourceElement,
+            		Object edgeType) {
+                Collection<MatchType> matches = observedMultimap.get(sourceElement);
+                for (MatchType matchType : matches) {
+                    notifyListeners(matchType);
+                }
+            }        
         };
         this.observedMultimap = HashMultimap.create();
     }
     
     @Override
     public void registerFor(MatchType atom) {
-        Collection<EObject> allEObjects = findAllEObjects(atom);
-        for (EObject eObject : allEObjects) {
-            navigationHelper.addLightweightEObjectObserver(observer, eObject);
-            observedMultimap.put(eObject, atom);
+        Collection<Object> allObjects = findAllObjects(atom);
+        for (Object object : allObjects) {
+            if (index.addInstanceObserver(observer, object))
+            	observedMultimap.put(object, atom);
         }
     }
 
     @Override
     public void unregisterForAll() {
-        for (EObject eobj : observedMultimap.keySet()) {
-            navigationHelper.removeLightweightEObjectObserver(observer, eobj);
+        for (Object eobj : observedMultimap.keySet()) {
+            index.removeInstanceObserver(observer, eobj);
         }
     }
 
     @Override
     public void unregisterFor(MatchType atom) {
-        Collection<EObject> allEObjects = findAllEObjects(atom);
-        for (EObject eObject : allEObjects) {
-            navigationHelper.removeLightweightEObjectObserver(observer, eObject);
-            observedMultimap.remove(eObject, atom);
+        Collection<Object> allObjects = findAllObjects(atom);
+        for (Object object : allObjects) {
+            if (index.removeInstanceObserver(observer, object))
+            	observedMultimap.remove(object, atom);
         }
     }
 
-    private Collection<EObject> findAllEObjects(MatchType atom){
-        Collection<EObject> eobjs = Lists.newArrayList();
+    private Collection<Object> findAllObjects(MatchType atom){
+        Collection<Object> objs = Lists.newArrayList();
         for (String param : atom.parameterNames()) {
             Object location = atom.get(param);
-            if(location instanceof EObject) {
-                eobjs.add((EObject) location);
-            }
+            objs.add(location);
         }
-        return eobjs;
+        return objs;
     }
     
 }

@@ -11,7 +11,7 @@
 package org.eclipse.incquery.runtime.evm.update;
 
 import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
+import org.eclipse.incquery.runtime.api.scope.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 
 import com.google.common.base.Preconditions;

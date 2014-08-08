@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener.ChangeLevel;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
+import org.eclipse.incquery.runtime.api.scope.IncQueryBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.collect.ImmutableSet;

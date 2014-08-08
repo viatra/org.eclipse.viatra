@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.base.api;
+package org.eclipse.incquery.runtime.api.scope;
 
 /**
  * Listener interface for change notifications from the IncQuery Base index.

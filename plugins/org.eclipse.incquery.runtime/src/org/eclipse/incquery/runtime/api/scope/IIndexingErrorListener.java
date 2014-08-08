@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.base.api;
+package org.eclipse.incquery.runtime.api.scope;
 
 /**
  * 

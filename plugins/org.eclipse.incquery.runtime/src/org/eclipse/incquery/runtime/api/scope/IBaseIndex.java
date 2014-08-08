@@ -13,9 +13,6 @@ package org.eclipse.incquery.runtime.api.scope;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
-import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
-
 /**
  * Represents the index maintained on the model.
  * @author Bergmann Gabor
@@ -71,5 +68,23 @@ public interface IBaseIndex {
      * @since 0.8.0
      */
     boolean removeIndexingErrorListener(IIndexingErrorListener listener);
+
+    /**
+     * Register a lightweight observer that is notified if any edge starting at the given Object changes.
+     * 
+     * @param observer the listener instance
+     * @param observedObject the observed instance object
+     * @return false if no observer can be registered for the given instance (e.g. it is a primitive)
+     */
+    public boolean addInstanceObserver(IInstanceObserver observer, Object observedObject);
+    
+    /**
+     * Unregisters a lightweight observer for the given Object.
+     * 
+     * @param observer the listener instance
+     * @param observedObjectt the observed instance object
+     * @return false if no observer can be registered for the given instance (e.g. it is a primitive)
+     */
+    public boolean removeInstanceObserver(IInstanceObserver observer, Object observedObject);
 
 }

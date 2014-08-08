@@ -21,25 +21,24 @@ import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
  *
  */
 public interface IEngineContext {
-	/**
-	 * Returns the runtime context for the query evaluator backends.
-	 */
-	IPatternMatcherRuntimeContext getRuntimeContext();
 	
 	/**
 	 * Returns the base index. 
+	 * @throws IncQueryException 
 	 */	
-	IBaseIndex getBaseIndex();
+	IBaseIndex getBaseIndex() throws IncQueryException;
 	
 	/**
-	 * Invokes the given code. 
+	 * Invokes the given initializer code with a runtime context for pattern matching. 
 	 * 
 	 * If the base index has not yet been initialized, 
-	 * it will be only loaded with content after the callback, 
-	 * but it will be guaranteed to exist during it.
+	 * it will be only loaded with content after the callback.
 	 * @throws IncQueryException 
 	 */
-	void withoutBaseIndexInitializationDo(Runnable runnable) throws IncQueryException;
+	void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException;
+	public static interface IQueryBackendInitializer {
+		public void initializeWith(IPatternMatcherRuntimeContext context);
+	}
 
 	/**
 	 * Disposes this context object. Resources in the index may now be freed up.

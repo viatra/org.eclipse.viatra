@@ -33,8 +33,9 @@ import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
 import org.eclipse.incquery.runtime.api.scope.IEngineContext;
+import org.eclipse.incquery.runtime.api.scope.IEngineContext.IQueryBackendInitializer;
+import org.eclipse.incquery.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
-import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
@@ -84,15 +85,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     private final Map<IQuerySpecification<? extends IncQueryMatcher<?>>, IncQueryMatcher<?>> matchers
     		= Maps.newHashMap();
     
-//    /**
-//     * The base index keeping track of basic EMF contents of the model.
-//     */
-//    private NavigationHelper baseIndex;
-//    /**
-//     * Whether to initialize the base index in wildcard mode.
-//     * Whether to initialize the base index in dynamic EMF mode.
-//     */
-//	private final BaseIndexOptions options;
 	/**
      * The RETE pattern matcher component of the IncQuery engine.
      */
@@ -121,7 +113,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         this.scope = scope;
         this.lifecycleProvider = new LifecycleProvider(this, getLogger());
         this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
-        this.engineContext = scope.createEngineContext(this, getLogger());
+        this.engineContext = scope.createEngineContext(this, taintListener, getLogger());
     }
 
     @Override
@@ -205,17 +197,16 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public IQueryBackend getReteEngine() throws IncQueryException {
         if (reteEngine == null) {
-        	engineContext.withoutBaseIndexInitializationDo(new Runnable() {
+        	engineContext.initializeBackends(new IQueryBackendInitializer() {
 				@Override
-				public void run() {
-		            synchronized (this) {
-		                reteEngine = buildReteEngineInternal(engineContext.getRuntimeContext());
-		            }
+				public void initializeWith(IPatternMatcherRuntimeContext context) {
+					synchronized (this) {
+						reteEngine = buildReteEngineInternal(context);
+					}
 				}
 			});
         }
         return reteEngine;
-
     }
 
     

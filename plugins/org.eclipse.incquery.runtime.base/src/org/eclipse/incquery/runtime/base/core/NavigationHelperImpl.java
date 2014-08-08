@@ -45,8 +45,8 @@ import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
-import org.eclipse.incquery.runtime.base.api.IIndexingErrorListener;
-import org.eclipse.incquery.runtime.base.api.IncQueryBaseIndexChangeListener;
+import org.eclipse.incquery.runtime.base.api.IEMFIndexingErrorListener;
+import org.eclipse.incquery.runtime.base.api.EMFBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -114,7 +114,7 @@ public class NavigationHelperImpl implements NavigationHelper {
      * These global listeners will be called after updates.
      */
     //private final Set<Runnable> afterUpdateCallbacks;
-    private final Set<IncQueryBaseIndexChangeListener> baseIndexChangeListeners;
+    private final Set<EMFBaseIndexChangeListener> baseIndexChangeListeners;
     private final Map<LightweightEObjectObserver, Collection<EObject>> lightweightObservers;
 
     // These are the user subscriptions to notifications
@@ -130,7 +130,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     private Table<Object, FeatureListener, Set<EStructuralFeature>> featureListeners;
     private Table<Object, DataTypeListener, Set<EDataType>> dataTypeListeners;
 
-    private final Set<IIndexingErrorListener> errorListeners;
+    private final Set<IEMFIndexingErrorListener> errorListeners;
     private final BaseIndexOptions baseIndexOptions;
 
     private EMFModelComprehension comprehension;
@@ -209,8 +209,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashSet<Object>();
         this.contentAdapter = new NavigationHelperContentAdapter(this);
-        this.baseIndexChangeListeners = new HashSet<IncQueryBaseIndexChangeListener>();
-        this.errorListeners = new LinkedHashSet<IIndexingErrorListener>();
+        this.baseIndexChangeListeners = new HashSet<EMFBaseIndexChangeListener>();
+        this.errorListeners = new LinkedHashSet<IEMFIndexingErrorListener>();
         
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
@@ -614,7 +614,7 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
         if (!baseIndexChangeListeners.isEmpty()) {
-            for (IncQueryBaseIndexChangeListener listener : new ArrayList<IncQueryBaseIndexChangeListener>(baseIndexChangeListeners)) {
+            for (EMFBaseIndexChangeListener listener : new ArrayList<EMFBaseIndexChangeListener>(baseIndexChangeListeners)) {
                 try {
                     if(!listener.onlyOnIndexChange() || baseIndexChanged) {
                         listener.notifyChanged(baseIndexChanged);
@@ -628,37 +628,37 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+    public void addBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
         checkArgument(listener != null, "Cannot add null listener!");
         baseIndexChangeListeners.add(listener);
     }
 
     @Override
-    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+    public void removeBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         baseIndexChangeListeners.remove(listener);
     }
 
     @Override
-    public boolean addIndexingErrorListener(IIndexingErrorListener listener) {
+    public boolean addIndexingErrorListener(IEMFIndexingErrorListener listener) {
         return errorListeners.add(listener);
     }
 
     @Override
-    public boolean removeIndexingErrorListener(IIndexingErrorListener listener) {
+    public boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener) {
         return errorListeners.remove(listener);
     }
     
     public void notifyErrorListener(String message, Throwable t) {
         logger.error(message, t);
-        for (IIndexingErrorListener listener : errorListeners) {
+        for (IEMFIndexingErrorListener listener : errorListeners) {
             listener.error(message, t);
         }
     }
     
     public void notifyFatalListener(String message, Throwable t) {
         logger.fatal(message, t);
-        for (IIndexingErrorListener listener : errorListeners) {
+        for (IEMFIndexingErrorListener listener : errorListeners) {
             listener.fatal(message, t);
         }
     }
