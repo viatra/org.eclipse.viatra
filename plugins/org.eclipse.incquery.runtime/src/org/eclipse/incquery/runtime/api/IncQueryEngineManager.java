@@ -116,7 +116,7 @@ public class IncQueryEngineManager {
     public Set<IncQueryEngine> getExistingIncQueryEngines(){
         Set<IncQueryEngine> existingEngines = null;
         for (WeakReference<IncQueryEngineImpl> engineRef : engines.values()) {
-        	IncQueryEngineImpl engine = engineRef == null ? null : engineRef.get();
+        	AdvancedIncQueryEngine engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
                 existingEngines = Sets.newHashSet();
             }

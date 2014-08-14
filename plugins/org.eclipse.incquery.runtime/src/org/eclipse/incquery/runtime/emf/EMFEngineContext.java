@@ -19,7 +19,6 @@ import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 
 /**
  * Implements an engine context on EMF models.
@@ -34,6 +33,7 @@ class EMFEngineContext implements IEngineContext {
 	NavigationHelper navHelper;
 	IBaseIndex baseIndex;
 	IIndexingErrorListener taintListener;
+	private EMFPatternMatcherRuntimeContext matcherContext;
 	
 	public EMFEngineContext(EMFScope emfScope, IncQueryEngine engine, IIndexingErrorListener taintListener, Logger logger) {
 		this.emfScope = emfScope;
@@ -80,9 +80,8 @@ class EMFEngineContext implements IEngineContext {
 	@Override
 	public void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException {
        try {
-    	   // if navHelper is uninitialized, don't load contents yet yet    	   
-    	   IPatternMatcherRuntimeContext matcherContext = 
-    			   new EMFPatternMatcherRuntimeContext(engine, logger, getNavHelper(false));
+    	   if (matcherContext == null) 
+    		   matcherContext = new EMFPatternMatcherRuntimeContext(engine, logger, getNavHelper(false));
     	   
     	   initializer.initializeWith(matcherContext);
        } finally {
@@ -93,6 +92,7 @@ class EMFEngineContext implements IEngineContext {
 	
 	@Override
 	public void dispose() {
+		if (matcherContext != null) matcherContext.dispose();
 		if (navHelper != null) navHelper.dispose();
 		
 		this.baseIndex = null;

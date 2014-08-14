@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.rete.construction.basiclinear;
 import java.util.Comparator;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;

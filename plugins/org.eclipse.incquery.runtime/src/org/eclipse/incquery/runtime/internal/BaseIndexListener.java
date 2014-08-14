@@ -11,7 +11,6 @@
 
 package org.eclipse.incquery.runtime.internal;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,11 +23,7 @@ import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
-import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
-import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
-import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
-import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.network.Direction;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
 
 /**
  * A listener binding as Rete boundary to an eiqBase index
@@ -36,9 +31,10 @@ import org.eclipse.incquery.runtime.rete.network.Direction;
  * @author Bergmann Gábor
  * 
  */
-public class BaseIndexListener implements FeatureListener, InstanceListener, DataTypeListener, IManipulationListener {
-    private final ReteBoundary boundary;
-    private final NavigationHelper baseIndex;
+public class BaseIndexListener implements FeatureListener, InstanceListener, DataTypeListener {
+	private final NavigationHelper baseIndex;
+    final Set<IPatternMatcherRuntimeContextListener> listeners = 
+    		new HashSet<IPatternMatcherRuntimeContextListener>();
 
     /**
      * This reference is vital, to avoid the premature GC of the engine while the EMF model is still reachable.
@@ -47,103 +43,60 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
     @SuppressWarnings("unused")
     private final IncQueryEngine iqEngine;
 
-    private final Set<EClass> classes = new HashSet<EClass>();
-    private final Set<EDataType> dataTypes = new HashSet<EDataType>();
-    private final Set<EStructuralFeature> features = new HashSet<EStructuralFeature>();
 
     /**
      * @param inputConnector
      */
-    public BaseIndexListener(IncQueryEngine iqEngine, ReteEngine engine, NavigationHelper baseIndex) {
+    public BaseIndexListener(IncQueryEngine iqEngine, NavigationHelper baseIndex) {
         super();
         this.iqEngine = iqEngine;
-        this.boundary = engine.getBoundary();
         this.baseIndex = baseIndex;
-        engine.addDisconnectable(this);
-
+    }
+    
+    public void addListener(IPatternMatcherRuntimeContextListener listener) {
+    	listeners.add(listener);
+    }
+    public void removeListener(IPatternMatcherRuntimeContextListener listener) {
+    	listeners.remove(listener);
     }
 
-    public void ensure(EClass eClass) {
-        if (classes.add(eClass)) {
-            final Set<EClass> newClasses = Collections.singleton(eClass);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEClasses(newClasses);
-            baseIndex.addInstanceListener(newClasses, this);
-        }
-    }
-
-    public void ensure(EDataType eDataType) {
-        if (dataTypes.add(eDataType)) {
-            final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEDataTypes(newDataTypes);
-            baseIndex.addDataTypeListener(newDataTypes, this);
-        }
-    }
-
-    public void ensure(EStructuralFeature feature) {
-        if (features.add(feature)) {
-            final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEStructuralFeatures(newFeatures);
-            baseIndex.addFeatureListener(newFeatures, this);
-        }
-    }
 
     @Override
     public void instanceInserted(EClass clazz, EObject instance) {
-        boundary.updateUnary(Direction.INSERT, instance, clazz);
-        boundary.updateInstantiation(Direction.INSERT, clazz, instance);
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateUnary(true, instance, clazz);
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateInstantiation(true, clazz, instance);
     }
 
     @Override
     public void instanceDeleted(EClass clazz, EObject instance) {
-        boundary.updateUnary(Direction.REVOKE, instance, clazz);
-        boundary.updateInstantiation(Direction.REVOKE, clazz, instance);
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateUnary(false, instance, clazz);
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateInstantiation(false, clazz, instance);
     }
 
     @Override
     public void dataTypeInstanceInserted(EDataType type, Object instance, boolean first) {
     	if (first) {
-	        boundary.updateUnary(Direction.INSERT, instance, type);
-	        boundary.updateInstantiation(Direction.INSERT, type, instance);
+	        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateUnary(true, instance, type);
+	        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateInstantiation(true, type, instance);
     	}
     }
 
     @Override
     public void dataTypeInstanceDeleted(EDataType type, Object instance, boolean last) {
     	if (last) {
-	        boundary.updateUnary(Direction.REVOKE, instance, type);
-	        boundary.updateInstantiation(Direction.REVOKE, type, instance);
+	        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateUnary(false, instance, type);
+	        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateInstantiation(false, type, instance);
     	}
     }
 
     @Override
     public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
-        boundary.updateBinaryEdge(Direction.INSERT, host, value, feature);
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateBinaryEdge(true, host, value, feature);
     }
 
     @Override
     public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
-        boundary.updateBinaryEdge(Direction.REVOKE, host, value, feature);
-    }
-
-    @Override
-    public void registerSensitiveTerm(Object element, PredicateEvaluatorNode termEvaluatorNode) {
-    }
-
-    @Override
-    public void unregisterSensitiveTerm(Object element, PredicateEvaluatorNode termEvaluatorNode) {
-    }
-
-    @Override
-    public void disconnect() {
-        baseIndex.removeFeatureListener(features, this);
-        features.clear();
-        baseIndex.removeInstanceListener(classes, this);
-        classes.clear();
-        baseIndex.removeDataTypeListener(dataTypes, this);
-        dataTypes.clear();
+        for (IPatternMatcherRuntimeContextListener listener : listeners) listener.updateBinaryEdge(false, host, value, feature);
     }
 
 }

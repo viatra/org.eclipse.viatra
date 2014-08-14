@@ -17,7 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;

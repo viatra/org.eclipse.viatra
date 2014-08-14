@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;

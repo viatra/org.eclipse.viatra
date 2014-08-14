@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -25,7 +26,6 @@ import org.eclipse.incquery.runtime.rete.index.CountNode;
 import org.eclipse.incquery.runtime.rete.index.ExistenceNode;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.JoinNode;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.misc.ConstantNode;
 import org.eclipse.incquery.runtime.rete.recipes.AggregatorIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;

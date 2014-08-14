@@ -358,12 +358,12 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      *             if engine is managed
      */
     public abstract void dispose();
-
+ 
     /**
-     * Access the internal Rete pattern matching network (for advanced debugging purposes only).
-     * 
+     * Provides access to the selected query backend component of the IncQuery engine.
      * @noreference for internal use only
      */
-    public abstract IQueryBackend getReteEngine() throws IncQueryException;
+	public abstract IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass)
+			throws IncQueryException;
 
 }

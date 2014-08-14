@@ -11,7 +11,7 @@
 package org.eclipse.incquery.runtime.api.scope;
 
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 
 /**
  * The context of the engine is instantiated by the scope, 

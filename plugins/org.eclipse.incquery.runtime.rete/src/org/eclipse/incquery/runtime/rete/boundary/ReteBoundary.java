@@ -16,15 +16,16 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Network;
@@ -47,7 +48,7 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
  * <p> TODO: should eventually be merged into {@link InputConnector} and deleted
  *
  */
-public class ReteBoundary {
+public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
 
     protected ReteEngine engine;
     protected Network network;
@@ -465,73 +466,102 @@ public class ReteBoundary {
 
     // updaters for change notification
     // if the corresponding rete input isn't created yet, call is ignored
-    public void updateUnary(Direction direction, Object entity, Object typeObject) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateUnary(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
+	 */
+    
+    private static Direction direction(boolean isInsertion) {
+    	return isInsertion ? Direction.INSERT : Direction.REVOKE;
+    }
+    
+    @Override
+	public void updateUnary(boolean isInsertion, Object entity, Object typeObject) {
         Address<? extends Tunnel> root = inputConnector.getUnaryRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(entity)));
+            network.sendExternalUpdate(root, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(entity)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
         if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.SUPERTYPE_ONLY) {
             for (Object superType : context.enumerateDirectUnarySupertypes(typeObject)) {
-                updateUnary(direction, entity, superType);
+                updateUnary(isInsertion, entity, superType);
             }
         }
     }
 
-    public void updateTernaryEdge(Direction direction, Object relation, Object from, Object to, Object typeObject) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateTernaryEdge(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)
+	 */
+    @Override
+	public void updateTernaryEdge(boolean isInsertion, Object relation, Object from, Object to, Object typeObject) {
         Address<? extends Tunnel> root = inputConnector.getTernaryEdgeRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(relation), inputConnector.wrapElement(from),
+            network.sendExternalUpdate(root, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(relation), inputConnector.wrapElement(from),
                     inputConnector.wrapElement(to)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
         if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.SUPERTYPE_ONLY) {
             for (Object superType : context.enumerateDirectTernaryEdgeSupertypes(typeObject)) {
-                updateTernaryEdge(direction, relation, from, to, superType);
+                updateTernaryEdge(isInsertion, relation, from, to, superType);
             }
         }
     }
 
-    public void updateBinaryEdge(Direction direction, Object from, Object to, Object typeObject) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateBinaryEdge(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object, java.lang.Object)
+	 */
+    @Override
+	public void updateBinaryEdge(boolean isInsertion, Object from, Object to, Object typeObject) {
         Address<? extends Tunnel> root = inputConnector.getBinaryEdgeRoot(typeObject);
         if (root != null) {
-            network.sendExternalUpdate(root, direction, new FlatTuple(inputConnector.wrapElement(from), inputConnector.wrapElement(to)));
+            network.sendExternalUpdate(root, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(from), inputConnector.wrapElement(to)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
         if (typeObject != null && generalizationQueryDirection == GeneralizationQueryDirection.SUPERTYPE_ONLY) {
             for (Object superType : context.enumerateDirectBinaryEdgeSupertypes(typeObject)) {
-                updateBinaryEdge(direction, from, to, superType);
+                updateBinaryEdge(isInsertion, from, to, superType);
             }
         }
     }
 
-    public void updateContainment(Direction direction, Object container, Object element) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateContainment(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
+	 */
+    @Override
+	public void updateContainment(boolean isInsertion, Object container, Object element) {
         final Address<? extends Tunnel> containmentRoot = inputConnector.getContainmentRoot();
 		if (containmentRoot != null) {
-            network.sendExternalUpdate(containmentRoot, direction, new FlatTuple(inputConnector.wrapElement(container),
+            network.sendExternalUpdate(containmentRoot, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(container),
                     inputConnector.wrapElement(element)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
     }
 
-    public void updateInstantiation(Direction direction, Object parent, Object child) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateInstantiation(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
+	 */
+    @Override
+	public void updateInstantiation(boolean isInsertion, Object parent, Object child) {
         final Address<? extends Tunnel> instantiationRoot = inputConnector.getInstantiationRoot();
        if (instantiationRoot != null) {
-            network.sendExternalUpdate(instantiationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
+            network.sendExternalUpdate(instantiationRoot, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(parent),
                     inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();
         }
     }
 
-    public void updateGeneralization(Direction direction, Object parent, Object child) {
+    /* (non-Javadoc)
+	 * @see org.eclipse.incquery.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateGeneralization(org.eclipse.incquery.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
+	 */
+    @Override
+	public void updateGeneralization(boolean isInsertion, Object parent, Object child) {
        final Address<? extends Tunnel> generalizationRoot = inputConnector.getGeneralizationRoot();
        if (generalizationRoot != null) {
-            network.sendExternalUpdate(generalizationRoot, direction, new FlatTuple(inputConnector.wrapElement(parent),
+            network.sendExternalUpdate(generalizationRoot, direction(isInsertion), new FlatTuple(inputConnector.wrapElement(parent),
                     inputConnector.wrapElement(child)));
             if (!engine.isParallelExecutionEnabled())
                 network.waitForReteTermination();

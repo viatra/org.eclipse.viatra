@@ -8,8 +8,8 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.guava;bundle-version="10.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.runtime.matchers,
- org.eclipse.incquery.runtime.matchers.backend,
+Export-Package: org.eclipse.incquery.runtime.matchers.backend,
+ org.eclipse.incquery.runtime.matchers.context,
  org.eclipse.incquery.runtime.matchers.planning,
  org.eclipse.incquery.runtime.matchers.planning.helpers,
  org.eclipse.incquery.runtime.matchers.planning.operations,

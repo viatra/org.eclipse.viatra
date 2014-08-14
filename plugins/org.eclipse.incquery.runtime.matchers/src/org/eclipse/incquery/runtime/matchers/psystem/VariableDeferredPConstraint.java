@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 
 /**

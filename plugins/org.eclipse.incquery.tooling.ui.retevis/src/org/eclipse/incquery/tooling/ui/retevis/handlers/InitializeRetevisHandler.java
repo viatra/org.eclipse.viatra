@@ -46,7 +46,7 @@ public class InitializeRetevisHandler extends AbstractHandler {
             if (iterator.hasNext()) {
                 try {
                     PatternMatcherContent pm = iterator.next();
-                    final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) pm.getMatcher().getEngine()).getReteEngine();
+                    final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) pm.getMatcher().getEngine()).getQueryBackend(ReteEngine.class);
 					ReteBoundary rb = ((ReteEngine) reteEngine).getBoundary();
                     ReteVisView.getInstance().setContent(rb);
                 } catch (IncQueryException e) {

@@ -19,13 +19,12 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
-import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 import org.eclipse.incquery.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.incquery.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
@@ -47,8 +46,7 @@ public class ReteEngine implements IQueryBackend {
     protected IPatternMatcherRuntimeContext context;
 
     protected Collection<Disconnectable> disconnectables;
-    protected IManipulationListener manipulationListener;
-    protected IPredicateTraceListener traceListener;
+//    protected IPredicateTraceListener traceListener;
     // protected MachineListener machineListener;
 
     protected Map<PQuery, RetePatternMatcher> matchers;
@@ -100,9 +98,9 @@ public class ReteEngine implements IQueryBackend {
         /* this.matchersScoped = new HashMap<PatternDescription, Map<Map<Integer,Scope>,RetePatternMatcher>>(); */
 
         // prerequisite: network, framework, boundary, disconnectables
-        this.manipulationListener = context.subscribePatternMatcherForUpdates(this);
+        context.subscribeBackendForUpdates(this.boundary);
         // prerequisite: boundary, disconnectables
-        this.traceListener = context.subscribePatternMatcherForTraceInfluences(this);
+//        this.traceListener = context.subscribePatternMatcherForTraceInfluences(this);
 
     }
 
@@ -113,6 +111,7 @@ public class ReteEngine implements IQueryBackend {
     	ensureInitialized();
         reteNet.kill();
 
+        context.unSubscribeBackendFromUpdates(this.boundary);
         for (Disconnectable disc : disconnectables) {
             disc.disconnect();
         }
@@ -125,8 +124,7 @@ public class ReteEngine implements IQueryBackend {
 
         // this.machineListener = new MachineListener(this); // prerequisite:
         // framework, disconnectables
-        this.manipulationListener = null;
-        this.traceListener = null;
+//        this.traceListener = null;
 
     	this.disposedOrUninitialized = true;
     }
@@ -138,6 +136,7 @@ public class ReteEngine implements IQueryBackend {
         deconstructEngine();
         // this.framework = null;
         this.compiler = null;
+        this.context = null;
     }
 
     /**
@@ -408,21 +407,21 @@ public class ReteEngine implements IQueryBackend {
         this.compiler = builder;
     }
 
-    /**
-     * @return the manipulationListener
-     */
-    public IManipulationListener getManipulationListener() {
-    	ensureInitialized();
-       return manipulationListener;
-    }
+//    /**
+//     * @return the manipulationListener
+//     */
+//    public IManipulationListener getManipulationListener() {
+//    	ensureInitialized();
+//       return manipulationListener;
+//    }
 
-    /**
-     * @return the traceListener
-     */
-    public IPredicateTraceListener geTraceListener() {
-    	ensureInitialized();
-        return traceListener;
-    }
+//    /**
+//     * @return the traceListener
+//     */
+//    public IPredicateTraceListener geTraceListener() {
+//    	ensureInitialized();
+//        return traceListener;
+//    }
 
     /**
      * @param disc

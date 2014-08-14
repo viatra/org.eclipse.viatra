@@ -1,4 +1,4 @@
-package org.eclipse.incquery.runtime.matchers;
+package org.eclipse.incquery.runtime.matchers.context;
 /*******************************************************************************
  * Copyright (c) 2004-2008 Gabor Bergmann and Daniel Varro
  * All rights reserved. This program and the accompanying materials

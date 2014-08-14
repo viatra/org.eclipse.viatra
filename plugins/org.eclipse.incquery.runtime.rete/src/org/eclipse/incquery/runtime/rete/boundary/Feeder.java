@@ -11,9 +11,9 @@
 
 package org.eclipse.incquery.runtime.rete.boundary;
 
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.rete.network.Direction;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Receiver;

@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -42,15 +43,15 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
-import org.eclipse.incquery.runtime.rete.util.Options;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.ImmutableSet;
@@ -86,19 +87,29 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     		= Maps.newHashMap();
     
 	/**
-     * The RETE pattern matcher component of the IncQuery engine.
+     * The RETE and other pattern matcher implementations of the IncQuery engine.
      */
-    private IQueryBackend reteEngine = null;
-
+    private volatile Map<Class<? extends IQueryBackend>, IQueryBackend> queryBackends 
+    		= null;
+    
+    /**
+     * Known backend implementations
+     */
+    private static Map<Class<? extends IQueryBackend>, IQueryBackendFactory> queryBackendFactories 
+    		= Maps.newHashMap();
+    static {
+    	queryBackendFactories.put(ReteEngine.class, new ReteBackendFactory());
+    }
+    /**
+     * Default backend implementation.
+     */
+    private Class<? extends IQueryBackend> defaultBackendClass = ReteEngine.class;
+    
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
     private Logger logger;
 	private boolean disposed = false;
     
-    /**
-     * EXPERIMENTAL
-     */
-    private final int reteThreads = 0;
     
     /**
      * @param manager
@@ -189,37 +200,43 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     }
 
     /**
-     * Provides access to the internal RETE pattern matcher component of the IncQuery engine.
-     * 
-     * @noreference A typical user would not need to call this method.
-     * TODO make it package visible only
+     * Provides access to the selected query backend component of the IncQuery engine.
      */
     @Override
-	public IQueryBackend getReteEngine() throws IncQueryException {
-        if (reteEngine == null) {
-        	engineContext.initializeBackends(new IQueryBackendInitializer() {
-				@Override
-				public void initializeWith(IPatternMatcherRuntimeContext context) {
-					synchronized (this) {
-						reteEngine = buildReteEngineInternal(context);
-					}
-				}
-			});
+	public IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass) throws IncQueryException {
+        if (queryBackends == null) {
+        	initBackends();
         }
-        return reteEngine;
+        final IQueryBackend iQueryBackend = queryBackends.get(backendClass);
+        if (iQueryBackend == null)
+        	throw new IncQueryException("Query backend class not registered: " + backendClass.getName(), "Unknown query backend.");
+		return iQueryBackend;
     }
 
-    
+	private void initBackends() throws IncQueryException {
+		synchronized (this) {
+		    if (queryBackends == null) {
+		    	boolean initialized = false;
+		    	try {
+		    		engineContext.initializeBackends(new IQueryBackendInitializer() {
+		    			@Override
+		    			public void initializeWith(IPatternMatcherRuntimeContext context) {
+		    				queryBackends = Maps.newHashMap();
+		    				for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : queryBackendFactories.entrySet()) {
+		    					IQueryBackend backend = factoryEntry.getValue().create(context);
+		    					queryBackends.put(factoryEntry.getKey(), backend);
+		    				}
+		    			}
+		    		});
+		    		initialized = true;
+		    	} finally {
+		    		if (!initialized) 
+		    			queryBackends = null;
+		    	}
+		    }
+		}
+	}
 
-    private IQueryBackend buildReteEngineInternal(IPatternMatcherRuntimeContext context) {
-        ReteEngine engine;
-        engine = new ReteEngine(context, reteThreads);
-        ReteRecipeCompiler compiler = new ReteRecipeCompiler(Options.builderMethod.layoutStrategy(), context);
-        //EPMBuilder builder = new EPMBuilder(buildable, context);
-        engine.setCompiler(compiler);
-        return engine;
-    }
-    
     ///////////////// advanced stuff /////////////
     
     @Override
@@ -250,9 +267,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         			String.format("Cannot wipe() managed IncQuery engine. Attempted for scope %s.", scope));
         }
         // TODO generalize for each query backend
-        if (reteEngine != null) {
-            reteEngine.dispose();
-            reteEngine = null;
+        if (queryBackends != null) {
+        	for (IQueryBackend backend : queryBackends.values()) {
+				backend.dispose();
+			}
+            queryBackends = null;
         }
         matchers.clear();
         lifecycleProvider.engineWiped();
@@ -410,7 +429,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
         checkArgument(!disposed, "Cannot evaluate query on disposed engine!");
         
 		// TODO: there could be different ways for selecting a backend for this query
-		final IQueryBackend backend = getReteEngine();
+		final IQueryBackend backend = getQueryBackend(defaultBackendClass);
 		
 		return backend.getResultProvider(query);
 	}

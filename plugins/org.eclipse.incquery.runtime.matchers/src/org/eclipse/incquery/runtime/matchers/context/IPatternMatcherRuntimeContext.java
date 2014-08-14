@@ -9,15 +9,10 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.runtime.rete.matcher;
+package org.eclipse.incquery.runtime.matchers.context;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
-
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
-import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
-import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
 
 /**
  * Represents all knowledge of the outside world, that is needed durin runtime operation, towards the pattern matcher.
@@ -29,15 +24,8 @@ public interface IPatternMatcherRuntimeContext extends IPatternMatcherContext {
 
     // ---------------------------------------------------------------------------------
 
-    /**
-     * @pre: network, framework, boundary, disconnectables initialised
-     */
-    IManipulationListener subscribePatternMatcherForUpdates(ReteEngine engine);
-
-    /**
-     * @pre: boundary, disconnectables initialised
-     */
-    IPredicateTraceListener subscribePatternMatcherForTraceInfluences(IQueryBackend engine);
+    void subscribeBackendForUpdates(IPatternMatcherRuntimeContextListener contextListener);
+    void unSubscribeBackendFromUpdates(IPatternMatcherRuntimeContextListener contextListener);
 
     Object ternaryEdgeTarget(Object relation);
 

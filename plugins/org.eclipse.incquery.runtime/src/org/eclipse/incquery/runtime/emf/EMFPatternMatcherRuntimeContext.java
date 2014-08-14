@@ -12,6 +12,9 @@
 package org.eclipse.incquery.runtime.emf;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
@@ -25,13 +28,8 @@ import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypePro
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.internal.BaseIndexListener;
-import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
-import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.boundary.IManipulationListener;
-import org.eclipse.incquery.runtime.rete.boundary.IPredicateTraceListener;
-import org.eclipse.incquery.runtime.rete.eval.PredicateEvaluatorNode;
-import org.eclipse.incquery.runtime.rete.matcher.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
 
 /**
  * @author Bergmann Gábor
@@ -69,6 +67,11 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
 	private final NavigationHelper baseIndex;
     private BaseIndexListener listener;
     private IncQueryEngine iqEngine;
+    
+    private final Set<EClass> classes = new HashSet<EClass>();
+    private final Set<EDataType> dataTypes = new HashSet<EDataType>();
+    private final Set<EStructuralFeature> features = new HashSet<EStructuralFeature>();
+
 
     /**
      * Notifier must be EObject, Resource or ResourceSet
@@ -81,7 +84,37 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         this.baseIndex = baseIndex;
         // this.waitingVisitors = new ArrayList<EMFVisitor>();
         // this.traversalCoalescing = false;
+        this.listener = new BaseIndexListener(iqEngine, baseIndex);
     }
+    
+    
+    public void ensure(EClass eClass) {
+        if (classes.add(eClass)) {
+            final Set<EClass> newClasses = Collections.singleton(eClass);
+            if (!baseIndex.isInWildcardMode())
+                baseIndex.registerEClasses(newClasses);
+            baseIndex.addInstanceListener(newClasses, listener);
+        }
+    }
+
+    public void ensure(EDataType eDataType) {
+        if (dataTypes.add(eDataType)) {
+            final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
+            if (!baseIndex.isInWildcardMode())
+                baseIndex.registerEDataTypes(newDataTypes);
+            baseIndex.addDataTypeListener(newDataTypes, listener);
+        }
+    }
+
+    public void ensure(EStructuralFeature feature) {
+        if (features.add(feature)) {
+            final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
+            if (!baseIndex.isInWildcardMode())
+                baseIndex.registerEStructuralFeatures(newFeatures);
+            baseIndex.addFeatureListener(newFeatures, listener);
+        }
+    }
+    
 
     @Override
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
@@ -122,7 +155,7 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     @Override
     public void enumerateDirectBinaryEdgeInstances(Object typeObject, final ModelElementPairCrawler crawler) {
         final EStructuralFeature structural = (EStructuralFeature) typeObject;
-        listener.ensure(structural);
+        ensure(structural);
 
         baseIndex.processAllFeatureInstances(structural, new IEStructuralFeatureProcessor() {
 
@@ -153,11 +186,11 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     public void enumerateDirectUnaryInstances(final Object typeObject, final ModelElementCrawler crawler) {
         if (typeObject instanceof EClass) {
             final EClass eClass = (EClass) typeObject;
-            listener.ensure(eClass);
+            ensure(eClass);
 			baseIndex.processDirectInstances(eClass, new ClassCrawler(crawler));
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
-            listener.ensure(eDataType);
+            ensure(eDataType);
             baseIndex.processDataTypeInstances(eDataType, new DataTypeCrawler(crawler));
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
@@ -167,16 +200,20 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     public void enumerateAllUnaryInstances(final Object typeObject, final ModelElementCrawler crawler) {
         if (typeObject instanceof EClass) {
             final EClass eClass = (EClass) typeObject;
-            listener.ensure(eClass);
+            ensure(eClass);
             baseIndex.processAllInstances(eClass, new ClassCrawler(crawler));
         } else if (typeObject instanceof EDataType) {
             final EDataType eDataType = (EDataType) typeObject;
-            listener.ensure(eDataType);
+            ensure(eDataType);
             baseIndex.processDataTypeInstances(eDataType, new DataTypeCrawler(crawler));
         } else
             throw new IllegalArgumentException("typeObject has invalid type " + typeObject.getClass().getName());
     }
 
+    
+    
+    
+    
     @Override
     public void modelReadLock() {
         // TODO runnable? domain.runExclusive(read)
@@ -191,10 +228,13 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
 
     @Override
     // TODO Transactional?
-    public IManipulationListener subscribePatternMatcherForUpdates(ReteEngine engine) {
-        if (listener == null)
-            listener = new BaseIndexListener(iqEngine, engine, baseIndex);
-        return listener;
+    public void subscribeBackendForUpdates(IPatternMatcherRuntimeContextListener contextListener) {
+        listener.addListener(contextListener);
+    }
+    @Override
+    public void unSubscribeBackendFromUpdates(
+    		IPatternMatcherRuntimeContextListener contextListener) {
+        listener.removeListener(contextListener);
     }
 
     @Override
@@ -207,22 +247,14 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public IPredicateTraceListener subscribePatternMatcherForTraceInfluences(IQueryBackend engine) {
-        // No ASMFunctions, use DUMMY
-        return new IPredicateTraceListener() {
-            @Override
-            public void registerSensitiveTrace(Tuple trace, PredicateEvaluatorNode node) {
-            }
-
-            @Override
-            public void unregisterSensitiveTrace(Tuple trace, PredicateEvaluatorNode node) {
-            }
-
-            @Override
-            public void disconnect() {
-            }
-        };
+    public void dispose() {
+        baseIndex.removeFeatureListener(features, listener);
+        features.clear();
+        baseIndex.removeInstanceListener(classes, listener);
+        classes.clear();
+        baseIndex.removeDataTypeListener(dataTypes, listener);
+        dataTypes.clear();
     }
+    
 
 }

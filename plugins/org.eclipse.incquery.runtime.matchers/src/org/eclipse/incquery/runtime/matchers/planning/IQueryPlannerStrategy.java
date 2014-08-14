@@ -11,7 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.planning;
 
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 /**
