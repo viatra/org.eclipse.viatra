@@ -220,7 +220,7 @@
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
     <workingSet
-        name="Language">
+        name="IncQuery Language">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -232,7 +232,7 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Runtime">
+        name="IncQuery Runtime">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -244,7 +244,8 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Tooling">
+        name="IncQuery Tooling"
+        id="">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -256,7 +257,7 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Addons">
+        name="IncQuery Addons">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -283,7 +284,7 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Testing">
+        name="IncQuery Testing">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -295,7 +296,7 @@
       </predicate>
     </workingSet>
     <workingSet
-        name="Release Engineering">
+        name="IncQuery Release Engineering">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
