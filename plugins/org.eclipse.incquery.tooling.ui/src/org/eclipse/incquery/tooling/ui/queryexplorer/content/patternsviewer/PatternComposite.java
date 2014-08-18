@@ -208,7 +208,9 @@ public class PatternComposite extends PatternComponent {
         }
 
         if (allSelected != this.selected) {
-            QueryExplorer.getInstance().getPatternsViewer().setChecked(this, allSelected);
+            if(QueryExplorer.getInstance() != null) {
+                QueryExplorer.getInstance().getPatternsViewer().setChecked(this, allSelected);
+            }
             this.selected = allSelected;
             changedComponents.add(this);
         }
@@ -228,7 +230,9 @@ public class PatternComposite extends PatternComponent {
             if (child.selected != this.selected) {
                 changedComponents.add(child);
                 child.selected = this.selected;
-                QueryExplorer.getInstance().getPatternsViewer().setChecked(child, this.selected);
+                if(QueryExplorer.getInstance() != null) {
+                    QueryExplorer.getInstance().getPatternsViewer().setChecked(child, this.selected);
+                }
             }
             changedComponents.addAll(child.propagateSelectionStateDownwards());
         }
@@ -293,14 +297,16 @@ public class PatternComposite extends PatternComponent {
 
     @Override
     public void updateHasChildren() {
-        CheckboxTreeViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
-        if (patternsViewer.getExpandedState(this)) {
-            for (PatternComponent pc : this.children) {
-                pc.updateHasChildren();
+        if(QueryExplorer.getInstance() != null) {
+            CheckboxTreeViewer patternsViewer = QueryExplorer.getInstance().getPatternsViewer();
+            if (patternsViewer.getExpandedState(this)) {
+                for (PatternComponent pc : this.children) {
+                    pc.updateHasChildren();
+                }
+            } else {
+                //patternsViewer.setChecked(this, this.selected);
+                patternsViewer.setHasChildren(this, this.children.size() > 0);
             }
-        } else {
-            //patternsViewer.setChecked(this, this.selected);
-            patternsViewer.setHasChildren(this, this.children.size() > 0);
         }
     }
 

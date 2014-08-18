@@ -58,7 +58,9 @@ public abstract class PatternComponent {
         if (this.selected != checked) {
             changedComponents.add(this);
             this.selected = checked;
-            QueryExplorer.getInstance().getPatternsViewer().setChecked(this, checked);
+            if(QueryExplorer.getInstance() != null) {
+                QueryExplorer.getInstance().getPatternsViewer().setChecked(this, checked);
+            }
         }
 
         changedComponents.addAll(propagateSelectionStateDownwards());
