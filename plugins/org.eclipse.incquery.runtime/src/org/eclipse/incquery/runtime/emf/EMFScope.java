@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
- * A IncQuery scope consisting of EMF objects contained in an EMF resource set, a single resource, or a containment subtree below a given object.
+ * A IncQuery scope consisting of EMF objects contained in an EMF resource set, a single resource, or a containment subtree below a given EObject.
  * 
  * <p> The scope is characterized by a root, and some options (see {@link BaseIndexOptions}) such as dynamic EMF mode, subtree filtering, etc.
  * <p>

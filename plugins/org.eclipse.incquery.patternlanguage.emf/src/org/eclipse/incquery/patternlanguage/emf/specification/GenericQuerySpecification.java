@@ -21,6 +21,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
@@ -202,6 +204,11 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
 		return GenericPatternMatch.newMatch(this, parameters);
 	}
 
+	@Override
+	public Class<? extends IncQueryScope> getPreferredScopeClass() {
+		return EMFScope.class;
+	}
 
+	
     
 }

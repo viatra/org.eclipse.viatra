@@ -73,50 +73,6 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
         } 	
         return matcher;
 	}
-    /**
-     * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). 
-     * If a pattern matcher is already constructed with the same root, only a light-weight reference is returned.
-     * 
-     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-     * The match set will be incrementally refreshed upon updates from this scope.
-     * 
-     * <p>
-     * The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so
-     * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
-     * 
-     * @param pattern
-     *            the EMF-IncQuery pattern for which the matcher is to be constructed.
-     * @param emfRoot
-     *            the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended:
-     *            Resource or ResourceSet.
-     * @throws IncQueryException
-     *             if an error occurs during pattern matcher creation
-	 * @deprecated use {@link #on(Pattern, IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}
-	 * 
-	 */
-	@Deprecated
-    public GenericPatternMatcher(Pattern pattern, Notifier emfRoot) throws IncQueryException {
-        this(pattern, IncQueryEngine.on(emfRoot));
-    }
-
-    /**
-     * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-     * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned. 
-     * The match set will be incrementally refreshed upon updates.
-     * 
-     * @param pattern
-     *            the EMF-IncQuery pattern for which the matcher is to be constructed.
-     * @param engine
-     *            the existing EMF-IncQuery engine in which this matcher will be created.
-     * @throws IncQueryException
-     *             if an error occurs during pattern matcher creation
-	 * @deprecated use {@link #on(Pattern, IncQueryEngine)} instead.
-	 * 
-	 */
-	@Deprecated
-    public GenericPatternMatcher(Pattern pattern, IncQueryEngine engine) throws IncQueryException {
-        this(engine, new GenericQuerySpecification(pattern));
-    }
 
     private GenericPatternMatcher(IncQueryEngine engine, GenericQuerySpecification specification) throws IncQueryException {
         super(engine, specification);

@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 /**
- * Represents all knowledge of the outside world, that is needed durin runtime operation, towards the pattern matcher.
+ * Represents all knowledge of the outside world, that is needed during runtime operation, towards the pattern matcher.
  * 
  * @author Gabor Bergmann
  * 

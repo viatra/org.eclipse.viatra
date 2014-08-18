@@ -12,6 +12,8 @@
 package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
@@ -84,5 +86,11 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * @return the (partial) match object.
      */
     public abstract IPatternMatch newMatch(Object... parameters);
+    
+    /**
+     * The query is formulated over this kind of modeling platform.
+     * E.g. for queries over EMF models, the {@link EMFScope} class is returned.
+     */
+    public Class<? extends IncQueryScope> getPreferredScopeClass();
     
 }

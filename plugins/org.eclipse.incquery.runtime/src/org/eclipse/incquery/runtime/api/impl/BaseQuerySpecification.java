@@ -72,12 +72,20 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
         IncQueryEngine engine = IncQueryEngine.on(emfRoot);
-        return instantiate(engine);
+        return getMatcher(engine);
     }
 
     @Override
     public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-        return instantiate(engine);
+    	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
+    		return instantiate(engine);
+    	else throw new IncQueryException(
+    			String.format(
+    					"Scope class incompatibility: the query %s is formulated over query scopes of class %s, " + 
+    					" thus the query engine formulated over scope %s of class %s cannot evaluate it.", 
+    					this.getFullyQualifiedName(), this.getPreferredScopeClass().getCanonicalName(),
+    					engine.getScope(), engine.getScope().getClass().getCanonicalName()), 
+    			"Incompatible scope classes of engine and query.");
     }
 
     protected PQueryStatus status = PQueryStatus.UNINITIALIZED;

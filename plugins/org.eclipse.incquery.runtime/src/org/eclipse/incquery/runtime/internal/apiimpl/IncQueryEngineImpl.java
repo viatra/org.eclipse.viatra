@@ -58,7 +58,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
- * An EMF-IncQuery engine back-end (implementation)
+ * An IncQuery engine back-end (implementation)
  * 
  * @author Bergmann Gábor
  * 

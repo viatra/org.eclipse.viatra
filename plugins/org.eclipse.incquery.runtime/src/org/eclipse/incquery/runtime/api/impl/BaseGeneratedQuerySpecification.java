@@ -19,6 +19,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Preconditions;
@@ -70,4 +72,10 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
         Preconditions.checkState(literal != null, "Unknown literal %s in enum %s", literalName, enumName);
         return literal;
     }
+    
+	@Override
+	public Class<? extends IncQueryScope> getPreferredScopeClass() {
+		return EMFScope.class;
+	}
+    
 }
