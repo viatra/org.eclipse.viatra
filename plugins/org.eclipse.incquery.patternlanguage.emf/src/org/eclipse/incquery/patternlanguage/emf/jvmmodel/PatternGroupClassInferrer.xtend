@@ -18,7 +18,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedPatternGroup
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmConstructor
@@ -28,6 +27,7 @@ import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -56,7 +56,7 @@ class PatternGroupClassInferrer {
 		groupClass.members += model.inferInstanceField(groupClass)
 		groupClass.members += model.inferConstructor(groupClass)
 		for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
-			groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredClass(typeof(BaseGeneratedQuerySpecification)))
+			groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredClass(typeof(BaseGeneratedEMFQuerySpecification)))
 			groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(typeof(BaseMatcher)))
 		}
 		groupClass

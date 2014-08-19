@@ -19,8 +19,8 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
+import org.eclipse.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -42,23 +42,26 @@ import com.google.common.collect.Lists;
 
 /**
  * This is a generic query specification for EMF-IncQuery pattern matchers, for "interpretative" query execution. Instantiate the
- * specification with any registered pattern, and then use the specification to obtain an actual pattern matcher operating on a
- * given model.
+ * specification with any registered pattern (or through a {@link SpecificationBuilder} instance), and then use the specification 
+ * to obtain an actual pattern matcher operating on a given model.
  *
  * <p>
  * When available, consider using the pattern-specific generated matcher API instead.
  *
  * <p>
- * The created matcher will be of type GenericPatternMatcher. Matches of the pattern will be represented as
+ * The created matcher will be of type org.eclipse.incquery.runtime.api.GenericPatternMatcher. Matches of the pattern will be represented as
  * GenericPatternMatch.
  *
- * @see GenericPatternMatcher
+ * @see org.eclipse.incquery.runtime.api.GenericPatternMatcher
  * @see GenericPatternMatch
  * @see GenericMatchProcessor
  * @author Bergmann Gábor
  * @noinstantiate This class is not intended to be instantiated by clients
  */
-public class GenericQuerySpecification extends BaseQuerySpecification<GenericPatternMatcher> implements InitializablePQuery{
+public class GenericQuerySpecification 
+	extends org.eclipse.incquery.runtime.api.GenericQuerySpecification<GenericPatternMatcher> 
+	implements InitializablePQuery
+{
 
     private Pattern pattern;
 
@@ -93,11 +96,7 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
         if (delayedInitialization) {
             setStatus(PQueryStatus.UNINITIALIZED);
         } else {
-            try {
-                setBodies(doGetContainedBodies());
-            } catch (RewriterException e) {
-                throw new IncQueryException(e);
-            }
+            setBodies(doGetContainedBodies());
         }
     }
 
@@ -191,18 +190,13 @@ public class GenericQuerySpecification extends BaseQuerySpecification<GenericPat
     @Override
     protected Set<PBody> doGetContainedBodies() throws IncQueryException {
         SpecificationBuilder converter = new SpecificationBuilder();
-        return converter.getBodies(pattern, this);
+        try {
+			return converter.getBodies(pattern, this);
+		} catch (RewriterException e) {
+            addError(new PProblem(e, e.getShortMessage()));
+            throw new RuntimeException(e);
+		}
     }
-
-	@Override
-	public GenericPatternMatch newEmptyMatch() {
-		return GenericPatternMatch.newEmptyMatch(this);
-	}
-
-	@Override
-	public GenericPatternMatch newMatch(Object... parameters) {
-		return GenericPatternMatch.newMatch(this, parameters);
-	}
 
 	@Override
 	public Class<? extends IncQueryScope> getPreferredScopeClass() {

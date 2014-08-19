@@ -196,11 +196,6 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void reportPatternDependency(Object pattern) {
-        // Ignore, because we don't support changing machines here
-    }
-
     public Logger getLogger() {
         return logger;
     }

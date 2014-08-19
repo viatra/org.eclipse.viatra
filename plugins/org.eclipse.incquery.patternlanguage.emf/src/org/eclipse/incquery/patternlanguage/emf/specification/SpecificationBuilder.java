@@ -27,6 +27,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
@@ -34,9 +35,13 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -59,6 +64,10 @@ import com.google.common.collect.Sets;
  *
  */
 public class SpecificationBuilder {
+
+    private static final Logger LOGGER = IncQueryLoggingUtil.getLogger(BaseQuerySpecification.class);
+    protected static final IPatternMatcherContext CONTEXT = new EMFPatternMatcherContext(LOGGER);
+    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(CONTEXT);
 
     private Logger logger = Logger.getLogger(SpecificationBuilder.class);
     private NameToSpecificationMap patternMap;
@@ -201,7 +210,9 @@ public class SpecificationBuilder {
                 	buildBodies(newPattern, specification, converter);
             	} catch (IncQueryException e) {
             		specification.addError(new PProblem(e, e.getShortMessage()));
-            	}
+                } catch (RewriterException e) {
+                	specification.addError(new PProblem(e, e.getShortMessage()));
+                }
                 if (!PQueryStatus.ERROR.equals(specification.getStatus())) {
                     for (PQuery query : specification.getDirectReferredQueries()) {
                         dependantQueries.put(query, specification);
@@ -241,12 +252,12 @@ public class SpecificationBuilder {
         }
     }
 
-    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws IncQueryException {
+    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws IncQueryException, RewriterException {
         return buildBodies(pattern, query, new EPMToPBody(pattern, query, context, patternMap));
     }
 
     protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
-            throws IncQueryException {
+            throws IncQueryException, RewriterException {
         Set<PBody> bodies = getBodies(pattern, converter);
         try {
             query.initializeBodies(bodies);
@@ -256,17 +267,20 @@ public class SpecificationBuilder {
         return bodies;
     }
 
-    public Set<PBody> getBodies(Pattern pattern, PQuery query) throws IncQueryException {
+    public Set<PBody> getBodies(Pattern pattern, PQuery query) throws IncQueryException, RewriterException {
         return getBodies(pattern, new EPMToPBody(pattern, query, context, patternMap));
     }
     
-    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException {
+    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException, RewriterException {
         Set<PBody> bodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
             PBody pBody = converter.toPBody(body);
             bodies.add(pBody);
         }
-        return bodies;
+        // TODO this should be temporary, before normalization is handled by a caching rewriter
+        PDisjunction tempDisjunction = new PDisjunction(bodies);
+        tempDisjunction = NORMALIZER.rewrite(tempDisjunction);
+        return tempDisjunction.getBodies();
     }
 
     public IQuerySpecification<?> getSpecification(Pattern pattern) {

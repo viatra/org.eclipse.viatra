@@ -22,7 +22,6 @@ import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmType
@@ -35,6 +34,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -345,7 +345,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	}
 	
 	def findInferredSpecification(Pattern pattern) {
-		pattern.findInferredClass(typeof (BaseGeneratedQuerySpecification))
+		pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification))
 	}
 	
 	def findInferredClass(EObject pattern, Class clazz) {

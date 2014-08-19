@@ -28,7 +28,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 
@@ -82,7 +82,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
         if(querySpec != null) {
-            if (querySpec instanceof BaseGeneratedQuerySpecification) {
+            if (querySpec instanceof BaseGeneratedEMFQuerySpecification) {
                 result = createSettingDelegate(eStructuralFeature, querySpec, false, false);
             } else {
                 result = createSettingDelegate(eStructuralFeature, querySpec, true, true);                

@@ -16,24 +16,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
-import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -50,9 +44,6 @@ import com.google.common.collect.Sets;
 public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
-    private static final Logger LOGGER = IncQueryLoggingUtil.getLogger(BaseQuerySpecification.class);
-    protected static final IPatternMatcherContext CONTEXT = new EMFPatternMatcherContext(LOGGER);
-    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(CONTEXT);
     
     private final class AnnotationNameTester implements Predicate<PAnnotation> {
         private final String annotationName;
@@ -194,18 +185,14 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         } catch (IncQueryException e) {
             addError(new PProblem(e, e.getShortMessage()));
             throw new RuntimeException(e);
-        } catch (RewriterException e) {
-            addError(new PProblem(e));
-            throw new RuntimeException(e);
         }
     }
 
-    protected final void setBodies(Set<PBody> bodies) throws RewriterException {
+    protected final void setBodies(Set<PBody> bodies) {
         canonicalDisjunction = new PDisjunction(this, bodies);
         for (PBody body : canonicalDisjunction.getBodies()) {
             body.setStatus(null);
         }
-        NORMALIZER.rewrite(canonicalDisjunction);
         setStatus(PQueryStatus.OK);
     }
     

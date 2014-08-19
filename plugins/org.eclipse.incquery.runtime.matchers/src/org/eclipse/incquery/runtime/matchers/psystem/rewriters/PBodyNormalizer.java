@@ -36,7 +36,7 @@ import com.google.common.base.Preconditions;
  * @author Gabor Bergmann
  * 
  */
-public class PBodyNormalizer extends PDisjunctionRewriter {
+public class PBodyNormalizer extends CachingPDisjunctionRewriter {
 
     /**
      * If set to true, shrinks the net by avoiding unnecessary typechecks
@@ -48,7 +48,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         this.context = context;
     }
     @Override
-    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
+    protected PDisjunction doRewrite(PDisjunction disjunction) throws RewriterException {
         Preconditions.checkArgument(disjunction.isMutable(), "Disjunction must be mutable");
         try {
             for (PBody body : disjunction.getBodies()) {
@@ -76,12 +76,12 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         // UNIFICATION AND WEAK INEQUALITY ELMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
+        removeMootEqualities(body);
 
         // UNARY ELIMINATION WITH TYPE INFERENCE
         if (calcImpliedTypes) {
             eliminateInferrableUnaryTypes(body, context);
         }
-        removeMootEqualities(body);
         // PREVENTIVE CHECKS
         checkSanity(body);
         return body;

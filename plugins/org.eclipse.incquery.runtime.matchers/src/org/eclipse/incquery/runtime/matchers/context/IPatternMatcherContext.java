@@ -92,8 +92,6 @@ public interface IPatternMatcherContext {
     // boolean checkBelowContainer(Object container, Object contained);
     // boolean checkInContainer(Object container, Object contained);
 
-    void reportPatternDependency(Object pattern);
-
     // Logger getLogger();
     void logFatal(String message);
 

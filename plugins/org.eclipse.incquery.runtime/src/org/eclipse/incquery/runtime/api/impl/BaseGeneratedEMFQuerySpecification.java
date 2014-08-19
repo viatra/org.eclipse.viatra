@@ -26,15 +26,15 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import com.google.common.base.Preconditions;
 
 /**
- * Provides common functionality of pattern-specific generated query specifications.
+ * Provides common functionality of pattern-specific generated query specifications over the EMF scope.
  *
  * @author Bergmann Gábor
  * @author Mark Czotter
  */
-public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
+public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
 
-    public BaseGeneratedQuerySpecification() {
+    public BaseGeneratedEMFQuerySpecification() {
         super();
         ensureInitialized();
     }

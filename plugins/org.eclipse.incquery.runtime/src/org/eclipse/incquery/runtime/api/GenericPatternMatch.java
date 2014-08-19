@@ -9,11 +9,10 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.incquery.patternlanguage.emf.specification;
+package org.eclipse.incquery.runtime.api;
 
 import java.util.Arrays;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 
 /**
@@ -26,10 +25,10 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
  */
 public abstract class GenericPatternMatch extends BasePatternMatch {
 
-    private final GenericQuerySpecification specification;
+    private final GenericQuerySpecification<? extends GenericPatternMatcher> specification;
     private final Object[] array;
 
-    private GenericPatternMatch(GenericQuerySpecification specification, Object[] array) {
+    private GenericPatternMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
         super();
         this.specification = specification;
         this.array = array;
@@ -95,7 +94,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
     }
 
     @Override
-    public GenericQuerySpecification specification() {
+    public GenericQuerySpecification<? extends GenericPatternMatcher> specification() {
         return specification;
     }
     
@@ -105,7 +104,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      * 
      * @return the empty match
      */
-    public static GenericPatternMatch newEmptyMatch(GenericQuerySpecification specification) {
+    public static GenericPatternMatch newEmptyMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification) {
   	  return new Mutable(specification, new Object[specification.getParameters().size()]);
     }
 
@@ -117,7 +116,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      *            the fixed value of pattern parameters, or null if not bound.
      * @return the new, mutable (partial) match object.
      */
-    public static GenericPatternMatch newMutableMatch(GenericQuerySpecification specification, Object... parameters) {
+    public static GenericPatternMatch newMutableMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object... parameters) {
   	  return new Mutable(specification, parameters);
     }
 
@@ -131,7 +130,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      *            the fixed value of pattern parameters, or null if not bound.
      * @return the (partial) match object.
      */
-    public static GenericPatternMatch newMatch(GenericQuerySpecification specification, Object... parameters) {
+    public static GenericPatternMatch newMatch(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object... parameters) {
   	  return new Immutable(specification, Arrays.copyOf(parameters, parameters.length));
     }
     
@@ -141,7 +140,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
 	}
 
     static final class Mutable extends GenericPatternMatch {
-		Mutable(GenericQuerySpecification specification, Object[] array) {
+		Mutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
 			super(specification, array);
 		}
 
@@ -151,7 +150,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
 		}
     }
     static final class Immutable extends GenericPatternMatch {
-    	Immutable(GenericQuerySpecification specification, Object[] array) {
+    	Immutable(GenericQuerySpecification<? extends GenericPatternMatcher> specification, Object[] array) {
 			super(specification, array);
 		}
 
