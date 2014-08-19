@@ -18,6 +18,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePacka
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
@@ -30,6 +32,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 
@@ -44,6 +47,8 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
     private IScopeProvider scopeProvider;
     @Inject
     private ReferenceProposalCreator crossReferenceProposalCreator;
+    @Inject
+    private ValidFeatureDescription featureDescriptionPredicate;
 
     @Override
     public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context,
@@ -113,7 +118,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
         if (prefix.length() > 0 && !Character.isJavaIdentifierStart(prefix.charAt(0))) {
             return;
         }
-        
+
         final PatternBody body = EcoreUtil2.getContainerOfType(context, PatternBody.class);
         for (Variable v : body.getVariables()) {
             if (!v.getName().startsWith("_")) {
@@ -121,10 +126,27 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
                 acceptor.accept(proposal);
             }
         }
-        
-        Function<IEObjectDescription, ICompletionProposal> proposalFactory = getProposalFactory(getFeatureCallRuleName(), contentAssistContext);
-        proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);        
+
+        Function<IEObjectDescription, ICompletionProposal> proposalFactory = getProposalFactory(
+                getFeatureCallRuleName(), contentAssistContext);
+        proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);
     }
-    
-    
+
+    @Override
+    public void completePatternCall_PatternRef(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        /*
+         * filter not local, private patterns (private patterns in other resources) this information stored in the
+         * userdata of the EObjectDescription EObjectDescription only created for not local eObjects, so check for
+         * resource equality is unnecessary.
+         */
+        lookupCrossReference(((CrossReference) assignment.getTerminal()), context, acceptor,
+                Predicates.and(featureDescriptionPredicate, new Predicate<IEObjectDescription>() {
+
+                    @Override
+                    public boolean apply(IEObjectDescription input) {
+                        return !("true".equals(input.getUserData("private")));
+                    }
+                }));
+    }
 }

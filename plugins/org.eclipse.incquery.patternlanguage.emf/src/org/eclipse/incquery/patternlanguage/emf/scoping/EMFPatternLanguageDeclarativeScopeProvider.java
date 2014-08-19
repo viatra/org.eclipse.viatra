@@ -39,7 +39,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.util.PatternLanguageSwitch;
-import org.eclipse.incquery.patternlanguage.scoping.PatternLanguageDeclarativeScopeProvider;
+import org.eclipse.incquery.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
@@ -64,7 +64,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * 
  */
-public class EMFPatternLanguageDeclarativeScopeProvider extends PatternLanguageDeclarativeScopeProvider {
+public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclarativeScopeProvider {
     @Inject
     private IQualifiedNameConverter qualifiedNameConverter;
     
