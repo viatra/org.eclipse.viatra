@@ -197,7 +197,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param pattern
      */
-    @Check(CheckType.NORMAL)
+    @Check(/*CheckType.NORMAL*/)
     public void checkPatternParametersType(Pattern pattern) {
         for (Variable variable : pattern.getParameters()) {
             EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
@@ -231,7 +231,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param pattern
      */
-    @Check(CheckType.NORMAL)
+    @Check(/*CheckType.NORMAL*/)
     public void checkPatternVariablesType(Pattern pattern) {
         for (PatternBody patternBody : pattern.getBodies()) {
             for (Variable variable : patternBody.getVariables()) {
