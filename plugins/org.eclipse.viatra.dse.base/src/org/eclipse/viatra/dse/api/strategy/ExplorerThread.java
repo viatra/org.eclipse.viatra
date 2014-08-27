@@ -52,7 +52,7 @@ public class ExplorerThread implements IExplorerThread {
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
-        this.strategyBase = context.getStrategyBase();
+        this.strategyBase = context.getStrategy();
     }
 
     /**

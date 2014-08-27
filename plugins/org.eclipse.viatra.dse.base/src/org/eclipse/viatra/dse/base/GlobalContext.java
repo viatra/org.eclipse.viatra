@@ -72,7 +72,7 @@ public class GlobalContext {
     /**
      * Starts a new thread to explore the design space.
      * 
-     * @param strategyBase
+     * @param strategy
      *            The {@link Strategy}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
@@ -81,7 +81,7 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, Strategy strategyBase) {
+            boolean cloneModel, Strategy strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
@@ -107,7 +107,7 @@ public class GlobalContext {
             ThreadContext newThreadContext;
             if (cloneModel) {
                 TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategyBase, ted, root != null ? null : trajectoryInfo,
+                newThreadContext = new ThreadContext(this, strategy, ted, root != null ? null : trajectoryInfo,
                         originalThreadContext.getGuidance());
             } else {
                 // TODO This is only appropriate if this is the first thread
@@ -115,13 +115,13 @@ public class GlobalContext {
                 newThreadContext = originalThreadContext;
             }
             // TODO : clone undo list? slave strategy can't go further back...
-            IExplorerThread strategy = strategyFactory.createStrategy(newThreadContext);
-            newThreadContext.setStrategy(strategy);
+            IExplorerThread explorerThread = strategyFactory.createStrategy(newThreadContext);
+            newThreadContext.setExplorerThread(explorerThread);
 
-            boolean isSuccessful = threadPool.tryStartNewStrategy(strategy);
+            boolean isSuccessful = threadPool.tryStartNewStrategy(explorerThread);
 
             if (isSuccessful) {
-                runningThreads.add(strategy);
+                runningThreads.add(explorerThread);
 
                 state = ExplorationProcessState.RUNNING;
                 ++numberOfStartedThreads;
@@ -138,7 +138,7 @@ public class GlobalContext {
                     logger.debug("New worker started, active workers: " + runningThreads.size());
                 }
 
-                return strategy;
+                return explorerThread;
             }
         }
         return null;
@@ -154,7 +154,7 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
-        return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategyBase());
+        return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Strategy strategyBase) {
@@ -162,11 +162,11 @@ public class GlobalContext {
     }
 
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
-        return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategyBase());
+        return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategy());
     }
 
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
-        return tryStartNewThread(originalThreadContext, root, true, originalThreadContext.getStrategyBase());
+        return tryStartNewThread(originalThreadContext, root, true, originalThreadContext.getStrategy());
     }
 
     public synchronized void strategyFinished(IExplorerThread strategy) {

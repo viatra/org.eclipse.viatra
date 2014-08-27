@@ -41,8 +41,8 @@ import org.eclipse.viatra.dse.guidance.Guidance;
 public class ThreadContext {
 
     private final GlobalContext globalContext;
-    private final Strategy strategyBase;
-    private/* final */IExplorerThread strategy;
+    private final Strategy strategy;
+    private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
     private TransactionalEditingDomain ted;
@@ -72,7 +72,7 @@ public class ThreadContext {
     public ThreadContext(final GlobalContext globalContext, Strategy strategyBase, TransactionalEditingDomain ted,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
-        this.strategyBase = strategyBase;
+        this.strategy = strategyBase;
         this.ted = ted;
 
         // clone if it is not null
@@ -146,8 +146,6 @@ public class ThreadContext {
         }
     }
 
-    // *** getters and setters
-
     public RuleEngine getRuleEngine() {
         return ruleEngine;
     }
@@ -180,16 +178,16 @@ public class ThreadContext {
         this.guidance = guidance;
     }
 
-    public Strategy getStrategyBase() {
-        return strategyBase;
-    }
-
-    public IExplorerThread getStrategy() {
+    public Strategy getStrategy() {
         return strategy;
     }
 
-    public void setStrategy(IExplorerThread strategy) {
-        this.strategy = strategy;
+    public IExplorerThread getExplorerThread() {
+        return explorerThread;
+    }
+
+    public void setExplorerThread(IExplorerThread explorerThread) {
+        this.explorerThread = explorerThread;
     }
 
 }
