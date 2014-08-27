@@ -22,6 +22,13 @@ import java.util.List;
 
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
+/**
+ * Instances of this class can be used for running tests configured by a csv file (each row is a test case) and create
+ * the corresponding csv results file.
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public abstract class BaseTestRunner {
 
     private static final String CSV = ".csv";
@@ -49,8 +56,26 @@ public abstract class BaseTestRunner {
 
     }
 
+    /**
+     * Returns a string which will be the header of the results file. The string should contain one line with column
+     * names separated by semicolons. Note that there are a few predefined columns, see {@link BaseResult} for details.
+     * 
+     * @return Column names separated by semicolons.
+     */
     public abstract String getResultsHeader();
 
+    /**
+     * Runs the desired tests.
+     * 
+     * @param configRow
+     *            The configuration row.
+     * @param result
+     *            The base results, used to fill the attributes {@code report} and {@code runTime}.
+     * @return the results separated by semicolons, in the order defined by the
+     *         {@link BaseTestRunner#getResultsHeader()} method.
+     * 
+     * @throws IncQueryException
+     */
     public abstract String runTestWithConfig(Row configRow, BaseResult result) throws IncQueryException;
 
     public void runTests() throws IOException, IncQueryException {

@@ -41,6 +41,12 @@ import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
 
+/**
+ * This abstract class helps to test out genetic algorithms run by the {@link GeneticDesignSpaceExplorer} if inherited.
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public abstract class GeneticTestRunner extends BaseTestRunner {
 
     // Config
@@ -81,14 +87,43 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         this.goals = goals;
     }
 
+    /**
+     * Creates a {@link GeneticDesignSpaceExplorer} configured with the transformations, objectives, serializer, etc.
+     * 
+     * @param configRow
+     *            The corrsponding row from the configuration csv file.
+     * @return The configured {@link GeneticDesignSpaceExplorer}.
+     * @throws IncQueryException
+     */
     public abstract GeneticDesignSpaceExplorer createGdse(Row configRow) throws IncQueryException;
 
+    /**
+     * If needed, an XMI serializer can be registered here, for loading the test models.
+     */
     public abstract void registerXMISerailizer();
 
+    /**
+     * Custom result columns can be registered by the implementation.
+     * 
+     * @return A list of string containing the column names.
+     */
     public abstract List<String> getCustomResultColumns();
 
+    /**
+     * The implementation adds results, if custom result columns are defined.
+     * 
+     * @param configRow
+     *            The row containing the configuration.
+     * @param resultsRow
+     *            Add results to this row.
+     */
     public abstract void addResults(Row configRow, Row resultsRow);
 
+    /**
+     * Custom {@link GeneticDebugger} can be registered by returning an instance in the implementation.
+     * 
+     * @return An instance of {@link GeneticDebugger}.
+     */
     public abstract GeneticDebugger getGeneticDebugger();
 
     private void addKeysToResultHeader(GeneticDesignSpaceExplorer gdse) {
