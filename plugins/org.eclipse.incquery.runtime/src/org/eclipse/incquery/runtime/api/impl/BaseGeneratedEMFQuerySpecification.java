@@ -20,8 +20,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 
 import com.google.common.base.Preconditions;
 
@@ -33,7 +35,9 @@ import com.google.common.base.Preconditions;
  */
 public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
-
+	
+	protected static final IPatternMatcherContext CONTEXT = EMFPatternMatcherContext.STATIC_INSTANCE;
+	
     public BaseGeneratedEMFQuerySpecification() {
         super();
         ensureInitialized();

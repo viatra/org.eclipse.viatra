@@ -50,12 +50,8 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
     @Override
     protected PDisjunction doRewrite(PDisjunction disjunction) throws RewriterException {
         Preconditions.checkArgument(disjunction.isMutable(), "Disjunction must be mutable");
-        try {
-            for (PBody body : disjunction.getBodies()) {
-                normalizeBody(body);
-            }
-        } catch (QueryPlannerException e) {
-            throw new RewriterException("Error during rewriting: {1}", new String[]{e.getMessage()}, e.getShortMessage(), disjunction.getQuery(), e);
+        for (PBody body : disjunction.getBodies()) {
+            normalizeBody(body);
         }
         return disjunction;
     }
@@ -70,10 +66,17 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
      * 
      * @param body
      * @return
-     * @throws QueryPlannerException
      */
-    PBody normalizeBody(PBody body) throws QueryPlannerException {
-        // UNIFICATION AND WEAK INEQUALITY ELMINATION
+    public PBody normalizeBody(PBody body) throws RewriterException {
+        try {
+			return normalizeBodyInternal(body);
+		} catch (QueryPlannerException e) {
+            throw new RewriterException("Error during rewriting: {1}", new String[]{e.getMessage()}, e.getShortMessage(), body.getPattern(), e);
+		}
+    }
+    
+	PBody normalizeBodyInternal(PBody body) throws QueryPlannerException {
+		// UNIFICATION AND WEAK INEQUALITY ELMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
         removeMootEqualities(body);
@@ -85,7 +88,7 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
         // PREVENTIVE CHECKS
         checkSanity(body);
         return body;
-    }
+	}
 
     private void removeMootEqualities(PBody body) {
         Set<Equality> equals = body.getConstraintsOfType(Equality.class);

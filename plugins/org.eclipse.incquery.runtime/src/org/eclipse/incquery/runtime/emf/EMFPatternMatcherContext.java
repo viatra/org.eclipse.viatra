@@ -30,6 +30,8 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
  * @author Bergmann Gábor
  */
 public class EMFPatternMatcherContext implements IPatternMatcherContext {
+	
+    public static final EMFPatternMatcherContext STATIC_INSTANCE = new EMFPatternMatcherContext();
 
     /**
      * 

@@ -27,7 +27,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
 import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
@@ -35,13 +34,11 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -65,9 +62,7 @@ import com.google.common.collect.Sets;
  */
 public class SpecificationBuilder {
 
-    private static final Logger LOGGER = IncQueryLoggingUtil.getLogger(BaseQuerySpecification.class);
-    protected static final IPatternMatcherContext CONTEXT = new EMFPatternMatcherContext(LOGGER);
-    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(CONTEXT);
+    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(EMFPatternMatcherContext.STATIC_INSTANCE);
 
     private Logger logger = Logger.getLogger(SpecificationBuilder.class);
     private NameToSpecificationMap patternMap;
@@ -275,12 +270,9 @@ public class SpecificationBuilder {
         Set<PBody> bodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
             PBody pBody = converter.toPBody(body);
-            bodies.add(pBody);
+			bodies.add(NORMALIZER.normalizeBody(pBody));
         }
-        // TODO this should be temporary, before normalization is handled by a caching rewriter
-        PDisjunction tempDisjunction = new PDisjunction(bodies);
-        tempDisjunction = NORMALIZER.rewrite(tempDisjunction);
-        return tempDisjunction.getBodies();
+        return bodies;
     }
 
     public IQuerySpecification<?> getSpecification(Pattern pattern) {

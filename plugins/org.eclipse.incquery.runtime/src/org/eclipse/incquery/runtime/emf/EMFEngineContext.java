@@ -108,6 +108,6 @@ class EMFEngineContext implements IEngineContext {
 			final NavigationHelper navigationHelper = getNavHelper();
 			baseIndex = new EMFBaseIndexWrapper(navigationHelper);
 		}
-		return null;
+		return baseIndex;
 	}
 }
