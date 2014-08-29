@@ -46,23 +46,28 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionCo
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
+import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.incquery.patternlanguage.validation.whitelist.PureClassChecker;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
-import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
-import org.eclipse.xtext.common.types.util.TypeConformanceComputer;
+import org.eclipse.xtext.common.types.util.Primitives.Primitive;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
+import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
+import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
+import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -101,13 +106,15 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Inject
     private PureClassChecker purityChecker;
     @Inject
-    private ITypeProvider provider;
-    @Inject
-    private TypeConformanceComputer typeConformance;
-    @Inject
     private Primitives primitives;
     @Inject
     private IJvmModelAssociations associations;
+    @Inject
+    private ITypeSystem typeSystem;
+    @Inject
+    private ITypeInferrer typeInferrer;
+    @Inject
+    private IBatchTypeResolver typeResolver;
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -184,12 +191,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
-                    JvmTypeReference type1 = provider.getTypeForIdentifiable(patternRef.getParameters().get(0));
-                    JvmTypeReference type2 = provider.getTypeForIdentifiable(patternRef.getParameters().get(1));
-                    if (!typeConformance.isConformant(type1, type2) && !typeConformance.isConformant(type2, type1)) {
+                    
+                    Object type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0)); 
+                    Object type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
+                    if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
                         error(String.format(
                                 "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
-                                type1.getSimpleName(), type2.getSimpleName()),
+                                typeSystem.typeString(type1), typeSystem.typeString(type2)),
                                 PatternLanguagePackage.Literals.PATTERN_CALL__PARAMETERS,
                                 IssueCodes.TRANSITIVE_PATTERNCALL_TYPE);
                     }
@@ -421,9 +429,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     public void checkReturnTypeOfCheckConstraints(CheckConstraint checkConstraint) {
         XExpression xExpression = checkConstraint.getExpression();
         if (xExpression != null) {
-            JvmTypeReference type = provider.getCommonReturnType(xExpression, true);
-            String simpleName = primitives.asPrimitiveIfWrapperType(type).getSimpleName();
-            if (!simpleName.equals("boolean")) {
+            final IResolvedTypes resolvedType = typeResolver.resolveTypes(xExpression);
+            LightweightTypeReference type = resolvedType.getReturnType(xExpression);
+            
+            if (type.getPrimitiveIfWrapperType().getPrimitiveKind() != Primitive.Boolean) {
                 error("Check expressions must return boolean instead of " + type.getSimpleName(), checkConstraint,
                         PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION, IssueCodes.CHECK_MUST_BE_BOOLEAN);
             }

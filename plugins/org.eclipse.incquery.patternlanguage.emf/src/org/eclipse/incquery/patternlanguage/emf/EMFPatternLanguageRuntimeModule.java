@@ -20,7 +20,9 @@ import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkin
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
+import org.eclipse.incquery.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
@@ -30,6 +32,9 @@ import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJav
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.incquery.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
+import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
+import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -42,8 +47,6 @@ import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
-import org.eclipse.xtext.xbase.scoping.XImportSectionNamespaceScopeProvider;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -76,11 +79,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     @Override
     public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy() {
         return PatternLanguageResourceDescriptionStrategy.class;
-    }
-
-    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
-    public Class<? extends ITypeProvider> bindITypeProvider() {
-        return EMFPatternTypeProvider.class;
     }
 
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
@@ -136,4 +134,13 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends IErrorFeedback> bindIErrorFeedback() {
         return EmptyErrorFeedback.class;
     }
+    
+    public Class<? extends ITypeSystem> bindITypeSystem() {
+        return EMFTypeSystem.class;
+    }
+    
+    public Class<? extends ITypeInferrer> bindITypeInferrer() {
+        return EMFTypeInferrer.class;
+    }
+    
 }

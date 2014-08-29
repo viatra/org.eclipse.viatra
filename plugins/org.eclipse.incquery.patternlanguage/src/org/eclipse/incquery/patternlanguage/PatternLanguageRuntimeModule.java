@@ -13,9 +13,16 @@ package org.eclipse.incquery.patternlanguage;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.naming.PatternNameProvider;
+<<<<<<< Upstream, based on 54815596e2a550447bd5bb6b1dbbeed5c90af940
+import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer.NullTypeInferrer;
+import org.eclipse.incquery.patternlanguage.typing.ITypeSystem.NullTypeSystem;
+import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
+=======
+import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
+import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem.NullTypeSystem;
+>>>>>>> e612164 [437972] Reduced usage of deprecated ITypeProvider API
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
-import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Provides;
 
@@ -38,7 +45,16 @@ public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntime
         return PatternAnnotationProvider.class;
     }
     
-    public Class<? extends ITypeProvider> bindITypeProvider() {
-        return XbaseBatchTypeProvider.class;
+<<<<<<< Upstream, based on 54815596e2a550447bd5bb6b1dbbeed5c90af940
+    public Class<? extends ITypeSystem> bindITypeSystem() {
+        return NullTypeSystem.class;
+    }
+    
+    public Class<? extends ITypeInferrer> bindITypeInferrer() {
+        return NullTypeInferrer.class;
+=======
+    public Class<? extends AbstractTypeSystem> bindAbstractTypeSystem() {
+        return NullTypeSystem.class;
+>>>>>>> e612164 [437972] Reduced usage of deprecated ITypeProvider API
     }
 }

@@ -103,7 +103,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
      * @return
      */
     private String calculateVariableHover(Variable variable) {
-        JvmTypeReference type = typeProvider.getTypeForIdentifiable(variable);
+        JvmTypeReference type = emfTypeProvider.getVariableType(variable); 
         EClassifier emfType = emfTypeProvider.getClassifierForVariable(variable);
         String javaTypeString = type.getQualifiedName();
         String emfTypeString;

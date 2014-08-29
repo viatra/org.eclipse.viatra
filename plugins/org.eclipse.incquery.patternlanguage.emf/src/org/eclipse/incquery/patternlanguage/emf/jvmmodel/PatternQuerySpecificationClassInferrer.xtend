@@ -69,11 +69,10 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblemimport org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
-
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 /**
  * {@link IQuerySpecification} implementation inferrer.
  *
@@ -84,7 +83,7 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
-	@Inject extension ITypeProvider
+	@Inject extension IEMFTypeProvider
 	@Inject extension TypeReferences types
 	@Inject var IErrorFeedback feedback
 	@Inject var Logger logger
@@ -530,7 +529,7 @@ class PatternQuerySpecificationClassInferrer {
     }
 
     def parameterInstantiation(Variable variable) {
-		val ref = getTypeForIdentifiable(variable);
+		val ref = getVariableType(variable);
         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
         val clazz = if (ref == null || ref instanceof JvmUnknownTypeReference) {
         	""

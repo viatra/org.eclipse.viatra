@@ -18,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -32,6 +33,8 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
@@ -58,17 +61,17 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.resource.CompilerPhases;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -76,13 +79,13 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
- * An extension of the {@link XbaseTypeProvider} for infering the correct types for the pattern variables. It handles
+ * An extension of the {@link XbaseTypeProvider} for inferring the correct types for the pattern variables. It handles
  * all constraints in the model which can modify the outcome of the type, but it has some practical limitations, as the
  * calculation of the proper type can be time consuming in some cases.
  */
 @Singleton
 @SuppressWarnings("restriction")
-public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IEMFTypeProvider {
+public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Inject
     private TypeReferences typeReferences;
@@ -94,17 +97,14 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
     private CompilerPhases compilerPhases;
     @Inject
     private IResourceScopeCache cache;
+    
+    @Inject
+    private IErrorFeedback errorFeedback;
+    
+    @Inject
+    private XbaseBatchTypeProvider typeProvider;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
-
-    @Override
-    public JvmTypeReference getTypeForIdentifiable(final JvmIdentifiableElement identifiable) {
-        if (identifiable instanceof Variable) {
-            Variable variable = (Variable) identifiable;
-            return getVariableType(variable);
-        }
-        return super.getTypeForIdentifiable(identifiable);        
-    }
 
     @Override
     public JvmTypeReference getVariableType(final Variable variable) {
@@ -120,71 +120,42 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
 
     protected JvmTypeReference doGetVariableType(Variable variable) {
         EClassifier classifier = getClassifierForVariable(variable);
-        JvmTypeReference typeReference = null;
+        return getJvmType(classifier, variable);
+    }
+
+    @Override
+    public JvmTypeReference getJvmType(EClassifier classifier, EObject context) {
         if (classifier != null) {
-            typeReference = getTypeReferenceForVariableWithEClassifier(classifier, variable);
+            String className = getClassNameForEClassifier(classifier, context);
+            if (!Strings.isNullOrEmpty(className)) {
+                return getTypeReferenceForTypeName(className, context);
+            }
         }
-        if (typeReference == null) {
-            final Class<?> clazz = (classifier instanceof EClass) ? EObject.class : Object.class;
-            typeReference = typeReferences.getTypeForName(clazz, variable);
-        }
-        return typeReference;
+        //Return Object or EObject if no classifier can be found 
+        final Class<?> clazz = (classifier instanceof EClass) ? EObject.class : Object.class;
+        return typeReferences.getTypeForName(clazz, context);
     }
 
     /**
-     * internal class cache, introduced to speed up calls to EClassifier.getInstanceClass
-     * significantly.
-     */
-    private Map<String, Class<?>> classCache = Maps.newHashMap();
-    
-    /**
-     * Returns the {@link JvmTypeReference} for a given {@link EClassifier} and {@link Variable} combination.
+     * Returns the {@link JvmTypeReference} for a given {@link EClassifier}.
      * 
      * @param classifier
-     * @param variable
+     * @param context The context parameter is used for identifying the current Resource/ResourceSet context
      * @return
      */
-    protected JvmTypeReference getTypeReferenceForVariableWithEClassifier(EClassifier classifier, Variable variable) {
-        if (classifier == null || "void".equals(classifier.getInstanceClassName())) {
-            // hack to speed up things quite a bit
-            return null;
-        }
-
-        String key = classifier.getInstanceClassName();
-
-        Class<?> c = null;
-        if (classCache.containsKey(key)) {
-            c = classCache.get(key);
-        } else {
-            // System.out.println("cc miss for "+classifier.getInstanceClassName());
-            // Long start = System.nanoTime();
-            Class<?> newC = classifier.getInstanceClass();
-            // Long stop = System.nanoTime();
-            // System.out.println("getInstClass for '"+key+"' took " + (stop-start)/(1000*1000)
-            // +" ms, returning '"+newC+"' as result");
-            if (newC != null) {
-                classCache.put(key, newC);
-                c = newC;
-            }
-        }
-
-        if (c != null) {
-            JvmTypeReference typeReference = typeReferences.getTypeForName(c, variable);
-            return primitives.asWrapperTypeIfPrimitive(typeReference);
-        }
-        return null;
+    protected String getClassNameForEClassifier(EClassifier classifier, EObject context) {
+        return classifier.getInstanceClassName();
     }
 
     @Override
     public EClassifier getClassifierForVariable(Variable variable) {
-    	// XXX Why?
-        EcoreUtil2.resolveAll(variable);
-
-        EObject container = variable.eContainer();
-        if (container instanceof Pattern) {
-            return getClassifierForParameterVariable((Pattern) container, variable, 0);
-        } else if (container instanceof PatternBody) {
-            return getClassifierForVariableWithPatternBody((PatternBody) container, variable, 0, null);
+        if (!variable.eIsProxy()) {
+            EObject container = variable.eContainer();
+            if (container instanceof Pattern) {
+                return getClassifierForParameterVariable((Pattern) container, variable, 0);
+            } else if (container instanceof PatternBody) {
+                return getClassifierForVariableWithPatternBody((PatternBody) container, variable, 0, null);
+            }
         }
         return null;
     }
@@ -194,7 +165,7 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
         if (resultList.size() > 1) {
             for (EClassifier classifier : classifierList) {
                 if ("EObject".equals(classifier.getName()) && 
-                		"http://www.eclipse.org/emf/2002/Ecore".equals(classifier.getEPackage().getNsURI())) {
+                        EcorePackage.eNS_URI.equals(classifier.getEPackage().getNsURI())) {
                     resultList.remove(classifier);
                 } else if (classifier instanceof EClass) {
                     for (EClass eClass : ((EClass) classifier).getEAllSuperTypes()) {
@@ -458,7 +429,7 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
         return result;
     }
 
-    private static boolean isEqualVariables(Variable variable, VariableReference variableReference) {
+    private boolean isEqualVariables(Variable variable, VariableReference variableReference) {
         if (variable != null && variableReference != null) {
             final Variable variableReferenceVariable = variableReference.getVariable();
             if (equal(variable, variableReferenceVariable)
@@ -491,22 +462,15 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
         } else if (valueReference instanceof FunctionEvaluationValue) {
             FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
             final XExpression xExpression = eval.getExpression();
-            EDataType dataType;            
+            //XXX If type cannot be calculated, use Java Object
+            EDataType dataType = EcorePackage.Literals.EJAVA_OBJECT;
             if (!compilerPhases.isIndexing(xExpression)){
-            	JvmTypeReference type = getCommonReturnType(xExpression, true);
-            	if (type == null) {
-            	    //Return type can be null - in that case return Object
-            	    //XXX very hacky solution
-            	    dataType = EcorePackage.Literals.EJAVA_OBJECT;
-            	} else {
+            	JvmTypeReference type = typeProvider.getCommonReturnType(xExpression, true);
+            	if (type != null) {
             	    dataType = EcoreFactory.eINSTANCE.createEDataType();
             	    dataType.setName(type.getSimpleName());
             	    dataType.setInstanceClassName(type.getQualifiedName());
             	}
-            } else {
-            	//During the indexing phase it is impossible to calculate the expression type
-            	//XXX very hacky solution
-            	dataType = EcorePackage.Literals.EJAVA_OBJECT;
             }
             return dataType;
         } else if (valueReference instanceof EnumValue) {
@@ -546,6 +510,27 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
             }
             getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
         }
+    }
+
+    private JvmTypeReference getTypeReferenceForTypeName(String typeName, EObject context) {
+        JvmTypeReference typeRef = typeReferences.getTypeForName(typeName, context);
+        JvmTypeReference typeReference = primitives.asWrapperTypeIfPrimitive(typeRef);
+        
+        if (typeReference == null) {
+            EObject errorContext = context;
+            String contextName = context.toString();
+            if (context instanceof Variable && ((Variable)context).eContainer() instanceof PatternBody && ((Variable)context).getReferences().size() > 0) {
+                contextName = ((Variable)context).getName();
+                errorContext = ((Variable)context).getReferences().get(0);
+            }
+            errorFeedback.reportError(
+                    errorContext,
+                    String.format(
+                            "Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
+                            contextName), EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE,
+                            Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+        }
+        return typeReference;
     }
 
 }

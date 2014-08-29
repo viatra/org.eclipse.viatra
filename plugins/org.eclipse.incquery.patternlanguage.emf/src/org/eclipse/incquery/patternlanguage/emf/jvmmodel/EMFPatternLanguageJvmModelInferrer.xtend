@@ -176,6 +176,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			initializePrivateSpecification(pattern, matcherClassRef, null /* no match class */, builder)
 		]
 	}
+	
    	/**
 	 * Is called for each Pattern instance in a resource.
 	 *
@@ -188,15 +189,18 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
 	   	try {
 	   		val builder = new SpecificationBuilder
-   			val groupClass = model.inferPatternGroupClass
    			for (pattern : model.patterns){
    				pattern.infer(acceptor, builder, isPrelinkingPhase)
    			}
-   			acceptor.accept(groupClass).initializeLater[
-   				initializePatternGroup(model)
-   			]
 	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
-   			model.associatePrimary(groupClass)
+   			if (!model.patterns.empty) {
+	   			val groupClass = model.inferPatternGroupClass
+   				acceptor.accept(groupClass).initializeLater[
+   					initializePatternGroup(model)
+   				]
+   				model.associatePrimary(groupClass)
+   			}
+   				
    		} catch (IllegalArgumentException e){
    			errorFeedback.reportErrorNoLocation(model, e.message, EMFPatternLanguageJvmModelInferrer::INVALID_PATTERN_MODEL_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
    		} catch(Exception e) {

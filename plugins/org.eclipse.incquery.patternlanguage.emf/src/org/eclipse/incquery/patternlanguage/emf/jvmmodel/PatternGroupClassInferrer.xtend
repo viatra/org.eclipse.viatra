@@ -22,11 +22,11 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmField
+import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 
 /**
@@ -98,7 +98,7 @@ class PatternGroupClassInferrer {
 			simpleName = groupClassName(model)
 			exceptions += incQueryException
 			body = [
-				for (matcherRef : model.patterns.filter[public].map[findInferredSpecification.createTypeRef]) {
+				for (matcherRef : model.patterns.filter[public].filterNull.map[findInferredSpecification.createTypeRef]) {
 					append('''querySpecifications.add(''')
 					serialize(matcherRef, model)
 					append('''.instance());''')
@@ -111,27 +111,37 @@ class PatternGroupClassInferrer {
 	
 
 	def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
+		val classRef = if (specificationClass == null) {
+			getTypeForName(typeof(Object), model)
+		} else {
+			specificationClass.createTypeRef
+		}
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
-		model.toMethod("get" + model.name.toFirstUpper, specificationClass.createTypeRef) [
+		model.toMethod("get" + model.name.toFirstUpper, classRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
 			body = [
 				append('''return ''')
-				serialize(specificationClass.createTypeRef, model)
+				serialize(classRef, model)
 				append('''.instance();''')
 			]
 		]
 	}
 	
 	def JvmOperation inferMatcherGetter(Pattern model, JvmType groupClass, JvmType matcherClass) {
+		val classRef = if (matcherClass == null) {
+			getTypeForName(typeof(Object), model)
+		} else {
+			matcherClass.createTypeRef
+		}
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
-		model.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
+		model.toMethod("get" + model.name.toFirstUpper, classRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
 			parameters += matcherClass.toParameter("engine", model.newTypeRef(typeof (IncQueryEngine)))
 			body = [
 				append('''return ''')
-				serialize(matcherClass.createTypeRef, model)
+				serialize(classRef, model)
 				append('''.on(engine);''')
 			]
 		]

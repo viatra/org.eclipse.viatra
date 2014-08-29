@@ -126,9 +126,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return GenModelMetamodelProviderService.class;
     }
 
-    public Class<? extends ITypeProvider> bindITypeProvider() {
-        return GenModelBasedTypeProvider.class;
-    }
+//    public Class<? extends ITypeProvider> bindITypeProvider() {
+//        return GenModelBasedTypeProvider.class;
+//    }
 
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
     	return GenModelBasedTypeProvider.class;
