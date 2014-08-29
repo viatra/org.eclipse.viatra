@@ -39,9 +39,13 @@ public class EcoreGenmodelRegistry {
     private IGenmodelMappingLoader loader;
     
     private void ensureInitialized() {
-        if (genmodelUriMap == null && loader != null) {
-            genmodelUriMap = loader.loadGenmodels();
-        }
+        if (genmodelUriMap == null) {
+            if (loader != null) {
+                genmodelUriMap = loader.loadGenmodels();
+            } else {
+                genmodelUriMap = Maps.newHashMap();
+            }
+        } 
     }
     
     public GenPackage findGenPackage(String nsURI, ResourceSet set) {
