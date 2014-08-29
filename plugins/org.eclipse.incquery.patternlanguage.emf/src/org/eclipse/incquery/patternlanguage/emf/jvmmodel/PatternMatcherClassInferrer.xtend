@@ -92,7 +92,7 @@ class PatternMatcherClassInferrer {
    	def inferConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
    		matcherClass.members += matcherClass.toConstructor [
    			simpleName = pattern.matcherClassName
-			annotations += matcherClass.toAnnotation(typeof (Deprecated))
+			matcherClass.addAnnotation(typeof (Deprecated))
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorNotifier.toString
 			parameters += matcherClass.toParameter("emfRoot", pattern.newTypeRef(typeof (Notifier)))
@@ -106,7 +106,7 @@ class PatternMatcherClassInferrer {
 
 		matcherClass.members += matcherClass.toConstructor [
 			simpleName = pattern.matcherClassName
-			annotations += matcherClass.toAnnotation(typeof (Deprecated))
+			matcherClass.addAnnotation(typeof (Deprecated))
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorEngine.toString
 			parameters += matcherClass.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))

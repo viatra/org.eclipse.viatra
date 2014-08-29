@@ -47,4 +47,6 @@ public final class EMFIssueCodes {
 
     public static final String MISSING_PARAMETER_TYPE = ISSUE_CODE_PREFIX + "missing_parameter_type";
 
+    public static final String JDK_NOT_ON_CLASSPATH = ISSUE_CODE_PREFIX + "no_jdk_on_classpath";
+    public static final String IQR_NOT_ON_CLASSPATH = ISSUE_CODE_PREFIX + "no_iq_runtime_on_classpath";
 }

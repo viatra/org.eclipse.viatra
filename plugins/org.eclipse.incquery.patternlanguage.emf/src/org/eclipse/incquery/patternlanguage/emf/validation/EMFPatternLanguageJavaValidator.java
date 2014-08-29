@@ -59,9 +59,11 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
@@ -112,6 +114,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     
     @Inject
     private IJvmModelAssociations associations;
+    
+    @Inject
+    private TypeReferences typeReferences;
 
     @Override
     protected List<EPackage> getEPackages() {
@@ -779,6 +784,19 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 info("Type not defined for variable " + variable.getName(),
                         PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE, issueData);
             }
+        }
+    }
+    
+
+    @Check
+    public void checkClassPath(PatternModel modelFile) {
+        final JvmGenericType listType = (JvmGenericType) typeReferences.findDeclaredType(List.class, modelFile);
+        if (listType == null || listType.getTypeParameters().isEmpty()) {
+            error("Couldn't find a JDK 1.5 or higher on the project's classpath.", modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+                EMFIssueCodes.JDK_NOT_ON_CLASSPATH);
+        } else if (typeReferences.findDeclaredType(IncQueryEngine.class, modelFile) == null) {
+            error("Couldn't find the mandatory library 'org.eclipse.incquery.runtime' on the project's classpath.",
+                modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
         }
     }
 }
