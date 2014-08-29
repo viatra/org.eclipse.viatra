@@ -25,9 +25,9 @@ import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.common.types.JvmDeclaredType
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -91,7 +91,7 @@ class PatternGroupClassInferrer {
 
 	}
 
-	def JvmConstructor inferConstructor(PatternModel model, JvmGenericType groupClass) {
+	def JvmConstructor inferConstructor(PatternModel model, JvmType groupClass) {
 		val incQueryException = model.newTypeRef(typeof (IncQueryException))
 		groupClass.toConstructor [
 			visibility = JvmVisibility::PRIVATE
@@ -110,7 +110,7 @@ class PatternGroupClassInferrer {
 
 	
 
-	def JvmOperation inferSpecificationGetter(Pattern model, JvmGenericType groupClass, JvmGenericType specificationClass) {
+	def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
 		model.toMethod("get" + model.name.toFirstUpper, specificationClass.createTypeRef) [
 			visibility = JvmVisibility::PUBLIC
@@ -123,7 +123,7 @@ class PatternGroupClassInferrer {
 		]
 	}
 	
-	def JvmOperation inferMatcherGetter(Pattern model, JvmGenericType groupClass, JvmGenericType matcherClass) {
+	def JvmOperation inferMatcherGetter(Pattern model, JvmType groupClass, JvmType matcherClass) {
 		val incQueryException = model.newTypeRef(typeof(IncQueryException))
 		model.toMethod("get" + model.name.toFirstUpper, matcherClass.createTypeRef) [
 			visibility = JvmVisibility::PUBLIC
