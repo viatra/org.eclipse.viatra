@@ -133,7 +133,7 @@ class PatternQuerySpecificationClassInferrer {
 
   		querySpecificationClass.members += querySpecificationClass.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
 			visibility = JvmVisibility::PROTECTED
-			querySpecificationClass.addAnnotation(typeof (Override))
+			addAnnotation(typeof (Override))
 			parameters += querySpecificationClass.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
 			exceptions += pattern.newTypeRef(typeof (IncQueryException))
 			body = if (isPublic) [
@@ -146,7 +146,7 @@ class PatternQuerySpecificationClassInferrer {
 		]
 		querySpecificationClass.members += querySpecificationClass.toMethod("getFullyQualifiedName", pattern.newTypeRef(typeof (String))) [
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof (Override))
+			addAnnotation(typeof (Override))
 			body = [append('''
 				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
 			''')]
@@ -154,7 +154,7 @@ class PatternQuerySpecificationClassInferrer {
 		querySpecificationClass.members += querySpecificationClass.toMethod("getParameterNames",
 			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(String)))) [
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof(Override))
+			addAnnotation(typeof(Override))
 			body = [
 				append('''return ''')
 				referClass(pattern, typeof(Arrays))
@@ -165,7 +165,7 @@ class PatternQuerySpecificationClassInferrer {
 		querySpecificationClass.members += querySpecificationClass.toMethod("getParameters",
 			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof(Override))
+			addAnnotation(typeof(Override))
 			body = [
 				append('''return ''')
 				referClass(pattern, typeof(Arrays))
@@ -177,7 +177,7 @@ class PatternQuerySpecificationClassInferrer {
 			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
 		[
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof(Override))
+			addAnnotation(typeof(Override))
 			body = [
 				if (isPublic) {
 					append('''return «pattern.matchClassName».newEmptyMatch();''')
@@ -192,7 +192,7 @@ class PatternQuerySpecificationClassInferrer {
 			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
 		[
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof(Override))
+			addAnnotation(typeof(Override))
 			parameters += querySpecificationClass.toParameter("parameters", pattern.newTypeRef(Object).addArrayTypeDimension)
 			varArgs = true
 			body = [
@@ -208,7 +208,7 @@ class PatternQuerySpecificationClassInferrer {
 		querySpecificationClass.members += querySpecificationClass.toMethod("doGetContainedBodies",
 			pattern.newTypeRef(typeof(Set), pattern.newTypeRef(typeof(PBody)))) [
 			visibility = JvmVisibility::PUBLIC
-			querySpecificationClass.addAnnotation(typeof(Override))
+			addAnnotation(typeof(Override))
 			exceptions += pattern.newTypeRef(typeof(IncQueryException))
 			body = [ appender |
 				var IQuerySpecification<?> genericSpecification

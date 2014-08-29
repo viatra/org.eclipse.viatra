@@ -102,7 +102,7 @@ class PatternMatcherClassMethodInferrer {
    				for (parameter : pattern.parameters){
 					parameters += type.toParameter(parameter.parameterName, parameter.calculateType)
    				}
-   				type.addAnnotation(typeof (Deprecated))
+   				addAnnotation(typeof (Deprecated))
    				body = [append('''
    					return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{«FOR p : pattern.parameters SEPARATOR ', '»«p.parameterName»«ENDFOR»});''')
    				]
@@ -183,17 +183,17 @@ class PatternMatcherClassMethodInferrer {
    	 */
    	def inferMatcherClassToMatchMethods(JvmDeclaredType matcherClass, Pattern pattern, JvmTypeReference matchClassRef) {
 	   	val tupleToMatchMethod = matcherClass.toMethod("tupleToMatch", cloneWithProxies(matchClassRef)) [
-   			matcherClass.addAnnotation(typeof (Override))
+   			addAnnotation(typeof (Override))
    			visibility = JvmVisibility::PROTECTED
    			parameters += matcherClass.toParameter("t", pattern.newTypeRef(typeof (Tuple)))
    		]
    		val arrayToMatchMethod = matcherClass.toMethod("arrayToMatch", cloneWithProxies(matchClassRef)) [
-   			matcherClass.addAnnotation(typeof (Override))
+   			addAnnotation(typeof (Override))
    			visibility = JvmVisibility::PROTECTED
    			parameters += matcherClass.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
    		val arrayToMatchMutableMethod = matcherClass.toMethod("arrayToMatchMutable", cloneWithProxies(matchClassRef)) [
-   			matcherClass.addAnnotation(typeof (Override))
+   			addAnnotation(typeof (Override))
    			visibility = JvmVisibility::PROTECTED
    			parameters += matcherClass.toParameter("match", pattern.newTypeRef(typeof (Object)).addArrayTypeDimension)
    		]
