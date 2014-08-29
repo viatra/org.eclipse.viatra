@@ -23,11 +23,11 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmConstructor
 import org.eclipse.xtext.common.types.JvmField
-import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.common.types.JvmGenericType
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -64,14 +64,14 @@ class PatternGroupClassInferrer {
 		return fileName.toFirstUpper
 	}
 
-	def JvmField inferInstanceField(PatternModel model, JvmGenericType groupClass) {
+	def JvmField inferInstanceField(PatternModel model, JvmType groupClass) {
 		groupClass.toField("INSTANCE", groupClass.createTypeRef) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
 		]
 	}
 
-	def JvmOperation inferInstanceMethod(PatternModel model, JvmGenericType groupClass) {
+	def JvmOperation inferInstanceMethod(PatternModel model, JvmType groupClass) {
 		val incQueryException = model.newTypeRef(typeof (IncQueryException))
 		groupClass.toMethod("instance", groupClass.createTypeRef) [
 			documentation = model.javadocGroupClassInstanceMethod.toString
