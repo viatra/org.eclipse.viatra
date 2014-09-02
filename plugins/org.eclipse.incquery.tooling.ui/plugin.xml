@@ -617,7 +617,7 @@
             description="The annotation can be used to define the way to present the pattern and its match set in the Query Explorer. "
             name="QueryExplorer">
          <annotationparameter
-               description="Possible values: &amp;quot;true&amp;quot; to display and &amp;quot;false&amp;quot; to not display."
+               description="Deprecated. Use the parameter checked instead."
                mandatory="false"
                multiple="false"
                name="display"
