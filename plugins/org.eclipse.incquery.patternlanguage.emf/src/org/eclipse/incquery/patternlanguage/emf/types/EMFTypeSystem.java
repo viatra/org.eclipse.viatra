@@ -20,7 +20,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType
 import org.eclipse.incquery.patternlanguage.patternLanguage.RelationType;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
-import org.eclipse.incquery.runtime.context.EMFPatternMatcherContext;
+import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -78,11 +78,12 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     @Override
     public boolean isConformant(Object expectedType, Object actualType) {
-        Preconditions.checkArgument(expectedType instanceof EClassifier, NON_EMF_TYPE_ENCOUNTERED,
-                expectedType.getClass());
-        Preconditions.checkArgument(actualType instanceof EClassifier, NON_EMF_TYPE_ENCOUNTERED, actualType.getClass());
-
-        return isConform((EClassifier) expectedType, (EClassifier) actualType);
+        if (expectedType instanceof EClassifier && actualType instanceof EClassifier) {
+            return isConform((EClassifier) expectedType, (EClassifier) actualType);
+        } else {
+            //This means inconsistent type settings that is reported elsewhere
+            return false;
+        }
     }
 
     public boolean isConformant(ClassType expectedType, ClassType actualType) {

@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.incquery.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
@@ -33,8 +34,10 @@ import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryEngine
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider
@@ -55,24 +58,23 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple
+import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
-import org.eclipse.incquery.runtime.api.IPatternMatch
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblemimport org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
-import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
+import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+
 /**
  * {@link IQuerySpecification} implementation inferrer.
  *
@@ -84,32 +86,40 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
 	@Inject extension IEMFTypeProvider
-	@Inject extension TypeReferences types
 	@Inject var IErrorFeedback feedback
 	@Inject var Logger logger
+	@Extension private JvmTypeReferenceBuilder builder
+	@Extension private JvmAnnotationReferenceBuilder annBuilder
 
 	/**
 	 * Infers the {@link IQuerySpecification} implementation class from {@link Pattern}.
 	 */
-	def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase, String querySpecificationPackageName, JvmTypeReference matcherClassRef) {
+	def JvmDeclaredType inferQuerySpecificationClass(Pattern pattern, boolean isPrelinkingPhase, String querySpecificationPackageName, JvmType matcherClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
+		this.builder = builder
+		this.annBuilder = annBuilder
+		
 		val querySpecificationClass = pattern.toClass(pattern.querySpecificationClassName) [
   			packageName = querySpecificationPackageName
   			documentation = pattern.javadocQuerySpecificationClass.toString
   			final = true
-  			superTypes += pattern.newTypeRef(typeof (BaseGeneratedEMFQuerySpecification), cloneWithProxies(matcherClassRef))
+  			if (pattern.isPublic) {
+  				superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass))
+  			} else {
+	  			superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass, typeRef(typeof(IPatternMatch))))
+  			}
   		]
   		return querySpecificationClass
   	}
 
-  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, SpecificationBuilder builder) {
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, matchClassRef, true, builder)
+  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder builder) {
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true, builder)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true)
   		querySpecificationClass.inferExpressions(pattern)
   	}
 
-  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, SpecificationBuilder builder) {
+  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder builder) {
   		querySpecificationClass.visibility = JvmVisibility::DEFAULT
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClassRef, matchClassRef, false, builder)
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false, builder)
   		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false)
   		querySpecificationClass.inferExpressions(pattern)
   	}
@@ -117,198 +127,152 @@ class PatternQuerySpecificationClassInferrer {
 	/**
    	 * Infers methods for QuerySpecification class based on the input 'pattern'.
    	 */
-  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmTypeReference matcherClassRef, JvmTypeReference matchClassRef, boolean isPublic, SpecificationBuilder builder) {
-  		val context = new EMFPatternMatcherContext(logger)
-   		querySpecificationClass.members += querySpecificationClass.toMethod("instance", types.createTypeRef(querySpecificationClass)) [
+  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean isPublic, SpecificationBuilder builder) {
+   		querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
-			exceptions += pattern.newTypeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (IncQueryException))
 			documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
-			body = [append('''
+			body = '''
 					return «pattern.querySpecificationHolderClassName».INSTANCE;
-			''')]
+			'''
 		]
 
-  		querySpecificationClass.members += querySpecificationClass.toMethod("instantiate", cloneWithProxies(matcherClassRef)) [
+  		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
 			visibility = JvmVisibility::PROTECTED
-			addAnnotation(typeof (Override))
-			parameters += querySpecificationClass.toParameter("engine", pattern.newTypeRef(typeof (IncQueryEngine)))
-			exceptions += pattern.newTypeRef(typeof (IncQueryException))
-			body = if (isPublic) [
-				append('''return «pattern.matcherClassName».on(engine);''')
-			] else [
-				append('''throw new ''')
-				referClass(pattern, typeof(UnsupportedOperationException))
-				append('''();''')
-			]
+			annotations += annotationRef(typeof (Override))
+			parameters += pattern.toParameter("engine", typeRef(typeof (IncQueryEngine)))
+			exceptions += typeRef(typeof (IncQueryException))
+			body = if (isPublic) { 
+				'''return «pattern.matcherClassName».on(engine);'''
+			} else {
+				'''throw new «UnsupportedOperationException»();'''
+			}
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("getFullyQualifiedName", pattern.newTypeRef(typeof (String))) [
+		querySpecificationClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(typeof (String))) [
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof (Override))
-			body = [append('''
+			annotations += annotationRef(typeof (Override))
+			body = '''
 				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
-			''')]
+			'''
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("getParameterNames",
-			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(String)))) [
+		querySpecificationClass.members += pattern.toMethod("getParameterNames",
+			typeRef(typeof(List), typeRef(typeof(String)))) [
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof(Override))
-			body = [
-				append('''return ''')
-				referClass(pattern, typeof(Arrays))
-				append(
-					'''.asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);''')
-			]
+			annotations += annotationRef(typeof(Override))
+			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("getParameters",
-			pattern.newTypeRef(typeof(List), pattern.newTypeRef(typeof(PParameter)))) [
+		querySpecificationClass.members += pattern.toMethod("getParameters",
+			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof(Override))
-			body = [
-				append('''return ''')
-				referClass(pattern, typeof(Arrays))
-				append(
-					'''.asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);''')
-			]
+			annotations += annotationRef(typeof(Override))
+			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);'''
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("newEmptyMatch",
-			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
+		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
+			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) 
 		[
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof(Override))
-			body = [
-				if (isPublic) {
-					append('''return «pattern.matchClassName».newEmptyMatch();''')
+			annotations += annotationRef(typeof(Override))
+			body = if (isPublic) {
+					'''return «pattern.matchClassName».newEmptyMatch();'''
 				} else {
-					append('''throw new ''')
-					referClass(pattern, UnsupportedOperationException)
-					append('''();''')
+					'''throw new «UnsupportedOperationException»();'''
 				}
-			]
+			
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("newMatch",
-			if (isPublic) cloneWithProxies(matchClassRef) else pattern.newTypeRef(typeof(IPatternMatch))) 
-		[
+		querySpecificationClass.members += pattern.toMethod("newMatch",
+			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) [
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof(Override))
-			parameters += querySpecificationClass.toParameter("parameters", pattern.newTypeRef(Object).addArrayTypeDimension)
+			annotations += annotationRef(typeof(Override))
+			parameters += pattern.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
 			varArgs = true
-			body = [
-				if (isPublic) {
-					append('''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);''')
+			body = if (isPublic) {
+					'''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
 				} else {
-					append('''throw new ''')
-					referClass(pattern, UnsupportedOperationException)
-					append('''();''')
+					'''throw new «UnsupportedOperationException»();'''
 				}
-			]
 		]
-		querySpecificationClass.members += querySpecificationClass.toMethod("doGetContainedBodies",
-			pattern.newTypeRef(typeof(Set), pattern.newTypeRef(typeof(PBody)))) [
+		querySpecificationClass.members += pattern.toMethod("doGetContainedBodies",
+			typeRef(typeof(Set), typeRef(typeof(PBody)))) [
 			visibility = JvmVisibility::PUBLIC
-			addAnnotation(typeof(Override))
-			exceptions += pattern.newTypeRef(typeof(IncQueryException))
-			body = [ appender |
-				var IQuerySpecification<?> genericSpecification
-				try {
-					genericSpecification = builder.getOrCreateSpecification(pattern, true)
-					if (genericSpecification == null || genericSpecification.status == PQueryStatus::ERROR) {
-						feedback.reportError(pattern, "Error building generic query specification",
-							EMFPatternLanguageJvmModelInferrer::SPECIFICATION_BUILDER_CODE, Severity::ERROR,
+			annotations += annotationRef(typeof(Override))
+			exceptions += typeRef(typeof(IncQueryException))
+			try {
+				val IQuerySpecification<?> genericSpecification = builder.getOrCreateSpecification(pattern, true)
+				if (genericSpecification == null || genericSpecification.status == PQueryStatus::ERROR) {
+					feedback.reportError(pattern, "Error building generic query specification",
+					EMFPatternLanguageJvmModelInferrer::SPECIFICATION_BUILDER_CODE, Severity::ERROR,
 							IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-					}					
-				} catch (Exception e) {
-					//If called with an inconsistent pattern, then no body will be built
-					appender.append('''addError(new ''')
-					appender.referClass(pattern, PProblem)
-					appender.append('''("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));''')
-					//appender.append('''Inconsistent pattern definition thrown exception «e.class.simpleName»  with message: «e.getMessage»''')
-					// TODO smarter error reporting required
-					logger.warn("Error while building PBodies", e)
-					return
 				}
-				if (genericSpecification != null) {
-					appender.inferBodies(pattern, genericSpecification, context)
-					appender.inferAnnotations(pattern, genericSpecification)
-					genericSpecification.PProblems.forEach[
-						appender.append('''addError(new ''')
-						appender.referClass(pattern, PProblem)
-						appender.append('''("«shortMessage.escapeToQuotedString»"));''')
-					]
+				if (genericSpecification == null) {
+					body = '''
+						addError(new «PProblem»("Could not initialize query specification from the pattern definition"));
+						return null;
+					'''
 				} else {
-					//appender.append('''Cannot initialize PSystem from the pattern definition''')
-					appender.append('''addError(new ''')
-					appender.referClass(pattern, PProblem)
-					appender.append('''("Could not initialize query specification from the pattern definition"));''')
-				}
-				appender.append('''return bodies;''')
-			]
+					body = '''
+						«inferBodies(pattern, genericSpecification)»
+						«inferAnnotations(pattern, genericSpecification)»
+						«FOR problem : genericSpecification.PProblems»
+							addError(new «PProblem»("«problem.shortMessage.escapeToQuotedString»"));
+						«ENDFOR»
+						return bodies;
+					'''
+				}			
+			} catch (Exception e) {
+				//If called with an inconsistent pattern, then no body will be built
+				body = '''
+					addError(new «PProblem»("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));
+					return bodies;
+				'''
+				// 	TODO smarter error reporting required
+				logger.warn("Error while building PBodies", e)
+			}
 			]
   	}
 
-	def inferBodies(ITreeAppendable appender, Pattern pattern, IQuerySpecification<?> genericSpecification, EMFPatternMatcherContext context) {
-		appender.referClass(pattern, typeof(Set), pattern.newTypeRef(typeof(PBody)))
-		appender.append(''' bodies = ''')
-		appender.referClass(pattern, typeof(Sets))
-		appender.append('''.newLinkedHashSet();''')
-		appender.newLine
-		for (pBody : genericSpecification.disjunctBodies.bodies) {
-			appender.increaseIndentation
-			appender.append("{")
-			appender.newLine
-			appender.append('''PBody body = new PBody(this);''')
-			appender.newLine
-			for (variable : pBody.uniqueVariables) {
-				appender.referClass(pattern, typeof(PVariable))
-				appender.append(''' «variable.escapedName» = body.getOrCreateVariableByName("«variable.name»");''')
-				appender.newLine
+	def StringConcatenationClient inferBodies(Pattern pattern, IQuerySpecification<?> genericSpecification) {
+		'''
+		«Set»<«PBody»>  bodies = «Sets».newLinkedHashSet();
+		
+		«FOR pBody : genericSpecification.disjunctBodies.bodies »
+			{
+				PBody body = new PBody(this);
+				«FOR variable : pBody.uniqueVariables »
+					«PVariable» «variable.escapedName» = body.getOrCreateVariableByName("«variable.name»");
+				«ENDFOR»
+				body.setExportedParameters(«Arrays».<«ExportedParameter»>asList(
+					«FOR parameter : pBody.symbolicParameters SEPARATOR ",\n"»
+						«parameter.inferExportedParameterConstraint(pBody, pattern)»
+					«ENDFOR»
+				));
+				«FOR constraint : pBody.constraints»
+					«constraint.inferConstraint(pBody, pattern)»
+				«ENDFOR»
+				bodies.add(body);
 			}
-			appender.append('''body.setExportedParameters(''')
-			appender.referClass(pattern,typeof(Arrays))
-			appender.append('''.<''')
-			appender.referClass(pattern, typeof(ExportedParameter))
-			appender.append('''>asList(''')
-			appender.increaseIndentation
-			appender.newLine
-			val exportIt = pBody.symbolicParameters.iterator
-			while (exportIt.hasNext) {
-				exportIt.next.inferExportedParameterConstraint(pBody, pattern, appender)
-				if (exportIt.hasNext) {
-					appender.append(''', ''')
-					appender.newLine
-				}
-			}
-			appender.decreaseIndentation
-			appender.newLine			
-			appender.append('''));''')
-			appender.newLine
-			pBody.constraints.forEach[inferConstraint(pBody, pattern,  appender)]
-			appender.append('''bodies.add(body);''')
-			appender.decreaseIndentation
-			appender.newLine
-			appender.append("}")
-			appender.newLine
-		}
+		«ENDFOR»
+		'''
 	}
 
  	/**
    	 * Infers inner class for QuerySpecification class based on the input 'pattern'.
    	 */
   	def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic) {
-   		querySpecificationClass.members += querySpecificationClass.toClass(pattern.querySpecificationHolderClassName) [
+   		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
-			members += querySpecificationClass.toField("INSTANCE", types.createTypeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
+			members += pattern.toField("INSTANCE", typeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
 				final = true
 				static = true
-				initializer = [append('''make()''')];
+				initializer = '''make()''';
 			]
-			it.members += querySpecificationClass.toMethod("make", types.createTypeRef(querySpecificationClass)) [
+			it.members += pattern.toMethod("make", typeRef(querySpecificationClass)) [
 				visibility = JvmVisibility::PUBLIC
 				static = true
-				body = [append('''
+				body = '''
 					return new «pattern.querySpecificationClassName»();					
-				''')]
+				'''
 			]
 		]
  	}
@@ -320,97 +284,60 @@ class PatternQuerySpecificationClassInferrer {
 		"var_" + variable.name.replaceAll("[\\.\\{\\}<>]","_")
 	}
 
-	def inferExportedParameterConstraint(ExportedParameter constraint, PBody body, Pattern pattern, ITreeAppendable appender) {
-		appender.append('''new ''')
-		appender.referClass(pattern, typeof(ExportedParameter))
-		appender.append('''(body, «constraint.parameterVariable.escapedName», "«constraint.parameterName»")''')
+	def StringConcatenationClient inferExportedParameterConstraint(ExportedParameter constraint, PBody body, Pattern pattern) {
+		'''new «ExportedParameter»(body, «constraint.parameterVariable.escapedName», "«constraint.parameterName»")'''
 	}
 	
-	def inferConstraint(PConstraint constraint, PBody body, Pattern pattern, ITreeAppendable appender) {
+	def StringConcatenationClient inferConstraint(PConstraint constraint, PBody body, Pattern pattern) {
 		switch constraint {
 			ExportedParameter : {
 				// Exported parameters are already handled in inferExportedParameterConstraints - ignore here
+				''''''
 			}
 			Equality : {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(Equality))
-				appender.append('''(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);''')
+				'''new «Equality»(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);'''
 			}
 			Inequality: {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(Inequality))
-				appender.append('''''')
-				appender.append('''(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);''')
+				'''new «Inequality»(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);'''
 			}
 			TypeUnary: {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(TypeUnary))
-				val literal = constraint.supplierKey as EClassifier
-				val packageNsUri = literal.EPackage.nsURI
-				appender.append('''(body, «constraint.variablesTuple.output», getClassifierLiteral("«packageNsUri»", "«literal.name»"), "«constraint.typeString»");''')
+				'''
+				«val literal = constraint.supplierKey as EClassifier»
+				«val packageNsUri = literal.EPackage.nsURI»
+				new «TypeUnary»(body, «constraint.variablesTuple.output», getClassifierLiteral("«packageNsUri»", "«literal.name»"), "«constraint.typeString»");
+				'''
 			}
 			TypeBinary: {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(TypeBinary))
-				val literal = constraint.supplierKey as EStructuralFeature
-				val container = literal.EContainingClass
-				val packageNsUri = container.EPackage.nsURI
-				appender.append('''(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");''')
+				'''
+				«val literal = constraint.supplierKey as EStructuralFeature»
+				«val container = literal.EContainingClass»
+				«val packageNsUri = container.EPackage.nsURI»
+				new «TypeBinary»(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");
+				'''
 			}
 			ConstantValue : {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(ConstantValue))
-				appender.append('''(body, «constraint.variablesTuple.output», «constraint.supplierKey.outputConstant»);''')
+				'''new «ConstantValue»(body, «constraint.variablesTuple.output», «constraint.supplierKey.outputConstant»);'''
 			}
 			PositivePatternCall : {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(PositivePatternCall))
-				appender.append('''(body, new ''')
-				appender.referClass(pattern, FlatTuple)
-				appender.append('''(«constraint.variablesTuple.output»), ''')
-				appender.referSpecification(constraint.referredQuery, pattern)
-				appender.append(''');''')
+				'''new «PositivePatternCall»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referSpecification(constraint.referredQuery, pattern)»);'''
 			}
 			NegativePatternCall : {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(NegativePatternCall))
-				appender.append('''(body, new ''')
-				appender.referClass(pattern, FlatTuple)
-				appender.append('''(«constraint.actualParametersTuple.output»), ''')
-				appender.referSpecification(constraint.referredQuery, pattern)
-				appender.append('''.instance());''')
+				'''new «NegativePatternCall»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referSpecification(constraint.referredQuery, pattern)»);'''
 			}
 			BinaryTransitiveClosure: {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(BinaryTransitiveClosure))
-				appender.append('''(body, new ''')
-				appender.referClass(pattern, FlatTuple)
-				appender.append('''(«constraint.variablesTuple.output»), ''')
-				appender.referSpecification(constraint.supplierKey, pattern)
-				appender.append('''.instance());''')
+				'''new «BinaryTransitiveClosure»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referSpecification(constraint.supplierKey, pattern)»);'''
 			}
 			PatternMatchCounter: {
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(PatternMatchCounter))
-				appender.append('''(body, new ''')
-				appender.referClass(pattern, FlatTuple)
-				appender.append('''(«constraint.actualParametersTuple.output»), ''')
-				appender.referSpecification(constraint.referredQuery, pattern)
-				appender.append('''.instance(), «constraint.resultVariable.escapedName»);''')
+				'''new «PatternMatchCounter»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referSpecification(constraint.referredQuery, pattern)», «constraint.resultVariable.escapedName»);'''
 			}
 			ExpressionEvaluation : {
-				val evaluator = constraint.evaluator as XBaseEvaluator
-				if (evaluator.inputParameterNames.empty) {
+				'''
+				«val evaluator = constraint.evaluator as XBaseEvaluator»
+				«if (evaluator.inputParameterNames.empty) {
 					feedback.reportError(evaluator.expression, "No parameters defined", EMFPatternLanguageJvmModelInferrer::SPECIFICATION_BUILDER_CODE, Severity::WARNING, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-				}
-				appender.append('''new ''')
-				appender.referClass(pattern, typeof(ExpressionEvaluation))
-				appender.append('''(body, new ''')
-				appender.referClass(pattern, typeof(IExpressionEvaluator))
-				appender.append('''() {''')
-				appender.increaseIndentation
-				appender.append('''
-
+				}»
+				new «ExpressionEvaluation»(body, new «IExpressionEvaluator»() {
+					
 					@Override
 					public String getShortDescription() {
 						return "Expression evaluation from pattern «pattern.name»";
@@ -418,19 +345,11 @@ class PatternQuerySpecificationClassInferrer {
 
 					@Override
 					public Iterable<String> getInputParameterNames() {
-						return ''')
-				appender.referClass(pattern, typeof(Arrays))
-				appender.append('''.asList(«FOR name : evaluator.inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);''')
-				appender.append('''
+						return «Arrays».asList(«FOR name : evaluator.inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);
+					}
 
-						}
-
-						@Override
-						public Object evaluateExpression(''')
-				appender.referClass(pattern, typeof(IValueProvider))
-				appender.append(" ")
-				appender.append('''
-						provider) throws Exception {
+					@Override
+					public Object evaluateExpression(«IValueProvider» provider) throws Exception {
 							«val variables = variables(evaluator.expression)»
 							«FOR variable : variables»
 								«variable.calculateType.qualifiedName» «variable.name» = («variable.calculateType.qualifiedName») provider.getValue("«variable.name»");
@@ -438,24 +357,21 @@ class PatternQuerySpecificationClassInferrer {
 							return «expressionMethodName(evaluator.expression)»(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);
 						}
 
-						''')
-				appender.decreaseIndentation
-				appender.append('''}, «IF constraint.outputVariable != null » «constraint.outputVariable.escapedName» «ELSE» null«ENDIF»); ''')
-			}
-			default:
-				appender.append('''
+				}, «IF constraint.outputVariable != null » «constraint.outputVariable.escapedName» «ELSE» null«ENDIF»); '''
+			} default:
+				'''
 					//TODO error in code generation
-					Unsupported constraint «constraint.class.simpleName»''')
+					Unsupported constraint «constraint.class.simpleName»
+				'''
 		}
 
-		appender.newLine
 	}
 
 	def output(Tuple tuple) {
 		Joiner.on(", ").join(tuple.elements.map[(it as PVariable).escapedName])
 	}
 
-	def outputConstant(Object constant) {
+	def StringConcatenationClient outputConstant(Object constant) {
 		switch constant {
 			EEnumLiteral: {
 				val enumeration = constant.EEnum
@@ -468,16 +384,15 @@ class PatternQuerySpecificationClassInferrer {
 			String :
 				'''"«constant»"'''
 			default :
-				constant.toString
+				'''«constant»'''
 		}
 	}
 
-	def referSpecification(ITreeAppendable appender, PQuery referredQuery, Pattern callerPattern) {
+	def StringConcatenationClient referSpecification(PQuery referredQuery, Pattern callerPattern) {
 		if ((referredQuery as GenericQuerySpecification).getPattern == callerPattern) {
-			appender.append('''this''')
+			'''this'''
 		} else {
-			appender.referClass(callerPattern, referredQuery.findGeneratedSpecification)
-			appender.append('''.instance()''')
+			'''«referredQuery.findGeneratedSpecification».instance()'''
 		}
 	}
 
@@ -539,50 +454,34 @@ class PatternQuerySpecificationClassInferrer {
 		'''new PParameter("«variable.name»", "«clazz»")'''
     }
 
-    def inferAnnotations(ITreeAppendable appender, Pattern pattern, IQuerySpecification<?> genericSpecification) {
-    	genericSpecification.allAnnotations.forEach[
-    		appender.append('''{''')
-    		appender.increaseIndentation
-    		appender.newLine
-    		appender.append('''PAnnotation annotation = new ''')
-    		appender.referClass(pattern, typeof(PAnnotation))
-    		appender.append('''("«it.name»");''')
-    		appender.newLine
-    		allValues.forEach[
-    			appender.append('''annotation.addAttribute("«key»",''')
-    			appender.outputAnnotationParameter(pattern, value)
-    			appender.append(''');''')
-    			appender.newLine
-    		]
-    		appender.append('''addAnnotation(annotation);''')
-    		appender.decreaseIndentation
-    		appender.newLine
-    		appender.append('''}''')
-    		appender.newLine
-    	]
+    def StringConcatenationClient inferAnnotations(Pattern pattern, IQuerySpecification<?> genericSpecification) {
+    	'''
+    		«FOR ann : genericSpecification.allAnnotations»
+    		{
+    			«PAnnotation» annotation = new «PAnnotation»("«ann.name»");
+    			«FOR attribute : ann.allValues»
+    				annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(pattern, attribute.value)»);
+    			«ENDFOR»
+    			addAnnotation(annotation);
+    		}
+    		«ENDFOR»
+    	'''
     }
 
-    def void outputAnnotationParameter(ITreeAppendable appender, Pattern ctx, Object value) {
+    def StringConcatenationClient outputAnnotationParameter(Pattern ctx, Object value) {
 		switch value {
 			List<?> : {
-				appender.referClass(ctx, typeof(Arrays))
-				appender.append('''.asList(new Object[] {''')
-				val iterator = value.iterator
-				while (iterator.hasNext) {
-					appender.outputAnnotationParameter(ctx, iterator.next)
-					if (iterator.hasNext) {
-						appender.append(''', ''')
-					}					
-				}
-				appender.append('''})''')
+				'''«Arrays».asList(new Object[] {
+					«FOR item : value SEPARATOR ", "»
+						«outputAnnotationParameter(ctx, item)»
+					«ENDFOR»
+				})'''
 			} ParameterReference : {
-				appender.append('''new ''')
-				appender.referClass(ctx, typeof(ParameterReference))
-				appender.append('''("«value.name»")''')
+				'''new «ParameterReference»("«value.name»")'''
 			} String : {
-				appender.append('''"«value»"''')
+				'''"«value»"'''
 			} default : {
-				appender.append(value.toString)
+				'''«value.toString»'''
 			}
     	}
     }

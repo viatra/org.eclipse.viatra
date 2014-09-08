@@ -18,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -68,7 +67,9 @@ import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.resource.CompilerPhases;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.XExpression;
-import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
+import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
+import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
+import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
@@ -102,7 +103,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     private IErrorFeedback errorFeedback;
     
     @Inject
-    private XbaseBatchTypeProvider typeProvider;
+    private IBatchTypeResolver typeResolver;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
 
@@ -465,11 +466,12 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
             //XXX If type cannot be calculated, use Java Object
             EDataType dataType = EcorePackage.Literals.EJAVA_OBJECT;
             if (!compilerPhases.isIndexing(xExpression)){
-            	JvmTypeReference type = typeProvider.getCommonReturnType(xExpression, true);
+                final IResolvedTypes resolvedTypes = typeResolver.resolveTypes(xExpression);
+                final LightweightTypeReference type = resolvedTypes.getReturnType(xExpression);
             	if (type != null) {
             	    dataType = EcoreFactory.eINSTANCE.createEDataType();
             	    dataType.setName(type.getSimpleName());
-            	    dataType.setInstanceClassName(type.getQualifiedName());
+            	    dataType.setInstanceClassName(type.getJavaIdentifier());
             	}
             }
             return dataType;

@@ -26,7 +26,7 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     
     @Override
     public Object getInferredVariableType(Variable var) {
-        return emfTypeProvider.getVariableType(var);
+        return emfTypeProvider.getClassifierForVariable(var);
     }
 
 }

@@ -11,7 +11,7 @@
 package org.eclipse.incquery.patternlanguage.typing;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
-import org.eclipse.incquery.runtime.matchers.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 
 /**
  * @author Zoltan Ujhelyi

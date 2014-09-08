@@ -21,13 +21,9 @@ import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.runtime.api.IPatternMatch
-import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
-import org.eclipse.incquery.runtime.exception.IncQueryException
-import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
@@ -57,12 +53,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension PatternMatchClassInferrer
 	@Inject extension PatternMatcherClassInferrer
-	@Inject extension PatternMatcherClassMethodInferrer
 	@Inject extension PatternQuerySpecificationClassInferrer
 	@Inject extension PatternMatchProcessorClassInferrer
 	@Inject extension PatternGroupClassInferrer
-	@Inject extension JavadocInferrer
-	@Inject extension TypeReferences
 	@Inject extension IJvmModelAssociator associator
 
 	/**
@@ -96,62 +89,31 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 
 		val matchClass = pattern.toClass(pattern.matchClassName) [
 			it.packageName = packageName
-			superTypes += pattern.newTypeRef(typeof(BasePatternMatch))
+			superTypes += typeRef(typeof(BasePatternMatch))
 		]
 
 		//pattern.inferMatchClass(isPrelinkingPhase, packageName)
-		val matchClassRef = matchClass.createTypeRef
 		val matcherClass = pattern.toClass(pattern.matcherClassName) [
 			it.packageName = packageName
-			superTypes += pattern.newTypeRef(typeof(BaseMatcher), cloneWithProxies(matchClassRef))
+			superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
 		]
-		val matcherClassRef = matcherClass.createTypeRef
 		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-			matcherClassRef)
-		val querySpecificationClassRef = querySpecificationClass.createTypeRef
-		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClassRef)
+			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
+		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
 
-		acceptor.accept(querySpecificationClass).initializeLater [
-			initializePublicSpecification(pattern, matcherClassRef, matchClassRef, builder)
+		acceptor.accept(querySpecificationClass) [
+			initializePublicSpecification(pattern, matcherClass, matchClass, builder)
 		]
-		acceptor.accept(processorClass).initializeLater[
-			processorClass.inferProcessorClassMethods(pattern, matchClassRef)
-		]
-
-		acceptor.accept(matchClass).initializeLater [
-			documentation = pattern.javadocMatchClass.toString
-			abstract = true
-			//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
-			inferMatchClassFields(pattern)
-			inferMatchClassConstructors(pattern)
-			inferMatchClassGetters(pattern)
-			inferMatchClassSetters(pattern)
-			inferMatchClassMethods(pattern, querySpecificationClassRef)
-			inferMatchInnerClasses(pattern)
+		acceptor.accept(processorClass) [
+			processorClass.inferProcessorClassMethods(pattern, matchClass)
 		]
 
-		acceptor.accept(matcherClass).initializeLater [
-			documentation = pattern.javadocMatcherClass.toString
-			inferStaticMethods(pattern, matcherClass)
-			inferFields(pattern)
-			inferConstructors(pattern)
-			inferMethods(pattern, matchClassRef)
+		acceptor.accept(matchClass) [
+			inferMatchClassElements(pattern, querySpecificationClass, _typeReferenceBuilder, _annotationTypesBuilder)
 		]
 
-		// add querySpecification() field to Matcher class
-		matcherClass.members += matcherClass.toMethod("querySpecification",
-			pattern.newTypeRef(typeof(IQuerySpecification), cloneWithProxies(matcherClassRef))) [
-			visibility = JvmVisibility::PUBLIC
-			static = true
-			documentation = pattern.javadocQuerySpecificationMethod.toString
-			exceptions += pattern.newTypeRef(typeof(IncQueryException))
-			body = [
-				append(
-					'''
-					return ''')
-				serialize(querySpecificationClassRef, pattern)
-				append('''.instance();''')
-			]
+		acceptor.accept(matcherClass) [
+			inferMatcherClassElements(pattern, querySpecificationClass, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
 		]
 
 		associator.associatePrimary(pattern, matcherClass)
@@ -168,12 +130,12 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val utilPackageName = pattern.utilPackageName
 
 
-		val matcherClassRef = getTypeForName(typeof(IncQueryMatcher), pattern, getTypeForName(typeof(IPatternMatch), pattern))
+		val matcherClass = typeRef(typeof(IncQueryMatcher), typeRef(typeof(IPatternMatch))).type 
 		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
-			matcherClassRef)
+			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
 		associator.associatePrimary(pattern, querySpecificationClass)
-		acceptor.accept(querySpecificationClass).initializeLater [
-			initializePrivateSpecification(pattern, matcherClassRef, null /* no match class */, builder)
+		acceptor.accept(querySpecificationClass) [
+			initializePrivateSpecification(querySpecificationClass, pattern, matcherClass, null /* no match class */, builder)
 		]
 	}
 	
@@ -194,9 +156,9 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			}
 	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
    			if (!model.patterns.empty) {
-	   			val groupClass = model.inferPatternGroupClass
-   				acceptor.accept(groupClass).initializeLater[
-   					initializePatternGroup(model)
+	   			val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder)
+   				acceptor.accept(groupClass) [
+   					initializePatternGroup(model, _typeReferenceBuilder)
    				]
    				model.associatePrimary(groupClass)
    			}

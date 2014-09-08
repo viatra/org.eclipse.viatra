@@ -40,7 +40,7 @@ public class EMFPatternLanguageEditorCallback extends NatureAddingEditorCallback
                 String title = "Invalid EMF-IncQuery Project";
                 String message = "The project " + resource.getProject().getName()
                         + " is not a valid EMF-IncQuery project. If it was created with EMF-IncQuery 0.6, it should be migrated - check documentation on http://wiki.eclipse.org/EMFIncQuery.";
-                MessageDialog.openError(getShell(), title, message);
+                MessageDialog.openError(editor.getShell(), title, message);
 
             }
         } catch (CoreException e) {

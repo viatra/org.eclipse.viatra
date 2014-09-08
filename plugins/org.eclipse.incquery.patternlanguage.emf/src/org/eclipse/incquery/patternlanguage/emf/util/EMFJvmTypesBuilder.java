@@ -13,19 +13,9 @@ package org.eclipse.incquery.patternlanguage.emf.util;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.common.types.JvmAnnotationReference;
-import org.eclipse.xtext.common.types.JvmAnnotationTarget;
-import org.eclipse.xtext.common.types.JvmLowerBound;
-import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
-import org.eclipse.xtext.common.types.JvmType;
-import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.JvmWildcardTypeReference;
-import org.eclipse.xtext.common.types.TypesFactory;
-import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 /**
@@ -34,83 +24,10 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  * 
  */
-@SuppressWarnings("restriction")
 public class EMFJvmTypesBuilder extends JvmTypesBuilder {
 
     @Inject
-    private TypesFactory factory = TypesFactory.eINSTANCE;
-
-    @Inject
-    private TypeReferences typeReferences;
-    @Inject
     private Logger logger;
-
-    /**
-     * Creates a {@link JvmWildcardTypeReference} with a {@link JvmLowerBound} constraint to 'clone' parameter.
-     * 
-     * @param clone
-     * @return {@link JvmWildcardTypeReference} with a {@link JvmLowerBound} contraint.
-     */
-    public JvmWildcardTypeReference wildCardSuper(JvmTypeReference clone) {
-        JvmWildcardTypeReference result = factory.createJvmWildcardTypeReference();
-        JvmLowerBound lowerBound = factory.createJvmLowerBound();
-        lowerBound.setTypeReference(clone);
-        result.getConstraints().add(lowerBound);
-        return result;
-    }
-
-    /**
-     * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
-     * 
-     * @return
-     */
-    public JvmTypeReference newRawTypeRef(EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-        Preconditions.checkNotNull(clazz, "clazz");
-
-        JvmType declaredType = typeReferences.findDeclaredType(clazz, ctx);
-        if (declaredType == null) {
-            return null;
-        }
-        return createTypeRef(declaredType);
-    }
-
-    /**
-     * Creates a JvmTypeReference, that does not have any type parameter (serialized as a raw type).
-     * 
-     * @return
-     */
-    public JvmTypeReference newRawTypeRef(EObject ctx, String typeName, JvmTypeReference... typeArgs) {
-        Preconditions.checkNotNull(typeName, "typeName");
-        Preconditions.checkNotNull(ctx, "context");
-
-        JvmType declaredType = typeReferences.findDeclaredType(typeName, ctx);
-        if (declaredType == null) {
-            return null;
-        }
-        return createTypeRef(declaredType);
-    }
-
-    /**
-     * Adds an annotation to a possible target, if the annotation reference is created. If no annotation is created, the target is left unchanged.
-     * @param ctx
-     * @param annotationType
-     */
-    public void addAnnotation(JvmAnnotationTarget ctx, Class<?> annotationType) {
-        try {
-            final JvmAnnotationReference annotation = toAnnotation(ctx, annotationType);
-            if (annotation != null) {
-                ctx.getAnnotations().add(annotation);
-            }
-        } catch (IllegalArgumentException ex) {
-            //In this case, the annotation is not found; but that should be reported by classpath validator
-        }
-    }
-    
-    private JvmTypeReference createTypeRef(JvmType type) {
-        JvmParameterizedTypeReference reference = factory.createJvmParameterizedTypeReference();
-        reference.setType(type);
-        return reference;
-    }
 
     /**
      * Overriding parent method to replace logging {@inheritDoc}

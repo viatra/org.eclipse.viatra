@@ -33,8 +33,8 @@
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.7.0.201403182114</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.6.2</xtend.compiler.version>
-		<xcore.version>1.2.0</xcore.version>
+		<xtend.compiler.version>2.7.0</xtend.compiler.version>
+		<xcore.version>1.2.1-SNAPSHOT</xcore.version>
 		<xcore.lib.version>1.1.0</xcore.lib.version>
 		<java.version>1.6</java.version>
 		<!-- Sonar -->
@@ -209,6 +209,11 @@
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 		<pluginRepository>
+			<id>sonatype.snapshot.repository</id>
+			<name>Sonatype OSS snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</pluginRepository>
+		<pluginRepository>
 			<id>incquery-snapshots</id>
 			<snapshots>
 				<enabled>true</enabled>
@@ -300,6 +305,16 @@
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 				<module>../../releng/org.eclipse.incquery.update</module>
 				<module>../../releng/org.eclipse.incquery.update.extras</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>xcore_integration</id>
+			<activation>
+				<property>
+					<name>xcore.integration</name>
+				</property>
+			</activation>
+			<modules>
 				<module>../../plugins/org.eclipse.incquery.xcore.model</module>
 				<module>../../plugins/org.eclipse.incquery.xcore</module>
 				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
