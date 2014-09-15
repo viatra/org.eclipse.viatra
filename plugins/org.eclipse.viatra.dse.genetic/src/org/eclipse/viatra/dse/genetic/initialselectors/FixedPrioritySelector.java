@@ -48,8 +48,10 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     private Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos;
 
     private IncQueryEngine incqueryEngine;
-    
+
     private Logger logger = Logger.getLogger(this.getClass());
+
+    private boolean isInterrupted = false;
 
     public FixedPrioritySelector(List<PatternWithCardinality> goals) {
         this.goals = goals;
@@ -78,25 +80,29 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
 
+        if (isInterrupted) {
+            return null;
+        }
+
         boolean isGoalState = true;
         for (PatternWithCardinality goal : goals) {
             if (!goal.isPatternSatisfied(incqueryEngine)) {
                 isGoalState = false;
             }
         }
-        
+
         if (isGoalState) {
             foundInstances++;
             logger.debug("Found goal state " + foundInstances + "/" + initialSizeOfPopulation);
             store.addChild(context);
             if (foundInstances >= initialSizeOfPopulation) {
                 return null;
-            }
-            else {
-                while(dsm.undoLastTransformation());
+            } else {
+                while (dsm.undoLastTransformation())
+                    ;
             }
         }
-        
+
         Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
         while (transitions == null || transitions.isEmpty()) {
             if (!dsm.undoLastTransformation()) {
@@ -124,17 +130,17 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
                 int index = random.nextInt(bestTrasitions.size());
                 ITransition iTransition = bestTrasitions.get(index);
                 logger.debug("Transition fired: " + iTransition.getId() + " from " + iTransition.getFiredFrom().getId());
-                
+
                 if (iTransition.isAssignedToFire()) {
                     dsm.fireActivation(iTransition);
                     return getNextTransition(context, true);
                 }
-                
+
                 return iTransition;
             }
 
             logger.debug("Backtrack");
-            
+
         } while (!dsm.undoLastTransformation());
 
         return null;
@@ -146,6 +152,11 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
         }
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
     private double getBestPriority(Collection<? extends ITransition> transitions,

@@ -93,8 +93,13 @@ public class ExplorerThread implements IExplorerThread {
             // do the exploration until {@link StrategyBase#solutionFound}
             // returns
             // stop, or interrupted from outside by Strategy#stopRunning
-            mainloop: while (continueExecution && !interrupted.get()) {
+            mainloop: while (continueExecution) {
                 PerformanceMonitorManager.endTimer(WALKER_CYCLE);
+
+                if (interrupted.get()) {
+                    strategyBase.interrupted(threadContext);
+                }
+
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
 
                 ITransition transition = null;

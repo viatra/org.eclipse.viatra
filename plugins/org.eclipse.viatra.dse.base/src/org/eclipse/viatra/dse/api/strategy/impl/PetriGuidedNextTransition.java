@@ -27,6 +27,7 @@ public class PetriGuidedNextTransition implements INextTransition {
     private List<Integer> trajectoyIndexes = new ArrayList<Integer>();
     private BreadthFirstNextTransition breadthFirstSearch;
     private boolean lastWasPetriTurn = true;
+    private boolean isInterrupted = false;;
 
     @Override
     public void init(ThreadContext context) {
@@ -34,6 +35,10 @@ public class PetriGuidedNextTransition implements INextTransition {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         // get important variables from context
         DesignSpaceManager dsm = context.getDesignSpaceManager();
@@ -83,4 +88,8 @@ public class PetriGuidedNextTransition implements INextTransition {
             boolean constraintsNotSatisfied) {
     }
 
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
+    }
 }

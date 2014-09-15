@@ -45,6 +45,7 @@ public class RandomSearchStrategy implements INextTransition {
     private SharedData shared;
     private TrajectoryInfo trajectoryInfo;
     int nth;
+    private boolean isInterrupted = false;
 
     public RandomSearchStrategy(int minDepth, int maxDepth, int numberOfTries) {
         shared = new SharedData(minDepth, maxDepth, numberOfTries);
@@ -71,6 +72,10 @@ public class RandomSearchStrategy implements INextTransition {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         do {
             if (trajectoryInfo.getDepthFromRoot() < maxDepth) {
@@ -102,8 +107,7 @@ public class RandomSearchStrategy implements INextTransition {
     }
 
     private IExplorerThread tryStartNewThread(ThreadContext context) {
-        return gc
-                .tryStartNewThread(context, context.getModelRoot(), true, new Strategy(new RandomSearchStrategy()));
+        return gc.tryStartNewThread(context, context.getModelRoot(), true, new Strategy(new RandomSearchStrategy()));
     }
 
     @Override
@@ -112,6 +116,11 @@ public class RandomSearchStrategy implements INextTransition {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
         }
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
     private static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {

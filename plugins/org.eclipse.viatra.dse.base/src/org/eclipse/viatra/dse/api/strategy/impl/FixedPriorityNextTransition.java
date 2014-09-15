@@ -46,6 +46,7 @@ public class FixedPriorityNextTransition implements INextTransition {
     private int actDepth = 0;
     private Random rnd = new Random();
     private DesignSpaceManager dsm;
+    private boolean isInterrupted = false;
 
     public FixedPriorityNextTransition() {
         // tryBestTransitionsOnly = true by default
@@ -76,6 +77,10 @@ public class FixedPriorityNextTransition implements INextTransition {
 
     @Override
     public ITransition getNextTransition(final ThreadContext context, boolean lastWasSuccesful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos = context.getGuidance().getRuleInfos();
 
@@ -132,6 +137,11 @@ public class FixedPriorityNextTransition implements INextTransition {
         if (isAlreadyTraversed || isGoalState || constraintsNotSatisfied) {
             context.getDesignSpaceManager().undoLastTransformation();
         }
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
     private ITransition getBestTransition(Collection<? extends ITransition> transitions,

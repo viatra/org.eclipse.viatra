@@ -56,6 +56,8 @@ public class ParallelBFSNextTransition implements INextTransition {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
+    private boolean isInterrupted = false;;
+
     public ParallelBFSNextTransition() {
     }
 
@@ -86,7 +88,7 @@ public class ParallelBFSNextTransition implements INextTransition {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
 
-        if (sharedData.actLevel > sharedData.maxDepth) {
+        if (sharedData.actLevel > sharedData.maxDepth || isInterrupted) {
             return null;
         }
 
@@ -168,4 +170,8 @@ public class ParallelBFSNextTransition implements INextTransition {
             boolean constraintsNotSatisfied) {
     }
 
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
+    }
 }

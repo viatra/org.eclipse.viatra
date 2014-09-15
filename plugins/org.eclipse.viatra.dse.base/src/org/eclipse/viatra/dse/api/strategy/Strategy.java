@@ -91,7 +91,6 @@ public class Strategy {
     }
 
     /**
-     * 
      * Delegates the call to {@link INextTransition#init(ThreadContext)}.
      * 
      * @see INextTransition#init(ThreadContext)
@@ -101,7 +100,6 @@ public class Strategy {
     }
 
     /**
-     * 
      * Delegates the call to {@link INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)}.
      * 
      * @see INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)
@@ -109,6 +107,15 @@ public class Strategy {
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean areConstraintsSatisfied) {
         iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, isGoalState, areConstraintsSatisfied);
+    }
+
+    /**
+     * Delegates the call to {@link INextTransition#interrupted(ThreadContext)}.
+     * 
+     * @see INextTransition#interrupted(ThreadContext)
+     */
+    public void interrupted(ThreadContext context) {
+        iNextTransition.interrupted(context);
     }
 
     /**

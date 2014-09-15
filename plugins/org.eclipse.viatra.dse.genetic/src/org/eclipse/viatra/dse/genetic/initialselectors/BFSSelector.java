@@ -41,6 +41,8 @@ public class BFSSelector implements IInitialPopulationSelector {
 
     private Random random = new Random();
 
+    private boolean isInterrupted = false;
+
     public BFSSelector() {
         this(2, 1);
     }
@@ -69,6 +71,10 @@ public class BFSSelector implements IInitialPopulationSelector {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
 
@@ -130,6 +136,11 @@ public class BFSSelector implements IInitialPopulationSelector {
     @Override
     public void setPopulationSize(int populationSize) {
         initialSizeOfPopulation = populationSize;
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
 }

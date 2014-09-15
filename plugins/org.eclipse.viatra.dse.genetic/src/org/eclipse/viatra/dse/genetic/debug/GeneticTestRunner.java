@@ -268,48 +268,46 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             result.report = "Exception happend";
         } else if (wasTimeout) {
             result.report = "Timeout";
-        } else {
-
-            Map<InstanceData, SolutionTrajectory> solutions = gdse.getSolutions();
-
-            if (solutions.isEmpty()) {
-                result.report = "Empty solutions";
-            } else {
-
-                GeneticSharedObject gso = gdse.getGeneticSharedObject();
-
-                Map<String, Double> avgObjectives = new HashMap<String, Double>();
-                for (String key : gso.comparators.keySet()) {
-                    avgObjectives.put(key, 0d);
-                }
-                for (InstanceData solution : solutions.keySet()) {
-                    addMaps(avgObjectives, solution.objectives);
-                }
-                for (String key : avgObjectives.keySet()) {
-                    Double d = avgObjectives.get(key);
-                    avgObjectives.put(key, d / solutions.size());
-                }
-
-                resultsRow.add(SOLUTIONS, solutions.size());
-                InstanceData aSolution = solutions.keySet().iterator().next();
-                resultsRow.add(SOFT_CONSTRAINT, aSolution.sumOfConstraintViolationMeauserement);
-
-                for (String objective : avgObjectives.keySet()) {
-                    resultsRow.add(AVG + objective, avgObjectives.get(objective));
-                }
-
-                for (IMutateTrajectory mutator : gso.mutationApplications.keySet()) {
-                    resultsRow.add(mutator.getClass().getSimpleName(), gso.mutationApplications.get(mutator));
-                }
-                for (ICrossoverTrajectories crossover : gso.crossoverApplications.keySet()) {
-                    resultsRow.add(crossover.getClass().getSimpleName(), gso.crossoverApplications.get(crossover));
-                }
-
-                resultsRow.add(NUMBER_OF_DUPLICATIONS, gso.numOfDuplications);
-                resultsRow.add(NUMBER_OF_CORRECTIONS, gso.numOfCorrections.get());
-
-            }
         }
+
+        Map<InstanceData, SolutionTrajectory> solutions = gdse.getSolutions();
+
+        if (solutions.isEmpty()) {
+            System.out.println("BUG BUGBUGBUGBUGBUBGUBGUBGBUGBUGBUGUBGU BUG");
+            return "No Solution found its a bug";
+        }
+        
+        GeneticSharedObject gso = gdse.getGeneticSharedObject();
+
+        Map<String, Double> avgObjectives = new HashMap<String, Double>();
+        for (String key : gso.comparators.keySet()) {
+            avgObjectives.put(key, 0d);
+        }
+        for (InstanceData solution : solutions.keySet()) {
+            addMaps(avgObjectives, solution.objectives);
+        }
+        for (String key : avgObjectives.keySet()) {
+            Double d = avgObjectives.get(key);
+            avgObjectives.put(key, d / solutions.size());
+        }
+
+        resultsRow.add(SOLUTIONS, solutions.size());
+        InstanceData aSolution = solutions.keySet().iterator().next();
+        resultsRow.add(SOFT_CONSTRAINT, aSolution.sumOfConstraintViolationMeauserement);
+
+        for (String objective : avgObjectives.keySet()) {
+            resultsRow.add(AVG + objective, avgObjectives.get(objective));
+        }
+
+        for (IMutateTrajectory mutator : gso.mutationApplications.keySet()) {
+            resultsRow.add(mutator.getClass().getSimpleName(), gso.mutationApplications.get(mutator));
+        }
+        for (ICrossoverTrajectories crossover : gso.crossoverApplications.keySet()) {
+            resultsRow.add(crossover.getClass().getSimpleName(), gso.crossoverApplications.get(crossover));
+        }
+
+        resultsRow.add(NUMBER_OF_DUPLICATIONS, gso.numOfDuplications);
+        resultsRow.add(NUMBER_OF_CORRECTIONS, gso.numOfCorrections.get());
 
         addResults(configRow, resultsRow);
 

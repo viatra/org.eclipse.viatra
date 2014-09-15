@@ -63,7 +63,6 @@ public class InstanceGeneticStrategy implements INextTransition {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
-
         do {
 
             // Get next Instance
@@ -80,8 +79,7 @@ public class InstanceGeneticStrategy implements INextTransition {
                         }
                     } catch (InterruptedException e1) {
                     }
-                    if ((actInstanceData == null && !sharedObject.newPopulationIsNeeded.get())
-                            || !gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
+                    if (actInstanceData == null && !sharedObject.newPopulationIsNeeded.get()) {
                         return null;
                     }
                 }
@@ -99,7 +97,6 @@ public class InstanceGeneticStrategy implements INextTransition {
 
                 int depthFromRoot = dsm.getTrajectoryInfo().getDepthFromRoot();
                 while (depthFromRoot < actInstanceData.trajectory.size()) {
-
                     if (dsm.getCurrentState().getTraversalState() == TraversalStateType.CUT) {
                         break;
                     }
@@ -161,8 +158,7 @@ public class InstanceGeneticStrategy implements INextTransition {
                 }
             }
 
-        } while ((sharedObject.newPopulationIsNeeded.get() || actInstanceData != null)
-                && gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING));
+        } while (sharedObject.newPopulationIsNeeded.get() || actInstanceData != null);
 
         return null;
     }
@@ -172,4 +168,7 @@ public class InstanceGeneticStrategy implements INextTransition {
             boolean constraintsNotSatisfied) {
     }
 
+    @Override
+    public void interrupted(ThreadContext context) {
+    }
 }

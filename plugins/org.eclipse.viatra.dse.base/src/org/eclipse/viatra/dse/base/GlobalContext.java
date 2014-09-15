@@ -127,14 +127,6 @@ public class GlobalContext {
                 ++numberOfStartedThreads;
 
                 if (logger.isDebugEnabled()) {
-                    StringBuilder sb = new StringBuilder();
-
-                    for (int i = 0; i < runningThreads.size(); i++) {
-                        sb.append("=");
-                    }
-
-                    logger.debug(sb.toString());
-
                     logger.debug("New worker started, active workers: " + runningThreads.size());
                 }
 
@@ -173,14 +165,6 @@ public class GlobalContext {
         runningThreads.remove(strategy);
 
         if (logger.isDebugEnabled()) {
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < runningThreads.size(); i++) {
-                sb.append("=");
-            }
-
-            logger.info(sb.toString());
-
             logger.debug("Worker finished, active workers: " + runningThreads.size());
         }
 

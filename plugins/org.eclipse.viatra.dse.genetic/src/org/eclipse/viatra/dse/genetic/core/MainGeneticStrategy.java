@@ -258,8 +258,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                                 .size()) {
                             try {
                                 Thread.sleep(1);
-                                if (gc.getExceptionHappendInOtherThread().get()
-                                        || !gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
+                                if (gc.getExceptionHappendInOtherThread().get()) {
                                     return null;
                                 }
                             } catch (InterruptedException e) {
@@ -328,8 +327,25 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 sharedObject.newPopulationIsNeeded.set(false);
             }
 
-        } while (sharedObject.newPopulationIsNeeded.get()
-                && gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING));
+            // Interrupted
+            if (!gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
+                logger.debug("Interrupted");
+                parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
+                        sharedObject.comparators, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug());
+                geneticDebugger.debug(parentPopulation);
+                sharedObject.addInstanceToBestSolutions.set(true);
+                for (InstanceData instanceData : parentPopulation) {
+                    if (instanceData.rank == 1) {
+                        logger.debug("solution to process " + instanceData.toString());
+                        sharedObject.instancesToBeChecked.offer(instanceData);
+                    }
+                }
+                sharedObject.newPopulationIsNeeded.set(false);
+            }
+
+        } while (sharedObject.newPopulationIsNeeded.get());
+
+        logger.debug("Stopped");
 
         return null;
     }
@@ -358,6 +374,10 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
             sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, isGoalState,
                     constraintsNotSatisfied);
         }
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
     }
 
     @Override
