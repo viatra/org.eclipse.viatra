@@ -72,7 +72,7 @@ public class Row {
         StringBuilder sb = new StringBuilder();
         for (String string : keysInOrder) {
             sb.append(string);
-            sb.append(';');
+            sb.append(',');
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
@@ -84,7 +84,7 @@ public class Row {
             String value = map.get(key);
             if (value != null) {
                 sb.append(value);
-                sb.append(';');
+                sb.append(',');
             }
         }
         if (sb.length() > 0) {

@@ -78,6 +78,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     private List<String> resultKeysInOrder;
     private boolean isFirstRun = true;
     private List<PatternWithCardinality> goals;
+    private GeneticDebugger geneticDebugger;
+    private int lastConfigId = -1;
 
     public GeneticTestRunner() {
         this(null);
@@ -155,7 +157,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         StringBuilder sb = new StringBuilder();
         for (String string : resultKeysInOrder) {
             sb.append(string);
-            sb.append(';');
+            sb.append(',');
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
@@ -166,13 +168,36 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         GeneticDesignSpaceExplorer gdse = createGdse(configRow);
 
-        GeneticDebugger geneticDebugger = getGeneticDebugger();
-        if (geneticDebugger == null) {
-            geneticDebugger = new GeneticDebugger(true);
+        if (lastConfigId != result.configId) {
+            lastConfigId = result.configId;
+
+            geneticDebugger = getGeneticDebugger();
+            if (geneticDebugger == null) {
+                geneticDebugger = new GeneticDebugger(true);
+            }
+            geneticDebugger.setConfigId(result.configId);
+
+            String modelPath = configRow.getValueAsString(MODEL_PATH);
+            int start = modelPath.lastIndexOf('/') + 1;
+            int end = modelPath.lastIndexOf('.');
+            if (end < 0) {
+                end = modelPath.length();
+            }
+            String modelName = modelPath.substring(start, end);
+
+            String configName;
+            try {
+                configName = configRow.getValueAsString("ConfigName");
+            } catch (GeneticConfigurationException e) {
+                configName = Integer.toString(result.configId);
+            }
+            geneticDebugger.setCsvName("results_" + configName + "_" + modelName + "_"
+                    + configRow.getValueAsString(INITIAL_SELECTOR) + ".csv");
+        } else {
+            geneticDebugger.resetIteration();
         }
-        geneticDebugger.setConfigId(result.configId);
+
         geneticDebugger.setRunId(result.runId);
-        geneticDebugger.setCsvName(result.configId + "-" + result.runId);
         gdse.setDebugger(geneticDebugger);
 
         registerXMISerailizer();

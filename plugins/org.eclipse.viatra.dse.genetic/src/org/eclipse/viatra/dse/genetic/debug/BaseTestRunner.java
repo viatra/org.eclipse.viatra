@@ -47,11 +47,11 @@ public abstract class BaseTestRunner {
         public double memAfter;
 
         public String toString() {
-            return configId + ";" + runId + ";" + report + ";" + runTime + ";" + memBefore + ";" + memAfter;
+            return configId + "," + runId + "," + report + "," + runTime + "," + memBefore + "," + memAfter;
         }
 
         public static String header() {
-            return "ConfigId;RunId;Report;RunTime[s];MemBefore;MemAfter";
+            return "ConfigId,RunId,Report,RunTime[s],MemBefore,MemAfter";
         }
 
     }
@@ -97,7 +97,7 @@ public abstract class BaseTestRunner {
             for (String line; (line = br.readLine()) != null;) {
 
                 Row configRow = new Row(configKeysInOrder);
-                String[] values = line.split(";");
+                String[] values = line.split(",");
                 for (int index = 0; index < values.length; index++) {
                     configRow.add(configKeysInOrder.get(index), values[index]);
                 }
@@ -132,9 +132,9 @@ public abstract class BaseTestRunner {
                     result.memAfter = (memAfter / 1024) / 1024;
 
                     if (i == 1 && times == 1) {
-                        printHeader(BaseResult.header() + ";" + getResultsHeader());
+                        printHeader(BaseResult.header() + "," + getResultsHeader());
                     }
-                    appendResultToFile(result.toString() + ";" + stringResult);
+                    appendResultToFile(result.toString() + "," + stringResult);
 
                     if (timesColumn) {
                         System.out.println("Finished " + times + "/" + maxTimes + " with config row " + i + "/"
@@ -166,7 +166,7 @@ public abstract class BaseTestRunner {
             br = new BufferedReader(new FileReader(configFileName + CSV));
 
             String header = br.readLine();
-            keys = header.split(";");
+            keys = header.split(",");
             for (String string : keys) {
                 configKeysInOrder.add(string);
             }

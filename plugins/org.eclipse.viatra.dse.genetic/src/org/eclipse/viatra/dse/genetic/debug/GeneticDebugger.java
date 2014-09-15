@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.genetic.debug;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,6 +27,7 @@ import com.google.common.base.Stopwatch;
 
 public class GeneticDebugger {
 
+    private static final char COMA = ',';
     private int configId = -1;
     private int runId = -1;
     private boolean debug = false;
@@ -58,9 +60,12 @@ public class GeneticDebugger {
 
         PrintWriter out = null;
         try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(csvName + ".csv", true)));
+            File f = new File(csvName);
+            boolean isFileExists = f.exists();
 
-            if (iteration <= 1) {
+            out = new PrintWriter(new BufferedWriter(new FileWriter(csvName, true)));
+
+            if (!isFileExists) {
                 printHeader(populationToDebug, out);
             }
 
@@ -68,32 +73,32 @@ public class GeneticDebugger {
                 StringBuilder sb = new StringBuilder();
 
                 sb.append(configId);
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(runId);
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(iteration);
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(elapsedTime);
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(instanceData.trajectory.size());
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(instanceData.sumOfConstraintViolationMeauserement);
-                sb.append(';');
+                sb.append(COMA);
 
                 for (String key : orderedSoftConstraints) {
                     sb.append(instanceData.violations.get(key));
-                    sb.append(';');
+                    sb.append(COMA);
                 }
 
                 for (String key : orderedObjectives) {
                     sb.append(instanceData.objectives.get(key));
-                    sb.append(';');
+                    sb.append(COMA);
                 }
 
                 sb.append(instanceData.rank - 1);
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(instanceData.survive);
-                sb.append(';');
+                sb.append(COMA);
 
                 appendCustomResults(sb, instanceData);
 
@@ -114,7 +119,7 @@ public class GeneticDebugger {
 
     private void printHeader(List<InstanceData> populationToDebug, PrintWriter out) {
         StringBuilder sb = new StringBuilder();
-        sb.append("ConfigId;RunId;Iteration;RunTime[ms];Length;SoftConstraints;");
+        sb.append("ConfigId,RunId,Iteration,RunTime[ms],Length,SoftConstraints,");
 
         InstanceData individual = populationToDebug.get(0);
 
@@ -122,21 +127,21 @@ public class GeneticDebugger {
         orderedSoftConstraints = new ArrayList<String>(softConstraints);
         for (String softConstraint : orderedSoftConstraints) {
             sb.append(softConstraint);
-            sb.append(';');
+            sb.append(COMA);
         }
 
         Set<String> objectives = individual.objectives.keySet();
         orderedObjectives = new ArrayList<String>(objectives);
         for (String objective : orderedObjectives) {
             sb.append(objective);
-            sb.append(';');
+            sb.append(COMA);
         }
 
-        sb.append("FrontIndex;Survive");
+        sb.append("FrontIndex,Survive");
 
         if (getCustomColumns() != null) {
             for (String column : getCustomColumns()) {
-                sb.append(';');
+                sb.append(COMA);
                 sb.append(column);
             }
         }
@@ -158,7 +163,10 @@ public class GeneticDebugger {
 
     public void setCsvName(String csvName) {
         this.csvName = csvName;
+    }
 
+    public void resetIteration() {
+        iteration = 1;
     }
 
 }
