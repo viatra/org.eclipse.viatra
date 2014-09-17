@@ -208,7 +208,7 @@ public class EMFPatternMatcherContext implements IPatternMatcherContext {
     @Override
     public void logDebug(String message) {
         if (getLogger() != null)
-            getLogger().debug(message);
+            getLogger().trace(message);
     }
 
     @Override
