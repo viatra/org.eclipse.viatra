@@ -378,6 +378,9 @@
 		<profile>
 			<id>examples</id>
 			<activation>
+				<property>
+					<name>!maven.runtime</name>
+				</property>
 				<file>
 					<exists>../../../examples/README.markdown</exists>
 				</file>
@@ -390,6 +393,9 @@
 		<profile>
 			<id>examples-eclipse.org</id>
 			<activation>
+				<property>
+					<name>!maven.runtime</name>
+				</property>
 				<file>
 					<exists>../../../examples-eclipse.org/README.markdown</exists>
 				</file>
