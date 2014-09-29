@@ -11,10 +11,12 @@
 package org.eclipse.viatra.dse.genetic.debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -273,7 +275,10 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         Map<InstanceData, SolutionTrajectory> solutions = gdse.getSolutions();
 
         if (solutions.isEmpty()) {
-            System.out.println("BUG BUGBUGBUGBUGBUBGUBGUBGBUGBUGBUGUBGU BUG");
+            if (exceptionHappened) {
+                return "";
+            }
+            Logger.getLogger(this.getClass().getSimpleName()).error("Solution collection was empty. It's a bug.");
             return "No Solution found its a bug";
         }
         

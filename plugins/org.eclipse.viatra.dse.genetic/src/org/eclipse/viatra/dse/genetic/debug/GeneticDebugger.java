@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -125,6 +126,7 @@ public class GeneticDebugger {
 
         Set<String> softConstraints = individual.violations.keySet();
         orderedSoftConstraints = new ArrayList<String>(softConstraints);
+        Collections.sort(orderedSoftConstraints);
         for (String softConstraint : orderedSoftConstraints) {
             sb.append(softConstraint);
             sb.append(COMA);
@@ -132,6 +134,7 @@ public class GeneticDebugger {
 
         Set<String> objectives = individual.objectives.keySet();
         orderedObjectives = new ArrayList<String>(objectives);
+        Collections.sort(orderedObjectives);
         for (String objective : orderedObjectives) {
             sb.append(objective);
             sb.append(COMA);
