@@ -345,11 +345,11 @@ public class DesignSpaceExplorer {
             // create rule dependency graph
             guidance.resolveDependencyGraph();
 
-            List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
-
-            Map<EModelElement, Integer> initialMarking = getInitialMarking(modelRoot, classesAndReferences);
-
-            guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
+            if (guidance.getOccuranceVectorResolver() != null) {
+                List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
+                Map<EModelElement, Integer> initialMarking = getInitialMarking(modelRoot, classesAndReferences);
+                guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
+            }
         }
 
         logger.info("DesignSpaceExplorer started exploration.");
