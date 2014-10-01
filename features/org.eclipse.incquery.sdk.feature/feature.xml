@@ -20,10 +20,6 @@
    </url>
 
    <includes
-         id="org.eclipse.incquery.runtime.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.incquery.databinding.runtime.feature"
          version="0.0.0"/>
 
@@ -37,6 +33,14 @@
 
    <includes
          id="org.eclipse.incquery.viewers.tooling.ui.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.incquery.runtime.generic.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.incquery.runtime.feature"
          version="0.0.0"/>
 
    <plugin
