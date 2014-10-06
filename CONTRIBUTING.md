@@ -11,7 +11,7 @@ With EMF-IncQuery, you can:
 # Installation
 To install EMF-IncQuery to your Eclipse instance, you can use the update sites created and maintained by the project. Before installation, you will need a current version of EMF and Xtext installed.
 
-The update site locations are described in [http://eclipse.org/incquery/download.php](), while their contents are updated in [the installation wiki page](http://wiki.eclipse.org/EMFIncQuery/UserDocumentation/Installation).
+The update site locations are described in [http://eclipse.org/incquery/download.php](http://eclipse.org/incquery/download.php), while their contents are updated in [the installation wiki page](http://wiki.eclipse.org/EMFIncQuery/UserDocumentation/Installation).
 
 # Most important links
 
