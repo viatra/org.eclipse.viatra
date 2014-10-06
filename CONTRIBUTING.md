@@ -11,7 +11,7 @@ With EMF-IncQuery, you can:
 # Installation
 To install EMF-IncQuery to your Eclipse instance, you can use the update sites created and maintained by the project. Before installation, you will need a current version of EMF and Xtext installed.
 
-The update site locations are described in [http://eclipse.org/incquery/download.php](http://eclipse.org/incquery/download.php), while their contents are updated in [the installation wiki page](http://wiki.eclipse.org/EMFIncQuery/UserDocumentation/Installation).
+The update site locations are described in [http://eclipse.org/incquery/download.php](http://eclipse.org/incquery/download.php).
 
 # Most important links
 
@@ -22,17 +22,17 @@ The update site locations are described in [http://eclipse.org/incquery/download
 # Building and Contributing
 
 ## Building EMF-IncQuery
-This repository does not contain generated code, making first build from source somewhat complicated. A detailed description is maintained in the [development environment wiki page]
-(http://wiki.eclipse.org/EMFIncQuery/DeveloperDocumentation/DevEnvironment).
+This repository does not contain generated code, making first build from source somewhat complicated. A detailed description is maintained in the [development environment wiki page](http://wiki.eclipse.org/EMFIncQuery/DeveloperDocumentation/DevEnvironment).
 
-EMF-IncQuery maintains Maven/Tycho-based builds. It can be executed by executing the following lines:
+EMF-IncQuery maintains Maven/Tycho-based builds, however for bootstrapping reasons it can be executed in two parts. It can be executed by executing the following lines:
 
+    mvn -f releng/org.eclipse.incquery.parent/pom.xml -Dmaven.runtime=true clean install    
     mvn -f releng/org.eclipse.incquery.parent/pom.xml clean install
     
 The created update sites will be available in:
 
   * **Core plug-ins**: releng/org.eclipse.incquery.update/target/repository/
-  * **All plug-ins**: releng/org.eclipse.incquery.update.extras/target/repository/
+  * **All plug-ins** (including experimental ones): releng/org.eclipse.incquery.update.extras/target/repository/
 
 ## Contributing
 
