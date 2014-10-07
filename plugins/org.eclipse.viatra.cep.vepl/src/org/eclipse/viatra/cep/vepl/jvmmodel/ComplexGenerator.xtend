@@ -57,6 +57,9 @@ class ComplexGenerator {
 	}
 
 	def public generateComplexEventPattern(ComplexEventPattern pattern, IJvmDeclaredTypeAcceptor acceptor) {
+		if(pattern.complexEventExpression == null){
+			return
+		}
 		var patternGroups = disassembler.decomposeComplexPattern(pattern.complexEventExpression).entries.toList
 
 		if (!patternGroups.empty) {

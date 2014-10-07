@@ -15,7 +15,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class DSEThreadPool extends ThreadPoolExecutor {
         return Runtime.getRuntime().availableProcessors();
     }
 
-    public boolean tryStartNewStrategy(IStrategy strategy) {
+    public boolean tryStartNewStrategy(IExplorerThread strategy) {
 
         if (!canStartNewThread()) {
             return false;

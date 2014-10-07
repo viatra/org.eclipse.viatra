@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -45,6 +45,7 @@ public class RandomSearchStrategy implements INextTransition {
     private SharedData shared;
     private TrajectoryInfo trajectoryInfo;
     int nth;
+    private boolean isInterrupted = false;
 
     public RandomSearchStrategy(int minDepth, int maxDepth, int numberOfTries) {
         shared = new SharedData(minDepth, maxDepth, numberOfTries);
@@ -71,6 +72,10 @@ public class RandomSearchStrategy implements INextTransition {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         do {
             if (trajectoryInfo.getDepthFromRoot() < maxDepth) {
@@ -101,15 +106,21 @@ public class RandomSearchStrategy implements INextTransition {
         return null;
     }
 
-    private IStrategy tryStartNewThread(ThreadContext context) {
-        return gc
-                .tryStartNewThread(context, context.getModelRoot(), true, new StrategyBase(new RandomSearchStrategy()));
+    private IExplorerThread tryStartNewThread(ThreadContext context) {
+        return gc.tryStartNewThread(context, context.getModelRoot(), true, new Strategy(new RandomSearchStrategy()));
     }
 
     @Override
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied) {
+        if (constraintsNotSatisfied) {
+            dsm.undoLastTransformation();
+        }
+    }
 
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
     private static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {

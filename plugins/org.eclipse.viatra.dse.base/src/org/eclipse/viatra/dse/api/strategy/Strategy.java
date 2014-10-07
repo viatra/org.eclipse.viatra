@@ -11,219 +11,120 @@
 package org.eclipse.viatra.dse.api.strategy;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
+import org.eclipse.viatra.dse.api.strategy.impl.CheckAllConstraints;
+import org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals;
+import org.eclipse.viatra.dse.api.strategy.impl.ConfigurableSoultionFound;
+import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
+import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.ExecutationType;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.guidance.Guidance;
-import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
-import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 
-/**
- * 
- * @author Andras Szabolcs Nagy
- * 
- */
-public class Strategy implements IStrategy {
+public class Strategy {
 
-    private static final String STATE_EVALUATION = "stateEvaluation";
-    private static final String FIRE_ACTIVATION_TIMER = "fireActivationTimer";
-    private static final String GET_NEXT_TRANSITION_ID_TIMER = "getNextTransitionIdTimer";
-    private static final String WALKER_CYCLE = "walkerCycle";
+    private ICheckConstraints constraintsChecker;
+    private ICheckGoalState goalStateChecker;
+    private INextTransition iNextTransition;
 
-    private final ThreadContext threadContext;
-    private GlobalContext globalContext;
-    private final StrategyBase strategyBase;
-    private final AtomicBoolean interrupted = new AtomicBoolean(false);
+    private ISolutionFound solutionFoundHandler;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    public Strategy(INextTransition iNextTransition) {
+        this.iNextTransition = iNextTransition;
+        constraintsChecker = new CheckAllConstraints();
+        goalStateChecker = new CheckAllGoals();
+        solutionFoundHandler = new ConfigurableSoultionFound(1);
+    }
 
-    public Strategy(final ThreadContext context) {
-        this.threadContext = context;
-        this.strategyBase = context.getStrategyBase();
+    public void setConstraintsChecker(ICheckConstraints iCheckConstraints) {
+        this.constraintsChecker = iCheckConstraints;
+    }
+
+    public void setGoalStateChecker(ICheckGoalState iCheckGoalState) {
+        this.goalStateChecker = iCheckGoalState;
+    }
+
+    public ICheckConstraints getConstraintsChecker() {
+        return constraintsChecker;
+    }
+
+    public ICheckGoalState getGoalStateChecker() {
+        return goalStateChecker;
+    }
+
+    public void setSolutionFoundHandler(ISolutionFound solutionFoundHandler) {
+        this.solutionFoundHandler = solutionFoundHandler;
+    }
+
+    public ISolutionFound getSolutionFoundHandler() {
+        return solutionFoundHandler;
     }
 
     /**
-     * Makes the strategy (the thread) end it's last step, then exit.
-     */
-    @Override
-    public void stopRunning() {
-        interrupted.set(true);
-    }
-
-    /**
-     * Starts the design space exploration. Returns only when {@link ISolutionFound#solutionFound(Strategy, Solution)}
-     * method returns STOP or the {@link INextTransition#getNextTransition(ThreadContext)} method returns null.
+     * Delegates the call to {@link ICheckConstraints#checkConstraints(ThreadContext)}.
      * 
-     * If this main algorithm is not good for you, you can derive from this class and override this method. TODO:
-     * strategy factory
+     * @see ICheckConstraints#checkConstraints(ThreadContext)
      */
-    @Override
-    public void run() {
-        try {
-
-            // init is called here, not in the constructor, because of
-            // performance
-            // (initialization happens in the new thread)
-            threadContext.init();
-
-            globalContext = threadContext.getGlobalContext();
-
-            strategyBase.initINextTransition(threadContext);
-
-            boolean continueExecution = true;
-
-            DesignSpaceManager designSpaceManager = threadContext.getDesignSpaceManager();
-            Guidance guidance = threadContext.getGuidance();
-
-            logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
-
-            // do the exploration until {@link StrategyBase#solutionFound}
-            // returns
-            // stop, or interrupted from outside by Strategy#stopRunning
-            mainloop: while (continueExecution && !interrupted.get()) {
-                PerformanceMonitorManager.endTimer(WALKER_CYCLE);
-                PerformanceMonitorManager.startTimer(WALKER_CYCLE);
-
-                ITransition transition = null;
-
-                do {
-                    // Get next activation to fire. Eventually calls the
-                    // getNextTransition methods.
-                    PerformanceMonitorManager.startTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    transition = strategyBase.getNextTransition(threadContext, transition == null);
-                    PerformanceMonitorManager.endTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    // If there are no more transitions to fire, then return and
-                    // stop the exploration.
-                    if (transition == null) {
-                        break mainloop;
-                    }
-                    // if we cannot lock that particular Transition id, we try
-                    // to get a new activation one
-                } while (!transition.tryToLock());
-
-                // fire activation
-                PerformanceMonitorManager.startTimer(FIRE_ACTIVATION_TIMER);
-                designSpaceManager.fireActivation(transition);
-                PerformanceMonitorManager.endTimer(FIRE_ACTIVATION_TIMER);
-
-                IState newState = designSpaceManager.getCurrentState();
-
-                logger.debug("Transition fired: " + transition.getId() + " State: " + newState.getId());
-
-                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
-
-                boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
-                boolean isGoalState = false;
-                boolean areConstraintsSatisfied = true;
-                if (isAlreadyTraversed) {
-                    TraversalStateType traversalState = newState.getTraversalState();
-
-                    // Create new trajectory for solution
-                    if (traversalState == TraversalStateType.GOAL) {
-                        // TODO check goal state again, because of the hash
-                        // collision if(iCheckGoalState.isGoalState(context)){}
-                        globalContext.getSolutionStore().newSolution(threadContext, null);
-                        isGoalState = true;
-                    } else if (traversalState == TraversalStateType.CUT) {
-                        areConstraintsSatisfied = false;
-                    }
-
-                    logger.debug("State is already traversed.");
-
-                    strategyBase.traversedStateFound(threadContext, traversalState);
-
-                } else {
-                    // if the global constraints are satisfied
-                    areConstraintsSatisfied = strategyBase.checkConstraints(threadContext);
-                    if (areConstraintsSatisfied) {
-
-                        // if it is a goal state
-                        Map<String, Double> measurements = strategyBase.isGoalState(threadContext);
-                        if (measurements != null) {
-
-                            logger.debug("Goal state.");
-
-                            isGoalState = true;
-                            Solution solution = globalContext.getSolutionStore().newSolution(threadContext,
-                                    measurements);
-
-                            if (solution != null) {
-                                // TODO this behavior could be unwanted
-                                newState.setTraversalState(TraversalStateType.GOAL);
-
-                                // Call SolutionFoundResolver
-                                ExecutationType verdict = strategyBase.solutionFound(threadContext, solution);
-
-                                switch (verdict) {
-                                case STOP_ALL:
-                                    continueExecution = false;
-                                    globalContext.stopAllThreads();
-                                    break;
-                                case STOP_THREAD:
-                                    continueExecution = false;
-                                default:
-                                    break;
-                                }
-                            }
-
-                        }
-                        // if not goal state, check the cut-off criterias
-                        else {
-                            if (guidance != null && guidance.evaluateCutOffCriterias() == EvaluationResult.CUT_OFF) {
-                                newState.setTraversalState(TraversalStateType.CUT);
-                            }
-
-                        }
-                    }
-                    // if the global constraints are not satisfied
-                    else {
-                        newState.setTraversalState(TraversalStateType.CUT);
-                        logger.debug("Constraints are not satisfied.");
-                    }
-                    newState.setProcessed(); // TODO there is one in addState
-                }
-
-                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, isGoalState,
-                        !areConstraintsSatisfied);
-                PerformanceMonitorManager.endTimer(STATE_EVALUATION);
-            }
-
-            logger.debug("Strategy stopped on Thread " + Thread.currentThread());
-            globalContext.strategyFinished(this);
-            return;
-        } catch (Exception e) {
-            logger.error("Thread stopped unexpectedly!", e);
-            globalContext.getExceptionHappendInOtherThread().set(true);
-            globalContext.strategyFinished(this);
-            throw new DSEException(e);
-        }
+    public boolean checkConstraints(ThreadContext context) {
+        return constraintsChecker.checkConstraints(context);
     }
 
-    @Override
-    public void dispose() {
-        threadContext.getRuleEngine().dispose();
-        try {
-            threadContext.getIncqueryEngine().getBaseIndex().dispose();
-        } catch (IncQueryException e) {
-            throw new DSEException(e);
-        }
+    /**
+     * Delegates the call to {@link ICheckGoalState#isGoalState(ThreadContext)}.
+     * 
+     * @see ICheckGoalState#isGoalState(ThreadContext)
+     */
+    public Map<String, Double> isGoalState(ThreadContext context) {
+        return goalStateChecker.isGoalState(context);
     }
 
-    @Override
-    public ThreadContext getThreadContext() {
-        return threadContext;
+    /**
+     * Delegates the call to {@link INextTransition#getNextTransition(ThreadContext)}.
+     * 
+     * @see INextTransition#getNextTransition(ThreadContext)
+     */
+    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+        return iNextTransition.getNextTransition(context, lastWasSuccessful);
     }
+
+    /**
+     * Delegates the call to {@link INextTransition#init(ThreadContext)}.
+     * 
+     * @see INextTransition#init(ThreadContext)
+     */
+    public void initINextTransition(ThreadContext context) {
+        iNextTransition.init(context);
+    }
+
+    /**
+     * Delegates the call to {@link INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)}.
+     * 
+     * @see INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)
+     */
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+            boolean areConstraintsSatisfied) {
+        iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, isGoalState, areConstraintsSatisfied);
+    }
+
+    /**
+     * Delegates the call to {@link INextTransition#interrupted(ThreadContext)}.
+     * 
+     * @see INextTransition#interrupted(ThreadContext)
+     */
+    public void interrupted(ThreadContext context) {
+        iNextTransition.interrupted(context);
+    }
+
+    /**
+     * Delegates the call to {@link ISolutionFound#solutionFound(ThreadContext, Solution)}.
+     * 
+     * @see ISolutionFound#solutionFound(ThreadContext, Solution)
+     */
+    public ExecutationType solutionFound(ThreadContext context, Solution solution) {
+        return solutionFoundHandler.solutionFound(context, solution);
+    }
+
 }

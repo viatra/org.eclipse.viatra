@@ -35,6 +35,7 @@ public class DepthFirstNextTransition implements INextTransition {
     private SharedData sharedData;
     private Random random = new Random();
     private Logger logger = Logger.getLogger(this.getClass());
+    private boolean isInterrupted = false;
 
     public DepthFirstNextTransition() {
     }
@@ -59,6 +60,10 @@ public class DepthFirstNextTransition implements INextTransition {
 
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+
+        if (isInterrupted) {
+            return null;
+        }
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         PerformanceMonitorManager.startTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
@@ -90,7 +95,8 @@ public class DepthFirstNextTransition implements INextTransition {
         int index = random.nextInt(transitions.size());
         ITransition transition = transitions.get(index);
 
-        logger.debug("Next transition: " + transition.getId());
+        logger.debug("Depth: " + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() + " Next transition: "
+                + transition.getId() + " From state: " + transition.getFiredFrom().getId());
 
         return transition;
     }
@@ -103,6 +109,11 @@ public class DepthFirstNextTransition implements INextTransition {
                     + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();
         }
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
 }

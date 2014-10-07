@@ -31,8 +31,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -274,7 +274,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(StrategyBase strategyBase, boolean waitForTermination) throws DSEException {
+    public void startExploration(Strategy strategyBase, boolean waitForTermination) throws DSEException {
         initExploration(strategyBase);
 
         // wait until all threads exit
@@ -304,7 +304,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(StrategyBase strategyBase, int waitInMilliseconds) throws DSEException {
+    public void startExploration(Strategy strategyBase, int waitInMilliseconds) throws DSEException {
         initExploration(strategyBase);
 
         try {
@@ -330,7 +330,7 @@ public class DesignSpaceExplorer {
         } while (true);
     }
 
-    private void initExploration(StrategyBase strategyBase) {
+    private void initExploration(Strategy strategyBase) {
         checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
         checkArgument(strategyBase != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
@@ -345,11 +345,11 @@ public class DesignSpaceExplorer {
             // create rule dependency graph
             guidance.resolveDependencyGraph();
 
-            List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
-
-            Map<EModelElement, Integer> initialMarking = getInitialMarking(modelRoot, classesAndReferences);
-
-            guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
+            if (guidance.getOccuranceVectorResolver() != null) {
+                List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
+                Map<EModelElement, Integer> initialMarking = getInitialMarking(modelRoot, classesAndReferences);
+                guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
+            }
         }
 
         logger.info("DesignSpaceExplorer started exploration.");
@@ -474,7 +474,7 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Returns true if the {@link IStrategy strategy} decided to stop, and all the threads finished their work.
+     * Returns true if the {@link IExplorerThread strategy} decided to stop, and all the threads finished their work.
      * 
      * @return true if the process has finished, false otherwise.
      */

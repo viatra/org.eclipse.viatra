@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
@@ -57,4 +59,13 @@ public interface INextTransition {
      */
     void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied);
+
+    /**
+     * Called if the exploration process is interrupted for example by timeout. Exit by returning null in the
+     * {@link INextTransition#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
+     * 
+     * @param context
+     *            The {@link ThreadContext} which contains necessary informations.
+     */
+    void interrupted(ThreadContext context);
 }

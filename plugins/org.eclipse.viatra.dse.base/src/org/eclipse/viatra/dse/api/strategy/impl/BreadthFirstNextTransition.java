@@ -44,6 +44,7 @@ public class BreadthFirstNextTransition implements INextTransition {
     private int remainingTransitions = 0;
     private int transitionsInNextLevel = 0;
     private TransitionWrapper t;
+    private boolean isInterrupted = false;
 
     public BreadthFirstNextTransition() {
     }
@@ -55,14 +56,9 @@ public class BreadthFirstNextTransition implements INextTransition {
     @Override
     public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
 
-        // note and TODO: this implementation depends on two other: don't
-        // backtrack at traversed state and unsatisfied constraints. Solution
-        // is, that the DSM has a notifier, that notifies, when an undo has
-        // happened.
-
         // TODO: For some reason it keeps failing from time to time
         // For me it failed at the level of 10 and 11, in the 2/3 of the time
-        if (actDepth > maxDepth) {
+        if (actDepth > maxDepth || isInterrupted) {
             return null;
         }
 
@@ -151,6 +147,11 @@ public class BreadthFirstNextTransition implements INextTransition {
     @Override
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
             boolean constraintsNotSatisfied) {
+    }
+
+    @Override
+    public void interrupted(ThreadContext context) {
+        isInterrupted = true;
     }
 
 }

@@ -13,23 +13,22 @@ package org.eclipse.viatra.dse.genetic.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.genetic.api.StopCondition;
+import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
@@ -39,7 +38,9 @@ import org.eclipse.viatra.dse.util.EMFHelper;
 public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
     enum GeneticStrategyState {
-        FIRST_POPULATION, CREATING_NEW_POPULATION, STOPPING
+        FIRST_POPULATION,
+        CREATING_NEW_POPULATION,
+        STOPPING
     }
 
     private GeneticSharedObject sharedObject;
@@ -52,6 +53,10 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     private Random random = new Random();
 
     private Logger logger = Logger.getLogger(MainGeneticStrategy.class);
+    private GeneticDebugger geneticDebugger = new GeneticDebugger(false);
+
+    private double actualBestSoftConstraint = Double.MAX_VALUE;
+    private int noBetterSolutionForXIterations = 0;
 
     @Override
     public void init(ThreadContext context) {
@@ -80,6 +85,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
         sharedObject.instancesToBeChecked = new ArrayBlockingQueue<InstanceData>(sharedObject.sizeOfPopulation, false);
 
         sharedObject.initialPopulationSelector.setChildStore(this);
+        sharedObject.initialPopulationSelector.setPopulationSize(sharedObject.sizeOfPopulation);
         sharedObject.initialPopulationSelector.init(context);
 
         logger.debug("MainGeneticStratgey is inited");
@@ -106,16 +112,60 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
 
                 logger.debug(sharedObject.actNumberOfPopulation + ". population, selecting");
 
+                boolean isLastPopulation = false;
+                switch (sharedObject.stopCondition) {
+                case CANT_FIND_BETTER:
+                    // Intended, check after selection
+                    break;
+                case GOOD_ENOUGH_SOLUTION:
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.sumOfConstraintViolationMeauserement < sharedObject.stopConditionNumber) {
+                            isLastPopulation = true;
+                            break;
+                        }
+                    }
+                    break;
+                case ITERATIONS:
+                    isLastPopulation = sharedObject.actNumberOfPopulation >= sharedObject.stopConditionNumber;
+                    break;
+                default:
+                    break;
+                }
+
                 // Selection
-                if (sharedObject.actNumberOfPopulation < sharedObject.maxNumberOfPopulation) {
-                    parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                            sharedObject.comparators, sharedObject.sizeOfPopulation, false);
-                } else {
-                    List<InstanceData> bestSolutions = sharedObject.selector.selectNextPopulation(parentPopulation,
-                            sharedObject.comparators, sharedObject.sizeOfPopulation, true);
+                parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
+                        sharedObject.comparators, sharedObject.sizeOfPopulation,
+                        isLastPopulation && !geneticDebugger.isDebug());
+
+                geneticDebugger.debug(parentPopulation);
+
+                for (InstanceData instanceData : parentPopulation) {
+                    instanceData.survive++;
+                }
+
+                if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.rank == 1) {
+                            if (!(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
+                                noBetterSolutionForXIterations++;
+                                if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
+                                    isLastPopulation = true;
+                                }
+                            } else {
+                                noBetterSolutionForXIterations = 0;
+                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (isLastPopulation) {
                     sharedObject.addInstanceToBestSolutions.set(true);
-                    for (InstanceData instanceData : bestSolutions) {
-                        sharedObject.instancesToBeChecked.offer(instanceData);
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.rank == 1) {
+                            sharedObject.instancesToBeChecked.offer(instanceData);
+                        }
                     }
                     state = GeneticStrategyState.STOPPING;
                     continue;
@@ -125,14 +175,26 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 ArrayList<InstanceData> tempChildren = new ArrayList<InstanceData>();
                 ArrayList<InstanceData> alreadyTriedChildren = new ArrayList<InstanceData>();
                 Iterator<InstanceData> mainIterator = parentPopulation.iterator();
+
+                int paretoFrontSize = 0;
+                for (InstanceData instanceData : parentPopulation) {
+                    if (instanceData.rank == 1) {
+                        paretoFrontSize++;
+                    }
+                }
+
+                float mutationChance = sharedObject.mutationChanceMultiplier * paretoFrontSize
+                        / parentPopulation.size() + sharedObject.chanceOfMutationInsteadOfCrossover;
                 while (mainIterator.hasNext()) {
                     InstanceData parent1 = mainIterator.next();
 
                     // Mutation (crossover with one parent)
-                    if (random.nextFloat() < sharedObject.chanceOfMutationInsteadOfCrossover) {
+                    if (random.nextFloat() < mutationChance) {
                         List<IMutateTrajectory> mutatiors = sharedObject.mutatiors;
                         int rnd = random.nextInt(mutatiors.size());
-                        InstanceData child = mutatiors.get(rnd).mutate(parent1, context);
+                        IMutateTrajectory mutator = mutatiors.get(rnd);
+                        sharedObject.mutationUsed(mutator);
+                        InstanceData child = mutator.mutate(parent1, context);
                         if (child.trajectory.isEmpty()) {
                             throw new DSEException("Mutation operator (at crossover) "
                                     + mutatiors.get(rnd).getClass().getSimpleName() + " returned an empty trajectory.");
@@ -148,7 +210,6 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                         if (parent1.equals(parent2)) {
                             if (p1Index + 1 < parentPopulation.size()) {
                                 parent2 = parentPopulation.get(p1Index + 1);
-                                ;
                             } else {
                                 parent2 = parentPopulation.get(0);
                             }
@@ -158,6 +219,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                         List<ICrossoverTrajectories> crossovers = sharedObject.crossovers;
                         int rnd = random.nextInt(crossovers.size());
                         ICrossoverTrajectories crossover = crossovers.get(rnd);
+                        sharedObject.crossoverUsed(crossover);
                         Collection<InstanceData> result = crossover.crossover(Arrays.asList(parent1, parent1), context);
                         logger.debug("Crossover parent1: " + parent1 + " parent2: " + parent2);
                         for (InstanceData child : result) {
@@ -165,7 +227,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                                 throw new DSEException("Crossover operation " + crossover.getClass().getSimpleName()
                                         + " returned an empty trajectory.");
                             }
-                            logger.debug("  Child" + child);
+                            logger.debug("  Child: " + child);
                             tempChildren.add(child);
                         }
                     }
@@ -173,14 +235,20 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                     // Check the created children and make it feasible by the worker threads
                     for (Iterator<InstanceData> iterator = tempChildren.iterator(); iterator.hasNext();) {
                         InstanceData child = iterator.next();
-                        if (child.trajectory.size() > 1 && !isDuplication(child, parentPopulation)
-                                && !isDuplication(child, alreadyTriedChildren)) {
+                        boolean isDuplicationInParent = isDuplication(child, parentPopulation);
+                        boolean isDuplicationInAlreadyTrieds = isDuplication(child, alreadyTriedChildren);
+
+                        if (child.trajectory.size() > 1 && !isDuplicationInParent && !isDuplicationInAlreadyTrieds) {
                             boolean queueIsNotFull = sharedObject.instancesToBeChecked.offer(child);
                             if (queueIsNotFull) {
                                 alreadyTriedChildren.add(child);
                                 logger.debug("Child to try: " + child.toString());
                             }
                         }
+                        if (isDuplicationInParent || isDuplicationInAlreadyTrieds) {
+                            sharedObject.numOfDuplications++;
+                        }
+
                         iterator.remove();
                     }
 
@@ -190,8 +258,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                                 .size()) {
                             try {
                                 Thread.sleep(1);
-                                if (gc.getExceptionHappendInOtherThread().get()
-                                        || !gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
+                                if (gc.getExceptionHappendInOtherThread().get()) {
                                     return null;
                                 }
                             } catch (InterruptedException e) {
@@ -260,8 +327,25 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                 sharedObject.newPopulationIsNeeded.set(false);
             }
 
-        } while (sharedObject.newPopulationIsNeeded.get()
-                && gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING));
+            // Interrupted
+            if (!gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
+                logger.debug("Interrupted");
+                parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
+                        sharedObject.comparators, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug());
+                geneticDebugger.debug(parentPopulation);
+                sharedObject.addInstanceToBestSolutions.set(true);
+                for (InstanceData instanceData : parentPopulation) {
+                    if (instanceData.rank == 1) {
+                        logger.debug("solution to process " + instanceData.toString());
+                        sharedObject.instancesToBeChecked.offer(instanceData);
+                    }
+                }
+                sharedObject.newPopulationIsNeeded.set(false);
+            }
+
+        } while (sharedObject.newPopulationIsNeeded.get());
+
+        logger.debug("Stopped");
 
         return null;
     }
@@ -278,7 +362,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     }
 
     private void startWorkerThreads(ThreadContext context) {
-        while (gc.tryStartNewThread(context, sharedObject.initialModel, true, new StrategyBase(
+        while (gc.tryStartNewThread(context, sharedObject.initialModel, true, new Strategy(
                 new InstanceGeneticStrategy())) != null) {
         }
     }
@@ -293,12 +377,24 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     }
 
     @Override
+    public void interrupted(ThreadContext context) {
+    }
+
+    @Override
     public void addChild(ThreadContext context) {
         ArrayList<ITransition> trajectory = new ArrayList<ITransition>(dsm.getTrajectoryInfo()
                 .getTransitionTrajectory());
         InstanceData instance = new InstanceData(trajectory);
         sharedObject.fitnessCalculator.calculateFitness(sharedObject, context, instance);
         parentPopulation.add(instance);
+    }
+
+    public void setGeneticDebugger(GeneticDebugger geneticDebugger) {
+        this.geneticDebugger = geneticDebugger;
+    }
+
+    public GeneticDebugger getGeneticDebugger() {
+        return geneticDebugger;
     }
 
 }

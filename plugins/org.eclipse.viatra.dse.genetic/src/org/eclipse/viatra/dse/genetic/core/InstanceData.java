@@ -20,20 +20,18 @@ public class InstanceData {
 
     public volatile List<ITransition> trajectory;
 
-    public boolean wasunfeseable = false;
-
-    public InstanceData(List<ITransition> initialTrajectory) {
-        trajectory = initialTrajectory;
-    }
-
-    // *********************************
-
     public volatile int rank;
     public volatile double crowdingDistance;
 
     public volatile double sumOfConstraintViolationMeauserement = 0;
     public volatile Map<String, Integer> violations;
     public volatile Map<String, Double> objectives;
+
+    public int survive = 0;
+
+    public InstanceData(List<ITransition> initialTrajectory) {
+        trajectory = initialTrajectory;
+    }
 
     public Double getFitnessValue(String m) {
         return objectives.get(m);

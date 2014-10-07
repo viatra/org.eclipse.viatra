@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.designspace.impl.pojo;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,13 +32,12 @@ public class State implements IState {
     private final AtomicReference<TraversalStateType> traversalState = new AtomicReference<TraversalStateType>(
             TraversalStateType.TRAVERSED);
     private final Object id;
-    private final ConcurrentLinkedQueue<Transition> incomingTransitions = new ConcurrentLinkedQueue<Transition>();
-    private final ConcurrentLinkedQueue<Transition> outgoingTransitions = new ConcurrentLinkedQueue<Transition>();
+    private final CopyOnWriteArrayList<Transition> incomingTransitions = new CopyOnWriteArrayList<Transition>();
+    private ThreadsafeImmutableList<Transition> outgoingTransitions;
 
     private final AtomicBoolean isProcessed = new AtomicBoolean(false);
 
     private final Collection<? extends ITransition> incomingTransitionsView;
-    private final Collection<? extends ITransition> outgoingTransitionsView;
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -46,16 +45,14 @@ public class State implements IState {
         incomingTransitions.add(transition);
     }
 
-    void addOutTransition(Transition transition) {
-        outgoingTransitions.add(transition);
+    void setOutTransitions(Transition[] transitions) {
+        outgoingTransitions = new ThreadsafeImmutableList<Transition>(transitions);
     }
 
     State(Object id) {
         this.id = id;
         incomingTransitionsView = (Collection<? extends ITransition>) Collections
                 .unmodifiableCollection(incomingTransitions);
-        outgoingTransitionsView = (Collection<? extends ITransition>) Collections
-                .unmodifiableCollection(outgoingTransitions);
     }
 
     @Override
@@ -80,7 +77,7 @@ public class State implements IState {
 
     @Override
     public Collection<? extends ITransition> getOutgoingTransitions() {
-        return outgoingTransitionsView;
+        return outgoingTransitions;
     }
 
     @Override

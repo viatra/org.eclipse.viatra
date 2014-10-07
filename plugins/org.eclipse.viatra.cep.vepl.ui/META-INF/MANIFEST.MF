@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Event Processing Language (VEPL) UI Contribution
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.cep.vepl.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -16,12 +16,15 @@ Require-Bundle: org.eclipse.viatra.cep.vepl;visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.common.types.ui;bundle-version="[2.5.0,2.7.0)",
  org.eclipse.xtext.ui.codetemplates.ui;bundle-version="[2.5.0,2.7.0)",
- org.eclipse.compare
+ org.eclipse.compare,
+ org.apache.log4j,
+ org.eclipse.jdt.core
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.viatra.cep.vepl.ui.quickfix,
+Export-Package: org.eclipse.viatra.cep.vepl.ui,
  org.eclipse.viatra.cep.vepl.ui.contentassist,
  org.eclipse.viatra.cep.vepl.ui.contentassist.antlr,
- org.eclipse.viatra.cep.vepl.ui.internal
+ org.eclipse.viatra.cep.vepl.ui.internal,
+ org.eclipse.viatra.cep.vepl.ui.quickfix
 Bundle-Activator: org.eclipse.viatra.cep.vepl.ui.internal.VeplActivator

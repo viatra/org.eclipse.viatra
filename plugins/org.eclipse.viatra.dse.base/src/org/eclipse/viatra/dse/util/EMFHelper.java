@@ -54,23 +54,13 @@ public final class EMFHelper {
         Map<String, Object> m = reg.getExtensionToFactoryMap();
         m.put(ext, new XMIResourceFactoryImpl());
 
-        // Obtain a new resource set
         ResourceSet resSet = new ResourceSetImpl();
 
         URI uri = URI.createURI(name + "." + ext);
-        // Create a resource
         Resource resource = resSet.createResource(uri);
 
-        // Get the first model element and cast it to the right type, in my
-        // example everything is hierarchical included in this first node
-        Copier copier = new Copier();
-        EObject result = copier.copy(root);
+        resource.getContents().add(root);
 
-        copier.copyReferences();
-
-        resource.getContents().add(result);
-
-        // Now save the content.
         try {
             resource.save(Collections.EMPTY_MAP);
         } catch (IOException e) {

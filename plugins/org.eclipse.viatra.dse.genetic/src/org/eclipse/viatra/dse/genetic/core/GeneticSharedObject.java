@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.fintesscalculators.SimpleFitnessCalculator;
 import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
@@ -36,10 +37,12 @@ public class GeneticSharedObject {
 
     // Configuration
     public int sizeOfPopulation = 4;
-    public int maxNumberOfPopulation = 50;
     public int actNumberOfPopulation = 1;
     public float chanceOfMutationInsteadOfCrossover = 0.2f;
+    public float mutationChanceMultiplier = 0.0f;
     public int workerThreads = 0;
+    public StopCondition stopCondition = StopCondition.ITERATIONS;
+    public int stopConditionNumber;
 
     public List<SoftConstraint> softConstraints = new ArrayList<SoftConstraint>();
     public Map<String, Comparator<InstanceData>> comparators = new HashMap<String, Comparator<InstanceData>>();
@@ -62,5 +65,19 @@ public class GeneticSharedObject {
 
     // Result
     public Map<InstanceData, SolutionTrajectory> bestSolutions = new ConcurrentHashMap<InstanceData, SolutionTrajectory>();
+    public Map<IMutateTrajectory, Integer> mutationApplications = new HashMap<IMutateTrajectory, Integer>();
+    public Map<ICrossoverTrajectories, Integer> crossoverApplications = new HashMap<ICrossoverTrajectories, Integer>();
+    public AtomicInteger numOfCorrections = new AtomicInteger(0);
+    public int numOfDuplications = 0;
+
+    public void mutationUsed(IMutateTrajectory mutator) {
+        Integer integer = mutationApplications.get(mutator);
+        mutationApplications.put(mutator, integer + 1);
+    }
+
+    public void crossoverUsed(ICrossoverTrajectories crossover) {
+        Integer integer = crossoverApplications.get(crossover);
+        crossoverApplications.put(crossover, integer + 1);
+    }
 
 }

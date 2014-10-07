@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+   	point="org.eclipse.ui.newWizards">
+    	<category
+        	id="org.eclipse.viatra.cep.tooling.ui.category"
+            name="VIATRA-CEP">
+		</category>
+		<wizard
+			category="org.eclipse.viatra.cep.tooling.ui.category"
+			class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewProjectWizard"
+			id="org.eclipse.viatra.cep.tooling.ui.newproject"
+			name="New VIATRA-CEP Project"
+			preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
+			project="true">
+		</wizard>
+		<wizard
+			category="org.eclipse.viatra.cep.tooling.ui.category"
+			class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewVeplFileWizard"
+			finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+			id="org.eclipse.viatra.cep.tooling.ui.newveplfile"
+			name="New VEPL File"
+			preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
+			project="true">
+		</wizard>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.cep.projectnature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.viatra.cep.tooling.ui.nature.ViatraCepNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.cep.tooling.ui.projectbuilder"
+         name="VIATRA-CEP Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+      	hasNature="true">
+      	<run
+               class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory">
+               <parameter name="guicekey" value="org.eclipse.viatra.cep.tooling.ui.builder.ViatraCepProjectBuilder"/>
+         </run>
+      </builder>
+   </extension>
+</plugin>

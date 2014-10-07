@@ -16,16 +16,16 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.StrategyBase;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
 import org.eclipse.viatra.dse.genetic.core.SoftConstraint;
+import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IFitnessCalculator;
@@ -37,6 +37,7 @@ import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 
 public class GeneticDesignSpaceExplorer {
 
+    private final MainGeneticStrategy MAIN_GENETIC_STRATEGY = new MainGeneticStrategy();
     private DesignSpaceExplorer dse;
     private GeneticSharedObject configuration;
     private Guidance guidance;
@@ -75,8 +76,9 @@ public class GeneticDesignSpaceExplorer {
         configuration.sizeOfPopulation = sizeOfPopulation;
     }
 
-    public void setNumberOfPopulation(int numberOfPopulation) {
-        configuration.maxNumberOfPopulation = numberOfPopulation;
+    public void setStopCondition(StopCondition stopCondition, int stopConditionNumber) {
+        configuration.stopCondition = stopCondition;
+        configuration.stopConditionNumber = stopConditionNumber;
     }
 
     public void addSoftConstraint(SoftConstraint softConstraint) {
@@ -95,8 +97,13 @@ public class GeneticDesignSpaceExplorer {
         configuration.modelObjectivesCalculator = calculator;
     }
 
-    public void setMutationChanceAtCrossover(float propability) {
-        configuration.chanceOfMutationInsteadOfCrossover = propability;
+    public void setMutationChanceAtCrossover(float baseChance) {
+        setMutationChanceAtCrossover(baseChance, 0.0f);
+    }
+
+    public void setMutationChanceAtCrossover(float baseChance, float multiplierForAdaptivity) {
+        configuration.chanceOfMutationInsteadOfCrossover = baseChance;
+        configuration.mutationChanceMultiplier = multiplierForAdaptivity;
     }
 
     public void addMutatitor(IMutateTrajectory mutatior) {
@@ -104,6 +111,7 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void addMutatitor(IMutateTrajectory mutatior, int weight) {
+        configuration.mutationApplications.put(mutatior, 0);
         for (int i = 0; i < weight; ++i) {
             configuration.mutatiors.add(mutatior);
         }
@@ -114,6 +122,7 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void addCrossover(ICrossoverTrajectories crossover, int weight) {
+        configuration.crossoverApplications.put(crossover, 0);
         for (int i = 0; i < weight; ++i) {
             configuration.crossovers.add(crossover);
         }
@@ -137,33 +146,19 @@ public class GeneticDesignSpaceExplorer {
 
     public void startExploration(boolean waitForTermination) {
 
-        if (configuration.crossovers.isEmpty()) {
-            throw new DSEException("There is no crossover operation registered.");
-        }
-        if (configuration.mutatiors.isEmpty()) {
-            throw new DSEException("There is no mutation operation registered.");
-        }
-
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
-        dse.startExploration(new StrategyBase(new MainGeneticStrategy()), waitForTermination);
+        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), waitForTermination);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
 
-        if (configuration.crossovers.isEmpty()) {
-            throw new DSEException("There is no crossover operation registered.");
-        }
-        if (configuration.mutatiors.isEmpty()) {
-            throw new DSEException("There is no mutation operation registered.");
-        }
-
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
 
-        dse.startExploration(new StrategyBase(new MainGeneticStrategy()), false);
+        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), false);
 
         double start = System.nanoTime() / 1000000;
         do {
@@ -228,5 +223,9 @@ public class GeneticDesignSpaceExplorer {
 
     public Map<InstanceData, SolutionTrajectory> getSolutions() {
         return configuration.bestSolutions;
+    }
+
+    public void setDebugger(GeneticDebugger geneticDebugger) {
+        MAIN_GENETIC_STRATEGY.setGeneticDebugger(geneticDebugger);
     }
 }
