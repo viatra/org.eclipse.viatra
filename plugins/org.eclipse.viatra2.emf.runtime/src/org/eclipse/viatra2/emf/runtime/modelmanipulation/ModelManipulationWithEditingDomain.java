@@ -143,8 +143,9 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 			throws ModelManipulationException {
 		if (command.canExecute()) {
 			command.execute();
+		} else {
+		    throw new ModelManipulationException("Cannot execute command");
 		}
-		throw new ModelManipulationException("Cannot execute command");
 	}
 
 }
