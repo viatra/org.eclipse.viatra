@@ -9,8 +9,8 @@
       <repository location="http://download.eclipse.org/releases/indigo"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.0.0.v201108011202"/>
-      <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="2.0.0.v201108011202"/>
+      <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
+      <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="2.1.1.v201405091103"/>
       <repository location="http://download.itemis.com/updates/releases"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
