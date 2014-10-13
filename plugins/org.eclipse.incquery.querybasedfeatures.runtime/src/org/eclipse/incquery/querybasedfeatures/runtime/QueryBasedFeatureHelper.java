@@ -164,7 +164,7 @@ public final class QueryBasedFeatureHelper {
         return queryBasedFeatureHandler;
     }
 
-    private static QueryBasedFeature createQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind,
+    protected static QueryBasedFeature createQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind,
             boolean keepCache) {
         QueryBasedFeature newFeature = null;
         switch(kind) {

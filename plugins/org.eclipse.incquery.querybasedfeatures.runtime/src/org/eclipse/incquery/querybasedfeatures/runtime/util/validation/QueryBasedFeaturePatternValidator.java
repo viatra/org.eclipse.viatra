@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime.util.validation;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -59,8 +61,15 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
      */
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
+        boolean foundErrors = false;
+
         Pattern pattern = (Pattern) annotation.eContainer();
 
+        foundErrors = checkFeatureUniquenessOnQBFAnnotations(annotation, validator, pattern);
+        if(foundErrors) {
+            return;
+        }
+        
         // 1. at least two parameters
         if (pattern.getParameters().size() < 2) {
             validator.error("Query-based feature pattern must have at least two parameters.", pattern,
@@ -218,7 +227,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
         if (ref instanceof BoolValue) {
             boolean keepCache = ((BoolValue) ref).isValue();
-            if (keepCache == false) {
+            if(!keepCache) {
                 switch (kind) {
                 case SINGLE_REFERENCE:
                 case MANY_REFERENCE:
@@ -243,6 +252,33 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         
 
+    }
+
+    private boolean checkFeatureUniquenessOnQBFAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
+        Collection<Annotation> qbfAnnotations = CorePatternLanguageHelper.getAnnotationsByName(pattern, "QueryBasedFeature");
+        if(qbfAnnotations.size() > 1) {
+            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+            if(feature == null) {
+                validator.error("Feature must be specified when multiple QueryBasedFeature annotations are used on a single pattern.", annotation,
+                        PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
+                return true;
+            } else {
+                String featureName = ((StringValue) feature).getValue();
+                for (Annotation antn : qbfAnnotations) {
+                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
+                    if(otherFeature != null) {
+                        String otherFeatureName = ((StringValue) otherFeature).getValue();
+                        if(featureName.equals(otherFeatureName)) {
+                            validator.error("Feature must be unique among multiple QueryBasedFeature annotations used on a single pattern.", annotation,
+                                    PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+        }
+        return false;
     }
 
 }
