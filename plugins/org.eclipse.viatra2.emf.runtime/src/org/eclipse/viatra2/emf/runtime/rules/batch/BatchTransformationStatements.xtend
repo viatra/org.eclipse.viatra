@@ -249,6 +249,7 @@ class BatchTransformationStatements {
 	}
 		
 	private def <Match extends IPatternMatch> fireOne(RuleSpecification<Match> ruleSpecification, EventFilter<? super Match> filter) {
+		registerRule(ruleSpecification, filter)
 		val conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
 		
 		val act = conflictSet.conflictingActivations.head as Activation<Match>
