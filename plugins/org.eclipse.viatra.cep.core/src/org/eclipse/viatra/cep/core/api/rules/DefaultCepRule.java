@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
  * 
  */
 public class DefaultCepRule implements ICepRule {
-    private static final Logger logger = LoggerUtils.getInstance().getLogger();
+    private static final Logger LOGGER = LoggerUtils.getInstance().getLogger();
 
     private List<EventPattern> eventPatterns = Lists.newArrayList();
     private Job<IObservableComplexEventPattern> job;
@@ -96,7 +96,7 @@ public class DefaultCepRule implements ICepRule {
         return new Job<IObservableComplexEventPattern>(CepActivationStates.ACTIVE) {
 
             protected void execute(Activation<? extends IObservableComplexEventPattern> activation, Context context) {
-                logger.debug("CepJobs#DefaultJob: Complex event pattern appeared: "
+                LOGGER.debug("CepJobs#DefaultJob: Complex event pattern appeared: "
                         + activation.getAtom().getObservableEventPattern().getId());
             }
 

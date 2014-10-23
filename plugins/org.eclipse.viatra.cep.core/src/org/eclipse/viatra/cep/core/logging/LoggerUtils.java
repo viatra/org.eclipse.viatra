@@ -38,10 +38,6 @@ public class LoggerUtils {
         this.logger = Logger.getLogger(LOGGER_NAME);
     }
 
-    private LoggerUtils(String name) {
-        this.logger = Logger.getLogger(name);
-    }
-
     /**
      * @return the {@link Logger} instance
      */

@@ -48,8 +48,8 @@ import com.google.common.collect.Maps;
  * 
  */
 public class Compiler {
-    private static final Logger logger = LoggerUtils.getInstance().getLogger();
-    private final AutomatonFactory FACTORY = AutomatonFactory.eINSTANCE;
+    private final static Logger LOGGER = LoggerUtils.getInstance().getLogger();
+    private final static AutomatonFactory FACTORY = AutomatonFactory.eINSTANCE;
     
     private InternalModel model;
     private Automaton automaton;
@@ -69,7 +69,7 @@ public class Compiler {
      * @return the {@link Automaton} created from the {@link EventPattern}
      */
     public Automaton compile(EventPattern eventPattern) {
-        logger.debug(String.format("Compiler: Compiling event pattern %s", eventPattern));
+        LOGGER.debug(String.format("Compiler: Compiling event pattern %s", eventPattern));
         Precompiler precompiler = new Precompiler();
         EventPattern unfoldedEventPattern = precompiler.unfoldEventPattern(eventPattern);
 
@@ -331,9 +331,9 @@ public class Compiler {
     }
 
     private FinalState createFinalState() {
-        FinalState finalState = FACTORY.createFinalState();
-        finalState.setLabel("final");
-        return finalState;
+        FinalState state = FACTORY.createFinalState();
+        state.setLabel("final");
+        return state;
     }
 
     /**

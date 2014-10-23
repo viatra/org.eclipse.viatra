@@ -22,8 +22,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
  */
 public final class EventProcessingStrategyFactory {
 
-    private EventProcessingStrategyFactory() {
-    };
+    private EventProcessingStrategyFactory() {}
 
     public static IEventProcessingStrategy getStrategy(EventContext context, IEventModelManager eventModelManager) {
         if (context == null) { // return default
