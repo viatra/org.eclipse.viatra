@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.cep.core.logging;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -22,36 +21,32 @@ import org.apache.log4j.Logger;
  * 
  */
 public class LoggerUtils {
-    private static final String LOGGER_NAME = "org.eclipse.viatra.cep";
-    private static LoggerUtils instance;
-    private Logger logger;
+	private static final String LOGGER_NAME = "org.eclipse.viatra.cep";
+	private static final Logger LOGGER = Logger.getLogger(LOGGER_NAME);
 
-    public static LoggerUtils getInstance() {
-        if (instance == null) {
-            instance = new LoggerUtils();
-            BasicConfigurator.configure();
-        }
-        return instance;
-    }
+	private static LoggerUtils instance;
 
-    private LoggerUtils() {
-        this.logger = Logger.getLogger(LOGGER_NAME);
-    }
+	public static LoggerUtils getInstance() {
+		if (instance == null) {
+			instance = new LoggerUtils();
+		}
+		return instance;
+	}
 
-    /**
-     * @return the {@link Logger} instance
-     */
-    public Logger getLogger() {
-        return logger;
-    }
+	/**
+	 * @return the {@link Logger} instance
+	 */
+	public Logger getLogger() {
+		return LOGGER;
+	}
 
-    /**
-     * Set the {@link Level} of debugging.
-     * 
-     * @param level
-     *            the {@link Level} of debugging
-     */
-    public void setLevel(Level level) {
-        logger.setLevel(level);
-    }
+	/**
+	 * Set the {@link Level} of debugging.
+	 * 
+	 * @param level
+	 *            the {@link Level} of debugging
+	 */
+	public void setLevel(Level level) {
+		LOGGER.setLevel(level);
+	}
 }
