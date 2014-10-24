@@ -15,6 +15,11 @@ import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource
+import org.eclipse.xtext.naming.QualifiedName
+import org.eclipse.xtext.common.types.JvmField
+import java.util.List
+import org.eclipse.xtext.common.types.JvmMember
+import org.eclipse.emf.common.util.EList
 
 @SuppressWarnings("discouraged")
 @SuppressWarnings("restriction")
@@ -41,19 +46,33 @@ class FactoryGenerator {
 			]
 			instanceMethod.setStatic(true)
 			members += instanceMethod
-
 			for (fqn : FactoryManager.instance.registeredClasses) {
-				var createMethod = model.toMethod("create" + fqn.lastSegment, model.newTypeRef(fqn.toString)) [
-					if(fqn.event){
-						parameters += model.toParameter("eventSource", model.newTypeRef(EventSource))
-					}
-					body = [
-						append('''return new ''').append('''«referClass(it, fqn, model)»''').append('''(«IF fqn.event»eventSource«ENDIF»);''')
-					]
-				]
-				createMethod.setDocumentation('''Factory method for «fqn.type» {@link «fqn.lastSegment»}.''')
-				members += createMethod
+				if (fqn.event) {
+					var parametricEventMethod = fqn.createFactoryMethod(model, acceptor, members,
+						FactoryMethodParameter.EVENTSOURCE)
+					parametricEventMethod.parameters.add(model.toParameter("eventSource", model.newTypeRef(EventSource)))
+					members += parametricEventMethod
+
+					var simpleEventMethod = fqn.createFactoryMethod(model, acceptor, members,
+						FactoryMethodParameter.NULL)
+					members += simpleEventMethod
+				} else {
+					var method = fqn.createFactoryMethod(model, acceptor, members, FactoryMethodParameter.EMPTY)
+					members += method
+				}
 			}
 		]
+	}
+
+	def private createFactoryMethod(QualifiedName fqn, PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+		List<JvmMember> members, FactoryMethodParameter methodParameter) {
+		var method = model.toMethod("create" + fqn.lastSegment, model.newTypeRef(fqn.toString)) [
+			body = [
+				append('''return new ''').append('''«referClass(it, fqn, model)»''').append(
+					'''(«methodParameter.literal»);''')
+			]
+		]
+		method.setDocumentation('''Factory method for «fqn.type» {@link «fqn.lastSegment»}.''')
+		method
 	}
 }
