@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<history>
+  <StructureModification>
+    <dependencies>
+      <model index="ipj7" modelUID="r:72b2626f-5a0a-40af-a2b4-fbc2ae1b60c1(org.eclipse.incquery.mps.test.structure)" version="-1" />
+    </dependencies>
+    <rename id="ipj7.7224892637325261610" type="CHILD" from="friendsWith" to="directFriends" />
+  </StructureModification>
+</history>
+
