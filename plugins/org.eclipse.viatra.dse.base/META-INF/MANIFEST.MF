@@ -26,9 +26,11 @@ Export-Package: org.eclipse.viatra.dse,
  org.eclipse.viatra.dse.guidance.criterias,
  org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl,
  org.eclipse.viatra.dse.multithreading,
+ org.eclipse.viatra.dse.solutionstore,
  org.eclipse.viatra.dse.statecode.graph,
  org.eclipse.viatra.dse.statecode.graph.impl,
  org.eclipse.viatra.dse.statecode.incrementalgraph,
+ org.eclipse.viatra.dse.statecode.incrementalgraph.impl,
  org.eclipse.viatra.dse.util
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.viatra.dse.DSEActivator
