@@ -72,7 +72,7 @@ public class DepthFirstNextTransition implements INextTransition {
 
         // backtrack
         while (transitions == null || transitions.isEmpty()
-                || baseDepth + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= sharedData.maxDepth) {
+                || ((baseDepth + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= sharedData.maxDepth) && sharedData.maxDepth != 0)) {
             PerformanceMonitorManager.startTimer(UNDO_TIMER);
             boolean didUndo = dsm.undoLastTransformation();
             PerformanceMonitorManager.endTimer(UNDO_TIMER);
