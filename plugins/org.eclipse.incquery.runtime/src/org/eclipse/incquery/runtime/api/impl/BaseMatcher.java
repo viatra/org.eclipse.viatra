@@ -57,6 +57,9 @@ public abstract class BaseMatcher<Match extends IPatternMatch> implements IncQue
         this.engine = engine;
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
+        if (this.querySpecification instanceof BaseGeneratedQuerySpecification<?>) {
+            ((BaseGeneratedQuerySpecification<?>) this.querySpecification).ensureInitialized();
+        }
         this.patternMatcher = accessMatcher(engineImpl, querySpecification);
         this.reteEngine = engineImpl.getReteEngine();
         engineImpl.reportMatcherInitialized(querySpecification, this);

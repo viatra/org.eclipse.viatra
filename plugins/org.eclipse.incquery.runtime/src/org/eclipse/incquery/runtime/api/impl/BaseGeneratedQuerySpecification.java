@@ -34,7 +34,6 @@ public abstract class BaseGeneratedQuerySpecification<Matcher extends IncQueryMa
 
     public BaseGeneratedQuerySpecification() {
         super();
-        ensureInitialized();
     }
     
     protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
