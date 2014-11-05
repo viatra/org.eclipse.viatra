@@ -310,9 +310,10 @@
 		<profile>
 			<id>xcore_integration</id>
 			<activation>
-				<property>
+				<!-- <property>
 					<name>xcore.integration</name>
-				</property>
+				</property>-->
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
 				<module>../../plugins/org.eclipse.incquery.xcore.model</module>

@@ -122,16 +122,7 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 					if (processed.add(eStructuralFeature)) {
 						val xFeature = mappings.getXcoreElement(eStructuralFeature);
 						if (xFeature != null) {
-							if (xFeature instanceof XStructuralFeature) {
-								val getBody = (xFeature as XStructuralFeature).getBody
-								if (getBody != null) {
-									val getter = mappings.getMapping(xFeature as XStructuralFeature).getter
-									val appendable = createAppendable
-									compiler.compile(getBody, appendable, getter.returnType, Collections::emptySet)
-									EcoreUtil::setAnnotation(eStructuralFeature, GenModelPackage::eNS_URI, "get",
-										extractBody(appendable.toString))
-								}
-							} else if (xFeature instanceof XIncQueryDerivedFeature) {
+							if (xFeature instanceof XIncQueryDerivedFeature) {
 								val XIncQueryDerivedFeature feature = xFeature as XIncQueryDerivedFeature
 
 								//Set annotation for the query based feature factory
@@ -142,6 +133,15 @@ class IncQueryXcoreGenerator extends XcoreGenerator {
 
 								extensions.add(
 									WellBehavingFeatureDefinitionGenerator.generateExtension(eStructuralFeature, exGen))
+							} else if (xFeature instanceof XStructuralFeature) {
+								val getBody = (xFeature as XStructuralFeature).getBody
+								if (getBody != null) {
+									val getter = mappings.getMapping(xFeature as XStructuralFeature).getter
+									val appendable = createAppendable
+									compiler.compile(getBody, appendable, getter.returnType, Collections::emptySet)
+									EcoreUtil::setAnnotation(eStructuralFeature, GenModelPackage::eNS_URI, "get",
+										extractBody(appendable.toString))
+								}
 							}
 						}
 					}

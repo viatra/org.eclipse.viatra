@@ -14,47 +14,47 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface XcoreFactory extends EFactory {
 	/**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	XcoreFactory eINSTANCE = org.eclipse.incquery.xcore.model.impl.XcoreFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>XInc Query Derived Feature</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>XInc Query Derived Feature</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>XInc Query Derived Feature</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>XInc Query Derived Feature</em>'.
+     * @generated
+     */
 	XIncQueryDerivedFeature createXIncQueryDerivedFeature();
 
 	/**
-	 * Returns a new object of class '<em>XInc Query Package</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>XInc Query Package</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>XInc Query Package</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>XInc Query Package</em>'.
+     * @generated
+     */
 	XIncQueryPackage createXIncQueryPackage();
 
 	/**
-	 * Returns a new object of class '<em>XInc Query Import</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>XInc Query Import</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>XInc Query Import</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>XInc Query Import</em>'.
+     * @generated
+     */
 	XIncQueryImport createXIncQueryImport();
 
 	/**
-	 * Returns the package supported by this factory.
-	 * <!-- begin-user-doc -->
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the package supported by this factory.
-	 * @generated
-	 */
+     * @return the package supported by this factory.
+     * @generated
+     */
 	XcorePackage getXcorePackage();
 
 } //XcoreFactory

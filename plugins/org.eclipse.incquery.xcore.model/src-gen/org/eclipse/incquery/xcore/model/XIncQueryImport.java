@@ -24,29 +24,29 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
  */
 public interface XIncQueryImport extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Imported Pattern Model</b></em>' reference.
-	 * <!-- begin-user-doc -->
+     * Returns the value of the '<em><b>Imported Pattern Model</b></em>' reference.
+     * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Imported Pattern Model</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Imported Pattern Model</em>' reference.
-	 * @see #setImportedPatternModel(PatternModel)
-	 * @see org.eclipse.incquery.xcore.model.XcorePackage#getXIncQueryImport_ImportedPatternModel()
-	 * @model required="true"
-	 * @generated
-	 */
+     * @return the value of the '<em>Imported Pattern Model</em>' reference.
+     * @see #setImportedPatternModel(PatternModel)
+     * @see org.eclipse.incquery.xcore.model.XcorePackage#getXIncQueryImport_ImportedPatternModel()
+     * @model required="true"
+     * @generated
+     */
 	PatternModel getImportedPatternModel();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.incquery.xcore.model.XIncQueryImport#getImportedPatternModel <em>Imported Pattern Model</em>}' reference.
-	 * <!-- begin-user-doc -->
+     * Sets the value of the '{@link org.eclipse.incquery.xcore.model.XIncQueryImport#getImportedPatternModel <em>Imported Pattern Model</em>}' reference.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Imported Pattern Model</em>' reference.
-	 * @see #getImportedPatternModel()
-	 * @generated
-	 */
+     * @param value the new value of the '<em>Imported Pattern Model</em>' reference.
+     * @see #getImportedPatternModel()
+     * @generated
+     */
 	void setImportedPatternModel(PatternModel value);
 
 } // XIncQueryImport

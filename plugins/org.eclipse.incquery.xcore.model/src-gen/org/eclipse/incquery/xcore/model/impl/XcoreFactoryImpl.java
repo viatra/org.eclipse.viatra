@@ -20,98 +20,98 @@ import org.eclipse.incquery.xcore.model.*;
  */
 public class XcoreFactoryImpl extends EFactoryImpl implements XcoreFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public static XcoreFactory init() {
-		try {
-			XcoreFactory theXcoreFactory = (XcoreFactory)EPackage.Registry.INSTANCE.getEFactory(XcorePackage.eNS_URI);
-			if (theXcoreFactory != null) {
-				return theXcoreFactory;
-			}
-		}
-		catch (Exception exception) {
-			EcorePlugin.INSTANCE.log(exception);
-		}
-		return new XcoreFactoryImpl();
-	}
+        try {
+            XcoreFactory theXcoreFactory = (XcoreFactory)EPackage.Registry.INSTANCE.getEFactory(XcorePackage.eNS_URI);
+            if (theXcoreFactory != null) {
+                return theXcoreFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new XcoreFactoryImpl();
+    }
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public XcoreFactoryImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-			case XcorePackage.XINC_QUERY_DERIVED_FEATURE: return createXIncQueryDerivedFeature();
-			case XcorePackage.XINC_QUERY_PACKAGE: return createXIncQueryPackage();
-			case XcorePackage.XINC_QUERY_IMPORT: return createXIncQueryImport();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-		}
-	}
+        switch (eClass.getClassifierID()) {
+            case XcorePackage.XINC_QUERY_DERIVED_FEATURE: return createXIncQueryDerivedFeature();
+            case XcorePackage.XINC_QUERY_PACKAGE: return createXIncQueryPackage();
+            case XcorePackage.XINC_QUERY_IMPORT: return createXIncQueryImport();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public XIncQueryDerivedFeature createXIncQueryDerivedFeature() {
-		XIncQueryDerivedFeatureImpl xIncQueryDerivedFeature = new XIncQueryDerivedFeatureImpl();
-		return xIncQueryDerivedFeature;
-	}
+        XIncQueryDerivedFeatureImpl xIncQueryDerivedFeature = new XIncQueryDerivedFeatureImpl();
+        return xIncQueryDerivedFeature;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public XIncQueryPackage createXIncQueryPackage() {
-		XIncQueryPackageImpl xIncQueryPackage = new XIncQueryPackageImpl();
-		return xIncQueryPackage;
-	}
+        XIncQueryPackageImpl xIncQueryPackage = new XIncQueryPackageImpl();
+        return xIncQueryPackage;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public XIncQueryImport createXIncQueryImport() {
-		XIncQueryImportImpl xIncQueryImport = new XIncQueryImportImpl();
-		return xIncQueryImport;
-	}
+        XIncQueryImportImpl xIncQueryImport = new XIncQueryImportImpl();
+        return xIncQueryImport;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public XcorePackage getXcorePackage() {
-		return (XcorePackage)getEPackage();
-	}
+        return (XcorePackage)getEPackage();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
+     * @deprecated
+     * @generated
+     */
 	@Deprecated
 	public static XcorePackage getPackage() {
-		return XcorePackage.eINSTANCE;
-	}
+        return XcorePackage.eINSTANCE;
+    }
 
 } //XcoreFactoryImpl
