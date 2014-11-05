@@ -16,10 +16,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -33,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 
 import com.google.inject.Inject;
 
@@ -242,12 +243,25 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         
         // 7. if resource is not writable, the generation will fail
-        Resource resource = sourceClass.getEPackage().eResource();
-        URI uri = resource.getURI();
+        EPackage ePackage = sourceClass.getEPackage();
+		URI uri = ePackage.eResource().getURI();
         // only file and platform resource URIs are considered safely writable
         if(!(uri.isFile() || uri.isPlatformResource())) {
-            validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
-                    PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
+        	boolean useModelCode = false;
+        	if(useModelCodeRef != null){
+        		useModelCode = ((BoolValue)useModelCodeRef).isValue();
+        	}
+        	String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+			boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
+        	
+        	if(!annotationsOK){
+        		validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
+        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	} else {
+        		validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable, but it already contains correct annotations.", uri.toString(), sourceClass.getName()), source,
+        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	}
             return;
         }
         
@@ -280,5 +294,6 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         return false;
     }
+    
 
 }

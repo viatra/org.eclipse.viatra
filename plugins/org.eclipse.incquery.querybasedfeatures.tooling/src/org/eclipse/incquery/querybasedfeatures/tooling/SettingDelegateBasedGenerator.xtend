@@ -14,14 +14,11 @@ import java.io.IOException
 import java.util.ArrayList
 import java.util.StringTokenizer
 import org.eclipse.emf.ecore.EcoreFactory
-import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
-import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
 
 /**
  * @author Abel Hegedus
@@ -48,9 +45,7 @@ class SettingDelegateBasedGenerator {
       try{
         parameters.ePackage.eResource.save(null)
       } catch(IOException e){
-        val message = String.format("Cannot save Ecore resource %s, make sure your it is in the workspace!", parameters.ePackage.eResource.URI)
-        errorFeedback.reportError(annotation, message, QueryBasedFeatureGenerator::DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-        logger.warn(message, e)
+        // validator already checks write access, cannot do anything about this here
       }
     } catch(IllegalArgumentException e){
       if(generate){
@@ -64,28 +59,28 @@ class SettingDelegateBasedGenerator {
       val pckg = parameters.ePackage
       val annotations = new ArrayList(pckg.EAnnotations)
       var ecoreAnnotation = annotations.findFirst[
-        source == QueryBasedFeatureGenerator::ECORE_ANNOTATION
+        source == QueryBasedFeatures::ECORE_ANNOTATION
       ]
       if(ecoreAnnotation == null) {
         ecoreAnnotation = EcoreFactory::eINSTANCE.createEAnnotation
-        ecoreAnnotation.source = QueryBasedFeatureGenerator::ECORE_ANNOTATION
+        ecoreAnnotation.source = QueryBasedFeatures::ECORE_ANNOTATION
         pckg.EAnnotations.add(ecoreAnnotation)
       }
       var entry = ecoreAnnotation.details.findFirst[
-        key == QueryBasedFeatureGenerator::SETTING_DELEGATES_KEY
+        key == QueryBasedFeatures::SETTING_DELEGATES_KEY
       ]
       if(entry == null) {
         // add entry ("patternFQN", pattern.fullyQualifiedName)
-        ecoreAnnotation.details.put(QueryBasedFeatureGenerator::SETTING_DELEGATES_KEY, QueryBasedFeatureGenerator::SETTING_DELEGATES_VALUE)
+        ecoreAnnotation.details.put(QueryBasedFeatures::SETTING_DELEGATES_KEY, QueryBasedFeatures::ANNOTATION_SOURCE)
       } else {
         val delegates = new StringTokenizer(entry.value)
         while(delegates.hasMoreTokens){
           val delegate = delegates.nextToken
-          if(delegate == QueryBasedFeatureGenerator::SETTING_DELEGATES_VALUE){
+          if(delegate == QueryBasedFeatures::ANNOTATION_SOURCE){
             return
           }
         }
-        entry.value = entry.value + " " + QueryBasedFeatureGenerator::SETTING_DELEGATES_VALUE
+        entry.value = entry.value + " " + QueryBasedFeatures::ANNOTATION_SOURCE
       }
     } catch(Exception e){
       logger.warn(String.format("Error happened when trying to add QBF annotation to package %s in Ecore!",parameters.ePackage.name), e)
