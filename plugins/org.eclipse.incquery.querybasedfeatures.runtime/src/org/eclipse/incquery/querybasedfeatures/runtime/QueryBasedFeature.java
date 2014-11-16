@@ -13,12 +13,14 @@ package org.eclipse.incquery.querybasedfeatures.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -26,8 +28,9 @@ import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -37,7 +40,26 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
  */
 public abstract class QueryBasedFeature {
 
-    /**
+    private final class MatchUpdateListener implements
+			IMatchUpdateListener<IPatternMatch> {
+		@Override
+		public void notifyAppearance(IPatternMatch match) {
+			boolean removed = matchLostEvents.remove(match);
+			if(!removed){
+				matchFoundEvents.add(match);
+			}
+		}
+
+		@Override
+		public void notifyDisappearance(IPatternMatch match) {
+			boolean removed = matchFoundEvents.remove(match);
+			if(!removed){
+				matchLostEvents.add(match);
+			}
+		}
+	}
+
+	/**
      * @author Abel Hegedus
      * 
      */
@@ -45,8 +67,8 @@ public abstract class QueryBasedFeature {
         @Override
         public void notifyChanged(ChangeLevel changeLevel) {
             beforeUpdate();
-            dm.matchFoundEvents.removeAll(processNewMatches(dm.matchFoundEvents));
-            dm.matchLostEvents.removeAll(processLostMatches(dm.matchLostEvents));
+            matchFoundEvents.removeAll(processNewMatches(matchFoundEvents));
+            matchLostEvents.removeAll(processLostMatches(matchLostEvents));
             afterUpdate();
             sendNotfications();
             // engineForMatcher().getLogger()
@@ -79,7 +101,9 @@ public abstract class QueryBasedFeature {
                 IncQueryLoggingUtil.getLogger(getClass()).error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);
             }
-            dm = matcher.newDeltaMonitor(false);
+//            dm = matcher.newDeltaMonitor(false);
+            matchFoundEvents.clear();
+            matchLostEvents.clear();
         }
 
         @Override
@@ -92,7 +116,8 @@ public abstract class QueryBasedFeature {
     }
 
     private IncQueryMatcher<IPatternMatch> matcher;
-    private DeltaMonitor<IPatternMatch> dm;
+    private Set<IPatternMatch> matchFoundEvents;
+    private Set<IPatternMatch> matchLostEvents;
     private final EStructuralFeature feature;
     private String sourceParamName;
     private String targetParamName;
@@ -104,6 +129,7 @@ public abstract class QueryBasedFeature {
 
     private ModelUpdateListener listener;
     private EngineLifecycleListener engineLifecycleListener;
+	private MatchUpdateListener matchUpdateListener;
 
     protected void initialize(final IncQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
@@ -123,8 +149,11 @@ public abstract class QueryBasedFeature {
             IncQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
-        this.dm = matcher.newDeltaMonitor(true);
-        engineLifecycleListener = new EngineLifecycleListener();
+//        this.dm = matcher.newDeltaMonitor(true);
+        this.matchFoundEvents = Sets.newHashSet();
+        this.matchLostEvents = Sets.newHashSet();
+        matchUpdateListener = new MatchUpdateListener();
+		engineLifecycleListener = new EngineLifecycleListener();
         listener = new ModelUpdateListener();
     }
 
@@ -199,7 +228,7 @@ public abstract class QueryBasedFeature {
      */
     protected void startMonitoring() {
         AdvancedIncQueryEngine engine = engineForMatcher();
-
+        engine.addMatchUpdateListener(matcher, matchUpdateListener, true);
         engine.addLifecycleListener(engineLifecycleListener);
         engine.addModelUpdateListener(listener);
         listener.notifyChanged(ChangeLevel.MATCHSET);
