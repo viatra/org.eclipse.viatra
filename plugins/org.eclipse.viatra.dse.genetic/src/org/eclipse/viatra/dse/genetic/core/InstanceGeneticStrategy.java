@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.genetic.core;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.api.DSEException;
@@ -164,7 +165,7 @@ public class InstanceGeneticStrategy implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
     }
 

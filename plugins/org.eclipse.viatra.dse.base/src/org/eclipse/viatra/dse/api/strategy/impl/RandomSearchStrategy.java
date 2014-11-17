@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -111,7 +112,7 @@ public class RandomSearchStrategy implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();

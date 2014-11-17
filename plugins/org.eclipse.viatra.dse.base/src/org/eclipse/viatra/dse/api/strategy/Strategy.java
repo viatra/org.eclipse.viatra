@@ -104,9 +104,9 @@ public class Strategy {
      * 
      * @see INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)
      */
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean areConstraintsSatisfied) {
-        iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, isGoalState, areConstraintsSatisfied);
+        iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, objectives, areConstraintsSatisfied);
     }
 
     /**

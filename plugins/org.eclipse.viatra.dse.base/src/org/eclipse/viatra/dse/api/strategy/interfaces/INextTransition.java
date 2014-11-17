@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Map;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -52,12 +52,13 @@ public interface INextTransition {
      *            The {@link ThreadContext} which contains necessary informations.
      * @param isAlreadyTraversed
      *            True if the new state is already traversed in the past.
-     * @param isGoalState
-     *            True if the new state is a goal state.
+     * @param objectives
+     *            A map containing the objectives. It can also be empty (it is a goal state) or null (it is not a goal
+     *            state).
      * @param areConstraintsSatisfied
      *            True if the new state doesn't satisfies the global constraints.
      */
-    void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied);
 
     /**

@@ -132,9 +132,9 @@ public class FixedPriorityNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || isGoalState || constraintsNotSatisfied) {
+        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives!=null && objectives.isEmpty())) {
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }

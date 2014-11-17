@@ -100,6 +100,8 @@ public class ExplorerThread implements IExplorerThread {
                     strategyBase.interrupted(threadContext);
                 }
 
+                Map<String, Double> objectives = null;
+
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
 
                 ITransition transition = null;
@@ -131,8 +133,8 @@ public class ExplorerThread implements IExplorerThread {
                 PerformanceMonitorManager.startTimer(STATE_EVALUATION);
 
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
-                boolean isGoalState = false;
                 boolean areConstraintsSatisfied = true;
+                objectives = strategyBase.isGoalState(threadContext);
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = newState.getTraversalState();
 
@@ -141,7 +143,6 @@ public class ExplorerThread implements IExplorerThread {
                         // TODO check goal state again, because of the hash
                         // collision if(iCheckGoalState.isGoalState(context)){}
                         globalContext.getSolutionStore().newSolution(threadContext, null);
-                        isGoalState = true;
                     } else if (traversalState == TraversalStateType.CUT) {
                         areConstraintsSatisfied = false;
                     }
@@ -154,14 +155,11 @@ public class ExplorerThread implements IExplorerThread {
                     if (areConstraintsSatisfied) {
 
                         // if it is a goal state
-                        Map<String, Double> measurements = strategyBase.isGoalState(threadContext);
-                        if (measurements != null) {
+                        if (objectives != null) {
 
                             logger.debug("Goal state.");
 
-                            isGoalState = true;
-                            Solution solution = globalContext.getSolutionStore().newSolution(threadContext,
-                                    measurements);
+                            Solution solution = globalContext.getSolutionStore().newSolution(threadContext, objectives);
 
                             if (solution != null) {
                                 // TODO this behavior could be unwanted
@@ -199,7 +197,7 @@ public class ExplorerThread implements IExplorerThread {
                     newState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, isGoalState,
+                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, objectives,
                         !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
             }
