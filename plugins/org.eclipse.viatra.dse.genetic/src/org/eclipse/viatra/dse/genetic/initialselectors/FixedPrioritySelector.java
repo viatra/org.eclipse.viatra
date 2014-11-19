@@ -98,8 +98,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
             if (foundInstances >= initialSizeOfPopulation) {
                 return null;
             } else {
-                while (dsm.undoLastTransformation())
-                    ;
+                while (dsm.undoLastTransformation());
             }
         }
 
