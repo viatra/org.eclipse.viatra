@@ -205,11 +205,13 @@ public class ExplorerThread implements IExplorerThread {
             logger.debug("Strategy stopped on Thread " + Thread.currentThread());
             globalContext.strategyFinished(this);
             return;
-        } catch (Exception e) {
-            logger.error("Thread stopped unexpectedly!", e);
+        } catch (Throwable e) {
+            logger.fatal("Thread stopped unexpectedly!", e);
+            throw new DSEException(e);
+        } finally {
             globalContext.getExceptionHappendInOtherThread().set(true);
             globalContext.strategyFinished(this);
-            throw new DSEException(e);
+            dispose();
         }
     }
 
