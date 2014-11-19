@@ -86,7 +86,7 @@ public class FixedPriorityNextTransition implements INextTransition {
 
         // Backtrack if there is no more unfired transition from here
         List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
-        while ((depthLimit != 0 && actDepth >= depthLimit) || (transitions == null || transitions.isEmpty())) {
+        while ((depthLimit > 0 && actDepth >= depthLimit) || (transitions == null || transitions.isEmpty())) {
             if (!dsm.undoLastTransformation()) {
                 return null;
             }

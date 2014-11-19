@@ -39,7 +39,7 @@ public class BreadthFirstNextTransition implements INextTransition {
 
     }
 
-    private int maxDepth = Integer.MAX_VALUE;
+    private int maxDepth = 0;
     private LinkedList<TransitionWrapper> transitions = new LinkedList<TransitionWrapper>();
     private int actDepth = 0;
     private int remainingTransitions = 0;
@@ -59,7 +59,7 @@ public class BreadthFirstNextTransition implements INextTransition {
 
         // TODO: For some reason it keeps failing from time to time
         // For me it failed at the level of 10 and 11, in the 2/3 of the time
-        if (actDepth > maxDepth || isInterrupted) {
+        if ((maxDepth > 0 && actDepth > maxDepth) || isInterrupted) {
             return null;
         }
 

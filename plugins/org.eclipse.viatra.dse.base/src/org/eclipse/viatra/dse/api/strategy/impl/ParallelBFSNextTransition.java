@@ -89,7 +89,7 @@ public class ParallelBFSNextTransition implements INextTransition {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
 
-        if (sharedData.actLevel > sharedData.maxDepth || isInterrupted) {
+        if ((sharedData.maxDepth > 0 && sharedData.actLevel > sharedData.maxDepth) || isInterrupted) {
             return null;
         }
 
