@@ -20,7 +20,6 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ITraversedStateFound;
 import org.eclipse.viatra.dse.guidance.IDependencyGraphResolver;
 import org.eclipse.viatra.dse.guidance.IOccurrenceVectorResolver;
 
@@ -32,7 +31,6 @@ public enum StrategyBuildingBlocksManager {
 
     public static final String CHECK_CONSTRAINTS = "org.eclipse.viatra.dse.api.strategy.checkconstraints";
     public static final String CHECK_GOAL_STATE = "org.eclipse.viatra.dse.api.strategy.checkgoalstate";
-    public static final String TRAVERSED_STATE_FOUND = "org.eclipse.viatra.dse.api.strategy.traversedstatefound";
     public static final String SOLUTION_FOUND = "org.eclipse.viatra.dse.api.strategy.solutionfound";
     public static final String NEXT_TRANSITION = "org.eclipse.viatra.dse.api.strategy.nexttransition";
 
@@ -52,7 +50,6 @@ public enum StrategyBuildingBlocksManager {
         extensionPointNames = new HashSet<String>();
         extensionPointNames.add(CHECK_CONSTRAINTS);
         extensionPointNames.add(CHECK_GOAL_STATE);
-        extensionPointNames.add(TRAVERSED_STATE_FOUND);
         extensionPointNames.add(SOLUTION_FOUND);
         extensionPointNames.add(NEXT_TRANSITION);
         extensionPointNames.add(OCCURRENCE_RESOLVER);
@@ -117,10 +114,6 @@ public enum StrategyBuildingBlocksManager {
         return (ISolutionFound) createExtensionByName(SOLUTION_FOUND, extensionName);
     }
 
-    public ITraversedStateFound createTraversedStateFoundByName(String extensionName) {
-        return (ITraversedStateFound) createExtensionByName(TRAVERSED_STATE_FOUND, extensionName);
-    }
-
     // ************* get by extension id, returns good type *****************//
 
     public IDependencyGraphResolver createRuleDependencyResolverById(String id) {
@@ -145,10 +138,6 @@ public enum StrategyBuildingBlocksManager {
 
     public ISolutionFound createSolutionFoundById(String extensionName) {
         return (ISolutionFound) createExtensionById(SOLUTION_FOUND, extensionName);
-    }
-
-    public ITraversedStateFound createTraversedStateFoundById(String extensionName) {
-        return (ITraversedStateFound) createExtensionById(TRAVERSED_STATE_FOUND, extensionName);
     }
 
 }
