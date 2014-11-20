@@ -379,7 +379,7 @@
         label="Xtext">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.7.0,2.8.0)"/>
+          versionRange="[2.8.0,2.9.0)"/>
       <requirement
           name="com.google.inject.multibindings.source"
           versionRange="[3.0.0,4.0.0)"/>

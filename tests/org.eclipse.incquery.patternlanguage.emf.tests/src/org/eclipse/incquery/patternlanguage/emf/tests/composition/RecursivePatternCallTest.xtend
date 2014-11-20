@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CompositionTest extends AbstractValidatorTest {
+class RecursivePatternCallTest extends AbstractValidatorTest {
 
 	@Inject
 	private ParseHelper<EObject> parseHelper

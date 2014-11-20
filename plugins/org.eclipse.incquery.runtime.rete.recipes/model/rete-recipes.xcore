@@ -210,7 +210,7 @@ class TransparentRecipe extends FilterRecipe {}
  */
 class TrimmerRecipe extends AlphaRecipe {
 	contains Mask mask
-	op int getArity() {mask.sourceIndices.length}		
+	op int getArity() {mask.sourceIndices.size}		
 }
 
 // Expressions
@@ -267,7 +267,7 @@ class EvalRecipe extends ExpressionEnforcerRecipe {
  */
 abstract class AggregatorRecipe extends ReteNodeRecipe {
 	contains ProjectionIndexerRecipe parent
-	op int getArity() {1 + parent.mask.sourceIndices.length}			
+	op int getArity() {1 + parent.mask.sourceIndices.size}		
 }
 
 /*
@@ -282,7 +282,7 @@ class CountAggregatorRecipe extends AggregatorRecipe {}
  */
 class JoinRecipe extends BetaRecipe {
 	contains Mask rightParentComplementaryMask
-	op int getArity() {leftParent.arity+ rightParent.arity- /*common columns count once*/rightParent.mask.sourceIndices.length}		
+	op int getArity() {leftParent.arity+ rightParent.arity- /*common columns count once*/rightParent.mask.sourceIndices.size}		
 }
 
 /*
