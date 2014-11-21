@@ -15,10 +15,11 @@ import java.util.Map;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
+import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
- * Interface for saving and retrieving solution trajectories.
+ * Interface for saving and retrieving solution trajectories. <b>Implementation should be thread safe!</b>
  * 
  * @author Andras Szabolcs Nagy
  * 
@@ -26,20 +27,60 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 public interface ISolutionStore {
 
     /**
-     * Notifies the solution store of a potential solution trajectory.
+     * The types of responses that an object implementing {@link ISolutionStore} can give.
+     */
+    public enum StopExecutionType {
+        /**
+         * This execution thread should be stopped while the others can continue.
+         */
+        STOP_THREAD,
+        /**
+         * The whole design space exploration process should exit.
+         */
+        STOP_ALL,
+        /**
+         * The exploration should continue.
+         */
+        CONTINUE
+    }
+
+    /**
+     * Notifies the solution store of a potential solution trajectory. Note that the {@code objectives} will never be
+     * null and the implementation should be thread safe.
+     * <p>
+     * Also it determines whether the execution should stop or not, if a solution is found. It can have three different
+     * responses:
+     * </p>
+     * 
+     * <ul>
+     * <li>{@link StopExecutionType#CONTINUE}: the execution should continue.</li>
+     * <li>{@link StopExecutionType#STOP_THREAD}: this execution thread should be stopped while the others can continue.
+     * </li>
+     * <li>{@link StopExecutionType#STOP_ALL}: the whole design space exploration process should exit.</li>
+     * </ul>
      * 
      * @param context
      *            Context with the actual state of the exploration process.
-     * @param measurements
-     *            Measurements returned by the used implementation of {@link ICheckGoalState}. Can be null.
-     * @return The newly created solution or null if it is not considered as a solution.
+     * @param objectives
+     *            Measurements returned by the used implementation of {@link ICheckGoalState}. Cannot be null (but empty
+     *            is possible).
+     * @return The {@link StopExecutionType} based on it's internal reasoning.
      */
-    Solution newSolution(ThreadContext context, Map<String, Double> measurements);
+    StopExecutionType newSolution(ThreadContext context, Map<String, Double> objectives);
 
     /**
      * Returns the currently stored solutions.
      * 
-     * @return
+     * @return A collection of the currently stored {@link Solution}s.
      */
     Collection<Solution> getSolutions();
+
+    /**
+     * Registers a handler for executing custom code after a solution is found. When exactly it is called is determined
+     * by the implementation.
+     * 
+     * @param handler
+     *            The handler.
+     */
+    void registerSolutionFoundHandler(ISolutionFoundHandler handler);
 }
