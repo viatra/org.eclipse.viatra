@@ -46,7 +46,7 @@ public class DisjunctionBasedQuerySpecification implements IQuerySpecification<I
     public DisjunctionBasedQuerySpecification(
             IQuerySpecification<?> querySpecification, PDisjunction pDisjunction) {
         this.pDisjunction = pDisjunction;
-        this.querySpecification = querySpecicifation;
+        this.querySpecification = querySpecification;
     }
     
     @Override
