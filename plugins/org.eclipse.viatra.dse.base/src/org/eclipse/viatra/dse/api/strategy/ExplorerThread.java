@@ -138,9 +138,7 @@ public class ExplorerThread implements IExplorerThread {
                     TraversalStateType traversalState = newState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (traversalState == TraversalStateType.GOAL) {
-                        // TODO check goal state again, because of the hash
-                        // collision if(iCheckGoalState.isGoalState(context)){}
+                    if (objectives != null) {
                         globalContext.getSolutionStore().newSolution(threadContext, objectives);
                     } else if (traversalState == TraversalStateType.CUT) {
                         areConstraintsSatisfied = false;
@@ -158,7 +156,9 @@ public class ExplorerThread implements IExplorerThread {
 
                             logger.debug("Goal state.");
 
-                            newState.setTraversalState(TraversalStateType.GOAL);
+                            if (objectives.isEmpty()) {
+                                newState.setTraversalState(TraversalStateType.GOAL);
+                            }
 
                             StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext, objectives);
 
