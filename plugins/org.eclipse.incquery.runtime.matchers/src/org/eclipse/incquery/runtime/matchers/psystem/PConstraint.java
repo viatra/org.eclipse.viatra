@@ -43,4 +43,9 @@ public interface PConstraint {
     public void delete();
 
     public void checkSanity() throws QueryPlannerException;
+
+    /**
+     * Returns an integer ID that is guaranteed to increase strictly monotonously for constraints within a pBody.
+     */
+	public abstract int getMonotonousID();
 }

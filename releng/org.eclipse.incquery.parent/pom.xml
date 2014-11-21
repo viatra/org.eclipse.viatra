@@ -36,6 +36,7 @@
 		<xtend.compiler.version>2.6.2</xtend.compiler.version>
 		<xcore.version>1.2.0</xcore.version>
 		<xcore.lib.version>1.1.0</xcore.lib.version>
+		<java.version>1.6</java.version>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -140,12 +141,21 @@
 					<version>2.5</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -248,6 +258,7 @@
 				<module>../../plugins/org.eclipse.incquery.tooling.generator.model.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.core</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
+				<module>../../plugins/org.eclipse.incquery.tooling.localsearch.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
@@ -271,6 +282,7 @@
 				<module>../../tests/org.eclipse.incquery.testing.queries</module>
 				<module>../../tests/org.eclipse.incquery.testing.ui</module>
 				<module>../../features/org.eclipse.incquery.runtime.feature</module>
+				<module>../../features/org.eclipse.incquery.runtime.generic.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>
 				<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
@@ -367,9 +379,9 @@
 		<profile>
 			<id>examples</id>
 			<activation>
-				<file>
-					<exists>../../../examples/README.markdown</exists>
-				</file>
+				<property>
+					<name>incquery.examples</name>
+				</property>
 			</activation>
 			<modules>
 				<module>../../../examples/school/org.eclipse.incquery.tests.school.parent</module>
@@ -379,9 +391,9 @@
 		<profile>
 			<id>examples-eclipse.org</id>
 			<activation>
-				<file>
-					<exists>../../../examples-eclipse.org/README.markdown</exists>
-				</file>
+				<property>
+					<name>incquery.examples.eclipse</name>
+				</property>
 			</activation>
 			<modules>
 				<module>../../../examples-eclipse.org/bpm/org.eclipse.incquery.examples.bpm.test.parent</module>

@@ -36,5 +36,20 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = context.getBaseIndex().getAllInstances(clazz).iterator();
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IterateOverEClassInstances(");
+        builder.append(position + ", " );
+        
+        String name = clazz.getName();
+        String packageNsUri = clazz.getEPackage().getNsURI();
+        builder.append("getClassifierLiteral(\"" + packageNsUri + "\", \"" + name + "\")");
+        
+        builder.append(")");
+        return builder.toString();
+    }
+    
 
 }

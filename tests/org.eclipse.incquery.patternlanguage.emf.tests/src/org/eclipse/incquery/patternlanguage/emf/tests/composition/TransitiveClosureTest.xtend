@@ -79,7 +79,7 @@ class TransitiveClosureTest extends AbstractValidatorTest{
 				Constraint(c);						// ...can be deleted.
 			}'''
 		)
-		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY));
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
 	}
 	@Test
 	def void wrongTypedClosure() {

@@ -64,6 +64,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.resource.CompilerPhases;
+import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.typesystem.legacy.XbaseBatchTypeProvider;
 
@@ -71,6 +72,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
@@ -90,26 +92,33 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
     
     @Inject
     private CompilerPhases compilerPhases;
+    @Inject
+    private IResourceScopeCache cache;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.xtext.xbase.typing.XbaseTypeProvider#typeForIdentifiable(
-     * org.eclipse.xtext.common.types.JvmIdentifiableElement, boolean)
-     */
     @Override
-    public JvmTypeReference getTypeForIdentifiable(JvmIdentifiableElement identifiable) {
+    public JvmTypeReference getTypeForIdentifiable(final JvmIdentifiableElement identifiable) {
         if (identifiable instanceof Variable) {
             Variable variable = (Variable) identifiable;
             return getVariableType(variable);
         }
-        return super.getTypeForIdentifiable(identifiable);
+        return super.getTypeForIdentifiable(identifiable);        
     }
 
     @Override
-    public JvmTypeReference getVariableType(Variable variable) {
+    public JvmTypeReference getVariableType(final Variable variable) {
+        return cache.get(variable, variable.eResource(), new Provider<JvmTypeReference>(){
+            
+            @Override
+            public JvmTypeReference get() {
+                return doGetVariableType(variable);
+            }
+            
+        });
+    }
+
+    protected JvmTypeReference doGetVariableType(Variable variable) {
         EClassifier classifier = getClassifierForVariable(variable);
         JvmTypeReference typeReference = null;
         if (classifier != null) {
@@ -122,14 +131,6 @@ public class EMFPatternTypeProvider extends XbaseBatchTypeProvider implements IE
         return typeReference;
     }
 
-    /**
-	 * 
-	 */
-//	public EMFPatternTypeProvider() {
-//		System.out.println("EMFTypeProvider instantiated");
-//	}
-
-    
     /**
      * internal class cache, introduced to speed up calls to EClassifier.getInstanceClass
      * significantly.

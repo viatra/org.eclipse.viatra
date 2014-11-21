@@ -34,6 +34,8 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
+import org.eclipse.xtext.common.types.util.TypeReferences
+import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 
 /**
@@ -44,6 +46,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 class EMFPatternLanguageJvmModelInferrerUtil {
 
 	@Inject extension EMFJvmTypesBuilder
+	@Inject extension TypeReferences
 	Logger logger = Logger::getLogger(getClass())
 //	@Inject ITypeProvider typeProvider
 	@Inject IEMFTypeProvider emfTypeProvider
@@ -348,17 +351,17 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 		pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification))
 	}
 	
-	def findInferredClass(EObject pattern, Class clazz) {
-		associations.getJvmElements(pattern).filter(typeof(JvmGenericType)).findFirst[
-//			superTypes.forEach[println(it.qualifiedName)]
-			superTypes.exists[
-				if(type == null) {
-					false
-				} else {
-				    type.qualifiedName == clazz.canonicalName
-				}
-			]
+	def findInferredClass(EObject pattern, Class<?> clazz) {
+		associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
+			isCompatibleWith(clazz) 
+	
 		]
+	}
+	
+	def boolean isCompatibleWith(JvmType type, Class<?> clazz) {
+		type.is(clazz) || (
+			type instanceof JvmDeclaredType && (type as JvmDeclaredType).superTypes.exists[it.is(clazz)]
+		)
 	}
 	
 	def isPublic(Pattern pattern) {

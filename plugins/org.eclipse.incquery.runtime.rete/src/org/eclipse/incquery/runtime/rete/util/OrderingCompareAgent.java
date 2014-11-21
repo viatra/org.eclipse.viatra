@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.runtime.rete.util;
 
+import java.util.Comparator;
+
 /**
  * Comparing agent for an ordering. Terminology: the "preferred" item will register as LESS.
  * 
@@ -77,9 +79,16 @@ public abstract class OrderingCompareAgent<T> {
     protected static <U> int preferLess(Comparable<U> c1, U c2) {
         return c1.compareTo(c2);
     }
+    
+    protected static <U> int preferLess(U c1, U c2, Comparator<U> comp) {
+        return comp.compare(c1, c2);
+    }
 
     protected static <U> int preferMore(Comparable<U> c1, U c2) {
         return -c1.compareTo(c2);
+    }
+    protected static <U> int preferMore(U c1, U c2, Comparator<U> comp) {
+        return -comp.compare(c1, c2);
     }
 
 }

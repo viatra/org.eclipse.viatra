@@ -27,20 +27,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * This class holds the flattening logic
+ * This rewriter class holds the query flattening logic
  * 
  * @author Marton Bur
  * 
  */
 public class PQueryFlattener extends PDisjunctionRewriter {
 
-    // TODO handle recursive pattern calls - check for backward edges in the call graph
-    
     private static final String FLATTENING_ERROR_MESSAGE = "Error occured while flattening";
-    
+
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         PQuery query = disjunction.getQuery();
+
+        // Check for recursion
+        if (query.getAllReferredQueries().contains(query)) {
+            throw new RewriterException("Recursive queries are not supported, can't flatten query named \""
+                    + query.getFullyQualifiedName() + "\"", null, "Unsupported recursive query", query);
+        }
+
         try {
             return this.flatten(query);
         } catch (Exception e) {
@@ -56,7 +61,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return a PDisjunction containing the flattened bodies
      * @throws Exception
      */
-    public PDisjunction flatten(PQuery pQuery) throws Exception {
+    public PDisjunction flatten(PQuery pQuery) {
         return doFlatten(pQuery);
     }
 
@@ -68,10 +73,10 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return the flattened bodies of the pQuery
      * @throws Exception
      */
-    private PDisjunction doFlatten(PQuery pQuery) throws Exception {
+    private PDisjunction doFlatten(PQuery pQuery) {
         Set<PBody> bodies = pQuery.getDisjunctBodies().getBodies();
         // This stores the flattened bodies; they are disjoint
-        Set<PBody> flattenedBodies = Sets.<PBody>newHashSet();
+        Set<PBody> flattenedBodies = Sets.<PBody> newHashSet();
         for (PBody pBody : bodies) {
             // OR connection between the bodies
             flattenedBodies.addAll(doFlatten(pBody));
@@ -79,7 +84,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         return new PDisjunction(pQuery, flattenedBodies);
     }
 
-    
     /**
      * This function holds the actual flattening logic for a PBody
      * 
@@ -88,7 +92,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return the flattened equivalent of the given pBody
      * @throws Exception
      */
-    private Set<PBody> doFlatten(PBody pBody) throws Exception {
+    private Set<PBody> doFlatten(PBody pBody) {
 
         Set<PConstraint> constraints = pBody.getConstraints();
 
@@ -96,10 +100,10 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         if (!isFlatteningNeeded(constraints)) {
             return prepareFlatPBody(pBody);
         }
-        
+
         // The calls that are flattened
         List<PositivePatternCall> flattenedCalls = Lists.newArrayList();
-        
+
         // This point we know the body needs flattening
         // Flatten each positive pattern call where shouldFlatten() returns true
         List<PDisjunction> flattenedDisjunctions = Lists.<PDisjunction> newArrayList();
@@ -116,41 +120,36 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             }
         }
 
-        return createFlatPDisjunction(pBody,flattenedDisjunctions,flattenedCalls);
+        return createFlatPDisjunction(pBody, flattenedDisjunctions, flattenedCalls);
 
     }
 
-    /**
-     * @param pBody
-     * @param flattenedDisjunctions
-     * @param flattenedCalls 
-     * @return
-     */
-    private Set<PBody> createFlatPDisjunction(PBody pBody, List<PDisjunction> flattenedDisjunctions, List<PositivePatternCall> flattenedCalls) {
+    private Set<PBody> createFlatPDisjunction(PBody pBody, List<PDisjunction> flattenedDisjunctions,
+            List<PositivePatternCall> flattenedCalls) {
         PQuery pQuery = pBody.getPattern();
-        
+
         // The members of this set are sets containing bodies in disjunction
         Set<List<PBody>> conjunctBodySets = combineBodies(flattenedDisjunctions);
-        
+
         // The result set containing the merged conjuncted bodies
         Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
-        
+
         for (List<PBody> bodySet : conjunctBodySets) {
             FlattenerCopier copier = new FlattenerCopier(pQuery, flattenedCalls, bodySet);
 
             for (PBody calledBody : bodySet) {
                 // Copy each called body
-                copyBody(calledBody, copier, new HierarchicalName(), new ExportedParameterFilter());                
+                copyBody(calledBody, copier, new HierarchicalName(), new ExportedParameterFilter());
             }
-            
+
             // Copy the caller body
             copyBody(pBody, copier, new SameName());
-            
+
             PBody copiedBody = copier.getCopiedBody();
             copiedBody.setStatus(PQueryStatus.OK);
             conjunctedBodies.add(copiedBody);
         }
-        
+
         // Create a new (flattened) PDisjunction referring to the corresponding query and return it
         return conjunctedBodies;
     }
@@ -167,8 +166,8 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         // Check if the body contains positive pattern call AND if it should be flattened
         for (PConstraint pConstraint : constraints) {
             if (pConstraint instanceof PositivePatternCall) {
-                 if(shouldFlatten((PositivePatternCall) pConstraint))
-                     return true;
+                if (shouldFlatten((PositivePatternCall) pConstraint))
+                    return true;
             }
         }
         return false;
@@ -186,7 +185,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 
         ArrayList<Set<PBody>> setsToCombine = Lists.newArrayList();
         Set<List<PBody>> result = Sets.<List<PBody>> newHashSet();
-        
+
         if (pDisjunctions.size() == 0) {
             // Do nothing (error handling should happen here?)
         } else {
@@ -198,7 +197,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         }
         return result;
     }
-    
+
     /**
      * Helper function to copy a PBody object as-is. Creates a new copier.
      * 
@@ -208,7 +207,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     private FlattenerCopier copyBody(PBody pBody) {
         return copyBody(pBody, new SameName());
     }
-    
+
     /**
      * Helper function to copy a PBody object. Creates a new copier.
      * 
@@ -217,7 +216,8 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return
      */
     private FlattenerCopier copyBody(PBody pBody, INamingTool namingTool) {
-        FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(), Lists.<PBody> newArrayList());
+        FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(),
+                Lists.<PBody> newArrayList());
         copyBody(pBody, copier, namingTool);
         return copier;
     }
@@ -243,17 +243,17 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @return
      */
     private void copyBody(PBody pBody, FlattenerCopier copier, INamingTool namingTool, IConstraintFilter filter) {
-        
+
         // Copy variables
         Set<PVariable> allVariables = pBody.getAllVariables();
         for (PVariable pVariable : allVariables) {
             copier.copyVariable(pVariable, namingTool.createVariableName(pVariable, pBody.getPattern()));
         }
-        
+
         // Copy constraints which are not filtered
         Set<PConstraint> constraints = pBody.getConstraints();
         for (PConstraint pConstraint : constraints) {
-            if(!filter.filter(pConstraint)){
+            if (!filter.filter(pConstraint)) {
                 copier.copyConstraint(pConstraint);
             }
         }
@@ -269,31 +269,32 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         /**
          * Returns true, if the given constraint should be filtered (thus should not be copied)
          * 
-         * @param constraint to check
+         * @param constraint
+         *            to check
          * @return true, if the constraint should be filtered
          */
         boolean filter(PConstraint constraint);
     }
-    
-    private class ExportedParameterFilter implements IConstraintFilter{
+
+    private class ExportedParameterFilter implements IConstraintFilter {
 
         @Override
         public boolean filter(PConstraint constraint) {
             return constraint instanceof ExportedParameter;
         }
-        
+
     }
-    
-    private class AllowAllFilter implements IConstraintFilter{
+
+    private class AllowAllFilter implements IConstraintFilter {
 
         @Override
         public boolean filter(PConstraint constraint) {
             // Nothing is filtered
             return false;
         }
-        
+
     }
-    
+
     /**
      * Helper interface to ease the naming of the new variables during flattening
      * 

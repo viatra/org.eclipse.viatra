@@ -86,4 +86,13 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IterateOverContainers(");
+        builder.append(position + ", " + sourcePosition + ", " + transitive);
+        builder.append(")");
+        return builder.toString();
+    }
+
 }

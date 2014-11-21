@@ -11,8 +11,10 @@
 
 package org.eclipse.incquery.runtime.rete.construction.quasitree;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +37,10 @@ class JoinCandidate {
     Set<PVariable> varPrimary;
     Set<PVariable> varSecondary;
     Set<PVariable> varCommon;
+    
+    List<PConstraint> consPrimary;
+    List<PConstraint> consSecondary;
+    
 
     JoinCandidate(SubPlan joinedPlan) {
         super();
@@ -46,8 +52,15 @@ class JoinCandidate {
         varSecondary = getSecondary().getVisibleVariables();
         varCommon = CollectionsFactory.getSet(varPrimary);
         varCommon.retainAll(varSecondary);
+        
+        consPrimary = new ArrayList<PConstraint>(primary.getAllEnforcedConstraints());
+        Collections.sort(consPrimary, TieBreaker.CONSTRAINT_COMPARATOR);
+        consSecondary = new ArrayList<PConstraint>(secondary.getAllEnforcedConstraints());
+        Collections.sort(consSecondary, TieBreaker.CONSTRAINT_COMPARATOR);
     }
-
+    
+    
+    
     /**
      * @return the a
      */
@@ -89,8 +102,23 @@ class JoinCandidate {
     public Set<PVariable> getVarSecondary() {
         return varSecondary;
     }
+    
+    /**
+     * @return constraints of primary, sorted according to {@link TieBreaker#CONSTRAINT_COMPARATOR}.
+     */
+    public List<PConstraint> getConsPrimary() {
+		return consPrimary;
+	}
+    /**
+     * @return constraints of secondary, sorted according to {@link TieBreaker#CONSTRAINT_COMPARATOR}.
+     */
+	public List<PConstraint> getConsSecondary() {
+		return consSecondary;
+	}
 
-    public boolean isTrivial() {
+
+
+	public boolean isTrivial() {
         return getPrimary().equals(getSecondary());
     }
 

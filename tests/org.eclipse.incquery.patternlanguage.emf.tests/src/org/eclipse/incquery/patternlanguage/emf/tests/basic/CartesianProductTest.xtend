@@ -170,13 +170,13 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Good1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good6(X) {
+			pattern Good6(X : EClass) {
 				EClass(X);
 				neg find Good1(X,_A);
 			}
@@ -192,13 +192,13 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Good1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good7(X) {
+			pattern Good7(X : EClass) {
 				EClass(X);
 				neg find Good1(_A,_B);
 			}
@@ -214,13 +214,13 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Good1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good8(X) {
+			pattern Good8(X : EClass) {
 				EClass(X);
 				M == count find Good1(X,_A);
 				check(M>10);
@@ -237,7 +237,7 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good9(X, Y) {
+			pattern Good9(X : EClass, Y) {
 				EClass(X);
 				EInt(Y);
 				Y == 10;
@@ -270,13 +270,13 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Good1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Soft2(X, Y) {
+			pattern Soft2(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				_A == count find Good1(X,Y);
@@ -291,13 +291,13 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Good1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Soft3(X, Y) {
+			pattern Soft3(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				neg find Good1(X,Y);
@@ -312,7 +312,7 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Soft4(X, Y) {
+			pattern Soft4(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X != Y;
@@ -327,7 +327,7 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Strict1(X, Y) {
+			pattern Strict1(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 			}
@@ -341,7 +341,7 @@ class CartesianProductTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Strict1(X) {
+			pattern Strict1(X : EClass) {
 				EClass(X);
 				EClass(_Y);
 			}

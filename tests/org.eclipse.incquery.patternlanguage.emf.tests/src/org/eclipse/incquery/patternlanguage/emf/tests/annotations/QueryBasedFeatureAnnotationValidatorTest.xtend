@@ -88,6 +88,44 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 	}
 	
 	@Test
+	def void multipleAnnotations() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@QueryBasedFeature
+			@QueryBasedFeature
+			pattern pattern2(p : Pattern, pb : PatternBody) = {
+				Pattern.bodies(p, pb);
+			}'
+		) 
+		val validationResult = tester.validate(model)
+    validationResult.assertAll(
+      getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE),
+      getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE)
+    );
+	}
+	
+	@Test
+	def void ambiguousAnnotations() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			@QueryBasedFeature(feature = "x")
+			@QueryBasedFeature(feature = "x")
+			pattern pattern2(p : Pattern, pb : PatternBody) = {
+				Pattern.bodies(p, pb);
+			}'
+		) 
+		val validationResult = tester.validate(model)
+    validationResult.assertAll(
+      getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE),
+      getErrorCode(QueryBasedFeaturePatternValidator::ANNOTATION_ISSUE_CODE)
+    );
+	}
+	
+	@Test
 	def void incorrectFeature() {
 		val model = parseHelper.parse(
 			'package org.eclipse.incquery.patternlanguage.emf.tests

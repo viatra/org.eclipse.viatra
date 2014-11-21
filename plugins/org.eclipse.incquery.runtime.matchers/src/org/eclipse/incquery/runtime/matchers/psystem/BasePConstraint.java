@@ -23,8 +23,15 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
  * 
  */
 public abstract class BasePConstraint implements PConstraint {
+	
+	
     protected PBody pSystem;
     private final Set<PVariable> affectedVariables;
+    
+    
+    private final int sequentialID = nextID++;
+
+	private static int nextID = 0;
 
     public BasePConstraint(PBody pSystem, Set<PVariable> affectedVariables) {
         super();
@@ -84,4 +91,8 @@ public abstract class BasePConstraint implements PConstraint {
         return pSystem;
     }
     
+    @Override
+	public int getMonotonousID() {
+		return sequentialID;
+	}    
 }

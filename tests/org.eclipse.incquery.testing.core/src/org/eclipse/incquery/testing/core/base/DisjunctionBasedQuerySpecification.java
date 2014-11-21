@@ -44,7 +44,7 @@ public class DisjunctionBasedQuerySpecification implements IQuerySpecification<I
      * @param pDisjunction the returned PDisjunction instance when the getDisjunctbodes() method is called
      */
     public DisjunctionBasedQuerySpecification(
-            IQuerySpecification<?> querySpecicifation, PDisjunction pDisjunction) {
+            IQuerySpecification<?> querySpecification, PDisjunction pDisjunction) {
         this.pDisjunction = pDisjunction;
         this.querySpecification = querySpecicifation;
     }

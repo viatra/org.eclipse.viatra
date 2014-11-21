@@ -25,18 +25,16 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
  */
 public class Containment extends CoreModelRelationship {
 
-	PVariable parent; 
-	PVariable child;
 
 	public Containment(PBody pSystem, PVariable parent, PVariable child,
             boolean transitive) {
         super(pSystem, parent, child, transitive);
-        this.parent = parent;
-        this.child = child;
     }
     
     @Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	PVariable parent = getVariableInTuple(0);
+		PVariable child = getVariableInTuple(1);
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(child), Collections.singleton(parent));
 		return result;

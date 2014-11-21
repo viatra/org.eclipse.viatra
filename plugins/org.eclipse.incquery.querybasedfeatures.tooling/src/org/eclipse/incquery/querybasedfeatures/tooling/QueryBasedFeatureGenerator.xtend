@@ -12,14 +12,11 @@
 package org.eclipse.incquery.querybasedfeatures.tooling
 
 import com.google.inject.Inject
-import java.util.ArrayList
 import java.util.Map
-import java.util.StringTokenizer
 import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EcoreFactory
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
@@ -31,12 +28,11 @@ import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind
 import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
+import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import java.io.IOException
-import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
 
 /* usage: @DerivedFeature(
  *      feature="featureName", (default: patten name)
@@ -58,12 +54,8 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   @Inject protected extension ExtensionGenerator exGen
   @Inject protected extension DerivedFeatureSourceCodeUtil codeGen
   
-  protected static String ANNOTATION_LITERAL      = "QueryBasedFeature"
-  protected static String DERIVED_EXTENSION_POINT = "org.eclipse.incquery.runtime.base.wellbehaving.derived.features"
-  protected static String DERIVED_ERROR_CODE      = "org.eclipse.incquery.runtime.querybasedfeature.error"
-  protected static String ECORE_ANNOTATION        = "http://www.eclipse.org/emf/2002/Ecore"
-  protected static String SETTING_DELEGATES_KEY   = "settingDelegates"
-  protected static String SETTING_DELEGATES_VALUE = "org.eclipse.incquery.querybasedfeature"
+  protected static String DERIVED_EXTENSION_POINT   = "org.eclipse.incquery.runtime.base.wellbehaving.derived.features"
+  protected static String DERIVED_ERROR_CODE        = "org.eclipse.incquery.runtime.querybasedfeature.error"
   protected static String DERIVED_EXTENSION_PREFIX  = "extension.derived."
 
   protected static Map<String,QueryBasedFeatureKind> kinds = newHashMap(
@@ -97,9 +89,13 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   }
   
   def private processAnnotations(Pattern pattern, boolean generate) {
-    for(annotation : pattern.getAnnotationsByName(QueryBasedFeatureGenerator::ANNOTATION_LITERAL)) {
-      val useModelCode = annotation.getFirstAnnotationParameter("generateIntoModelCode")
-      if(useModelCode != null && (useModelCode as BoolValue).value == true){
+    for(annotation : pattern.getAnnotationsByName(QueryBasedFeatures::ANNOTATION_LITERAL)) {
+      val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode")
+      var useModelCode = false
+      if(useModelCodeRef != null){
+          useModelCode = (useModelCodeRef as BoolValue).value
+      }
+      if(useModelCode){
         modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
       } else {
         delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
@@ -109,7 +105,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   
   override extensionContribution(Pattern pattern) {
     val parameterList = newArrayList()
-    for(annotation : pattern.getAnnotationsByName(ANNOTATION_LITERAL)) {
+    for(annotation : pattern.getAnnotationsByName(QueryBasedFeatures::ANNOTATION_LITERAL)) {
       try{
         parameterList += pattern.processDerivedFeatureAnnotation(annotation, false)
       } catch(IllegalArgumentException e){
@@ -219,21 +215,6 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     }
     parameters.ePackage = pckg
 
-    // if resource is not writable, the generation will fail
-    val resource = pckg.eResource();
-    val uri = resource.getURI();
-    // only file and platform resource URIs are considered safely writable
-    if (!(uri.isFile() || uri.isPlatformResource())) {
-      val message = String.format(
-        "Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!",
-        source.getName(),
-        uri.toString()
-      )
-      errorFeedback.reportError(sourcevar, message, DERIVED_ERROR_CODE, Severity::ERROR,
-        IErrorFeedback::FRAGMENT_ERROR_TYPE);
-      throw new IllegalArgumentException(
-        "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
-    }
 
     val featureString = featureTmp
     val features = source.EAllStructuralFeatures.filter[it.name == featureString]
@@ -249,6 +230,30 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
       throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
     }
     parameters.feature = feature
+
+    // if resource is not writable, the generation will fail
+    val resource = pckg.eResource();
+    val uri = resource.getURI();
+    // only file and platform resource URIs are considered safely writable
+    if (!(uri.isFile() || uri.isPlatformResource())) {
+      val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
+      var useModelCode = false;
+      if(useModelCodeRef != null){
+        useModelCode = (useModelCodeRef as BoolValue).value
+      }
+      val annotationsOK = QueryBasedFeatures::checkEcoreAnnotation(pckg, feature, pattern.fullyQualifiedName, useModelCode)
+      if(!annotationsOK){
+          val message = String.format(
+            "Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!",
+            source.getName(),
+            uri.toString()
+          )
+          errorFeedback.reportError(sourcevar, message, DERIVED_ERROR_CODE, Severity::ERROR,
+            IErrorFeedback::FRAGMENT_ERROR_TYPE);
+          throw new IllegalArgumentException(
+            "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
+      }  
+    }
 
     if(kindTmp == ""){
       if(feature.many){

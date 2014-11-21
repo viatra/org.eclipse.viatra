@@ -48,7 +48,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			pattern constantCompareTest(A) = {
+			pattern constantCompareTest(A : Pattern) = {
 				Pattern(A);
 				1 == 2;
 			}
@@ -60,7 +60,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			pattern constantCompareTest(A) = {
+			pattern constantCompareTest(A : Pattern) = {
 				Pattern(A);
 				1.2 == "String";
 			}
@@ -75,7 +75,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			pattern constantCompareTest(A) = {
+			pattern constantCompareTest(A : Pattern) = {
 				Pattern(A);
 				false == 2;
 			}
@@ -103,7 +103,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			pattern constantCompareTest(A) = {
+			pattern constantCompareTest(A : Pattern) = {
 				Pattern(A);
 				1 == Name2;
 				IntValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
@@ -130,7 +130,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
-			pattern constantCompareTest(A) = {
+			pattern constantCompareTest(A : Pattern) = {
 				Pattern(A);
 				Name2 == "Test";
 				StringValue.value(Name3, Name2);	// Name3 should be a single variable, e.g. _Name3
@@ -170,7 +170,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern IntAndClassPattern(X, Y) {
+			pattern IntAndClassPattern(X : EInt, Y : EClass) {
 			  EInt(X);
 			  EClass(Y);
 			  EClass.eAttributes.upperBound(Y,X);

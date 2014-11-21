@@ -13,6 +13,8 @@ package org.eclipse.incquery.patternlanguage.emf.util;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmAnnotationReference;
+import org.eclipse.xtext.common.types.JvmAnnotationTarget;
 import org.eclipse.xtext.common.types.JvmLowerBound;
 import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 import org.eclipse.xtext.common.types.JvmType;
@@ -88,6 +90,22 @@ public class EMFJvmTypesBuilder extends JvmTypesBuilder {
         return createTypeRef(declaredType);
     }
 
+    /**
+     * Adds an annotation to a possible target, if the annotation reference is created. If no annotation is created, the target is left unchanged.
+     * @param ctx
+     * @param annotationType
+     */
+    public void addAnnotation(JvmAnnotationTarget ctx, Class<?> annotationType) {
+        try {
+            final JvmAnnotationReference annotation = toAnnotation(ctx, annotationType);
+            if (annotation != null) {
+                ctx.getAnnotations().add(annotation);
+            }
+        } catch (IllegalArgumentException ex) {
+            //In this case, the annotation is not found; but that should be reported by classpath validator
+        }
+    }
+    
     private JvmTypeReference createTypeRef(JvmType type) {
         JvmParameterizedTypeReference reference = factory.createJvmParameterizedTypeReference();
         reference.setType(type);

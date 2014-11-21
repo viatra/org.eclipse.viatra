@@ -61,7 +61,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT));
+		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
 	}
 
 	@Test

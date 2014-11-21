@@ -10,31 +10,26 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.exceptions;
 
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+
 /**
  * @author Zoltan Ujhelyi, Akos Horvath
  * 
  */
-public class LocalSearchException extends Exception {
+public class LocalSearchException extends IncQueryException {
 
     private static final long serialVersionUID = -2585896573351435974L;
 
     public static final String PLAN_EXECUTION_ERROR = "Error while executing search plan";
     public static final String TYPE_ERROR = "Invalid type of variable";
 
-    public LocalSearchException() {
-        super();
+    public LocalSearchException(String description, Throwable rootException) {
+        super(description, description, rootException);
     }
 
-    public LocalSearchException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    public LocalSearchException(String description) {
+        super(description, description);
     }
 
-    public LocalSearchException(String arg0) {
-        super(arg0);
-    }
-
-    public LocalSearchException(Throwable arg0) {
-        super(arg0);
-    }
 
 }

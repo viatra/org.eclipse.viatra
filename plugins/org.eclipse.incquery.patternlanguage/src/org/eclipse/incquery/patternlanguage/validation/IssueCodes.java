@@ -31,7 +31,9 @@ public final class IssueCodes {
     public static final String TRANSITIVE_PATTERNCALL_TYPE = ISSUE_CODE_PREFIX
             + "transitive_patterncall_incompatibletypes";
     public static final String PATTERN_BODY_EMPTY = ISSUE_CODE_PREFIX + "patternbody_empty";
-
+    
+    public static final String PRIVATE_PATTERN_CALLED = ISSUE_CODE_PREFIX + "private_pattern_call";
+    
     public static final String UNKNOWN_ANNOTATION = ISSUE_CODE_PREFIX + "unknown_annotation";
     public static final String UNKNOWN_ANNOTATION_PARAMETER = ISSUE_CODE_PREFIX + "unknown_annotation_attribute";
     public static final String MISSING_REQUIRED_ANNOTATION_PARAMETER = ISSUE_CODE_PREFIX

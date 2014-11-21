@@ -40,5 +40,21 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = context.getBaseIndex().getDataTypeInstances(dataType).iterator();
     }
+    
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IterateOverEDatatypeInstances(");
+        builder.append(position + ", ");
+
+        String name = dataType.getName();
+        String packageNsUri = dataType.getEPackage().getNsURI();
+        builder.append("getClassifierLiteral(\"" + packageNsUri + "\", \"" + name + "\")");
+
+        builder.append(")");
+        return builder.toString();
+    }
+    
 
 }

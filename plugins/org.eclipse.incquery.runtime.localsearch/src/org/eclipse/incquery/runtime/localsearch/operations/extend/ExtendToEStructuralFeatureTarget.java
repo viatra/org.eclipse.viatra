@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Collection;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -46,6 +47,11 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
             final EObject value = (EObject) frame.getValue(sourcePosition);
+            if(! feature.getEContainingClass().isSuperTypeOf(value.eClass()) ){
+                // TODO planner should ensure the proper supertype relation
+                it = Iterators.emptyIterator();
+                return;
+            }
             final Object featureValue = value.eGet(feature);
             if (feature.isMany()) {
                 if (featureValue != null) {
@@ -64,6 +70,21 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
         } catch (ClassCastException e) {
             throw new LocalSearchException("Invalid feature source in parameter" + Integer.toString(sourcePosition), e);
         }
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ExtendToEStructuralFeatureTarget(");
+        builder.append(sourcePosition + ", " + position + ", ");
+
+        String name = feature.getName();
+        EClass container = feature.getEContainingClass();
+        String packageNsUri = container.getEPackage().getNsURI();
+        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
+
+        builder.append(")");
+        return builder.toString();
     }
 
 }

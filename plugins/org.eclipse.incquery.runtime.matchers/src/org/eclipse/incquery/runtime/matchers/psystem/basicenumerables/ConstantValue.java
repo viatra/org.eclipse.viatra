@@ -40,7 +40,7 @@ public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
         final Set<PVariable> emptySet = Collections.emptySet(); // a constant value is functionally determined by everything
-        result.put(emptySet, Collections.singleton((PVariable) this.variablesTuple.get(0)));
+        result.put(emptySet, Collections.singleton(getVariableInTuple(0)));
         return result;
     }
 

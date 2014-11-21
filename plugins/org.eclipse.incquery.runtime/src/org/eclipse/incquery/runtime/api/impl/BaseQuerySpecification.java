@@ -63,11 +63,13 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
         IncQueryEngine engine = IncQueryEngine.on(emfRoot);
+        ensureInitialized();
         return getMatcher(engine);
     }
 
     @Override
     public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
+        ensureInitialized();
     	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
     		return instantiate(engine);
     	else throw new IncQueryException(
@@ -85,6 +87,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
     @Override
     public Integer getPositionOfParameter(String parameterName) {
+        ensureInitialized();
         int index = getParameterNames().indexOf(parameterName);
         return index != -1 ? index : null;
     }
@@ -124,26 +127,31 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
 
     @Override
     public List<PAnnotation> getAllAnnotations() {
+        ensureInitialized();
         return Lists.newArrayList(annotations);
     }
 
     @Override
     public List<PAnnotation> getAnnotationsByName(final String annotationName) {
+        ensureInitialized();
         return Lists.newArrayList(Iterables.filter(annotations, new AnnotationNameTester(annotationName)));
     }
 
     @Override
     public PAnnotation getFirstAnnotationByName(String annotationName) {
+        ensureInitialized();
         return Iterables.find(annotations, new AnnotationNameTester(annotationName), null);
     }
 
     @Override
     public List<String> getParameterNames() {
+        ensureInitialized();
         return Lists.transform(getParameters(), PQueries.parameterNameFunction());
     }
 
     @Override
     public Set<PQuery> getDirectReferredQueries() {
+        ensureInitialized();
         Iterable<PQuery> queries = Iterables.concat(Iterables.transform(canonicalDisjunction.getBodies(),
                 PQueries.directlyReferencedQueriesFunction()));
         return Sets.newHashSet(queries);

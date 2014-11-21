@@ -53,7 +53,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model) = {
+			pattern resolutionTest(Model : GenModel) = {
 				GenModel(Model);
 				GenModel.runtimeVersion(Model, ::EMF23);
 			}
@@ -67,7 +67,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model) = {
+			pattern resolutionTest(Model : GenModel) = {
 				GenModel(Model);
 				GenModel.runtimeVersion(Model, GenRuntimeVersion::EMF23);
 			}
@@ -81,7 +81,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model) = {
+			pattern resolutionTest(Model: GenModel) = {
 				GenModel(Model);
 				GenModel.runtimeVersion(Model, Version);
 				Version == GenRuntimeVersion::EMF23;
@@ -97,7 +97,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/GenModel"
 
-			pattern resolutionTest(Model) = {
+			pattern resolutionTest(Model : GenModel) = {
 				GenModel(Model);
 				GenModel.runtimeVersion(Model, GenDelegationKind::None);
 			}
@@ -115,7 +115,7 @@ class EnumValidationTest extends AbstractValidatorTest {
 				GenRuntimeVersion(Version);
 			}
 
-			pattern call(c) = {
+			pattern call(c : GenModel) = {
 				GenModel(c);
 				find runtimeVersion(GenRuntimeVersion::EMF24);
 			}

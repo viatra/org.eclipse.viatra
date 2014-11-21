@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
@@ -75,5 +76,19 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IterateOverEStructuralFeatureInstances(");
+        builder.append(sourcePosition + ", " + targetPosition + ", ");
 
+        String name = feature.getName();
+        EClass container = feature.getEContainingClass();
+        String packageNsUri = container.getEPackage().getNsURI();
+        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
+
+        builder.append(")");
+        return builder.toString();
+    }
+    
 }

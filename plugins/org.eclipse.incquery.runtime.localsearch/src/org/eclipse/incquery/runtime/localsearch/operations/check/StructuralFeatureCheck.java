@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import java.util.Collection;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
@@ -48,6 +49,24 @@ public class StructuralFeatureCheck extends CheckOperation {
         } catch (ClassCastException e) {
             throw new LocalSearchException(LocalSearchException.TYPE_ERROR, e);
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("StructuralFeatureCheck(");
+        builder.append(sourcePosition + ", " + targetPosition + ", ");
+
+        String name = feature.getName();
+        EClass container = feature.getEContainingClass();
+        String packageNsUri = container.getEPackage().getNsURI();
+        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
+
+        builder.append(")");
+        return builder.toString();
     }
 
 }

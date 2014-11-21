@@ -34,20 +34,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.incquery.patternlanguage"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.incquery.patternlanguage.emf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.incquery.runtime.base"
          download-size="0"
          install-size="0"

@@ -54,4 +54,8 @@ public abstract class EnumerablePConstraint extends BasePConstraint {
         return getAffectedVariables();
     }
 
+	public PVariable getVariableInTuple(int index) {
+		return (PVariable) this.variablesTuple.get(index);
+	}
+
 }

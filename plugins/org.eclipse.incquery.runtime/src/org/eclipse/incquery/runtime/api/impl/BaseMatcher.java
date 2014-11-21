@@ -53,6 +53,9 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
         this.engine = engine;
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
+        if (this.querySpecification instanceof BaseQuerySpecification<?>) {
+            ((BaseQuerySpecification<?>) this.querySpecification).ensureInitialized();
+        }
         this.backend = accessMatcher(engineImpl, querySpecification);
         engineImpl.reportMatcherInitialized(querySpecification, this);
     }

@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.incquery.querybasedfeatures.runtime.util.validation;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -31,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
 import org.eclipse.incquery.querybasedfeatures.runtime.QueryBasedFeatureKind;
+import org.eclipse.incquery.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 
 import com.google.inject.Inject;
 
@@ -59,8 +62,15 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
      */
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
+        boolean foundErrors = false;
+
         Pattern pattern = (Pattern) annotation.eContainer();
 
+        foundErrors = checkFeatureUniquenessOnQBFAnnotations(annotation, validator, pattern);
+        if(foundErrors) {
+            return;
+        }
+        
         // 1. at least two parameters
         if (pattern.getParameters().size() < 2) {
             validator.error("Query-based feature pattern must have at least two parameters.", pattern,
@@ -218,7 +228,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
         if (ref instanceof BoolValue) {
             boolean keepCache = ((BoolValue) ref).isValue();
-            if (keepCache == false) {
+            if(!keepCache) {
                 switch (kind) {
                 case SINGLE_REFERENCE:
                 case MANY_REFERENCE:
@@ -233,16 +243,57 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         }
         
         // 7. if resource is not writable, the generation will fail
-        Resource resource = sourceClass.getEPackage().eResource();
-        URI uri = resource.getURI();
+        EPackage ePackage = sourceClass.getEPackage();
+		URI uri = ePackage.eResource().getURI();
         // only file and platform resource URIs are considered safely writable
         if(!(uri.isFile() || uri.isPlatformResource())) {
-            validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
-                    PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
+        	boolean useModelCode = false;
+        	if(useModelCodeRef != null){
+        		useModelCode = ((BoolValue)useModelCodeRef).isValue();
+        	}
+        	String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+			boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
+        	
+        	if(!annotationsOK){
+        		validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
+        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	} else {
+        		validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable, but it already contains correct annotations.", uri.toString(), sourceClass.getName()), source,
+        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        	}
             return;
         }
         
 
     }
+
+    private boolean checkFeatureUniquenessOnQBFAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
+        Collection<Annotation> qbfAnnotations = CorePatternLanguageHelper.getAnnotationsByName(pattern, "QueryBasedFeature");
+        if(qbfAnnotations.size() > 1) {
+            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+            if(feature == null) {
+                validator.error("Feature must be specified when multiple QueryBasedFeature annotations are used on a single pattern.", annotation,
+                        PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
+                return true;
+            } else {
+                String featureName = ((StringValue) feature).getValue();
+                for (Annotation antn : qbfAnnotations) {
+                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
+                    if(otherFeature != null) {
+                        String otherFeatureName = ((StringValue) otherFeature).getValue();
+                        if(featureName.equals(otherFeatureName)) {
+                            validator.error("Feature must be unique among multiple QueryBasedFeature annotations used on a single pattern.", annotation,
+                                    PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+        }
+        return false;
+    }
+    
 
 }
