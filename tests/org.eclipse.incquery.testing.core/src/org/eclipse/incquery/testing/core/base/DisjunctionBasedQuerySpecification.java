@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
@@ -34,7 +35,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 public class DisjunctionBasedQuerySpecification implements IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>> {
 
     private PDisjunction pDisjunction;
-    private IQuerySpecification<?> querySpecifiaction;
+    private IQuerySpecification<?> querySpecification;
 
     /**
      * The constructor. 
@@ -45,12 +46,12 @@ public class DisjunctionBasedQuerySpecification implements IQuerySpecification<I
     public DisjunctionBasedQuerySpecification(
             IQuerySpecification<?> querySpecicifation, PDisjunction pDisjunction) {
         this.pDisjunction = pDisjunction;
-        this.querySpecifiaction = querySpecicifation;
+        this.querySpecification = querySpecicifation;
     }
     
     @Override
     public String getFullyQualifiedName() {
-        return querySpecifiaction.getFullyQualifiedName();
+        return querySpecification.getFullyQualifiedName();
     }
 
     @Override
@@ -60,83 +61,88 @@ public class DisjunctionBasedQuerySpecification implements IQuerySpecification<I
 
     @Override
     public Set<PQuery> getDirectReferredQueries() {
-        return querySpecifiaction.getDirectReferredQueries();
+        return querySpecification.getDirectReferredQueries();
     }
 
     @Override
     public Set<PQuery> getAllReferredQueries() {
-        return querySpecifiaction.getAllReferredQueries();
+        return querySpecification.getAllReferredQueries();
     }
 
     @Override
     public List<String> getParameterNames() {
-        return querySpecifiaction.getParameterNames();
+        return querySpecification.getParameterNames();
     }
 
     @Override
     public List<PParameter> getParameters() {
-        return querySpecifiaction.getParameters();
+        return querySpecification.getParameters();
     }
 
     @Override
     public Integer getPositionOfParameter(String parameterName) {
-        return querySpecifiaction.getPositionOfParameter(parameterName);
+        return querySpecification.getPositionOfParameter(parameterName);
     }
 
     @Override
     public PQueryStatus getStatus() {
-        return querySpecifiaction.getStatus();
+        return querySpecification.getStatus();
     }
 
     @Override
     public List<PProblem> getPProblems() {
-        return querySpecifiaction.getPProblems();
+        return querySpecification.getPProblems();
     }
 
     @Override
     public void checkMutability() throws IllegalStateException {
-        querySpecifiaction.checkMutability();
+        querySpecification.checkMutability();
     }
 
     @Override
     public boolean isMutable() {
-        return querySpecifiaction.isMutable();
+        return querySpecification.isMutable();
     }
 
     @Override
     public List<PAnnotation> getAllAnnotations() {
-        return querySpecifiaction.getAllAnnotations();
+        return querySpecification.getAllAnnotations();
     }
 
     @Override
     public List<PAnnotation> getAnnotationsByName(String annotationName) {
-        return querySpecifiaction.getAnnotationsByName(annotationName);
+        return querySpecification.getAnnotationsByName(annotationName);
     }
 
     @Override
     public PAnnotation getFirstAnnotationByName(String annotationName) {
-        return querySpecifiaction.getFirstAnnotationByName(annotationName);
+        return querySpecification.getFirstAnnotationByName(annotationName);
     }
 
     @Override
     @Deprecated
     public IncQueryMatcher<? extends IPatternMatch> getMatcher(Notifier emfRoot) throws IncQueryException {
-        return querySpecifiaction.getMatcher(emfRoot);
+        return querySpecification.getMatcher(emfRoot);
     }
 
     @Override
     public IncQueryMatcher<? extends IPatternMatch> getMatcher(IncQueryEngine engine) throws IncQueryException {
-        return querySpecifiaction.getMatcher(engine);
+        return querySpecification.getMatcher(engine);
     }
 
     @Override
     public IPatternMatch newEmptyMatch() {
-        return querySpecifiaction.newEmptyMatch();
+        return querySpecification.newEmptyMatch();
     }
 
     @Override
     public IPatternMatch newMatch(Object... parameters) {
-        return querySpecifiaction.newMatch(parameters);
+        return querySpecification.newMatch(parameters);
+    }
+    
+    @Override
+    public Class<? extends IncQueryScope> getPreferredScopeClass() {
+    	return querySpecification.getPreferredScopeClass();
     }
 
 }
