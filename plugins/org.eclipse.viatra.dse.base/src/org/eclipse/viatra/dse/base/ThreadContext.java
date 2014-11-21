@@ -15,8 +15,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.command.ChangeCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
@@ -45,7 +45,7 @@ public class ThreadContext {
     private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
-    private TransactionalEditingDomain ted;
+    private EditingDomain domain;
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
 
@@ -65,15 +65,15 @@ public class ThreadContext {
      * 
      * @param globalContext
      * @param strategyBase
-     * @param ted
+     * @param domain
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, Strategy strategyBase, TransactionalEditingDomain ted,
+    public ThreadContext(final GlobalContext globalContext, Strategy strategyBase, EditingDomain domain,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
         this.strategy = strategyBase;
-        this.ted = ted;
+        this.domain = domain;
 
         // clone if it is not null
         this.trajectoryInfo = trajectoryInfoToClone == null ? null : trajectoryInfoToClone.clone();
@@ -93,7 +93,7 @@ public class ThreadContext {
         // prohibit re-initialization
         checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
-        modelRoot = ted.getResourceSet().getResources().get(0).getContents().get(0);
+        modelRoot = domain.getResourceSet().getResources().get(0).getContents().get(0);
         checkArgument(modelRoot != null, "Cannot initialize ThreadContext on a null model.");
 
         try {
@@ -106,7 +106,7 @@ public class ThreadContext {
         // initialize RuleEngine
         ruleEngine = RuleEngines.createIncQueryRuleEngine(incqueryEngine);
 
-        RecordingCommand addRuleCommand = new RecordingCommand(ted) {
+        ChangeCommand addRuleCommand = new ChangeCommand(modelRoot) {
             @Override
             protected void doExecute() {
                 // add rules to the RuleEngine
@@ -115,7 +115,7 @@ public class ThreadContext {
                 }
             }
         };
-        ted.getCommandStack().execute(addRuleCommand);
+        domain.getCommandStack().execute(addRuleCommand);
 
         if (isFirstThreadInit.get()) {
             // This code ensures, that the query specification is initialized, because it cannot be done in parallel
@@ -135,7 +135,7 @@ public class ThreadContext {
             isFirstThreadInit.set(false);
         }
         // create the thread specific DesignSpaceManager
-        designSpaceManager = new DesignSpaceManager(ted, globalContext.getStateSerializerFactory(),
+        designSpaceManager = new DesignSpaceManager(modelRoot, domain, globalContext.getStateSerializerFactory(),
                 globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, incqueryEngine);
 
         // if there is a guidance registered, hook this thread's
@@ -158,8 +158,8 @@ public class ThreadContext {
         return designSpaceManager;
     }
 
-    public TransactionalEditingDomain getTed() {
-        return ted;
+    public EditingDomain getEditingDomain() {
+        return domain;
     }
 
     public EObject getModelRoot() {

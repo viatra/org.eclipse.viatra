@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.command.ChangeCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
@@ -54,8 +55,9 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     private final RuleEngine ruleEngine;
 
-    // the transactional editing domain encapsulating the working model
-    private final TransactionalEditingDomain ted;
+    // the editing domain encapsulating the working model
+    private final EditingDomain domain;
+    private EObject modelRoot;
 
     private final IDesignSpace designSpace;
 
@@ -75,15 +77,16 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     private static final long SLEEP_INTERVAL = 1;
 
-    public DesignSpaceManager(TransactionalEditingDomain ted, IStateSerializerFactory factory,
+    public DesignSpaceManager(EObject modelRoot, EditingDomain domain, IStateSerializerFactory factory,
             IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, IncQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
-        checkNotNull(ted, "Cannot initialize crawler on a null transactional editing domain!");
+        checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
 
+        this.modelRoot = modelRoot;
         this.ruleEngine = ruleEngine;
         this.designSpace = designSpace;
-        this.ted = ted;
+        this.domain = domain;
         this.serializerFactory = factory;
 
         // init serializer
@@ -108,7 +111,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         final Activation<?> activation = getActivationByTransitionId(transition);
 
         // assemble the new RecordingCommand to fire the Transition
-        RecordingCommand rc = new RecordingCommand(ted) {
+        ChangeCommand rc = new ChangeCommand(modelRoot) {
             @Override
             protected void doExecute() {
                 activation.fire(evmContext);
@@ -119,7 +122,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         // execute the command
         PerformanceMonitorManager.startTimer(EXECUTE);
-        ted.getCommandStack().execute(rc);
+        domain.getCommandStack().execute(rc);
         PerformanceMonitorManager.endTimer(EXECUTE);
 
         Object newStateId = stateSerializer.serializeContainmentTree();
@@ -297,7 +300,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         IState previousState = trajectory.getCurrentState();
 
         // we move the model by executing undo on the command stack
-        ted.getCommandStack().undo();
+        domain.getCommandStack().undo();
 
         // save transition id
         ITransition lastTransition = trajectory.getLastTransition();
