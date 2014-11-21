@@ -105,7 +105,9 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 	}
 	@Override
 	public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
-		navigationHelper.removeBaseIndexChangeListener(indexChangeListeners.remove(listener));
+		final EMFBaseIndexChangeListener cListener = indexChangeListeners.remove(listener);
+		if (cListener != null) 
+			navigationHelper.removeBaseIndexChangeListener(cListener);
 	}
 
 	Map<IInstanceObserver, EObjectObserver> instanceObservers = 
