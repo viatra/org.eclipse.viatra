@@ -199,7 +199,7 @@ implements IGenerationFragment {
 
 		import org.eclipse.incquery.validation.runtime.Constraint;
 		import org.eclipse.incquery.validation.runtime.ValidationUtil;
-		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 		import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 		import «pattern.packageName + "." + pattern.matchClassName»;
@@ -243,7 +243,7 @@ implements IGenerationFragment {
 			}
 
 			@Override
-			public BaseGeneratedQuerySpecification<«pattern.matcherClassName»> getQuerySpecification() {
+			public BaseGeneratedEMFQuerySpecification<«pattern.matcherClassName»> getQuerySpecification() {
 				return querySpecification;
 			}
 		}
