@@ -18,32 +18,31 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcce
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
 public class CepDslHighlightingConfiguration extends DefaultHighlightingConfiguration {
+    public static final String EDL_ENUM_ID = "edlEnum";
 
-	public static final String EDL_ENUM_ID = "edlEnum";
+    @Override
+    public void configure(IHighlightingConfigurationAcceptor acceptor) {
+        super.configure(acceptor);
+        acceptor.acceptDefaultHighlighting(EDL_ENUM_ID, "Edl enums", edlEnumTextStyle());
+    }
 
-	@Override
-	public void configure(IHighlightingConfigurationAcceptor acceptor) {
-		super.configure(acceptor);
-		acceptor.acceptDefaultHighlighting(EDL_ENUM_ID, "Edl enums", edlEnumTextStyle());
-	}
+    @Override
+    public TextStyle numberTextStyle() {
+        TextStyle textStyle = defaultTextStyle().copy();
+        textStyle.setColor(new RGB(254, 61, 27));
+        return textStyle;
+    }
 
-	@Override
-	public TextStyle numberTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(254, 61, 27));
-		return textStyle;
-	}
+    @Override
+    public TextStyle stringTextStyle() {
+        TextStyle stringTextStyle = super.stringTextStyle();
+        stringTextStyle.setStyle(SWT.ITALIC);
+        return stringTextStyle;
+    }
 
-	@Override
-	public TextStyle stringTextStyle() {
-		TextStyle stringTextStyle = super.stringTextStyle();
-		stringTextStyle.setStyle(SWT.ITALIC);
-		return stringTextStyle;
-	}
-
-	public TextStyle edlEnumTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(128, 0, 255));
-		return textStyle;
-	}
+    public TextStyle edlEnumTextStyle() {
+        TextStyle textStyle = defaultTextStyle().copy();
+        textStyle.setColor(new RGB(128, 0, 255));
+        return textStyle;
+    }
 }

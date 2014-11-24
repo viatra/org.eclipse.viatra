@@ -16,27 +16,24 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeId
 
 import com.google.common.base.Joiner;
 
-public class CepDslAntlrTokenToAttributeIdMapper extends
-		DefaultAntlrTokenToAttributeIdMapper {
+public class CepDslAntlrTokenToAttributeIdMapper extends DefaultAntlrTokenToAttributeIdMapper {
 
-	@Override
-	protected String calculateId(String tokenName, int tokenType) {
-		String calculateId = super.calculateId(tokenName, tokenType);
+    @Override
+    protected String calculateId(String tokenName, int tokenType) {
+        String calculateId = super.calculateId(tokenName, tokenType);
 
-		if (getApostrophedKeyword(IQPatternChangeType.NEW_MATCH_FOUND.getLiteral())
-				.equals(tokenName)
-				|| getApostrophedKeyword(IQPatternChangeType.EXISTING_MATCH_LOST.getLiteral())
-						.equals(tokenName)) {
-			return CepDslHighlightingConfiguration.EDL_ENUM_ID;
-		}
+        if (getApostrophedKeyword(IQPatternChangeType.NEW_MATCH_FOUND.getLiteral()).equals(tokenName)
+                || getApostrophedKeyword(IQPatternChangeType.EXISTING_MATCH_LOST.getLiteral()).equals(tokenName)) {
+            return CepDslHighlightingConfiguration.EDL_ENUM_ID;
+        }
 
-		return calculateId;
+        return calculateId;
 
-	}
+    }
 
-	private String getApostrophedKeyword(String keyword) {
-		final String APOSTROPHE = "'";
-		Joiner joiner = Joiner.on("");
-		return joiner.join(APOSTROPHE, keyword, APOSTROPHE);
-	}
+    private String getApostrophedKeyword(String keyword) {
+        final String APOSTROPHE = "'";
+        Joiner joiner = Joiner.on("");
+        return joiner.join(APOSTROPHE, keyword, APOSTROPHE);
+    }
 }
