@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -368,10 +369,10 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
         if (state == GeneticStrategyState.FIRST_POPULATION) {
-            sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, isGoalState,
+            sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, objectives,
                     constraintsNotSatisfied);
         }
     }

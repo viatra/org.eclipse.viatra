@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.viatra.dse.api.Solution;
+import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
@@ -26,13 +27,17 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 public class DummySolutionStore implements ISolutionStore {
 
     @Override
-    public Solution newSolution(ThreadContext context, Map<String, Double> measurements) {
-        return null;
+    public StopExecutionType newSolution(ThreadContext context, Map<String, Double> objectives) {
+        return StopExecutionType.CONTINUE;
     }
 
     @Override
     public Collection<Solution> getSolutions() {
         throw new UnsupportedOperationException("DummySolutionStore cannot return any solutions.");
+    }
+
+    @Override
+    public void registerSolutionFoundHandler(ISolutionFoundHandler handler) {
     }
 
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -31,7 +32,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
 public final class EMFHelper {
 
@@ -40,12 +42,12 @@ public final class EMFHelper {
     private EMFHelper() {
     }
 
-    public static TransactionalEditingDomain wrapModelInDummyDomain(EObject root) {
+    public static EditingDomain createEditingDomain(EObject root) {
         // TODO maybe there is already a ted on the eobject
-        TransactionalEditingDomain ted = TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain();
-        Resource createResource = ted.getResourceSet().createResource(URI.createFileURI("DUMMY"));
-        ted.getCommandStack().execute(new AddCommand(ted, createResource.getContents(), root));
-        return ted;
+        EditingDomain domain = new AdapterFactoryEditingDomain(null,new BasicCommandStack());
+        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("DUMMY"));
+        domain.getCommandStack().execute(new AddCommand(domain, createResource.getContents(), root));
+        return domain;
     }
 
     public static void serializeModel(EObject root, String name, String ext) {

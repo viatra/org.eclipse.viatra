@@ -12,15 +12,11 @@ package org.eclipse.viatra.dse.api.strategy;
 
 import java.util.Map;
 
-import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.impl.CheckAllConstraints;
 import org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals;
-import org.eclipse.viatra.dse.api.strategy.impl.ConfigurableSoultionFound;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.ExecutationType;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
@@ -30,13 +26,10 @@ public class Strategy {
     private ICheckGoalState goalStateChecker;
     private INextTransition iNextTransition;
 
-    private ISolutionFound solutionFoundHandler;
-
     public Strategy(INextTransition iNextTransition) {
         this.iNextTransition = iNextTransition;
         constraintsChecker = new CheckAllConstraints();
         goalStateChecker = new CheckAllGoals();
-        solutionFoundHandler = new ConfigurableSoultionFound(1);
     }
 
     public void setConstraintsChecker(ICheckConstraints iCheckConstraints) {
@@ -53,14 +46,6 @@ public class Strategy {
 
     public ICheckGoalState getGoalStateChecker() {
         return goalStateChecker;
-    }
-
-    public void setSolutionFoundHandler(ISolutionFound solutionFoundHandler) {
-        this.solutionFoundHandler = solutionFoundHandler;
-    }
-
-    public ISolutionFound getSolutionFoundHandler() {
-        return solutionFoundHandler;
     }
 
     /**
@@ -104,9 +89,9 @@ public class Strategy {
      * 
      * @see INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)
      */
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean areConstraintsSatisfied) {
-        iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, isGoalState, areConstraintsSatisfied);
+        iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, objectives, areConstraintsSatisfied);
     }
 
     /**
@@ -116,15 +101,6 @@ public class Strategy {
      */
     public void interrupted(ThreadContext context) {
         iNextTransition.interrupted(context);
-    }
-
-    /**
-     * Delegates the call to {@link ISolutionFound#solutionFound(ThreadContext, Solution)}.
-     * 
-     * @see ISolutionFound#solutionFound(ThreadContext, Solution)
-     */
-    public ExecutationType solutionFound(ThreadContext context, Solution solution) {
-        return solutionFoundHandler.solutionFound(context, solution);
     }
 
 }

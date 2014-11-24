@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -88,7 +89,7 @@ public class ParallelBFSNextTransition implements INextTransition {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
 
-        if (sharedData.actLevel > sharedData.maxDepth || isInterrupted) {
+        if ((sharedData.maxDepth > 0 && sharedData.actLevel > sharedData.maxDepth) || isInterrupted) {
             return null;
         }
 
@@ -166,7 +167,7 @@ public class ParallelBFSNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
     }
 

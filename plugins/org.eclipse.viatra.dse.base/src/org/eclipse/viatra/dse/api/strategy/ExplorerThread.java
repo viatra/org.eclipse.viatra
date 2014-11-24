@@ -17,10 +17,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFound.ExecutationType;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -30,6 +28,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
+import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
  * 
@@ -64,7 +63,7 @@ public class ExplorerThread implements IExplorerThread {
     }
 
     /**
-     * Starts the design space exploration. Returns only when {@link ISolutionFound#solutionFound(Strategy, Solution)}
+     * Starts the design space exploration. Returns only when {@link ISolutionFoundHandler#solutionFound(Strategy, Solution)}
      * method returns STOP or the {@link INextTransition#getNextTransition(ThreadContext)} method returns null.
      * 
      * If this main algorithm is not good for you, you can derive from this class and override this method. TODO:
@@ -100,6 +99,8 @@ public class ExplorerThread implements IExplorerThread {
                     strategyBase.interrupted(threadContext);
                 }
 
+                Map<String, Double> objectives = null;
+
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
 
                 ITransition transition = null;
@@ -131,17 +132,14 @@ public class ExplorerThread implements IExplorerThread {
                 PerformanceMonitorManager.startTimer(STATE_EVALUATION);
 
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
-                boolean isGoalState = false;
                 boolean areConstraintsSatisfied = true;
+                objectives = strategyBase.isGoalState(threadContext);
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = newState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (traversalState == TraversalStateType.GOAL) {
-                        // TODO check goal state again, because of the hash
-                        // collision if(iCheckGoalState.isGoalState(context)){}
-                        globalContext.getSolutionStore().newSolution(threadContext, null);
-                        isGoalState = true;
+                    if (objectives != null) {
+                        globalContext.getSolutionStore().newSolution(threadContext, objectives);
                     } else if (traversalState == TraversalStateType.CUT) {
                         areConstraintsSatisfied = false;
                     }
@@ -154,32 +152,25 @@ public class ExplorerThread implements IExplorerThread {
                     if (areConstraintsSatisfied) {
 
                         // if it is a goal state
-                        Map<String, Double> measurements = strategyBase.isGoalState(threadContext);
-                        if (measurements != null) {
+                        if (objectives != null) {
 
                             logger.debug("Goal state.");
 
-                            isGoalState = true;
-                            Solution solution = globalContext.getSolutionStore().newSolution(threadContext,
-                                    measurements);
-
-                            if (solution != null) {
-                                // TODO this behavior could be unwanted
+                            if (objectives.isEmpty()) {
                                 newState.setTraversalState(TraversalStateType.GOAL);
+                            }
 
-                                // Call SolutionFoundResolver
-                                ExecutationType verdict = strategyBase.solutionFound(threadContext, solution);
+                            StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext, objectives);
 
-                                switch (verdict) {
-                                case STOP_ALL:
-                                    continueExecution = false;
-                                    globalContext.stopAllThreads();
-                                    break;
-                                case STOP_THREAD:
-                                    continueExecution = false;
-                                default:
-                                    break;
-                                }
+                            switch (verdict) {
+                            case STOP_ALL:
+                                continueExecution = false;
+                                globalContext.stopAllThreads();
+                                break;
+                            case STOP_THREAD:
+                                continueExecution = false;
+                            default:
+                                break;
                             }
 
                         }
@@ -199,7 +190,7 @@ public class ExplorerThread implements IExplorerThread {
                     newState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, isGoalState,
+                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, objectives,
                         !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
             }
@@ -207,11 +198,13 @@ public class ExplorerThread implements IExplorerThread {
             logger.debug("Strategy stopped on Thread " + Thread.currentThread());
             globalContext.strategyFinished(this);
             return;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("Thread stopped unexpectedly!", e);
+            throw new DSEException(e);
+        } finally {
             globalContext.getExceptionHappendInOtherThread().set(true);
             globalContext.strategyFinished(this);
-            throw new DSEException(e);
+            dispose();
         }
     }
 

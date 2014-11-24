@@ -43,7 +43,6 @@ public class FixedPriorityNextTransition implements INextTransition {
     private boolean tryBestTransitionsOnly = true;
     private Map<Object, Double> bestPriorityInState;
     private int depthLimit = 0;
-    private int actDepth = 0;
     private Random rnd = new Random();
     private DesignSpaceManager dsm;
     private boolean isInterrupted = false;
@@ -86,11 +85,10 @@ public class FixedPriorityNextTransition implements INextTransition {
 
         // Backtrack if there is no more unfired transition from here
         List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
-        while ((depthLimit != 0 && actDepth >= depthLimit) || (transitions == null || transitions.isEmpty())) {
+        while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit) || (transitions == null || transitions.isEmpty())) {
             if (!dsm.undoLastTransformation()) {
                 return null;
             }
-
             transitions = dsm.getUntraversedTransitionsFromCurrentState();
         }
 
@@ -111,7 +109,6 @@ public class FixedPriorityNextTransition implements INextTransition {
                 // Random selection between transitions on the same level
                 if (!bestTrasitions.isEmpty()) {
                     int index = rnd.nextInt(bestTrasitions.size());
-                    actDepth++;
                     ITransition iTransition = bestTrasitions.get(index);
                     return iTransition;
                 }
@@ -119,12 +116,10 @@ public class FixedPriorityNextTransition implements INextTransition {
                 ITransition bestTransition = getBestTransition(dsm.getUntraversedTransitionsFromCurrentState(),
                         ruleInfos);
                 if (bestTransition != null) {
-                    actDepth++;
                     return bestTransition;
                 }
             }
 
-            actDepth--;
 
         } while (!dsm.undoLastTransformation());
 
@@ -132,9 +127,9 @@ public class FixedPriorityNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || isGoalState || constraintsNotSatisfied) {
+        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives!=null && objectives.isEmpty())) {
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }

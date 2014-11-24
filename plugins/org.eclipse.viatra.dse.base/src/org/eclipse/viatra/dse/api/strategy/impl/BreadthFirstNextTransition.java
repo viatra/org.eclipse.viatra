@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -38,7 +39,7 @@ public class BreadthFirstNextTransition implements INextTransition {
 
     }
 
-    private int maxDepth = Integer.MAX_VALUE;
+    private int maxDepth = 0;
     private LinkedList<TransitionWrapper> transitions = new LinkedList<TransitionWrapper>();
     private int actDepth = 0;
     private int remainingTransitions = 0;
@@ -58,7 +59,7 @@ public class BreadthFirstNextTransition implements INextTransition {
 
         // TODO: For some reason it keeps failing from time to time
         // For me it failed at the level of 10 and 11, in the 2/3 of the time
-        if (actDepth > maxDepth || isInterrupted) {
+        if ((maxDepth > 0 && actDepth > maxDepth) || isInterrupted) {
             return null;
         }
 
@@ -145,7 +146,7 @@ public class BreadthFirstNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
     }
 

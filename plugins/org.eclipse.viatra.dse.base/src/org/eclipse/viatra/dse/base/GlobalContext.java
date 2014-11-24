@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
@@ -87,8 +87,8 @@ public class GlobalContext {
 
             // clone the parent's thread model. it should be done in the
             // parent's thread so the model won't be changed during cloning
-            TransactionalEditingDomain ted = originalThreadContext.getTed();
-            EObject rootToClone = ted.getResourceSet().getResources().get(0).getContents().get(0);
+            EditingDomain domain = originalThreadContext.getEditingDomain();
+            EObject rootToClone = domain.getResourceSet().getResources().get(0).getContents().get(0);
 
             if (root != null) {
                 if (cloneModel) {
@@ -101,13 +101,13 @@ public class GlobalContext {
 
             if (cloneModel) {
                 EObject clonedModel = EMFHelper.clone(rootToClone);
-                ted = EMFHelper.wrapModelInDummyDomain(clonedModel);
+                domain = EMFHelper.createEditingDomain(clonedModel);
             }
 
             ThreadContext newThreadContext;
             if (cloneModel) {
                 TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategy, ted, root != null ? null : trajectoryInfo,
+                newThreadContext = new ThreadContext(this, strategy, domain, root != null ? null : trajectoryInfo,
                         originalThreadContext.getGuidance());
             } else {
                 // TODO This is only appropriate if this is the first thread

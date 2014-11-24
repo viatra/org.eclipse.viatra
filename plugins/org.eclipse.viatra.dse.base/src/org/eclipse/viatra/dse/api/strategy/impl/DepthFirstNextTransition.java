@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -72,7 +73,7 @@ public class DepthFirstNextTransition implements INextTransition {
 
         // backtrack
         while (transitions == null || transitions.isEmpty()
-                || baseDepth + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= sharedData.maxDepth) {
+                || ((baseDepth + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= sharedData.maxDepth) && sharedData.maxDepth > 0)) {
             PerformanceMonitorManager.startTimer(UNDO_TIMER);
             boolean didUndo = dsm.undoLastTransformation();
             PerformanceMonitorManager.endTimer(UNDO_TIMER);
@@ -102,10 +103,10 @@ public class DepthFirstNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || isGoalState || constraintsNotSatisfied) {
-            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + isGoalState
+        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives!=null && objectives.isEmpty())) {
+            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (objectives!=null)
                     + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();
         }

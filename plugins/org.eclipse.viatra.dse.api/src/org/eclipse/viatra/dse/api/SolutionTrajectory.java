@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -31,7 +32,7 @@ public class SolutionTrajectory {
     private final List<Object> transitionIds;
     private final List<TransformationRule<? extends IPatternMatch>> transformationRules;
     private final IStateSerializerFactory stateSerializerFactory;
-    private double usefulness;
+    private Map<String, Double> objectives;
 
     private IncQueryEngine engine;
     private EObject rootEObject;
@@ -145,12 +146,12 @@ public class SolutionTrajectory {
         return transitionIds;
     }
 
-    public double getUsefulness() {
-        return usefulness;
+    public Map<String, Double> getObjectives() {
+        return objectives;
     }
 
-    public void setUsefulness(double usefulness) {
-        this.usefulness = usefulness;
+    public void setObjectives(Map<String, Double> objectives) {
+        this.objectives = objectives;
     }
 
 }

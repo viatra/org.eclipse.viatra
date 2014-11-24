@@ -98,8 +98,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
             if (foundInstances >= initialSizeOfPopulation) {
                 return null;
             } else {
-                while (dsm.undoLastTransformation())
-                    ;
+                while (dsm.undoLastTransformation());
             }
         }
 
@@ -147,7 +146,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, boolean isGoalState,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
