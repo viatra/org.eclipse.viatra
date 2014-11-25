@@ -34,7 +34,7 @@
 		<jacoco.version>0.7.0.201403182114</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.7.0</xtend.compiler.version>
-		<xcore.version>1.2.1-SNAPSHOT</xcore.version>
+		<xcore.version>1.2.1</xcore.version>
 		<xcore.lib.version>1.1.0</xcore.lib.version>
 		<java.version>1.6</java.version>
 		<!-- Sonar -->
