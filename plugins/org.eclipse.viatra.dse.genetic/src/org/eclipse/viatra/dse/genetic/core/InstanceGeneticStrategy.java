@@ -75,12 +75,10 @@ public class InstanceGeneticStrategy implements INextTransition {
                 while (actInstanceData == null) {
                     try {
                         actInstanceData = sharedObject.instancesToBeChecked.poll(10, TimeUnit.MILLISECONDS);
-                        if (gc.getExceptionHappendInOtherThread().get()) {
-                            return null;
-                        }
                     } catch (InterruptedException e1) {
                     }
-                    if (actInstanceData == null && !sharedObject.newPopulationIsNeeded.get()) {
+                    if ((actInstanceData == null && !sharedObject.newPopulationIsNeeded.get())
+                            || gc.isExceptionHappendInOtherThread()) {
                         return null;
                     }
                 }

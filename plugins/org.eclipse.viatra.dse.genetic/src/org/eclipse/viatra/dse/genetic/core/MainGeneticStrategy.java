@@ -259,7 +259,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
                                 .size()) {
                             try {
                                 Thread.sleep(1);
-                                if (gc.getExceptionHappendInOtherThread().get()) {
+                                if (gc.isExceptionHappendInOtherThread()) {
                                     return null;
                                 }
                             } catch (InterruptedException e) {

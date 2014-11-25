@@ -23,6 +23,10 @@ public class Row {
         this.keysInOrder = keys;
     }
 
+    public boolean isKeyPresent(String key) {
+        return map.containsKey(key);
+    }
+
     public void add(String key, String value) {
         map.put(key, value);
     }

@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.debug;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,31 +56,32 @@ import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutati
  */
 public abstract class GeneticTestRunner extends BaseTestRunner {
 
+    private static final String EXCEPTIONS_FILE = "exceptions.txt";
     // Config
-    private static final String MODEL_PATH = "InitialModelPath";
-    private static final String TIMEOUT = "Timeout[s]";
-    private static final String POPULATION_SIZE = "PopulationSize";
-    private static final String MUTATION_RATE = "MutationRate";
-    private static final String ADAPTIVE_MUTATION_MULTIPLIER = "AdaptiveMutationMultiplier";
-    private static final String INITIAL_SELECTOR = "InitialSelector";
-    private static final String INITIAL_SELECTION_RATE = "InitialSelectionRate";
-    private static final String STOP_CONDITION = "StopCondition";
-    private static final String STOP_CONDITION_NUMBER = "StopConditionNumber";
-    private static final String CUT_AND_SPLICE_CROSSOVER = "CutAndSpliceCrossover";
-    private static final String SINGLE_POINT_CROSSOVER = "SinglePointCrossover";
-    private static final String PERMUTATION_CROSSOVER = "PermutationCrossover";
-    private static final String ADD_MUTATION = "AddMutation";
-    private static final String ADD_BY_PRIORITY_MUTATION = "AddByPriorityMutation";
-    private static final String MODIFY_MUTATION = "ModifyMutation";
-    private static final String MODIFY_BY_PRIORITY_MUTATION = "ModifyByPriorityMutation";
-    private static final String DELETE_MUTATION = "DeleteMutation";
+    public static final String MODEL_PATH = "InitialModelPath";
+    public static final String TIMEOUT = "Timeout[s]";
+    public static final String POPULATION_SIZE = "PopulationSize";
+    public static final String MUTATION_RATE = "MutationRate";
+    public static final String ADAPTIVE_MUTATION_MULTIPLIER = "AdaptiveMutationMultiplier";
+    public static final String INITIAL_SELECTOR = "InitialSelector";
+    public static final String INITIAL_SELECTION_RATE = "InitialSelectionRate";
+    public static final String STOP_CONDITION = "StopCondition";
+    public static final String STOP_CONDITION_NUMBER = "StopConditionNumber";
+    public static final String CUT_AND_SPLICE_CROSSOVER = "CutAndSpliceCrossover";
+    public static final String SINGLE_POINT_CROSSOVER = "SinglePointCrossover";
+    public static final String PERMUTATION_CROSSOVER = "PermutationCrossover";
+    public static final String ADD_MUTATION = "AddMutation";
+    public static final String ADD_BY_PRIORITY_MUTATION = "AddByPriorityMutation";
+    public static final String MODIFY_MUTATION = "ModifyMutation";
+    public static final String MODIFY_BY_PRIORITY_MUTATION = "ModifyByPriorityMutation";
+    public static final String DELETE_MUTATION = "DeleteMutation";
 
     // Results
-    private static final String SOLUTIONS = "Solutions";
-    private static final String SOFT_CONSTRAINT = "SoftConstraint";
-    private static final String AVG = "Avg";
-    private static final String NUMBER_OF_CORRECTIONS = "NumberOfCorrections";
-    private static final String NUMBER_OF_DUPLICATIONS = "NumberOfDuplications";
+    public static final String SOLUTIONS = "Solutions";
+    public static final String SOFT_CONSTRAINT = "SoftConstraint";
+    public static final String AVG = "Avg";
+    public static final String NUMBER_OF_CORRECTIONS = "NumberOfCorrections";
+    public static final String NUMBER_OF_DUPLICATIONS = "NumberOfDuplications";
 
     private List<String> resultKeysInOrder;
     private boolean isFirstRun = true;
@@ -166,7 +172,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     }
 
     @Override
-    public String runTestWithConfig(Row configRow, BaseResult result) throws IncQueryException {
+    public String runTestWithConfig(Row configRow, BaseResult result) throws Exception {
 
         GeneticDesignSpaceExplorer gdse = createGdse(configRow);
 
@@ -187,14 +193,16 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             }
             String modelName = modelPath.substring(start, end);
 
-            String configName;
-            try {
-                configName = configRow.getValueAsString("ConfigName");
-            } catch (GeneticConfigurationException e) {
-                configName = Integer.toString(result.configId);
+            if (configRow.isKeyPresent("ConfigName")) {
+                String configName = configRow.getValueAsString("ConfigName");
+                geneticDebugger.setCsvName("results_" + configName + ".csv");
+            } else {
+                geneticDebugger.setCsvName("results_"
+                        + Integer.toString(result.configId) + "_"
+                        + modelName + "_"
+                        + configRow.getValueAsString(INITIAL_SELECTOR)
+                        + ".csv");
             }
-            geneticDebugger.setCsvName("results_" + configName + "_" + modelName + "_"
-                    + configRow.getValueAsString(INITIAL_SELECTOR) + ".csv");
         } else {
             geneticDebugger.resetIteration();
         }
@@ -265,9 +273,27 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         Row resultsRow = new Row(resultKeysInOrder);
 
-        boolean exceptionHappened = gdse.getDseEngine().getGlobalContext().getExceptionHappendInOtherThread().get();
-        if (exceptionHappened) {
-            result.report = "Exception happend";
+        Collection<Throwable> exceptions = gdse.getDseEngine().getGlobalContext().getExceptions();
+        if (!exceptions.isEmpty()) {
+            result.report = "Exception happend. See " + EXCEPTIONS_FILE + " for details.";
+            PrintWriter out = null;
+            try {
+                out = new PrintWriter(new BufferedWriter(new FileWriter(EXCEPTIONS_FILE, true)));
+                out.println("Exceptions in config id:" + result.configId + ", run id: " + result.runId);
+                for (Throwable throwable : exceptions) {
+                    StringWriter sw = new StringWriter();
+                    throwable.printStackTrace(new PrintWriter(sw));
+                    out.println();
+                    out.println(throwable.getMessage());
+                    out.println();
+                    out.println(sw.toString());
+                }
+                out.println("==========================================");
+            } catch (IOException e) {
+                throw e;
+            } finally {
+                out.close();
+            }
         } else if (wasTimeout) {
             result.report = "Timeout";
         }
@@ -275,13 +301,13 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         Map<InstanceData, SolutionTrajectory> solutions = gdse.getSolutions();
 
         if (solutions.isEmpty()) {
-            if (exceptionHappened) {
+            if (!exceptions.isEmpty()) {
                 return "";
             }
             Logger.getLogger(this.getClass().getSimpleName()).error("Solution collection was empty. It's a bug.");
             return "No Solution found its a bug";
         }
-        
+
         GeneticSharedObject gso = gdse.getGeneticSharedObject();
 
         Map<String, Double> avgObjectives = new HashMap<String, Double>();

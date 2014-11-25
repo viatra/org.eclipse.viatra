@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
@@ -46,10 +47,13 @@ public class GlobalContext {
     // *************************************************//
 
     public enum ExplorationProcessState {
-        NOT_STARTED, RUNNING, STOPPING, COMPLETED
+        NOT_STARTED,
+        RUNNING,
+        STOPPING,
+        COMPLETED
     }
 
-    private AtomicBoolean exceptionHappendInOtherThread = new AtomicBoolean(false);
+    private ConcurrentLinkedQueue<Throwable> exceptions = new ConcurrentLinkedQueue<Throwable>();
 
     private volatile ExplorationProcessState state = ExplorationProcessState.NOT_STARTED;
     private IStrategyFactory strategyFactory = new StrategyFactory();
@@ -78,7 +82,8 @@ public class GlobalContext {
      *            The model to clone. Hint: context.getTed()
      * @param cloneModel
      *            It should be true in most cases.
-     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
+     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
+     *         maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
             boolean cloneModel, Strategy strategy) {
@@ -143,7 +148,8 @@ public class GlobalContext {
      *            The {@link Strategy}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
-     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their maximum.
+     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
+     *         maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
@@ -199,6 +205,10 @@ public class GlobalContext {
         }
     }
 
+    public void registerException(Throwable e) {
+        exceptions.add(e);
+    }
+
     // ******* fields and methods for exploration *******//
     // **************************************************//
 
@@ -212,13 +222,17 @@ public class GlobalContext {
     public void reset() {
         state = ExplorationProcessState.NOT_STARTED;
         threadPool = new DSEThreadPool();
-        exceptionHappendInOtherThread.set(false);
+        exceptions.clear();
     }
 
     // *** getters and setters
 
-    public AtomicBoolean getExceptionHappendInOtherThread() {
-        return exceptionHappendInOtherThread;
+    public boolean isExceptionHappendInOtherThread() {
+        return !exceptions.isEmpty();
+    }
+
+    public Collection<Throwable> getExceptions() {
+        return exceptions;
     }
 
     public IStateSerializerFactory getStateSerializerFactory() {

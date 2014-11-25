@@ -200,9 +200,9 @@ public class ExplorerThread implements IExplorerThread {
             return;
         } catch (Throwable e) {
             logger.error("Thread stopped unexpectedly!", e);
+            globalContext.registerException(e);
             throw new DSEException(e);
         } finally {
-            globalContext.getExceptionHappendInOtherThread().set(true);
             globalContext.strategyFinished(this);
             dispose();
         }

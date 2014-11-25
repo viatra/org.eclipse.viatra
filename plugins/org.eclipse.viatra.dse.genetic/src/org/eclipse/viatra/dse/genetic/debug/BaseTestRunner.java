@@ -20,8 +20,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-
 /**
  * Instances of this class can be used for running tests configured by a csv file (each row is a test case) and create
  * the corresponding csv results file.
@@ -74,11 +72,11 @@ public abstract class BaseTestRunner {
      * @return the results separated by semicolons, in the order defined by the
      *         {@link BaseTestRunner#getResultsHeader()} method.
      * 
-     * @throws IncQueryException
+     * @throws Exception 
      */
-    public abstract String runTestWithConfig(Row configRow, BaseResult result) throws IncQueryException;
+    public abstract String runTestWithConfig(Row configRow, BaseResult result) throws Exception;
 
-    public void runTests() throws IOException, IncQueryException {
+    public void runTests() throws Exception {
 
         List<String> configKeysInOrder = new ArrayList<String>();
         int numberOfRows = countRecordsInFile(configKeysInOrder);
