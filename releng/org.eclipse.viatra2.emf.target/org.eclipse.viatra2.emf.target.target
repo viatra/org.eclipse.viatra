@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="emfpattern" sequenceNumber="24">
+<target name="viatra" sequenceNumber="24">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.gmf.runtime.notation.sdk.feature.group" version="1.5.0.v20110426-2159-47D08xGD6ExNBM7CIJa3CIKK9t84"/>
@@ -19,11 +19,11 @@
       <repository location="http://download.eclipse.org/eclipse/updates/3.7"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
+      <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.2.v20141013-0308"/>
       <repository location="http://download.eclipse.org/modeling/emf/emf/updates/releases/"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.1.v201406120726"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.7.0.v201409021032"/>
       <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
