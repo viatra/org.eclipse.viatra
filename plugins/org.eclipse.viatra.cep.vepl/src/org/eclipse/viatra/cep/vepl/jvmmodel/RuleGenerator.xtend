@@ -29,8 +29,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
-@SuppressWarnings("discouraged")
-@SuppressWarnings("restriction")
+@SuppressWarnings("discouraged", "restriction")
 class RuleGenerator {
 
 	@Inject extension JvmTypesBuilder jvmTypesBuilder

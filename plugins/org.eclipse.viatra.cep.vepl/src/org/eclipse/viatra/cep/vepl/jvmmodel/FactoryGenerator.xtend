@@ -21,8 +21,7 @@ import java.util.List
 import org.eclipse.xtext.common.types.JvmMember
 import org.eclipse.emf.common.util.EList
 
-@SuppressWarnings("discouraged")
-@SuppressWarnings("restriction")
+@SuppressWarnings("discouraged","restriction")
 class FactoryGenerator {
 
 	@Inject extension JvmTypesBuilder jvmTypesBuilder

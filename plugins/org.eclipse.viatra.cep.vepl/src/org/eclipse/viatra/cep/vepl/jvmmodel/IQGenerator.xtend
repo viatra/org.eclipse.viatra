@@ -36,8 +36,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.common.types.JvmVisibility
 
-@SuppressWarnings("discouraged")
-@SuppressWarnings("restriction")
+@SuppressWarnings("restriction","discouraged")
 class IQGenerator {
 
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
