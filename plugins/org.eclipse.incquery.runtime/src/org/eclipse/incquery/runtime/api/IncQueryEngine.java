@@ -99,8 +99,11 @@ public abstract class IncQueryEngine {
 	}
 
     /**
-     * Provides access to the internal base index component of the engine, responsible for keeping track of basic EMF
+     * Provides access to the internal base index component of the engine, responsible for keeping track of basic
      * contents of the model.
+     * 
+     * <p>If using an {@link EMFScope}, 
+     *  consider {@link EMFScope#extractUnderlyingEMFIndex(IncQueryEngine)} instead to access EMF-specific details.
      * 
      * @return the baseIndex the NavigationHelper maintaining the base index
      * @throws IncQueryException

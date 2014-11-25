@@ -15,11 +15,13 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.scope.IEngineContext;
 import org.eclipse.incquery.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -59,6 +61,20 @@ public class EMFScope extends IncQueryScope {
             throw new IncQueryException(IncQueryException.INVALID_EMFROOT
                     + (scopeRoot == null ? "(null)" : scopeRoot.getClass().getName()),
                     IncQueryException.INVALID_EMFROOT_SHORT);
+	}
+	
+	/**
+	 * Provides access to the underlying EMF model index ({@link NavigationHelper}) from an IncQuery engine instantiated on an EMFScope
+	 * 
+	 * @param engine an already existing EMF-IncQuery engine instantiated on an EMFScope
+	 * @return the underlying EMF base index that indexes the contents of the EMF model
+	 * @throws IncQueryException if base index initialization fails
+	 */
+	public static NavigationHelper extractUnderlyingEMFIndex(IncQueryEngine engine) throws IncQueryException {
+		final IncQueryScope scope = engine.getScope();
+		if (scope instanceof EMFScope)
+			return ((EMFBaseIndexWrapper)AdvancedIncQueryEngine.from(engine).getBaseIndex()).getNavigationHelper();
+		else throw new IllegalArgumentException("Cannot extract EMF base index from IncQuery engine instantiated on non-EMF scope " + scope);
 	}
 
 	/**
