@@ -51,7 +51,7 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 		public void doExecute() {
 			try {
 				for (Object obj : collection) {
-					engine.getBaseIndex().cheapMoveTo((EObject)obj, owner, (EReference)feature);
+					getBaseEMFIndex().cheapMoveTo((EObject)obj, owner, (EReference)feature);
 				}
 			} catch (IncQueryException e) {
 				throw new WrappedException(new ModelManipulationException(e));

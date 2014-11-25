@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -211,11 +211,7 @@ public class ExplorerThread implements IExplorerThread {
     @Override
     public void dispose() {
         threadContext.getRuleEngine().dispose();
-        try {
-            threadContext.getIncqueryEngine().getBaseIndex().dispose();
-        } catch (IncQueryException e) {
-            throw new DSEException(e);
-        }
+        threadContext.getIncqueryEngine().dispose();
     }
 
     @Override

@@ -19,6 +19,8 @@ import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -44,7 +46,7 @@ public class ThreadContext {
     private final Strategy strategy;
     private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
-    private IncQueryEngine incqueryEngine;
+    private AdvancedIncQueryEngine incqueryEngine;
     private EditingDomain domain;
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
@@ -98,7 +100,8 @@ public class ThreadContext {
 
         try {
             // initialize IQEngine
-            incqueryEngine = AdvancedIncQueryEngine.createUnmanagedEngine(modelRoot, true);
+            final EMFScope scope = new EMFScope(modelRoot, new BaseIndexOptions().withDynamicEMFMode(true));
+			incqueryEngine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to create unmanaged IncQueryEngine on the model.", e);
         }
@@ -166,7 +169,7 @@ public class ThreadContext {
         return modelRoot;
     }
 
-    public IncQueryEngine getIncqueryEngine() {
+    public AdvancedIncQueryEngine getIncqueryEngine() {
         return incqueryEngine;
     }
 

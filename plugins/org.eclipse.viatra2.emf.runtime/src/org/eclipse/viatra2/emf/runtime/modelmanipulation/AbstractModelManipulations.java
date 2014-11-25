@@ -18,6 +18,9 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.emf.EMFScope;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -33,10 +36,19 @@ import com.google.common.collect.ImmutableList;
 public abstract class AbstractModelManipulations implements IModelManipulations {
 
 	protected final IncQueryEngine engine;
-	
+	private NavigationHelper baseEMFIndex;
+
+
 	public AbstractModelManipulations(IncQueryEngine engine) {
 		super();
 		this.engine = engine;
+	}
+	
+	protected NavigationHelper getBaseEMFIndex() throws IncQueryException {
+		if (baseEMFIndex == null) {
+			baseEMFIndex = EMFScope.extractUnderlyingEMFIndex(engine);
+		}
+		return baseEMFIndex;
 	}
 
 	protected void doMoveTo(Collection<EObject> what, EObject newContainer, EReference reference) throws ModelManipulationException {

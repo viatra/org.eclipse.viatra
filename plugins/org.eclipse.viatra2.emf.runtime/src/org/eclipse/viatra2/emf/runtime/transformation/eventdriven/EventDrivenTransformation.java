@@ -18,7 +18,6 @@ import org.apache.log4j.Level;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.IncQueryEngineManager;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
@@ -50,7 +49,7 @@ public class EventDrivenTransformation {
 
     private EventDrivenTransformation(ResourceSet resourceSet) {
         try {
-            incQueryEngine = IncQueryEngineManager.getInstance().getIncQueryEngine(resourceSet);
+            incQueryEngine = IncQueryEngine.on(resourceSet);
             schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
             conflictResolver = new ArbitraryOrderConflictResolver();
         } catch (IncQueryException e) {

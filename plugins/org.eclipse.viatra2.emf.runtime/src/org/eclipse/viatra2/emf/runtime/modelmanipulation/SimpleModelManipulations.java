@@ -87,7 +87,7 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	protected void doMoveTo(EObject what, EObject newContainer, EReference reference)
 			throws ModelManipulationException {
 		try {
-			engine.getBaseIndex().cheapMoveTo(what, newContainer, reference);
+			getBaseEMFIndex().cheapMoveTo(what, newContainer, reference);
 		} catch (IncQueryException e) {
 			throw new ModelManipulationException(e);
 		}
@@ -96,7 +96,7 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	@Override
 	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
 		try {
-			engine.getBaseIndex().cheapMoveTo(what, newContainer.getContents());
+			getBaseEMFIndex().cheapMoveTo(what, newContainer.getContents());
 		} catch (IncQueryException e) {
 			throw new ModelManipulationException(e);
 		}

@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 /**
@@ -113,7 +114,7 @@ public class EGraphBuilderContext {
     private NavigationHelper getHelper() {
         if (helperInstance == null) {
             try {
-                helperInstance = engine.getBaseIndex();
+                helperInstance = EMFScope.extractUnderlyingEMFIndex(engine);
             } catch (IncQueryException e) {
                 logger.error(e);
             }

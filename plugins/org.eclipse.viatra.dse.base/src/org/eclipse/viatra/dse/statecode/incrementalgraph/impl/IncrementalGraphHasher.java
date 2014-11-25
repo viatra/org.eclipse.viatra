@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
@@ -93,7 +94,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
         iqEngine = engine;
 
         // add listeners
-        iqEngine.getBaseIndex().addInstanceListener(classes, this);
+        EMFScope.extractUnderlyingEMFIndex(iqEngine).addInstanceListener(classes, this);
 
         // create mapping context
         context = new EGraphBuilderContext(iqEngine);
@@ -297,7 +298,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
 
         addNewModelObject(context.getEVertex(instance));
         try {
-            iqEngine.getBaseIndex().addLightweightEObjectObserver(observer, instance);
+        	EMFScope.extractUnderlyingEMFIndex(iqEngine).addLightweightEObjectObserver(observer, instance);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to create EObjectObserver.", e);
         }
@@ -315,7 +316,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
         }
         context.forgetEVertex(instance);
         try {
-            iqEngine.getBaseIndex().removeLightweightEObjectObserver(observer, instance);
+            EMFScope.extractUnderlyingEMFIndex(iqEngine).removeLightweightEObjectObserver(observer, instance);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to remove EObjectObserver.", e);
         }
@@ -339,7 +340,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
 
     private List<EObject> getAllObjects() {
         Collection<Notifier> root = new ArrayList<Notifier>();
-        root.add(iqEngine.getScope());
+        root.add(((EMFScope)iqEngine.getScope()).getScopeRoot());
 
         List<EObject> objects = new ArrayList<EObject>();
 
@@ -399,6 +400,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
                 invalidateObjectState(context.getEVertex(host));
             }
         }
+
     }
 
 }
