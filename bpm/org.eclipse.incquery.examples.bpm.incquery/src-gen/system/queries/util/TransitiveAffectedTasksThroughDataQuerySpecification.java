@@ -53,7 +53,7 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("SourceTask", "org.eclipse.emf.ecore.EObject"),new PParameter("AffectedTask", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("SourceTask", "process.Task"),new PParameter("AffectedTask", "process.Task"));
   }
   
   @Override
@@ -63,7 +63,7 @@ public final class TransitiveAffectedTasksThroughDataQuerySpecification extends 
   
   @Override
   public TransitiveAffectedTasksThroughDataMatch newMatch(final Object... parameters) {
-    return TransitiveAffectedTasksThroughDataMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override

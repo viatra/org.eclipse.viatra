@@ -51,7 +51,7 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Job", "org.eclipse.emf.ecore.EObject"),new PParameter("Info", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Job", "system.Job"),new PParameter("Info", "operation.RuntimeInformation"));
   }
   
   @Override
@@ -61,7 +61,7 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
   
   @Override
   public JobInfoCorrespondenceMatch newMatch(final Object... parameters) {
-    return JobInfoCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return JobInfoCorrespondenceMatch.newMatch((system.Job) parameters[0], (operation.RuntimeInformation) parameters[1]);
   }
   
   @Override

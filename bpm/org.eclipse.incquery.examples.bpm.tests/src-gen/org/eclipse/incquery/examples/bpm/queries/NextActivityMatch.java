@@ -32,7 +32,6 @@ public abstract class NextActivityMatch extends BasePatternMatch {
   private NextActivityMatch(final Activity pAct, final Activity pNext) {
     this.fAct = pAct;
     this.fNext = pNext;
-    
   }
   
   @Override
@@ -40,17 +39,14 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     if ("Act".equals(parameterName)) return this.fAct;
     if ("Next".equals(parameterName)) return this.fNext;
     return null;
-    
   }
   
   public Activity getAct() {
     return this.fAct;
-    
   }
   
   public Activity getNext() {
     return this.fNext;
-    
   }
   
   @Override
@@ -65,52 +61,46 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     	return true;
     }
     return false;
-    
   }
   
   public void setAct(final Activity pAct) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fAct = pAct;
-    
   }
   
   public void setNext(final Activity pNext) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fNext = pNext;
-    
   }
   
   @Override
   public String patternName() {
     return "org.eclipse.incquery.examples.bpm.queries.nextActivity";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return NextActivityMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fAct, fNext};
-    
   }
   
   @Override
   public NextActivityMatch toImmutable() {
     return isMutable() ? newMatch(fAct, fNext) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Act\"=" + prettyPrintValue(fAct) + ", ");
-    result.append("\"Next\"=" + prettyPrintValue(fNext));
-    return result.toString();
     
+    result.append("\"Next\"=" + prettyPrintValue(fNext)
+    );
+    return result.toString();
   }
   
   @Override
@@ -120,7 +110,6 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     result = prime * result + ((fAct == null) ? 0 : fAct.hashCode());
     result = prime * result + ((fNext == null) ? 0 : fNext.hashCode());
     return result;
-    
   }
   
   @Override
@@ -128,10 +117,12 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof NextActivityMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -151,9 +142,8 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     	return NextActivityQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -165,7 +155,6 @@ public abstract class NextActivityMatch extends BasePatternMatch {
    */
   public static NextActivityMatch newEmptyMatch() {
     return new Mutable(null, null);
-    
   }
   
   /**
@@ -179,7 +168,6 @@ public abstract class NextActivityMatch extends BasePatternMatch {
    */
   public static NextActivityMatch newMutableMatch(final Activity pAct, final Activity pNext) {
     return new Mutable(pAct, pNext);
-    
   }
   
   /**
@@ -193,14 +181,11 @@ public abstract class NextActivityMatch extends BasePatternMatch {
    */
   public static NextActivityMatch newMatch(final Activity pAct, final Activity pNext) {
     return new Immutable(pAct, pNext);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends NextActivityMatch {
     Mutable(final Activity pAct, final Activity pNext) {
       super(pAct, pNext);
-      
     }
     
     @Override
@@ -209,12 +194,9 @@ public abstract class NextActivityMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends NextActivityMatch {
     Immutable(final Activity pAct, final Activity pNext) {
       super(pAct, pNext);
-      
     }
     
     @Override
@@ -222,5 +204,4 @@ public abstract class NextActivityMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

@@ -55,7 +55,7 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("CLE", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("Data", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Task", "process.Task"),new PParameter("Data", "system.Data"));
   }
   
   @Override
@@ -65,7 +65,7 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
   
   @Override
   public DataReadByChecklistEntryMatch newMatch(final Object... parameters) {
-    return DataReadByChecklistEntryMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1], (org.eclipse.emf.ecore.EObject) parameters[2]);
+    return DataReadByChecklistEntryMatch.newMatch((operation.ChecklistEntry) parameters[0], (process.Task) parameters[1], (system.Data) parameters[2]);
   }
   
   @Override

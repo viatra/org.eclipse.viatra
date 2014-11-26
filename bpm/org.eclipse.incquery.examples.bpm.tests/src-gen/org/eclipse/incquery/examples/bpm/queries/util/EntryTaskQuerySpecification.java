@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatch;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
  * 
  */
 @SuppressWarnings("all")
-public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecification<EntryTaskMatcher> {
+public final class EntryTaskQuerySpecification extends BaseGeneratedEMFQuerySpecification<EntryTaskMatcher> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -31,7 +31,6 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
    */
   public static EntryTaskQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
@@ -42,7 +41,6 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
   @Override
   public String getFullyQualifiedName() {
     return "org.eclipse.incquery.examples.bpm.queries.entryTask";
-    
   }
   
   @Override
@@ -67,31 +65,28 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedQuerySpecifi
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_Entry = body.getOrCreateVariableByName("Entry");
-      PVariable var_Task = body.getOrCreateVariableByName("Task");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Entry, "Entry"), 
-        new ExportedParameter(body, var_Task, "Task")
-      ));
-      
-      
-      new TypeBinary(body, CONTEXT, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_Entry = body.getOrCreateVariableByName("Entry");
+    	PVariable var_Task = body.getOrCreateVariableByName("Task");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_Entry, "Entry"),
+    		
+    		new ExportedParameter(body, var_Task, "Task")
+    	));
+    new TypeBinary(body, CONTEXT, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
+    	bodies.add(body);
     }
     return bodies;
   }
   
-  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static EntryTaskQuerySpecification INSTANCE = make();
     
     public static EntryTaskQuerySpecification make() {
       return new EntryTaskQuerySpecification();					
-      
     }
   }
-  
 }

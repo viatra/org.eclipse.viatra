@@ -3,11 +3,11 @@ package operation.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import operation.Checklist;
 import operation.queries.ChecklistProcessCorrespondenceMatch;
 import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -104,7 +104,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return matches represented as a ChecklistProcessCorrespondenceMatch object.
    * 
    */
-  public Collection<ChecklistProcessCorrespondenceMatch> getAllMatches(final EObject pChecklist, final EObject pProcess) {
+  public Collection<ChecklistProcessCorrespondenceMatch> getAllMatches(final Checklist pChecklist, final process.Process pProcess) {
     return rawGetAllMatches(new Object[]{pChecklist, pProcess});
   }
   
@@ -116,7 +116,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return a match represented as a ChecklistProcessCorrespondenceMatch object, or null if no match is found.
    * 
    */
-  public ChecklistProcessCorrespondenceMatch getOneArbitraryMatch(final EObject pChecklist, final EObject pProcess) {
+  public ChecklistProcessCorrespondenceMatch getOneArbitraryMatch(final Checklist pChecklist, final process.Process pProcess) {
     return rawGetOneArbitraryMatch(new Object[]{pChecklist, pProcess});
   }
   
@@ -128,7 +128,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final EObject pChecklist, final EObject pProcess) {
+  public boolean hasMatch(final Checklist pChecklist, final process.Process pProcess) {
     return rawHasMatch(new Object[]{pChecklist, pProcess});
   }
   
@@ -139,7 +139,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final EObject pChecklist, final EObject pProcess) {
+  public int countMatches(final Checklist pChecklist, final process.Process pProcess) {
     return rawCountMatches(new Object[]{pChecklist, pProcess});
   }
   
@@ -150,7 +150,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final EObject pChecklist, final EObject pProcess, final IMatchProcessor<? super ChecklistProcessCorrespondenceMatch> processor) {
+  public void forEachMatch(final Checklist pChecklist, final process.Process pProcess, final IMatchProcessor<? super ChecklistProcessCorrespondenceMatch> processor) {
     rawForEachMatch(new Object[]{pChecklist, pProcess}, processor);
   }
   
@@ -163,7 +163,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final EObject pChecklist, final EObject pProcess, final IMatchProcessor<? super ChecklistProcessCorrespondenceMatch> processor) {
+  public boolean forOneArbitraryMatch(final Checklist pChecklist, final process.Process pProcess, final IMatchProcessor<? super ChecklistProcessCorrespondenceMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pChecklist, pProcess}, processor);
   }
   
@@ -176,7 +176,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the (partial) match object.
    * 
    */
-  public ChecklistProcessCorrespondenceMatch newMatch(final EObject pChecklist, final EObject pProcess) {
+  public ChecklistProcessCorrespondenceMatch newMatch(final Checklist pChecklist, final process.Process pProcess) {
     return ChecklistProcessCorrespondenceMatch.newMatch(pChecklist, pProcess);
   }
   
@@ -185,8 +185,8 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfChecklist(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Checklist> rawAccumulateAllValuesOfChecklist(final Object[] parameters) {
+    Set<Checklist> results = new HashSet<Checklist>();
     rawAccumulateAllValues(POSITION_CHECKLIST, parameters, results);
     return results;
   }
@@ -196,7 +196,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfChecklist() {
+  public Set<Checklist> getAllValuesOfChecklist() {
     return rawAccumulateAllValuesOfChecklist(emptyArray());
   }
   
@@ -205,7 +205,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfChecklist(final ChecklistProcessCorrespondenceMatch partialMatch) {
+  public Set<Checklist> getAllValuesOfChecklist(final ChecklistProcessCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfChecklist(partialMatch.toArray());
   }
   
@@ -214,7 +214,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfChecklist(final EObject pProcess) {
+  public Set<Checklist> getAllValuesOfChecklist(final process.Process pProcess) {
     return rawAccumulateAllValuesOfChecklist(new Object[]{
     null, 
     pProcess
@@ -226,8 +226,8 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfProcess(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<process.Process> rawAccumulateAllValuesOfProcess(final Object[] parameters) {
+    Set<process.Process> results = new HashSet<process.Process>();
     rawAccumulateAllValues(POSITION_PROCESS, parameters, results);
     return results;
   }
@@ -237,7 +237,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfProcess() {
+  public Set<process.Process> getAllValuesOfProcess() {
     return rawAccumulateAllValuesOfProcess(emptyArray());
   }
   
@@ -246,7 +246,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfProcess(final ChecklistProcessCorrespondenceMatch partialMatch) {
+  public Set<process.Process> getAllValuesOfProcess(final ChecklistProcessCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfProcess(partialMatch.toArray());
   }
   
@@ -255,7 +255,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfProcess(final EObject pChecklist) {
+  public Set<process.Process> getAllValuesOfProcess(final Checklist pChecklist) {
     return rawAccumulateAllValuesOfProcess(new Object[]{
     pChecklist, 
     null
@@ -265,7 +265,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return ChecklistProcessCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_CHECKLIST), (org.eclipse.emf.ecore.EObject) t.get(POSITION_PROCESS));
+    	return ChecklistProcessCorrespondenceMatch.newMatch((operation.Checklist) t.get(POSITION_CHECKLIST), (process.Process) t.get(POSITION_PROCESS));
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in tuple not properly typed!",e);
     	return null;
@@ -275,7 +275,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return ChecklistProcessCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CHECKLIST], (org.eclipse.emf.ecore.EObject) match[POSITION_PROCESS]);
+    	return ChecklistProcessCorrespondenceMatch.newMatch((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;
@@ -285,7 +285,7 @@ public class ChecklistProcessCorrespondenceMatcher extends BaseMatcher<Checklist
   @Override
   protected ChecklistProcessCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return ChecklistProcessCorrespondenceMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CHECKLIST], (org.eclipse.emf.ecore.EObject) match[POSITION_PROCESS]);
+    	return ChecklistProcessCorrespondenceMatch.newMutableMatch((operation.Checklist) match[POSITION_CHECKLIST], (process.Process) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;

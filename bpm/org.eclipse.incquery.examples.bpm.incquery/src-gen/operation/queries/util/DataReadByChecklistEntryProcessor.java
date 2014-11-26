@@ -1,8 +1,10 @@
 package operation.queries.util;
 
+import operation.ChecklistEntry;
 import operation.queries.DataReadByChecklistEntryMatch;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import process.Task;
+import system.Data;
 
 /**
  * A match processor tailored for the operation.queries.DataReadByChecklistEntry pattern.
@@ -19,7 +21,7 @@ public abstract class DataReadByChecklistEntryProcessor implements IMatchProcess
    * @param pData the value of pattern parameter Data in the currently processed match
    * 
    */
-  public abstract void process(final EObject pCLE, final EObject pTask, final EObject pData);
+  public abstract void process(final ChecklistEntry pCLE, final Task pTask, final Data pData);
   
   @Override
   public void process(final DataReadByChecklistEntryMatch match) {

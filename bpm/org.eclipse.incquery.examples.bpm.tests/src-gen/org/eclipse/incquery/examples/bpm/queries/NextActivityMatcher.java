@@ -13,7 +13,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Activity;
 
@@ -40,15 +39,6 @@ import process.Activity;
  */
 @SuppressWarnings("all")
 public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<NextActivityMatcher> querySpecification() throws IncQueryException {
-    return NextActivityQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -175,24 +165,6 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pAct the fixed value of pattern parameter Act, or null if not bound.
-   * @param pNext the fixed value of pattern parameter Next, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<NextActivityMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Activity pAct, final Activity pNext) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pAct, pNext});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -203,7 +175,6 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
    */
   public NextActivityMatch newMatch(final Activity pAct, final Activity pNext) {
     return NextActivityMatch.newMatch(pAct, pNext);
-    
   }
   
   /**
@@ -241,7 +212,10 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
    * 
    */
   public Set<Activity> getAllValuesOfAct(final Activity pNext) {
-    return rawAccumulateAllValuesOfAct(new Object[]{null, pNext});
+    return rawAccumulateAllValuesOfAct(new Object[]{
+    null, 
+    pNext
+    });
   }
   
   /**
@@ -279,39 +253,48 @@ public class NextActivityMatcher extends BaseMatcher<NextActivityMatch> {
    * 
    */
   public Set<Activity> getAllValuesOfNext(final Activity pAct) {
-    return rawAccumulateAllValuesOfNext(new Object[]{pAct, null});
+    return rawAccumulateAllValuesOfNext(new Object[]{
+    pAct, 
+    null
+    });
   }
   
   @Override
   protected NextActivityMatch tupleToMatch(final Tuple t) {
     try {
-      return NextActivityMatch.newMatch((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
+    	return NextActivityMatch.newMatch((process.Activity) t.get(POSITION_ACT), (process.Activity) t.get(POSITION_NEXT));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected NextActivityMatch arrayToMatch(final Object[] match) {
     try {
-      return NextActivityMatch.newMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+    	return NextActivityMatch.newMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected NextActivityMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return NextActivityMatch.newMutableMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
+    	return NextActivityMatch.newMutableMatch((process.Activity) match[POSITION_ACT], (process.Activity) match[POSITION_NEXT]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<NextActivityMatcher> querySpecification() throws IncQueryException {
+    return NextActivityQuerySpecification.instance();
   }
 }

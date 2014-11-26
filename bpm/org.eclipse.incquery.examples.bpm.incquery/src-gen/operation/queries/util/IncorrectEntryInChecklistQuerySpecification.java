@@ -58,7 +58,7 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("ChecklistEntry", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("Process", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("ChecklistEntry", "operation.ChecklistEntry"),new PParameter("Task", "process.Task"),new PParameter("Process", "process.Process"));
   }
   
   @Override
@@ -68,7 +68,7 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
   
   @Override
   public IncorrectEntryInChecklistMatch newMatch(final Object... parameters) {
-    return IncorrectEntryInChecklistMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1], (org.eclipse.emf.ecore.EObject) parameters[2]);
+    return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) parameters[0], (process.Task) parameters[1], (process.Process) parameters[2]);
   }
   
   @Override

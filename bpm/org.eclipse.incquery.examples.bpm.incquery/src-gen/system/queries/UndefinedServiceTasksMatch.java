@@ -2,10 +2,10 @@ package system.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import process.Task;
 import system.queries.util.UndefinedServiceTasksQuerySpecification;
 
 /**
@@ -23,11 +23,11 @@ import system.queries.util.UndefinedServiceTasksQuerySpecification;
  */
 @SuppressWarnings("all")
 public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
-  private EObject fTask;
+  private Task fTask;
   
   private static List<String> parameterNames = makeImmutableList("Task");
   
-  private UndefinedServiceTasksMatch(final EObject pTask) {
+  private UndefinedServiceTasksMatch(final Task pTask) {
     this.fTask = pTask;
   }
   
@@ -37,7 +37,7 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
     return null;
   }
   
-  public EObject getTask() {
+  public Task getTask() {
     return this.fTask;
   }
   
@@ -45,13 +45,13 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fTask = (process.Task) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setTask(final EObject pTask) {
+  public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
   }
@@ -143,7 +143,7 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static UndefinedServiceTasksMatch newMutableMatch(final EObject pTask) {
+  public static UndefinedServiceTasksMatch newMutableMatch(final Task pTask) {
     return new Mutable(pTask);
   }
   
@@ -155,12 +155,12 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static UndefinedServiceTasksMatch newMatch(final EObject pTask) {
+  public static UndefinedServiceTasksMatch newMatch(final Task pTask) {
     return new Immutable(pTask);
   }
   
   private static final class Mutable extends UndefinedServiceTasksMatch {
-    Mutable(final EObject pTask) {
+    Mutable(final Task pTask) {
       super(pTask);
     }
     
@@ -171,7 +171,7 @@ public abstract class UndefinedServiceTasksMatch extends BasePatternMatch {
   }
   
   private static final class Immutable extends UndefinedServiceTasksMatch {
-    Immutable(final EObject pTask) {
+    Immutable(final Task pTask) {
       super(pTask);
     }
     

@@ -52,7 +52,7 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Job", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Job", "system.Job"),new PParameter("Task", "process.Task"));
   }
   
   @Override
@@ -62,7 +62,7 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
   
   @Override
   public JobTaskCorrespondenceMatch newMatch(final Object... parameters) {
-    return JobTaskCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return JobTaskCorrespondenceMatch.newMatch((system.Job) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override
@@ -79,8 +79,8 @@ public final class JobTaskCorrespondenceQuerySpecification extends BaseGenerated
     		
     		new ExportedParameter(body, var_Task, "Task")
     	));
-    new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
     new TypeBinary(body, CONTEXT, var_Job, var_TaskId, getFeatureLiteral("http://system/1.0", "Job", "taskIds"), "http://system/1.0/Job.taskIds");
+    new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
     new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
     	bodies.add(body);
     }

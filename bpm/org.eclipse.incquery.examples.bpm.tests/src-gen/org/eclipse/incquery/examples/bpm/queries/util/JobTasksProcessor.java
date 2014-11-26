@@ -24,6 +24,5 @@ public abstract class JobTasksProcessor implements IMatchProcessor<JobTasksMatch
   @Override
   public void process(final JobTasksMatch match) {
     process(match.getJob(), match.getTask());
-    
   }
 }

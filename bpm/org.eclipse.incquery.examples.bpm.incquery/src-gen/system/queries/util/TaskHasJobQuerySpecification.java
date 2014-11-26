@@ -53,7 +53,7 @@ final class TaskHasJobQuerySpecification extends BaseGeneratedEMFQuerySpecificat
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Task", "process.Task"));
   }
   
   @Override

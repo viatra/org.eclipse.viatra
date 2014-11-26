@@ -33,7 +33,6 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
   private EntryTaskMatch(final ChecklistEntry pEntry, final Task pTask) {
     this.fEntry = pEntry;
     this.fTask = pTask;
-    
   }
   
   @Override
@@ -41,17 +40,14 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     if ("Entry".equals(parameterName)) return this.fEntry;
     if ("Task".equals(parameterName)) return this.fTask;
     return null;
-    
   }
   
   public ChecklistEntry getEntry() {
     return this.fEntry;
-    
   }
   
   public Task getTask() {
     return this.fTask;
-    
   }
   
   @Override
@@ -66,52 +62,46 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     	return true;
     }
     return false;
-    
   }
   
   public void setEntry(final ChecklistEntry pEntry) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fEntry = pEntry;
-    
   }
   
   public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
   @Override
   public String patternName() {
     return "org.eclipse.incquery.examples.bpm.queries.entryTask";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return EntryTaskMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fEntry, fTask};
-    
   }
   
   @Override
   public EntryTaskMatch toImmutable() {
     return isMutable() ? newMatch(fEntry, fTask) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Entry\"=" + prettyPrintValue(fEntry) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask)
+    );
+    return result.toString();
   }
   
   @Override
@@ -121,7 +111,6 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     result = prime * result + ((fEntry == null) ? 0 : fEntry.hashCode());
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     return result;
-    
   }
   
   @Override
@@ -129,10 +118,12 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof EntryTaskMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -152,9 +143,8 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     	return EntryTaskQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -166,7 +156,6 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
    */
   public static EntryTaskMatch newEmptyMatch() {
     return new Mutable(null, null);
-    
   }
   
   /**
@@ -180,7 +169,6 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
    */
   public static EntryTaskMatch newMutableMatch(final ChecklistEntry pEntry, final Task pTask) {
     return new Mutable(pEntry, pTask);
-    
   }
   
   /**
@@ -194,14 +182,11 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
    */
   public static EntryTaskMatch newMatch(final ChecklistEntry pEntry, final Task pTask) {
     return new Immutable(pEntry, pTask);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends EntryTaskMatch {
     Mutable(final ChecklistEntry pEntry, final Task pTask) {
       super(pEntry, pTask);
-      
     }
     
     @Override
@@ -210,12 +195,9 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends EntryTaskMatch {
     Immutable(final ChecklistEntry pEntry, final Task pTask) {
       super(pEntry, pTask);
-      
     }
     
     @Override
@@ -223,5 +205,4 @@ public abstract class EntryTaskMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

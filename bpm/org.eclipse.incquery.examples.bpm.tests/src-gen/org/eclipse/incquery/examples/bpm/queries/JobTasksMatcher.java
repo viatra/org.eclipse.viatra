@@ -13,7 +13,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Task;
 import system.Job;
@@ -41,15 +40,6 @@ import system.Job;
  */
 @SuppressWarnings("all")
 public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<JobTasksMatcher> querySpecification() throws IncQueryException {
-    return JobTasksQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -176,24 +166,6 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pJob the fixed value of pattern parameter Job, or null if not bound.
-   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<JobTasksMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final Job pJob, final Task pTask) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pJob, pTask});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -204,7 +176,6 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
    */
   public JobTasksMatch newMatch(final Job pJob, final Task pTask) {
     return JobTasksMatch.newMatch(pJob, pTask);
-    
   }
   
   /**
@@ -242,7 +213,10 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
    * 
    */
   public Set<Job> getAllValuesOfJob(final Task pTask) {
-    return rawAccumulateAllValuesOfJob(new Object[]{null, pTask});
+    return rawAccumulateAllValuesOfJob(new Object[]{
+    null, 
+    pTask
+    });
   }
   
   /**
@@ -280,39 +254,48 @@ public class JobTasksMatcher extends BaseMatcher<JobTasksMatch> {
    * 
    */
   public Set<Task> getAllValuesOfTask(final Job pJob) {
-    return rawAccumulateAllValuesOfTask(new Object[]{pJob, null});
+    return rawAccumulateAllValuesOfTask(new Object[]{
+    pJob, 
+    null
+    });
   }
   
   @Override
   protected JobTasksMatch tupleToMatch(final Tuple t) {
     try {
-      return JobTasksMatch.newMatch((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
+    	return JobTasksMatch.newMatch((system.Job) t.get(POSITION_JOB), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected JobTasksMatch arrayToMatch(final Object[] match) {
     try {
-      return JobTasksMatch.newMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+    	return JobTasksMatch.newMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected JobTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return JobTasksMatch.newMutableMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
+    	return JobTasksMatch.newMutableMatch((system.Job) match[POSITION_JOB], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<JobTasksMatcher> querySpecification() throws IncQueryException {
+    return JobTasksQuerySpecification.instance();
   }
 }

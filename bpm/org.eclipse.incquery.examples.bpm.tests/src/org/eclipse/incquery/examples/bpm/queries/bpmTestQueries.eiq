@@ -4,7 +4,7 @@ import "http://operation/1.0"
 import "http://process/1.0"
 import "http://system/1.0"
 
-pattern processTasks(Proc, Task){
+pattern processTasks(Proc , Task){ 
 	Process.contents(Proc, Task);
 }
 

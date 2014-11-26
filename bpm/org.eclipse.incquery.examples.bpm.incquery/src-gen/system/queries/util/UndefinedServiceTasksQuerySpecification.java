@@ -56,7 +56,7 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Task", "process.Task"));
   }
   
   @Override
@@ -66,7 +66,7 @@ public final class UndefinedServiceTasksQuerySpecification extends BaseGenerated
   
   @Override
   public UndefinedServiceTasksMatch newMatch(final Object... parameters) {
-    return UndefinedServiceTasksMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0]);
+    return UndefinedServiceTasksMatch.newMatch((process.Task) parameters[0]);
   }
   
   @Override

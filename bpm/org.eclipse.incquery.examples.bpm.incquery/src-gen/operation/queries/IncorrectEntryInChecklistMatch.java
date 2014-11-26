@@ -2,11 +2,12 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
+import operation.ChecklistEntry;
 import operation.queries.util.IncorrectEntryInChecklistQuerySpecification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import process.Task;
 
 /**
  * Pattern-specific match representation of the operation.queries.IncorrectEntryInChecklist pattern,
@@ -23,15 +24,15 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 @SuppressWarnings("all")
 public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
-  private EObject fChecklistEntry;
+  private ChecklistEntry fChecklistEntry;
   
-  private EObject fTask;
+  private Task fTask;
   
-  private EObject fProcess;
+  private process.Process fProcess;
   
   private static List<String> parameterNames = makeImmutableList("ChecklistEntry", "Task", "Process");
   
-  private IncorrectEntryInChecklistMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
+  private IncorrectEntryInChecklistMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
     this.fChecklistEntry = pChecklistEntry;
     this.fTask = pTask;
     this.fProcess = pProcess;
@@ -45,15 +46,15 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     return null;
   }
   
-  public EObject getChecklistEntry() {
+  public ChecklistEntry getChecklistEntry() {
     return this.fChecklistEntry;
   }
   
-  public EObject getTask() {
+  public Task getTask() {
     return this.fTask;
   }
   
-  public EObject getProcess() {
+  public process.Process getProcess() {
     return this.fProcess;
   }
   
@@ -61,31 +62,31 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("ChecklistEntry".equals(parameterName) ) {
-    	this.fChecklistEntry = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fChecklistEntry = (operation.ChecklistEntry) newValue;
     	return true;
     }
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fTask = (process.Task) newValue;
     	return true;
     }
     if ("Process".equals(parameterName) ) {
-    	this.fProcess = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fProcess = (process.Process) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setChecklistEntry(final EObject pChecklistEntry) {
+  public void setChecklistEntry(final ChecklistEntry pChecklistEntry) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fChecklistEntry = pChecklistEntry;
   }
   
-  public void setTask(final EObject pTask) {
+  public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
   }
   
-  public void setProcess(final EObject pProcess) {
+  public void setProcess(final process.Process pProcess) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fProcess = pProcess;
   }
@@ -189,7 +190,7 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static IncorrectEntryInChecklistMatch newMutableMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
+  public static IncorrectEntryInChecklistMatch newMutableMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
     return new Mutable(pChecklistEntry, pTask, pProcess);
   }
   
@@ -203,12 +204,12 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static IncorrectEntryInChecklistMatch newMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
+  public static IncorrectEntryInChecklistMatch newMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
     return new Immutable(pChecklistEntry, pTask, pProcess);
   }
   
   private static final class Mutable extends IncorrectEntryInChecklistMatch {
-    Mutable(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
+    Mutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);
     }
     
@@ -219,7 +220,7 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
   }
   
   private static final class Immutable extends IncorrectEntryInChecklistMatch {
-    Immutable(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
+    Immutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
       super(pChecklistEntry, pTask, pProcess);
     }
     

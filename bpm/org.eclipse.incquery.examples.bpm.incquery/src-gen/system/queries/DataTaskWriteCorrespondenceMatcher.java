@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -13,6 +12,8 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import process.Task;
+import system.Data;
 import system.queries.DataTaskWriteCorrespondenceMatch;
 import system.queries.util.DataTaskWriteCorrespondenceQuerySpecification;
 
@@ -104,7 +105,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return matches represented as a DataTaskWriteCorrespondenceMatch object.
    * 
    */
-  public Collection<DataTaskWriteCorrespondenceMatch> getAllMatches(final EObject pData, final EObject pTask) {
+  public Collection<DataTaskWriteCorrespondenceMatch> getAllMatches(final Data pData, final Task pTask) {
     return rawGetAllMatches(new Object[]{pData, pTask});
   }
   
@@ -116,7 +117,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return a match represented as a DataTaskWriteCorrespondenceMatch object, or null if no match is found.
    * 
    */
-  public DataTaskWriteCorrespondenceMatch getOneArbitraryMatch(final EObject pData, final EObject pTask) {
+  public DataTaskWriteCorrespondenceMatch getOneArbitraryMatch(final Data pData, final Task pTask) {
     return rawGetOneArbitraryMatch(new Object[]{pData, pTask});
   }
   
@@ -128,7 +129,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final EObject pData, final EObject pTask) {
+  public boolean hasMatch(final Data pData, final Task pTask) {
     return rawHasMatch(new Object[]{pData, pTask});
   }
   
@@ -139,7 +140,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final EObject pData, final EObject pTask) {
+  public int countMatches(final Data pData, final Task pTask) {
     return rawCountMatches(new Object[]{pData, pTask});
   }
   
@@ -150,7 +151,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final EObject pData, final EObject pTask, final IMatchProcessor<? super DataTaskWriteCorrespondenceMatch> processor) {
+  public void forEachMatch(final Data pData, final Task pTask, final IMatchProcessor<? super DataTaskWriteCorrespondenceMatch> processor) {
     rawForEachMatch(new Object[]{pData, pTask}, processor);
   }
   
@@ -163,7 +164,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final EObject pData, final EObject pTask, final IMatchProcessor<? super DataTaskWriteCorrespondenceMatch> processor) {
+  public boolean forOneArbitraryMatch(final Data pData, final Task pTask, final IMatchProcessor<? super DataTaskWriteCorrespondenceMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pData, pTask}, processor);
   }
   
@@ -176,7 +177,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the (partial) match object.
    * 
    */
-  public DataTaskWriteCorrespondenceMatch newMatch(final EObject pData, final EObject pTask) {
+  public DataTaskWriteCorrespondenceMatch newMatch(final Data pData, final Task pTask) {
     return DataTaskWriteCorrespondenceMatch.newMatch(pData, pTask);
   }
   
@@ -185,8 +186,8 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfData(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Data> rawAccumulateAllValuesOfData(final Object[] parameters) {
+    Set<Data> results = new HashSet<Data>();
     rawAccumulateAllValues(POSITION_DATA, parameters, results);
     return results;
   }
@@ -196,7 +197,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfData() {
+  public Set<Data> getAllValuesOfData() {
     return rawAccumulateAllValuesOfData(emptyArray());
   }
   
@@ -205,7 +206,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfData(final DataTaskWriteCorrespondenceMatch partialMatch) {
+  public Set<Data> getAllValuesOfData(final DataTaskWriteCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfData(partialMatch.toArray());
   }
   
@@ -214,7 +215,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfData(final EObject pTask) {
+  public Set<Data> getAllValuesOfData(final Task pTask) {
     return rawAccumulateAllValuesOfData(new Object[]{
     null, 
     pTask
@@ -226,8 +227,8 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfTask(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Task> rawAccumulateAllValuesOfTask(final Object[] parameters) {
+    Set<Task> results = new HashSet<Task>();
     rawAccumulateAllValues(POSITION_TASK, parameters, results);
     return results;
   }
@@ -237,7 +238,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfTask() {
+  public Set<Task> getAllValuesOfTask() {
     return rawAccumulateAllValuesOfTask(emptyArray());
   }
   
@@ -246,7 +247,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfTask(final DataTaskWriteCorrespondenceMatch partialMatch) {
+  public Set<Task> getAllValuesOfTask(final DataTaskWriteCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfTask(partialMatch.toArray());
   }
   
@@ -255,7 +256,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfTask(final EObject pData) {
+  public Set<Task> getAllValuesOfTask(final Data pData) {
     return rawAccumulateAllValuesOfTask(new Object[]{
     pData, 
     null
@@ -265,7 +266,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return DataTaskWriteCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_DATA), (org.eclipse.emf.ecore.EObject) t.get(POSITION_TASK));
+    	return DataTaskWriteCorrespondenceMatch.newMatch((system.Data) t.get(POSITION_DATA), (process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in tuple not properly typed!",e);
     	return null;
@@ -275,7 +276,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return DataTaskWriteCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_DATA], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
+    	return DataTaskWriteCorrespondenceMatch.newMatch((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;
@@ -285,7 +286,7 @@ public class DataTaskWriteCorrespondenceMatcher extends BaseMatcher<DataTaskWrit
   @Override
   protected DataTaskWriteCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return DataTaskWriteCorrespondenceMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_DATA], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
+    	return DataTaskWriteCorrespondenceMatch.newMutableMatch((system.Data) match[POSITION_DATA], (process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;

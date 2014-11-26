@@ -2,10 +2,11 @@ package system.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.emf.ecore.EObject;
+import operation.RuntimeInformation;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import system.Job;
 import system.queries.util.JobInfoCorrespondenceQuerySpecification;
 
 /**
@@ -23,13 +24,13 @@ import system.queries.util.JobInfoCorrespondenceQuerySpecification;
  */
 @SuppressWarnings("all")
 public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
-  private EObject fJob;
+  private Job fJob;
   
-  private EObject fInfo;
+  private RuntimeInformation fInfo;
   
   private static List<String> parameterNames = makeImmutableList("Job", "Info");
   
-  private JobInfoCorrespondenceMatch(final EObject pJob, final EObject pInfo) {
+  private JobInfoCorrespondenceMatch(final Job pJob, final RuntimeInformation pInfo) {
     this.fJob = pJob;
     this.fInfo = pInfo;
   }
@@ -41,11 +42,11 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
     return null;
   }
   
-  public EObject getJob() {
+  public Job getJob() {
     return this.fJob;
   }
   
-  public EObject getInfo() {
+  public RuntimeInformation getInfo() {
     return this.fInfo;
   }
   
@@ -53,22 +54,22 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Job".equals(parameterName) ) {
-    	this.fJob = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fJob = (system.Job) newValue;
     	return true;
     }
     if ("Info".equals(parameterName) ) {
-    	this.fInfo = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fInfo = (operation.RuntimeInformation) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setJob(final EObject pJob) {
+  public void setJob(final Job pJob) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fJob = pJob;
   }
   
-  public void setInfo(final EObject pInfo) {
+  public void setInfo(final RuntimeInformation pInfo) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fInfo = pInfo;
   }
@@ -166,7 +167,7 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static JobInfoCorrespondenceMatch newMutableMatch(final EObject pJob, final EObject pInfo) {
+  public static JobInfoCorrespondenceMatch newMutableMatch(final Job pJob, final RuntimeInformation pInfo) {
     return new Mutable(pJob, pInfo);
   }
   
@@ -179,12 +180,12 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static JobInfoCorrespondenceMatch newMatch(final EObject pJob, final EObject pInfo) {
+  public static JobInfoCorrespondenceMatch newMatch(final Job pJob, final RuntimeInformation pInfo) {
     return new Immutable(pJob, pInfo);
   }
   
   private static final class Mutable extends JobInfoCorrespondenceMatch {
-    Mutable(final EObject pJob, final EObject pInfo) {
+    Mutable(final Job pJob, final RuntimeInformation pInfo) {
       super(pJob, pInfo);
     }
     
@@ -195,7 +196,7 @@ public abstract class JobInfoCorrespondenceMatch extends BasePatternMatch {
   }
   
   private static final class Immutable extends JobInfoCorrespondenceMatch {
-    Immutable(final EObject pJob, final EObject pInfo) {
+    Immutable(final Job pJob, final RuntimeInformation pInfo) {
       super(pJob, pInfo);
     }
     

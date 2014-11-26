@@ -2,8 +2,8 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
+import operation.Checklist;
 import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -23,13 +23,13 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 @SuppressWarnings("all")
 public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMatch {
-  private EObject fChecklist;
+  private Checklist fChecklist;
   
-  private EObject fProcess;
+  private process.Process fProcess;
   
   private static List<String> parameterNames = makeImmutableList("Checklist", "Process");
   
-  private ChecklistProcessCorrespondenceMatch(final EObject pChecklist, final EObject pProcess) {
+  private ChecklistProcessCorrespondenceMatch(final Checklist pChecklist, final process.Process pProcess) {
     this.fChecklist = pChecklist;
     this.fProcess = pProcess;
   }
@@ -41,11 +41,11 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
     return null;
   }
   
-  public EObject getChecklist() {
+  public Checklist getChecklist() {
     return this.fChecklist;
   }
   
-  public EObject getProcess() {
+  public process.Process getProcess() {
     return this.fProcess;
   }
   
@@ -53,22 +53,22 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Checklist".equals(parameterName) ) {
-    	this.fChecklist = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fChecklist = (operation.Checklist) newValue;
     	return true;
     }
     if ("Process".equals(parameterName) ) {
-    	this.fProcess = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fProcess = (process.Process) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setChecklist(final EObject pChecklist) {
+  public void setChecklist(final Checklist pChecklist) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fChecklist = pChecklist;
   }
   
-  public void setProcess(final EObject pProcess) {
+  public void setProcess(final process.Process pProcess) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fProcess = pProcess;
   }
@@ -166,7 +166,7 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static ChecklistProcessCorrespondenceMatch newMutableMatch(final EObject pChecklist, final EObject pProcess) {
+  public static ChecklistProcessCorrespondenceMatch newMutableMatch(final Checklist pChecklist, final process.Process pProcess) {
     return new Mutable(pChecklist, pProcess);
   }
   
@@ -179,12 +179,12 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
    * @return the (partial) match object.
    * 
    */
-  public static ChecklistProcessCorrespondenceMatch newMatch(final EObject pChecklist, final EObject pProcess) {
+  public static ChecklistProcessCorrespondenceMatch newMatch(final Checklist pChecklist, final process.Process pProcess) {
     return new Immutable(pChecklist, pProcess);
   }
   
   private static final class Mutable extends ChecklistProcessCorrespondenceMatch {
-    Mutable(final EObject pChecklist, final EObject pProcess) {
+    Mutable(final Checklist pChecklist, final process.Process pProcess) {
       super(pChecklist, pProcess);
     }
     
@@ -195,7 +195,7 @@ public abstract class ChecklistProcessCorrespondenceMatch extends BasePatternMat
   }
   
   private static final class Immutable extends ChecklistProcessCorrespondenceMatch {
-    Immutable(final EObject pChecklist, final EObject pProcess) {
+    Immutable(final Checklist pChecklist, final process.Process pProcess) {
       super(pChecklist, pProcess);
     }
     

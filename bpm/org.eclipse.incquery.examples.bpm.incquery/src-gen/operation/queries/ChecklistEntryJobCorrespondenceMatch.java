@@ -2,11 +2,12 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
+import operation.ChecklistEntry;
 import operation.queries.util.ChecklistEntryJobCorrespondenceQuerySpecification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import system.Job;
 
 /**
  * Pattern-specific match representation of the operation.queries.ChecklistEntryJobCorrespondence pattern,
@@ -23,13 +24,13 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 @SuppressWarnings("all")
 public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMatch {
-  private EObject fCLE;
+  private ChecklistEntry fCLE;
   
-  private EObject fJob;
+  private Job fJob;
   
   private static List<String> parameterNames = makeImmutableList("CLE", "Job");
   
-  private ChecklistEntryJobCorrespondenceMatch(final EObject pCLE, final EObject pJob) {
+  private ChecklistEntryJobCorrespondenceMatch(final ChecklistEntry pCLE, final Job pJob) {
     this.fCLE = pCLE;
     this.fJob = pJob;
   }
@@ -41,11 +42,11 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
     return null;
   }
   
-  public EObject getCLE() {
+  public ChecklistEntry getCLE() {
     return this.fCLE;
   }
   
-  public EObject getJob() {
+  public Job getJob() {
     return this.fJob;
   }
   
@@ -53,22 +54,22 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("CLE".equals(parameterName) ) {
-    	this.fCLE = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fCLE = (operation.ChecklistEntry) newValue;
     	return true;
     }
     if ("Job".equals(parameterName) ) {
-    	this.fJob = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fJob = (system.Job) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setCLE(final EObject pCLE) {
+  public void setCLE(final ChecklistEntry pCLE) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fCLE = pCLE;
   }
   
-  public void setJob(final EObject pJob) {
+  public void setJob(final Job pJob) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fJob = pJob;
   }
@@ -166,7 +167,7 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static ChecklistEntryJobCorrespondenceMatch newMutableMatch(final EObject pCLE, final EObject pJob) {
+  public static ChecklistEntryJobCorrespondenceMatch newMutableMatch(final ChecklistEntry pCLE, final Job pJob) {
     return new Mutable(pCLE, pJob);
   }
   
@@ -179,12 +180,12 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
    * @return the (partial) match object.
    * 
    */
-  public static ChecklistEntryJobCorrespondenceMatch newMatch(final EObject pCLE, final EObject pJob) {
+  public static ChecklistEntryJobCorrespondenceMatch newMatch(final ChecklistEntry pCLE, final Job pJob) {
     return new Immutable(pCLE, pJob);
   }
   
   private static final class Mutable extends ChecklistEntryJobCorrespondenceMatch {
-    Mutable(final EObject pCLE, final EObject pJob) {
+    Mutable(final ChecklistEntry pCLE, final Job pJob) {
       super(pCLE, pJob);
     }
     
@@ -195,7 +196,7 @@ public abstract class ChecklistEntryJobCorrespondenceMatch extends BasePatternMa
   }
   
   private static final class Immutable extends ChecklistEntryJobCorrespondenceMatch {
-    Immutable(final EObject pCLE, final EObject pJob) {
+    Immutable(final ChecklistEntry pCLE, final Job pJob) {
       super(pCLE, pJob);
     }
     

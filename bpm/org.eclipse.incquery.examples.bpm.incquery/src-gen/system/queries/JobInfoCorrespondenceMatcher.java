@@ -3,9 +3,9 @@ package system.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import operation.RuntimeInformation;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -13,6 +13,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import system.Job;
 import system.queries.JobInfoCorrespondenceMatch;
 import system.queries.util.JobInfoCorrespondenceQuerySpecification;
 
@@ -104,7 +105,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return matches represented as a JobInfoCorrespondenceMatch object.
    * 
    */
-  public Collection<JobInfoCorrespondenceMatch> getAllMatches(final EObject pJob, final EObject pInfo) {
+  public Collection<JobInfoCorrespondenceMatch> getAllMatches(final Job pJob, final RuntimeInformation pInfo) {
     return rawGetAllMatches(new Object[]{pJob, pInfo});
   }
   
@@ -116,7 +117,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return a match represented as a JobInfoCorrespondenceMatch object, or null if no match is found.
    * 
    */
-  public JobInfoCorrespondenceMatch getOneArbitraryMatch(final EObject pJob, final EObject pInfo) {
+  public JobInfoCorrespondenceMatch getOneArbitraryMatch(final Job pJob, final RuntimeInformation pInfo) {
     return rawGetOneArbitraryMatch(new Object[]{pJob, pInfo});
   }
   
@@ -128,7 +129,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final EObject pJob, final EObject pInfo) {
+  public boolean hasMatch(final Job pJob, final RuntimeInformation pInfo) {
     return rawHasMatch(new Object[]{pJob, pInfo});
   }
   
@@ -139,7 +140,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final EObject pJob, final EObject pInfo) {
+  public int countMatches(final Job pJob, final RuntimeInformation pInfo) {
     return rawCountMatches(new Object[]{pJob, pInfo});
   }
   
@@ -150,7 +151,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final EObject pJob, final EObject pInfo, final IMatchProcessor<? super JobInfoCorrespondenceMatch> processor) {
+  public void forEachMatch(final Job pJob, final RuntimeInformation pInfo, final IMatchProcessor<? super JobInfoCorrespondenceMatch> processor) {
     rawForEachMatch(new Object[]{pJob, pInfo}, processor);
   }
   
@@ -163,7 +164,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final EObject pJob, final EObject pInfo, final IMatchProcessor<? super JobInfoCorrespondenceMatch> processor) {
+  public boolean forOneArbitraryMatch(final Job pJob, final RuntimeInformation pInfo, final IMatchProcessor<? super JobInfoCorrespondenceMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pJob, pInfo}, processor);
   }
   
@@ -176,7 +177,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the (partial) match object.
    * 
    */
-  public JobInfoCorrespondenceMatch newMatch(final EObject pJob, final EObject pInfo) {
+  public JobInfoCorrespondenceMatch newMatch(final Job pJob, final RuntimeInformation pInfo) {
     return JobInfoCorrespondenceMatch.newMatch(pJob, pInfo);
   }
   
@@ -185,8 +186,8 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfJob(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Job> rawAccumulateAllValuesOfJob(final Object[] parameters) {
+    Set<Job> results = new HashSet<Job>();
     rawAccumulateAllValues(POSITION_JOB, parameters, results);
     return results;
   }
@@ -196,7 +197,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfJob() {
+  public Set<Job> getAllValuesOfJob() {
     return rawAccumulateAllValuesOfJob(emptyArray());
   }
   
@@ -205,7 +206,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfJob(final JobInfoCorrespondenceMatch partialMatch) {
+  public Set<Job> getAllValuesOfJob(final JobInfoCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfJob(partialMatch.toArray());
   }
   
@@ -214,7 +215,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfJob(final EObject pInfo) {
+  public Set<Job> getAllValuesOfJob(final RuntimeInformation pInfo) {
     return rawAccumulateAllValuesOfJob(new Object[]{
     null, 
     pInfo
@@ -226,8 +227,8 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfInfo(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<RuntimeInformation> rawAccumulateAllValuesOfInfo(final Object[] parameters) {
+    Set<RuntimeInformation> results = new HashSet<RuntimeInformation>();
     rawAccumulateAllValues(POSITION_INFO, parameters, results);
     return results;
   }
@@ -237,7 +238,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfInfo() {
+  public Set<RuntimeInformation> getAllValuesOfInfo() {
     return rawAccumulateAllValuesOfInfo(emptyArray());
   }
   
@@ -246,7 +247,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfInfo(final JobInfoCorrespondenceMatch partialMatch) {
+  public Set<RuntimeInformation> getAllValuesOfInfo(final JobInfoCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfInfo(partialMatch.toArray());
   }
   
@@ -255,7 +256,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfInfo(final EObject pJob) {
+  public Set<RuntimeInformation> getAllValuesOfInfo(final Job pJob) {
     return rawAccumulateAllValuesOfInfo(new Object[]{
     pJob, 
     null
@@ -265,7 +266,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-    	return JobInfoCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_JOB), (org.eclipse.emf.ecore.EObject) t.get(POSITION_INFO));
+    	return JobInfoCorrespondenceMatch.newMatch((system.Job) t.get(POSITION_JOB), (operation.RuntimeInformation) t.get(POSITION_INFO));
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in tuple not properly typed!",e);
     	return null;
@@ -275,7 +276,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-    	return JobInfoCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_JOB], (org.eclipse.emf.ecore.EObject) match[POSITION_INFO]);
+    	return JobInfoCorrespondenceMatch.newMatch((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;
@@ -285,7 +286,7 @@ public class JobInfoCorrespondenceMatcher extends BaseMatcher<JobInfoCorresponde
   @Override
   protected JobInfoCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return JobInfoCorrespondenceMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_JOB], (org.eclipse.emf.ecore.EObject) match[POSITION_INFO]);
+    	return JobInfoCorrespondenceMatch.newMutableMatch((system.Job) match[POSITION_JOB], (operation.RuntimeInformation) match[POSITION_INFO]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;

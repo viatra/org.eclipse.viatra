@@ -32,7 +32,6 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
   private ProcessTasksMatch(final process.Process pProc, final Activity pTask) {
     this.fProc = pProc;
     this.fTask = pTask;
-    
   }
   
   @Override
@@ -40,17 +39,14 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     if ("Proc".equals(parameterName)) return this.fProc;
     if ("Task".equals(parameterName)) return this.fTask;
     return null;
-    
   }
   
   public process.Process getProc() {
     return this.fProc;
-    
   }
   
   public Activity getTask() {
     return this.fTask;
-    
   }
   
   @Override
@@ -65,52 +61,46 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     	return true;
     }
     return false;
-    
   }
   
   public void setProc(final process.Process pProc) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fProc = pProc;
-    
   }
   
   public void setTask(final Activity pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
   @Override
   public String patternName() {
     return "org.eclipse.incquery.examples.bpm.queries.processTasks";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return ProcessTasksMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fProc, fTask};
-    
   }
   
   @Override
   public ProcessTasksMatch toImmutable() {
     return isMutable() ? newMatch(fProc, fTask) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Proc\"=" + prettyPrintValue(fProc) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask)
+    );
+    return result.toString();
   }
   
   @Override
@@ -120,7 +110,6 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     result = prime * result + ((fProc == null) ? 0 : fProc.hashCode());
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     return result;
-    
   }
   
   @Override
@@ -128,10 +117,12 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof ProcessTasksMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -151,9 +142,8 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     	return ProcessTasksQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -165,7 +155,6 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
    */
   public static ProcessTasksMatch newEmptyMatch() {
     return new Mutable(null, null);
-    
   }
   
   /**
@@ -179,7 +168,6 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
    */
   public static ProcessTasksMatch newMutableMatch(final process.Process pProc, final Activity pTask) {
     return new Mutable(pProc, pTask);
-    
   }
   
   /**
@@ -193,14 +181,11 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
    */
   public static ProcessTasksMatch newMatch(final process.Process pProc, final Activity pTask) {
     return new Immutable(pProc, pTask);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends ProcessTasksMatch {
     Mutable(final process.Process pProc, final Activity pTask) {
       super(pProc, pTask);
-      
     }
     
     @Override
@@ -209,12 +194,9 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends ProcessTasksMatch {
     Immutable(final process.Process pProc, final Activity pTask) {
       super(pProc, pTask);
-      
     }
     
     @Override
@@ -222,5 +204,4 @@ public abstract class ProcessTasksMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatch;
 import org.eclipse.incquery.examples.bpm.queries.NextActivityMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
  * 
  */
 @SuppressWarnings("all")
-public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpecification<NextActivityMatcher> {
+public final class NextActivityQuerySpecification extends BaseGeneratedEMFQuerySpecification<NextActivityMatcher> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -31,7 +31,6 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
    */
   public static NextActivityQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
@@ -42,7 +41,6 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
   @Override
   public String getFullyQualifiedName() {
     return "org.eclipse.incquery.examples.bpm.queries.nextActivity";
-    
   }
   
   @Override
@@ -67,19 +65,19 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_Act = body.getOrCreateVariableByName("Act");
-      PVariable var_Next = body.getOrCreateVariableByName("Next");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Act, "Act"), 
-        new ExportedParameter(body, var_Next, "Next")
-      ));
-      
-      
-      new TypeBinary(body, CONTEXT, var_Act, var_Next, getFeatureLiteral("http://process/1.0", "Activity", "next"), "http://process/1.0/Activity.next");
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_Act = body.getOrCreateVariableByName("Act");
+    	PVariable var_Next = body.getOrCreateVariableByName("Next");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_Act, "Act"),
+    		
+    		new ExportedParameter(body, var_Next, "Next")
+    	));
+    new TypeBinary(body, CONTEXT, var_Act, var_Next, getFeatureLiteral("http://process/1.0", "Activity", "next"), "http://process/1.0/Activity.next");
+    	bodies.add(body);
     }
     return bodies;
   }
@@ -89,7 +87,6 @@ public final class NextActivityQuerySpecification extends BaseGeneratedQuerySpec
     
     public static NextActivityQuerySpecification make() {
       return new NextActivityQuerySpecification();					
-      
     }
   }
 }

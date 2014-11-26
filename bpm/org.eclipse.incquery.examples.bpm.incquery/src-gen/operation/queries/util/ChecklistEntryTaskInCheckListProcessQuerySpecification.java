@@ -54,7 +54,7 @@ final class ChecklistEntryTaskInCheckListProcessQuerySpecification extends BaseG
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("CLE", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Task", "process.Task"));
   }
   
   @Override

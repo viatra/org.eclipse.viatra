@@ -52,7 +52,7 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Data", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Data", "system.Data"),new PParameter("Task", "process.Task"));
   }
   
   @Override
@@ -62,7 +62,7 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
   
   @Override
   public DataTaskReadCorrespondenceMatch newMatch(final Object... parameters) {
-    return DataTaskReadCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return DataTaskReadCorrespondenceMatch.newMatch((system.Data) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override
@@ -79,8 +79,8 @@ public final class DataTaskReadCorrespondenceQuerySpecification extends BaseGene
     		
     		new ExportedParameter(body, var_Task, "Task")
     	));
-    new TypeBinary(body, CONTEXT, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
     new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+    new TypeBinary(body, CONTEXT, var_Data, var_TaskId, getFeatureLiteral("http://system/1.0", "Data", "readingTaskIds"), "http://system/1.0/Data.readingTaskIds");
     new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
     	bodies.add(body);
     }

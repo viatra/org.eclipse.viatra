@@ -13,7 +13,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import process.Activity;
 
@@ -28,7 +27,7 @@ import process.Activity;
  * 
  * <p>Original source:
  * <code><pre>
- * pattern processTasks(Proc, Task){
+ * pattern processTasks(Proc , Task){ 
  * 	Process.contents(Proc, Task);
  * }
  * </pre></code>
@@ -40,15 +39,6 @@ import process.Activity;
  */
 @SuppressWarnings("all")
 public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<ProcessTasksMatcher> querySpecification() throws IncQueryException {
-    return ProcessTasksQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -175,24 +165,6 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
   }
   
   /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pProc the fixed value of pattern parameter Proc, or null if not bound.
-   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<ProcessTasksMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final process.Process pProc, final Activity pTask) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pProc, pTask});
-  }
-  
-  /**
    * Returns a new (partial) match.
    * This can be used e.g. to call the matcher with a partial match.
    * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
@@ -203,7 +175,6 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
    */
   public ProcessTasksMatch newMatch(final process.Process pProc, final Activity pTask) {
     return ProcessTasksMatch.newMatch(pProc, pTask);
-    
   }
   
   /**
@@ -241,7 +212,10 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
    * 
    */
   public Set<process.Process> getAllValuesOfProc(final Activity pTask) {
-    return rawAccumulateAllValuesOfProc(new Object[]{null, pTask});
+    return rawAccumulateAllValuesOfProc(new Object[]{
+    null, 
+    pTask
+    });
   }
   
   /**
@@ -279,39 +253,48 @@ public class ProcessTasksMatcher extends BaseMatcher<ProcessTasksMatch> {
    * 
    */
   public Set<Activity> getAllValuesOfTask(final process.Process pProc) {
-    return rawAccumulateAllValuesOfTask(new Object[]{pProc, null});
+    return rawAccumulateAllValuesOfTask(new Object[]{
+    pProc, 
+    null
+    });
   }
   
   @Override
   protected ProcessTasksMatch tupleToMatch(final Tuple t) {
     try {
-      return ProcessTasksMatch.newMatch((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
+    	return ProcessTasksMatch.newMatch((process.Process) t.get(POSITION_PROC), (process.Activity) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ProcessTasksMatch arrayToMatch(final Object[] match) {
     try {
-      return ProcessTasksMatch.newMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+    	return ProcessTasksMatch.newMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ProcessTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return ProcessTasksMatch.newMutableMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
+    	return ProcessTasksMatch.newMutableMatch((process.Process) match[POSITION_PROC], (process.Activity) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<ProcessTasksMatcher> querySpecification() throws IncQueryException {
+    return ProcessTasksQuerySpecification.instance();
   }
 }

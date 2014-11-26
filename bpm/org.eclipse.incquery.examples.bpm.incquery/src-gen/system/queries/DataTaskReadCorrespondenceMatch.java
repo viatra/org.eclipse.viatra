@@ -2,10 +2,11 @@ package system.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import process.Task;
+import system.Data;
 import system.queries.util.DataTaskReadCorrespondenceQuerySpecification;
 
 /**
@@ -23,13 +24,13 @@ import system.queries.util.DataTaskReadCorrespondenceQuerySpecification;
  */
 @SuppressWarnings("all")
 public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
-  private EObject fData;
+  private Data fData;
   
-  private EObject fTask;
+  private Task fTask;
   
   private static List<String> parameterNames = makeImmutableList("Data", "Task");
   
-  private DataTaskReadCorrespondenceMatch(final EObject pData, final EObject pTask) {
+  private DataTaskReadCorrespondenceMatch(final Data pData, final Task pTask) {
     this.fData = pData;
     this.fTask = pTask;
   }
@@ -41,11 +42,11 @@ public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
     return null;
   }
   
-  public EObject getData() {
+  public Data getData() {
     return this.fData;
   }
   
-  public EObject getTask() {
+  public Task getTask() {
     return this.fTask;
   }
   
@@ -53,22 +54,22 @@ public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Data".equals(parameterName) ) {
-    	this.fData = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fData = (system.Data) newValue;
     	return true;
     }
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fTask = (process.Task) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setData(final EObject pData) {
+  public void setData(final Data pData) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fData = pData;
   }
   
-  public void setTask(final EObject pTask) {
+  public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
   }
@@ -166,7 +167,7 @@ public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static DataTaskReadCorrespondenceMatch newMutableMatch(final EObject pData, final EObject pTask) {
+  public static DataTaskReadCorrespondenceMatch newMutableMatch(final Data pData, final Task pTask) {
     return new Mutable(pData, pTask);
   }
   
@@ -179,12 +180,12 @@ public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static DataTaskReadCorrespondenceMatch newMatch(final EObject pData, final EObject pTask) {
+  public static DataTaskReadCorrespondenceMatch newMatch(final Data pData, final Task pTask) {
     return new Immutable(pData, pTask);
   }
   
   private static final class Mutable extends DataTaskReadCorrespondenceMatch {
-    Mutable(final EObject pData, final EObject pTask) {
+    Mutable(final Data pData, final Task pTask) {
       super(pData, pTask);
     }
     
@@ -195,7 +196,7 @@ public abstract class DataTaskReadCorrespondenceMatch extends BasePatternMatch {
   }
   
   private static final class Immutable extends DataTaskReadCorrespondenceMatch {
-    Immutable(final EObject pData, final EObject pTask) {
+    Immutable(final Data pData, final Task pTask) {
       super(pData, pTask);
     }
     

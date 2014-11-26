@@ -1,7 +1,8 @@
 package system.queries.util;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import process.Task;
+import system.Data;
 import system.queries.DataTaskReadCorrespondenceMatch;
 
 /**
@@ -18,7 +19,7 @@ public abstract class DataTaskReadCorrespondenceProcessor implements IMatchProce
    * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
-  public abstract void process(final EObject pData, final EObject pTask);
+  public abstract void process(final Data pData, final Task pTask);
   
   @Override
   public void process(final DataTaskReadCorrespondenceMatch match) {

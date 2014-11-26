@@ -43,7 +43,6 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
     	INSTANCE = new BpmTestQueries();
     }
     return INSTANCE;
-    
   }
   
   private static BpmTestQueries INSTANCE;
@@ -53,7 +52,6 @@ public final class BpmTestQueries extends BaseGeneratedPatternGroup {
     querySpecifications.add(NextActivityQuerySpecification.instance());
     querySpecifications.add(JobTasksQuerySpecification.instance());
     querySpecifications.add(EntryTaskQuerySpecification.instance());
-    
   }
   
   public ProcessTasksQuerySpecification getProcessTasks() throws IncQueryException {

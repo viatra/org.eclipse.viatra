@@ -2,11 +2,13 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
+import operation.ChecklistEntry;
 import operation.queries.util.TaskChecklistEntryJobCorrespondenceQuerySpecification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import process.Task;
+import system.Job;
 
 /**
  * Pattern-specific match representation of the operation.queries.TaskChecklistEntryJobCorrespondence pattern,
@@ -23,15 +25,15 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
  */
 @SuppressWarnings("all")
 public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatternMatch {
-  private EObject fTask;
+  private Task fTask;
   
-  private EObject fCLE;
+  private ChecklistEntry fCLE;
   
-  private EObject fJob;
+  private Job fJob;
   
   private static List<String> parameterNames = makeImmutableList("Task", "CLE", "Job");
   
-  private TaskChecklistEntryJobCorrespondenceMatch(final EObject pTask, final EObject pCLE, final EObject pJob) {
+  private TaskChecklistEntryJobCorrespondenceMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
     this.fTask = pTask;
     this.fCLE = pCLE;
     this.fJob = pJob;
@@ -45,15 +47,15 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
     return null;
   }
   
-  public EObject getTask() {
+  public Task getTask() {
     return this.fTask;
   }
   
-  public EObject getCLE() {
+  public ChecklistEntry getCLE() {
     return this.fCLE;
   }
   
-  public EObject getJob() {
+  public Job getJob() {
     return this.fJob;
   }
   
@@ -61,31 +63,31 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fTask = (process.Task) newValue;
     	return true;
     }
     if ("CLE".equals(parameterName) ) {
-    	this.fCLE = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fCLE = (operation.ChecklistEntry) newValue;
     	return true;
     }
     if ("Job".equals(parameterName) ) {
-    	this.fJob = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fJob = (system.Job) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setTask(final EObject pTask) {
+  public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
   }
   
-  public void setCLE(final EObject pCLE) {
+  public void setCLE(final ChecklistEntry pCLE) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fCLE = pCLE;
   }
   
-  public void setJob(final EObject pJob) {
+  public void setJob(final Job pJob) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fJob = pJob;
   }
@@ -189,7 +191,7 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static TaskChecklistEntryJobCorrespondenceMatch newMutableMatch(final EObject pTask, final EObject pCLE, final EObject pJob) {
+  public static TaskChecklistEntryJobCorrespondenceMatch newMutableMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
     return new Mutable(pTask, pCLE, pJob);
   }
   
@@ -203,12 +205,12 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
    * @return the (partial) match object.
    * 
    */
-  public static TaskChecklistEntryJobCorrespondenceMatch newMatch(final EObject pTask, final EObject pCLE, final EObject pJob) {
+  public static TaskChecklistEntryJobCorrespondenceMatch newMatch(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
     return new Immutable(pTask, pCLE, pJob);
   }
   
   private static final class Mutable extends TaskChecklistEntryJobCorrespondenceMatch {
-    Mutable(final EObject pTask, final EObject pCLE, final EObject pJob) {
+    Mutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);
     }
     
@@ -219,7 +221,7 @@ public abstract class TaskChecklistEntryJobCorrespondenceMatch extends BasePatte
   }
   
   private static final class Immutable extends TaskChecklistEntryJobCorrespondenceMatch {
-    Immutable(final EObject pTask, final EObject pCLE, final EObject pJob) {
+    Immutable(final Task pTask, final ChecklistEntry pCLE, final Job pJob) {
       super(pTask, pCLE, pJob);
     }
     

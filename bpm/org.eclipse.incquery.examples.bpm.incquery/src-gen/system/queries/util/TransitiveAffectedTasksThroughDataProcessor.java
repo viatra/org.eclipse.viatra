@@ -1,7 +1,7 @@
 package system.queries.util;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import process.Task;
 import system.queries.TransitiveAffectedTasksThroughDataMatch;
 
 /**
@@ -18,7 +18,7 @@ public abstract class TransitiveAffectedTasksThroughDataProcessor implements IMa
    * @param pAffectedTask the value of pattern parameter AffectedTask in the currently processed match
    * 
    */
-  public abstract void process(final EObject pSourceTask, final EObject pAffectedTask);
+  public abstract void process(final Task pSourceTask, final Task pAffectedTask);
   
   @Override
   public void process(final TransitiveAffectedTasksThroughDataMatch match) {

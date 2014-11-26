@@ -54,7 +54,7 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("SourceTask", "org.eclipse.emf.ecore.EObject"),new PParameter("AffectedTask", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("SourceTask", "process.Task"),new PParameter("AffectedTask", "process.Task"));
   }
   
   @Override
@@ -64,7 +64,7 @@ public final class TasksAffectedThroughDataQuerySpecification extends BaseGenera
   
   @Override
   public TasksAffectedThroughDataMatch newMatch(final Object... parameters) {
-    return TasksAffectedThroughDataMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return TasksAffectedThroughDataMatch.newMatch((process.Task) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override

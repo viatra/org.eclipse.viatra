@@ -52,7 +52,7 @@ public final class DataTaskWriteCorrespondenceQuerySpecification extends BaseGen
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Data", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Data", "system.Data"),new PParameter("Task", "process.Task"));
   }
   
   @Override
@@ -62,7 +62,7 @@ public final class DataTaskWriteCorrespondenceQuerySpecification extends BaseGen
   
   @Override
   public DataTaskWriteCorrespondenceMatch newMatch(final Object... parameters) {
-    return DataTaskWriteCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return DataTaskWriteCorrespondenceMatch.newMatch((system.Data) parameters[0], (process.Task) parameters[1]);
   }
   
   @Override

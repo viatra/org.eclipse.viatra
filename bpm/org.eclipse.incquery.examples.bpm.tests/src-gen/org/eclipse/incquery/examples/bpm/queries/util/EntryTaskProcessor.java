@@ -24,6 +24,5 @@ public abstract class EntryTaskProcessor implements IMatchProcessor<EntryTaskMat
   @Override
   public void process(final EntryTaskMatch match) {
     process(match.getEntry(), match.getTask());
-    
   }
 }

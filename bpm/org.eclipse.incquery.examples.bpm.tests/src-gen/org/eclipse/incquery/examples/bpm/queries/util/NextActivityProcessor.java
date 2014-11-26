@@ -23,6 +23,5 @@ public abstract class NextActivityProcessor implements IMatchProcessor<NextActiv
   @Override
   public void process(final NextActivityMatch match) {
     process(match.getAct(), match.getNext());
-    
   }
 }

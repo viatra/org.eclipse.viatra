@@ -2,10 +2,10 @@ package system.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import process.Task;
 import system.queries.util.TasksAffectedThroughDataQuerySpecification;
 
 /**
@@ -23,13 +23,13 @@ import system.queries.util.TasksAffectedThroughDataQuerySpecification;
  */
 @SuppressWarnings("all")
 public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
-  private EObject fSourceTask;
+  private Task fSourceTask;
   
-  private EObject fAffectedTask;
+  private Task fAffectedTask;
   
   private static List<String> parameterNames = makeImmutableList("SourceTask", "AffectedTask");
   
-  private TasksAffectedThroughDataMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  private TasksAffectedThroughDataMatch(final Task pSourceTask, final Task pAffectedTask) {
     this.fSourceTask = pSourceTask;
     this.fAffectedTask = pAffectedTask;
   }
@@ -41,11 +41,11 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
     return null;
   }
   
-  public EObject getSourceTask() {
+  public Task getSourceTask() {
     return this.fSourceTask;
   }
   
-  public EObject getAffectedTask() {
+  public Task getAffectedTask() {
     return this.fAffectedTask;
   }
   
@@ -53,22 +53,22 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("SourceTask".equals(parameterName) ) {
-    	this.fSourceTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fSourceTask = (process.Task) newValue;
     	return true;
     }
     if ("AffectedTask".equals(parameterName) ) {
-    	this.fAffectedTask = (org.eclipse.emf.ecore.EObject) newValue;
+    	this.fAffectedTask = (process.Task) newValue;
     	return true;
     }
     return false;
   }
   
-  public void setSourceTask(final EObject pSourceTask) {
+  public void setSourceTask(final Task pSourceTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fSourceTask = pSourceTask;
   }
   
-  public void setAffectedTask(final EObject pAffectedTask) {
+  public void setAffectedTask(final Task pAffectedTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fAffectedTask = pAffectedTask;
   }
@@ -166,7 +166,7 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static TasksAffectedThroughDataMatch newMutableMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  public static TasksAffectedThroughDataMatch newMutableMatch(final Task pSourceTask, final Task pAffectedTask) {
     return new Mutable(pSourceTask, pAffectedTask);
   }
   
@@ -179,12 +179,12 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static TasksAffectedThroughDataMatch newMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  public static TasksAffectedThroughDataMatch newMatch(final Task pSourceTask, final Task pAffectedTask) {
     return new Immutable(pSourceTask, pAffectedTask);
   }
   
   private static final class Mutable extends TasksAffectedThroughDataMatch {
-    Mutable(final EObject pSourceTask, final EObject pAffectedTask) {
+    Mutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
     }
     
@@ -195,7 +195,7 @@ public abstract class TasksAffectedThroughDataMatch extends BasePatternMatch {
   }
   
   private static final class Immutable extends TasksAffectedThroughDataMatch {
-    Immutable(final EObject pSourceTask, final EObject pAffectedTask) {
+    Immutable(final Task pSourceTask, final Task pAffectedTask) {
       super(pSourceTask, pAffectedTask);
     }
     

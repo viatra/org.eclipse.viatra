@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatch;
 import org.eclipse.incquery.examples.bpm.queries.ProcessTasksMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
  * 
  */
 @SuppressWarnings("all")
-public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpecification<ProcessTasksMatcher> {
+public final class ProcessTasksQuerySpecification extends BaseGeneratedEMFQuerySpecification<ProcessTasksMatcher> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -31,7 +31,6 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
    */
   public static ProcessTasksQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
@@ -42,7 +41,6 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
   @Override
   public String getFullyQualifiedName() {
     return "org.eclipse.incquery.examples.bpm.queries.processTasks";
-    
   }
   
   @Override
@@ -67,19 +65,19 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_Proc = body.getOrCreateVariableByName("Proc");
-      PVariable var_Task = body.getOrCreateVariableByName("Task");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Proc, "Proc"), 
-        new ExportedParameter(body, var_Task, "Task")
-      ));
-      
-      
-      new TypeBinary(body, CONTEXT, var_Proc, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_Proc = body.getOrCreateVariableByName("Proc");
+    	PVariable var_Task = body.getOrCreateVariableByName("Task");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_Proc, "Proc"),
+    		
+    		new ExportedParameter(body, var_Task, "Task")
+    	));
+    new TypeBinary(body, CONTEXT, var_Proc, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
+    	bodies.add(body);
     }
     return bodies;
   }
@@ -89,7 +87,6 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
     
     public static ProcessTasksQuerySpecification make() {
       return new ProcessTasksQuerySpecification();					
-      
     }
   }
 }

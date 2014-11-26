@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -13,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import process.Task;
 import system.queries.UndefinedServiceTasksMatch;
 import system.queries.util.UndefinedServiceTasksQuerySpecification;
 
@@ -102,7 +102,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return matches represented as a UndefinedServiceTasksMatch object.
    * 
    */
-  public Collection<UndefinedServiceTasksMatch> getAllMatches(final EObject pTask) {
+  public Collection<UndefinedServiceTasksMatch> getAllMatches(final Task pTask) {
     return rawGetAllMatches(new Object[]{pTask});
   }
   
@@ -113,7 +113,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return a match represented as a UndefinedServiceTasksMatch object, or null if no match is found.
    * 
    */
-  public UndefinedServiceTasksMatch getOneArbitraryMatch(final EObject pTask) {
+  public UndefinedServiceTasksMatch getOneArbitraryMatch(final Task pTask) {
     return rawGetOneArbitraryMatch(new Object[]{pTask});
   }
   
@@ -124,7 +124,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final EObject pTask) {
+  public boolean hasMatch(final Task pTask) {
     return rawHasMatch(new Object[]{pTask});
   }
   
@@ -134,7 +134,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final EObject pTask) {
+  public int countMatches(final Task pTask) {
     return rawCountMatches(new Object[]{pTask});
   }
   
@@ -144,7 +144,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final EObject pTask, final IMatchProcessor<? super UndefinedServiceTasksMatch> processor) {
+  public void forEachMatch(final Task pTask, final IMatchProcessor<? super UndefinedServiceTasksMatch> processor) {
     rawForEachMatch(new Object[]{pTask}, processor);
   }
   
@@ -156,7 +156,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final EObject pTask, final IMatchProcessor<? super UndefinedServiceTasksMatch> processor) {
+  public boolean forOneArbitraryMatch(final Task pTask, final IMatchProcessor<? super UndefinedServiceTasksMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pTask}, processor);
   }
   
@@ -168,7 +168,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return the (partial) match object.
    * 
    */
-  public UndefinedServiceTasksMatch newMatch(final EObject pTask) {
+  public UndefinedServiceTasksMatch newMatch(final Task pTask) {
     return UndefinedServiceTasksMatch.newMatch(pTask);
   }
   
@@ -177,8 +177,8 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfTask(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Task> rawAccumulateAllValuesOfTask(final Object[] parameters) {
+    Set<Task> results = new HashSet<Task>();
     rawAccumulateAllValues(POSITION_TASK, parameters, results);
     return results;
   }
@@ -188,14 +188,14 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfTask() {
+  public Set<Task> getAllValuesOfTask() {
     return rawAccumulateAllValuesOfTask(emptyArray());
   }
   
   @Override
   protected UndefinedServiceTasksMatch tupleToMatch(final Tuple t) {
     try {
-    	return UndefinedServiceTasksMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_TASK));
+    	return UndefinedServiceTasksMatch.newMatch((process.Task) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in tuple not properly typed!",e);
     	return null;
@@ -205,7 +205,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatch(final Object[] match) {
     try {
-    	return UndefinedServiceTasksMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
+    	return UndefinedServiceTasksMatch.newMatch((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;
@@ -215,7 +215,7 @@ public class UndefinedServiceTasksMatcher extends BaseMatcher<UndefinedServiceTa
   @Override
   protected UndefinedServiceTasksMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return UndefinedServiceTasksMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
+    	return UndefinedServiceTasksMatch.newMutableMatch((process.Task) match[POSITION_TASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;

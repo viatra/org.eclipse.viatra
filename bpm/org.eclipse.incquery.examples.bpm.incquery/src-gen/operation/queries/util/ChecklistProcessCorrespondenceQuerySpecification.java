@@ -52,7 +52,7 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Checklist", "org.eclipse.emf.ecore.EObject"),new PParameter("Process", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Checklist", "operation.Checklist"),new PParameter("Process", "process.Process"));
   }
   
   @Override
@@ -62,7 +62,7 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
   
   @Override
   public ChecklistProcessCorrespondenceMatch newMatch(final Object... parameters) {
-    return ChecklistProcessCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
+    return ChecklistProcessCorrespondenceMatch.newMatch((operation.Checklist) parameters[0], (process.Process) parameters[1]);
   }
   
   @Override

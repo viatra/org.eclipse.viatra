@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -13,6 +12,7 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import process.Task;
 import system.queries.TransitiveAffectedTasksThroughDataMatch;
 import system.queries.util.TransitiveAffectedTasksThroughDataQuerySpecification;
 
@@ -117,7 +117,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return matches represented as a TransitiveAffectedTasksThroughDataMatch object.
    * 
    */
-  public Collection<TransitiveAffectedTasksThroughDataMatch> getAllMatches(final EObject pSourceTask, final EObject pAffectedTask) {
+  public Collection<TransitiveAffectedTasksThroughDataMatch> getAllMatches(final Task pSourceTask, final Task pAffectedTask) {
     return rawGetAllMatches(new Object[]{pSourceTask, pAffectedTask});
   }
   
@@ -129,7 +129,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return a match represented as a TransitiveAffectedTasksThroughDataMatch object, or null if no match is found.
    * 
    */
-  public TransitiveAffectedTasksThroughDataMatch getOneArbitraryMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  public TransitiveAffectedTasksThroughDataMatch getOneArbitraryMatch(final Task pSourceTask, final Task pAffectedTask) {
     return rawGetOneArbitraryMatch(new Object[]{pSourceTask, pAffectedTask});
   }
   
@@ -141,7 +141,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  public boolean hasMatch(final Task pSourceTask, final Task pAffectedTask) {
     return rawHasMatch(new Object[]{pSourceTask, pAffectedTask});
   }
   
@@ -152,7 +152,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final EObject pSourceTask, final EObject pAffectedTask) {
+  public int countMatches(final Task pSourceTask, final Task pAffectedTask) {
     return rawCountMatches(new Object[]{pSourceTask, pAffectedTask});
   }
   
@@ -163,7 +163,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final EObject pSourceTask, final EObject pAffectedTask, final IMatchProcessor<? super TransitiveAffectedTasksThroughDataMatch> processor) {
+  public void forEachMatch(final Task pSourceTask, final Task pAffectedTask, final IMatchProcessor<? super TransitiveAffectedTasksThroughDataMatch> processor) {
     rawForEachMatch(new Object[]{pSourceTask, pAffectedTask}, processor);
   }
   
@@ -176,7 +176,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final EObject pSourceTask, final EObject pAffectedTask, final IMatchProcessor<? super TransitiveAffectedTasksThroughDataMatch> processor) {
+  public boolean forOneArbitraryMatch(final Task pSourceTask, final Task pAffectedTask, final IMatchProcessor<? super TransitiveAffectedTasksThroughDataMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pSourceTask, pAffectedTask}, processor);
   }
   
@@ -189,7 +189,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the (partial) match object.
    * 
    */
-  public TransitiveAffectedTasksThroughDataMatch newMatch(final EObject pSourceTask, final EObject pAffectedTask) {
+  public TransitiveAffectedTasksThroughDataMatch newMatch(final Task pSourceTask, final Task pAffectedTask) {
     return TransitiveAffectedTasksThroughDataMatch.newMatch(pSourceTask, pAffectedTask);
   }
   
@@ -198,8 +198,8 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfSourceTask(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Task> rawAccumulateAllValuesOfSourceTask(final Object[] parameters) {
+    Set<Task> results = new HashSet<Task>();
     rawAccumulateAllValues(POSITION_SOURCETASK, parameters, results);
     return results;
   }
@@ -209,7 +209,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfSourceTask() {
+  public Set<Task> getAllValuesOfSourceTask() {
     return rawAccumulateAllValuesOfSourceTask(emptyArray());
   }
   
@@ -218,7 +218,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfSourceTask(final TransitiveAffectedTasksThroughDataMatch partialMatch) {
+  public Set<Task> getAllValuesOfSourceTask(final TransitiveAffectedTasksThroughDataMatch partialMatch) {
     return rawAccumulateAllValuesOfSourceTask(partialMatch.toArray());
   }
   
@@ -227,7 +227,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfSourceTask(final EObject pAffectedTask) {
+  public Set<Task> getAllValuesOfSourceTask(final Task pAffectedTask) {
     return rawAccumulateAllValuesOfSourceTask(new Object[]{
     null, 
     pAffectedTask
@@ -239,8 +239,8 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<EObject> rawAccumulateAllValuesOfAffectedTask(final Object[] parameters) {
-    Set<EObject> results = new HashSet<EObject>();
+  protected Set<Task> rawAccumulateAllValuesOfAffectedTask(final Object[] parameters) {
+    Set<Task> results = new HashSet<Task>();
     rawAccumulateAllValues(POSITION_AFFECTEDTASK, parameters, results);
     return results;
   }
@@ -250,7 +250,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfAffectedTask() {
+  public Set<Task> getAllValuesOfAffectedTask() {
     return rawAccumulateAllValuesOfAffectedTask(emptyArray());
   }
   
@@ -259,7 +259,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfAffectedTask(final TransitiveAffectedTasksThroughDataMatch partialMatch) {
+  public Set<Task> getAllValuesOfAffectedTask(final TransitiveAffectedTasksThroughDataMatch partialMatch) {
     return rawAccumulateAllValuesOfAffectedTask(partialMatch.toArray());
   }
   
@@ -268,7 +268,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<EObject> getAllValuesOfAffectedTask(final EObject pSourceTask) {
+  public Set<Task> getAllValuesOfAffectedTask(final Task pSourceTask) {
     return rawAccumulateAllValuesOfAffectedTask(new Object[]{
     pSourceTask, 
     null
@@ -278,7 +278,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch tupleToMatch(final Tuple t) {
     try {
-    	return TransitiveAffectedTasksThroughDataMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_SOURCETASK), (org.eclipse.emf.ecore.EObject) t.get(POSITION_AFFECTEDTASK));
+    	return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) t.get(POSITION_SOURCETASK), (process.Task) t.get(POSITION_AFFECTEDTASK));
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in tuple not properly typed!",e);
     	return null;
@@ -288,7 +288,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatch(final Object[] match) {
     try {
-    	return TransitiveAffectedTasksThroughDataMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_SOURCETASK], (org.eclipse.emf.ecore.EObject) match[POSITION_AFFECTEDTASK]);
+    	return TransitiveAffectedTasksThroughDataMatch.newMatch((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;
@@ -298,7 +298,7 @@ public class TransitiveAffectedTasksThroughDataMatcher extends BaseMatcher<Trans
   @Override
   protected TransitiveAffectedTasksThroughDataMatch arrayToMatchMutable(final Object[] match) {
     try {
-    	return TransitiveAffectedTasksThroughDataMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_SOURCETASK], (org.eclipse.emf.ecore.EObject) match[POSITION_AFFECTEDTASK]);
+    	return TransitiveAffectedTasksThroughDataMatch.newMutableMatch((process.Task) match[POSITION_SOURCETASK], (process.Task) match[POSITION_AFFECTEDTASK]);
     } catch(ClassCastException e) {
     	LOGGER.error("Element(s) in array not properly typed!",e);
     	return null;

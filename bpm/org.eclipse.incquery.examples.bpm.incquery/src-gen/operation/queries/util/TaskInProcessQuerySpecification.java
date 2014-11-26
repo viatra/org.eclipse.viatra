@@ -51,7 +51,7 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedEMFQuerySpecifi
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("Process", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("Process", "process.Process"));
   }
   
   @Override

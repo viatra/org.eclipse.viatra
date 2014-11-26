@@ -1,7 +1,8 @@
 package system.queries.util;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
+import process.Task;
+import system.Job;
 import system.queries.JobTaskCorrespondenceMatch;
 
 /**
@@ -18,7 +19,7 @@ public abstract class JobTaskCorrespondenceProcessor implements IMatchProcessor<
    * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
-  public abstract void process(final EObject pJob, final EObject pTask);
+  public abstract void process(final Job pJob, final Task pTask);
   
   @Override
   public void process(final JobTaskCorrespondenceMatch match) {

@@ -33,7 +33,6 @@ public abstract class JobTasksMatch extends BasePatternMatch {
   private JobTasksMatch(final Job pJob, final Task pTask) {
     this.fJob = pJob;
     this.fTask = pTask;
-    
   }
   
   @Override
@@ -41,17 +40,14 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     if ("Job".equals(parameterName)) return this.fJob;
     if ("Task".equals(parameterName)) return this.fTask;
     return null;
-    
   }
   
   public Job getJob() {
     return this.fJob;
-    
   }
   
   public Task getTask() {
     return this.fTask;
-    
   }
   
   @Override
@@ -66,52 +62,46 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     	return true;
     }
     return false;
-    
   }
   
   public void setJob(final Job pJob) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fJob = pJob;
-    
   }
   
   public void setTask(final Task pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
   @Override
   public String patternName() {
     return "org.eclipse.incquery.examples.bpm.queries.jobTasks";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return JobTasksMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fJob, fTask};
-    
   }
   
   @Override
   public JobTasksMatch toImmutable() {
     return isMutable() ? newMatch(fJob, fTask) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"Job\"=" + prettyPrintValue(fJob) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask)
+    );
+    return result.toString();
   }
   
   @Override
@@ -121,7 +111,6 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     result = prime * result + ((fJob == null) ? 0 : fJob.hashCode());
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     return result;
-    
   }
   
   @Override
@@ -129,10 +118,12 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof JobTasksMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -152,9 +143,8 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     	return JobTasksQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -166,7 +156,6 @@ public abstract class JobTasksMatch extends BasePatternMatch {
    */
   public static JobTasksMatch newEmptyMatch() {
     return new Mutable(null, null);
-    
   }
   
   /**
@@ -180,7 +169,6 @@ public abstract class JobTasksMatch extends BasePatternMatch {
    */
   public static JobTasksMatch newMutableMatch(final Job pJob, final Task pTask) {
     return new Mutable(pJob, pTask);
-    
   }
   
   /**
@@ -194,14 +182,11 @@ public abstract class JobTasksMatch extends BasePatternMatch {
    */
   public static JobTasksMatch newMatch(final Job pJob, final Task pTask) {
     return new Immutable(pJob, pTask);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends JobTasksMatch {
     Mutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);
-      
     }
     
     @Override
@@ -210,12 +195,9 @@ public abstract class JobTasksMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends JobTasksMatch {
     Immutable(final Job pJob, final Task pTask) {
       super(pJob, pTask);
-      
     }
     
     @Override
@@ -223,5 +205,4 @@ public abstract class JobTasksMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

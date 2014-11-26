@@ -23,6 +23,5 @@ public abstract class ProcessTasksProcessor implements IMatchProcessor<ProcessTa
   @Override
   public void process(final ProcessTasksMatch match) {
     process(match.getProc(), match.getTask());
-    
   }
 }

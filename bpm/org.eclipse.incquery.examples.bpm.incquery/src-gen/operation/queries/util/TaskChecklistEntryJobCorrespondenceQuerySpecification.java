@@ -55,7 +55,7 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("CLE", "org.eclipse.emf.ecore.EObject"),new PParameter("Job", "org.eclipse.emf.ecore.EObject"));
+    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Job", "system.Job"));
   }
   
   @Override
@@ -65,7 +65,7 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   
   @Override
   public TaskChecklistEntryJobCorrespondenceMatch newMatch(final Object... parameters) {
-    return TaskChecklistEntryJobCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1], (org.eclipse.emf.ecore.EObject) parameters[2]);
+    return TaskChecklistEntryJobCorrespondenceMatch.newMatch((process.Task) parameters[0], (operation.ChecklistEntry) parameters[1], (system.Job) parameters[2]);
   }
   
   @Override

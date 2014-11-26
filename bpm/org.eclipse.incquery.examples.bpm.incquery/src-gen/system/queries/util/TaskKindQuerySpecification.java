@@ -50,7 +50,7 @@ final class TaskKindQuerySpecification extends BaseGeneratedEMFQuerySpecificatio
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("Kind", "java.lang.Object"));
+    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("Kind", "process.TaskKind"));
   }
   
   @Override
