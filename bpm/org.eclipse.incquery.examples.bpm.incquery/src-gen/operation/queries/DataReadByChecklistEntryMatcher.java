@@ -3,21 +3,18 @@ package operation.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import operation.ChecklistEntry;
 import operation.queries.DataReadByChecklistEntryMatch;
 import operation.queries.util.DataReadByChecklistEntryQuerySpecification;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
-import process.Task;
-import system.Data;
 
 /**
  * Generated pattern matcher API of the operation.queries.DataReadByChecklistEntry pattern,
@@ -46,15 +43,6 @@ import system.Data;
  */
 @SuppressWarnings("all")
 public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByChecklistEntryMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<DataReadByChecklistEntryMatcher> querySpecification() throws IncQueryException {
-    return DataReadByChecklistEntryQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -120,7 +108,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return matches represented as a DataReadByChecklistEntryMatch object.
    * 
    */
-  public Collection<DataReadByChecklistEntryMatch> getAllMatches(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public Collection<DataReadByChecklistEntryMatch> getAllMatches(final EObject pCLE, final EObject pTask, final EObject pData) {
     return rawGetAllMatches(new Object[]{pCLE, pTask, pData});
   }
   
@@ -133,7 +121,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return a match represented as a DataReadByChecklistEntryMatch object, or null if no match is found.
    * 
    */
-  public DataReadByChecklistEntryMatch getOneArbitraryMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public DataReadByChecklistEntryMatch getOneArbitraryMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     return rawGetOneArbitraryMatch(new Object[]{pCLE, pTask, pData});
   }
   
@@ -146,7 +134,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public boolean hasMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     return rawHasMatch(new Object[]{pCLE, pTask, pData});
   }
   
@@ -158,7 +146,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public int countMatches(final EObject pCLE, final EObject pTask, final EObject pData) {
     return rawCountMatches(new Object[]{pCLE, pTask, pData});
   }
   
@@ -170,7 +158,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData, final IMatchProcessor<? super DataReadByChecklistEntryMatch> processor) {
+  public void forEachMatch(final EObject pCLE, final EObject pTask, final EObject pData, final IMatchProcessor<? super DataReadByChecklistEntryMatch> processor) {
     rawForEachMatch(new Object[]{pCLE, pTask, pData}, processor);
   }
   
@@ -184,27 +172,8 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData, final IMatchProcessor<? super DataReadByChecklistEntryMatch> processor) {
+  public boolean forOneArbitraryMatch(final EObject pCLE, final EObject pTask, final EObject pData, final IMatchProcessor<? super DataReadByChecklistEntryMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pCLE, pTask, pData}, processor);
-  }
-  
-  /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
-   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
-   * @param pData the fixed value of pattern parameter Data, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<DataReadByChecklistEntryMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final ChecklistEntry pCLE, final Task pTask, final Data pData) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pCLE, pTask, pData});
   }
   
   /**
@@ -217,9 +186,8 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the (partial) match object.
    * 
    */
-  public DataReadByChecklistEntryMatch newMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public DataReadByChecklistEntryMatch newMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     return DataReadByChecklistEntryMatch.newMatch(pCLE, pTask, pData);
-    
   }
   
   /**
@@ -227,8 +195,8 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<ChecklistEntry> rawAccumulateAllValuesOfCLE(final Object[] parameters) {
-    Set<ChecklistEntry> results = new HashSet<ChecklistEntry>();
+  protected Set<EObject> rawAccumulateAllValuesOfCLE(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_CLE, parameters, results);
     return results;
   }
@@ -238,7 +206,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE() {
+  public Set<EObject> getAllValuesOfCLE() {
     return rawAccumulateAllValuesOfCLE(emptyArray());
   }
   
@@ -247,7 +215,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE(final DataReadByChecklistEntryMatch partialMatch) {
+  public Set<EObject> getAllValuesOfCLE(final DataReadByChecklistEntryMatch partialMatch) {
     return rawAccumulateAllValuesOfCLE(partialMatch.toArray());
   }
   
@@ -256,8 +224,12 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE(final Task pTask, final Data pData) {
-    return rawAccumulateAllValuesOfCLE(new Object[]{null, pTask, pData});
+  public Set<EObject> getAllValuesOfCLE(final EObject pTask, final EObject pData) {
+    return rawAccumulateAllValuesOfCLE(new Object[]{
+    null, 
+    pTask, 
+    pData
+    });
   }
   
   /**
@@ -265,8 +237,8 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<Task> rawAccumulateAllValuesOfTask(final Object[] parameters) {
-    Set<Task> results = new HashSet<Task>();
+  protected Set<EObject> rawAccumulateAllValuesOfTask(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_TASK, parameters, results);
     return results;
   }
@@ -276,7 +248,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask() {
+  public Set<EObject> getAllValuesOfTask() {
     return rawAccumulateAllValuesOfTask(emptyArray());
   }
   
@@ -285,7 +257,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final DataReadByChecklistEntryMatch partialMatch) {
+  public Set<EObject> getAllValuesOfTask(final DataReadByChecklistEntryMatch partialMatch) {
     return rawAccumulateAllValuesOfTask(partialMatch.toArray());
   }
   
@@ -294,8 +266,12 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final ChecklistEntry pCLE, final Data pData) {
-    return rawAccumulateAllValuesOfTask(new Object[]{pCLE, null, pData});
+  public Set<EObject> getAllValuesOfTask(final EObject pCLE, final EObject pData) {
+    return rawAccumulateAllValuesOfTask(new Object[]{
+    pCLE, 
+    null, 
+    pData
+    });
   }
   
   /**
@@ -303,8 +279,8 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<Data> rawAccumulateAllValuesOfData(final Object[] parameters) {
-    Set<Data> results = new HashSet<Data>();
+  protected Set<EObject> rawAccumulateAllValuesOfData(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_DATA, parameters, results);
     return results;
   }
@@ -314,7 +290,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Data> getAllValuesOfData() {
+  public Set<EObject> getAllValuesOfData() {
     return rawAccumulateAllValuesOfData(emptyArray());
   }
   
@@ -323,7 +299,7 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Data> getAllValuesOfData(final DataReadByChecklistEntryMatch partialMatch) {
+  public Set<EObject> getAllValuesOfData(final DataReadByChecklistEntryMatch partialMatch) {
     return rawAccumulateAllValuesOfData(partialMatch.toArray());
   }
   
@@ -332,40 +308,50 @@ public class DataReadByChecklistEntryMatcher extends BaseMatcher<DataReadByCheck
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Data> getAllValuesOfData(final ChecklistEntry pCLE, final Task pTask) {
-    return rawAccumulateAllValuesOfData(new Object[]{pCLE, pTask, null});
+  public Set<EObject> getAllValuesOfData(final EObject pCLE, final EObject pTask) {
+    return rawAccumulateAllValuesOfData(new Object[]{
+    pCLE, 
+    pTask, 
+    null
+    });
   }
   
   @Override
   protected DataReadByChecklistEntryMatch tupleToMatch(final Tuple t) {
     try {
-      return DataReadByChecklistEntryMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK), (system.Data) t.get(POSITION_DATA));
+    	return DataReadByChecklistEntryMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_CLE), (org.eclipse.emf.ecore.EObject) t.get(POSITION_TASK), (org.eclipse.emf.ecore.EObject) t.get(POSITION_DATA));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected DataReadByChecklistEntryMatch arrayToMatch(final Object[] match) {
     try {
-      return DataReadByChecklistEntryMatch.newMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
+    	return DataReadByChecklistEntryMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CLE], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK], (org.eclipse.emf.ecore.EObject) match[POSITION_DATA]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected DataReadByChecklistEntryMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return DataReadByChecklistEntryMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK], (system.Data) match[POSITION_DATA]);
+    	return DataReadByChecklistEntryMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CLE], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK], (org.eclipse.emf.ecore.EObject) match[POSITION_DATA]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<DataReadByChecklistEntryMatcher> querySpecification() throws IncQueryException {
+    return DataReadByChecklistEntryQuerySpecification.instance();
   }
 }

@@ -3,20 +3,18 @@ package operation.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import operation.ChecklistEntry;
 import operation.queries.ChecklistEntryTaskCorrespondenceMatch;
 import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
-import process.Task;
 
 /**
  * Generated pattern matcher API of the operation.queries.ChecklistEntryTaskCorrespondence pattern,
@@ -44,15 +42,6 @@ import process.Task;
  */
 @SuppressWarnings("all")
 public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<ChecklistEntryTaskCorrespondenceMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<ChecklistEntryTaskCorrespondenceMatcher> querySpecification() throws IncQueryException {
-    return ChecklistEntryTaskCorrespondenceQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -115,7 +104,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return matches represented as a ChecklistEntryTaskCorrespondenceMatch object.
    * 
    */
-  public Collection<ChecklistEntryTaskCorrespondenceMatch> getAllMatches(final ChecklistEntry pCLE, final Task pTask) {
+  public Collection<ChecklistEntryTaskCorrespondenceMatch> getAllMatches(final EObject pCLE, final EObject pTask) {
     return rawGetAllMatches(new Object[]{pCLE, pTask});
   }
   
@@ -127,7 +116,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return a match represented as a ChecklistEntryTaskCorrespondenceMatch object, or null if no match is found.
    * 
    */
-  public ChecklistEntryTaskCorrespondenceMatch getOneArbitraryMatch(final ChecklistEntry pCLE, final Task pTask) {
+  public ChecklistEntryTaskCorrespondenceMatch getOneArbitraryMatch(final EObject pCLE, final EObject pTask) {
     return rawGetOneArbitraryMatch(new Object[]{pCLE, pTask});
   }
   
@@ -139,7 +128,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final ChecklistEntry pCLE, final Task pTask) {
+  public boolean hasMatch(final EObject pCLE, final EObject pTask) {
     return rawHasMatch(new Object[]{pCLE, pTask});
   }
   
@@ -150,7 +139,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final ChecklistEntry pCLE, final Task pTask) {
+  public int countMatches(final EObject pCLE, final EObject pTask) {
     return rawCountMatches(new Object[]{pCLE, pTask});
   }
   
@@ -161,7 +150,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final ChecklistEntry pCLE, final Task pTask, final IMatchProcessor<? super ChecklistEntryTaskCorrespondenceMatch> processor) {
+  public void forEachMatch(final EObject pCLE, final EObject pTask, final IMatchProcessor<? super ChecklistEntryTaskCorrespondenceMatch> processor) {
     rawForEachMatch(new Object[]{pCLE, pTask}, processor);
   }
   
@@ -174,26 +163,8 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final ChecklistEntry pCLE, final Task pTask, final IMatchProcessor<? super ChecklistEntryTaskCorrespondenceMatch> processor) {
+  public boolean forOneArbitraryMatch(final EObject pCLE, final EObject pTask, final IMatchProcessor<? super ChecklistEntryTaskCorrespondenceMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pCLE, pTask}, processor);
-  }
-  
-  /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pCLE the fixed value of pattern parameter CLE, or null if not bound.
-   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<ChecklistEntryTaskCorrespondenceMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final ChecklistEntry pCLE, final Task pTask) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pCLE, pTask});
   }
   
   /**
@@ -205,9 +176,8 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the (partial) match object.
    * 
    */
-  public ChecklistEntryTaskCorrespondenceMatch newMatch(final ChecklistEntry pCLE, final Task pTask) {
+  public ChecklistEntryTaskCorrespondenceMatch newMatch(final EObject pCLE, final EObject pTask) {
     return ChecklistEntryTaskCorrespondenceMatch.newMatch(pCLE, pTask);
-    
   }
   
   /**
@@ -215,8 +185,8 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<ChecklistEntry> rawAccumulateAllValuesOfCLE(final Object[] parameters) {
-    Set<ChecklistEntry> results = new HashSet<ChecklistEntry>();
+  protected Set<EObject> rawAccumulateAllValuesOfCLE(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_CLE, parameters, results);
     return results;
   }
@@ -226,7 +196,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE() {
+  public Set<EObject> getAllValuesOfCLE() {
     return rawAccumulateAllValuesOfCLE(emptyArray());
   }
   
@@ -235,7 +205,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE(final ChecklistEntryTaskCorrespondenceMatch partialMatch) {
+  public Set<EObject> getAllValuesOfCLE(final ChecklistEntryTaskCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfCLE(partialMatch.toArray());
   }
   
@@ -244,8 +214,11 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfCLE(final Task pTask) {
-    return rawAccumulateAllValuesOfCLE(new Object[]{null, pTask});
+  public Set<EObject> getAllValuesOfCLE(final EObject pTask) {
+    return rawAccumulateAllValuesOfCLE(new Object[]{
+    null, 
+    pTask
+    });
   }
   
   /**
@@ -253,8 +226,8 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<Task> rawAccumulateAllValuesOfTask(final Object[] parameters) {
-    Set<Task> results = new HashSet<Task>();
+  protected Set<EObject> rawAccumulateAllValuesOfTask(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_TASK, parameters, results);
     return results;
   }
@@ -264,7 +237,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask() {
+  public Set<EObject> getAllValuesOfTask() {
     return rawAccumulateAllValuesOfTask(emptyArray());
   }
   
@@ -273,7 +246,7 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final ChecklistEntryTaskCorrespondenceMatch partialMatch) {
+  public Set<EObject> getAllValuesOfTask(final ChecklistEntryTaskCorrespondenceMatch partialMatch) {
     return rawAccumulateAllValuesOfTask(partialMatch.toArray());
   }
   
@@ -282,40 +255,49 @@ public class ChecklistEntryTaskCorrespondenceMatcher extends BaseMatcher<Checkli
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final ChecklistEntry pCLE) {
-    return rawAccumulateAllValuesOfTask(new Object[]{pCLE, null});
+  public Set<EObject> getAllValuesOfTask(final EObject pCLE) {
+    return rawAccumulateAllValuesOfTask(new Object[]{
+    pCLE, 
+    null
+    });
   }
   
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch tupleToMatch(final Tuple t) {
     try {
-      return ChecklistEntryTaskCorrespondenceMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CLE), (process.Task) t.get(POSITION_TASK));
+    	return ChecklistEntryTaskCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_CLE), (org.eclipse.emf.ecore.EObject) t.get(POSITION_TASK));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch arrayToMatch(final Object[] match) {
     try {
-      return ChecklistEntryTaskCorrespondenceMatch.newMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
+    	return ChecklistEntryTaskCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CLE], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected ChecklistEntryTaskCorrespondenceMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return ChecklistEntryTaskCorrespondenceMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CLE], (process.Task) match[POSITION_TASK]);
+    	return ChecklistEntryTaskCorrespondenceMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CLE], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<ChecklistEntryTaskCorrespondenceMatcher> querySpecification() throws IncQueryException {
+    return ChecklistEntryTaskCorrespondenceQuerySpecification.instance();
   }
 }

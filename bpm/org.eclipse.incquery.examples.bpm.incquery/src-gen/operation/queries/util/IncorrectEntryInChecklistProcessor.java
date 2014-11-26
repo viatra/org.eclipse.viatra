@@ -1,9 +1,8 @@
 package operation.queries.util;
 
-import operation.ChecklistEntry;
 import operation.queries.IncorrectEntryInChecklistMatch;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import process.Task;
 
 /**
  * A match processor tailored for the operation.queries.IncorrectEntryInChecklist pattern.
@@ -20,11 +19,10 @@ public abstract class IncorrectEntryInChecklistProcessor implements IMatchProces
    * @param pProcess the value of pattern parameter Process in the currently processed match
    * 
    */
-  public abstract void process(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess);
+  public abstract void process(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess);
   
   @Override
   public void process(final IncorrectEntryInChecklistMatch match) {
     process(match.getChecklistEntry(), match.getTask(), match.getProcess());
-    
   }
 }

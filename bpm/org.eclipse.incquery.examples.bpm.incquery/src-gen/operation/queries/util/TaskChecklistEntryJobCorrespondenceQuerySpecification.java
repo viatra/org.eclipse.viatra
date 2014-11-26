@@ -9,7 +9,7 @@ import operation.queries.TaskChecklistEntryJobCorrespondenceMatcher;
 import operation.queries.util.ChecklistEntryJobCorrespondenceQuerySpecification;
 import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -28,7 +28,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
  * 
  */
 @SuppressWarnings("all")
-public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends BaseGeneratedQuerySpecification<TaskChecklistEntryJobCorrespondenceMatcher> {
+public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends BaseGeneratedEMFQuerySpecification<TaskChecklistEntryJobCorrespondenceMatcher> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -36,7 +36,6 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
    */
   public static TaskChecklistEntryJobCorrespondenceQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
@@ -47,7 +46,6 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   @Override
   public String getFullyQualifiedName() {
     return "operation.queries.TaskChecklistEntryJobCorrespondence";
-    
   }
   
   @Override
@@ -57,7 +55,7 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Job", "system.Job"));
+    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("CLE", "org.eclipse.emf.ecore.EObject"),new PParameter("Job", "org.eclipse.emf.ecore.EObject"));
   }
   
   @Override
@@ -67,47 +65,44 @@ public final class TaskChecklistEntryJobCorrespondenceQuerySpecification extends
   
   @Override
   public TaskChecklistEntryJobCorrespondenceMatch newMatch(final Object... parameters) {
-    return TaskChecklistEntryJobCorrespondenceMatch.newMatch((process.Task) parameters[0], (operation.ChecklistEntry) parameters[1], (system.Job) parameters[2]);
+    return TaskChecklistEntryJobCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1], (org.eclipse.emf.ecore.EObject) parameters[2]);
   }
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_Task = body.getOrCreateVariableByName("Task");
-      PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      PVariable var_Job = body.getOrCreateVariableByName("Job");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Task, "Task"), 
-        new ExportedParameter(body, var_CLE, "CLE"), 
-        new ExportedParameter(body, var_Job, "Job")
-      ));
-      
-      
-      
-      new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
-      new PositivePatternCall(body, new FlatTuple(var_CLE, var_Job), ChecklistEntryJobCorrespondenceQuerySpecification.instance());
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_Task = body.getOrCreateVariableByName("Task");
+    	PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+    	PVariable var_Job = body.getOrCreateVariableByName("Job");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_Task, "Task"),
+    		
+    		new ExportedParameter(body, var_CLE, "CLE"),
+    		
+    		new ExportedParameter(body, var_Job, "Job")
+    	));
+    	new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance());
+    	new PositivePatternCall(body, new FlatTuple(var_CLE, var_Job), ChecklistEntryJobCorrespondenceQuerySpecification.instance());
+    	bodies.add(body);
     }
     {
-      PAnnotation annotation = new PAnnotation("Constraint");
-      annotation.addAttribute("message","Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$");
-      annotation.addAttribute("location",new ParameterReference("CLE"));
-      annotation.addAttribute("severity","warning");
-      addAnnotation(annotation);
+    	PAnnotation annotation = new PAnnotation("Constraint");
+    	annotation.addAttribute("severity", "warning");
+    	annotation.addAttribute("location", new ParameterReference("CLE"));
+    	annotation.addAttribute("message", "Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$");
+    	addAnnotation(annotation);
     }
     return bodies;
   }
   
-  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static TaskChecklistEntryJobCorrespondenceQuerySpecification INSTANCE = make();
     
     public static TaskChecklistEntryJobCorrespondenceQuerySpecification make() {
       return new TaskChecklistEntryJobCorrespondenceQuerySpecification();					
-      
     }
   }
-  
 }

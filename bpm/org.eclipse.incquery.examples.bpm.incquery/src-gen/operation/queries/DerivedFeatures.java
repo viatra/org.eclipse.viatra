@@ -51,7 +51,6 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
     	INSTANCE = new DerivedFeatures();
     }
     return INSTANCE;
-    
   }
   
   private static DerivedFeatures INSTANCE;
@@ -63,7 +62,6 @@ public final class DerivedFeatures extends BaseGeneratedPatternGroup {
     querySpecifications.add(IncorrectEntryInChecklistQuerySpecification.instance());
     querySpecifications.add(TaskChecklistEntryJobCorrespondenceQuerySpecification.instance());
     querySpecifications.add(DataReadByChecklistEntryQuerySpecification.instance());
-    
   }
   
   public ChecklistEntryJobCorrespondenceQuerySpecification getChecklistEntryJobCorrespondence() throws IncQueryException {

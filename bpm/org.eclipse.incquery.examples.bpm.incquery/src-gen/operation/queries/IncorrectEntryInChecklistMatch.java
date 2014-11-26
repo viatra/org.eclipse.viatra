@@ -2,12 +2,11 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import operation.ChecklistEntry;
 import operation.queries.util.IncorrectEntryInChecklistQuerySpecification;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import process.Task;
 
 /**
  * Pattern-specific match representation of the operation.queries.IncorrectEntryInChecklist pattern,
@@ -24,19 +23,18 @@ import process.Task;
  */
 @SuppressWarnings("all")
 public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
-  private ChecklistEntry fChecklistEntry;
+  private EObject fChecklistEntry;
   
-  private Task fTask;
+  private EObject fTask;
   
-  private process.Process fProcess;
+  private EObject fProcess;
   
   private static List<String> parameterNames = makeImmutableList("ChecklistEntry", "Task", "Process");
   
-  private IncorrectEntryInChecklistMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  private IncorrectEntryInChecklistMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     this.fChecklistEntry = pChecklistEntry;
     this.fTask = pTask;
     this.fProcess = pProcess;
-    
   }
   
   @Override
@@ -45,93 +43,83 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     if ("Task".equals(parameterName)) return this.fTask;
     if ("Process".equals(parameterName)) return this.fProcess;
     return null;
-    
   }
   
-  public ChecklistEntry getChecklistEntry() {
+  public EObject getChecklistEntry() {
     return this.fChecklistEntry;
-    
   }
   
-  public Task getTask() {
+  public EObject getTask() {
     return this.fTask;
-    
   }
   
-  public process.Process getProcess() {
+  public EObject getProcess() {
     return this.fProcess;
-    
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("ChecklistEntry".equals(parameterName) ) {
-    	this.fChecklistEntry = (operation.ChecklistEntry) newValue;
+    	this.fChecklistEntry = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (process.Task) newValue;
+    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     if ("Process".equals(parameterName) ) {
-    	this.fProcess = (process.Process) newValue;
+    	this.fProcess = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     return false;
-    
   }
   
-  public void setChecklistEntry(final ChecklistEntry pChecklistEntry) {
+  public void setChecklistEntry(final EObject pChecklistEntry) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fChecklistEntry = pChecklistEntry;
-    
   }
   
-  public void setTask(final Task pTask) {
+  public void setTask(final EObject pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
-  public void setProcess(final process.Process pProcess) {
+  public void setProcess(final EObject pProcess) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fProcess = pProcess;
-    
   }
   
   @Override
   public String patternName() {
     return "operation.queries.IncorrectEntryInChecklist";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return IncorrectEntryInChecklistMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fChecklistEntry, fTask, fProcess};
-    
   }
   
   @Override
   public IncorrectEntryInChecklistMatch toImmutable() {
     return isMutable() ? newMatch(fChecklistEntry, fTask, fProcess) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"ChecklistEntry\"=" + prettyPrintValue(fChecklistEntry) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask) + ", ");
-    result.append("\"Process\"=" + prettyPrintValue(fProcess));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask) + ", ");
+    
+    result.append("\"Process\"=" + prettyPrintValue(fProcess)
+    );
+    return result.toString();
   }
   
   @Override
@@ -142,7 +130,6 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     result = prime * result + ((fProcess == null) ? 0 : fProcess.hashCode());
     return result;
-    
   }
   
   @Override
@@ -150,10 +137,12 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof IncorrectEntryInChecklistMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -175,9 +164,8 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     	return IncorrectEntryInChecklistQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -189,7 +177,6 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
    */
   public static IncorrectEntryInChecklistMatch newEmptyMatch() {
     return new Mutable(null, null, null);
-    
   }
   
   /**
@@ -202,9 +189,8 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static IncorrectEntryInChecklistMatch newMutableMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public static IncorrectEntryInChecklistMatch newMutableMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return new Mutable(pChecklistEntry, pTask, pProcess);
-    
   }
   
   /**
@@ -217,16 +203,13 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static IncorrectEntryInChecklistMatch newMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public static IncorrectEntryInChecklistMatch newMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return new Immutable(pChecklistEntry, pTask, pProcess);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends IncorrectEntryInChecklistMatch {
-    Mutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+    Mutable(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
       super(pChecklistEntry, pTask, pProcess);
-      
     }
     
     @Override
@@ -235,12 +218,9 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends IncorrectEntryInChecklistMatch {
-    Immutable(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+    Immutable(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
       super(pChecklistEntry, pTask, pProcess);
-      
     }
     
     @Override
@@ -248,5 +228,4 @@ public abstract class IncorrectEntryInChecklistMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

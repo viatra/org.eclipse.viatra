@@ -2,13 +2,11 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import operation.ChecklistEntry;
 import operation.queries.util.DataReadByChecklistEntryQuerySpecification;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import process.Task;
-import system.Data;
 
 /**
  * Pattern-specific match representation of the operation.queries.DataReadByChecklistEntry pattern,
@@ -25,19 +23,18 @@ import system.Data;
  */
 @SuppressWarnings("all")
 public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
-  private ChecklistEntry fCLE;
+  private EObject fCLE;
   
-  private Task fTask;
+  private EObject fTask;
   
-  private Data fData;
+  private EObject fData;
   
   private static List<String> parameterNames = makeImmutableList("CLE", "Task", "Data");
   
-  private DataReadByChecklistEntryMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  private DataReadByChecklistEntryMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     this.fCLE = pCLE;
     this.fTask = pTask;
     this.fData = pData;
-    
   }
   
   @Override
@@ -46,93 +43,83 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     if ("Task".equals(parameterName)) return this.fTask;
     if ("Data".equals(parameterName)) return this.fData;
     return null;
-    
   }
   
-  public ChecklistEntry getCLE() {
+  public EObject getCLE() {
     return this.fCLE;
-    
   }
   
-  public Task getTask() {
+  public EObject getTask() {
     return this.fTask;
-    
   }
   
-  public Data getData() {
+  public EObject getData() {
     return this.fData;
-    
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("CLE".equals(parameterName) ) {
-    	this.fCLE = (operation.ChecklistEntry) newValue;
+    	this.fCLE = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (process.Task) newValue;
+    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     if ("Data".equals(parameterName) ) {
-    	this.fData = (system.Data) newValue;
+    	this.fData = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     return false;
-    
   }
   
-  public void setCLE(final ChecklistEntry pCLE) {
+  public void setCLE(final EObject pCLE) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fCLE = pCLE;
-    
   }
   
-  public void setTask(final Task pTask) {
+  public void setTask(final EObject pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
-  public void setData(final Data pData) {
+  public void setData(final EObject pData) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fData = pData;
-    
   }
   
   @Override
   public String patternName() {
     return "operation.queries.DataReadByChecklistEntry";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return DataReadByChecklistEntryMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fCLE, fTask, fData};
-    
   }
   
   @Override
   public DataReadByChecklistEntryMatch toImmutable() {
     return isMutable() ? newMatch(fCLE, fTask, fData) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"CLE\"=" + prettyPrintValue(fCLE) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask) + ", ");
-    result.append("\"Data\"=" + prettyPrintValue(fData));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask) + ", ");
+    
+    result.append("\"Data\"=" + prettyPrintValue(fData)
+    );
+    return result.toString();
   }
   
   @Override
@@ -143,7 +130,6 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     result = prime * result + ((fData == null) ? 0 : fData.hashCode());
     return result;
-    
   }
   
   @Override
@@ -151,10 +137,12 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     if (this == obj)
     	return true;
     if (!(obj instanceof DataReadByChecklistEntryMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -176,9 +164,8 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     	return DataReadByChecklistEntryQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -190,7 +177,6 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
    */
   public static DataReadByChecklistEntryMatch newEmptyMatch() {
     return new Mutable(null, null, null);
-    
   }
   
   /**
@@ -203,9 +189,8 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static DataReadByChecklistEntryMatch newMutableMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public static DataReadByChecklistEntryMatch newMutableMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     return new Mutable(pCLE, pTask, pData);
-    
   }
   
   /**
@@ -218,16 +203,13 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
    * @return the (partial) match object.
    * 
    */
-  public static DataReadByChecklistEntryMatch newMatch(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+  public static DataReadByChecklistEntryMatch newMatch(final EObject pCLE, final EObject pTask, final EObject pData) {
     return new Immutable(pCLE, pTask, pData);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends DataReadByChecklistEntryMatch {
-    Mutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    Mutable(final EObject pCLE, final EObject pTask, final EObject pData) {
       super(pCLE, pTask, pData);
-      
     }
     
     @Override
@@ -236,12 +218,9 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends DataReadByChecklistEntryMatch {
-    Immutable(final ChecklistEntry pCLE, final Task pTask, final Data pData) {
+    Immutable(final EObject pCLE, final EObject pTask, final EObject pData) {
       super(pCLE, pTask, pData);
-      
     }
     
     @Override
@@ -249,5 +228,4 @@ public abstract class DataReadByChecklistEntryMatch extends BasePatternMatch {
       return false;
     }
   }
-  
 }

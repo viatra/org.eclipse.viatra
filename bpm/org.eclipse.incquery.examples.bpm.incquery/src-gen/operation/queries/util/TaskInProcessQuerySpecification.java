@@ -7,7 +7,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -24,7 +24,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
  * 
  */
 @SuppressWarnings("all")
-final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecification<IncQueryMatcher<IPatternMatch>> {
+final class TaskInProcessQuerySpecification extends BaseGeneratedEMFQuerySpecification<IncQueryMatcher<IPatternMatch>> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -32,18 +32,16 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
    */
   public static TaskInProcessQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
-  protected IncQueryMatcher<IPatternMatch> instantiate(final IncQueryEngine engine) throws IncQueryException {
+  protected IncQueryMatcher instantiate(final IncQueryEngine engine) throws IncQueryException {
     throw new UnsupportedOperationException();
   }
   
   @Override
   public String getFullyQualifiedName() {
     return "operation.queries.TaskInProcess";
-    
   }
   
   @Override
@@ -53,7 +51,7 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("Task", "process.Task"),new PParameter("Process", "process.Process"));
+    return Arrays.asList(new PParameter("Task", "org.eclipse.emf.ecore.EObject"),new PParameter("Process", "org.eclipse.emf.ecore.EObject"));
   }
   
   @Override
@@ -68,32 +66,29 @@ final class TaskInProcessQuerySpecification extends BaseGeneratedQuerySpecificat
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_Task = body.getOrCreateVariableByName("Task");
-      PVariable var_Process = body.getOrCreateVariableByName("Process");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_Task, "Task"), 
-        new ExportedParameter(body, var_Process, "Process")
-      ));
-      
-      
-      new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
-      new TypeBinary(body, CONTEXT, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_Task = body.getOrCreateVariableByName("Task");
+    	PVariable var_Process = body.getOrCreateVariableByName("Process");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_Task, "Task"),
+    		
+    		new ExportedParameter(body, var_Process, "Process")
+    	));
+    new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+    new TypeBinary(body, CONTEXT, var_Process, var_Task, getFeatureLiteral("http://process/1.0", "Process", "contents"), "http://process/1.0/Process.contents");
+    	bodies.add(body);
     }
     return bodies;
   }
   
-  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static TaskInProcessQuerySpecification INSTANCE = make();
     
     public static TaskInProcessQuerySpecification make() {
       return new TaskInProcessQuerySpecification();					
-      
     }
   }
-  
 }

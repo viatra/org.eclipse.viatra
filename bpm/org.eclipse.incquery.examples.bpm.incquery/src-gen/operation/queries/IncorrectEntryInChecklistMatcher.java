@@ -3,20 +3,18 @@ package operation.queries;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import operation.ChecklistEntry;
 import operation.queries.IncorrectEntryInChecklistMatch;
 import operation.queries.util.IncorrectEntryInChecklistQuerySpecification;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
-import org.eclipse.incquery.runtime.rete.misc.DeltaMonitor;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
-import process.Task;
 
 /**
  * Generated pattern matcher API of the operation.queries.IncorrectEntryInChecklist pattern,
@@ -48,15 +46,6 @@ import process.Task;
  */
 @SuppressWarnings("all")
 public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntryInChecklistMatch> {
-  /**
-   * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
-   * 
-   */
-  public static IQuerySpecification<IncorrectEntryInChecklistMatcher> querySpecification() throws IncQueryException {
-    return IncorrectEntryInChecklistQuerySpecification.instance();
-  }
-  
   /**
    * Initializes the pattern matcher within an existing EMF-IncQuery engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -122,7 +111,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return matches represented as a IncorrectEntryInChecklistMatch object.
    * 
    */
-  public Collection<IncorrectEntryInChecklistMatch> getAllMatches(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public Collection<IncorrectEntryInChecklistMatch> getAllMatches(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return rawGetAllMatches(new Object[]{pChecklistEntry, pTask, pProcess});
   }
   
@@ -135,7 +124,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return a match represented as a IncorrectEntryInChecklistMatch object, or null if no match is found.
    * 
    */
-  public IncorrectEntryInChecklistMatch getOneArbitraryMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public IncorrectEntryInChecklistMatch getOneArbitraryMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return rawGetOneArbitraryMatch(new Object[]{pChecklistEntry, pTask, pProcess});
   }
   
@@ -148,7 +137,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return true if the input is a valid (partial) match of the pattern.
    * 
    */
-  public boolean hasMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public boolean hasMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return rawHasMatch(new Object[]{pChecklistEntry, pTask, pProcess});
   }
   
@@ -160,7 +149,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the number of pattern matches found.
    * 
    */
-  public int countMatches(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public int countMatches(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return rawCountMatches(new Object[]{pChecklistEntry, pTask, pProcess});
   }
   
@@ -172,7 +161,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @param processor the action that will process each pattern match.
    * 
    */
-  public void forEachMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess, final IMatchProcessor<? super IncorrectEntryInChecklistMatch> processor) {
+  public void forEachMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess, final IMatchProcessor<? super IncorrectEntryInChecklistMatch> processor) {
     rawForEachMatch(new Object[]{pChecklistEntry, pTask, pProcess}, processor);
   }
   
@@ -186,27 +175,8 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
    * 
    */
-  public boolean forOneArbitraryMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess, final IMatchProcessor<? super IncorrectEntryInChecklistMatch> processor) {
+  public boolean forOneArbitraryMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess, final IMatchProcessor<? super IncorrectEntryInChecklistMatch> processor) {
     return rawForOneArbitraryMatch(new Object[]{pChecklistEntry, pTask, pProcess}, processor);
-  }
-  
-  /**
-   * Registers a new filtered delta monitor on this pattern matcher.
-   * The DeltaMonitor can be used to track changes (delta) in the set of filtered pattern matches from now on, considering those matches only that conform to the given fixed values of some parameters.
-   * It can also be reset to track changes from a later point in time,
-   * and changes can even be acknowledged on an individual basis.
-   * See {@link DeltaMonitor} for details.
-   * @param fillAtStart if true, all current matches are reported as new match events; if false, the delta monitor starts empty.
-   * @param pChecklistEntry the fixed value of pattern parameter ChecklistEntry, or null if not bound.
-   * @param pTask the fixed value of pattern parameter Task, or null if not bound.
-   * @param pProcess the fixed value of pattern parameter Process, or null if not bound.
-   * @return the delta monitor.
-   * @deprecated use the IncQuery Databinding API (IncQueryObservables) instead.
-   * 
-   */
-  @Deprecated
-  public DeltaMonitor<IncorrectEntryInChecklistMatch> newFilteredDeltaMonitor(final boolean fillAtStart, final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
-    return rawNewFilteredDeltaMonitor(fillAtStart, new Object[]{pChecklistEntry, pTask, pProcess});
   }
   
   /**
@@ -219,9 +189,8 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the (partial) match object.
    * 
    */
-  public IncorrectEntryInChecklistMatch newMatch(final ChecklistEntry pChecklistEntry, final Task pTask, final process.Process pProcess) {
+  public IncorrectEntryInChecklistMatch newMatch(final EObject pChecklistEntry, final EObject pTask, final EObject pProcess) {
     return IncorrectEntryInChecklistMatch.newMatch(pChecklistEntry, pTask, pProcess);
-    
   }
   
   /**
@@ -229,8 +198,8 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<ChecklistEntry> rawAccumulateAllValuesOfChecklistEntry(final Object[] parameters) {
-    Set<ChecklistEntry> results = new HashSet<ChecklistEntry>();
+  protected Set<EObject> rawAccumulateAllValuesOfChecklistEntry(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_CHECKLISTENTRY, parameters, results);
     return results;
   }
@@ -240,7 +209,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfChecklistEntry() {
+  public Set<EObject> getAllValuesOfChecklistEntry() {
     return rawAccumulateAllValuesOfChecklistEntry(emptyArray());
   }
   
@@ -249,7 +218,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfChecklistEntry(final IncorrectEntryInChecklistMatch partialMatch) {
+  public Set<EObject> getAllValuesOfChecklistEntry(final IncorrectEntryInChecklistMatch partialMatch) {
     return rawAccumulateAllValuesOfChecklistEntry(partialMatch.toArray());
   }
   
@@ -258,8 +227,12 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<ChecklistEntry> getAllValuesOfChecklistEntry(final Task pTask, final process.Process pProcess) {
-    return rawAccumulateAllValuesOfChecklistEntry(new Object[]{null, pTask, pProcess});
+  public Set<EObject> getAllValuesOfChecklistEntry(final EObject pTask, final EObject pProcess) {
+    return rawAccumulateAllValuesOfChecklistEntry(new Object[]{
+    null, 
+    pTask, 
+    pProcess
+    });
   }
   
   /**
@@ -267,8 +240,8 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<Task> rawAccumulateAllValuesOfTask(final Object[] parameters) {
-    Set<Task> results = new HashSet<Task>();
+  protected Set<EObject> rawAccumulateAllValuesOfTask(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_TASK, parameters, results);
     return results;
   }
@@ -278,7 +251,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask() {
+  public Set<EObject> getAllValuesOfTask() {
     return rawAccumulateAllValuesOfTask(emptyArray());
   }
   
@@ -287,7 +260,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final IncorrectEntryInChecklistMatch partialMatch) {
+  public Set<EObject> getAllValuesOfTask(final IncorrectEntryInChecklistMatch partialMatch) {
     return rawAccumulateAllValuesOfTask(partialMatch.toArray());
   }
   
@@ -296,8 +269,12 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<Task> getAllValuesOfTask(final ChecklistEntry pChecklistEntry, final process.Process pProcess) {
-    return rawAccumulateAllValuesOfTask(new Object[]{pChecklistEntry, null, pProcess});
+  public Set<EObject> getAllValuesOfTask(final EObject pChecklistEntry, final EObject pProcess) {
+    return rawAccumulateAllValuesOfTask(new Object[]{
+    pChecklistEntry, 
+    null, 
+    pProcess
+    });
   }
   
   /**
@@ -305,8 +282,8 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  protected Set<process.Process> rawAccumulateAllValuesOfProcess(final Object[] parameters) {
-    Set<process.Process> results = new HashSet<process.Process>();
+  protected Set<EObject> rawAccumulateAllValuesOfProcess(final Object[] parameters) {
+    Set<EObject> results = new HashSet<EObject>();
     rawAccumulateAllValues(POSITION_PROCESS, parameters, results);
     return results;
   }
@@ -316,7 +293,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<process.Process> getAllValuesOfProcess() {
+  public Set<EObject> getAllValuesOfProcess() {
     return rawAccumulateAllValuesOfProcess(emptyArray());
   }
   
@@ -325,7 +302,7 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<process.Process> getAllValuesOfProcess(final IncorrectEntryInChecklistMatch partialMatch) {
+  public Set<EObject> getAllValuesOfProcess(final IncorrectEntryInChecklistMatch partialMatch) {
     return rawAccumulateAllValuesOfProcess(partialMatch.toArray());
   }
   
@@ -334,40 +311,50 @@ public class IncorrectEntryInChecklistMatcher extends BaseMatcher<IncorrectEntry
    * @return the Set of all values, null if no parameter with the given name exists, empty set if there are no matches
    * 
    */
-  public Set<process.Process> getAllValuesOfProcess(final ChecklistEntry pChecklistEntry, final Task pTask) {
-    return rawAccumulateAllValuesOfProcess(new Object[]{pChecklistEntry, pTask, null});
+  public Set<EObject> getAllValuesOfProcess(final EObject pChecklistEntry, final EObject pTask) {
+    return rawAccumulateAllValuesOfProcess(new Object[]{
+    pChecklistEntry, 
+    pTask, 
+    null
+    });
   }
   
   @Override
   protected IncorrectEntryInChecklistMatch tupleToMatch(final Tuple t) {
     try {
-      return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) t.get(POSITION_CHECKLISTENTRY), (process.Task) t.get(POSITION_TASK), (process.Process) t.get(POSITION_PROCESS));
+    	return IncorrectEntryInChecklistMatch.newMatch((org.eclipse.emf.ecore.EObject) t.get(POSITION_CHECKLISTENTRY), (org.eclipse.emf.ecore.EObject) t.get(POSITION_TASK), (org.eclipse.emf.ecore.EObject) t.get(POSITION_PROCESS));
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in tuple not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in tuple not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected IncorrectEntryInChecklistMatch arrayToMatch(final Object[] match) {
     try {
-      return IncorrectEntryInChecklistMatch.newMatch((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
+    	return IncorrectEntryInChecklistMatch.newMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CHECKLISTENTRY], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK], (org.eclipse.emf.ecore.EObject) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
   }
   
   @Override
   protected IncorrectEntryInChecklistMatch arrayToMatchMutable(final Object[] match) {
     try {
-      return IncorrectEntryInChecklistMatch.newMutableMatch((operation.ChecklistEntry) match[POSITION_CHECKLISTENTRY], (process.Task) match[POSITION_TASK], (process.Process) match[POSITION_PROCESS]);
+    	return IncorrectEntryInChecklistMatch.newMutableMatch((org.eclipse.emf.ecore.EObject) match[POSITION_CHECKLISTENTRY], (org.eclipse.emf.ecore.EObject) match[POSITION_TASK], (org.eclipse.emf.ecore.EObject) match[POSITION_PROCESS]);
     } catch(ClassCastException e) {
-      LOGGER.error("Element(s) in array not properly typed!",e);
-      return null;
+    	LOGGER.error("Element(s) in array not properly typed!",e);
+    	return null;
     }
-    
+  }
+  
+  /**
+   * @return the singleton instance of the query specification of this pattern
+   * @throws IncQueryException if the pattern definition could not be loaded
+   * 
+   */
+  public static IQuerySpecification<IncorrectEntryInChecklistMatcher> querySpecification() throws IncQueryException {
+    return IncorrectEntryInChecklistQuerySpecification.instance();
   }
 }

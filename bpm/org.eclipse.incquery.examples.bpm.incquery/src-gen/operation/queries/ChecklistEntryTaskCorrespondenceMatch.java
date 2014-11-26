@@ -2,12 +2,11 @@ package operation.queries;
 
 import java.util.Arrays;
 import java.util.List;
-import operation.ChecklistEntry;
 import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import process.Task;
 
 /**
  * Pattern-specific match representation of the operation.queries.ChecklistEntryTaskCorrespondence pattern,
@@ -24,16 +23,15 @@ import process.Task;
  */
 @SuppressWarnings("all")
 public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternMatch {
-  private ChecklistEntry fCLE;
+  private EObject fCLE;
   
-  private Task fTask;
+  private EObject fTask;
   
   private static List<String> parameterNames = makeImmutableList("CLE", "Task");
   
-  private ChecklistEntryTaskCorrespondenceMatch(final ChecklistEntry pCLE, final Task pTask) {
+  private ChecklistEntryTaskCorrespondenceMatch(final EObject pCLE, final EObject pTask) {
     this.fCLE = pCLE;
     this.fTask = pTask;
-    
   }
   
   @Override
@@ -41,77 +39,68 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     if ("CLE".equals(parameterName)) return this.fCLE;
     if ("Task".equals(parameterName)) return this.fTask;
     return null;
-    
   }
   
-  public ChecklistEntry getCLE() {
+  public EObject getCLE() {
     return this.fCLE;
-    
   }
   
-  public Task getTask() {
+  public EObject getTask() {
     return this.fTask;
-    
   }
   
   @Override
   public boolean set(final String parameterName, final Object newValue) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     if ("CLE".equals(parameterName) ) {
-    	this.fCLE = (operation.ChecklistEntry) newValue;
+    	this.fCLE = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     if ("Task".equals(parameterName) ) {
-    	this.fTask = (process.Task) newValue;
+    	this.fTask = (org.eclipse.emf.ecore.EObject) newValue;
     	return true;
     }
     return false;
-    
   }
   
-  public void setCLE(final ChecklistEntry pCLE) {
+  public void setCLE(final EObject pCLE) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fCLE = pCLE;
-    
   }
   
-  public void setTask(final Task pTask) {
+  public void setTask(final EObject pTask) {
     if (!isMutable()) throw new java.lang.UnsupportedOperationException();
     this.fTask = pTask;
-    
   }
   
   @Override
   public String patternName() {
     return "operation.queries.ChecklistEntryTaskCorrespondence";
-    
   }
   
   @Override
   public List<String> parameterNames() {
     return ChecklistEntryTaskCorrespondenceMatch.parameterNames;
-    
   }
   
   @Override
   public Object[] toArray() {
     return new Object[]{fCLE, fTask};
-    
   }
   
   @Override
   public ChecklistEntryTaskCorrespondenceMatch toImmutable() {
     return isMutable() ? newMatch(fCLE, fTask) : this;
-    
   }
   
   @Override
   public String prettyPrint() {
     StringBuilder result = new StringBuilder();
     result.append("\"CLE\"=" + prettyPrintValue(fCLE) + ", ");
-    result.append("\"Task\"=" + prettyPrintValue(fTask));
-    return result.toString();
     
+    result.append("\"Task\"=" + prettyPrintValue(fTask)
+    );
+    return result.toString();
   }
   
   @Override
@@ -121,7 +110,6 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     result = prime * result + ((fCLE == null) ? 0 : fCLE.hashCode());
     result = prime * result + ((fTask == null) ? 0 : fTask.hashCode());
     return result;
-    
   }
   
   @Override
@@ -129,10 +117,12 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     if (this == obj)
     	return true;
     if (!(obj instanceof ChecklistEntryTaskCorrespondenceMatch)) { // this should be infrequent
-    	if (obj == null)
+    	if (obj == null) {
     		return false;
-    	if (!(obj instanceof IPatternMatch))
+    	}
+    	if (!(obj instanceof IPatternMatch)) {
     		return false;
+    	}
     	IPatternMatch otherSig  = (IPatternMatch) obj;
     	if (!specification().equals(otherSig.specification()))
     		return false;
@@ -152,9 +142,8 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     	return ChecklistEntryTaskCorrespondenceQuerySpecification.instance();
     } catch (IncQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
-     	throw new IllegalStateException	(ex);
+     	throw new IllegalStateException (ex);
     }
-    
   }
   
   /**
@@ -166,7 +155,6 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
    */
   public static ChecklistEntryTaskCorrespondenceMatch newEmptyMatch() {
     return new Mutable(null, null);
-    
   }
   
   /**
@@ -178,9 +166,8 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
    * @return the new, mutable (partial) match object.
    * 
    */
-  public static ChecklistEntryTaskCorrespondenceMatch newMutableMatch(final ChecklistEntry pCLE, final Task pTask) {
+  public static ChecklistEntryTaskCorrespondenceMatch newMutableMatch(final EObject pCLE, final EObject pTask) {
     return new Mutable(pCLE, pTask);
-    
   }
   
   /**
@@ -192,16 +179,13 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
    * @return the (partial) match object.
    * 
    */
-  public static ChecklistEntryTaskCorrespondenceMatch newMatch(final ChecklistEntry pCLE, final Task pTask) {
+  public static ChecklistEntryTaskCorrespondenceMatch newMatch(final EObject pCLE, final EObject pTask) {
     return new Immutable(pCLE, pTask);
-    
   }
   
-  @SuppressWarnings("all")
   private static final class Mutable extends ChecklistEntryTaskCorrespondenceMatch {
-    Mutable(final ChecklistEntry pCLE, final Task pTask) {
+    Mutable(final EObject pCLE, final EObject pTask) {
       super(pCLE, pTask);
-      
     }
     
     @Override
@@ -210,12 +194,9 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
     }
   }
   
-  
-  @SuppressWarnings("all")
   private static final class Immutable extends ChecklistEntryTaskCorrespondenceMatch {
-    Immutable(final ChecklistEntry pCLE, final Task pTask) {
+    Immutable(final EObject pCLE, final EObject pTask) {
       super(pCLE, pTask);
-      
     }
     
     @Override
@@ -223,5 +204,4 @@ public abstract class ChecklistEntryTaskCorrespondenceMatch extends BasePatternM
       return false;
     }
   }
-  
 }

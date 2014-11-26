@@ -1,7 +1,7 @@
 package operation.queries.util;
 
-import operation.Checklist;
 import operation.queries.ChecklistProcessCorrespondenceMatch;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 
 /**
@@ -18,11 +18,10 @@ public abstract class ChecklistProcessCorrespondenceProcessor implements IMatchP
    * @param pProcess the value of pattern parameter Process in the currently processed match
    * 
    */
-  public abstract void process(final Checklist pChecklist, final process.Process pProcess);
+  public abstract void process(final EObject pChecklist, final EObject pProcess);
   
   @Override
   public void process(final ChecklistProcessCorrespondenceMatch match) {
     process(match.getChecklist(), match.getProcess());
-    
   }
 }

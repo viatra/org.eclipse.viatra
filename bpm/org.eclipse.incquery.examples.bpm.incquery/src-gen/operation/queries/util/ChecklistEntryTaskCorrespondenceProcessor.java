@@ -1,9 +1,8 @@
 package operation.queries.util;
 
-import operation.ChecklistEntry;
 import operation.queries.ChecklistEntryTaskCorrespondenceMatch;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import process.Task;
 
 /**
  * A match processor tailored for the operation.queries.ChecklistEntryTaskCorrespondence pattern.
@@ -19,11 +18,10 @@ public abstract class ChecklistEntryTaskCorrespondenceProcessor implements IMatc
    * @param pTask the value of pattern parameter Task in the currently processed match
    * 
    */
-  public abstract void process(final ChecklistEntry pCLE, final Task pTask);
+  public abstract void process(final EObject pCLE, final EObject pTask);
   
   @Override
   public void process(final ChecklistEntryTaskCorrespondenceMatch match) {
     process(match.getCLE(), match.getTask());
-    
   }
 }

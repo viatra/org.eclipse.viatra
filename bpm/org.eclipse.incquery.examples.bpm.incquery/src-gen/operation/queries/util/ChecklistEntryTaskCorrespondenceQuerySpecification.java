@@ -7,7 +7,7 @@ import java.util.Set;
 import operation.queries.ChecklistEntryTaskCorrespondenceMatch;
 import operation.queries.ChecklistEntryTaskCorrespondenceMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
  * 
  */
 @SuppressWarnings("all")
-public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends BaseGeneratedQuerySpecification<ChecklistEntryTaskCorrespondenceMatcher> {
+public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends BaseGeneratedEMFQuerySpecification<ChecklistEntryTaskCorrespondenceMatcher> {
   /**
    * @return the singleton instance of the query specification
    * @throws IncQueryException if the pattern definition could not be loaded
@@ -33,7 +33,6 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
    */
   public static ChecklistEntryTaskCorrespondenceQuerySpecification instance() throws IncQueryException {
     return LazyHolder.INSTANCE;
-    
   }
   
   @Override
@@ -44,7 +43,6 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
   @Override
   public String getFullyQualifiedName() {
     return "operation.queries.ChecklistEntryTaskCorrespondence";
-    
   }
   
   @Override
@@ -54,7 +52,7 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
   
   @Override
   public List<PParameter> getParameters() {
-    return Arrays.asList(new PParameter("CLE", "operation.ChecklistEntry"),new PParameter("Task", "process.Task"));
+    return Arrays.asList(new PParameter("CLE", "org.eclipse.emf.ecore.EObject"),new PParameter("Task", "org.eclipse.emf.ecore.EObject"));
   }
   
   @Override
@@ -64,44 +62,41 @@ public final class ChecklistEntryTaskCorrespondenceQuerySpecification extends Ba
   
   @Override
   public ChecklistEntryTaskCorrespondenceMatch newMatch(final Object... parameters) {
-    return ChecklistEntryTaskCorrespondenceMatch.newMatch((operation.ChecklistEntry) parameters[0], (process.Task) parameters[1]);
+    return ChecklistEntryTaskCorrespondenceMatch.newMatch((org.eclipse.emf.ecore.EObject) parameters[0], (org.eclipse.emf.ecore.EObject) parameters[1]);
   }
   
   @Override
   public Set<PBody> doGetContainedBodies() throws IncQueryException {
-    Set<PBody> bodies = Sets.newLinkedHashSet();
+    Set<PBody>  bodies = Sets.newLinkedHashSet();
+    
     {
-      PBody body = new PBody(this);
-      PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      PVariable var_Task = body.getOrCreateVariableByName("Task");
-      PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
-      body.setExportedParameters(Arrays.<ExportedParameter>asList(
-        new ExportedParameter(body, var_CLE, "CLE"), 
-        new ExportedParameter(body, var_Task, "Task")
-      ));
-      
-      
-      new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
-      new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
-      new TypeBinary(body, CONTEXT, var_CLE, var_TaskId, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "taskId"), "http://operation/1.0/ChecklistEntry.taskId");
-      bodies.add(body);
+    	PBody body = new PBody(this);
+    	PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+    	PVariable var_Task = body.getOrCreateVariableByName("Task");
+    	PVariable var_TaskId = body.getOrCreateVariableByName("TaskId");
+    	body.setExportedParameters(Arrays.<ExportedParameter>asList(
+    		new ExportedParameter(body, var_CLE, "CLE"),
+    		
+    		new ExportedParameter(body, var_Task, "Task")
+    	));
+    new TypeUnary(body, var_Task, getClassifierLiteral("http://process/1.0", "Task"), "http://process/1.0/Task");
+    new TypeBinary(body, CONTEXT, var_Task, var_TaskId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
+    new TypeBinary(body, CONTEXT, var_CLE, var_TaskId, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "taskId"), "http://operation/1.0/ChecklistEntry.taskId");
+    	bodies.add(body);
     }
     {
-      PAnnotation annotation = new PAnnotation("QueryBasedFeature");
-      annotation.addAttribute("feature","task");
-      addAnnotation(annotation);
+    	PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+    	annotation.addAttribute("feature", "task");
+    	addAnnotation(annotation);
     }
     return bodies;
   }
   
-  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static ChecklistEntryTaskCorrespondenceQuerySpecification INSTANCE = make();
     
     public static ChecklistEntryTaskCorrespondenceQuerySpecification make() {
       return new ChecklistEntryTaskCorrespondenceQuerySpecification();					
-      
     }
   }
-  
 }
