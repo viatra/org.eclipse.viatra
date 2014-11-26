@@ -40,7 +40,7 @@ public class GenModelBasedTypeProvider extends EMFPatternTypeProvider {
     @Override
     protected String getClassNameForEClassifier(EClassifier classifier, EObject context) {
         String className = super.getClassNameForEClassifier(classifier, context);
-        if (!Strings.isNullOrEmpty(className) && classifier != null) {
+        if (Strings.isNullOrEmpty(className) && classifier != null) {
             EPackage ePackage = classifier.getEPackage();
             if (ePackage != null) {
                 GenPackage genPackage = genModelProvider.findGenPackage(context, ePackage);
