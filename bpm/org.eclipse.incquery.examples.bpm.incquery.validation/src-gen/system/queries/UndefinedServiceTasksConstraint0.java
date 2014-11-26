@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.incquery.validation.runtime.Constraint;
 import org.eclipse.incquery.validation.runtime.ValidationUtil;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import system.queries.UndefinedServiceTasksMatch;
@@ -39,7 +39,7 @@ public class UndefinedServiceTasksConstraint0 extends Constraint<UndefinedServic
 	}
 
 	@Override
-	public BaseGeneratedQuerySpecification<UndefinedServiceTasksMatcher> getQuerySpecification() {
+	public BaseGeneratedEMFQuerySpecification<UndefinedServiceTasksMatcher> getQuerySpecification() {
 		return querySpecification;
 	}
 }

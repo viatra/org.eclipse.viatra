@@ -84,7 +84,6 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
     return bodies;
   }
   
-  @SuppressWarnings("all")
   private static class LazyHolder {
     private final static ProcessTasksQuerySpecification INSTANCE = make();
     
@@ -93,5 +92,4 @@ public final class ProcessTasksQuerySpecification extends BaseGeneratedQuerySpec
       
     }
   }
-  
 }
