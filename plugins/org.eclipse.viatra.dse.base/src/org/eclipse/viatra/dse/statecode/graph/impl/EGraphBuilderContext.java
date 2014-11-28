@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -62,9 +63,10 @@ public class EGraphBuilderContext {
         }
     }
 
-    public EGraphBuilderContext(IncQueryEngine engine) {
-        this.root = (EObject) engine.getScope();
-        this.engine = engine;
+    public EGraphBuilderContext(Notifier modelRoot) throws IncQueryException {
+        this.root = (EObject) modelRoot;
+        EMFScope scope = new EMFScope(modelRoot);
+        this.engine = IncQueryEngine.on(scope);
     }
 
     public EVertex getEVertex(EObject obj) {

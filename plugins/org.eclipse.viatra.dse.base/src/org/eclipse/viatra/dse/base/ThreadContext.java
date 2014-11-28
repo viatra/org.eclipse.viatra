@@ -46,7 +46,7 @@ public class ThreadContext {
     private final Strategy strategy;
     private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
-    private AdvancedIncQueryEngine incqueryEngine;
+    private IncQueryEngine incqueryEngine;
     private EditingDomain domain;
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
@@ -100,8 +100,8 @@ public class ThreadContext {
 
         try {
             // initialize IQEngine
-            final EMFScope scope = new EMFScope(modelRoot, new BaseIndexOptions().withDynamicEMFMode(true));
-			incqueryEngine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
+            final EMFScope scope = new EMFScope(modelRoot);
+			incqueryEngine = IncQueryEngine.on(scope);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to create unmanaged IncQueryEngine on the model.", e);
         }
@@ -169,7 +169,7 @@ public class ThreadContext {
         return modelRoot;
     }
 
-    public AdvancedIncQueryEngine getIncqueryEngine() {
+    public IncQueryEngine getIncqueryEngine() {
         return incqueryEngine;
     }
 

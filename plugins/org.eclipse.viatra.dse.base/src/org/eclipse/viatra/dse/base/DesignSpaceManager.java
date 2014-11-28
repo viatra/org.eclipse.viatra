@@ -90,7 +90,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         this.serializerFactory = factory;
 
         // init serializer
-        stateSerializer = factory.createStateSerializer(engine);
+        stateSerializer = factory.createStateSerializer(modelRoot);
 
         Object initialStateId = stateSerializer.serializeContainmentTree();
         isNewState = designSpace.addState(null, initialStateId, generateTransitions());

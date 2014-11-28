@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.statecode;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 
 /**
@@ -28,13 +29,13 @@ public interface IStateSerializerFactory {
      * given {@link IncQueryEngine} and the underlying EMF model instance.
      * 
      * 
-     * @param engine
-     *            The {@link IncQueryEngine} initialized on the working EMF model instance root.
+     * @param modelRoot
+     *            The root of the model (given to the DSE engine). Can be an EObject, Resource or ResourceSet.
      * @return the new {@link IStateSerializer} instance specific to this working model.
      * @throws UnsupportedMetaModel
      *             in case of an unsupported EMF model.
      */
-    IStateSerializer createStateSerializer(IncQueryEngine engine) throws UnsupportedMetaModel;
+    IStateSerializer createStateSerializer(Notifier modelRoot) throws UnsupportedMetaModel;
 
     /**
      * {@link IStateSerializer}s and thus {@link IStateSerializerFactory}s can be meta model specific, resulting in an

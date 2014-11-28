@@ -211,7 +211,7 @@ public class ExplorerThread implements IExplorerThread {
     @Override
     public void dispose() {
         threadContext.getRuleEngine().dispose();
-        threadContext.getIncqueryEngine().dispose();
+//        threadContext.getIncqueryEngine().dispose();
     }
 
     @Override

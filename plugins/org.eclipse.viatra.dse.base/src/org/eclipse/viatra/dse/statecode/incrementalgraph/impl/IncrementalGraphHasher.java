@@ -86,18 +86,19 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
         }
     }
 
-    public IncrementalGraphHasher(IncQueryEngine engine, Collection<EClass> classes,
+    public IncrementalGraphHasher(Notifier modelRoot, Collection<EClass> classes,
             Collection<EStructuralFeature> features) throws IncQueryException {
         logger.debug("Coder created");
 
+        EMFScope scope = new EMFScope(modelRoot);
         // store the engine
-        iqEngine = engine;
+        iqEngine = IncQueryEngine.on(scope);
 
         // add listeners
         EMFScope.extractUnderlyingEMFIndex(iqEngine).addInstanceListener(classes, this);
 
         // create mapping context
-        context = new EGraphBuilderContext(iqEngine);
+        context = new EGraphBuilderContext(modelRoot);
 
         // create buckets for all objects
         // for (IModelObject modelObject : context.getVertices()) {

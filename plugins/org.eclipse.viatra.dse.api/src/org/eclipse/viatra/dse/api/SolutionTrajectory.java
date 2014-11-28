@@ -17,10 +17,12 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
@@ -55,10 +57,11 @@ public class SolutionTrajectory {
         currentIndex = 0;
     }
 
-    public void setModel(IncQueryEngine engine) throws IncQueryException {
-        this.engine = engine;
-        this.rootEObject = (EObject) engine.getScope();
-        stateSerializer = stateSerializerFactory.createStateSerializer(engine);
+    public void setModel(Notifier modelRoot) throws IncQueryException {
+        EMFScope scope = new EMFScope(modelRoot);
+        this.engine = IncQueryEngine.on(scope);
+        this.rootEObject = (EObject) modelRoot;
+        stateSerializer = stateSerializerFactory.createStateSerializer(modelRoot);
     }
 
     /**

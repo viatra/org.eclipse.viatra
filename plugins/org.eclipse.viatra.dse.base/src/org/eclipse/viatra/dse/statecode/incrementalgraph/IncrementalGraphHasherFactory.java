@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.statecode.incrementalgraph;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EPackage;
@@ -57,10 +58,10 @@ public class IncrementalGraphHasherFactory implements IStateSerializerFactory {
     }
 
     @Override
-    public IStateSerializer createStateSerializer(IncQueryEngine engine) {
+    public IStateSerializer createStateSerializer(Notifier modelRoot) {
         IncrementalGraphHasher gh;
         try {
-            gh = new IncrementalGraphHasher(engine, classes, features);
+            gh = new IncrementalGraphHasher(modelRoot, classes, features);
             return gh;
         } catch (IncQueryException e) {
             e.printStackTrace();

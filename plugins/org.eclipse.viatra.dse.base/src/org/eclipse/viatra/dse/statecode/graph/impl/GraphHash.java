@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 import org.eclipse.viatra.dse.util.Hasher;
 
@@ -33,14 +36,17 @@ public class GraphHash implements IStateSerializer {
 
     private Hasher hasher = Hasher.getHasher("MD5");
 
-    private void encapsulateModel(IncQueryEngine engine) {
-        this.ctx = new EGraphBuilderContext(engine);
+    private Notifier modelRoot;
+
+    private void encapsulateModel(Notifier modelRoot) throws IncQueryException {
+        this.ctx = new EGraphBuilderContext(modelRoot);
         this.vc = new ObjectCoder(ctx.getVertices(), hasher);
     }
 
-    public GraphHash(IncQueryEngine engine) {
+    public GraphHash(Notifier modelRoot, IncQueryEngine engine) throws IncQueryException {
         iqengine = engine;
-        encapsulateModel(engine);
+        this.modelRoot = modelRoot;
+        encapsulateModel(modelRoot);
     }
 
     private void calc() {
@@ -66,7 +72,11 @@ public class GraphHash implements IStateSerializer {
     @Override
     public void resetCache() {
         calculated = false;
-        encapsulateModel(iqengine);
+        try {
+            encapsulateModel(modelRoot);
+        } catch (IncQueryException e) {
+            throw new DSEException(e);
+        }
     }
 
     private boolean calculated = false;
