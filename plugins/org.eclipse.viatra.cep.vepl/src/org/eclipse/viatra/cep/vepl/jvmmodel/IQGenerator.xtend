@@ -31,33 +31,37 @@ import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformati
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException
+import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.xtext.common.types.JvmVisibility
 
-@SuppressWarnings("restriction","discouraged")
+@SuppressWarnings("restriction", "discouraged")
 class IQGenerator {
 
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension Utils
 	@Inject extension NamingProvider
+	private JvmTypeReferenceBuilder typeRefBuilder
 
 	def void generateIncQuery2ViatraCep(List<IQPatternEventPattern> patterns, EventModel model,
-		IJvmDeclaredTypeAcceptor acceptor) {
+		IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
+		this.typeRefBuilder = typeRefBuilder
+
 		if (model.packagedModel.usages.filter[e|(e instanceof PatternUsage)].size == 0) {
 			return
 		}
 
 		val fqn = patterns.head.iq2CepClassFqn
-		acceptor.accept(model.toClass(fqn)).initializeLater [
+		acceptor.accept(model.toClass(fqn)) [
 			documentation = model.documentation
-			members += model.toField("eventStream", model.newTypeRef(EventStream))
-			members += model.toField("resourceSet", model.newTypeRef(ResourceSet))
-			members += model.toField("transformation", model.newTypeRef(EventDrivenTransformation))
+			members += model.toField("eventStream", typeRefBuilder.typeRef(EventStream))
+			members += model.toField("resourceSet", typeRefBuilder.typeRef(ResourceSet))
+			members += model.toField("transformation", typeRefBuilder.typeRef(EventDrivenTransformation))
 			var constructor = model.toConstructor [
-				parameters += toParameter("resourceSet", model.newTypeRef(ResourceSet))
-				parameters += toParameter("eventStream", model.newTypeRef(EventStream))
+				parameters += toParameter("resourceSet", typeRefBuilder.typeRef(ResourceSet))
+				parameters += toParameter("eventStream", typeRefBuilder.typeRef(EventStream))
 				body = [
 					append(
 						'''
@@ -70,9 +74,9 @@ class IQGenerator {
 			constructor.setVisibility(JvmVisibility.PRIVATE)
 			members += constructor
 			val groupedPatterns = groupEventPatternsByIqPatternRef(patterns)
-			var registerMappingMethod = model.toMethod("register", model.newTypeRef(fqn.toString)) [
-				parameters += toParameter("resourceSet", model.newTypeRef(ResourceSet))
-				parameters += toParameter("eventStream", model.newTypeRef(EventStream))
+			var registerMappingMethod = model.toMethod("register", typeRefBuilder.typeRef(fqn.toString)) [
+				parameters += toParameter("resourceSet", typeRefBuilder.typeRef(ResourceSet))
+				parameters += toParameter("eventStream", typeRefBuilder.typeRef(EventStream))
 				body = [
 					append(
 						'''
@@ -84,7 +88,7 @@ class IQGenerator {
 			registerMappingMethod.setStatic(true)
 			members += registerMappingMethod
 			members += model.toMethod("getRules",
-				model.newTypeRef("org.eclipse.viatra2.emf.runtime.rules.EventDrivenTransformationRuleGroup")) [
+				typeRefBuilder.typeRef("org.eclipse.viatra2.emf.runtime.rules.EventDrivenTransformationRuleGroup")) [
 				body = [
 					append(
 						'''
@@ -97,7 +101,7 @@ class IQGenerator {
 					)
 				]
 			]
-			var registerTransformationMethod = model.toMethod("registerRules", model.newTypeRef(void)) [
+			var registerTransformationMethod = model.toMethod("registerRules", typeRefBuilder.typeRef(void)) [
 				body = [
 					append(
 						'''
@@ -115,37 +119,41 @@ class IQGenerator {
 					val match = patternsNamespace + p.name.toFirstUpper + "Match"
 
 					members += model.toMethod(p.mappingMethodName,
-						model.newTypeRef(EventDrivenTransformationRule, model.newTypeRef(match),
-							model.newTypeRef(matcher))) [
+						typeRefBuilder.typeRef(EventDrivenTransformationRule, typeRefBuilder.typeRef(match),
+							typeRefBuilder.typeRef(matcher))) [
 						body = [
 							append('''try{''').increaseIndentation
 							newLine
 							append(
-								'''«referClass(it, p, EventDrivenTransformationBuilder, model.newTypeRef(match),
-									model.newTypeRef(matcher))»''')
+								'''«referClass(it, typeRefBuilder, p, EventDrivenTransformationBuilder,
+									typeRefBuilder.typeRef(match), typeRefBuilder.typeRef(matcher))»''')
 							append(''' builder = new ''')
-							append('''«referClass(it, p, EventDrivenTransformationRuleFactory)»''')
+							append('''«referClass(it, typeRefBuilder, p, EventDrivenTransformationRuleFactory)»''')
 							append('''().createRule();''')
 							newLine
 							append(
 								'''
 								builder.addLifeCycle(EventDrivenTransformationRuleFactory.INTERVAL_SEMANTICS);
-								builder.precondition(''').append('''«it.referClass(matcher, p)»''').append(
-								'''.querySpecification());
-									''')
+								builder.precondition(''').append('''«it.referClass(typeRefBuilder, matcher, p)»''').
+								append(
+									'''.querySpecification());
+										''')
 							for (eventPattern : groupedPatterns.get(p)) {
 								newLine
 								append(
-									'''«referClass(it, eventPattern, IMatchProcessor, model.newTypeRef(match))» «eventPattern.
-										actionName»''').append(''' = new ''').append(
-									'''«referClass(it, eventPattern, IMatchProcessor, model.newTypeRef(match))»() {''').
+									'''«referClass(it, typeRefBuilder, eventPattern, IMatchProcessor,
+										typeRefBuilder.typeRef(match))» «eventPattern.actionName»''').append(''' = new ''').
+									append(
+										'''«referClass(it, typeRefBuilder, eventPattern, IMatchProcessor,
+											typeRefBuilder.typeRef(match))»() {''').increaseIndentation
+								newLine
+								append('''public void process(final ''').append(
+									'''«it.referClass(typeRefBuilder, match, p)»''').append(''' matchedPattern) {''').
 									increaseIndentation
 								newLine
-								append('''public void process(final ''').append('''«it.referClass(match, p)»''').
-									append(''' matchedPattern) {''').increaseIndentation
-								newLine
-								append('''«it.referClass(eventPattern.classFqn, p)»''').append(''' event = new ''').
-									append('''«it.referClass(eventPattern.classFqn, p)»''').append('''(null);''')
+								append('''«it.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append(
+									''' event = new ''').append(
+									'''«it.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append('''(null);''')
 								append('''«getParameterMapping(it, eventPattern)»''')
 								newLine
 								append('''event.setIncQueryPattern(matchedPattern);''')
@@ -157,22 +165,22 @@ class IQGenerator {
 								append('''};''')
 								newLine
 								append('''builder.action(''').append(
-									'''«referClass(it, eventPattern, IncQueryActivationStateEnum)».''').append(
-									'''«eventPattern.getActivationState», «eventPattern.actionName»''').append(
-									''');''')
+									'''«referClass(it, typeRefBuilder, eventPattern, IncQueryActivationStateEnum)».''').
+									append('''«eventPattern.getActivationState», «eventPattern.actionName»''').
+									append(''');''')
 								newLine
 							}
 							newLine
 							append('''return builder.build();''').decreaseIndentation
 							newLine
-							append('''} catch (''').append('''«referClass(it, p, IncQueryException)» e) {''').
-								increaseIndentation
+							append('''} catch (''').append(
+								'''«referClass(it, typeRefBuilder, p, IncQueryException)» e) {''').increaseIndentation
 							newLine
 							append('''e.printStackTrace();''').decreaseIndentation
 							newLine
 							append('''} catch (''').append(
-								'''«referClass(it, p, InconsistentEventSemanticsException)»''').append(''' e) {''').
-								increaseIndentation
+								'''«referClass(it, typeRefBuilder, p, InconsistentEventSemanticsException)»''').append(
+								''' e) {''').increaseIndentation
 							newLine
 							append('''e.printStackTrace();''').decreaseIndentation
 							newLine
@@ -185,7 +193,7 @@ class IQGenerator {
 					]
 				}
 			}
-			var disposeMethod = model.toMethod("dispose", model.newTypeRef("void")) [
+			var disposeMethod = model.toMethod("dispose", typeRefBuilder.typeRef("void")) [
 				body = [
 					append(
 						'''

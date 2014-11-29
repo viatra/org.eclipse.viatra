@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.common.collect.Lists
@@ -28,6 +27,7 @@ import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 
 @SuppressWarnings("discouraged", "restriction")
 class RuleGenerator {
@@ -35,8 +35,12 @@ class RuleGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension Utils
 	@Inject extension NamingProvider
+	private JvmTypeReferenceBuilder typeRefBuilder
 
-	def public generateRulesAndJobs(List<Rule> rules, IJvmDeclaredTypeAcceptor acceptor) {
+	def public generateRulesAndJobs(List<Rule> rules, IJvmDeclaredTypeAcceptor acceptor,
+		JvmTypeReferenceBuilder typeRefBuilder) {
+		this.typeRefBuilder = typeRefBuilder
+
 		var generatedRuleClassNames = Lists.newArrayList
 
 		for (r : rules) {
@@ -53,25 +57,28 @@ class RuleGenerator {
 	}
 
 	def private generateRuleClass(Rule rule, IJvmDeclaredTypeAcceptor acceptor) {
-		acceptor.accept(rule.toClass(rule.fqn)).initializeLater [
+		acceptor.accept(rule.toClass(rule.fqn)) [
 			documentation = rule.documentation
-			superTypes += rule.newTypeRef(ICepRule)
+			superTypes += typeRefBuilder.typeRef(ICepRule)
 			val eventPatterns = rule.eventPatterns
-			members += rule.toField("eventPatterns", rule.newTypeRef(List, it.newTypeRef(EventPattern))) [
-				initializer = [append('''«referClass(rule, Lists)».newArrayList()''')]
+			members += rule.toField("eventPatterns", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern))) [
+				initializer = [append('''«referClass(typeRefBuilder, rule, Lists)».newArrayList()''')]
 			]
-			members += rule.toField("job", rule.newTypeRef(Job, it.newTypeRef(IObservableComplexEventPattern))) [
+			members += rule.toField("job",
+				typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern))) [
 				initializer = [
-					append('''new ''').append('''«it.referClass(rule.jobClassName, rule)»''').append('''(''').append(
-						'''«referClass(rule, CepActivationStates)».ACTIVE)''')]
+					append('''new ''').append('''«it.referClass(typeRefBuilder, rule.jobClassName, rule)»''').
+						append('''(''').append('''«referClass(typeRefBuilder, rule, CepActivationStates)».ACTIVE)''')]
 			]
 			members += rule.toConstructor [
 				body = [
 					append('''«enumerateAssignableEventPatterns(it, rule)»''')
 				]
 			]
-			var patternsGetter = rule.toGetter("eventPatterns", rule.newTypeRef(List, it.newTypeRef(EventPattern)))
-			var jobGetter = rule.toGetter("job", rule.newTypeRef(Job, it.newTypeRef(IObservableComplexEventPattern)))
+			var patternsGetter = rule.toGetter("eventPatterns",
+				typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern)))
+			var jobGetter = rule.toGetter("job",
+				typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern)))
 			patternsGetter.addOverrideAnnotation(rule)
 			jobGetter.addOverrideAnnotation(rule)
 			members += patternsGetter
@@ -81,21 +88,21 @@ class RuleGenerator {
 	}
 
 	def private generateJobClass(Rule appRule, IJvmDeclaredTypeAcceptor acceptor) {
-		acceptor.accept(appRule.toClass(appRule.jobClassName)).initializeLater [
+		acceptor.accept(appRule.toClass(appRule.jobClassName)) [
 			documentation = appRule.documentation
-			superTypes += appRule.newTypeRef(Job, it.newTypeRef(IObservableComplexEventPattern))
+			superTypes += typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern))
 			members += appRule.toConstructor [
-				parameters += appRule.toParameter("activationState", appRule.newTypeRef(ActivationState))
+				parameters += appRule.toParameter("activationState", typeRefBuilder.typeRef(ActivationState))
 				body = [
 					append(
 						'''
 						super(activationState);''')]
 			]
-			var executeMethod = appRule.toMethod("execute", appRule.newTypeRef("void")) [
+			var executeMethod = appRule.toMethod("execute", typeRefBuilder.typeRef("void")) [
 				parameters += appRule.toParameter("activation",
-					appRule.newTypeRef(typeof(Activation),
-						cloneWithProxies(appRule.newTypeRef(IObservableComplexEventPattern)).wildCardExtends))
-				parameters += appRule.toParameter("context", appRule.newTypeRef(Context))
+					typeRefBuilder.typeRef(typeof(Activation),
+						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
+				parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
 				if (appRule.action != null) {
 					body = appRule.action
 				}
@@ -106,12 +113,12 @@ class RuleGenerator {
 				}
 			]
 			executeMethod.addOverrideAnnotation(appRule)
-			var errorMethod = appRule.toMethod("handleError", appRule.newTypeRef("void")) [
+			var errorMethod = appRule.toMethod("handleError", typeRefBuilder.typeRef("void")) [
 				parameters += appRule.toParameter("activation",
-					appRule.newTypeRef(typeof(Activation),
-						cloneWithProxies(appRule.newTypeRef(IObservableComplexEventPattern)).wildCardExtends))
-				parameters += appRule.toParameter("exception", appRule.newTypeRef(Exception))
-				parameters += appRule.toParameter("context", appRule.newTypeRef(Context))
+					typeRefBuilder.typeRef(typeof(Activation),
+						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
+				parameters += appRule.toParameter("exception", typeRefBuilder.typeRef(Exception))
+				parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
 				body = [
 					append(
 						'''
@@ -127,7 +134,7 @@ class RuleGenerator {
 		var actionHandler = (ctx as Rule).actionHandler
 		appendable.append(
 			'''
-			«referClass(appendable, ctx, IActionHandler)» actionHandler = new «actionHandler»();
+			«referClass(appendable, typeRefBuilder, ctx, IActionHandler)» actionHandler = new «actionHandler»();
 			actionHandler.handle(activation);'''
 		)
 	}
@@ -138,9 +145,10 @@ class RuleGenerator {
 		}
 
 		for (ep : rule.eventPatterns) {
-			appendable.append('''eventPatterns.add(new ''').append('''«appendable.referClass(ep.eventPattern.patternFqn, rule)»''').append('''());''')
-			if(!ep.equals(rule.eventPatterns.last)){
-				appendable.append('\n')	
+			appendable.append('''eventPatterns.add(new ''').append(
+				'''«appendable.referClass(typeRefBuilder, ep.eventPattern.patternFqn, rule)»''').append('''());''')
+			if (!ep.equals(rule.eventPatterns.last)) {
+				appendable.append('\n')
 			}
 		}
 	}

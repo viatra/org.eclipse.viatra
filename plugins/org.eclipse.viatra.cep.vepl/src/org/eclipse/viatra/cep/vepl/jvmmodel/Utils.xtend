@@ -24,6 +24,7 @@ import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 class Utils {
@@ -33,10 +34,10 @@ class Utils {
 	@Inject extension TypeReferences references
 
 	def Iterable<? extends JvmMember> toAdvancedSetter(ModelElement element, String name, JvmTypeReference type,
-		int index) {
+		JvmTypeReferenceBuilder typeRefBuilder, int index) {
 		val advancedSetter = TypesFactory.eINSTANCE.createJvmOperation
 		advancedSetter.simpleName = "set" + name.toFirstUpper
-		advancedSetter.returnType = element.newTypeRef("void")
+		advancedSetter.returnType = typeRefBuilder.typeRef("void")
 		advancedSetter.parameters.add(element.toParameter(name, type))
 		advancedSetter.setVisibility(JvmVisibility.PUBLIC)
 		advancedSetter.setBody [
@@ -62,12 +63,12 @@ class Utils {
 		return result;
 	}
 
-	def referClass(ITreeAppendable appendable, QualifiedName fqn, EObject ctx) {
-		referClass(appendable, fqn.toString, ctx)
+	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, QualifiedName fqn, EObject ctx) {
+		referClass(appendable, typeRefBuilder, fqn.toString, ctx)
 	}
 
-	def referClass(ITreeAppendable appendable, String fqn, EObject ctx) {
-		val ref = ctx.newTypeRef(fqn)
+	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, String fqn, EObject ctx) {
+		val ref = typeRefBuilder.typeRef(fqn)
 		if (ref != null) {
 			appendable.serialize(ref, ctx)
 		} else {
@@ -78,8 +79,9 @@ class Utils {
 		}
 	}
 
-	def referClass(ITreeAppendable appendable, EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-		val ref = ctx.newTypeRef(clazz, typeArgs)
+	def referClass(ITreeAppendable appendable, JvmTypeReferenceBuilder typeRefBuilder, EObject ctx, Class<?> clazz,
+		JvmTypeReference... typeArgs) {
+		val ref = typeRefBuilder.typeRef(clazz, typeArgs)
 		if (ref != null) {
 			appendable.serialize(ref, ctx)
 		} else {

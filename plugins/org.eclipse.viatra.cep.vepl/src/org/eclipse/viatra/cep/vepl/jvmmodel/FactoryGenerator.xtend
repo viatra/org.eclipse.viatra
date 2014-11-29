@@ -11,29 +11,29 @@
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.inject.Inject
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.cep.core.metamodels.events.EventSource
-import org.eclipse.xtext.naming.QualifiedName
-import org.eclipse.xtext.common.types.JvmField
 import java.util.List
+import org.eclipse.viatra.cep.core.metamodels.events.EventSource
+import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.xtext.common.types.JvmMember
-import org.eclipse.emf.common.util.EList
+import org.eclipse.xtext.naming.QualifiedName
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
-@SuppressWarnings("discouraged","restriction")
+@SuppressWarnings("discouraged", "restriction")
 class FactoryGenerator {
 
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension NamingProvider
 	@Inject extension Utils
 
-	def public generateFactory(PackagedModel model, IJvmDeclaredTypeAcceptor acceptor) {
-		acceptor.accept(model.toClass(model.factoryFqn)).initializeLater [
-			var instanceField = (model.toField("instance", model.newTypeRef("CepFactory")))
+	def public generateFactory(PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+		JvmTypeReferenceBuilder typeRefBuilder) {
+		acceptor.accept(model.toClass(model.factoryFqn)) [
+			var instanceField = (model.toField("instance", typeRefBuilder.typeRef("CepFactory")))
 			instanceField.setStatic(true)
 			members += instanceField
-			var instanceMethod = model.toMethod("getInstance", model.newTypeRef("CepFactory")) [
+			var instanceMethod = model.toMethod("getInstance", typeRefBuilder.typeRef("CepFactory")) [
 				body = [
 					append(
 						'''
@@ -48,15 +48,17 @@ class FactoryGenerator {
 			for (fqn : FactoryManager.instance.registeredClasses) {
 				if (fqn.event) {
 					var parametricEventMethod = fqn.createFactoryMethod(model, acceptor, members,
-						FactoryMethodParameter.EVENTSOURCE)
-					parametricEventMethod.parameters.add(model.toParameter("eventSource", model.newTypeRef(EventSource)))
+						FactoryMethodParameter.EVENTSOURCE, typeRefBuilder)
+					parametricEventMethod.parameters.add(
+						model.toParameter("eventSource", typeRefBuilder.typeRef(EventSource)))
 					members += parametricEventMethod
 
 					var simpleEventMethod = fqn.createFactoryMethod(model, acceptor, members,
-						FactoryMethodParameter.NULL)
+						FactoryMethodParameter.NULL, typeRefBuilder)
 					members += simpleEventMethod
 				} else {
-					var method = fqn.createFactoryMethod(model, acceptor, members, FactoryMethodParameter.EMPTY)
+					var method = fqn.createFactoryMethod(model, acceptor, members, FactoryMethodParameter.EMPTY,
+						typeRefBuilder)
 					members += method
 				}
 			}
@@ -64,10 +66,10 @@ class FactoryGenerator {
 	}
 
 	def private createFactoryMethod(QualifiedName fqn, PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
-		List<JvmMember> members, FactoryMethodParameter methodParameter) {
-		var method = model.toMethod("create" + fqn.lastSegment, model.newTypeRef(fqn.toString)) [
+		List<JvmMember> members, FactoryMethodParameter methodParameter, JvmTypeReferenceBuilder typeRefBuilder) {
+		var method = model.toMethod("create" + fqn.lastSegment, typeRefBuilder.typeRef(fqn.toString)) [
 			body = [
-				append('''return new ''').append('''«referClass(it, fqn, model)»''').append(
+				append('''return new ''').append('''«referClass(it, typeRefBuilder, fqn, model)»''').append(
 					'''(«methodParameter.literal»);''')
 			]
 		]

@@ -20,20 +20,22 @@ import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 
 class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension Utils
 	@Inject extension NamingProvider
+	
 
-	def public generateAtomicEventClasses(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor) {
+	def public generateAtomicEventClasses(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
 		for (pattern : patterns) {
-			acceptor.accept(pattern.toClass(pattern.classFqn)).initializeLater [
+			acceptor.accept(pattern.toClass(pattern.classFqn))[
 				documentation = pattern.documentation
 				if (pattern instanceof IQPatternEventPattern) {
-					superTypes += pattern.newTypeRef(ParameterizableIncQueryPatternEventInstance)
+					superTypes += typeRefBuilder.typeRef(ParameterizableIncQueryPatternEventInstance)
 				} else if (pattern instanceof AtomicEventPattern) {
-					superTypes += pattern.newTypeRef(ParameterizableEventInstance)
+					superTypes += typeRefBuilder.typeRef(ParameterizableEventInstance)
 				}
 				val paramList = getParamList(pattern)
 				if (paramList != null) {
@@ -42,7 +44,7 @@ class AtomicGenerator {
 					}
 				}
 				members += pattern.toConstructor [
-					parameters += pattern.toParameter("eventSource", pattern.newTypeRef(EventSource))
+					parameters += pattern.toParameter("eventSource", typeRefBuilder.typeRef(EventSource))
 					body = [
 						append(
 							'''
@@ -61,7 +63,7 @@ class AtomicGenerator {
 					var i = 0
 					for (parameter : paramList.parameters) {
 						members += pattern.toGetter(parameter.name, parameter.type)
-						members += pattern.toAdvancedSetter(parameter.name, parameter.type, i)
+						members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
 						i = i + 1
 					}
 				}
@@ -70,24 +72,24 @@ class AtomicGenerator {
 		}
 	}
 
-	def void generateAtomicEventPatterns(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor) {
+	def void generateAtomicEventPatterns(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
 		for (pattern : patterns) {
-			acceptor.accept(pattern.toClass(pattern.patternFqn)).initializeLater [
+			acceptor.accept(pattern.toClass(pattern.patternFqn)) [
 				documentation = pattern.documentation
-				superTypes += pattern.newTypeRef(AtomicEventPatternImpl)
+				superTypes += typeRefBuilder.typeRef(AtomicEventPatternImpl)
 				members += pattern.toConstructor [
 					body = [
 						append(
 							'''
 							super();
-							setType(''').append('''«it.referClass(pattern.classFqn, pattern)»''').append(
+							setType(''').append('''«it.referClass(typeRefBuilder, pattern.classFqn, pattern)»''').append(
 							'''.class.getCanonicalName());''').append(
 							'''
 							
 							setId("«pattern.patternFqn.toString.toLowerCase»");'''
 						)]
 				]
-				members += pattern.toMethod("checkStaticBindings", pattern.newTypeRef("boolean")) [
+				members += pattern.toMethod("checkStaticBindings", typeRefBuilder.typeRef("boolean")) [
 					if (pattern.staticBindings == null) {
 						body = [
 							append('''return true;''')
