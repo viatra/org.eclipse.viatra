@@ -31,6 +31,11 @@ public class Node extends TreeElement {
         this.operator = operator;
     }
 
+    public Node(ComplexEventOperator operator, int multiplicity) {
+        this.operator = operator;
+        setMultiplicity(multiplicity);
+    }
+
     public ComplexEventOperator getOperator() {
         return operator;
     }

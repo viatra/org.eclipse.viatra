@@ -15,22 +15,19 @@ import com.google.common.collect.Maps
 import com.google.inject.Inject
 import java.util.List
 import java.util.Map
-import java.util.Map.Entry
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
+import org.eclipse.viatra.cep.core.api.patterns.ParameterizableSingleAtomComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.Event
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
-import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.AtomicExpressionTree
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.ExpressionTreeBuilder
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Leaf
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Node
 import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
-import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.EventPattern
 import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
 import org.eclipse.viatra.cep.vepl.vepl.NegOperator
 import org.eclipse.viatra.cep.vepl.vepl.OrOperator
@@ -63,20 +60,8 @@ class ComplexGenerator {
 			return
 		}
 
-		val expression = pattern.complexEventExpression;
-
-		// TODO this case should be investigated as well
-		if (expression instanceof Atom) {
-			return
-		}
-
 		val expressionTree = expressionTreeBuilder.buildExpressionTree(pattern.complexEventExpression)
 
-		if (expressionTree instanceof AtomicExpressionTree) {
-			generateAtomicComplexEventPattern();
-		}
-
-		//		var patternGroups = disassembler.decomposeComplexPattern(pattern.complexEventExpression).entries.toList
 		generateComplexEventPattern(pattern, expressionTree.root, pattern.patternFqn, acceptor)
 	}
 
@@ -84,7 +69,7 @@ class ComplexGenerator {
 		return node.parentNode == null
 	}
 
-	def public QualifiedName generateComplexEventPattern(
+	def public Pair<QualifiedName, Integer> generateComplexEventPattern(
 		ComplexEventPattern pattern,
 		Node node,
 		QualifiedName className,
@@ -94,11 +79,16 @@ class ComplexGenerator {
 
 		for (child : node.children) {
 			if (child instanceof Node) {
-				val QualifiedName referredAnonymousPattern = generateComplexEventPattern(pattern, (child as Node),
-					getAnonymousName(pattern, anonManager.nextIndex), acceptor);
-				compositionEvents.add(referredAnonymousPattern)
+				val Pair<QualifiedName, Integer> referredAnonymousPattern = generateComplexEventPattern(pattern,
+					(child as Node), getAnonymousName(pattern, anonManager.nextIndex), acceptor);
+				for (var i = 0; i < referredAnonymousPattern.value; i++) {
+					compositionEvents.add(referredAnonymousPattern.key)
+				}
 			} else {
-				compositionEvents.add(((child as Leaf).expression as Atom).patternCall.eventPattern.patternFqn)
+				val leaf = child as Leaf
+				for (var i = 0; i < leaf.multiplicity; i++) {
+					compositionEvents.add((leaf.expression as Atom).patternCall.eventPattern.patternFqn)
+				}
 			}
 		}
 
@@ -116,14 +106,22 @@ class ComplexGenerator {
 
 		pattern.generateComplexEventPattern(node, currentClassName, compositionEvents, acceptor, patternType)
 
-		return currentClassName
+		return new Pair(currentClassName, node.multiplicity)
+	}
+
+	def singleAtomComplexEvent(Node node) {
+		return node.operator == null
 	}
 
 	def generateComplexEventPattern(ComplexEventPattern pattern, Node node, QualifiedName className,
 		List<QualifiedName> compositionPatterns, IJvmDeclaredTypeAcceptor acceptor,
 		ComplexPatternType complexPatternType) {
 		acceptor.accept(pattern.toClass(className)).initializeLater [
-			superTypes += pattern.newTypeRef(ParameterizableComplexEventPattern)
+			if (!node.singleAtomComplexEvent) {
+				superTypes += pattern.newTypeRef(ParameterizableComplexEventPattern)
+			} else {
+				superTypes += pattern.newTypeRef(ParameterizableSingleAtomComplexEventPattern)
+			}
 			members += pattern.toConstructor [
 				body = [
 					append(
@@ -131,10 +129,12 @@ class ComplexGenerator {
 							super();
 						'''
 					)
-					append('''setOperator(''').append('''«referClass(it, pattern, EventsFactory)».eINSTANCE''').
-						append('''.«node.operator.factoryMethod»''').append(
-							''');
-								''')
+					if (!node.singleAtomComplexEvent) {
+						append('''setOperator(''').append('''«referClass(it, pattern, EventsFactory)».eINSTANCE''').
+							append('''.«node.operator.factoryMethod»''').append(
+								''');
+									''')
+					}
 					it.append(
 						'''
 							
@@ -145,68 +145,6 @@ class ComplexGenerator {
 							append(
 								'''());
 									''')
-					}
-					it.append(
-						'''
-						setId("«className.toLowerCase»");''')
-				]
-			]
-			if (complexPatternType.normal) {
-				members += (pattern as ComplexEventPattern).parameterBindingDispatcher
-				members += (pattern as ComplexEventPattern).simpleBindingMethod
-			}
-		]
-		if (complexPatternType.normal) {
-			FactoryManager.instance.add(className)
-		} else if (complexPatternType.anonymous) {
-			anonManager.add(className.toString)
-			return className
-		}
-	}
-
-	def generateAtomicComplexEventPattern() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-
-	// TODO:implement
-	}
-
-	def public generateComplexEventPattern_old(
-		ComplexEventPattern pattern,
-		QualifiedName className,
-		Entry<ComplexEventOperator, List<EventPattern>> patternGroup,
-		QualifiedName anonymousPatternFqn,
-		IJvmDeclaredTypeAcceptor acceptor,
-		ComplexPatternType complexPatternType
-	) {
-		acceptor.accept(pattern.toClass(className)).initializeLater [
-			superTypes += pattern.newTypeRef(ParameterizableComplexEventPattern)
-			members += pattern.toConstructor [
-				body = [
-					append(
-						'''
-							super();
-						'''
-					)
-					append('''setOperator(''').append('''«referClass(it, pattern, EventsFactory)».eINSTANCE''').
-						append('''.«patternGroup.key.factoryMethod»''').append(
-							''');
-								''')
-					it.append(
-						'''
-							
-							// composition events
-						''')
-					if (anonymousPatternFqn != null) {
-						it.append('''getCompositionEvents().add(new ''').append(
-							'''«referClass(anonymousPatternFqn, pattern)»''').append(
-							'''());
-								''')
-					}
-					for (p : patternGroup.value) {
-						it.append('''getCompositionEvents().add(new ''').append(
-							'''«referClass(p.patternFqn, pattern)»''').append(
-							'''());
-								''')
 					}
 					it.append(
 						'''
@@ -265,7 +203,7 @@ class ComplexGenerator {
 	//	}
 	def Iterable<? extends JvmMember> getParameterBindingDispatcher(ComplexEventPattern pattern) {
 		val method = TypesFactory.eINSTANCE.createJvmOperation
-		method.simpleName = "evaluateParameterBindigs"
+		method.simpleName = "evaluateParameterBindings"
 		method.setVisibility(JvmVisibility.PUBLIC)
 		method.returnType = pattern.newTypeRef("boolean")
 		method.parameters.add(pattern.toParameter("event", pattern.newTypeRef(Event)))
@@ -276,7 +214,7 @@ class ComplexGenerator {
 				'''){
 					''').append(
 				'''
-						return evaluateParameterBindigs((ParameterizableEventInstance) event);
+						return evaluateParameterBindings((ParameterizableEventInstance) event);
 					}
 				''').append(
 				'''
@@ -289,7 +227,7 @@ class ComplexGenerator {
 
 	def Iterable<? extends JvmMember> getSimpleBindingMethod(ComplexEventPattern pattern) {
 		val method = TypesFactory.eINSTANCE.createJvmOperation
-		method.simpleName = "evaluateParameterBindigs"
+		method.simpleName = "evaluateParameterBindings"
 		method.setVisibility(JvmVisibility.PUBLIC)
 		method.returnType = pattern.newTypeRef("boolean")
 		method.parameters.add(pattern.toParameter("event", pattern.newTypeRef(ParameterizableEventInstance)))

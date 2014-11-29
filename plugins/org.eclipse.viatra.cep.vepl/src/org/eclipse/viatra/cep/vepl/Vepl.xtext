@@ -124,7 +124,7 @@ ChainedExpression:
 ;
 
 Primary returns ComplexEventExpression:
-	Atom (multiplicity=Multiplicity)? /*(timewindow=Timewindow)?*/ | '('ComplexEventExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
+	Atom (multiplicity=Multiplicity)? (timewindow=Timewindow)? | '('ComplexEventExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
 ;
 
 Atom:

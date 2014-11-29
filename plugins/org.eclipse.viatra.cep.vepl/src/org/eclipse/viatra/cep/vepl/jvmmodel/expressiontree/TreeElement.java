@@ -19,6 +19,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
  */
 abstract public class TreeElement {
     private Node parentNode;
+    private int multiplicity = 1;
 
     public Node getParentNode() {
         return parentNode;
@@ -26,5 +27,13 @@ abstract public class TreeElement {
 
     public void setParentNode(Node parentNode) {
         this.parentNode = parentNode;
+    }
+
+    public int getMultiplicity() {
+        return multiplicity;
+    }
+
+    public void setMultiplicity(int multiplicity) {
+        this.multiplicity = multiplicity;
     }
 }

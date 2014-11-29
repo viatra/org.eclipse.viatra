@@ -22,6 +22,7 @@ import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
+import org.eclipse.viatra.cep.vepl.vepl.Atom
 
 class VeplValidator extends AbstractVeplValidator {
 
@@ -29,6 +30,8 @@ class VeplValidator extends AbstractVeplValidator {
 	private static val INVALID_ARGUMENTS = 'invalidArguments'
 	private static val INVALID_ACTION_IN_RULE = "invalidRuleActions"
 	private static val MISSING_IQPATTERN_USAGE = "missingIqPatternUsage"
+	private static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
+	private static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -109,6 +112,35 @@ class VeplValidator extends AbstractVeplValidator {
 				VeplPackage.Literals.IQ_PATTERN_EVENT_PATTERN__IQ_PATTERN_REF,
 				MISSING_IQPATTERN_USAGE
 			)
+		}
+	}
+
+	@Check
+	def expressionAtomWithTimewindowMustFeatureMultiplicity(Atom atom) {
+		val multiplicity = atom.multiplicity
+		val timewindow = atom.timewindow
+
+		if (timewindow != null && multiplicity == null) {
+			error(
+				"Timewindows on expression atoms are allowed only if multiplicity is also specified.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
+				ATOM_TIMEWINDOW_NO_MULTIPLICITY
+			)
+		}
+	}
+
+	@Check
+	def complexEventPatternWithPlainAtomExpression(ComplexEventPattern eventPattern) {
+		val expression = eventPattern.complexEventExpression
+
+		if (expression.right.empty && (expression.left instanceof Atom)) {
+			val atom = expression.left as Atom
+
+			if (atom.multiplicity == null) {
+				warning("Using a single plain atomic event pattern in the complex event pattern is a bad design.",
+					VeplPackage.Literals.COMPLEX_EVENT_PATTERN__COMPLEX_EVENT_EXPRESSION,
+					SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION)
+			}
 		}
 	}
 }

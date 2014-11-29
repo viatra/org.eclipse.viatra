@@ -11,15 +11,17 @@
 
 package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator;
+import org.eclipse.viatra.cep.vepl.vepl.OrOperator;
 import org.eclipse.viatra.cep.vepl.vepl.UntilOperator;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Algorithm for building the {@link ExpressionTree} from the parsed Xtext model.
@@ -38,53 +40,50 @@ public class ExpressionTreeBuilder {
     }
 
     public ExpressionTree buildExpressionTree(ComplexEventExpression expression) {
-        ExpressionTree tree = buildTree(expression);
+        ExpressionTree tree = buildTree(expression, 1);
         while (!done(tree)) {
             decomposeComplexLeaves(tree);
         }
         return tree;
     }
 
-    private ExpressionTree buildTree(ComplexEventExpression expression) {
+    private int getMultiplicity(ComplexEventExpression expression) {
+        if (expression.getMultiplicity() == null) {
+            return 1;
+        }
+        return expression.getMultiplicity().getValue();
+    }
+
+    private ExpressionTree buildTree(ComplexEventExpression expression, int multiplicity) {
         if (expression instanceof Atom) {
-            return new AtomicExpressionTree((Atom) expression);
+            return new AtomicExpressionTree((Atom) expression, getMultiplicity(expression));
         }
 
         if (expressionInParenthesis(expression)) {
-            return buildTree(expression.getLeft()); // FIXME multiplicity and timewindows should be handled
+            return buildTree(expression.getLeft(), getMultiplicity(expression)); // FIXME timewindows should be handled
         }
 
         ExpressionTree tree = new ExpressionTree();
 
         ComplexEventOperator lastOperator = expression.getRight() != null ? expression.getRight().get(0).getOperator()
                 : null;
-        List<ComplexEventExpression> currentExpressionGroup = Lists.newArrayList();
+        Map<ComplexEventExpression, Integer> currentExpressionGroup = Maps.newLinkedHashMap();
 
         ComplexEventExpression head = expression.getLeft();
-        int headMultiplicity = (head.getMultiplicity() != null) ? head.getMultiplicity().getValue() : 1;
-
-        for (int i = 0; i < headMultiplicity; i++) {
-            currentExpressionGroup.add(head);
-        }
+        currentExpressionGroup.put(head, getMultiplicity(head));
 
         for (ChainedExpression che : expression.getRight()) {
             if (!sameOperators(che.getOperator(), lastOperator) || untilIntroducedCurrying(currentExpressionGroup, che)) {
-                packageCurrentPatternGroup(lastOperator, currentExpressionGroup, tree);
+                packagePatternGroup(lastOperator, 1, currentExpressionGroup, tree);
                 currentExpressionGroup.clear();
                 lastOperator = che.getOperator();
             }
 
             ComplexEventExpression tail = che.getExpression();
-            int tailMultiplicity = 1;
-            if (tail.getMultiplicity() != null) {
-                tailMultiplicity = tail.getMultiplicity().getValue();
-            }
-            for (int i = 0; i < tailMultiplicity; i++) {
-                currentExpressionGroup.add(tail);
-            }
+            currentExpressionGroup.put(tail, getMultiplicity(tail));
         }
 
-        packageCurrentPatternGroup(lastOperator, currentExpressionGroup, tree);
+        packagePatternGroup(lastOperator, multiplicity, currentExpressionGroup, tree);
 
         return tree;
     }
@@ -94,13 +93,14 @@ public class ExpressionTreeBuilder {
     }
 
     // UNTIL is binary, thus needs to be curried one by one
-    private boolean untilIntroducedCurrying(List<ComplexEventExpression> currentExpressionGroup, ChainedExpression che) {
+    private boolean untilIntroducedCurrying(Map<ComplexEventExpression, Integer> currentExpressionGroup,
+            ChainedExpression che) {
         return (currentExpressionGroup.size() > 1) && (che.getOperator() instanceof UntilOperator);
     }
 
-    private void packageCurrentPatternGroup(ComplexEventOperator lastOperator,
-            List<ComplexEventExpression> currentExpressionGroup, ExpressionTree tree) {
-        Node node = new Node(lastOperator);
+    private void packagePatternGroup(ComplexEventOperator operator, int multiplicity,
+            Map<ComplexEventExpression, Integer> expressionGroup, ExpressionTree tree) {
+        Node node = new Node(operator, multiplicity);
         if (tree.getRoot() == null) {
             tree.setRoot(node);
         } else {
@@ -108,13 +108,27 @@ public class ExpressionTreeBuilder {
             tree.setRoot(node);
         }
 
-        for (ComplexEventExpression complexEventExpression : currentExpressionGroup) {
-            Leaf leaf = new Leaf(complexEventExpression);
+        Map<ComplexEventExpression, Integer> reducedGroup = reduceExpressionGroup(operator, expressionGroup);
+
+        for (Entry<ComplexEventExpression, Integer> entry : reducedGroup.entrySet()) {
+            Leaf leaf = new Leaf(entry.getKey(), entry.getValue());
             node.addChild(leaf);
-            if (!(complexEventExpression instanceof Atom)) {
+            if (!(entry.getKey() instanceof Atom)) {
                 tree.getComplexLeaves().add(leaf);
             }
         }
+    }
+
+    private Map<ComplexEventExpression, Integer> reduceExpressionGroup(ComplexEventOperator operator,
+            Map<ComplexEventExpression, Integer> expressionGroup) {
+        Map<ComplexEventExpression, Integer> reducedGroup = Maps.newLinkedHashMap();
+
+        for (Entry<ComplexEventExpression, Integer> entry : expressionGroup.entrySet()) {
+            int multiplicity = (operator instanceof OrOperator) ? 1 : entry.getValue();
+            reducedGroup.put(entry.getKey(), multiplicity);
+        }
+
+        return reducedGroup;
     }
 
     private void decomposeComplexLeaves(ExpressionTree parentTree) {
@@ -124,7 +138,7 @@ public class ExpressionTreeBuilder {
             int leafPosition = parentNode.getChildren().indexOf(leaf);
 
             // decompose
-            ExpressionTree subTree = buildTree(leaf.getExpression());
+            ExpressionTree subTree = buildTree(leaf.getExpression(), leaf.getMultiplicity());
 
             // replace
             parentNode.getChildren().set(leafPosition, subTree.getRoot());

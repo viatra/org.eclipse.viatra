@@ -7,11 +7,11 @@ import org.eclipse.viatra.cep.vepl.vepl.Atom;
 
 public class AtomicExpressionTree extends ExpressionTree {
 
-    public AtomicExpressionTree(Atom atom) {
+    public AtomicExpressionTree(Atom atom, int multiplicity) {
         super();
 
         Node root = new Node(null);
-        Leaf leaf = new Leaf(atom);
+        Leaf leaf = new Leaf(atom, multiplicity);
         root.addChild(leaf);
         super.setRoot(root);
     }

@@ -25,7 +25,12 @@ public class Leaf extends TreeElement {
     public Leaf(ComplexEventExpression expression) {
         this.expression = expression;
     }
-
+    
+    public Leaf(ComplexEventExpression expression, int multiplicity) {
+        this.expression = expression;
+        setMultiplicity(multiplicity);
+    }
+    
     public ComplexEventExpression getExpression() {
         return expression;
     }
