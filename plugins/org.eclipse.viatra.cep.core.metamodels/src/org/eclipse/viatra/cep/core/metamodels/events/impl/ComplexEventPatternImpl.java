@@ -194,7 +194,7 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean evaluateParameterBindigs(Event event) {
+    public boolean evaluateParameterBindings(Event event) {
         // TODO: implement this method
         // Ensure that you remove @generated or mark it @generated NOT
         throw new UnsupportedOperationException();
@@ -306,8 +306,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
         switch (operationID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT:
-                return evaluateParameterBindigs((Event)arguments.get(0));
+            case EventsPackage.COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT:
+                return evaluateParameterBindings((Event)arguments.get(0));
         }
         return super.eInvoke(operationID, arguments);
     }

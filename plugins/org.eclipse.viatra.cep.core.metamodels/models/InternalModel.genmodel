@@ -75,8 +75,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/compositionEvents"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/operator"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timeWindow"/>
-      <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/evaluateParameterBindigs">
-        <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindigs/event"/>
+      <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings">
+        <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings/event"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//Event">

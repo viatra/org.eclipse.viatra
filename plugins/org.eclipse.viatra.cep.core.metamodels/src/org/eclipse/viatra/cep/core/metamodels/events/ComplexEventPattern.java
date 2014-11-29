@@ -97,6 +97,6 @@ public interface ComplexEventPattern extends EventPattern {
      * @model required="true" eventRequired="true"
      * @generated
      */
-    boolean evaluateParameterBindigs(Event event);
+    boolean evaluateParameterBindings(Event event);
 
 } // ComplexEventPattern

@@ -267,7 +267,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EOperation getComplexEventPattern__EvaluateParameterBindigs__Event() {
+    public EOperation getComplexEventPattern__EvaluateParameterBindings__Event() {
         return complexEventPatternEClass.getEOperations().get(0);
     }
 
@@ -436,7 +436,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS);
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__OPERATOR);
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__TIME_WINDOW);
-        createEOperation(complexEventPatternEClass, COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT);
+        createEOperation(complexEventPatternEClass, COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT);
 
         eventEClass = createEClass(EVENT);
         createEAttribute(eventEClass, EVENT__TYPE);
@@ -514,7 +514,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         initEReference(getComplexEventPattern_Operator(), this.getComplexEventOperator(), null, "operator", null, 1, 1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getComplexEventPattern_TimeWindow(), this.getTimeWindow(), null, "timeWindow", null, 0, 1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        EOperation op = initEOperation(getComplexEventPattern__EvaluateParameterBindigs__Event(), ecorePackage.getEBoolean(), "evaluateParameterBindigs", 1, 1, IS_UNIQUE, IS_ORDERED);
+        EOperation op = initEOperation(getComplexEventPattern__EvaluateParameterBindings__Event(), ecorePackage.getEBoolean(), "evaluateParameterBindings", 1, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, this.getEvent(), "event", 1, 1, IS_UNIQUE, IS_ORDERED);
 
         initEClass(eventEClass, Event.class, "Event", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

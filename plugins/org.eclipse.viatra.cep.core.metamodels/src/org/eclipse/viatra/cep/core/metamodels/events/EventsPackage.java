@@ -223,13 +223,13 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_PATTERN_FEATURE_COUNT = EVENT_PATTERN_FEATURE_COUNT + 3;
 
     /**
-     * The operation id for the '<em>Evaluate Parameter Bindigs</em>' operation.
+     * The operation id for the '<em>Evaluate Parameter Bindings</em>' operation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT = EVENT_PATTERN_OPERATION_COUNT + 0;
+    int COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT = EVENT_PATTERN_OPERATION_COUNT + 0;
 
     /**
      * The number of operations of the '<em>Complex Event Pattern</em>' class.
@@ -635,14 +635,14 @@ public interface EventsPackage extends EPackage {
     EReference getComplexEventPattern_TimeWindow();
 
     /**
-     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindigs(org.eclipse.viatra.cep.core.metamodels.events.Event) <em>Evaluate Parameter Bindigs</em>}' operation.
+     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindings(org.eclipse.viatra.cep.core.metamodels.events.Event) <em>Evaluate Parameter Bindings</em>}' operation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the '<em>Evaluate Parameter Bindigs</em>' operation.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindigs(org.eclipse.viatra.cep.core.metamodels.events.Event)
+     * @return the meta object for the '<em>Evaluate Parameter Bindings</em>' operation.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindings(org.eclipse.viatra.cep.core.metamodels.events.Event)
      * @generated
      */
-    EOperation getComplexEventPattern__EvaluateParameterBindigs__Event();
+    EOperation getComplexEventPattern__EvaluateParameterBindings__Event();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Event <em>Event</em>}'.
@@ -890,12 +890,12 @@ public interface EventsPackage extends EPackage {
         EReference COMPLEX_EVENT_PATTERN__TIME_WINDOW = eINSTANCE.getComplexEventPattern_TimeWindow();
 
         /**
-         * The meta object literal for the '<em><b>Evaluate Parameter Bindigs</b></em>' operation.
+         * The meta object literal for the '<em><b>Evaluate Parameter Bindings</b></em>' operation.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EOperation COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDIGS__EVENT = eINSTANCE.getComplexEventPattern__EvaluateParameterBindigs__Event();
+        EOperation COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT = eINSTANCE.getComplexEventPattern__EvaluateParameterBindings__Event();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl <em>Event</em>}' class.
