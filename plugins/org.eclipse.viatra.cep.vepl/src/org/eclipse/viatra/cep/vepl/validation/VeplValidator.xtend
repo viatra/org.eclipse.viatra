@@ -62,7 +62,7 @@ class VeplValidator extends AbstractVeplValidator {
 		if (parameterList.parameters.empty && patternParameterNumber != 0) {
 			error("Pattern call parameters must be specified!",
 				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST, INVALID_ARGUMENTS)
-		}		
+		}
 		if (parameterList.parameters.size != patternParameterNumber) {
 			error("The exact number of parameters in the referred pattern must be specified!",
 				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST, INVALID_ARGUMENTS)

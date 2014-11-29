@@ -78,7 +78,6 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 
 		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_8)
 		c.lineBreakAndDecrementIndentation(grammar.IQPatternEventPatternAccess.rightCurlyBracketKeyword_12)
-		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_8)
 		c.lineBreakAndDecrementIndentation(grammar.ruleAccess.rightCurlyBracketKeyword_9)
 		c.lineBreakAndDecrementIndentation(grammar.sourceAccess.rightCurlyBracketKeyword_4)
 
@@ -94,9 +93,7 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqChangeTypeAssignment_11)
 
 		//handle line breaks in COMPLEX bodies
-		c.setLinewrap().after(grammar.complexEventPatternAccess.priorityAssignment_6_2)
-		c.setLinewrap().after(grammar.complexEventExpressionAccess.augmentedExpressionParserRuleCall_1)
-		c.setLinewrap().after(grammar.complexEventExpressionAccess.plainExpressionParserRuleCall_0)
+		c.setLinewrap().after(grammar.complexEventExpressionAccess.primaryParserRuleCall_0)
 
 		//handle line breaks in RULE bodies
 		c.setLinewrap().before(grammar.ruleAccess.actionKeyword_8_0)

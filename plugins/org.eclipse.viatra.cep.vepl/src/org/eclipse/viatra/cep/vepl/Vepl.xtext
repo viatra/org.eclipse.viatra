@@ -70,7 +70,6 @@ IQPatternEventPattern:
 
 ComplexEventPattern:
 	'ComplexEvent' name=ID '('parameters=TypedParameterList?')' '{'
-		('priority'':' priority=INT)?
 		('definition'':'complexEventExpression=ComplexEventExpression)?
 	'}'
 ;
@@ -115,17 +114,35 @@ ParametrizedIncQueryPatternReference:
 /*******************************************INCQUERY INTEGRATION*******************************************/
 
 /*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+
+ComplexEventExpression:
+	Primary ({ComplexEventExpression.left=current} (right+=ChainedExpression)*)
+;
+
+ChainedExpression:
+	operator=ComplexEventOperator expression=Primary
+;
+
+Primary returns ComplexEventExpression:
+	Atom (multiplicity=Multiplicity)? /*(timewindow=Timewindow)?*/ | '('ComplexEventExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
+;
+
+Atom:
+	patternCall=ParameterizedPatternCall
+;
+
+
+
 Multiplicity:
-	'{'multiplicity=INT'}'
+	'{'value=INT'}'
 ;
 
 Timewindow:
 	'['length=INT']'
 ;
 
-PatternCallParameter:
-	{PatternCallParameter}
-	name=ID
+ParameterizedPatternCall:
+	eventPattern=[EventPattern]('('parameterList=PatternCallParameterList?')')?
 ;
 
 PatternCallParameterList:
@@ -133,33 +150,18 @@ PatternCallParameterList:
 	parameters+=PatternCallParameter (',' parameters+=PatternCallParameter)*
 ;
 
-ParameterizedPatternCall:
-	eventPattern=[EventPattern]('('parameterList=PatternCallParameterList?')')?
+PatternCallParameter:
+	{PatternCallParameter}
+	name=ID
 ;
 
-ComplexExpressionAtom:
-	patternCall=ParameterizedPatternCall (multiplicity=Multiplicity)?
-;
-
-TailExpressionAtom:
-	operator=ComplexEventOperator expressionAtom=ComplexExpressionAtom
-;
-
-
-ComplexEventExpression:
-	PlainExpression | AugmentedExpression
-;
-
-PlainExpression:
-	{PlainExpression}
-	headExpressionAtom=ComplexExpressionAtom (tailExpressionAtoms+=TailExpressionAtom)+
-;
-
-AugmentedExpression:
-	'('expression=PlainExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
+NegExpression:
+	{NegExpression}
+	operator=NegOperator '('eventPattern=EventPattern')'
 ;
 
 /*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
+
 
 
 /*******************************************OPERATORS*******************************************/
@@ -168,7 +170,7 @@ ComplexEventOperator:
 ;
 
 FollowsOperator:
-	{ComplexOperator}
+	{FollowsOperator}
 	'->'
 ;
 
@@ -187,15 +189,11 @@ UntilOperator:
 	'U'
 ;
 
-NegExpression:
-	{NegExpression}
-	operator=NegOperator eventPattern=EventPattern
-;
-
 NegOperator:
 	{NegOperator}
 	'NEG'
 ;
+
 /*******************************************OPERATORS*******************************************/
 
 
