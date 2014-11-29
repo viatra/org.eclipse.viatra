@@ -11,9 +11,10 @@
 
 package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 
+import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
+import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
 import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
@@ -21,7 +22,7 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator;
 import org.eclipse.viatra.cep.vepl.vepl.OrOperator;
 import org.eclipse.viatra.cep.vepl.vepl.UntilOperator;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
 /**
  * Algorithm for building the {@link ExpressionTree} from the parsed Xtext model.
@@ -40,11 +41,20 @@ public class ExpressionTreeBuilder {
     }
 
     public ExpressionTree buildExpressionTree(ComplexEventExpression expression) {
-        ExpressionTree tree = buildTree(expression, 1);
+        ExpressionTree tree = buildTree(expression, getMultiplicity(expression), getTimeWindow(expression));
         while (!done(tree)) {
             decomposeComplexLeaves(tree);
         }
         return tree;
+    }
+
+    private TimeWindow getTimeWindow(ComplexEventExpression expression) {
+        if (expression.getTimewindow() != null) {
+            TimeWindow timeWindow = EventsFactory.eINSTANCE.createTimeWindow();
+            timeWindow.setTime(expression.getTimewindow().getLength());
+            return timeWindow;
+        }
+        return null;
     }
 
     private int getMultiplicity(ComplexEventExpression expression) {
@@ -54,36 +64,37 @@ public class ExpressionTreeBuilder {
         return expression.getMultiplicity().getValue();
     }
 
-    private ExpressionTree buildTree(ComplexEventExpression expression, int multiplicity) {
+    private ExpressionTree buildTree(ComplexEventExpression expression, int multiplicity, TimeWindow timeWindow) {
         if (expression instanceof Atom) {
-            return new AtomicExpressionTree((Atom) expression, getMultiplicity(expression));
+            return new AtomicExpressionTree((Atom) expression, getMultiplicity(expression), getTimeWindow(expression));
         }
 
         if (expressionInParenthesis(expression)) {
-            return buildTree(expression.getLeft(), getMultiplicity(expression)); // FIXME timewindows should be handled
+            return buildTree(expression.getLeft(), getMultiplicity(expression.getLeft()),
+                    getTimeWindow(expression.getLeft()));
         }
 
         ExpressionTree tree = new ExpressionTree();
 
         ComplexEventOperator lastOperator = expression.getRight() != null ? expression.getRight().get(0).getOperator()
                 : null;
-        Map<ComplexEventExpression, Integer> currentExpressionGroup = Maps.newLinkedHashMap();
+        List<ExpressionGroupElement> currentExpressionGroup = Lists.newArrayList();
 
         ComplexEventExpression head = expression.getLeft();
-        currentExpressionGroup.put(head, getMultiplicity(head));
+        currentExpressionGroup.add(new ExpressionGroupElement(head, getMultiplicity(head), getTimeWindow(head)));
 
         for (ChainedExpression che : expression.getRight()) {
             if (!sameOperators(che.getOperator(), lastOperator) || untilIntroducedCurrying(currentExpressionGroup, che)) {
-                packagePatternGroup(lastOperator, 1, currentExpressionGroup, tree);
+                packagePatternGroup(lastOperator, 1, timeWindow, currentExpressionGroup, tree);
                 currentExpressionGroup.clear();
                 lastOperator = che.getOperator();
             }
 
             ComplexEventExpression tail = che.getExpression();
-            currentExpressionGroup.put(tail, getMultiplicity(tail));
+            currentExpressionGroup.add(new ExpressionGroupElement(tail, getMultiplicity(tail), getTimeWindow(tail)));
         }
 
-        packagePatternGroup(lastOperator, multiplicity, currentExpressionGroup, tree);
+        packagePatternGroup(lastOperator, multiplicity, timeWindow, currentExpressionGroup, tree);
 
         return tree;
     }
@@ -93,14 +104,13 @@ public class ExpressionTreeBuilder {
     }
 
     // UNTIL is binary, thus needs to be curried one by one
-    private boolean untilIntroducedCurrying(Map<ComplexEventExpression, Integer> currentExpressionGroup,
-            ChainedExpression che) {
+    private boolean untilIntroducedCurrying(List<ExpressionGroupElement> currentExpressionGroup, ChainedExpression che) {
         return (currentExpressionGroup.size() > 1) && (che.getOperator() instanceof UntilOperator);
     }
 
-    private void packagePatternGroup(ComplexEventOperator operator, int multiplicity,
-            Map<ComplexEventExpression, Integer> expressionGroup, ExpressionTree tree) {
-        Node node = new Node(operator, multiplicity);
+    private void packagePatternGroup(ComplexEventOperator operator, int multiplicity, TimeWindow timewindow,
+            List<ExpressionGroupElement> expressionGroup, ExpressionTree tree) {
+        Node node = new Node(operator, multiplicity, timewindow);
         if (tree.getRoot() == null) {
             tree.setRoot(node);
         } else {
@@ -108,24 +118,26 @@ public class ExpressionTreeBuilder {
             tree.setRoot(node);
         }
 
-        Map<ComplexEventExpression, Integer> reducedGroup = reduceExpressionGroup(operator, expressionGroup);
+        List<ExpressionGroupElement> reducedGroup = reduceExpressionGroup(operator, expressionGroup);
 
-        for (Entry<ComplexEventExpression, Integer> entry : reducedGroup.entrySet()) {
-            Leaf leaf = new Leaf(entry.getKey(), entry.getValue());
+        for (ExpressionGroupElement groupElement : reducedGroup) {
+            Leaf leaf = new Leaf(groupElement.getComplexEventExpression(), groupElement.getMultiplicity(),
+                    groupElement.getTimeWindow());
             node.addChild(leaf);
-            if (!(entry.getKey() instanceof Atom)) {
+            if (!(groupElement.getComplexEventExpression() instanceof Atom)) {
                 tree.getComplexLeaves().add(leaf);
             }
         }
     }
 
-    private Map<ComplexEventExpression, Integer> reduceExpressionGroup(ComplexEventOperator operator,
-            Map<ComplexEventExpression, Integer> expressionGroup) {
-        Map<ComplexEventExpression, Integer> reducedGroup = Maps.newLinkedHashMap();
+    private List<ExpressionGroupElement> reduceExpressionGroup(ComplexEventOperator operator,
+            List<ExpressionGroupElement> expressionGroup) {
+        List<ExpressionGroupElement> reducedGroup = Lists.newArrayList();
 
-        for (Entry<ComplexEventExpression, Integer> entry : expressionGroup.entrySet()) {
-            int multiplicity = (operator instanceof OrOperator) ? 1 : entry.getValue();
-            reducedGroup.put(entry.getKey(), multiplicity);
+        for (ExpressionGroupElement groupElement : expressionGroup) {
+            int multiplicity = (operator instanceof OrOperator) ? 1 : groupElement.getMultiplicity();
+            groupElement.setMultiplicity(multiplicity);
+            reducedGroup.add(groupElement);
         }
 
         return reducedGroup;
@@ -138,7 +150,7 @@ public class ExpressionTreeBuilder {
             int leafPosition = parentNode.getChildren().indexOf(leaf);
 
             // decompose
-            ExpressionTree subTree = buildTree(leaf.getExpression(), leaf.getMultiplicity());
+            ExpressionTree subTree = buildTree(leaf.getExpression(), leaf.getMultiplicity(), leaf.getTimeWindow());
 
             // replace
             parentNode.getChildren().set(leafPosition, subTree.getRoot());

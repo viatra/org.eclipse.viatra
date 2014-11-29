@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
+import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+
 /**
  * Abstract class for elements in the {@link ExpressionTree}.
  * 
@@ -20,6 +22,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 abstract public class TreeElement {
     private Node parentNode;
     private int multiplicity = 1;
+    private TimeWindow timeWindow;
 
     public Node getParentNode() {
         return parentNode;
@@ -35,5 +38,13 @@ abstract public class TreeElement {
 
     public void setMultiplicity(int multiplicity) {
         this.multiplicity = multiplicity;
+    }
+
+    public TimeWindow getTimeWindow() {
+        return timeWindow;
+    }
+
+    public void setTimeWindow(TimeWindow timeWindow) {
+        this.timeWindow = timeWindow;
     }
 }

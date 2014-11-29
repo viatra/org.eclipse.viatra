@@ -21,6 +21,7 @@ import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPatte
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableSingleAtomComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.Event
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
+import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.ExpressionTreeBuilder
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Leaf
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Node
@@ -145,6 +146,20 @@ class ComplexGenerator {
 							append(
 								'''());
 									''')
+					}
+					if (node.timeWindow != null) {
+						it.append(
+							'''
+						
+						''').append('''«referClass(it, pattern, TimeWindow)»''').append(''' timeWindow = ''').append(
+							'''«referClass(it, pattern, EventsFactory)».eINSTANCE''').append(
+							'''.createTimeWindow();
+								''').append(
+							'''
+								timeWindow.setTime(«node.timeWindow.time»);
+								setTimeWindow(timeWindow);
+									
+							''')
 					}
 					it.append(
 						'''
