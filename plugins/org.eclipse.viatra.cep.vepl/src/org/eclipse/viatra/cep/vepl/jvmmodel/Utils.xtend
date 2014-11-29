@@ -37,7 +37,7 @@ class Utils {
 		val advancedSetter = TypesFactory.eINSTANCE.createJvmOperation
 		advancedSetter.simpleName = "set" + name.toFirstUpper
 		advancedSetter.returnType = element.newTypeRef("void")
-		advancedSetter.parameters.add(advancedSetter.toParameter(name, type))
+		advancedSetter.parameters.add(element.toParameter(name, type))
 		advancedSetter.setVisibility(JvmVisibility.PUBLIC)
 		advancedSetter.setBody [
 			append(

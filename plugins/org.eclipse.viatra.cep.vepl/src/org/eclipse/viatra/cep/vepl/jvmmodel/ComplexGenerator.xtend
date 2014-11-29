@@ -268,7 +268,7 @@ class ComplexGenerator {
 		method.simpleName = "evaluateParameterBindigs"
 		method.setVisibility(JvmVisibility.PUBLIC)
 		method.returnType = pattern.newTypeRef("boolean")
-		method.parameters.add(method.toParameter("event", pattern.newTypeRef(Event)))
+		method.parameters.add(pattern.toParameter("event", pattern.newTypeRef(Event)))
 		method.setBody [
 			append(
 				'''
@@ -292,7 +292,7 @@ class ComplexGenerator {
 		method.simpleName = "evaluateParameterBindigs"
 		method.setVisibility(JvmVisibility.PUBLIC)
 		method.returnType = pattern.newTypeRef("boolean")
-		method.parameters.add(method.toParameter("event", pattern.newTypeRef(ParameterizableEventInstance)))
+		method.parameters.add(pattern.toParameter("event", pattern.newTypeRef(ParameterizableEventInstance)))
 		val expression = pattern.complexEventExpression
 		method.setBody [
 			append('''«referClass(it, pattern, Map, pattern.newTypeRef("String"), pattern.newTypeRef("Object"))»''').

@@ -42,7 +42,7 @@ class AtomicGenerator {
 					}
 				}
 				members += pattern.toConstructor [
-					parameters += toParameter("eventSource", pattern.newTypeRef(EventSource))
+					parameters += pattern.toParameter("eventSource", pattern.newTypeRef(EventSource))
 					body = [
 						append(
 							'''
