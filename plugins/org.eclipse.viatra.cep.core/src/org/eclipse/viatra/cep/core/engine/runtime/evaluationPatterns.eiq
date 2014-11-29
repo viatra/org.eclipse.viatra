@@ -27,11 +27,11 @@ pattern finalState(s : State, et : EventToken) {
 	check(label.equalsIgnoreCase("final"));
 }
 
-pattern latestEvent(e) {
+pattern latestEvent(e : Event) {
 	InternalModel.latestEvent(_, e);
 }
 
-pattern preState(t, s) {
+pattern preState(t : TypedTransition, s : State) {
 	TypedTransition.preState(t, s);
 }
 
@@ -64,7 +64,7 @@ pattern tokenInTrapState(et : EventToken) {
 	TrapState.eventTokens(_, et);
 }
 
-pattern initState(s) {
+pattern initState(s : InitState) {
 	InitState(s);
 }
 

@@ -82,7 +82,7 @@ class ModelHandlingRules {
 		EnabledTransitionMatcher::querySpecification).action [
 		var eventPattern = ((t.eContainer() as State).eContainer() as Automaton).eventPattern
 		if (eventPattern instanceof ParameterizableComplexEventPattern) {
-			if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindigs(e))) {
+			if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindings(e))) {
 				return
 			}
 		}
