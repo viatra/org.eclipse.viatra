@@ -18,7 +18,6 @@ import java.util.Map
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
-import org.eclipse.viatra.cep.core.api.patterns.ParameterizableSingleAtomComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.Event
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
@@ -110,19 +109,11 @@ class ComplexGenerator {
 		return currentClassName
 	}
 
-	def singleAtomComplexEvent(Node node) {
-		return node.operator == null
-	}
-
 	def generateComplexEventPattern(ComplexEventPattern pattern, Node node, QualifiedName className,
 		List<QualifiedName> compositionPatterns, IJvmDeclaredTypeAcceptor acceptor,
 		ComplexPatternType complexPatternType) {
 		acceptor.accept(pattern.toClass(className)) [
-			if (!node.singleAtomComplexEvent) {
-				superTypes += typeRefBuilder.typeRef(ParameterizableComplexEventPattern)
-			} else {
-				superTypes += typeRefBuilder.typeRef(ParameterizableSingleAtomComplexEventPattern)
-			}
+			superTypes += typeRefBuilder.typeRef(ParameterizableComplexEventPattern)
 			members += pattern.toConstructor [
 				body = [
 					append(
@@ -130,13 +121,11 @@ class ComplexGenerator {
 							super();
 						'''
 					)
-					if (!node.singleAtomComplexEvent) {
-						append('''setOperator(''').append(
-							'''«referClass(it, typeRefBuilder, pattern, EventsFactory)».eINSTANCE''').append(
-							'''.«node.operator.factoryMethod»''').append(
-							''');
-								''')
-					}
+					append('''setOperator(''').append(
+						'''«referClass(it, typeRefBuilder, pattern, EventsFactory)».eINSTANCE''').append(
+						'''.«node.operator.factoryMethod»''').append(
+						''');
+							''')
 					it.append(
 						'''
 							
