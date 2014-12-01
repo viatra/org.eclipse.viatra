@@ -13,12 +13,12 @@
     <eOperations name="evaluateParameterBindings" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eParameters name="event" lowerBound="1" eType="#//Event"/>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="compositionEvents" upperBound="-1"
-        eType="#//EventPattern" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="operator" lowerBound="1"
         eType="#//ComplexEventOperator" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="timeWindow" eType="#//TimeWindow"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containedEventPatterns"
+        upperBound="-1" eType="#//EventPatternReference" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Event">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -37,5 +37,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="AND" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="TimeWindow">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EventPatternReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" lowerBound="1"
+        eType="#//EventPattern" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multiplicity" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="1"/>
   </eClassifiers>
 </ecore:EPackage>

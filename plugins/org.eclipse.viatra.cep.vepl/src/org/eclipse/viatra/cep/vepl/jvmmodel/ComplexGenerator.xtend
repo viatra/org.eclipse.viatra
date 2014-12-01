@@ -144,13 +144,16 @@ class ComplexGenerator {
 					it.append(
 						'''
 							
-							// composition events
+							// contained event patterns
 						''')
-					for (p : compositionPatterns) {
-						it.append('''getCompositionEvents().add(new ''').append(
-							'''«referClass(typeRefBuilder, p, pattern)»''').append(
-							'''());
-								''')
+					val repetitions = if(node.operator instanceof OrOperator) 1 else node.multiplicity
+					for (var i = 0; i < repetitions; i++) {
+						for (p : compositionPatterns) {
+							it.append('''addEventPatternRefrence(new ''').append(
+								'''«referClass(typeRefBuilder, p, pattern)»''').append(
+								'''());
+									''')
+						}
 					}
 					if (node.timeWindow != null) {
 						it.append(

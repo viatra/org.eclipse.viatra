@@ -31,6 +31,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS;
 import org.eclipse.viatra.cep.core.metamodels.events.OR;
 import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
@@ -50,7 +51,7 @@ import com.google.common.collect.Maps;
 public class Compiler {
     private final static Logger LOGGER = LoggerUtils.getInstance().getLogger();
     private final static AutomatonFactory FACTORY = AutomatonFactory.eINSTANCE;
-    
+
     private InternalModel model;
     private Automaton automaton;
     private InitState initState;
@@ -164,7 +165,9 @@ public class Compiler {
 
         State lastCreatedState = preState;
 
-        for (EventPattern eventPattern : complexEventPattern.getCompositionEvents()) {
+        for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
+            EventPattern eventPattern = eventPatternReference.getEventPattern();
+            // int multiplicity = eventPatternReference.getMultiplicity();
             if (eventPattern instanceof AtomicEventPattern) {
                 State currentState = createState();
                 Guard guard = createGuard((AtomicEventPattern) eventPattern);
@@ -200,7 +203,8 @@ public class Compiler {
 
         List<State> statesToBeMergedIntoOut = Lists.newArrayList();
 
-        for (EventPattern eventPattern : complexEventPattern.getCompositionEvents()) {
+        for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
+            EventPattern eventPattern = eventPatternReference.getEventPattern();
             if (eventPattern instanceof AtomicEventPattern) {
                 Guard guard = createGuard((AtomicEventPattern) eventPattern);
                 createTransition(preState, outState, guard);
@@ -237,11 +241,11 @@ public class Compiler {
 
         states.put(StateType.IN, preState);
 
-        List<EventPattern> compositionEvents = complexEventPattern.getCompositionEvents();
-        Preconditions.checkArgument(compositionEvents.size() == 2); // UNTIL is a binary operator
+        List<EventPatternReference> containedEventPatterns = complexEventPattern.getContainedEventPatterns();
+        Preconditions.checkArgument(containedEventPatterns.size() == 2); // UNTIL is a binary operator
 
-        EventPattern selfEdgePattern = compositionEvents.get(0);
-        EventPattern advanceEdgePattern = compositionEvents.get(1);
+        EventPattern selfEdgePattern = containedEventPatterns.get(0).getEventPattern();
+        EventPattern advanceEdgePattern = containedEventPatterns.get(1).getEventPattern();
 
         if (selfEdgePattern instanceof AtomicEventPattern) {
             Guard guard = createGuard((AtomicEventPattern) selfEdgePattern);

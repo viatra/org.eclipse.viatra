@@ -17,6 +17,9 @@ import java.util.Map.Entry;
 
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
+import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl;
 
 import com.google.common.base.Strings;
@@ -67,6 +70,13 @@ public abstract class ParameterizableComplexEventPattern extends ComplexEventPat
             return true;
         }
         return value.equals(paramValue);
+    }
+
+    public void addEventPatternRefrence(EventPattern eventPatternToBeReffered) {
+        EventPatternReference eventPatternReference = EventsFactory.eINSTANCE.createEventPatternReference();
+        eventPatternReference.setEventPattern(eventPatternToBeReffered);
+        eventPatternReference.setMultiplicity(1);
+        getContainedEventPatterns().add(eventPatternReference);
     }
 
     public Map<String, Object> getParamValues() {

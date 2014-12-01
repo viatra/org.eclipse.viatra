@@ -19,6 +19,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.AND;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.NEG;
 
@@ -61,22 +62,29 @@ public class Precompiler {
     private EventPattern unfoldAnd(ComplexEventPattern originalPattern) {
         Preconditions.checkArgument(originalPattern.getOperator() instanceof AND);
 
-        List<EventPattern> compositionEvents = originalPattern.getCompositionEvents();
+        List<EventPatternReference> containedEventPatterns = originalPattern.getContainedEventPatterns();
 
-        Preconditions.checkArgument(compositionEvents != null && !compositionEvents.isEmpty());
+        Preconditions.checkArgument(containedEventPatterns != null && !containedEventPatterns.isEmpty());
 
         ComplexEventPattern newPattern = EventsFactory.eINSTANCE.createComplexEventPattern();
         newPattern.setId(originalPattern.getId());
         newPattern.setOperator(EventsFactory.eINSTANCE.createOR());
 
-        for (final List<EventPattern> permutation : new Permutations<EventPattern>().getAll(compositionEvents)) {
+        for (final List<EventPatternReference> permutation : new Permutations<EventPatternReference>()
+                .getAll(containedEventPatterns)) {
             ComplexEventPattern innerPattern = EventsFactory.eINSTANCE.createComplexEventPattern();
             innerPattern.setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
-            for (EventPattern eventPattern : permutation) {
-                EObject copy = new EcoreUtil.Copier().copy(eventPattern);
-                innerPattern.getCompositionEvents().add((EventPattern) copy);
+            for (EventPatternReference eventPatternReference : permutation) {
+                EObject copy = new EcoreUtil.Copier().copy(eventPatternReference.getEventPattern());
+                EventPatternReference newReference = EventsFactory.eINSTANCE.createEventPatternReference();
+                newReference.setMultiplicity(1);
+                newReference.setEventPattern((EventPattern) copy);
+                innerPattern.getContainedEventPatterns().add(newReference);
             }
-            newPattern.getCompositionEvents().add(innerPattern);
+            EventPatternReference innerReference = EventsFactory.eINSTANCE.createEventPatternReference();
+            innerReference.setMultiplicity(1);
+            innerReference.setEventPattern(innerPattern);
+            newPattern.getContainedEventPatterns().add(innerReference);
         }
 
         return newPattern;
