@@ -9,11 +9,11 @@ import org.eclipse.viatra.cep.vepl.vepl.VeplFactory;
 
 public class AtomicExpressionTree extends ExpressionTree {
 
-    public AtomicExpressionTree(Atom atom, int multiplicity, TimeWindow timeWindow) {
+    public AtomicExpressionTree(Atom atom, int multiplicity, TimeWindow timewindow) {
         super();
 
-        Node root = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), 1, timeWindow);
-        Leaf leaf = new Leaf(atom, multiplicity);
+        Node root = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), multiplicity, timewindow);
+        Leaf leaf = new Leaf(atom);
         root.addChild(leaf);
         super.setRoot(root);
     }

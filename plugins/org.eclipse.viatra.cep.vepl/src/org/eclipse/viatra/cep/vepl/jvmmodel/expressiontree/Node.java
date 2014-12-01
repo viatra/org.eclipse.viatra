@@ -26,26 +26,43 @@ import com.google.common.collect.Lists;
  */
 public class Node extends TreeElement {
     private ComplexEventOperator operator;
+    private int multiplicity = 1;
+    private TimeWindow timewindow;
     private List<TreeElement> children = Lists.newArrayList();
 
     public Node(ComplexEventOperator operator) {
         this.operator = operator;
     }
 
-    @Deprecated
     public Node(ComplexEventOperator operator, int multiplicity) {
         this.operator = operator;
-        setMultiplicity(multiplicity);
+        this.multiplicity = multiplicity;
     }
 
-    public Node(ComplexEventOperator operator, int multiplicity, TimeWindow timeWindow) {
+    public Node(ComplexEventOperator operator, int multiplicity, TimeWindow timewindow) {
         this.operator = operator;
-        setMultiplicity(multiplicity);
-        setTimeWindow(timeWindow);
+        this.multiplicity = multiplicity;
+        this.timewindow = timewindow;
     }
 
     public ComplexEventOperator getOperator() {
         return operator;
+    }
+
+    public int getMultiplicity() {
+        return multiplicity;
+    }
+
+    public void setMultiplicity(int multiplicity) {
+        this.multiplicity = multiplicity;
+    }
+
+    public TimeWindow getTimewindow() {
+        return timewindow;
+    }
+
+    public void setTimewindow(TimeWindow timewindow) {
+        this.timewindow = timewindow;
     }
 
     public List<TreeElement> getChildren() {

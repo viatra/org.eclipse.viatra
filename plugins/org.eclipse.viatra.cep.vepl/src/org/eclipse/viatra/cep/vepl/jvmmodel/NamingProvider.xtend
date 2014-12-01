@@ -29,6 +29,7 @@ class NamingProvider {
 	private static final String ATOMIC_PATTERN_PACKAGE_NAME_ELEMENT = "patterns.atomic"
 	private static final String IQ_PATTERN_PACKAGE_NAME_ELEMENT = "patterns.atomic.incquery"
 	private static final String COMPLEX_PATTERN_PACKAGE_NAME_ELEMENT = "patterns.complex"
+	private static final String ANONYMOUS_PATTERN_PACKAGE_NAME_ELEMENT = "patterns.complex.anonymous"
 	private static final String RULES_PACKAGE_NAME_ELEMENT = "rules"
 	private static final String JOBS_PACKAGE_NAME_ELEMENT = "jobs"
 	private static final String MAPPING_PACKAGE_NAME_ELEMENT = "mapping.IncQuery2ViatraCep"
@@ -71,7 +72,7 @@ class NamingProvider {
 	def getAnonymousName(EventPattern element, int suffix) {
 		var packageName = element.fullyQualifiedName.skipLast(1)
 
-		return packageName.append(COMPLEX_PATTERN_PACKAGE_NAME_ELEMENT).append(ANONYMOUS_PATTERN_NAME + suffix)
+		return packageName.append(ANONYMOUS_PATTERN_PACKAGE_NAME_ELEMENT).append(ANONYMOUS_PATTERN_NAME + suffix)
 	}
 
 	def getFqn(Rule rule) {

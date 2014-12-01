@@ -16,18 +16,19 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
 
 /**
  * Represents a group of expressions to be packaged under a {@link Node}.
+ * 
  * @author steve
  *
  */
 public class ExpressionGroupElement {
     private ComplexEventExpression complexEventExpression;
     private int multiplicity;
-    private TimeWindow timeWindow;
+    private TimeWindow timewindow;
 
-    public ExpressionGroupElement(ComplexEventExpression complexEventExpression, int multiplicity, TimeWindow timeWindow) {
+    public ExpressionGroupElement(ComplexEventExpression complexEventExpression, int multiplicity, TimeWindow timewindow) {
         this.complexEventExpression = complexEventExpression;
         this.multiplicity = multiplicity;
-        this.timeWindow = timeWindow;
+        this.timewindow = timewindow;
     }
 
     public ComplexEventExpression getComplexEventExpression() {
@@ -46,11 +47,11 @@ public class ExpressionGroupElement {
         this.multiplicity = multiplicity;
     }
 
-    public TimeWindow getTimeWindow() {
-        return timeWindow;
+    public TimeWindow getTimewindow() {
+        return timewindow;
     }
 
-    public void setTimeWindow(TimeWindow timeWindow) {
-        this.timeWindow = timeWindow;
+    public void setTimewindow(TimeWindow timewindow) {
+        this.timewindow = timewindow;
     }
 }

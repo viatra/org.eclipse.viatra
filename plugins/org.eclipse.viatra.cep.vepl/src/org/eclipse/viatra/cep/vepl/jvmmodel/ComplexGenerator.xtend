@@ -74,7 +74,7 @@ class ComplexGenerator {
 		return node.parentNode == null
 	}
 
-	def public Pair<QualifiedName, Integer> generateComplexEventPattern(
+	def public QualifiedName generateComplexEventPattern(
 		ComplexEventPattern pattern,
 		Node node,
 		QualifiedName className,
@@ -84,16 +84,12 @@ class ComplexGenerator {
 
 		for (child : node.children) {
 			if (child instanceof Node) {
-				val Pair<QualifiedName, Integer> referredAnonymousPattern = generateComplexEventPattern(pattern,
-					(child as Node), getAnonymousName(pattern, anonManager.nextIndex), acceptor);
-				for (var i = 0; i < referredAnonymousPattern.value; i++) {
-					compositionEvents.add(referredAnonymousPattern.key)
-				}
+				val QualifiedName referredAnonymousPattern = generateComplexEventPattern(pattern, (child as Node),
+					getAnonymousName(pattern, anonManager.nextIndex), acceptor);
+				compositionEvents.add(referredAnonymousPattern)
 			} else {
 				val leaf = child as Leaf
-				for (var i = 0; i < leaf.multiplicity; i++) {
-					compositionEvents.add((leaf.expression as Atom).patternCall.eventPattern.patternFqn)
-				}
+				compositionEvents.add((leaf.expression as Atom).patternCall.eventPattern.patternFqn)
 			}
 		}
 
@@ -111,7 +107,7 @@ class ComplexGenerator {
 
 		pattern.generateComplexEventPattern(node, currentClassName, compositionEvents, acceptor, patternType)
 
-		return new Pair(currentClassName, node.multiplicity)
+		return currentClassName
 	}
 
 	def singleAtomComplexEvent(Node node) {
@@ -146,16 +142,13 @@ class ComplexGenerator {
 							
 							// contained event patterns
 						''')
-					val repetitions = if(node.operator instanceof OrOperator) 1 else node.multiplicity
-					for (var i = 0; i < repetitions; i++) {
-						for (p : compositionPatterns) {
-							it.append('''addEventPatternRefrence(new ''').append(
-								'''«referClass(typeRefBuilder, p, pattern)»''').append(
-								'''());
-									''')
-						}
+					for (p : compositionPatterns) {
+						it.append('''addEventPatternRefrence(new ''').append(
+							'''«referClass(typeRefBuilder, p, pattern)»''').append(
+							'''(), «node.multiplicity»);
+								''')
 					}
-					if (node.timeWindow != null) {
+					if (node.timewindow != null) {
 						it.append(
 							'''
 						
@@ -165,7 +158,7 @@ class ComplexGenerator {
 								'''.createTimeWindow();
 									''').append(
 								'''
-									timeWindow.setTime(«node.timeWindow.time»);
+									timeWindow.setTime(«node.timewindow.time»);
 									setTimeWindow(timeWindow);
 										
 								''')

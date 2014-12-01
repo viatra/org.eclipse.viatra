@@ -72,10 +72,10 @@ public abstract class ParameterizableComplexEventPattern extends ComplexEventPat
         return value.equals(paramValue);
     }
 
-    public void addEventPatternRefrence(EventPattern eventPatternToBeReffered) {
+    public void addEventPatternRefrence(EventPattern eventPatternToBeReffered, int multiplicity) {
         EventPatternReference eventPatternReference = EventsFactory.eINSTANCE.createEventPatternReference();
         eventPatternReference.setEventPattern(eventPatternToBeReffered);
-        eventPatternReference.setMultiplicity(1);
+        eventPatternReference.setMultiplicity(multiplicity);
         getContainedEventPatterns().add(eventPatternReference);
     }
 

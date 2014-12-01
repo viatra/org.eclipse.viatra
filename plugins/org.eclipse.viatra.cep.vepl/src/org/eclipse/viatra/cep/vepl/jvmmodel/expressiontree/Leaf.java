@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
 
 /**
@@ -25,17 +24,6 @@ public class Leaf extends TreeElement {
 
     public Leaf(ComplexEventExpression expression) {
         this.expression = expression;
-    }
-
-    public Leaf(ComplexEventExpression expression, int multiplicity) {
-        this.expression = expression;
-        setMultiplicity(multiplicity);
-    }
-
-    public Leaf(ComplexEventExpression expression, int multiplicity, TimeWindow timeWindow) {
-        this.expression = expression;
-        setMultiplicity(multiplicity);
-        setTimeWindow(timeWindow);
     }
 
     public ComplexEventExpression getExpression() {
