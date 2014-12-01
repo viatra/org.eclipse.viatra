@@ -12,9 +12,9 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getCompositionEvents <em>Composition Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getOperator <em>Operator</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow <em>Time Window</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getContainedEventPatterns <em>Contained Event Patterns</em>}</li>
  * </ul>
  * </p>
  *
@@ -23,22 +23,6 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface ComplexEventPattern extends EventPattern {
-    /**
-     * Returns the value of the '<em><b>Composition Events</b></em>' containment reference list.
-     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.events.EventPattern}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Composition Events</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Composition Events</em>' containment reference list.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getComplexEventPattern_CompositionEvents()
-     * @model containment="true"
-     * @generated
-     */
-    EList<EventPattern> getCompositionEvents();
-
     /**
      * Returns the value of the '<em><b>Operator</b></em>' containment reference.
      * <!-- begin-user-doc -->
@@ -90,6 +74,22 @@ public interface ComplexEventPattern extends EventPattern {
      * @generated
      */
     void setTimeWindow(TimeWindow value);
+
+    /**
+     * Returns the value of the '<em><b>Contained Event Patterns</b></em>' containment reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Contained Event Patterns</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Contained Event Patterns</em>' containment reference list.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getComplexEventPattern_ContainedEventPatterns()
+     * @model containment="true"
+     * @generated
+     */
+    EList<EventPatternReference> getContainedEventPatterns();
 
     /**
      * <!-- begin-user-doc -->

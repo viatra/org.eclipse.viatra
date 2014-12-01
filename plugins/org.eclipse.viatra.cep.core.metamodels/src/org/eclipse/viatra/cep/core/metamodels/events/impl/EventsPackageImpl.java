@@ -19,6 +19,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
@@ -114,6 +115,13 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * @generated
      */
     private EClass timeWindowEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass eventPatternReferenceEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -240,7 +248,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getComplexEventPattern_CompositionEvents() {
+    public EReference getComplexEventPattern_Operator() {
         return (EReference)complexEventPatternEClass.getEStructuralFeatures().get(0);
     }
 
@@ -249,7 +257,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getComplexEventPattern_Operator() {
+    public EReference getComplexEventPattern_TimeWindow() {
         return (EReference)complexEventPatternEClass.getEStructuralFeatures().get(1);
     }
 
@@ -258,7 +266,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getComplexEventPattern_TimeWindow() {
+    public EReference getComplexEventPattern_ContainedEventPatterns() {
         return (EReference)complexEventPatternEClass.getEStructuralFeatures().get(2);
     }
 
@@ -402,6 +410,33 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getEventPatternReference() {
+        return eventPatternReferenceEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getEventPatternReference_EventPattern() {
+        return (EReference)eventPatternReferenceEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getEventPatternReference_Multiplicity() {
+        return (EAttribute)eventPatternReferenceEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EventsFactory getEventsFactory() {
         return (EventsFactory)getEFactoryInstance();
     }
@@ -433,9 +468,9 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         createEAttribute(atomicEventPatternEClass, ATOMIC_EVENT_PATTERN__TYPE);
 
         complexEventPatternEClass = createEClass(COMPLEX_EVENT_PATTERN);
-        createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS);
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__OPERATOR);
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__TIME_WINDOW);
+        createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS);
         createEOperation(complexEventPatternEClass, COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT);
 
         eventEClass = createEClass(EVENT);
@@ -460,6 +495,10 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
 
         timeWindowEClass = createEClass(TIME_WINDOW);
         createEAttribute(timeWindowEClass, TIME_WINDOW__TIME);
+
+        eventPatternReferenceEClass = createEClass(EVENT_PATTERN_REFERENCE);
+        createEReference(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__EVENT_PATTERN);
+        createEAttribute(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__MULTIPLICITY);
     }
 
     /**
@@ -510,9 +549,9 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         initEAttribute(getAtomicEventPattern_Type(), ecorePackage.getEString(), "type", null, 0, 1, AtomicEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(complexEventPatternEClass, ComplexEventPattern.class, "ComplexEventPattern", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getComplexEventPattern_CompositionEvents(), this.getEventPattern(), null, "compositionEvents", null, 0, -1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getComplexEventPattern_Operator(), this.getComplexEventOperator(), null, "operator", null, 1, 1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getComplexEventPattern_TimeWindow(), this.getTimeWindow(), null, "timeWindow", null, 0, 1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getComplexEventPattern_ContainedEventPatterns(), this.getEventPatternReference(), null, "containedEventPatterns", null, 0, -1, ComplexEventPattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         EOperation op = initEOperation(getComplexEventPattern__EvaluateParameterBindings__Event(), ecorePackage.getEBoolean(), "evaluateParameterBindings", 1, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, this.getEvent(), "event", 1, 1, IS_UNIQUE, IS_ORDERED);
@@ -540,6 +579,10 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
 
         initEClass(timeWindowEClass, TimeWindow.class, "TimeWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getTimeWindow_Time(), ecorePackage.getELong(), "time", null, 1, 1, TimeWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(eventPatternReferenceEClass, EventPatternReference.class, "EventPatternReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getEventPatternReference_EventPattern(), this.getEventPattern(), null, "eventPattern", null, 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getEventPatternReference_Multiplicity(), ecorePackage.getEInt(), "multiplicity", "1", 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);

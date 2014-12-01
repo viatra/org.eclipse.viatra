@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
-import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
 import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
 
@@ -33,25 +33,15 @@ import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getCompositionEvents <em>Composition Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getOperator <em>Operator</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getTimeWindow <em>Time Window</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getContainedEventPatterns <em>Contained Event Patterns</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
 public class ComplexEventPatternImpl extends EventPatternImpl implements ComplexEventPattern {
-    /**
-     * The cached value of the '{@link #getCompositionEvents() <em>Composition Events</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getCompositionEvents()
-     * @generated
-     * @ordered
-     */
-    protected EList<EventPattern> compositionEvents;
-
     /**
      * The cached value of the '{@link #getOperator() <em>Operator</em>}' containment reference.
      * <!-- begin-user-doc -->
@@ -73,6 +63,16 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     protected TimeWindow timeWindow;
 
     /**
+     * The cached value of the '{@link #getContainedEventPatterns() <em>Contained Event Patterns</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getContainedEventPatterns()
+     * @generated
+     * @ordered
+     */
+    protected EList<EventPatternReference> containedEventPatterns;
+
+    /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -89,18 +89,6 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     protected EClass eStaticClass() {
         return EventsPackage.Literals.COMPLEX_EVENT_PATTERN;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EList<EventPattern> getCompositionEvents() {
-        if (compositionEvents == null) {
-            compositionEvents = new EObjectContainmentEList<EventPattern>(EventPattern.class, this, EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS);
-        }
-        return compositionEvents;
     }
 
     /**
@@ -194,6 +182,18 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<EventPatternReference> getContainedEventPatterns() {
+        if (containedEventPatterns == null) {
+            containedEventPatterns = new EObjectContainmentEList<EventPatternReference>(EventPatternReference.class, this, EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS);
+        }
+        return containedEventPatterns;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public boolean evaluateParameterBindings(Event event) {
         // TODO: implement this method
         // Ensure that you remove @generated or mark it @generated NOT
@@ -208,12 +208,12 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
-                return ((InternalEList<?>)getCompositionEvents()).basicRemove(otherEnd, msgs);
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return basicSetOperator(null, msgs);
             case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
                 return basicSetTimeWindow(null, msgs);
+            case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
+                return ((InternalEList<?>)getContainedEventPatterns()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -226,12 +226,12 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
-                return getCompositionEvents();
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return getOperator();
             case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
                 return getTimeWindow();
+            case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
+                return getContainedEventPatterns();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -245,15 +245,15 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
-                getCompositionEvents().clear();
-                getCompositionEvents().addAll((Collection<? extends EventPattern>)newValue);
-                return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 setOperator((ComplexEventOperator)newValue);
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
                 setTimeWindow((TimeWindow)newValue);
+                return;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
+                getContainedEventPatterns().clear();
+                getContainedEventPatterns().addAll((Collection<? extends EventPatternReference>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -267,14 +267,14 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
-                getCompositionEvents().clear();
-                return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 setOperator((ComplexEventOperator)null);
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
                 setTimeWindow((TimeWindow)null);
+                return;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
+                getContainedEventPatterns().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -288,12 +288,12 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case EventsPackage.COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS:
-                return compositionEvents != null && !compositionEvents.isEmpty();
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return operator != null;
             case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
                 return timeWindow != null;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
+                return containedEventPatterns != null && !containedEventPatterns.isEmpty();
         }
         return super.eIsSet(featureID);
     }

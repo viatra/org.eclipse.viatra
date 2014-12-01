@@ -187,22 +187,13 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_PATTERN__ID = EVENT_PATTERN__ID;
 
     /**
-     * The feature id for the '<em><b>Composition Events</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS = EVENT_PATTERN_FEATURE_COUNT + 0;
-
-    /**
      * The feature id for the '<em><b>Operator</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN__OPERATOR = EVENT_PATTERN_FEATURE_COUNT + 1;
+    int COMPLEX_EVENT_PATTERN__OPERATOR = EVENT_PATTERN_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Time Window</b></em>' containment reference.
@@ -211,7 +202,16 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN__TIME_WINDOW = EVENT_PATTERN_FEATURE_COUNT + 2;
+    int COMPLEX_EVENT_PATTERN__TIME_WINDOW = EVENT_PATTERN_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Contained Event Patterns</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS = EVENT_PATTERN_FEATURE_COUNT + 2;
 
     /**
      * The number of structural features of the '<em>Complex Event Pattern</em>' class.
@@ -537,6 +537,52 @@ public interface EventsPackage extends EPackage {
      */
     int TIME_WINDOW_OPERATION_COUNT = 0;
 
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+     * @generated
+     */
+    int EVENT_PATTERN_REFERENCE = 12;
+
+    /**
+     * The feature id for the '<em><b>Event Pattern</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE__EVENT_PATTERN = 0;
+
+    /**
+     * The feature id for the '<em><b>Multiplicity</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE__MULTIPLICITY = 1;
+
+    /**
+     * The number of structural features of the '<em>Event Pattern Reference</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE_FEATURE_COUNT = 2;
+
+    /**
+     * The number of operations of the '<em>Event Pattern Reference</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE_OPERATION_COUNT = 0;
+
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPattern <em>Event Pattern</em>}'.
@@ -602,17 +648,6 @@ public interface EventsPackage extends EPackage {
     EClass getComplexEventPattern();
 
     /**
-     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getCompositionEvents <em>Composition Events</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Composition Events</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getCompositionEvents()
-     * @see #getComplexEventPattern()
-     * @generated
-     */
-    EReference getComplexEventPattern_CompositionEvents();
-
-    /**
      * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getOperator <em>Operator</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -633,6 +668,17 @@ public interface EventsPackage extends EPackage {
      * @generated
      */
     EReference getComplexEventPattern_TimeWindow();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getContainedEventPatterns <em>Contained Event Patterns</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Contained Event Patterns</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getContainedEventPatterns()
+     * @see #getComplexEventPattern()
+     * @generated
+     */
+    EReference getComplexEventPattern_ContainedEventPatterns();
 
     /**
      * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#evaluateParameterBindings(org.eclipse.viatra.cep.core.metamodels.events.Event) <em>Evaluate Parameter Bindings</em>}' operation.
@@ -789,6 +835,38 @@ public interface EventsPackage extends EPackage {
     EAttribute getTimeWindow_Time();
 
     /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Event Pattern Reference</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+     * @generated
+     */
+    EClass getEventPatternReference();
+
+    /**
+     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern <em>Event Pattern</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Event Pattern</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern()
+     * @see #getEventPatternReference()
+     * @generated
+     */
+    EReference getEventPatternReference_EventPattern();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity <em>Multiplicity</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Multiplicity</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity()
+     * @see #getEventPatternReference()
+     * @generated
+     */
+    EAttribute getEventPatternReference_Multiplicity();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -866,14 +944,6 @@ public interface EventsPackage extends EPackage {
         EClass COMPLEX_EVENT_PATTERN = eINSTANCE.getComplexEventPattern();
 
         /**
-         * The meta object literal for the '<em><b>Composition Events</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference COMPLEX_EVENT_PATTERN__COMPOSITION_EVENTS = eINSTANCE.getComplexEventPattern_CompositionEvents();
-
-        /**
          * The meta object literal for the '<em><b>Operator</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -888,6 +958,14 @@ public interface EventsPackage extends EPackage {
          * @generated
          */
         EReference COMPLEX_EVENT_PATTERN__TIME_WINDOW = eINSTANCE.getComplexEventPattern_TimeWindow();
+
+        /**
+         * The meta object literal for the '<em><b>Contained Event Patterns</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS = eINSTANCE.getComplexEventPattern_ContainedEventPatterns();
 
         /**
          * The meta object literal for the '<em><b>Evaluate Parameter Bindings</b></em>' operation.
@@ -1026,6 +1104,32 @@ public interface EventsPackage extends EPackage {
          * @generated
          */
         EAttribute TIME_WINDOW__TIME = eINSTANCE.getTimeWindow_Time();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+         * @generated
+         */
+        EClass EVENT_PATTERN_REFERENCE = eINSTANCE.getEventPatternReference();
+
+        /**
+         * The meta object literal for the '<em><b>Event Pattern</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_PATTERN_REFERENCE__EVENT_PATTERN = eINSTANCE.getEventPatternReference_EventPattern();
+
+        /**
+         * The meta object literal for the '<em><b>Multiplicity</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute EVENT_PATTERN_REFERENCE__MULTIPLICITY = eINSTANCE.getEventPatternReference_Multiplicity();
 
     }
 

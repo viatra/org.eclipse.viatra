@@ -65,6 +65,7 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
             case EventsPackage.UNTIL: return createUNTIL();
             case EventsPackage.AND: return createAND();
             case EventsPackage.TIME_WINDOW: return createTimeWindow();
+            case EventsPackage.EVENT_PATTERN_REFERENCE: return createEventPatternReference();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -158,6 +159,16 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
     public TimeWindow createTimeWindow() {
         TimeWindowImpl timeWindow = new TimeWindowImpl();
         return timeWindow;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EventPatternReference createEventPatternReference() {
+        EventPatternReferenceImpl eventPatternReference = new EventPatternReferenceImpl();
+        return eventPatternReference;
     }
 
     /**
