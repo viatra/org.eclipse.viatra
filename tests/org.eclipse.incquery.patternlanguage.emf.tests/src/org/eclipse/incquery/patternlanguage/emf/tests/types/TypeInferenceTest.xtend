@@ -26,13 +26,13 @@ import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
-import org.eclipse.xtext.xbase.typing.ITypeProvider
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 import org.junit.Ignoreimport org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -48,7 +48,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 	Injector injector
 	
 	@Inject
-	private ITypeProvider typeProvider
+	private IEMFTypeProvider typeProvider
 	
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
 	
@@ -73,7 +73,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
 	}
 	
@@ -96,8 +96,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(1).parameters.get(0)
-		val type1 = typeProvider.getTypeForIdentifiable(param1)
-		val type2 = typeProvider.getTypeForIdentifiable(param2)
+		val type1 = typeProvider.getVariableType(param1)
+		val type2 = typeProvider.getVariableType(param2)
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 	}
@@ -126,9 +126,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(1).parameters.get(0)
 		val param3 = model.patterns.get(2).parameters.get(0)
-		val type1 = typeProvider.getTypeForIdentifiable(param1)
-		val type2 = typeProvider.getTypeForIdentifiable(param2)
-		val type3 = typeProvider.getTypeForIdentifiable(param3)
+		val type1 = typeProvider.getVariableType(param1)
+		val type2 = typeProvider.getVariableType(param2)
+		val type3 = typeProvider.getVariableType(param3)
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
@@ -149,8 +149,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(0).parameters.get(1)
-		val type1 = typeProvider.getTypeForIdentifiable(param1)
-		val type2 = typeProvider.getTypeForIdentifiable(param2)
+		val type1 = typeProvider.getVariableType(param1)
+		val type2 = typeProvider.getVariableType(param2)
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EStructuralFeature).canonicalName, type2.qualifiedName)
 	}
@@ -176,10 +176,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		val param21 = model.patterns.get(0).parameters.get(1)
 		val param12 = model.patterns.get(1).parameters.get(0)
 		val param22 = model.patterns.get(1).parameters.get(1)
-		val type11 = typeProvider.getTypeForIdentifiable(param11)
-		val type21 = typeProvider.getTypeForIdentifiable(param21)
-		val type12 = typeProvider.getTypeForIdentifiable(param12)
-		val type22 = typeProvider.getTypeForIdentifiable(param22)
+		val type11 = typeProvider.getVariableType(param11)
+		val type21 = typeProvider.getVariableType(param21)
+		val type12 = typeProvider.getVariableType(param12)
+		val type22 = typeProvider.getVariableType(param22)
 		assertEquals(typeof(EClass).canonicalName, type11.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type12.qualifiedName)
 		assertEquals(typeof(EStructuralFeature).canonicalName, type21.qualifiedName)
@@ -202,8 +202,8 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(0).parameters.get(1)
-		val type1 = typeProvider.getTypeForIdentifiable(param1)
-		val type2 = typeProvider.getTypeForIdentifiable(param2)
+		val type1 = typeProvider.getVariableType(param1)
+		val type2 = typeProvider.getVariableType(param2)
 		assertEquals(typeof(EClass).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type2.qualifiedName)
 	}
@@ -226,9 +226,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		val parameter1 = model.patterns.get(0).parameters.get(0)
 		val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
 		val variable2 = model.patterns.get(0).bodies.get(1).variables.get(0)
-		val type1 = typeProvider.getTypeForIdentifiable(parameter1)
-		val type2 = typeProvider.getTypeForIdentifiable(variable1)
-		val type3 = typeProvider.getTypeForIdentifiable(variable2)
+		val type1 = typeProvider.getVariableType(parameter1)
+		val type2 = typeProvider.getVariableType(variable1)
+		val type3 = typeProvider.getVariableType(variable2)
 		assertEquals(typeof(EClassifier).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EDataType).canonicalName, type2.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
@@ -252,9 +252,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		val parameter1 = model.patterns.get(0).parameters.get(0)
 		val variable1 = model.patterns.get(0).bodies.get(0).variables.get(0)
 		val variable2 = model.patterns.get(0).bodies.get(1).variables.get(0)
-		val type1 = typeProvider.getTypeForIdentifiable(parameter1)
-		val type2 = typeProvider.getTypeForIdentifiable(variable1)
-		val type3 = typeProvider.getTypeForIdentifiable(variable2)
+		val type1 = typeProvider.getVariableType(parameter1)
+		val type2 = typeProvider.getVariableType(variable1)
+		val type3 = typeProvider.getVariableType(variable2)
 		assertEquals(typeof(EClassifier).canonicalName, type1.qualifiedName)
 		assertEquals(typeof(EDataType).canonicalName, type2.qualifiedName)
 		assertEquals(typeof(EClass).canonicalName, type3.qualifiedName)
@@ -272,7 +272,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertOK
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
 	}
 	
@@ -288,7 +288,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertOK
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals(typeof(String).canonicalName, type.qualifiedName) 
 	}
 	
@@ -304,7 +304,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertOK
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals(typeof(Boolean).canonicalName, type.qualifiedName) 
 	}
 	
@@ -320,7 +320,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertOK
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals(typeof(Double).canonicalName, type.qualifiedName) 
 	}
 	
@@ -342,7 +342,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertOK
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals("literalType", param.name) 
 		assertEquals(typeof(Integer).canonicalName, type.qualifiedName) 
 	}
@@ -374,7 +374,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals("parameter", param.name) 
 		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
 	}
@@ -392,7 +392,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals("parameter", param.name) 
 		assertEquals(typeof(EDataType).canonicalName, type.qualifiedName) 
 	}
@@ -411,7 +411,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		tester.validate(model).assertWarning(EMFIssueCodes::PARAMETER_TYPE_INVALID)
 		
 		val param = model.patterns.get(0).parameters.get(0)
-		val type = typeProvider.getTypeForIdentifiable(param)
+		val type = typeProvider.getVariableType(param)
 		assertEquals("parameter", param.name) 
 		assertEquals(typeof(EClass).canonicalName, type.qualifiedName) 
 	}

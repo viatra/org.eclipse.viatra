@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.LiteralValueReference;
@@ -70,6 +71,13 @@ public interface IEMFTypeProvider {
 	JvmTypeReference getVariableType(Variable variable);
 
 	/**
+	 * Calculates the corresponding JVM type of a selected EClassifier. The context is used to select the model-specific information, e.g. ResourceSet, project, etc.
+	 * @param classifier
+	 * @param context
+	 * @return
+	 */
+	JvmTypeReference getJvmType(EClassifier classifier, EObject context);
+	/**
      * @param valueReference
      * @return an {@link EClassifier} for the given input {@link ValueReference}. The ValueReference can be a
      *         {@link LiteralValueReference}, or a {@link ComputationValue}.
@@ -79,4 +87,5 @@ public interface IEMFTypeProvider {
     Map<PathExpressionTail,EStructuralFeature> getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail);
 
     Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail);
+
 }

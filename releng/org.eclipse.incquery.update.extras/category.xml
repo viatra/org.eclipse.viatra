@@ -39,9 +39,6 @@
    <feature url="features/org.eclipse.gef4.geometry_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.1.0.qualifier">
       <category name="thirdparty"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.xcore.feature_0.9.0.qualifier.jar" id="org.eclipse.incquery.xcore.feature" version="0.9.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
    <category-def name="org.eclipse.incquery.sources" label="EMF-IncQuery Sources"/>
    <category-def name="thirdparty" label="Third party features"/>

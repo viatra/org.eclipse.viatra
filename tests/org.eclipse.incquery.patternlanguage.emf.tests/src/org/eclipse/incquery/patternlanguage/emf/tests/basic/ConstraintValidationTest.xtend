@@ -143,7 +143,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 	def bothVariableCompareValidation() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
-			pattern constantCompareTest(Name) = {
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern constantCompareTest(Name : Pattern) = {
 				Name == Name2;
 				Pattern(Name2);
 			}

@@ -16,27 +16,21 @@ import com.google.inject.Inject
 import java.util.regex.Matcher
 import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
+import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.xtend2.lib.StringConcatenation
-import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
-import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
-import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtext.xbase.typing.ITypeProvider
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.xtext.common.types.JvmUnknownTypeReference
-import org.eclipse.xtext.common.types.util.TypeReferences
-import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -45,13 +39,10 @@ import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
  */
 class EMFPatternLanguageJvmModelInferrerUtil {
 
-	@Inject extension EMFJvmTypesBuilder
 	@Inject extension TypeReferences
 	Logger logger = Logger::getLogger(getClass())
-//	@Inject ITypeProvider typeProvider
 	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
-	@Inject IErrorFeedback errorFeedback
 	@Inject var IJvmModelAssociations associations
 
 	/**
@@ -324,27 +315,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 */
 	def realPatternName(String fqn) {
 		Splitter.on(".").split(fqn).last
-	}
-
-	def referClass(ITreeAppendable appendable, EObject ctx, Class<?> clazz, JvmTypeReference... typeArgs) {
-//		val type = ctx.newTypeRef(clazz, typeArgs).type
-//		appendable.append(type)
-		//'''«type.simpleName»'''
-		val ref = ctx.newTypeRef(clazz, typeArgs)
-		if (ref != null) {
-			appendable.serialize(ref, ctx)
-		} else {
-			errorFeedback.reportError(ctx, '''Cannot resolve class «clazz.canonicalName». Check project dependencies.''', EMFPatternLanguageJvmModelInferrer::INVALID_TYPEREF_CODE, Severity::ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
-			appendable.append(clazz.canonicalName)
-		}
-	}
-
-	def referClass(ITreeAppendable appendable, EObject ctx, JvmType type) {
-		appendable.serialize(type.newTypeRef, ctx)
-	}
-
-	def serialize(ITreeAppendable appendable, JvmTypeReference ref, EObject ctx) {
-		typeReferenceSerializer.serialize(ref, ctx, appendable)
 	}
 	
 	def findInferredSpecification(Pattern pattern) {

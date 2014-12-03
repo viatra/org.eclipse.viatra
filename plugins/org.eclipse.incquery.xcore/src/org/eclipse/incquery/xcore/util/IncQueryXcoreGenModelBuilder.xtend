@@ -156,12 +156,11 @@ class IncQueryXcoreGenModelBuilder extends XcoreGenModelBuilder {
 				GenFeature: {
 					val xFeature = genElement.ecoreFeature.toXcoreMapping.xcoreElement
 					if (xFeature != null) {
-						if (xFeature instanceof XStructuralFeature) {
-							(xFeature as XStructuralFeature).mapping.genFeature = genElement
-							genElement.toXcoreMapping.xcoreElement = xFeature
-						}
-						else if (xFeature instanceof XIncQueryDerivedFeature) {
+						if (xFeature instanceof XIncQueryDerivedFeature) {
 							(xFeature as XIncQueryDerivedFeature).mapping.genFeature = genElement
+							genElement.toXcoreMapping.xcoreElement = xFeature
+						} else if (xFeature instanceof XStructuralFeature) {
+							(xFeature as XStructuralFeature).mapping.genFeature = genElement
 							genElement.toXcoreMapping.xcoreElement = xFeature
 						}
 					}

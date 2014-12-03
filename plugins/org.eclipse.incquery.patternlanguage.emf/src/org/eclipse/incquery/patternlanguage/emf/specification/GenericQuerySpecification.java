@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -34,7 +35,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -162,8 +162,8 @@ public class GenericQuerySpecification
                 if (var == null) {
                     return new PParameter("", "");
                 } else {
-                    ITypeProvider typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeProvider.class);
-                    JvmTypeReference ref = typeProvider.getTypeForIdentifiable(var);
+                    IEMFTypeProvider typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(IEMFTypeProvider.class);
+                    JvmTypeReference ref = typeProvider.getVariableType(var);
                     // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
                     String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
                             .getQualifiedName();

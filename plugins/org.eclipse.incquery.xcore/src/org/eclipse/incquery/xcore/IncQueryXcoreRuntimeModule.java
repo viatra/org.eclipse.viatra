@@ -12,10 +12,10 @@ package org.eclipse.incquery.xcore;
 
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.xcore.formatting.XcoreFormatter;
+import org.eclipse.emf.ecore.xcore.mappings.XcoreMapper;
 import org.eclipse.emf.ecore.xcore.resource.XcoreReferableElementsUnloader;
 import org.eclipse.emf.ecore.xcore.resource.XcoreResource;
 import org.eclipse.emf.ecore.xcore.scoping.XcoreIdentifableSimpleNameProvider;
-import org.eclipse.emf.ecore.xcore.scoping.XcoreImplicitlyImportedTypes;
 import org.eclipse.emf.ecore.xcore.scoping.XcoreImportedNamespaceAwareScopeProvider;
 import org.eclipse.emf.ecore.xcore.scoping.XcoreQualifiedNameProvider;
 import org.eclipse.emf.ecore.xcore.scoping.XcoreResourceDescriptionManager;
@@ -26,8 +26,9 @@ import org.eclipse.emf.ecore.xcore.validation.XcoreDiagnostician;
 import org.eclipse.emf.ecore.xcore.validation.XcoreJvmTypeReferencesValidator;
 import org.eclipse.emf.ecore.xcore.validation.XcoreResourceValidator;
 import org.eclipse.incquery.xcore.generator.IncQueryXcoreGenerator;
+import org.eclipse.incquery.xcore.mappings.IncQueryXcoreMapper;
 import org.eclipse.incquery.xcore.resource.IncQueryXcoreModelAssociator;
-import org.eclipse.incquery.xcore.scoping.IncQueryXcoreBatchScopeProvider;
+import org.eclipse.incquery.xcore.scoping.IncQueryXcoreImplicitlyImportedTypes;
 import org.eclipse.incquery.xcore.scoping.IncQueryXcoreScopeProvider;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory;
 import org.eclipse.xtext.generator.IGenerator;
@@ -48,8 +49,7 @@ import org.eclipse.xtext.xbase.featurecalls.IdentifiableSimpleNameProvider;
 import org.eclipse.xtext.xbase.formatting.IBasicFormatter;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.jvmmodel.ILogicalContainerProvider;
-import org.eclipse.xtext.xbase.scoping.batch.ImplicitlyImportedTypes;
-import org.eclipse.xtext.xbase.scoping.batch.ImplicitlyImportedTypesAdapter;
+import org.eclipse.xtext.xbase.scoping.batch.ImplicitlyImportedFeatures;
 import org.eclipse.xtext.xbase.scoping.batch.XbaseBatchScopeProvider;
 import org.eclipse.xtext.xbase.validation.JvmTypeReferencesValidator;
 
@@ -66,47 +66,46 @@ public class IncQueryXcoreRuntimeModule extends org.eclipse.incquery.xcore.Abstr
     }
     
     @Override
-    public Class<? extends IGenerator> bindIGenerator() {
-        return IncQueryXcoreGenerator.class;
-    }
-
-    @Override
     public Class<? extends IDefaultResourceDescriptionStrategy> bindIDefaultResourceDescriptionStrategy()
     {
-      return XcoreResourceDescriptionStrategy.class;
+        return XcoreResourceDescriptionStrategy.class;
     }
-
+    
     @Override
     public Class<? extends XtextResource> bindXtextResource()
     {
-      return XcoreResource.class;
+        return XcoreResource.class;
     }
-
+    
     @Override
     public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider()
     {
-      return XcoreQualifiedNameProvider.class;
+        return XcoreQualifiedNameProvider.class;
     }
-
+    
     @Override
     public void configureIScopeProviderDelegate(Binder binder)
     {
-      binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(
-        XcoreImportedNamespaceAwareScopeProvider.class);
+        binder.bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(
+                XcoreImportedNamespaceAwareScopeProvider.class);
     }
-
+    
     @Override
     public void configureSerializerIScopeProvider(com.google.inject.Binder binder)
     {
-      binder.bind(IScopeProvider.class).annotatedWith(SerializerScopeProviderBinding.class).to(XcoreSerializerScopeProvider.class);
+        binder.bind(IScopeProvider.class).annotatedWith(SerializerScopeProviderBinding.class).to(XcoreSerializerScopeProvider.class);
     }
-
+    
     @Override
     public Class<? extends XbaseBatchScopeProvider> bindXbaseBatchScopeProvider()
     {
-      return IncQueryXcoreBatchScopeProvider.class;
+        return IncQueryXcoreScopeProvider.class;
     }
 
+    public Class<? extends XcoreMapper> bindXcoreMapper() {
+        return IncQueryXcoreMapper.class;
+    }
+    
     @Override
     public Class<? extends Manager> bindIResourceDescription$Manager()
     {
@@ -135,10 +134,10 @@ public class IncQueryXcoreRuntimeModule extends org.eclipse.incquery.xcore.Abstr
     {
       return XcoreDiagnostician.class;
     }
-
-    public Class<? extends ImplicitlyImportedTypes> bindImplicitlyImportedTypes()
-    {
-      return XcoreImplicitlyImportedTypes.class;
+    
+    @Override
+    public Class<? extends IGenerator> bindIGenerator() {
+        return IncQueryXcoreGenerator.class;
     }
 
     @Override
@@ -164,14 +163,6 @@ public class IncQueryXcoreRuntimeModule extends org.eclipse.incquery.xcore.Abstr
     {
       return XcoreJvmTypeReferencesValidator.class;
     }
-
-    @SuppressWarnings("deprecation")
-    @SingletonBinding(eager=true)
-    public Class<? extends org.eclipse.xtext.xbase.scoping.featurecalls.StaticImplicitMethodsFeatureForTypeProvider.ExtensionClassNameProvider> 
-      bindStaticImplicitMethodsFeatureForTypeProvider$ExtensionClassNameProvider()
-    {
-      return ImplicitlyImportedTypesAdapter.class;
-    }
     
     public Class<? extends IJvmModelAssociations> bindIJvmModelAssociations()
     {
@@ -181,12 +172,17 @@ public class IncQueryXcoreRuntimeModule extends org.eclipse.incquery.xcore.Abstr
     public Class<? extends ILogicalContainerProvider> bindILogicalContainerProvider()
     {
       return IncQueryXcoreModelAssociator.class;
-    }
-
+    } 
+    
     @Override
     public Class<? extends IDerivedStateComputer> bindIDerivedStateComputer()
     {
-      return IncQueryXcoreModelAssociator.class;
+        return IncQueryXcoreModelAssociator.class;
+    }
+    
+    public Class<? extends ImplicitlyImportedFeatures> bindImplicitlyImportedFeatures()
+    {
+      return IncQueryXcoreImplicitlyImportedTypes.class;
     }
     
     @Override

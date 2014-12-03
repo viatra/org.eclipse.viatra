@@ -70,7 +70,6 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
-import org.eclipse.xtext.xbase.lib.Functions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -775,7 +774,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
                         @Override
                         public String apply(EClassifier input) {
-                            return input.getName();
+                            final String name = input.getName();
+                            return (Strings.isEmpty(name)) ? "" : name;
                         }
 
                     });

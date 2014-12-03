@@ -11,10 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.jvmmodel;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.resource.DerivedStateAwareResource;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
@@ -26,19 +23,10 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  *
  */
-@SuppressWarnings("restriction")
 public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
 
     @Inject
     private IErrorFeedback feedback;
-
-    @Override
-    public JvmIdentifiableElement getLogicalContainer(EObject object) {
-        if (object instanceof PatternBody) {
-            return null;
-        }
-        return super.getLogicalContainer(object);
-    }
 
     @Override
     public void installDerivedState(DerivedStateAwareResource resource, boolean preIndexingPhase) {

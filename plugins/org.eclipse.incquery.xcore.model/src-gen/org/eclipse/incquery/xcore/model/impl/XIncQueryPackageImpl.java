@@ -35,127 +35,127 @@ import org.eclipse.incquery.xcore.model.XcorePackage;
  */
 public class XIncQueryPackageImpl extends XPackageImpl implements XIncQueryPackage {
 	/**
-	 * A set of bit flags representing the values of boolean attributes and whether unsettable features have been set.
-	 * <!-- begin-user-doc -->
+     * A set of bit flags representing the values of boolean attributes and whether unsettable features have been set.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
+     * @generated
+     * @ordered
+     */
 	protected int eFlags = 0;
 
 	/**
-	 * The cached value of the '{@link #getImportedIncQueries() <em>Imported Inc Queries</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getImportedIncQueries() <em>Imported Inc Queries</em>}' containment reference list.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getImportedIncQueries()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getImportedIncQueries()
+     * @generated
+     * @ordered
+     */
 	protected EList<XIncQueryImport> importedIncQueries;
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	protected XIncQueryPackageImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	protected EClass eStaticClass() {
-		return XcorePackage.Literals.XINC_QUERY_PACKAGE;
-	}
+        return XcorePackage.Literals.XINC_QUERY_PACKAGE;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public EList<XIncQueryImport> getImportedIncQueries() {
-		if (importedIncQueries == null) {
-			importedIncQueries = new EObjectContainmentEList<XIncQueryImport>(XIncQueryImport.class, this, XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES);
-		}
-		return importedIncQueries;
-	}
+        if (importedIncQueries == null) {
+            importedIncQueries = new EObjectContainmentEList<XIncQueryImport>(XIncQueryImport.class, this, XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES);
+        }
+        return importedIncQueries;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
-				return ((InternalEList<?>)getImportedIncQueries()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
+                return ((InternalEList<?>)getImportedIncQueries()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
-				return getImportedIncQueries();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
+                return getImportedIncQueries();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
-				getImportedIncQueries().clear();
-				getImportedIncQueries().addAll((Collection<? extends XIncQueryImport>)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
+                getImportedIncQueries().clear();
+                getImportedIncQueries().addAll((Collection<? extends XIncQueryImport>)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
-				getImportedIncQueries().clear();
-				return;
-		}
-		super.eUnset(featureID);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
+                getImportedIncQueries().clear();
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
-				return importedIncQueries != null && !importedIncQueries.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES:
+                return importedIncQueries != null && !importedIncQueries.isEmpty();
+        }
+        return super.eIsSet(featureID);
+    }
 
 } //XIncQueryPackageImpl

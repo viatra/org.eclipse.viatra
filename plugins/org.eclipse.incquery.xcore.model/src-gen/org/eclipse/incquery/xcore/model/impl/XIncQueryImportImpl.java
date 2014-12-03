@@ -30,138 +30,138 @@ import org.eclipse.incquery.xcore.model.XcorePackage;
  */
 public class XIncQueryImportImpl extends MinimalEObjectImpl.Container implements XIncQueryImport {
 	/**
-	 * A set of bit flags representing the values of boolean attributes and whether unsettable features have been set.
-	 * <!-- begin-user-doc -->
+     * A set of bit flags representing the values of boolean attributes and whether unsettable features have been set.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
+     * @generated
+     * @ordered
+     */
 	protected int eFlags = 0;
 
 	/**
-	 * The cached value of the '{@link #getImportedPatternModel() <em>Imported Pattern Model</em>}' reference.
-	 * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getImportedPatternModel() <em>Imported Pattern Model</em>}' reference.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getImportedPatternModel()
-	 * @generated
-	 * @ordered
-	 */
+     * @see #getImportedPatternModel()
+     * @generated
+     * @ordered
+     */
 	protected PatternModel importedPatternModel;
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	protected XIncQueryImportImpl() {
-		super();
-	}
+        super();
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	protected EClass eStaticClass() {
-		return XcorePackage.Literals.XINC_QUERY_IMPORT;
-	}
+        return XcorePackage.Literals.XINC_QUERY_IMPORT;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public PatternModel getImportedPatternModel() {
-		if (importedPatternModel != null && importedPatternModel.eIsProxy()) {
-			InternalEObject oldImportedPatternModel = (InternalEObject)importedPatternModel;
-			importedPatternModel = (PatternModel)eResolveProxy(oldImportedPatternModel);
-			if (importedPatternModel != oldImportedPatternModel) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL, oldImportedPatternModel, importedPatternModel));
-			}
-		}
-		return importedPatternModel;
-	}
+        if (importedPatternModel != null && importedPatternModel.eIsProxy()) {
+            InternalEObject oldImportedPatternModel = (InternalEObject)importedPatternModel;
+            importedPatternModel = (PatternModel)eResolveProxy(oldImportedPatternModel);
+            if (importedPatternModel != oldImportedPatternModel) {
+                if (eNotificationRequired())
+                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL, oldImportedPatternModel, importedPatternModel));
+            }
+        }
+        return importedPatternModel;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public PatternModel basicGetImportedPatternModel() {
-		return importedPatternModel;
-	}
+        return importedPatternModel;
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	public void setImportedPatternModel(PatternModel newImportedPatternModel) {
-		PatternModel oldImportedPatternModel = importedPatternModel;
-		importedPatternModel = newImportedPatternModel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL, oldImportedPatternModel, importedPatternModel));
-	}
+        PatternModel oldImportedPatternModel = importedPatternModel;
+        importedPatternModel = newImportedPatternModel;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL, oldImportedPatternModel, importedPatternModel));
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
-				if (resolve) return getImportedPatternModel();
-				return basicGetImportedPatternModel();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
+                if (resolve) return getImportedPatternModel();
+                return basicGetImportedPatternModel();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
-				setImportedPatternModel((PatternModel)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
+                setImportedPatternModel((PatternModel)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public void eUnset(int featureID) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
-				setImportedPatternModel((PatternModel)null);
-				return;
-		}
-		super.eUnset(featureID);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
+                setImportedPatternModel((PatternModel)null);
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
 	/**
-	 * <!-- begin-user-doc -->
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
 	@Override
 	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
-				return importedPatternModel != null;
-		}
-		return super.eIsSet(featureID);
-	}
+        switch (featureID) {
+            case XcorePackage.XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL:
+                return importedPatternModel != null;
+        }
+        return super.eIsSet(featureID);
+    }
 
 } //XIncQueryImportImpl

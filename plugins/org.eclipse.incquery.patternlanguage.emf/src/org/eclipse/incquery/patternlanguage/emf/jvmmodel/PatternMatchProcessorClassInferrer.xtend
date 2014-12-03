@@ -17,10 +17,12 @@ import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelI
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.runtime.api.IMatchProcessor
 import org.eclipse.xtext.common.types.JvmDeclaredType
-import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.common.types.JvmType
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 
 /**
- * {@link IMatchProcessor} implementation inferer.
+ * {@link IMatchProcessor} implementation inferrer.
  *
  * @author Mark Czotter
  */
@@ -29,16 +31,21 @@ class PatternMatchProcessorClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
+	@Extension private JvmTypeReferenceBuilder builder
+	@Extension private JvmAnnotationReferenceBuilder annBuilder
 
 	/**
 	 * Infers the {@link IMatchProcessor} implementation class from a {@link Pattern}.
 	 */
-	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmTypeReference matchClassRef) {
+	def JvmDeclaredType inferProcessorClass(Pattern pattern, boolean isPrelinkingPhase, String processorPackageName, JvmType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
+		this.builder = builder
+		this.annBuilder = annBuilder
+		
 		val processorClass = pattern.toClass(pattern.processorClassName) [
   			packageName = processorPackageName
   			documentation = pattern.javadocProcessorClass.toString
   			abstract = true
-  			superTypes += pattern.newTypeRef(typeof(IMatchProcessor), cloneWithProxies(matchClassRef))
+  			superTypes += typeRef(typeof(IMatchProcessor), typeRef(matchClass))
   		]
   		return processorClass
   	}
@@ -46,22 +53,22 @@ class PatternMatchProcessorClassInferrer {
 	/**
    	 * Infers methods for Processor class based on the input 'pattern'.
    	 */
-  	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmTypeReference matchClassRef) {
-  		processorClass.members += processorClass.toMethod("process", null) [
-  			returnType = pattern.newTypeRef(Void::TYPE)
+  	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmType matchClassRef) {
+  		processorClass.members += pattern.toMethod("process", null) [
+  			returnType = typeRef(Void::TYPE)
 			documentation = pattern.javadocProcessMethod.toString
 			abstract = true
 			for (parameter : pattern.parameters){
 				it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
 			}
 		]
-		processorClass.members += processorClass.toMethod("process", null) [
-			returnType = pattern.newTypeRef(Void::TYPE)
-			addAnnotation(typeof (Override))
-			parameters += processorClass.toParameter("match", cloneWithProxies(matchClassRef))
-			body = [it.append('''
+		processorClass.members += pattern.toMethod("process", null) [
+			returnType = typeRef(Void::TYPE)
+			annotations += annotationRef(typeof (Override))
+			parameters += pattern.toParameter("match", typeRef(matchClassRef))
+			body = '''
 				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
-			''')]
+			'''
 		]
   	}
 

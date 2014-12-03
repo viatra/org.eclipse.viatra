@@ -4,7 +4,7 @@
     modelPluginID="org.eclipse.incquery.xcore.model" modelName="IncQueryXcore" modelPluginClass="IncQueryXcorePlugin"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" booleanFlagsField="eFlags"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
-    packedEnums="true" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../org.eclipse.emf.codegen.ecore/model/GenModel.genmodel#//genmodel ../../org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types ../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase ../../org.eclipse.emf.ecore.xcore/model/Xcore.genmodel#//xcore ../../org.eclipse.incquery.patternlanguage/src-gen/org/eclipse/incquery/patternlanguage/PatternLanguage.genmodel#//patternLanguage">
+    packedEnums="true" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../org.eclipse.emf.codegen.ecore/model/GenModel.genmodel#//genmodel ../../org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage ../../org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types ../../org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase ../../org.eclipse.emf.ecore.xcore/model/Xcore.genmodel#//xcore">
   <foreignModel>IncQueryXcore.ecore</foreignModel>
   <genPackages prefix="Xcore" basePackage="org.eclipse.incquery" disposableProviderFactory="true"
       interfacePackageSuffix="model" metaDataPackageSuffix="model" classPackageSuffix="model.impl"

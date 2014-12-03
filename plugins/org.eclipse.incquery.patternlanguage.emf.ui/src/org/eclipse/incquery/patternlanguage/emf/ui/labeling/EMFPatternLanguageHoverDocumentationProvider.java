@@ -23,7 +23,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
 
 import com.google.inject.Inject;
@@ -39,8 +38,6 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
     private IEiqGenmodelProvider genmodelProvider;
     @Inject
     private PatternAnnotationProvider annotationProvider;
-    @Inject
-    private ITypeProvider typeProvider;
     @Inject
     private IEMFTypeProvider emfTypeProvider;
 
@@ -103,7 +100,7 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
      * @return
      */
     private String calculateVariableHover(Variable variable) {
-        JvmTypeReference type = typeProvider.getTypeForIdentifiable(variable);
+        JvmTypeReference type = emfTypeProvider.getVariableType(variable); 
         EClassifier emfType = emfTypeProvider.getClassifierForVariable(variable);
         String javaTypeString = type.getQualifiedName();
         String emfTypeString;

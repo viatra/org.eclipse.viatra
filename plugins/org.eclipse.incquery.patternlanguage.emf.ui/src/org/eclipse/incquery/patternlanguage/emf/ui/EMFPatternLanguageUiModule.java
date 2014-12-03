@@ -60,7 +60,6 @@ import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
-import org.eclipse.xtext.xbase.typing.ITypeProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -126,9 +125,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return GenModelMetamodelProviderService.class;
     }
 
-    public Class<? extends ITypeProvider> bindITypeProvider() {
-        return GenModelBasedTypeProvider.class;
-    }
+//    public Class<? extends ITypeProvider> bindITypeProvider() {
+//        return GenModelBasedTypeProvider.class;
+//    }
 
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
     	return GenModelBasedTypeProvider.class;
