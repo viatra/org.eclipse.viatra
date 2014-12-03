@@ -131,6 +131,10 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 			Object observedObject) {
 		if (observedObject instanceof EObject) {
 			EObjectObserver emfObserver = instanceObservers.get(observer);
+			if (emfObserver == null)
+				throw new IllegalStateException(String.format(
+						"EMF Base Index error: trying to remove non-attached IInstanceObserver %s from EObject %s.", 
+						observer, observedObject));
 			if (0 == --emfObserver.usageCount)
 				instanceObservers.remove(observer);
 			navigationHelper.removeLightweightEObjectObserver(emfObserver, (EObject)observedObject);
