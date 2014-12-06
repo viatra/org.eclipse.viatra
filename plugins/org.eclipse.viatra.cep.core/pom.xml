@@ -10,13 +10,6 @@
   </parent>
   <artifactId>org.eclipse.viatra.cep.core</artifactId>
   <packaging>eclipse-plugin</packaging>
-	<dependencies>
-		<dependency>
-		  <groupId>org.eclipse.viatra2</groupId>
-		  <artifactId>org.eclipse.viatra.cep.core.metamodels</artifactId>
-		  <version>0.7.0-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 	<build>
 		<resources>
 			<resource>
