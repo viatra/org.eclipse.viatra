@@ -34,7 +34,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS;
 import org.eclipse.viatra.cep.core.metamodels.events.OR;
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 import org.eclipse.viatra.cep.core.metamodels.events.UNTIL;
 
 import com.google.common.base.Preconditions;
@@ -97,9 +97,9 @@ public class Compiler {
 
             automaton.getStates().remove(lastState);
 
-            TimeWindow timeWindow = ((ComplexEventPattern) unfoldedEventPattern).getTimeWindow();
-            if (timeWindow != null) {
-                createTimedZone(timeWindow, initState, finalState);
+            Timewindow timewindow = ((ComplexEventPattern) unfoldedEventPattern).getTimewindow();
+            if (timewindow != null) {
+                createTimedZone(timewindow, initState, finalState);
             }
 
         } else if (unfoldedEventPattern instanceof AtomicEventPattern) {
@@ -298,19 +298,19 @@ public class Compiler {
         ((Automaton) eContainer).getStates().remove(stateToBeReplaced);
     }
 
-    private void createTimedZone(TimeWindow timeWindow, State inState, State outState) {
+    private void createTimedZone(Timewindow timewindow, State inState, State outState) {
         Within timedZone = AutomatonFactory.eINSTANCE.createWithin();
-        timedZone.setTime(timeWindow.getTime());
+        timedZone.setTime(timewindow.getTime());
         timedZone.setInState(inState);
         timedZone.setOutState(outState);
         automaton.getTimedZones().add(timedZone);
     }
 
-    private void createTimedZone(TimeWindow timeWindow, InitState initState, State outState) {
+    private void createTimedZone(Timewindow timewindow, InitState initState, State outState) {
         List<Transition> outTransitions = initState.getOutTransitions();
         for (Transition transition : outTransitions) {
             State timeZoneInState = transition.getPostState();
-            createTimedZone(timeWindow, timeZoneInState, outState);
+            createTimedZone(timewindow, timeZoneInState, outState);
         }
     }
 

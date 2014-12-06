@@ -15,7 +15,7 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="operator" lowerBound="1"
         eType="#//ComplexEventOperator" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="timeWindow" eType="#//TimeWindow"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timewindow" eType="#//Timewindow"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="containedEventPatterns"
         upperBound="-1" eType="#//EventPatternReference" containment="true"/>
@@ -35,7 +35,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="FOLLOWS" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="UNTIL" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="AND" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TimeWindow">
+  <eClassifiers xsi:type="ecore:EClass" name="Timewindow">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EventPatternReference">

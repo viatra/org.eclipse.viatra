@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getOperator <em>Operator</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow <em>Time Window</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimewindow <em>Timewindow</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getContainedEventPatterns <em>Contained Event Patterns</em>}</li>
  * </ul>
  * </p>
@@ -50,30 +50,30 @@ public interface ComplexEventPattern extends EventPattern {
     void setOperator(ComplexEventOperator value);
 
     /**
-     * Returns the value of the '<em><b>Time Window</b></em>' containment reference.
+     * Returns the value of the '<em><b>Timewindow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Time Window</em>' containment reference isn't clear,
+     * If the meaning of the '<em>Timewindow</em>' containment reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Time Window</em>' containment reference.
-     * @see #setTimeWindow(TimeWindow)
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getComplexEventPattern_TimeWindow()
+     * @return the value of the '<em>Timewindow</em>' containment reference.
+     * @see #setTimewindow(Timewindow)
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getComplexEventPattern_Timewindow()
      * @model containment="true"
      * @generated
      */
-    TimeWindow getTimeWindow();
+    Timewindow getTimewindow();
 
     /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow <em>Time Window</em>}' containment reference.
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimewindow <em>Timewindow</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Time Window</em>' containment reference.
-     * @see #getTimeWindow()
+     * @param value the new value of the '<em>Timewindow</em>' containment reference.
+     * @see #getTimewindow()
      * @generated
      */
-    void setTimeWindow(TimeWindow value);
+    void setTimewindow(Timewindow value);
 
     /**
      * Returns the value of the '<em><b>Contained Event Patterns</b></em>' containment reference list.

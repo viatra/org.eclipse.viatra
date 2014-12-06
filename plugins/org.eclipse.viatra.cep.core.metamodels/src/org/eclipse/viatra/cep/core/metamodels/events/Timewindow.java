@@ -6,21 +6,21 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Time Window</b></em>'.
+ * A representation of the model object '<em><b>Timewindow</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime <em>Time</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.Timewindow#getTime <em>Time</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getTimeWindow()
+ * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getTimewindow()
  * @model
  * @generated
  */
-public interface TimeWindow extends EObject {
+public interface Timewindow extends EObject {
     /**
      * Returns the value of the '<em><b>Time</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -31,14 +31,14 @@ public interface TimeWindow extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Time</em>' attribute.
      * @see #setTime(long)
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getTimeWindow_Time()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getTimewindow_Time()
      * @model required="true"
      * @generated
      */
     long getTime();
 
     /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime <em>Time</em>}' attribute.
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.Timewindow#getTime <em>Time</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Time</em>' attribute.
@@ -47,4 +47,4 @@ public interface TimeWindow extends EObject {
      */
     void setTime(long value);
 
-} // TimeWindow
+} // Timewindow

@@ -14,7 +14,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 import java.util.List;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
@@ -159,9 +159,9 @@ public class ExpressionTreeBuilder {
         }
     }
 
-    private TimeWindow getTimewindow(ComplexEventExpression expression) {
+    private Timewindow getTimewindow(ComplexEventExpression expression) {
         if (expression.getTimewindow() != null) {
-            TimeWindow timeWindow = EventsFactory.eINSTANCE.createTimeWindow();
+            Timewindow timeWindow = EventsFactory.eINSTANCE.createTimewindow();
             timeWindow.setTime(expression.getTimewindow().getLength());
             return timeWindow;
         }

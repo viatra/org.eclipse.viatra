@@ -24,7 +24,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,7 +34,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getOperator <em>Operator</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getTimeWindow <em>Time Window</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getTimewindow <em>Timewindow</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl#getContainedEventPatterns <em>Contained Event Patterns</em>}</li>
  * </ul>
  * </p>
@@ -53,14 +53,14 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
     protected ComplexEventOperator operator;
 
     /**
-     * The cached value of the '{@link #getTimeWindow() <em>Time Window</em>}' containment reference.
+     * The cached value of the '{@link #getTimewindow() <em>Timewindow</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getTimeWindow()
+     * @see #getTimewindow()
      * @generated
      * @ordered
      */
-    protected TimeWindow timeWindow;
+    protected Timewindow timewindow;
 
     /**
      * The cached value of the '{@link #getContainedEventPatterns() <em>Contained Event Patterns</em>}' containment reference list.
@@ -139,8 +139,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public TimeWindow getTimeWindow() {
-        return timeWindow;
+    public Timewindow getTimewindow() {
+        return timewindow;
     }
 
     /**
@@ -148,11 +148,11 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public NotificationChain basicSetTimeWindow(TimeWindow newTimeWindow, NotificationChain msgs) {
-        TimeWindow oldTimeWindow = timeWindow;
-        timeWindow = newTimeWindow;
+    public NotificationChain basicSetTimewindow(Timewindow newTimewindow, NotificationChain msgs) {
+        Timewindow oldTimewindow = timewindow;
+        timewindow = newTimewindow;
         if (eNotificationRequired()) {
-            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, oldTimeWindow, newTimeWindow);
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW, oldTimewindow, newTimewindow);
             if (msgs == null) msgs = notification; else msgs.add(notification);
         }
         return msgs;
@@ -163,18 +163,18 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setTimeWindow(TimeWindow newTimeWindow) {
-        if (newTimeWindow != timeWindow) {
+    public void setTimewindow(Timewindow newTimewindow) {
+        if (newTimewindow != timewindow) {
             NotificationChain msgs = null;
-            if (timeWindow != null)
-                msgs = ((InternalEObject)timeWindow).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, null, msgs);
-            if (newTimeWindow != null)
-                msgs = ((InternalEObject)newTimeWindow).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, null, msgs);
-            msgs = basicSetTimeWindow(newTimeWindow, msgs);
+            if (timewindow != null)
+                msgs = ((InternalEObject)timewindow).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW, null, msgs);
+            if (newTimewindow != null)
+                msgs = ((InternalEObject)newTimewindow).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW, null, msgs);
+            msgs = basicSetTimewindow(newTimewindow, msgs);
             if (msgs != null) msgs.dispatch();
         }
         else if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW, newTimeWindow, newTimeWindow));
+            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW, newTimewindow, newTimewindow));
     }
 
     /**
@@ -210,8 +210,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
         switch (featureID) {
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return basicSetOperator(null, msgs);
-            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
-                return basicSetTimeWindow(null, msgs);
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW:
+                return basicSetTimewindow(null, msgs);
             case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
                 return ((InternalEList<?>)getContainedEventPatterns()).basicRemove(otherEnd, msgs);
         }
@@ -228,8 +228,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
         switch (featureID) {
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return getOperator();
-            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
-                return getTimeWindow();
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW:
+                return getTimewindow();
             case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
                 return getContainedEventPatterns();
         }
@@ -248,8 +248,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 setOperator((ComplexEventOperator)newValue);
                 return;
-            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
-                setTimeWindow((TimeWindow)newValue);
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW:
+                setTimewindow((Timewindow)newValue);
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
                 getContainedEventPatterns().clear();
@@ -270,8 +270,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 setOperator((ComplexEventOperator)null);
                 return;
-            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
-                setTimeWindow((TimeWindow)null);
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW:
+                setTimewindow((Timewindow)null);
                 return;
             case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
                 getContainedEventPatterns().clear();
@@ -290,8 +290,8 @@ public class ComplexEventPatternImpl extends EventPatternImpl implements Complex
         switch (featureID) {
             case EventsPackage.COMPLEX_EVENT_PATTERN__OPERATOR:
                 return operator != null;
-            case EventsPackage.COMPLEX_EVENT_PATTERN__TIME_WINDOW:
-                return timeWindow != null;
+            case EventsPackage.COMPLEX_EVENT_PATTERN__TIMEWINDOW:
+                return timewindow != null;
             case EventsPackage.COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS:
                 return containedEventPatterns != null && !containedEventPatterns.isEmpty();
         }

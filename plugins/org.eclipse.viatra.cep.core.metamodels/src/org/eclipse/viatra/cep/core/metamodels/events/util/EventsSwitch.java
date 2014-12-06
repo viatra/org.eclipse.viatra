@@ -139,9 +139,9 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.TIME_WINDOW: {
-                TimeWindow timeWindow = (TimeWindow)theEObject;
-                T result = caseTimeWindow(timeWindow);
+            case EventsPackage.TIMEWINDOW: {
+                Timewindow timewindow = (Timewindow)theEObject;
+                T result = caseTimewindow(timewindow);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -321,17 +321,17 @@ public class EventsSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Time Window</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Timewindow</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Time Window</em>'.
+     * @return the result of interpreting the object as an instance of '<em>Timewindow</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseTimeWindow(TimeWindow object) {
+    public T caseTimewindow(Timewindow object) {
         return null;
     }
 

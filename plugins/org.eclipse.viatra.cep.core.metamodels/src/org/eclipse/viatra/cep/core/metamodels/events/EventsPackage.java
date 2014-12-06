@@ -196,13 +196,13 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_PATTERN__OPERATOR = EVENT_PATTERN_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Time Window</b></em>' containment reference.
+     * The feature id for the '<em><b>Timewindow</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int COMPLEX_EVENT_PATTERN__TIME_WINDOW = EVENT_PATTERN_FEATURE_COUNT + 1;
+    int COMPLEX_EVENT_PATTERN__TIMEWINDOW = EVENT_PATTERN_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Contained Event Patterns</b></em>' containment reference list.
@@ -501,14 +501,14 @@ public interface EventsPackage extends EPackage {
     int AND_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl <em>Time Window</em>}' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimewindowImpl <em>Timewindow</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimeWindow()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimewindowImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimewindow()
      * @generated
      */
-    int TIME_WINDOW = 11;
+    int TIMEWINDOW = 11;
 
     /**
      * The feature id for the '<em><b>Time</b></em>' attribute.
@@ -517,25 +517,25 @@ public interface EventsPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int TIME_WINDOW__TIME = 0;
+    int TIMEWINDOW__TIME = 0;
 
     /**
-     * The number of structural features of the '<em>Time Window</em>' class.
+     * The number of structural features of the '<em>Timewindow</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TIME_WINDOW_FEATURE_COUNT = 1;
+    int TIMEWINDOW_FEATURE_COUNT = 1;
 
     /**
-     * The number of operations of the '<em>Time Window</em>' class.
+     * The number of operations of the '<em>Timewindow</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TIME_WINDOW_OPERATION_COUNT = 0;
+    int TIMEWINDOW_OPERATION_COUNT = 0;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
@@ -659,15 +659,15 @@ public interface EventsPackage extends EPackage {
     EReference getComplexEventPattern_Operator();
 
     /**
-     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow <em>Time Window</em>}'.
+     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimewindow <em>Timewindow</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Time Window</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimeWindow()
+     * @return the meta object for the containment reference '<em>Timewindow</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getTimewindow()
      * @see #getComplexEventPattern()
      * @generated
      */
-    EReference getComplexEventPattern_TimeWindow();
+    EReference getComplexEventPattern_Timewindow();
 
     /**
      * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern#getContainedEventPatterns <em>Contained Event Patterns</em>}'.
@@ -814,25 +814,25 @@ public interface EventsPackage extends EPackage {
     EClass getAND();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow <em>Time Window</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Timewindow <em>Timewindow</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Time Window</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
+     * @return the meta object for class '<em>Timewindow</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Timewindow
      * @generated
      */
-    EClass getTimeWindow();
+    EClass getTimewindow();
 
     /**
-     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime <em>Time</em>}'.
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.Timewindow#getTime <em>Time</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for the attribute '<em>Time</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow#getTime()
-     * @see #getTimeWindow()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Timewindow#getTime()
+     * @see #getTimewindow()
      * @generated
      */
-    EAttribute getTimeWindow_Time();
+    EAttribute getTimewindow_Time();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
@@ -952,12 +952,12 @@ public interface EventsPackage extends EPackage {
         EReference COMPLEX_EVENT_PATTERN__OPERATOR = eINSTANCE.getComplexEventPattern_Operator();
 
         /**
-         * The meta object literal for the '<em><b>Time Window</b></em>' containment reference feature.
+         * The meta object literal for the '<em><b>Timewindow</b></em>' containment reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EReference COMPLEX_EVENT_PATTERN__TIME_WINDOW = eINSTANCE.getComplexEventPattern_TimeWindow();
+        EReference COMPLEX_EVENT_PATTERN__TIMEWINDOW = eINSTANCE.getComplexEventPattern_Timewindow();
 
         /**
          * The meta object literal for the '<em><b>Contained Event Patterns</b></em>' containment reference list feature.
@@ -1088,14 +1088,14 @@ public interface EventsPackage extends EPackage {
         EClass AND = eINSTANCE.getAND();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl <em>Time Window</em>}' class.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimewindowImpl <em>Timewindow</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimeWindow()
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.TimewindowImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getTimewindow()
          * @generated
          */
-        EClass TIME_WINDOW = eINSTANCE.getTimeWindow();
+        EClass TIMEWINDOW = eINSTANCE.getTimewindow();
 
         /**
          * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
@@ -1103,7 +1103,7 @@ public interface EventsPackage extends EPackage {
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute TIME_WINDOW__TIME = eINSTANCE.getTimeWindow_Time();
+        EAttribute TIMEWINDOW__TIME = eINSTANCE.getTimewindow_Time();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.

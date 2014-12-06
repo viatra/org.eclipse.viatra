@@ -112,8 +112,8 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createANDAdapter();
             }
             @Override
-            public Adapter caseTimeWindow(TimeWindow object) {
-                return createTimeWindowAdapter();
+            public Adapter caseTimewindow(Timewindow object) {
+                return createTimewindowAdapter();
             }
             @Override
             public Adapter caseEventPatternReference(EventPatternReference object) {
@@ -294,16 +294,16 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.TimeWindow <em>Time Window</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.Timewindow <em>Timewindow</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.TimeWindow
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Timewindow
      * @generated
      */
-    public Adapter createTimeWindowAdapter() {
+    public Adapter createTimewindowAdapter() {
         return null;
     }
 

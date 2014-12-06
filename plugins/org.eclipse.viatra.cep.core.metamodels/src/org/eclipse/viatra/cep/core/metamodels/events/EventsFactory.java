@@ -94,13 +94,13 @@ public interface EventsFactory extends EFactory {
     AND createAND();
 
     /**
-     * Returns a new object of class '<em>Time Window</em>'.
+     * Returns a new object of class '<em>Timewindow</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return a new object of class '<em>Time Window</em>'.
+     * @return a new object of class '<em>Timewindow</em>'.
      * @generated
      */
-    TimeWindow createTimeWindow();
+    Timewindow createTimewindow();
 
     /**
      * Returns a new object of class '<em>Event Pattern Reference</em>'.

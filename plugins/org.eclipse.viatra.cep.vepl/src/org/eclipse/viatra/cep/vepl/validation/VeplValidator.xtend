@@ -23,6 +23,7 @@ import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
 import org.eclipse.viatra.cep.vepl.vepl.Atom
+import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 
 class VeplValidator extends AbstractVeplValidator {
 
@@ -32,6 +33,7 @@ class VeplValidator extends AbstractVeplValidator {
 	private static val MISSING_IQPATTERN_USAGE = "missingIqPatternUsage"
 	private static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
 	private static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
+	private static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -125,6 +127,23 @@ class VeplValidator extends AbstractVeplValidator {
 				"Timewindows on expression atoms are allowed only if multiplicity is also specified.",
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
 				ATOM_TIMEWINDOW_NO_MULTIPLICITY
+			)
+		} else if (timewindow != null && multiplicity != null && multiplicity.value < 2) {
+			error(
+				"One atomic event does not result in a valid complex event.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+				ATOM_TIMEWINDOW_NO_MULTIPLICITY
+			)
+		}
+	}
+
+	@Check
+	def positiveMultiplicity(Multiplicity multiplicity) {
+		if (multiplicity != null && multiplicity.value < 1) {
+			error(
+				"Multiplicity should be a positive integer.",
+				VeplPackage.Literals.MULTIPLICITY__VALUE,
+				NON_POSITIVE_MULTIPLICITY
 			)
 		}
 	}

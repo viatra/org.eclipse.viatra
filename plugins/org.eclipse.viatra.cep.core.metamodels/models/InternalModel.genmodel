@@ -73,7 +73,7 @@
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//ComplexEventPattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/operator"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timeWindow"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timewindow"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/containedEventPatterns"/>
       <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings">
         <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings/event"/>
@@ -93,8 +93,8 @@
     <genClasses ecoreClass="Cep.ecore#//FOLLOWS"/>
     <genClasses ecoreClass="Cep.ecore#//UNTIL"/>
     <genClasses ecoreClass="Cep.ecore#//AND"/>
-    <genClasses ecoreClass="Cep.ecore#//TimeWindow">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//TimeWindow/time"/>
+    <genClasses ecoreClass="Cep.ecore#//Timewindow">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Timewindow/time"/>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>

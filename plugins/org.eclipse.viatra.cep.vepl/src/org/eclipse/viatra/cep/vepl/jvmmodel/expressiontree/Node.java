@@ -13,7 +13,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
 import java.util.List;
 
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator;
 
 import com.google.common.collect.Lists;
@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 public class Node extends TreeElement {
     private ComplexEventOperator operator;
     private int multiplicity = 1;
-    private TimeWindow timewindow;
+    private Timewindow timewindow;
     private List<TreeElement> children = Lists.newArrayList();
 
     public Node(ComplexEventOperator operator) {
@@ -39,7 +39,7 @@ public class Node extends TreeElement {
         this.multiplicity = multiplicity;
     }
 
-    public Node(ComplexEventOperator operator, int multiplicity, TimeWindow timewindow) {
+    public Node(ComplexEventOperator operator, int multiplicity, Timewindow timewindow) {
         this.operator = operator;
         this.multiplicity = multiplicity;
         this.timewindow = timewindow;
@@ -57,11 +57,11 @@ public class Node extends TreeElement {
         this.multiplicity = multiplicity;
     }
 
-    public TimeWindow getTimewindow() {
+    public Timewindow getTimewindow() {
         return timewindow;
     }
 
-    public void setTimewindow(TimeWindow timewindow) {
+    public void setTimewindow(Timewindow timewindow) {
         this.timewindow = timewindow;
     }
 

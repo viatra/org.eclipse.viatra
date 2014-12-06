@@ -10,22 +10,22 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
-import org.eclipse.viatra.cep.core.metamodels.events.TimeWindow;
+import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Time Window</b></em>'.
+ * An implementation of the model object '<em><b>Timewindow</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimeWindowImpl#getTime <em>Time</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.TimewindowImpl#getTime <em>Time</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class TimeWindowImpl extends MinimalEObjectImpl.Container implements TimeWindow {
+public class TimewindowImpl extends MinimalEObjectImpl.Container implements Timewindow {
     /**
      * The default value of the '{@link #getTime() <em>Time</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -51,7 +51,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
      * <!-- end-user-doc -->
      * @generated
      */
-    protected TimeWindowImpl() {
+    protected TimewindowImpl() {
         super();
     }
 
@@ -62,7 +62,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
      */
     @Override
     protected EClass eStaticClass() {
-        return EventsPackage.Literals.TIME_WINDOW;
+        return EventsPackage.Literals.TIMEWINDOW;
     }
 
     /**
@@ -83,7 +83,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
         long oldTime = time;
         time = newTime;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.TIME_WINDOW__TIME, oldTime, time));
+            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.TIMEWINDOW__TIME, oldTime, time));
     }
 
     /**
@@ -94,7 +94,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case EventsPackage.TIME_WINDOW__TIME:
+            case EventsPackage.TIMEWINDOW__TIME:
                 return getTime();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -108,7 +108,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case EventsPackage.TIME_WINDOW__TIME:
+            case EventsPackage.TIMEWINDOW__TIME:
                 setTime((Long)newValue);
                 return;
         }
@@ -123,7 +123,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case EventsPackage.TIME_WINDOW__TIME:
+            case EventsPackage.TIMEWINDOW__TIME:
                 setTime(TIME_EDEFAULT);
                 return;
         }
@@ -138,7 +138,7 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case EventsPackage.TIME_WINDOW__TIME:
+            case EventsPackage.TIMEWINDOW__TIME:
                 return time != TIME_EDEFAULT;
         }
         return super.eIsSet(featureID);
@@ -160,4 +160,4 @@ public class TimeWindowImpl extends MinimalEObjectImpl.Container implements Time
         return result.toString();
     }
 
-} //TimeWindowImpl
+} //TimewindowImpl
