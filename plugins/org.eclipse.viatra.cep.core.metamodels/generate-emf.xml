@@ -16,7 +16,7 @@
     <!-- =================================
           target: default
          ================================= -->
-    <target name="default" description="A build script to execute Event model and Automaton model generation">
+    <target name="generateEventModel" description="Event model generation">
         <emf.Ecore2Java genModel="models/InternalModel.genmodel"
         	model="model/Cep.ecore"
         	generateJavaCode="true"
@@ -26,6 +26,9 @@
         	reconcilegenmodel="keep">
         	  <arg line="-modelProject . src" />
         </emf.Ecore2Java>
+    	<eclipse.refreshLocal resource="org.eclipse.viatra.cep.core.metamodels/src" depth="infinite"/>
+    </target>
+    <target name="generateAutomatonModel" description="Automaton model generation">
         <emf.Ecore2Java genModel="models/InternalModel.genmodel"
         	model="model/Automaton.ecore"
         	generateJavaCode="true"
