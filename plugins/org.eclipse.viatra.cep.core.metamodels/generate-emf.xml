@@ -24,7 +24,16 @@
         	generateeditproject="false"
     		generateeditorproject="false"
         	reconcilegenmodel="keep">
-			<arg line="-modelProject . src" />
+			<arg line="-modelProject ${buildDirectory}/plugins/org.eclipse.viatra.cep.core.metamodels src" />
+        </emf.Ecore2Java>
+		<emf.Ecore2Java genModel="models/InternalModel.genmodel"
+        	model="model/Automaton.ecore"
+        	generateJavaCode="true"
+			generatemodelproject="true"
+        	generateeditproject="false"
+    		generateeditorproject="false"
+        	reconcilegenmodel="keep">
+			<arg line="-modelProject ${buildDirectory}/plugins/org.eclipse.viatra.cep.core.metamodels/src" />
         </emf.Ecore2Java>
     	<eclipse.refreshLocal resource="org.eclipse.viatra.cep.core.metamodels/src" depth="infinite"/>
     </target>
