@@ -17,8 +17,7 @@
 	<public name="emf.generate" actor="ant">
             <actorProperties>
                 <property key="buildFile" value="generate-emf.xml" />
-                <property key="targets" value="generateEventModel" />
-                <property key="targets" value="generateAutomatonModel" />
+                <property key="targets" value="default" />
             </actorProperties>
         </public>
 	</actions>
