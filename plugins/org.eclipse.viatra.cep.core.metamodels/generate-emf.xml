@@ -38,7 +38,6 @@
     		generateeditorproject="false"
         	reconcilegenmodel="keep">
         </emf.Ecore2Java>
-		<refreshWorkspace project="models"/>
     	<eclipse.refreshLocal resource="org.eclipse.viatra.cep.core.metamodels/src" depth="infinite"/>
     </target>
 	
