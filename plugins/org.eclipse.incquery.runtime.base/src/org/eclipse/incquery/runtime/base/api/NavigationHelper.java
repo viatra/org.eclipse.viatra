@@ -436,16 +436,18 @@ public interface NavigationHelper {
      * 
      * @param observer the listener instance
      * @param observedObject the observed EObject
+     * @return false if the observer was already attached to the object (call has no effect), true otherwise
      */
-    public void addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
+    public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
     
     /**
      * Unregisters a lightweight observer for the given EObject.
      * 
      * @param observer the listener instance
      * @param observedObjectt the observed EObject
+     * @return false if the observer has not been previously attached to the object (call has no effect), true otherwise
      */
-    public void removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
+    public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
     
     /**
      * Manually turns on indexing for the given types (indexing of others are unaffected). Note that

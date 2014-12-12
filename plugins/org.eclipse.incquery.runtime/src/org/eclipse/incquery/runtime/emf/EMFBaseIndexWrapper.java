@@ -121,9 +121,10 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 				emfObserver = new EObjectObserver(observer);
 				instanceObservers.put(observer, emfObserver);
 			}
-			emfObserver.usageCount++;
-			navigationHelper.addLightweightEObjectObserver(emfObserver, (EObject) observedObject);
-			return true;
+			boolean success = 
+					navigationHelper.addLightweightEObjectObserver(emfObserver, (EObject) observedObject);
+			if (success) emfObserver.usageCount++;
+			return success;
 		} else return false;
 	}
 	@Override
@@ -132,13 +133,13 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 		if (observedObject instanceof EObject) {
 			EObjectObserver emfObserver = instanceObservers.get(observer);
 			if (emfObserver == null)
-				throw new IllegalStateException(String.format(
-						"EMF Base Index error: trying to remove non-attached IInstanceObserver %s from EObject %s.", 
-						observer, observedObject));
-			if (0 == --emfObserver.usageCount)
-				instanceObservers.remove(observer);
-			navigationHelper.removeLightweightEObjectObserver(emfObserver, (EObject)observedObject);
-			return true;
+				return false;
+			boolean success = 
+					navigationHelper.removeLightweightEObjectObserver(emfObserver, (EObject)observedObject);
+			if (success) 
+				if (0 == --emfObserver.usageCount)
+					instanceObservers.remove(observer);
+			return success;
 		} else return false;
 	}
 	private class EObjectObserver implements LightweightEObjectObserver {

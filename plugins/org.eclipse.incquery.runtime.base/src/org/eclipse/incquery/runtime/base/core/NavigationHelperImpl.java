@@ -41,12 +41,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
+import org.eclipse.incquery.runtime.base.api.EMFBaseIndexChangeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.incquery.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
-import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.IEMFIndexingErrorListener;
-import org.eclipse.incquery.runtime.base.api.EMFBaseIndexChangeListener;
+import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -582,24 +582,26 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
     
     @Override
-    public void addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject){
+    public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject){
         Collection<EObject> observedObjects = lightweightObservers.get(observer);
         if(observedObjects == null) {
             observedObjects = new HashSet<EObject>();
             lightweightObservers.put(observer, observedObjects);
         }
-        observedObjects.add(observedObject);
+        return observedObjects.add(observedObject);
     }
     
     @Override
-    public void removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
-        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+    public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
+        boolean result = false;
+    	Collection<EObject> observedObjects = lightweightObservers.get(observer);
         if(observedObjects != null) {
-            observedObjects.remove(observedObject);
+        	result = observedObjects.remove(observedObject);
             if(observedObjects.isEmpty()) {
-                lightweightObservers.remove(observer);
+            	lightweightObservers.remove(observer);
             }
         }
+        return result;
     }
     
     /**

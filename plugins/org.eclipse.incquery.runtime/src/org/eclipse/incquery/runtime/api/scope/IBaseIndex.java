@@ -74,7 +74,8 @@ public interface IBaseIndex {
      * 
      * @param observer the listener instance
      * @param observedObject the observed instance object
-     * @return false if no observer can be registered for the given instance (e.g. it is a primitive)
+     * @return false if no observer can be registered for the given instance (e.g. it is a primitive), 
+     * 	or observer was already registered (call has no effect)
      */
     public boolean addInstanceObserver(IInstanceObserver observer, Object observedObject);
     
@@ -83,7 +84,8 @@ public interface IBaseIndex {
      * 
      * @param observer the listener instance
      * @param observedObjectt the observed instance object
-     * @return false if no observer can be registered for the given instance (e.g. it is a primitive)
+     * @return false if no observer can be registered for the given instance (e.g. it is a primitive), 
+     * 	or no observer was registered previously (call has no effect)
      */
     public boolean removeInstanceObserver(IInstanceObserver observer, Object observedObject);
 
