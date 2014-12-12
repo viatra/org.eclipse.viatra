@@ -198,15 +198,6 @@ class ComplexGenerator {
 		return "createNEG()"
 	}
 
-	//	def unwrapExpression(ComplexEventExpression expression) {
-	//		switch (expression) {
-	//			PlainExpression:
-	//				return expression
-	//			AugmentedExpression: {
-	//				return expression.expression
-	//			}
-	//		}
-	//	}
 	def Iterable<? extends JvmMember> getParameterBindingDispatcher(ComplexEventPattern pattern) {
 		val method = TypesFactory.eINSTANCE.createJvmOperation
 		method.simpleName = "evaluateParameterBindings"
@@ -247,14 +238,7 @@ class ComplexGenerator {
 			append(
 				'''.newHashMap();
 					''')
-			//			getParameterMapping(expression.unwrapCompositionEventsWithParameterList, method).append(
-			//				'''
-			//				return true;''')
 			it.getParameterMapping(expression, method)
-			//			it.getParameterMapping(expression.headExpressionAtom, method, "if")
-			//			for (expressionAtom : expression.tailExpressionAtoms) {
-			//				it.getParameterMapping(expressionAtom.expressionAtom, method, "else if")
-			//			}
 			append(
 				'''return evaluateParamBinding(params, event);
 					''')
@@ -269,67 +253,42 @@ class ComplexGenerator {
 		if (firstCondition) '''if''' else '''else if'''
 	}
 
-	//FIXME the params.put("«param.name»", value«i»); should look for the appropriate parameter position!
-	def getParameterMapping(ITreeAppendable appendable, ComplexEventExpression expression, EObject ctx) {
-		if (expression.left instanceof Atom) {
-			val atom = expression.left as Atom
-			if (atom.patternCall.parameterList != null && !atom.patternCall.parameterList.parameters.empty) {
-				appendable.append(
-					'''
-					«condition» (event instanceof ''').append(
-					'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').append(
-					'''){
-						''')
-
-				var i = 0
-				for (param : atom.patternCall.parameterList.parameters.filter[p|!p.ignorable]) {
-					appendable.append('''	Object value«i» = ((''').append(
-						'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').
-						append(
-							''') event).getParameter(«i»);
-								''')
-					appendable.append(
-						'''	params.put("«param.name»", value«i»);
-							''')
-					i = i + 1
-				}
-				appendable.append(
-					'''}
-						''')
-			}
+	def void getParameterMapping(ITreeAppendable appendable, ComplexEventExpression expression, EObject ctx) {
+		if (expression instanceof Atom) {
+			printParameterMapping(appendable, expression as Atom, ctx)
 		} else {
 			appendable.getParameterMapping(expression.left, ctx)
 		}
+		for (right : expression.right) {
+			appendable.getParameterMapping(right.expression, ctx)
+		}
 	}
 
-	//FIXME the params.put("«param.name»", value«i»); should look for the appropriate parameter position!
-	//	def getParameterMapping(ITreeAppendable appendable, ComplexExpressionAtom expressionAtom, EObject ctx,
-	//		String condition) {
-	//		if (expressionAtom.patternCall.parameterList != null &&
-	//			!expressionAtom.patternCall.parameterList.parameters.empty) {
-	//			appendable.append(
-	//				'''
-	//				«condition» (event instanceof ''').append(
-	//				'''«appendable.referClass(expressionAtom.patternCall.eventPattern.classFqn, ctx)»''').append(
-	//				'''){
-	//					''')
-	//
-	//			var i = 0
-	//			for (param : expressionAtom.patternCall.parameterList.parameters.filter[p|!p.ignorable]) {
-	//				appendable.append('''	Object value«i» = ((''').append(
-	//					'''«appendable.referClass(expressionAtom.patternCall.eventPattern.classFqn, ctx)»''').append(
-	//					''') event).getParameter(«i»);
-	//						''')
-	//				appendable.append(
-	//					'''	params.put("«param.name»", value«i»);
-	//						''')
-	//				i = i + 1
-	//			}
-	//			appendable.append(
-	//				'''}
-	//					''')
-	//		}
-	//	}
+	def void printParameterMapping(ITreeAppendable appendable, Atom atom, EObject ctx) {
+		if (atom.patternCall.parameterList != null && !atom.patternCall.parameterList.parameters.empty) {
+			appendable.append(
+				'''
+				«condition» (event instanceof ''').append(
+				'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').append(
+				'''){
+					''')
+			var i = 0
+			for (param : atom.patternCall.parameterList.parameters.filter[p|!p.ignorable]) {
+				appendable.append('''	Object value«i» = ((''').append(
+					'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').append(
+					''') event).getParameter(«atom.patternCall.parameterList.parameters.indexOf(param)»);
+						''')
+				appendable.append(
+					'''	params.put("«param.name»", value«i»);
+						''')
+				i = i + 1
+			}
+			appendable.append(
+				'''}
+					''')
+		}
+	}
+
 	def isIgnorable(PatternCallParameter parameter) {
 		if (parameter.name.startsWith("_")) {
 			return true
