@@ -25,59 +25,59 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 /**
  * This class implements the {@link IDesignSpaceVisualizer} interface by storing the trace of the exploration into its
- * own data structure and exporting it to .graphml supported by the yEd Graph Editor (tm) software. It only supports
+ * own data structure and exporting it to .graphml. It only supports
  * single threaded exploration.
  * 
  * @author Andras Szabolcs Nagy
  *
  */
-public class YEdDesignSpaceVisualizer implements IDesignSpaceVisualizer {
+public class GraphmlDesignSpaceVisualizer implements IDesignSpaceVisualizer {
 
     private DesignSpaceVisualizerOptions options;
     private String fileName;
     private AtomicInteger numberOfThreads = new AtomicInteger(0);
 
     /**
-     * Initializes a new instance of the {@link YEdDesignSpaceVisualizer} with custom options and file name to save.
+     * Initializes a new instance of the {@link GraphmlDesignSpaceVisualizer} with custom options and file name to save.
      * 
      * @param options
      * @param fileName
-     * @see YEdDesignSpaceVisualizer
+     * @see GraphmlDesignSpaceVisualizer
      */
-    public YEdDesignSpaceVisualizer(DesignSpaceVisualizerOptions options, String fileName) {
+    public GraphmlDesignSpaceVisualizer(DesignSpaceVisualizerOptions options, String fileName) {
         this.options = options;
         this.fileName = fileName;
     }
 
     /**
-     * Initializes a new instance of the {@link YEdDesignSpaceVisualizer} with custom options and the file name
+     * Initializes a new instance of the {@link GraphmlDesignSpaceVisualizer} with custom options and the file name
      * "DSEDesignSpace.graphml".
      * 
      * @param options
-     * @see YEdDesignSpaceVisualizer
+     * @see GraphmlDesignSpaceVisualizer
      */
-    public YEdDesignSpaceVisualizer(DesignSpaceVisualizerOptions options) {
+    public GraphmlDesignSpaceVisualizer(DesignSpaceVisualizerOptions options) {
         this(options, "DSEDesignSpace.graphml");
     }
 
     /**
-     * Initializes a new instance of the {@link YEdDesignSpaceVisualizer} with custom file name and default options.
+     * Initializes a new instance of the {@link GraphmlDesignSpaceVisualizer} with custom file name and default options.
      * 
      * @param fileName
-     * @see YEdDesignSpaceVisualizer
+     * @see GraphmlDesignSpaceVisualizer
      */
-    public YEdDesignSpaceVisualizer(String fileName) {
+    public GraphmlDesignSpaceVisualizer(String fileName) {
         this(new DesignSpaceVisualizerOptions(), fileName);
     }
 
     /**
-     * Initializes a new instance of the {@link YEdDesignSpaceVisualizer} with default options and the file name
+     * Initializes a new instance of the {@link GraphmlDesignSpaceVisualizer} with default options and the file name
      * "DSEDesignSpace.graphml".
      * 
      * @param fileName
-     * @see YEdDesignSpaceVisualizer
+     * @see GraphmlDesignSpaceVisualizer
      */
-    public YEdDesignSpaceVisualizer() {
+    public GraphmlDesignSpaceVisualizer() {
         this(new DesignSpaceVisualizerOptions(), "DSEDesignSpace.graphml");
     }
 
@@ -165,7 +165,6 @@ public class YEdDesignSpaceVisualizer implements IDesignSpaceVisualizer {
 
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\r\n"
                 + "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:y=\"http://www.yworks.com/xml/graphml\" xmlns:yed=\"http://www.yworks.com/xml/yed/3\" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd\">\r\n"
-                + "  <!--Created by yEd 3.12-->\r\n"
                 + "  <key for=\"graphml\" id=\"d0\" yfiles.type=\"resources\"/>\r\n"
                 + "  <key for=\"port\" id=\"d1\" yfiles.type=\"portgraphics\"/>\r\n"
                 + "  <key for=\"port\" id=\"d2\" yfiles.type=\"portgeometry\"/>\r\n"
