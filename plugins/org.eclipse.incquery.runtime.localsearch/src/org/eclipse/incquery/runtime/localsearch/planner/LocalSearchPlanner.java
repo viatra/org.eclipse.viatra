@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.planner;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -134,7 +133,7 @@ public class LocalSearchPlanner {
     }
 
     private void preparePatternAdornmentForPlanner(Set<Integer> boundVarIndices, PBody normalizedBody) {
-        HashSet<PVariable> boundVariables = Sets.<PVariable> newHashSet();
+        Set<PVariable> boundVariables = Sets.<PVariable> newHashSet();
         for (Integer i : boundVarIndices) {
             boundVariables.add(normalizedBody.getSymbolicParameterVariables().get(i));
         }

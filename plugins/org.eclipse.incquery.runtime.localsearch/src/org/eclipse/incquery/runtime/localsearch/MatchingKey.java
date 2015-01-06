@@ -22,7 +22,7 @@ public class MatchingKey {
     Object[] keys;
     
     public MatchingKey(Object[] keys) {
-        this.keys = keys;
+        this.keys = Arrays.copyOf(keys,keys.length);
     }
     
     public boolean equals(Object other) {
@@ -39,7 +39,7 @@ public class MatchingKey {
     }
     
     public String toString() {
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         for (int i = 0; i < keys.length; i++) {
             key.append("_");
             key.append(keys[i].toString());

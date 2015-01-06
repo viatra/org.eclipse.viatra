@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.planner;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +31,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStruc
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.incquery.runtime.localsearch.planner.util.CompilerHelper;
+import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
 import org.eclipse.incquery.runtime.matchers.planning.operations.POperation;
@@ -63,7 +63,7 @@ import com.google.common.collect.Sets;
  */
 public class POperationCompiler {
 
-    private ArrayList<ISearchOperation> operations;
+    private List<ISearchOperation> operations;
 
     /**
      * Compiles a plan of <code>POperation</code>s to a list of type <code>List&ltISearchOperation></code>
@@ -71,8 +71,9 @@ public class POperationCompiler {
      * @param plan
      * @param boundVariableIndexes 
      * @return
+     * @throws QueryPlannerException 
      */
-    public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) {
+    public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryPlannerException {
 
         Map<PVariable, Integer> variableMappings = CompilerHelper.createVariableMapping(plan);
         Map<PConstraint, Set<Integer>> variableBindings = CompilerHelper.cacheVariableBindings(plan,variableMappings,boundVariableIndexes);
@@ -88,7 +89,7 @@ public class POperationCompiler {
     }
  
     private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping,
-            Map<PConstraint, Set<Integer>> variableBindings) {
+            Map<PConstraint, Set<Integer>> variableBindings) throws QueryPlannerException {
 
         if (pOperation instanceof PApply) {
             PApply pApply = (PApply) pOperation;
@@ -113,7 +114,7 @@ public class POperationCompiler {
         } else if (pOperation instanceof PProject) {
             // nop
         } else {
-            throw new RuntimeException("PStart, PApply or PProject was expected, received: " + pOperation.getClass());
+            throw new QueryPlannerException("PStart, PApply or PProject was expected, received: " + pOperation.getClass(), null,"Unexpected POperation type", null);
         }
 
     }

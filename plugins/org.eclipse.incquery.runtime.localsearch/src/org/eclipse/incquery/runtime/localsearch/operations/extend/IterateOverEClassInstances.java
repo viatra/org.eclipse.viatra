@@ -40,14 +40,16 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IterateOverEClassInstances(");
-        builder.append(position + ", " );
-        
         String name = clazz.getName();
         String packageNsUri = clazz.getEPackage().getNsURI();
-        builder.append("getClassifierLiteral(\"" + packageNsUri + "\", \"" + name + "\")");
-        
-        builder.append(")");
+
+        builder.append("IterateOverEClassInstances(")
+            .append(position)
+            .append( ", getClassifierLiteral(\"")
+            .append(packageNsUri)
+            .append("\", \"")
+            .append(name)
+            .append( "\"))");
         return builder.toString();
     }
     

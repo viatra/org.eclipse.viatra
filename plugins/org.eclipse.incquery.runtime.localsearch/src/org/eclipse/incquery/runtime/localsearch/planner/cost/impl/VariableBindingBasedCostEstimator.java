@@ -44,18 +44,18 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantVa
 public class VariableBindingBasedCostEstimator implements ICostEstimator {
 
     // Static cost definitions
-    private static double MAX = 1000.0;
-    private double exportedParameterCost = MAX - 20;
-    private double binaryTransitiveClosureCost = MAX - 50;
-    private double nacCost = MAX - 100;
-    private double countCost = MAX - 200;
-    private double constantCost = 0.0;
+    private static int MAX = 1000;
+    private int exportedParameterCost = MAX - 20;
+    private int binaryTransitiveClosureCost = MAX - 50;
+    private int nacCost = MAX - 100;
+    private int countCost = MAX - 200;
+    private int constantCost = 0;
 
     @Override
     public double getCost(SubPlan currentPlan, PConstraint constraint) {
         Set<PVariable> affectedVariables = constraint.getAffectedVariables();
 
-        double cost = 0.0;
+        int cost = 0;
 
         // For constants the cost is determined to be 0.0
         // The following constraints should be checks:

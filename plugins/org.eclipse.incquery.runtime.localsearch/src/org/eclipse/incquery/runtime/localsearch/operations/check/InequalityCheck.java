@@ -49,9 +49,11 @@ public class InequalityCheck extends CheckOperation {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("InequalityCheck(");
-        builder.append(sourceLocation + ", " + targetLocation);
-        builder.append(")");
+        builder.append("InequalityCheck(")
+           .append(sourceLocation)
+           .append(", ")
+           .append(targetLocation)
+           .append(')');
         return builder.toString();
     }
 

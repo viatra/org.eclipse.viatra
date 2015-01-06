@@ -45,14 +45,17 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IterateOverEDatatypeInstances(");
-        builder.append(position + ", ");
-
         String name = dataType.getName();
         String packageNsUri = dataType.getEPackage().getNsURI();
-        builder.append("getClassifierLiteral(\"" + packageNsUri + "\", \"" + name + "\")");
 
-        builder.append(")");
+        builder.append("IterateOverEDatatypeInstances(")
+            .append(position)
+            .append(", getClassifierLiteral(\"")
+            .append(packageNsUri)
+            .append("\", \"")
+            .append(name)
+            .append("\"))");
+
         return builder.toString();
     }
     

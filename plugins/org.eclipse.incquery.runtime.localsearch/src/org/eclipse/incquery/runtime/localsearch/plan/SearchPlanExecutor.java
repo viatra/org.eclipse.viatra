@@ -15,6 +15,7 @@
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ILocalSearchAdapter;
@@ -88,7 +89,7 @@ public class SearchPlanExecutor {
      * Calculates the cost of the search plan.
 	 */
 	public double cost() {
-		/* default generated stub */;
+		/* default generated stub */
 		return 0.0;
 	}
 
@@ -132,7 +133,7 @@ public class SearchPlanExecutor {
 
     public void printDebugInformation() {
         for (int i = 0; i < operations.size(); i++) {
-            System.out.println("[" + i + "]\t" + operations.get(i).toString());
+            Logger.getRootLogger().debug("[" + i + "]\t" + operations.get(i).toString());
         }
     }
 
