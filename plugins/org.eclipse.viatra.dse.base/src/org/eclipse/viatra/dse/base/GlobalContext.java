@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -34,6 +36,7 @@ import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
 /**
  * Creates new contexts for strategies. It is needed because of the multithreading.
@@ -218,6 +221,7 @@ public class GlobalContext {
     private IStateSerializerFactory stateSerializerFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
     private Object SharedObject;
+    private List<IDesignSpaceVisualizer> visualizers;
 
     public void reset() {
         state = ExplorationProcessState.NOT_STARTED;
@@ -225,7 +229,40 @@ public class GlobalContext {
         exceptions.clear();
     }
 
-    // *** getters and setters
+    public void registerDesignSpaceVisualizer(IDesignSpaceVisualizer visualizer) {
+        if (visualizer == null) {
+            return;
+        }
+        if (visualizers == null) {
+            visualizers = new ArrayList<IDesignSpaceVisualizer>();
+        }
+        visualizers.add(visualizer);
+    }
+    
+    public void deregisterDesignSpaceVisualizer(IDesignSpaceVisualizer visualizer) {
+        if (visualizer == null) {
+            return;
+        }
+        if (visualizers != null) {
+            visualizers.remove(visualizer);
+        }
+    }
+    
+    public boolean isDesignSpaceVisualizerRegistered(IDesignSpaceVisualizer visualizer) {
+        if (visualizers != null) {
+            return visualizers.contains(visualizer);
+        }
+        return false;
+    }
+    
+    public void initVisualizersForThread(ThreadContext threadContext) {
+        if (visualizers != null && !visualizers.isEmpty()) {
+            for (IDesignSpaceVisualizer visualizer : visualizers) {
+                visualizer.init(threadContext);
+                threadContext.getDesignSpaceManager().registerExploreEventHandler(visualizer);
+            }
+        }
+    }
 
     public boolean isExceptionHappendInOtherThread() {
         return !exceptions.isEmpty();
@@ -310,4 +347,5 @@ public class GlobalContext {
     public ExplorationProcessState getState() {
         return state;
     }
+
 }

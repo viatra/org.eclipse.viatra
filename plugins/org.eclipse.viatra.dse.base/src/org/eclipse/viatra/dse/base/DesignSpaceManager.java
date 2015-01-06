@@ -44,6 +44,7 @@ import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.visualizer.IExploreEventHandler;
 
 public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplicationChanger {
 
@@ -67,6 +68,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     // the occurence vector callback
     private IRuleApplicationNumberChanged iRuleApplicationNumberChanged;
+    private List<IExploreEventHandler> handlers;
 
     // Dummy context for evm
     private final Context evmContext = Context.create();
@@ -147,6 +149,11 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         // maintain rule application number
         if (iRuleApplicationNumberChanged != null) {
             iRuleApplicationNumberChanged.increment(transition.getTransitionMetaData().rule, ruleEngine);
+        }
+        if (handlers != null) {
+            for (IExploreEventHandler iExploreEventHandler : handlers) {
+                iExploreEventHandler.transitionFired(transition);
+            }
         }
 
         logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to " + newStateId);
@@ -311,6 +318,11 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         if (iRuleApplicationNumberChanged != null) {
             iRuleApplicationNumberChanged.decrement(lastTransition.getTransitionMetaData().rule, ruleEngine);
         }
+        if (handlers != null) {
+            for (IExploreEventHandler iExploreEventHandler : handlers) {
+                iExploreEventHandler.undo(lastTransition);
+            }
+        }
 
         logger.debug(
                 "Successul undo from " + lastTransition.getResultsIn().getId() + " transition "
@@ -380,6 +392,25 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             designSpace.saveDesignSpace("designSpace.txt");
         } catch (IOException e) {
             logger.error("Saving designspace failed", e);
+        }
+    }
+    
+    public void registerExploreEventHandler(IExploreEventHandler handler) {
+        if (handler == null) {
+            return;
+        }
+        if (handlers == null) {
+            handlers = new ArrayList<IExploreEventHandler>();
+        }
+        handlers.add(handler);
+    }
+    
+    public void deregisterExploreEventHandler(IExploreEventHandler handler) {
+        if (handler == null) {
+            return;
+        }
+        if (handlers != null) {
+            handlers.remove(handler);
         }
     }
 

@@ -17,9 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -120,7 +118,7 @@ public class ThreadContext {
         };
         domain.getCommandStack().execute(addRuleCommand);
 
-        if (isFirstThreadInit.get()) {
+        if (isFirstThreadInit.compareAndSet(true, false)) {
             // This code ensures, that the query specification is initialized, because it cannot be done in parallel
             try {
 
@@ -135,7 +133,6 @@ public class ThreadContext {
             } catch (IncQueryException e) {
                 throw new DSEException("IncqueryException when initializing query specifications", e);
             }
-            isFirstThreadInit.set(false);
         }
         // create the thread specific DesignSpaceManager
         designSpaceManager = new DesignSpaceManager(modelRoot, domain, globalContext.getStateSerializerFactory(),
@@ -147,6 +144,9 @@ public class ThreadContext {
             guidance.resetActivations(ruleEngine);
             designSpaceManager.setiRuleApplicationNumberChanged(new ApplicationVectorUpdater(guidance));
         }
+        
+        globalContext.initVisualizersForThread(this);
+        
     }
 
     public RuleEngine getRuleEngine() {

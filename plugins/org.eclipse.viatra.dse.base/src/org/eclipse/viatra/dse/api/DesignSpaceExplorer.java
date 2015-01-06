@@ -46,6 +46,7 @@ import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 import org.eclipse.viatra.dse.statecode.graph.GraphHasherFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
 /**
  * <p>
@@ -484,6 +485,17 @@ public class DesignSpaceExplorer {
 
     public GlobalContext getGlobalContext() {
         return globalContext;
+    }
+
+    /**
+     * Registers a design space visualizer. Please see the corresponding interface {@link IDesignSpaceVisualizer}.
+     * 
+     * @see IDesignSpaceVisualizer
+     * 
+     * @param visualizer
+     */
+    public void addDesignSpaceVisulaizer(IDesignSpaceVisualizer visualizer) {
+        globalContext.registerDesignSpaceVisualizer(visualizer);
     }
 
 }
