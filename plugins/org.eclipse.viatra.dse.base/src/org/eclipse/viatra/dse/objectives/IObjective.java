@@ -86,7 +86,7 @@ public interface IObjective {
      * 
      * @param fitness
      *            The fitness value of a solution.
-     * @return True if it satisfies the hard objective.
+     * @return True if it satisfies the hard objective or it is a soft constraint.
      * @see IObjective
      */
     boolean satisifiesHardObjective(Double fitness);
