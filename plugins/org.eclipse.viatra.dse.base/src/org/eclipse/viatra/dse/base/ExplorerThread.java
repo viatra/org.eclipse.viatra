@@ -8,7 +8,7 @@
  *   Miklos Foldenyi - initial API and implementation
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.api.strategy;
+package org.eclipse.viatra.dse.base;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,18 +16,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
+import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.base.GlobalContext;
-import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
+import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
@@ -63,8 +63,9 @@ public class ExplorerThread implements IExplorerThread {
     }
 
     /**
-     * Starts the design space exploration. Returns only when {@link ISolutionFoundHandler#solutionFound(Strategy, Solution)}
-     * method returns STOP or the {@link INextTransition#getNextTransition(ThreadContext)} method returns null.
+     * Starts the design space exploration. Returns only when
+     * {@link ISolutionFoundHandler#solutionFound(Strategy, Solution)} method returns STOP or the
+     * {@link INextTransition#getNextTransition(ThreadContext)} method returns null.
      * 
      * If this main algorithm is not good for you, you can derive from this class and override this method. TODO:
      * strategy factory
@@ -99,7 +100,7 @@ public class ExplorerThread implements IExplorerThread {
                     strategyBase.interrupted(threadContext);
                 }
 
-                Map<String, Double> objectives = null;
+                ObjectiveValuesMap objectiveValuesMap = null;
 
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
 
@@ -133,13 +134,14 @@ public class ExplorerThread implements IExplorerThread {
 
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
                 boolean areConstraintsSatisfied = true;
-                objectives = strategyBase.isGoalState(threadContext);
+                objectiveValuesMap = calculateObjectives();
+                
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = newState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (objectives != null) {
-                        globalContext.getSolutionStore().newSolution(threadContext, objectives);
+                    if (objectiveValuesMap.isSatisifiesHardObjectives()) {
+                        globalContext.getSolutionStore().newSolution(threadContext, objectiveValuesMap);
                     } else if (traversalState == TraversalStateType.CUT) {
                         areConstraintsSatisfied = false;
                     }
@@ -152,15 +154,14 @@ public class ExplorerThread implements IExplorerThread {
                     if (areConstraintsSatisfied) {
 
                         // if it is a goal state
-                        if (objectives != null) {
+                        if (objectiveValuesMap.isSatisifiesHardObjectives()) {
 
                             logger.debug("Goal state.");
 
-                            if (objectives.isEmpty()) {
-                                newState.setTraversalState(TraversalStateType.GOAL);
-                            }
+                            newState.setTraversalState(TraversalStateType.GOAL);
 
-                            StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext, objectives);
+                            StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext,
+                                    objectiveValuesMap);
 
                             switch (verdict) {
                             case STOP_ALL:
@@ -190,7 +191,7 @@ public class ExplorerThread implements IExplorerThread {
                     newState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, objectives,
+                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, objectiveValuesMap,
                         !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
             }
@@ -211,11 +212,29 @@ public class ExplorerThread implements IExplorerThread {
     @Override
     public void dispose() {
         threadContext.getRuleEngine().dispose();
-//        threadContext.getIncqueryEngine().dispose();
+        // threadContext.getIncqueryEngine().dispose();
     }
 
     @Override
     public ThreadContext getThreadContext() {
         return threadContext;
+    }
+
+    private ObjectiveValuesMap calculateObjectives() {
+        ObjectiveValuesMap result = new ObjectiveValuesMap();
+
+        boolean satisifiesHardObjectives = true;
+
+        for (IObjective objective : globalContext.getObjectives()) {
+            Double fitness = objective.getFitness(threadContext);
+            result.put(objective.getName(), fitness);
+            if (objective.isHardObjective() && !objective.satisifiesHardObjective(fitness)) {
+                satisifiesHardObjectives = false;
+            }
+        }
+
+        result.setSatisifiesHardObjectives(satisifiesHardObjectives);
+
+        return result;
     }
 }

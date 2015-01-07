@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.guidance.IDependencyGraphResolver;
 import org.eclipse.viatra.dse.guidance.IOccurrenceVectorResolver;
@@ -29,7 +28,6 @@ public enum StrategyBuildingBlocksManager {
     INSTANCE;
 
     public static final String CHECK_CONSTRAINTS = "org.eclipse.viatra.dse.api.strategy.checkconstraints";
-    public static final String CHECK_GOAL_STATE = "org.eclipse.viatra.dse.api.strategy.checkgoalstate";
     public static final String NEXT_TRANSITION = "org.eclipse.viatra.dse.api.strategy.nexttransition";
 
     public static final String DEPENDENCY_RESOLVER = "org.eclipse.viatra.dse.ruledependency.resolver";
@@ -47,7 +45,6 @@ public enum StrategyBuildingBlocksManager {
 
         extensionPointNames = new HashSet<String>();
         extensionPointNames.add(CHECK_CONSTRAINTS);
-        extensionPointNames.add(CHECK_GOAL_STATE);
         extensionPointNames.add(NEXT_TRANSITION);
         extensionPointNames.add(OCCURRENCE_RESOLVER);
         extensionPointNames.add(DEPENDENCY_RESOLVER);
@@ -99,10 +96,6 @@ public enum StrategyBuildingBlocksManager {
         return (ICheckConstraints) createExtensionByName(CHECK_CONSTRAINTS, extensionName);
     }
 
-    public ICheckGoalState createCheckGoalStateByName(String extensionName) {
-        return (ICheckGoalState) createExtensionByName(CHECK_GOAL_STATE, extensionName);
-    }
-
     public INextTransition createNextTransitionByName(String extensionName) {
         return (INextTransition) createExtensionByName(NEXT_TRANSITION, extensionName);
     }
@@ -119,10 +112,6 @@ public enum StrategyBuildingBlocksManager {
 
     public ICheckConstraints createCheckConstraintsById(String extensionName) {
         return (ICheckConstraints) createExtensionById(CHECK_CONSTRAINTS, extensionName);
-    }
-
-    public ICheckGoalState createCheckGoalStateById(String extensionName) {
-        return (ICheckGoalState) createExtensionById(CHECK_GOAL_STATE, extensionName);
     }
 
     public INextTransition createNextTransitionById(String extensionName) {

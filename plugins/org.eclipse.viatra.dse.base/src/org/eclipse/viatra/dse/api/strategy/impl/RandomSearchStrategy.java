@@ -12,18 +12,18 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.strategy.Strategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class RandomSearchStrategy implements INextTransition {
 
@@ -112,7 +112,7 @@ public class RandomSearchStrategy implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();

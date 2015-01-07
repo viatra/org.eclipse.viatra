@@ -12,7 +12,6 @@ package org.eclipse.viatra.dse.genetic.core;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.api.DSEException;
@@ -22,6 +21,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class InstanceGeneticStrategy implements INextTransition {
 
@@ -163,7 +163,7 @@ public class InstanceGeneticStrategy implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
     }
 

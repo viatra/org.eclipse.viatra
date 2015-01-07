@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
@@ -24,7 +25,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
@@ -32,6 +32,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
+import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
@@ -64,6 +65,9 @@ public class GlobalContext {
     private DSEThreadPool threadPool = new DSEThreadPool();
     private int numberOfStartedThreads = 0;
     private IDesignSpace designSpace;
+    
+    private AtomicBoolean firstThreadContextInited = new AtomicBoolean(false);
+    private AtomicBoolean firstThreadContextIniting = new AtomicBoolean(false);
 
     /**
      * The DesignSpaceExplorer's thread.
@@ -217,6 +221,7 @@ public class GlobalContext {
 
     private Set<PatternWithCardinality> goalPatterns = new HashSet<PatternWithCardinality>();
     private Set<PatternWithCardinality> constraints = new HashSet<PatternWithCardinality>();
+    private List<IObjective> objectives = new ArrayList<IObjective>();
     private Set<TransformationRule<? extends IPatternMatch>> transformations = new HashSet<TransformationRule<? extends IPatternMatch>>();
     private IStateSerializerFactory stateSerializerFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
@@ -346,6 +351,22 @@ public class GlobalContext {
 
     public ExplorationProcessState getState() {
         return state;
+    }
+    
+    public List<IObjective> getObjectives() {
+        return objectives;
+    }
+    
+    public void setObjectives(List<IObjective> objectives) {
+        this.objectives = objectives;
+    }
+    
+    AtomicBoolean getFirstThreadContextInited() {
+        return firstThreadContextInited;
+    }
+    
+    AtomicBoolean getFirstThreadContextIniting() {
+        return firstThreadContextIniting;
     }
 
 }

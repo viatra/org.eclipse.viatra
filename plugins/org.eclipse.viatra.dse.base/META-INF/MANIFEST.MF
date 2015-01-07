@@ -29,6 +29,8 @@ Export-Package: org.eclipse.viatra.dse,
  org.eclipse.viatra.dse.guidance.criterias,
  org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl,
  org.eclipse.viatra.dse.multithreading,
+ org.eclipse.viatra.dse.objectives,
+ org.eclipse.viatra.dse.objectives.impl,
  org.eclipse.viatra.dse.solutionstore,
  org.eclipse.viatra.dse.statecode.graph,
  org.eclipse.viatra.dse.statecode.graph.impl,
@@ -38,5 +40,6 @@ Export-Package: org.eclipse.viatra.dse,
  org.eclipse.viatra.dse.visualizer
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.viatra.dse.DSEActivator
-Import-Package: org.apache.log4j;version="1.2.15"
+Import-Package: org.apache.log4j;version="1.2.15",
+ org.eclipse.viatra.dse.base
 Bundle-Vendor: Eclipse VIATRA Project

@@ -23,6 +23,7 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.guidance.RuleInfo;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 import com.google.common.collect.Lists;
 
@@ -127,9 +128,9 @@ public class FixedPriorityNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives!=null && objectives.isEmpty())) {
+        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives.isSatisifiesHardObjectives())) {
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }

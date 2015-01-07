@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.base;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.ecore.EObject;
@@ -30,6 +31,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
+import org.eclipse.viatra.dse.objectives.IObjective;
 
 /**
  * This class holds all the information that is related to a single processing thread of the DesignSpaceExploration
@@ -48,17 +50,17 @@ public class ThreadContext {
     private EditingDomain domain;
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
+    private List<IObjective> objectives;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
      */
     private AtomicBoolean inited = new AtomicBoolean(false);
 
-    private static AtomicBoolean isFirstThreadInit = new AtomicBoolean(true);
-
     private final TrajectoryInfo trajectoryInfo;
 
     private Guidance guidance;
+    private boolean isFirstThread = false;
 
     /**
      * Creates a {@link ThreadContext} and sets it up to be initialized on the given {@link TransactionalEditingDomain}
@@ -90,6 +92,20 @@ public class ThreadContext {
      * @throws IncQueryException
      */
     public void init() throws DSEException {
+
+        AtomicBoolean isFirst = globalContext.getFirstThreadContextIniting();
+        AtomicBoolean isFirstReady = globalContext.getFirstThreadContextInited();
+        if (!isFirst.compareAndSet(false, true) && !isFirstReady.get()) {
+            try {
+                do {
+                    Thread.sleep(5);
+                } while (!isFirstReady.get());
+            } catch (InterruptedException e) {
+            }
+        } else {
+            isFirstThread = true;
+        }
+
         // prohibit re-initialization
         checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
@@ -99,7 +115,7 @@ public class ThreadContext {
         try {
             // initialize IQEngine
             final EMFScope scope = new EMFScope(modelRoot);
-			incqueryEngine = IncQueryEngine.on(scope);
+            incqueryEngine = IncQueryEngine.on(scope);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to create unmanaged IncQueryEngine on the model.", e);
         }
@@ -118,7 +134,7 @@ public class ThreadContext {
         };
         domain.getCommandStack().execute(addRuleCommand);
 
-        if (isFirstThreadInit.compareAndSet(true, false)) {
+        if (isFirstThread) {
             // This code ensures, that the query specification is initialized, because it cannot be done in parallel
             try {
 
@@ -133,6 +149,13 @@ public class ThreadContext {
             } catch (IncQueryException e) {
                 throw new DSEException("IncqueryException when initializing query specifications", e);
             }
+
+            objectives = globalContext.getObjectives();
+
+        } else {
+            for (IObjective objective : globalContext.getObjectives()) {
+                objectives.add(objective.createNew());
+            }
         }
         // create the thread specific DesignSpaceManager
         designSpaceManager = new DesignSpaceManager(modelRoot, domain, globalContext.getStateSerializerFactory(),
@@ -144,9 +167,13 @@ public class ThreadContext {
             guidance.resetActivations(ruleEngine);
             designSpaceManager.setiRuleApplicationNumberChanged(new ApplicationVectorUpdater(guidance));
         }
-        
+
+        for (IObjective objective : objectives) {
+            objective.init(this);
+        }
+
         globalContext.initVisualizersForThread(this);
-        
+
     }
 
     public RuleEngine getRuleEngine() {

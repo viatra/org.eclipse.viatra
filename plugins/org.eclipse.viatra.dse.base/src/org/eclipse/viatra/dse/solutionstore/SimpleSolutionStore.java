@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;

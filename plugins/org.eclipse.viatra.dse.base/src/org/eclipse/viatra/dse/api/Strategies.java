@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSNextTransition;
+import org.eclipse.viatra.dse.base.ExplorerThread;
 
 /**
  * Helper class for instantiating Strategies. To implement a new strategy use the {@link ExplorerThread} class.

@@ -10,42 +10,29 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy;
 
-import java.util.Map;
-
 import org.eclipse.viatra.dse.api.strategy.impl.CheckAllConstraints;
-import org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckConstraints;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class Strategy {
 
     private ICheckConstraints constraintsChecker;
-    private ICheckGoalState goalStateChecker;
     private INextTransition iNextTransition;
 
     public Strategy(INextTransition iNextTransition) {
         this.iNextTransition = iNextTransition;
         constraintsChecker = new CheckAllConstraints();
-        goalStateChecker = new CheckAllGoals();
     }
 
     public void setConstraintsChecker(ICheckConstraints iCheckConstraints) {
         this.constraintsChecker = iCheckConstraints;
     }
 
-    public void setGoalStateChecker(ICheckGoalState iCheckGoalState) {
-        this.goalStateChecker = iCheckGoalState;
-    }
-
     public ICheckConstraints getConstraintsChecker() {
         return constraintsChecker;
-    }
-
-    public ICheckGoalState getGoalStateChecker() {
-        return goalStateChecker;
     }
 
     /**
@@ -55,15 +42,6 @@ public class Strategy {
      */
     public boolean checkConstraints(ThreadContext context) {
         return constraintsChecker.checkConstraints(context);
-    }
-
-    /**
-     * Delegates the call to {@link ICheckGoalState#isGoalState(ThreadContext)}.
-     * 
-     * @see ICheckGoalState#isGoalState(ThreadContext)
-     */
-    public Map<String, Double> isGoalState(ThreadContext context) {
-        return goalStateChecker.isGoalState(context);
     }
 
     /**
@@ -89,7 +67,7 @@ public class Strategy {
      * 
      * @see INextTransition#newStateIsProcessed(ThreadContext, boolean, boolean, boolean)
      */
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean areConstraintsSatisfied) {
         iNextTransition.newStateIsProcessed(context, isAlreadyTraversed, objectives, areConstraintsSatisfied);
     }

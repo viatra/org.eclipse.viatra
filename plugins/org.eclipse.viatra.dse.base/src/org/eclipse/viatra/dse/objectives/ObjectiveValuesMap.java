@@ -8,18 +8,20 @@
  *   Miklos Foldenyi - initial API and implementation
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.api.strategy;
+package org.eclipse.viatra.dse.objectives;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
-import org.eclipse.viatra.dse.base.ExplorerThread;
-import org.eclipse.viatra.dse.base.ThreadContext;
+import java.util.HashMap;
 
-public class StrategyFactory implements IStrategyFactory {
+public class ObjectiveValuesMap extends HashMap<String, Double>{
 
-    @Override
-    public IExplorerThread createStrategy(ThreadContext context) {
-        return new ExplorerThread(context);
+    private boolean satisifiesHardObjectives;
+    
+    public boolean isSatisifiesHardObjectives() {
+        return satisifiesHardObjectives;
     }
-
+    
+    public void setSatisifiesHardObjectives(boolean satisifiesHardObjectives) {
+        this.satisifiesHardObjectives = satisifiesHardObjectives;
+    }
+    
 }

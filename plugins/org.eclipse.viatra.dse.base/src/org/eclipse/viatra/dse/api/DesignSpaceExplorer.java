@@ -40,6 +40,7 @@ import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.impl.pojo.ConcurrentDesignSpace;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.Predicate;
+import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
@@ -188,16 +189,6 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Add the specified condition as a goal to the exploration process.
-     * 
-     * @param goalPattern
-     *            the condition definiton.
-     */
-    public void addGoalPattern(PatternWithCardinality goalPattern) {
-        globalContext.getGoalPatterns().add(goalPattern);
-    }
-
-    /**
      * Add the specified condition as a constraint to the exploration process.
      * 
      * @param constraint
@@ -207,6 +198,10 @@ public class DesignSpaceExplorer {
         globalContext.getConstraints().add(constraint);
     }
 
+    public void addObjective(IObjective objective) {
+        globalContext.getObjectives().add(objective);
+    }
+    
     /**
      * Sets a {@link IStateSerializerFactory} for which will be used for creating {@link IStateSerializer}s.
      * 

@@ -28,6 +28,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.guidance.RuleInfo;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 import com.google.common.collect.Lists;
 
@@ -146,7 +147,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();

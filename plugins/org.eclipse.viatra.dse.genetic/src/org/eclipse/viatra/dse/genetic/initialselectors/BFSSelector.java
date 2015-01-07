@@ -13,7 +13,6 @@ package org.eclipse.viatra.dse.genetic.initialselectors;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
@@ -25,6 +24,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class BFSSelector implements IInitialPopulationSelector {
 
@@ -130,7 +130,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
     }
 

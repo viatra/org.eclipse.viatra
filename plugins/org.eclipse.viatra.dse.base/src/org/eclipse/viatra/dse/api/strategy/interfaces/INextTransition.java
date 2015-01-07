@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
-import java.util.Map;
-
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 /**
  * This interface is the part of the strategy building blocks. Defines a method for selecting the next step in the
@@ -58,7 +57,7 @@ public interface INextTransition {
      * @param areConstraintsSatisfied
      *            True if the new state doesn't satisfies the global constraints.
      */
-    void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied);
 
     /**

@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -21,6 +20,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class DepthFirstNextTransition implements INextTransition {
 
@@ -103,9 +103,9 @@ public class DepthFirstNextTransition implements INextTransition {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives!=null && objectives.isEmpty())) {
+        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives.isSatisifiesHardObjectives())) {
             logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (objectives!=null)
                     + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();

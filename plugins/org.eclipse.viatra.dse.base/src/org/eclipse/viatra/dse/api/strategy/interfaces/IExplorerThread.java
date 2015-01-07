@@ -13,7 +13,7 @@ package org.eclipse.viatra.dse.api.strategy.interfaces;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
-import org.eclipse.viatra.dse.api.strategy.ExplorerThread;
+import org.eclipse.viatra.dse.base.ExplorerThread;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 

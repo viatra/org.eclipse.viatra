@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -34,6 +33,7 @@ import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
 public class MainGeneticStrategy implements INextTransition, IStoreChild {
@@ -369,7 +369,7 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Map<String, Double> objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
             boolean constraintsNotSatisfied) {
         if (state == GeneticStrategyState.FIRST_POPULATION) {
             sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, objectives,

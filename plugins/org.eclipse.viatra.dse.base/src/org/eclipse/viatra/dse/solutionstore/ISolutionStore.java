@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ICheckGoalState;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
