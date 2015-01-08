@@ -39,6 +39,9 @@ import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 /**
  * Creates new contexts for strategies. It is needed because of the multithreading.
  * 
@@ -234,6 +237,10 @@ public class GlobalContext {
         exceptions.clear();
     }
 
+    public List<IDesignSpaceVisualizer> getVisualizers() {
+        return ImmutableList.copyOf(visualizers);
+    }
+    
     public void registerDesignSpaceVisualizer(IDesignSpaceVisualizer visualizer) {
         if (visualizer == null) {
             return;
