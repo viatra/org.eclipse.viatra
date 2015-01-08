@@ -35,7 +35,7 @@ import com.google.common.base.Preconditions;
  * @see IObjective
  *
  */
-public class WeigthedPatternsSoftObjective implements IObjective {
+public class WeightedPatternsSoftObjective implements IObjective {
 
     protected String name;
 
@@ -51,7 +51,7 @@ public class WeigthedPatternsSoftObjective implements IObjective {
 
     protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
 
-    public WeigthedPatternsSoftObjective(String name,
+    public WeightedPatternsSoftObjective(String name,
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
         Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
@@ -64,18 +64,18 @@ public class WeigthedPatternsSoftObjective implements IObjective {
         this.weights = weights;
     }
 
-    public WeigthedPatternsSoftObjective(
+    public WeightedPatternsSoftObjective(
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
         this("HardObjective", constraints, weights);
     }
 
-    public WeigthedPatternsSoftObjective(String name) {
+    public WeightedPatternsSoftObjective(String name) {
         this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
     }
 
-    public WeigthedPatternsSoftObjective() {
+    public WeightedPatternsSoftObjective() {
         this("HardObjective", new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
     }
@@ -93,7 +93,7 @@ public class WeigthedPatternsSoftObjective implements IObjective {
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
      */
-    public WeigthedPatternsSoftObjective addConstraint(
+    public WeightedPatternsSoftObjective addConstraint(
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
@@ -140,7 +140,7 @@ public class WeigthedPatternsSoftObjective implements IObjective {
     @Override
     public IObjective createNew() {
 
-        WeigthedPatternsSoftObjective hardObjectiveCopy = new WeigthedPatternsSoftObjective(name, constraints, weights);
+        WeightedPatternsSoftObjective hardObjectiveCopy = new WeightedPatternsSoftObjective(name, constraints, weights);
         hardObjectiveCopy.setComparator(comparator);
 
         return hardObjectiveCopy;
