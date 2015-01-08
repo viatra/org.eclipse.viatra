@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.base;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -95,17 +96,18 @@ public class ThreadContext {
 
         AtomicBoolean isFirst = globalContext.getFirstThreadContextIniting();
         AtomicBoolean isFirstReady = globalContext.getFirstThreadContextInited();
-        if (!isFirst.compareAndSet(false, true) && !isFirstReady.get()) {
-            try {
-                do {
-                    Thread.sleep(5);
-                } while (!isFirstReady.get());
-            } catch (InterruptedException e) {
+        if (!isFirstReady.get()) {
+            if (!isFirst.compareAndSet(false, true)) {
+                try {
+                    do {
+                        Thread.sleep(5);
+                    } while (!isFirstReady.get());
+                } catch (InterruptedException e) {
+                }
+            } else {
+                isFirstThread = true;
             }
-        } else {
-            isFirstThread = true;
         }
-
         // prohibit re-initialization
         checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
@@ -153,6 +155,7 @@ public class ThreadContext {
             objectives = globalContext.getObjectives();
 
         } else {
+            objectives = new ArrayList<IObjective>();
             for (IObjective objective : globalContext.getObjectives()) {
                 objectives.add(objective.createNew());
             }
@@ -173,6 +176,10 @@ public class ThreadContext {
         }
 
         globalContext.initVisualizersForThread(this);
+        
+        if (isFirstThread) {
+            isFirstReady.set(true);
+        }
 
     }
 
