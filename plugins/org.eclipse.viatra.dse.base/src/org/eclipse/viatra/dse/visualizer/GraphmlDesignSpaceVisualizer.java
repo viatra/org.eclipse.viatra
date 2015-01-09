@@ -183,15 +183,13 @@ public class GraphmlDesignSpaceVisualizer implements IDesignSpaceVisualizer {
             sb.append("</graphml>\r\n");
             return sb;
         }
-
-        for (TraceElement traceElement : trace) {
-            if (!traceElement.isUndo) {
-                addEdge(sb, traceElement.transition);
-            }
-        }
-
+        
         IState rootState = trace.get(0).transition.getFiredFrom();
         addNode(sb, rootState);
+
+        for (ITransition transition : traceStrings.keySet()) {
+            addEdge(sb, transition);
+        }
 
         sb.append("</graph>\r\n");
         sb.append("</graphml>\r\n");
