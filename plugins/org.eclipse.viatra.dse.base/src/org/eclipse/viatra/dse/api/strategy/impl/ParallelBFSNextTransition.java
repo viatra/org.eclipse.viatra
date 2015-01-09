@@ -117,6 +117,7 @@ public class ParallelBFSNextTransition implements INextTransition {
 
                     logger.debug("Reachd barrier of depth of " + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot());
 
+                    int actLevel = sharedData.actLevel;
                     int position = sharedData.numOfThreadsAtBarrier.incrementAndGet();
                     if (position == sharedData.maxNumberOfThreads) {
                         if (sharedData.pushQueue.size() == 0) {
@@ -127,16 +128,15 @@ public class ParallelBFSNextTransition implements INextTransition {
                         sharedData.maxNumberOfThreads = context.getGlobalContext().getThreadPool().getMaximumPoolSize();
                         sharedData.numOfThreadsAtBarrier.set(0);
                         if (sharedData.actLevel % 2 == 0) {
-                            sharedData.barrier2 = true;
                             ++sharedData.actLevel;
                             sharedData.barrier1 = false;
+                            sharedData.barrier2 = true;
                         } else {
-                            sharedData.barrier1 = true;
                             ++sharedData.actLevel;
                             sharedData.barrier2 = false;
+                            sharedData.barrier1 = true;
                         }
                     } else {
-                        int actLevel = sharedData.actLevel;
                         do {
                             try {
                                 Thread.sleep(2);
