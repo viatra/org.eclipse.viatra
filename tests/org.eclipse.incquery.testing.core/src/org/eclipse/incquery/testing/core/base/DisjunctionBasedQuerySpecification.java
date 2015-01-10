@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
@@ -144,5 +145,10 @@ public class DisjunctionBasedQuerySpecification implements IQuerySpecification<I
     public Class<? extends IncQueryScope> getPreferredScopeClass() {
     	return querySpecification.getPreferredScopeClass();
     }
+
+	@Override
+	public QueryEvaluationHint getEvaluationHints() {
+		return querySpecification.getEvaluationHints();
+	}
 
 }
