@@ -18,6 +18,8 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeConte
  *
  */
 public interface IQueryBackendFactory {
-	public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext);
+	public IQueryBackend 
+		create(IPatternMatcherRuntimeContext matcherContext,
+				IQueryBackendHintProvider hintProvider);
 
 }

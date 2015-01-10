@@ -22,6 +22,7 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
@@ -80,11 +81,12 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     					engine.getScope(), engine.getScope().getClass().getCanonicalName()), 
     			"Incompatible scope classes of engine and query.");
     }
-
+    
     protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
     protected List<PProblem> pProblems = new ArrayList<PProblem>();
     private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
-
+    private QueryEvaluationHint evaluationHints = null;
+    
     @Override
     public Integer getPositionOfParameter(String parameterName) {
         ensureInitialized();
@@ -119,6 +121,19 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     public void checkMutability() throws IllegalStateException {
         Preconditions.checkState(isMutable(), "Cannot edit query definition " + getFullyQualifiedName());
     }
+    
+    protected void setEvaluationHints(QueryEvaluationHint hints) {
+        checkMutability();
+        this.evaluationHints = hints;
+    }
+    
+	@Override
+    public QueryEvaluationHint getEvaluationHints() {
+    	ensureInitialized();
+    	return evaluationHints;
+    	// TODO instead of field, compute something from annotations?
+    }
+
 
     protected void addAnnotation(PAnnotation annotation) {
         checkMutability();

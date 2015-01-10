@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.GeneralizationQueryDirection;
+import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -381,7 +381,8 @@ public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
      */
     public synchronized Address<? extends Production> accessProductionNode(PQuery query)
             throws QueryPlannerException {
-    	return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(accessProductionTrace(query));
+    	final RecipeTraceInfo productionTrace = accessProductionTrace(query);
+		return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
     }
 
 //    /**

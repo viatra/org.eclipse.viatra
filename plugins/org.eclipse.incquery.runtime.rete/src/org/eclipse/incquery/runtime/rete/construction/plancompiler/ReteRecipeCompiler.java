@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
@@ -35,7 +36,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -49,6 +49,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
@@ -89,11 +90,13 @@ public class ReteRecipeCompiler {
 	
 	private IQueryPlannerStrategy plannerStrategy;
 	private IPatternMatcherContext context;
+	private IQueryBackendHintProvider hintProvider;
 	
-	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context) {
+	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context, IQueryBackendHintProvider hintProvider) {
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.context = context;
+		this.hintProvider = hintProvider;
 	}
 
 	final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;

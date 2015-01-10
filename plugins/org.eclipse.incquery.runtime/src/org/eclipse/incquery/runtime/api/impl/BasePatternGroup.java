@@ -10,23 +10,11 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.api.impl;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQueryGroup;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
 
 /**
  * Base implementation of {@link IQueryGroup}.
@@ -38,28 +26,17 @@ public abstract class BasePatternGroup implements IQueryGroup {
 
     @Override
     public void prepare(Notifier emfRoot) throws IncQueryException {
-        prepare(IncQueryEngine.on(emfRoot));
+        prepare(AdvancedIncQueryEngine.on(emfRoot));
     }
 
     @Override
     public void prepare(IncQueryEngine engine) throws IncQueryException {
-        try {
-            final Set<PQuery> patterns = new HashSet<PQuery>(getSpecifications());
-            Collection<String> uninitializedPatterns = Collections2.transform(
-                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
-                    PQueries.queryNameFunction());
-            Preconditions.checkState(uninitializedPatterns.isEmpty(), "Uninitialized query(s) found: %s", Joiner.on(", ")
-                    .join(uninitializedPatterns));
-            Collection<String> erroneousPatterns = Collections2.transform(
-                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
-                    PQueries.queryNameFunction());
-            Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
-                    .join(erroneousPatterns));
-            final IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
-            engineImpl.prepareBackendsCoalesced(patterns);
-        } catch (QueryPlannerException e) {
-            throw new IncQueryException(e);
-        }
+    	AdvancedIncQueryEngine.from(engine);
     }
+    
+    protected void prepare(AdvancedIncQueryEngine engine) throws IncQueryException {
+        engine.prepareGroup(this, null /* default options */);
+    }
+    
 
 }

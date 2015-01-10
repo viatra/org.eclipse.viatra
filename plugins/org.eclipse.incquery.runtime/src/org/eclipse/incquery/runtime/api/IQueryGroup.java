@@ -32,8 +32,8 @@ public interface IQueryGroup {
      * 
      * <p>
      * This preparation step has the advantage that it prepares pattern matchers for an arbitrary number of patterns in a
-     * single-pass traversal of the EMF model. 
-     * This is typically more efficient than traversing the EMF model each time an individual pattern matcher is initialized on demand. 
+     * single-pass traversal of the model. 
+     * This is typically more efficient than traversing the model each time an individual pattern matcher is initialized on demand. 
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
      * @param engine

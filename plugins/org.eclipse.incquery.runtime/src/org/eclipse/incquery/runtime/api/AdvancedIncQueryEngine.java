@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
  * Advanced interface to an IncQuery incremental evaluation engine.
@@ -286,6 +287,42 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
     public abstract <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener);
 
+    
+	/**
+	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
+	 * Multiple calls will return the same matcher.
+	 * <p> Hints are only effective the first time a matcher is created.
+	 * @param querySpecification a {@link IQuerySpecification} that describes an IncQuery query
+	 * @return a pattern matcher corresponding to the specification
+     * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with the query
+	 * @throws IncQueryException if the matcher could not be initialized
+	 */
+    public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
+    		IQuerySpecification<Matcher> querySpecification, 
+    		QueryEvaluationHint optionalEvaluationHints)
+    	throws IncQueryException;
+
+    /**
+     * Initializes matchers for a group of patterns as one step (optionally overriding some of the default query evaluation hints). 
+     * If some of the pattern matchers are already
+     * constructed in the engine, no task is performed for them.
+     * 
+     * <p>
+     * This preparation step has the advantage that it prepares pattern matchers for an arbitrary number of patterns in a
+     * single-pass traversal of the model. 
+     * This is typically more efficient than traversing the model each time an individual pattern matcher is initialized on demand. 
+     * The performance benefit only manifests itself if the engine is not in wildcard mode.
+     * 
+	 * @param queryGroup a {@link IQueryGroup} identifying a set of IncQuery queries
+     * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with each query
+     * @throws IncQueryException
+     *             if there was an error in preparing the engine
+     */
+    public abstract void prepareGroup(
+    		IQueryGroup queryGroup, 
+    		QueryEvaluationHint optionalEvaluationHints)
+    	throws IncQueryException;
+ 
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
      * {@link IncQueryEngine#on(IncQueryScope)}.
@@ -366,4 +403,6 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	public abstract IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass)
 			throws IncQueryException;
 
+
+	
 }

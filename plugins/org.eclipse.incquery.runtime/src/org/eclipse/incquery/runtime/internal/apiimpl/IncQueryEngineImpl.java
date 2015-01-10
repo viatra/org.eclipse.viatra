@@ -15,6 +15,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -25,6 +28,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IMatchUpdateListener;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IQueryGroup;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
@@ -44,16 +48,23 @@ import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
@@ -63,7 +74,7 @@ import com.google.common.collect.Maps;
  * @author Bergmann Gábor
  * 
  */
-public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
+public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQueryBackendHintProvider {
 	
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
@@ -79,6 +90,12 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
      * The context of the engine, provided by the scope.
      */
     private IEngineContext engineContext;
+    
+    /**
+     * Query evaluation options registered for each query. Must have non-null fields if stored here.
+     */
+    private final Map<PQuery, QueryEvaluationHint> hints
+    		= Maps.newHashMap();    
     
     /**
      * Initialized matchers for each query
@@ -140,6 +157,16 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
         return querySpecification.getMatcher(this);
+    }
+    
+    @Override
+    public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
+    		IQuerySpecification<Matcher> querySpecification,
+    		QueryEvaluationHint optionalEvaluationHints) 
+    	throws IncQueryException 
+    {
+    	overrideKnownHints(querySpecification, optionalEvaluationHints);
+        return getMatcher(querySpecification);
     }
 
 	@Override
@@ -223,7 +250,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 		    			public void initializeWith(IPatternMatcherRuntimeContext context) {
 		    				queryBackends = Maps.newHashMap();
 		    				for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : queryBackendFactories.entrySet()) {
-		    					IQueryBackend backend = factoryEntry.getValue().create(context);
+		    					IQueryBackend backend = factoryEntry.getValue().create(context, IncQueryEngineImpl.this);
 		    					queryBackends.put(factoryEntry.getKey(), backend);
 		    				}
 		    			}
@@ -273,6 +300,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 			}
             queryBackends = null;
         }
+        hints.clear();
         matchers.clear();
         lifecycleProvider.engineWiped();
     }
@@ -340,10 +368,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
     @Override
 	public <Match extends IPatternMatch> void addMatchUpdateListener(final IncQueryMatcher<Match> matcher,
             final IMatchUpdateListener<? super Match> listener, boolean fireNow) {
+    	
         checkArgument(listener != null, "Cannot add null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot register listener for matcher of different engine!");
         checkArgument(!disposed, "Cannot register listener on matcher of disposed engine!");
-
+        
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
         final IUpdateable updateDispatcher = new IUpdateable() {
@@ -417,53 +446,134 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine {
 	public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
         lifecycleProvider.removeListener(listener);
     }
-
+	
     /**
      * Returns an internal interface towards the query backend to feed the matcher with results. 
+     * 
+     * @param query the pattern for which the result provider should be delivered
+     * 
      * @throws QueryPlannerException
      * @throws IncQueryException
      */
-	public IQueryResultProvider getResultProvider(PQuery query)
-			throws QueryPlannerException, IncQueryException 
+	public IQueryResultProvider getResultProvider(IQuerySpecification<?> query) 
+		throws QueryPlannerException, IncQueryException 
 	{
-        checkArgument(!disposed, "Cannot evaluate query on disposed engine!");
+		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
         
-		// TODO: there could be different ways for selecting a backend for this query
-		final IQueryBackend backend = getQueryBackend(defaultBackendClass);
-		
+		return getResultProviderInternal(query);
+	}
+
+	private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query) 
+		throws QueryPlannerException, IncQueryException 
+	{
+		final IQueryBackend backend = getQueryBackend(query);
 		return backend.getResultProvider(query);
+	}
+	
+	private IQueryBackend getQueryBackend(IQuerySpecification<?> query) throws IncQueryException {
+		return getQueryBackend(getCurrentHint(query).getQueryBackendClass());
+	}
+	
+	@Override
+	public Map<String, Object> getHints(PQuery query) {
+		return getCurrentHint(query).getBackendHints();
 	}
 
 	/**
-	 * Prepares backends for providing results for the given queries.
-	 * @param patterns a set of patterns to prepare at once
-	 * @throws IncQueryException 
-	 * @throws QueryPlannerException 
+	 * @return hint with non-null fields
 	 */
-	public void prepareBackendsCoalesced(final Set<PQuery> patterns) throws QueryPlannerException, IncQueryException {
-		// TODO maybe do some smarter preparation per backend?
-        try {
-			engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					for (PQuery pQuery : patterns) {
-						getResultProvider(pQuery);
-					}
-					return null;
-				}
-			});
-        } catch (InvocationTargetException ex) {
-            final Throwable cause = ex.getCause();
-            if (cause instanceof QueryPlannerException)
-                throw (QueryPlannerException) cause;
-            if (cause instanceof IncQueryException)
-                throw (IncQueryException) cause;
-            if (cause instanceof RuntimeException)
-                throw (RuntimeException) cause;
-            assert (false);
-        }
-		
+	private QueryEvaluationHint getCurrentHint(PQuery query) {
+		QueryEvaluationHint hint = hints.get(query);
+		if (hint == null) {
+			// global default
+			hint = new QueryEvaluationHint(defaultBackendClass, new HashMap<String, Object>());
+			hints.put(query, hint);
+			
+			// overrides provided in query specification
+			QueryEvaluationHint providedHint = query.getEvaluationHints();
+			if (providedHint != null) 
+				hint = overrideKnownHints(query, providedHint);
+		}
+		return hint;
 	}
+	
+	/**
+	 * @pre current hint exists with non-null fields
+	 */
+	private QueryEvaluationHint overrideKnownHints(
+			PQuery query, 
+			QueryEvaluationHint overridingHint) 
+	{
+		final QueryEvaluationHint currentHint = getCurrentHint(query);
+		if (overridingHint == null)
+			return currentHint;
+		
+		Class<? extends IQueryBackend> queryBackendClass = 
+				currentHint.getQueryBackendClass();
+		if (overridingHint.getQueryBackendClass() != null)
+			queryBackendClass = overridingHint.getQueryBackendClass();
+					
+		Map<String, Object> backendHints = 
+				new HashMap<String, Object>(currentHint.getBackendHints());
+		if (overridingHint.getBackendHints() != null)
+			backendHints.putAll(overridingHint.getBackendHints());
+		
+		QueryEvaluationHint consolidatendHint = 
+				new QueryEvaluationHint(queryBackendClass, backendHints);
+		hints.put(query, consolidatendHint);
+		return consolidatendHint;
+      
+	}
+	
+	@Override
+	public void prepareGroup(IQueryGroup queryGroup,
+			final QueryEvaluationHint optionalEvaluationHints) throws IncQueryException 
+	{
+        try {
+    		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
+    		
+    		final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(queryGroup.getSpecifications());
+            final Set<PQuery> patterns = new HashSet<PQuery>(specifications);
+            Collection<String> uninitializedPatterns = Collections2.transform(
+                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
+                    PQueries.queryNameFunction());
+            Preconditions.checkState(uninitializedPatterns.isEmpty(), "Uninitialized query(s) found: %s", Joiner.on(", ")
+                    .join(uninitializedPatterns));
+            Collection<String> erroneousPatterns = Collections2.transform(
+                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
+                    PQueries.queryNameFunction());
+            Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
+                    .join(erroneousPatterns));
+            
+    		// TODO maybe do some smarter preparation per backend?
+            try {
+    			engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+    				@Override
+    				public Void call() throws Exception {
+   					for (IQuerySpecification<?> query : specifications) {
+   							overrideKnownHints(query, optionalEvaluationHints);
+    					}
+    					for (IQuerySpecification<?> query : specifications) {
+    						getResultProviderInternal(query);
+    					}
+    					return null;
+    				}
+    			});
+            } catch (InvocationTargetException ex) {
+                final Throwable cause = ex.getCause();
+                if (cause instanceof QueryPlannerException)
+                    throw (QueryPlannerException) cause;
+                if (cause instanceof IncQueryException)
+                    throw (IncQueryException) cause;
+                if (cause instanceof RuntimeException)
+                    throw (RuntimeException) cause;
+                assert (false);
+            }
+        } catch (QueryPlannerException e) {
+            throw new IncQueryException(e);
+        }
+	}
+	
 
 	@Override
 	public IncQueryScope getScope() {

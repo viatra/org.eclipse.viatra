@@ -155,35 +155,35 @@ public class ReteEngine implements IQueryBackend {
      * Accesses the patternmatcher for a given pattern, constructs one if a matcher is not available yet.
      *
      * @pre: builder is set.
-     * @param gtPattern
+     * @param query
      *            the pattern to be matched.
      * @return a patternmatcher object that can match occurences of the given pattern.
      * @throws RetePatternBuildException
      *             if construction fails.
      */
-    public synchronized RetePatternMatcher accessMatcher(final PQuery gtPattern)
+    public synchronized RetePatternMatcher accessMatcher(final PQuery query)
             throws QueryPlannerException {
     	ensureInitialized();
     	RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
         // String name = gtPattern.getName();
         // String fqn = namespace + "." + name;
-        matcher = matchers.get(gtPattern);
+        matcher = matchers.get(query);
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
         		@Override
         		public Void call() throws QueryPlannerException {
         			RecipeTraceInfo prodNode;
-        			prodNode = boundary.accessProductionTrace(gtPattern);
+        			prodNode = boundary.accessProductionTrace(query);
 
         			RetePatternMatcher retePatternMatcher = new RetePatternMatcher(ReteEngine.this,
         					prodNode);
-        			retePatternMatcher.setTag(gtPattern);
-        			matchers.put(gtPattern, retePatternMatcher);
+        			retePatternMatcher.setTag(query);
+        			matchers.put(query, retePatternMatcher);
         			return null;
         		}
         	});
-            matcher = matchers.get(gtPattern);
+            matcher = matchers.get(query);
         }
 
         return matcher;

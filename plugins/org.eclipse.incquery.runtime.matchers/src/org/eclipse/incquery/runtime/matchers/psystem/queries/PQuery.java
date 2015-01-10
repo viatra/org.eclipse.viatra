@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.matchers.psystem.queries;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
@@ -152,4 +154,12 @@ public interface PQuery {
      * @return the found annotation, or null if non is available
      */
     PAnnotation getFirstAnnotationByName(String annotationName);
+
+	/**
+	 * Optional hints regarding the query evaluation strategy, to be interpreted by the query engine.
+	 * <p> To ensure the possibility of external overrides, 
+	 * 	the evaluation engine should not directly consult this field, 
+	 * 	but use an {@link IQueryBackendHintProvider} instead.
+	 */
+	public QueryEvaluationHint getEvaluationHints();
 }
