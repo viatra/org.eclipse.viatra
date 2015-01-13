@@ -24,11 +24,21 @@
   </setupTask>
   <setupTask
       xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.incquery.cps.demo.setup"
+      value="=http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/plain/releng/org.eclipse.incquery.setup/incquery.setup->${git.clone.incquery.location|uri}/releng/org.eclipse.incquery.setup/incquery.setup"
+      vm="true"/>
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
       option="-Xmx"
       value="2048m"
       vm="true">
     <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
   </setupTask>
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-XX:MaxPermSize="
+      value="256M"
+      vm="true"/>
   <setupTask
       xsi:type="setup:CompoundTask"
       name="EMF-IncQuery Eclipse Preferences">
@@ -105,45 +115,45 @@
   <setupTask
       xsi:type="setup.p2:P2Task">
     <requirement
-        id="org.eclipse.emf.sdk.feature.group"/>
+        name="org.eclipse.emf.sdk.feature.group"/>
     <requirement
-        id="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
+        name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.ide_feature.feature.group"/>
+        name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.java_feature.feature.group"/>
+        name="org.eclipse.mylyn.java_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.pde_feature.feature.group"/>
+        name="org.eclipse.mylyn.pde_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.team_feature.feature.group"/>
+        name="org.eclipse.mylyn.team_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.gerrit.feature.feature.group"/>
+        name="org.eclipse.mylyn.gerrit.feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn_feature.feature.group"/>
+        name="org.eclipse.mylyn_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.bugzilla_feature.feature.group"/>
+        name="org.eclipse.mylyn.bugzilla_feature.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.git.feature.group"/>
+        name="org.eclipse.mylyn.git.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.builds.feature.group"/>
+        name="org.eclipse.mylyn.builds.feature.group"/>
     <requirement
-        id="org.eclipse.mylyn.hudson.feature.group"/>
+        name="org.eclipse.mylyn.hudson.feature.group"/>
     <requirement
-        id="org.eclipse.egit.feature.group"/>
+        name="org.eclipse.egit.feature.group"/>
     <requirement
-        id="org.eclipse.egit.mylyn.feature.group"/>
+        name="org.eclipse.egit.mylyn.feature.group"/>
     <requirement
-        id="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
+        name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
     <requirement
-        id="org.eclipse.gmf.runtime.sdk.feature.group"/>
+        name="org.eclipse.gmf.runtime.sdk.feature.group"/>
     <requirement
-        id="org.eclipse.graphiti.sdk.feature.feature.group"/>
+        name="org.eclipse.graphiti.sdk.feature.feature.group"/>
     <requirement
-        id="org.eclipse.gef4.geometry.feature.group"/>
+        name="org.eclipse.gef4.geometry.feature.group"/>
     <requirement
-        id="org.eclipse.gef4.zest.sdk.feature.group"/>
+        name="org.eclipse.gef4.zest.sdk.feature.group"/>
     <requirement
-        id="de.itemis.xtext.antlr.feature.feature.group"/>
+        name="de.itemis.xtext.antlr.feature.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/luna"/>
     <repository
@@ -156,15 +166,30 @@
         url="http://download.itemis.com/updates/releases"/>
   </setupTask>
   <setupTask
+      xsi:type="projects:ProjectsImportTask">
+    <sourceLocator
+        rootFolder="${git.clone.incquery.location/tests}"
+        locateNestedProjects="true"/>
+    <sourceLocator
+        rootFolder="${git.clone.incquery.location/releng}"
+        locateNestedProjects="true"/>
+    <sourceLocator
+        rootFolder="${git.clone.incquery.location/plugins}"
+        locateNestedProjects="true"/>
+    <sourceLocator
+        rootFolder="${git.clone.incquery.location/features}"
+        locateNestedProjects="true"/>
+  </setupTask>
+  <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Eclipse TP">
       <requirement
-          id="org.eclipse.sdk.feature.group"/>
+          name="org.eclipse.sdk.feature.group"/>
       <requirement
-          id="org.eclipse.xtext.sdk.feature.group"/>
+          name="org.eclipse.xtext.sdk.feature.group"/>
       <requirement
-          id="de.itemis.xtext.antlr.feature.feature.group"/>
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
       <repositoryList
           name="Dependencies">
         <repository
@@ -182,40 +207,25 @@
     <targlet
         name="EMF-IncQuery">
       <requirement
-          id="org.eclipse.incquery.sdk.feature.feature.group"/>
+          name="org.eclipse.incquery.sdk.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.testing.sdk.feature.feature.group"/>
+          name="org.eclipse.incquery.testing.sdk.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.runtime.gmf.feature.feature.group"/>
+          name="org.eclipse.incquery.runtime.gmf.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.runtime.graphiti.feature.feature.group"/>
+          name="org.eclipse.incquery.runtime.graphiti.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.feature.group"/>
+          name="org.eclipse.incquery.viewers.tooling.ui.zest.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.tooling.ui.visualization.feature.feature.group"/>
+          name="org.eclipse.incquery.tooling.ui.visualization.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.xcore.feature.feature.group"/>
+          name="org.eclipse.incquery.xcore.feature.feature.group"/>
       <requirement
-          id="org.eclipse.incquery.runtime.localsearch.feature.feature.group"/>
+          name="org.eclipse.incquery.runtime.localsearch.feature.feature.group"/>
       <sourceLocator
           rootFolder="${git.clone.incquery.location}"
           locateNestedProjects="true"/>
     </targlet>
-  </setupTask>
-  <setupTask
-      xsi:type="projects:ProjectsImportTask">
-    <sourceLocator
-        rootFolder="${git.clone.incquery.location/tests}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.incquery.location/releng}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.incquery.location/plugins}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.incquery.location/features}"
-        locateNestedProjects="true"/>
   </setupTask>
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
@@ -376,8 +386,8 @@
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
-          id="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.6.0,2.7.0)"/>
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.7.0,2.8.0)"/>
       <repository
           url="http://download.eclipse.org/releases/luna"/>
     </setupTask>
@@ -441,7 +451,7 @@
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
-          id="org.eclipse.xtext.sdk.feature.group"
+          name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.6.0,2.7.0)"/>
       <repository
           url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
