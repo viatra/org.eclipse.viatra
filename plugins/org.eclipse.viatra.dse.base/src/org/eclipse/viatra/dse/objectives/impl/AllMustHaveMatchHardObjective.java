@@ -32,15 +32,11 @@ import com.google.common.base.Preconditions;
 public class AllMustHaveMatchHardObjective extends NoMatchHardObjective {
 
     public AllMustHaveMatchHardObjective(String name, List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
-        Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
-
-        this.name = name;
-        this.constraints = constraints;
+        super(name, constraints);
     }
 
     public AllMustHaveMatchHardObjective(List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
-        this("HardObjective", constraints);
+        this(HARD_OBJECTIVE, constraints);
     }
 
     public AllMustHaveMatchHardObjective(String name) {
@@ -48,15 +44,9 @@ public class AllMustHaveMatchHardObjective extends NoMatchHardObjective {
     }
 
     public AllMustHaveMatchHardObjective() {
-        this("HardObjective", new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+        this(HARD_OBJECTIVE, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
     }
 
-    @Override
-    public AllMustHaveMatchHardObjective addConstraint(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
-        constraints.add(constraint);
-        return this;
-    }
-    
     @Override
     public Double getFitness(ThreadContext context) {
 

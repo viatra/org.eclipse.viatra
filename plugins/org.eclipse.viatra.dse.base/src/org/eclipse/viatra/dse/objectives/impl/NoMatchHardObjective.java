@@ -35,6 +35,8 @@ import com.google.common.base.Preconditions;
  */
 public class NoMatchHardObjective implements IObjective {
 
+    protected static final String HARD_OBJECTIVE = "HardObjective";
+
     protected String name;
 
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
@@ -59,7 +61,7 @@ public class NoMatchHardObjective implements IObjective {
 
     public NoMatchHardObjective(
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
-        this("HardObjective", constraints);
+        this(HARD_OBJECTIVE, constraints);
     }
 
     public NoMatchHardObjective(String name) {
@@ -67,7 +69,7 @@ public class NoMatchHardObjective implements IObjective {
     }
 
     public NoMatchHardObjective() {
-        this("HardObjective", new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+        this(HARD_OBJECTIVE, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
     }
 
     public void setComparator(Comparator<Double> comparator) {
