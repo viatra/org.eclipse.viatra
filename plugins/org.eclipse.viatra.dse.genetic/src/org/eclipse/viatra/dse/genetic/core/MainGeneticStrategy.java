@@ -20,7 +20,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -363,8 +362,8 @@ public class MainGeneticStrategy implements INextTransition, IStoreChild {
     }
 
     private void startWorkerThreads(ThreadContext context) {
-        while (gc.tryStartNewThread(context, sharedObject.initialModel, true, new Strategy(
-                new InstanceGeneticStrategy())) != null) {
+        while (gc.tryStartNewThread(context, sharedObject.initialModel, true, 
+                new InstanceGeneticStrategy()) != null) {
         }
     }
 

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
@@ -26,6 +24,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
@@ -44,14 +43,12 @@ public class ExplorerThread implements IExplorerThread {
 
     private final ThreadContext threadContext;
     private GlobalContext globalContext;
-    private final Strategy strategyBase;
     private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
-        this.strategyBase = context.getStrategy();
     }
 
     /**
@@ -81,7 +78,7 @@ public class ExplorerThread implements IExplorerThread {
 
             globalContext = threadContext.getGlobalContext();
 
-            strategyBase.initINextTransition(threadContext);
+            INextTransition strategy = threadContext.getStrategy();
 
             boolean continueExecution = true;
 
@@ -97,7 +94,7 @@ public class ExplorerThread implements IExplorerThread {
                 PerformanceMonitorManager.endTimer(WALKER_CYCLE);
 
                 if (interrupted.get()) {
-                    strategyBase.interrupted(threadContext);
+                    strategy.interrupted(threadContext);
                 }
 
                 ObjectiveValuesMap objectiveValuesMap = null;
@@ -110,7 +107,7 @@ public class ExplorerThread implements IExplorerThread {
                     // Get next activation to fire. Eventually calls the
                     // getNextTransition methods.
                     PerformanceMonitorManager.startTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    transition = strategyBase.getNextTransition(threadContext, transition == null);
+                    transition = strategy.getNextTransition(threadContext, transition == null);
                     PerformanceMonitorManager.endTimer(GET_NEXT_TRANSITION_ID_TIMER);
                     // If there are no more transitions to fire, then return and
                     // stop the exploration.
@@ -150,7 +147,7 @@ public class ExplorerThread implements IExplorerThread {
 
                 } else {
                     // if the global constraints are satisfied
-                    areConstraintsSatisfied = strategyBase.checkConstraints(threadContext);
+                    areConstraintsSatisfied = checkGlobalConstraints();
                     if (areConstraintsSatisfied) {
 
                         // if it is a goal state
@@ -186,12 +183,12 @@ public class ExplorerThread implements IExplorerThread {
                     // if the global constraints are not satisfied
                     else {
                         newState.setTraversalState(TraversalStateType.CUT);
-                        logger.debug("Constraints are not satisfied.");
+                        logger.debug("Global constraints are not satisfied.");
                     }
                     newState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategyBase.newStateIsProcessed(threadContext, isAlreadyTraversed, objectiveValuesMap,
+                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, objectiveValuesMap,
                         !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
             }
@@ -236,5 +233,14 @@ public class ExplorerThread implements IExplorerThread {
         result.setSatisifiesHardObjectives(satisifiesHardObjectives);
 
         return result;
+    }
+    
+    private boolean checkGlobalConstraints() {
+        for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
+            if (!globalConstraint.checkGlobalConstraint(threadContext)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

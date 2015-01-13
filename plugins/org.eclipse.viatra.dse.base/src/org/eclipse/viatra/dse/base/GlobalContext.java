@@ -23,15 +23,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
@@ -40,7 +40,6 @@ import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Creates new contexts for strategies. It is needed because of the multithreading.
@@ -96,7 +95,7 @@ public class GlobalContext {
      *         maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, Strategy strategy) {
+            boolean cloneModel, INextTransition strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
@@ -165,7 +164,7 @@ public class GlobalContext {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Strategy strategyBase) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, INextTransition strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 
@@ -222,9 +221,8 @@ public class GlobalContext {
     // ******* fields and methods for exploration *******//
     // **************************************************//
 
-    private Set<PatternWithCardinality> goalPatterns = new HashSet<PatternWithCardinality>();
-    private Set<PatternWithCardinality> constraints = new HashSet<PatternWithCardinality>();
     private List<IObjective> objectives = new ArrayList<IObjective>();
+    private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
     private Set<TransformationRule<? extends IPatternMatch>> transformations = new HashSet<TransformationRule<? extends IPatternMatch>>();
     private IStateSerializerFactory stateSerializerFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
@@ -292,24 +290,8 @@ public class GlobalContext {
         this.stateSerializerFactory = stateSerializerFactory;
     }
 
-    public Set<PatternWithCardinality> getGoalPatterns() {
-        return goalPatterns;
-    }
-
-    public Set<PatternWithCardinality> getConstraints() {
-        return constraints;
-    }
-
     public Set<TransformationRule<? extends IPatternMatch>> getTransformations() {
         return transformations;
-    }
-
-    public void setGoalPatterns(Set<PatternWithCardinality> goalPatterns) {
-        this.goalPatterns = goalPatterns;
-    }
-
-    public void setConstraints(Set<PatternWithCardinality> constraints) {
-        this.constraints = constraints;
     }
 
     public void setTransformations(Set<TransformationRule<? extends IPatternMatch>> transformations) {
@@ -366,6 +348,14 @@ public class GlobalContext {
     
     public void setObjectives(List<IObjective> objectives) {
         this.objectives = objectives;
+    }
+
+    public List<IGlobalConstraint> getGlobalConstraints() {
+        return globalConstraints;
+    }
+
+    public void setGlobalConstraints(List<IGlobalConstraint> globalConstraints) {
+        this.globalConstraints = globalConstraints;
     }
     
     AtomicBoolean getFirstThreadContextInited() {

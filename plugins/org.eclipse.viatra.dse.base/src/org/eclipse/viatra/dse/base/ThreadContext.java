@@ -25,13 +25,13 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 /**
@@ -44,7 +44,7 @@ import org.eclipse.viatra.dse.objectives.IObjective;
 public class ThreadContext {
 
     private final GlobalContext globalContext;
-    private final Strategy strategy;
+    private final INextTransition strategy;
     private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
@@ -52,6 +52,7 @@ public class ThreadContext {
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
     private List<IObjective> objectives;
+    private List<IGlobalConstraint> globalConstraints;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -72,10 +73,10 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, Strategy strategyBase, EditingDomain domain,
+    public ThreadContext(final GlobalContext globalContext, INextTransition strategy, EditingDomain domain,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
-        this.strategy = strategyBase;
+        this.strategy = strategy;
         this.domain = domain;
 
         // clone if it is not null
@@ -137,27 +138,19 @@ public class ThreadContext {
         domain.getCommandStack().execute(addRuleCommand);
 
         if (isFirstThread) {
-            // This code ensures, that the query specification is initialized, because it cannot be done in parallel
-            try {
-
-                for (PatternWithCardinality constraint : globalContext.getConstraints()) {
-                    constraint.getQuerySpecification().getMatcher(incqueryEngine).countMatches();
-                }
-
-                for (PatternWithCardinality goal : globalContext.getGoalPatterns()) {
-                    goal.getQuerySpecification().getMatcher(incqueryEngine).countMatches();
-                }
-
-            } catch (IncQueryException e) {
-                throw new DSEException("IncqueryException when initializing query specifications", e);
-            }
 
             objectives = globalContext.getObjectives();
+            globalConstraints = globalContext.getGlobalConstraints();
 
         } else {
             objectives = new ArrayList<IObjective>();
             for (IObjective objective : globalContext.getObjectives()) {
                 objectives.add(objective.createNew());
+            }
+            
+            globalConstraints = new ArrayList<IGlobalConstraint>();
+            for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
+                globalConstraints.add(globalConstraint);
             }
         }
         // create the thread specific DesignSpaceManager
@@ -174,8 +167,13 @@ public class ThreadContext {
         for (IObjective objective : objectives) {
             objective.init(this);
         }
+        for (IGlobalConstraint globalConstraint : globalConstraints) {
+            globalConstraint.init(this);
+        }
 
         globalContext.initVisualizersForThread(this);
+        
+        strategy.init(this);
         
         if (isFirstThread) {
             isFirstReady.set(true);
@@ -215,7 +213,7 @@ public class ThreadContext {
         this.guidance = guidance;
     }
 
-    public Strategy getStrategy() {
+    public INextTransition getStrategy() {
         return strategy;
     }
 

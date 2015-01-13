@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSNextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 
 /**
@@ -27,28 +27,25 @@ public final class Strategies {
     private Strategies() {
     }
 
-    public static Strategy createDFSStrategy(int depthLimit) {
-        Strategy strategyBase = new Strategy(new DepthFirstNextTransition(depthLimit));
-        return strategyBase;
+    public static INextTransition createDFSStrategy(int depthLimit) {
+        return new DepthFirstNextTransition(depthLimit);
     }
 
-    public static Strategy createFixedPriorityStrategy(int depthLimit) {
+    public static INextTransition createFixedPriorityStrategy(int depthLimit) {
         return createFixedPriorityStrategy(depthLimit, true);
     }
 
-    public static Strategy createFixedPriorityStrategy(int depthLimit,
+    public static INextTransition createFixedPriorityStrategy(int depthLimit,
             boolean tryHigherPriorityFirst) {
-        Strategy strategyBase = new Strategy(new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
-                depthLimit));
-        return strategyBase;
+        return new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
+                depthLimit);
     }
 
-    public static Strategy createBFSStrategy() {
+    public static INextTransition createBFSStrategy() {
         return createBFSStrategy(0);
     }
 
-    public static Strategy createBFSStrategy(int depthLimit) {
-        Strategy strategyBase = new Strategy(new ParallelBFSNextTransition(depthLimit));
-        return strategyBase;
+    public static INextTransition createBFSStrategy(int depthLimit) {
+        return new ParallelBFSNextTransition(depthLimit);
     }
 }

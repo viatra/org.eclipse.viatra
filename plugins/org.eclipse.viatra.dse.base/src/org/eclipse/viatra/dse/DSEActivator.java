@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.viatra.dse.api.strategy.StrategyBuildingBlocksManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -27,11 +25,6 @@ public class DSEActivator implements BundleActivator {
     public void start(BundleContext context) {
         IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 
-        for (String extensionPointName : StrategyBuildingBlocksManager.INSTANCE.getExtensionPointNames()) {
-            for (IConfigurationElement extension : extensionRegistry.getConfigurationElementsFor(extensionPointName)) {
-                StrategyBuildingBlocksManager.INSTANCE.addExtension(extensionPointName, extension);
-            }
-        }
     }
 
     @Override

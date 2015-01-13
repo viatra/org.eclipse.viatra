@@ -31,8 +31,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -40,6 +40,7 @@ import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.impl.pojo.ConcurrentDesignSpace;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.Predicate;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
@@ -60,7 +61,7 @@ import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
  * <li>{@link #setStartingModel(EObject)} or it's overloads to set the starting model.</li>
  * <li>
  * {@link #addTransformationRule(IncQueryMatcher, IMatchProcessor)} to define the transformations.</li>
- * <li> {@link #addConstraint(Set)} to ensure some patterns on the trajectory's steps.</li>
+ * <li> {@link #addGlobalConstraint(Set)} to ensure some patterns on the trajectory's steps.</li>
  * <li {@link #addGoalPattern(Set)} to set the goal patterns.</li>
  * </ul>
  * </p>
@@ -77,7 +78,7 @@ import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
  * An extension to this paradigm is the introduction of "constraints", which guarantees, that no sequence will be
  * returned, which if executed, results in an intermediate model state that violate the specified rules ("constraints"),
  * including the final state. (or in reverse, they all fulfill the negative of the given constraints) You can add
- * constraints by invoking {@link #addConstraint(PatternWithCardinality)}.
+ * constraints by invoking {@link #addGlobalConstraint(PatternWithCardinality)}.
  * </p>
  * 
  * <p>
@@ -189,13 +190,13 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Add the specified condition as a constraint to the exploration process.
+     * Add the a global constraint to the exploration process.
      * 
      * @param constraint
-     *            the condition definition.
+     *            The global constraint.
      */
-    public void addConstraint(PatternWithCardinality constraint) {
-        globalContext.getConstraints().add(constraint);
+    public void addGlobalConstraint(IGlobalConstraint constraint) {
+        globalContext.getGlobalConstraints().add(constraint);
     }
 
     public void addObjective(IObjective objective) {
@@ -262,7 +263,7 @@ public class DesignSpaceExplorer {
      * strategy decides to stop the execution, otherwise when the exploration process is started it returns immediately.
      * In this case, process completion can be verified by calling {@link DesignSpaceExplorer#isDone()}.
      * 
-     * @param strategyBase
+     * @param strategy
      *            The strategy of the exploration.
      * @param waitForTermination
      *            True if the method must wait for the engine to stop.
@@ -270,8 +271,8 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(Strategy strategyBase, boolean waitForTermination) throws DSEException {
-        initExploration(strategyBase);
+    public void startExploration(INextTransition strategy, boolean waitForTermination) throws DSEException {
+        initExploration(strategy);
 
         // wait until all threads exit
         while (waitForTermination) {
@@ -292,7 +293,7 @@ public class DesignSpaceExplorer {
      * Starts the design space exploration and then sleeps {@code waitInMilliseconds} millisecond. After that it stops
      * the execution which can be a few millis long and returns.
      * 
-     * @param strategyBase
+     * @param strategy
      *            The strategy of the exploration.
      * @param waitInMilliseconds
      *            The number of milliseconds the method must wait for stopping the exploration.
@@ -300,8 +301,8 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(Strategy strategyBase, int waitInMilliseconds) throws DSEException {
-        initExploration(strategyBase);
+    public void startExploration(INextTransition strategy, int waitInMilliseconds) throws DSEException {
+        initExploration(strategy);
 
         try {
             Thread.sleep(waitInMilliseconds);
@@ -326,17 +327,17 @@ public class DesignSpaceExplorer {
         } while (true);
     }
 
-    private void initExploration(Strategy strategyBase) {
+    private void initExploration(INextTransition strategy) {
         checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
-        checkArgument(strategyBase != null, "A strategy must be given. Use the Strategies helper class.");
+        checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
                 "At least one transformation rule must be added to start the exploration.");
 
         if (guidance != null) {
 
             guidance.setRules(globalContext.getTransformations());
-            guidance.setConstraints(globalContext.getConstraints());
-            guidance.setGoalPatterns(globalContext.getGoalPatterns());
+//            guidance.setConstraints(globalContext.getConstraints());
+//            guidance.setGoalPatterns(globalContext.getGoalPatterns());
 
             // create rule dependency graph
             guidance.resolveDependencyGraph();
@@ -351,7 +352,7 @@ public class DesignSpaceExplorer {
         logger.info("DesignSpaceExplorer started exploration.");
 
         // Create main thread with given model, without cloning.
-        ThreadContext threadContext = new ThreadContext(globalContext, strategyBase,
+        ThreadContext threadContext = new ThreadContext(globalContext, strategy,
                 EMFHelper.createEditingDomain(modelRoot), null, null);
         threadContext.setGuidance(guidance);
 

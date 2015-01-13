@@ -17,10 +17,8 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.Strategy;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
@@ -33,6 +31,8 @@ import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
 import org.eclipse.viatra.dse.guidance.Guidance;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
+import org.eclipse.viatra.dse.solutionstore.DummySolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 
 public class GeneticDesignSpaceExplorer {
@@ -46,6 +46,7 @@ public class GeneticDesignSpaceExplorer {
         dse = new DesignSpaceExplorer();
         configuration = new GeneticSharedObject();
         dse.setSharedObject(configuration);
+        dse.setSolutionStore(new DummySolutionStore());
     }
 
     public void setStartingModel(EObject root) {
@@ -85,8 +86,8 @@ public class GeneticDesignSpaceExplorer {
         configuration.softConstraints.add(softConstraint);
     }
 
-    public void addGlobalConstraint(PatternWithCardinality constraint) {
-        dse.addConstraint(constraint);
+    public void addGlobalConstraint(IGlobalConstraint constraint) {
+        dse.addGlobalConstraint(constraint);
     }
 
     public void addObjectiveComparator(String objectiveName, Comparator<InstanceData> comparator) {
@@ -149,7 +150,7 @@ public class GeneticDesignSpaceExplorer {
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
-        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), waitForTermination);
+        dse.startExploration(MAIN_GENETIC_STRATEGY, waitForTermination);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
@@ -158,7 +159,7 @@ public class GeneticDesignSpaceExplorer {
             dse.setGuidance(guidance);
         }
 
-        dse.startExploration(new Strategy(MAIN_GENETIC_STRATEGY), false);
+        dse.startExploration(MAIN_GENETIC_STRATEGY, false);
 
         double start = System.nanoTime() / 1000000;
         do {
