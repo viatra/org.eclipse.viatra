@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.interfaces;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 
-public interface IInitialPopulationSelector extends INextTransition {
+public interface IInitialPopulationSelector extends IStrategy {
 
     /**
      * The initial population selector must call the

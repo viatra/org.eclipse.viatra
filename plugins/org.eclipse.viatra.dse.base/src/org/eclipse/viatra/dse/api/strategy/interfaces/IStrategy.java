@@ -21,10 +21,10 @@ import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
  * @author Andras Szabolcs Nagy
  * 
  */
-public interface INextTransition {
+public interface IStrategy {
 
     /**
-     * Called once before the first {@link INextTransition#getNextTransition(ThreadContext)} is called for every new
+     * Called once before the first {@link IStrategy#getNextTransition(ThreadContext)} is called for every new
      * thread.
      * 
      * @param context
@@ -62,7 +62,7 @@ public interface INextTransition {
 
     /**
      * Called if the exploration process is interrupted for example by timeout. Exit by returning null in the
-     * {@link INextTransition#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
+     * {@link IStrategy#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
      * 
      * @param context
      *            The {@link ThreadContext} which contains necessary informations.

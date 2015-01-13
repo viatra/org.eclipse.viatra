@@ -11,7 +11,7 @@
    <extension
          point="org.eclipse.viatra.dse.api.strategy.nexttransition">
       <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition"
+            class="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy"
             id="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition"
             name="DepthFirstNextTransition">
       </client>
@@ -27,7 +27,7 @@
    <extension
          point="org.eclipse.viatra.dse.api.strategy.nexttransition">
       <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition"
+            class="org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy"
             id="org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition"
             name="FixedPriorityNextTransition">
       </client>
@@ -35,7 +35,7 @@
    <extension
          point="org.eclipse.viatra.dse.api.strategy.nexttransition">
       <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstNextTransition"
+            class="org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstStrategy"
             id="org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstNextTransition"
             name="BreadthFirstNextTransition">
       </client>

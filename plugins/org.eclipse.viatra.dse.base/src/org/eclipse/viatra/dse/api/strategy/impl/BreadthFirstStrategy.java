@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
-public class BreadthFirstNextTransition implements INextTransition {
+public class BreadthFirstStrategy implements IStrategy {
 
     private class TransitionWrapper {
         private ITransition transition;
@@ -47,10 +47,10 @@ public class BreadthFirstNextTransition implements INextTransition {
     private TransitionWrapper t;
     private boolean isInterrupted = false;
 
-    public BreadthFirstNextTransition() {
+    public BreadthFirstStrategy() {
     }
 
-    public BreadthFirstNextTransition(int maxDepth) {
+    public BreadthFirstStrategy(int maxDepth) {
         this.maxDepth = maxDepth;
     }
 

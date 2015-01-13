@@ -18,7 +18,7 @@ import java.util.Random;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author Andras Szabolcs Nagy
  * 
  */
-public class FixedPriorityNextTransition implements INextTransition {
+public class FixedPriorityStrategy implements IStrategy {
 
     private boolean tryHigherPriorityFirst = true;
     private boolean tryBestTransitionsOnly = true;
@@ -48,7 +48,7 @@ public class FixedPriorityNextTransition implements INextTransition {
     private DesignSpaceManager dsm;
     private boolean isInterrupted = false;
 
-    public FixedPriorityNextTransition() {
+    public FixedPriorityStrategy() {
         // tryBestTransitionsOnly = true by default
         bestPriorityInState = new HashMap<Object, Double>();
     }
@@ -61,7 +61,7 @@ public class FixedPriorityNextTransition implements INextTransition {
      *            If set to true (default) it will try only the best rules based on priority, else it will try the less
      *            ones true.
      */
-    public FixedPriorityNextTransition(boolean tryHigherPriorityFirst, boolean tryBestTransitionsOnly, int depthLimit) {
+    public FixedPriorityStrategy(boolean tryHigherPriorityFirst, boolean tryBestTransitionsOnly, int depthLimit) {
         this.tryHigherPriorityFirst = tryHigherPriorityFirst;
         this.tryBestTransitionsOnly = tryBestTransitionsOnly;
         this.depthLimit = depthLimit;

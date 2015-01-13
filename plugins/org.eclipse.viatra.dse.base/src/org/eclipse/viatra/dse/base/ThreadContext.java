@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
@@ -44,7 +44,7 @@ import org.eclipse.viatra.dse.objectives.IObjective;
 public class ThreadContext {
 
     private final GlobalContext globalContext;
-    private final INextTransition strategy;
+    private final IStrategy strategy;
     private IExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
@@ -73,7 +73,7 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, INextTransition strategy, EditingDomain domain,
+    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, EditingDomain domain,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
         this.strategy = strategy;
@@ -213,7 +213,7 @@ public class ThreadContext {
         this.guidance = guidance;
     }
 
-    public INextTransition getStrategy() {
+    public IStrategy getStrategy() {
         return strategy;
     }
 

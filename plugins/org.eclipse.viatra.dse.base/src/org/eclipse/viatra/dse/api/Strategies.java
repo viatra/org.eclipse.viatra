@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition;
-import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition;
-import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSNextTransition;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
+import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
+import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 
 /**
@@ -27,25 +27,25 @@ public final class Strategies {
     private Strategies() {
     }
 
-    public static INextTransition createDFSStrategy(int depthLimit) {
-        return new DepthFirstNextTransition(depthLimit);
+    public static IStrategy createDFSStrategy(int depthLimit) {
+        return new DepthFirstStrategy(depthLimit);
     }
 
-    public static INextTransition createFixedPriorityStrategy(int depthLimit) {
+    public static IStrategy createFixedPriorityStrategy(int depthLimit) {
         return createFixedPriorityStrategy(depthLimit, true);
     }
 
-    public static INextTransition createFixedPriorityStrategy(int depthLimit,
+    public static IStrategy createFixedPriorityStrategy(int depthLimit,
             boolean tryHigherPriorityFirst) {
-        return new FixedPriorityNextTransition(tryHigherPriorityFirst, true,
+        return new FixedPriorityStrategy(tryHigherPriorityFirst, true,
                 depthLimit);
     }
 
-    public static INextTransition createBFSStrategy() {
+    public static IStrategy createBFSStrategy() {
         return createBFSStrategy(0);
     }
 
-    public static INextTransition createBFSStrategy(int depthLimit) {
-        return new ParallelBFSNextTransition(depthLimit);
+    public static IStrategy createBFSStrategy(int depthLimit) {
+        return new ParallelBFSStrategy(depthLimit);
     }
 }

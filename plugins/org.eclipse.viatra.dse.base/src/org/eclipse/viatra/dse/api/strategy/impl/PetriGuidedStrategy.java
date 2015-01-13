@@ -15,18 +15,18 @@ import java.util.List;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
-public class PetriGuidedNextTransition implements INextTransition {
+public class PetriGuidedStrategy implements IStrategy {
 
     private List<TransformationRule<? extends IPatternMatch>> petriTrajectory;
     private int actIndex = 0;
     private List<Integer> trajectoyIndexes = new ArrayList<Integer>();
-    private BreadthFirstNextTransition breadthFirstSearch;
+    private BreadthFirstStrategy breadthFirstSearch;
     private boolean lastWasPetriTurn = true;
     private boolean isInterrupted = false;;
 
@@ -75,7 +75,7 @@ public class PetriGuidedNextTransition implements INextTransition {
                 actIndex++;
                 trajectoyIndexes.add(dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() + 1);
                 lastWasPetriTurn = true;
-                breadthFirstSearch = new BreadthFirstNextTransition();
+                breadthFirstSearch = new BreadthFirstStrategy();
                 return t;
             }
         }

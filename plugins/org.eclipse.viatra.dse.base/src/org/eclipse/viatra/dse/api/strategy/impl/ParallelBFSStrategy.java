@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -25,7 +25,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
-public class ParallelBFSNextTransition implements INextTransition {
+public class ParallelBFSStrategy implements IStrategy {
 
     private class TrajectoryWrapper {
         public final LinkedList<ITransition> transitionTrajectory;
@@ -59,10 +59,10 @@ public class ParallelBFSNextTransition implements INextTransition {
 
     private boolean isInterrupted = false;;
 
-    public ParallelBFSNextTransition() {
+    public ParallelBFSStrategy() {
     }
 
-    public ParallelBFSNextTransition(int maxDepth) {
+    public ParallelBFSStrategy(int maxDepth) {
         this.initMaxDepth = maxDepth;
     }
 

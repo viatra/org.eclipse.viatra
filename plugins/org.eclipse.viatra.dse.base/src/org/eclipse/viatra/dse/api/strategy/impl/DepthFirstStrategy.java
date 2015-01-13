@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
-public class DepthFirstNextTransition implements INextTransition {
+public class DepthFirstStrategy implements IStrategy {
 
     private static final String UNDO_TIMER = "undoTimer";
     private static final String GET_LOCAL_FIREABLE_TRANSITIONS = "getLocalFireableTransitions";
@@ -38,10 +38,10 @@ public class DepthFirstNextTransition implements INextTransition {
     private Logger logger = Logger.getLogger(this.getClass());
     private boolean isInterrupted = false;
 
-    public DepthFirstNextTransition() {
+    public DepthFirstStrategy() {
     }
 
-    public DepthFirstNextTransition(int maxDepth) {
+    public DepthFirstStrategy(int maxDepth) {
         initMaxDepth = maxDepth;
     }
 

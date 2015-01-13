@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
-public class InstanceGeneticStrategy implements INextTransition {
+public class InstanceGeneticStrategy implements IStrategy {
 
     private enum WorkerState {
         NEXT_INSTANCE,

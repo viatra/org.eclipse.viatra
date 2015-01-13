@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -95,7 +95,7 @@ public class GlobalContext {
      *         maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, INextTransition strategy) {
+            boolean cloneModel, IStrategy strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
@@ -164,7 +164,7 @@ public class GlobalContext {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, INextTransition strategyBase) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, IStrategy strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 

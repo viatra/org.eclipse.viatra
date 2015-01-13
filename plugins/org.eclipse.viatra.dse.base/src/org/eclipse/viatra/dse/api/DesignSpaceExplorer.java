@@ -32,7 +32,7 @@ import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -271,7 +271,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(INextTransition strategy, boolean waitForTermination) throws DSEException {
+    public void startExploration(IStrategy strategy, boolean waitForTermination) throws DSEException {
         initExploration(strategy);
 
         // wait until all threads exit
@@ -301,7 +301,7 @@ public class DesignSpaceExplorer {
      *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
      *             {@link RuntimeException}, so it may be left unchecked.
      */
-    public void startExploration(INextTransition strategy, int waitInMilliseconds) throws DSEException {
+    public void startExploration(IStrategy strategy, int waitInMilliseconds) throws DSEException {
         initExploration(strategy);
 
         try {
@@ -327,7 +327,7 @@ public class DesignSpaceExplorer {
         } while (true);
     }
 
-    private void initExploration(INextTransition strategy) {
+    private void initExploration(IStrategy strategy) {
         checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
         checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),

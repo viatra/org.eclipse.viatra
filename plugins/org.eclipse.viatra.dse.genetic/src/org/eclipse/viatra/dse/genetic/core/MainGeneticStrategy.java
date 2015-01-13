@@ -20,7 +20,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.strategy.interfaces.INextTransition;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -35,7 +35,7 @@ import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
-public class MainGeneticStrategy implements INextTransition, IStoreChild {
+public class MainGeneticStrategy implements IStrategy, IStoreChild {
 
     enum GeneticStrategyState {
         FIRST_POPULATION,
