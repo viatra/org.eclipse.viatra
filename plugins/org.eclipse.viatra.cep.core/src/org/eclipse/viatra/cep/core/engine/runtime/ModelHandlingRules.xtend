@@ -28,14 +28,15 @@ import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTra
 import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.RuleOrderBasedFixedPriorityResolver
 
 import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class ModelHandlingRules {
 
 	val EventDrivenTransformationRuleFactory ruleFactory = new EventDrivenTransformationRuleFactory
 	val logger = LoggerUtils::instance.logger
 
-	@Property IEventModelManager eventModelManager;
-	@Property Map<RuleSpecification<?>, Integer> modelHandlers;
+	@Accessors IEventModelManager eventModelManager;
+	@Accessors Map<RuleSpecification<?>, Integer> modelHandlers;
 
 	new(IEventModelManager eventModelManager) {
 		this.eventModelManager = eventModelManager;

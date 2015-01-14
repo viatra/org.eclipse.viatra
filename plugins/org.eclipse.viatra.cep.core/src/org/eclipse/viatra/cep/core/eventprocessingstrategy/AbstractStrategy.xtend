@@ -19,6 +19,9 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
+import org.eclipse.viatra.cep.core.metamodels.events.Event
+import org.eclipse.xtend.lib.annotations.Accessors
+
 import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 
 /**
@@ -30,7 +33,7 @@ import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 *
 */
 abstract class AbstractStrategy implements IEventProcessingStrategy {
-	@Property IEventModelManager eventModelManager;
+	@Accessors IEventModelManager eventModelManager;
 
 	new(IEventModelManager eventModelManager) {
 		this.eventModelManager = eventModelManager
@@ -47,10 +50,15 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 
 		val nextState = transition.postState
 
-		eventTokenToMove.recordedEvents.add(eventModelManager.model.latestEvent)
+		eventTokenToMove.addProcessedEvent(eventModelManager.model.latestEvent)
 		preState.setLastProcessedEvent(eventModelManager.model.latestEvent)
 		eventTokenToMove.setCurrentState(nextState)
 		eventModelManager.callbackOnFiredToken(transition, eventTokenToMove)
+	}
+
+	def protected addProcessedEvent(EventToken eventToken, Event event) {
+		eventToken.recordedEvents.add(event)
+		eventToken.lastProcessed = event
 	}
 
 	override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory,

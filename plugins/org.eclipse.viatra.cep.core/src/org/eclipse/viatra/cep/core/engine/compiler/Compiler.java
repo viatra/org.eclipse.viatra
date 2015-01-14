@@ -167,15 +167,17 @@ public class Compiler {
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            // int multiplicity = eventPatternReference.getMultiplicity();
-            if (eventPattern instanceof AtomicEventPattern) {
-                State currentState = createState();
-                Guard guard = createGuard((AtomicEventPattern) eventPattern);
-                createTransition(lastCreatedState, currentState, guard);
-                lastCreatedState = currentState;
-            } else if (eventPattern instanceof ComplexEventPattern) {
-                Map<StateType, State> marginStates = map(lastCreatedState, (ComplexEventPattern) eventPattern);
-                lastCreatedState = marginStates.get(StateType.OUT);
+            int multiplicity = eventPatternReference.getMultiplicity();
+            for (int i = 0; i < multiplicity; i++) {
+                if (eventPattern instanceof AtomicEventPattern) {
+                    State currentState = createState();
+                    Guard guard = createGuard((AtomicEventPattern) eventPattern);
+                    createTransition(lastCreatedState, currentState, guard);
+                    lastCreatedState = currentState;
+                } else if (eventPattern instanceof ComplexEventPattern) {
+                    Map<StateType, State> marginStates = map(lastCreatedState, (ComplexEventPattern) eventPattern);
+                    lastCreatedState = marginStates.get(StateType.OUT);
+                }
             }
         }
 
