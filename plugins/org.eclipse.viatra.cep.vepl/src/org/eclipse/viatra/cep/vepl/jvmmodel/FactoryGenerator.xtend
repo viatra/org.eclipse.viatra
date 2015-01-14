@@ -19,6 +19,8 @@ import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.viatra.cep.core.api.rules.ICepRule
+import com.google.common.collect.Lists
 
 @SuppressWarnings("discouraged", "restriction")
 class FactoryGenerator {
@@ -62,6 +64,9 @@ class FactoryGenerator {
 					members += method
 				}
 			}
+			
+			val rules = FactoryManager.instance.registeredClasses.filter[fqn|fqn.rule].toList
+			members+=rules.createAllRulesMethod(model, acceptor, members, typeRefBuilder)
 		]
 	}
 
@@ -74,6 +79,26 @@ class FactoryGenerator {
 			]
 		]
 		method.setDocumentation('''Factory method for «fqn.type» {@link «fqn.lastSegment»}.''')
+		method
+	}
+	
+	def private createAllRulesMethod(List<QualifiedName> ruleFqns, PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+		List<JvmMember> members, JvmTypeReferenceBuilder typeRefBuilder) {
+		var method = model.toMethod("allRules", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(ICepRule))) [
+			body = [
+				append('''List<ICepRule> rules = ''')
+				append('''«referClass(typeRefBuilder, model, Lists)».newArrayList();
+				''');
+				for(fqn:ruleFqns){
+					append('''rules.add(new ''')
+					.append('''«referClass(typeRefBuilder, fqn, model)»''')
+					.append('''());
+					''')
+				}
+				append('''return rules;''')
+			]
+		]
+		method.setDocumentation('''Factory method for instantiating every defined rule.''')
 		method
 	}
 }

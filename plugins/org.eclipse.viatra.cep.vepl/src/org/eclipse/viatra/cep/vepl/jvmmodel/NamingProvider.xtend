@@ -103,6 +103,10 @@ class NamingProvider {
 	def isEvent(QualifiedName fqn) {
 		return fqn.toString.endsWith(EVENT_SUFFIX) || fqn.toString.endsWith(IQ_EVENT_SUFFIX)
 	}
+	
+	def isRule(QualifiedName fqn) {
+		return fqn.toString.contains(RULES_PACKAGE_NAME_ELEMENT)
+	}
 
 	def getType(QualifiedName fqn) {
 		if (fqn.toString.endsWith(EVENT_SUFFIX)) {
