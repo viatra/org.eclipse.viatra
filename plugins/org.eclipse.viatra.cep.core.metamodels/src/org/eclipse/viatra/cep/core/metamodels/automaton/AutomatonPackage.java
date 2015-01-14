@@ -205,13 +205,22 @@ public interface AutomatonPackage extends EPackage {
     int EVENT_TOKEN__RECORDED_EVENTS = 1;
 
     /**
+     * The feature id for the '<em><b>Last Processed</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_TOKEN__LAST_PROCESSED = 2;
+
+    /**
      * The number of structural features of the '<em>Event Token</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_TOKEN_FEATURE_COUNT = 2;
+    int EVENT_TOKEN_FEATURE_COUNT = 3;
 
     /**
      * The number of operations of the '<em>Event Token</em>' class.
@@ -1085,6 +1094,17 @@ public interface AutomatonPackage extends EPackage {
     EReference getEventToken_RecordedEvents();
 
     /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed <em>Last Processed</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Last Processed</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed()
+     * @see #getEventToken()
+     * @generated
+     */
+    EReference getEventToken_LastProcessed();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State <em>State</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1493,6 +1513,14 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference EVENT_TOKEN__RECORDED_EVENTS = eINSTANCE.getEventToken_RecordedEvents();
+
+        /**
+         * The meta object literal for the '<em><b>Last Processed</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_TOKEN__LAST_PROCESSED = eINSTANCE.getEventToken_LastProcessed();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.StateImpl <em>State</em>}' class.

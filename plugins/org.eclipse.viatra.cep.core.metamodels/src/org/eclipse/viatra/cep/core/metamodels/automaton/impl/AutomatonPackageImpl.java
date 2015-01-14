@@ -323,6 +323,15 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getEventToken_LastProcessed() {
+        return (EReference)eventTokenEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getState() {
         return stateEClass;
     }
@@ -603,6 +612,7 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         eventTokenEClass = createEClass(EVENT_TOKEN);
         createEReference(eventTokenEClass, EVENT_TOKEN__CURRENT_STATE);
         createEReference(eventTokenEClass, EVENT_TOKEN__RECORDED_EVENTS);
+        createEReference(eventTokenEClass, EVENT_TOKEN__LAST_PROCESSED);
 
         stateEClass = createEClass(STATE);
         createEReference(stateEClass, STATE__IN_TRANSITIONS);
@@ -699,6 +709,7 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEClass(eventTokenEClass, EventToken.class, "EventToken", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEventToken_CurrentState(), this.getState(), this.getState_EventTokens(), "currentState", null, 0, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEventToken_RecordedEvents(), theEventsPackage.getEvent(), null, "recordedEvents", null, 0, -1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEventToken_LastProcessed(), theEventsPackage.getEvent(), null, "lastProcessed", null, 0, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getState_InTransitions(), this.getTransition(), this.getTransition_PostState(), "inTransitions", null, 0, -1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

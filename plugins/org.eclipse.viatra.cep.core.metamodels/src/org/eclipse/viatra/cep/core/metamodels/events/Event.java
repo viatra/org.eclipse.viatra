@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.Event#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.Event#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.Event#getSource <em>Source</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.Event#isIsProcessed <em>Is Processed</em>}</li>
  * </ul>
  * </p>
  *
@@ -100,5 +101,31 @@ public interface Event extends EObject {
      * @generated
      */
     void setSource(EventSource value);
+
+    /**
+     * Returns the value of the '<em><b>Is Processed</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Is Processed</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Is Processed</em>' attribute.
+     * @see #setIsProcessed(boolean)
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getEvent_IsProcessed()
+     * @model required="true"
+     * @generated
+     */
+    boolean isIsProcessed();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.Event#isIsProcessed <em>Is Processed</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Is Processed</em>' attribute.
+     * @see #isIsProcessed()
+     * @generated
+     */
+    void setIsProcessed(boolean value);
 
 } // Event

@@ -320,6 +320,15 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getEvent_IsProcessed() {
+        return (EAttribute)eventEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getEventSource() {
         return eventSourceEClass;
     }
@@ -477,6 +486,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         createEAttribute(eventEClass, EVENT__TYPE);
         createEAttribute(eventEClass, EVENT__TIMESTAMP);
         createEReference(eventEClass, EVENT__SOURCE);
+        createEAttribute(eventEClass, EVENT__IS_PROCESSED);
 
         eventSourceEClass = createEClass(EVENT_SOURCE);
         createEOperation(eventSourceEClass, EVENT_SOURCE___GET_ID);
@@ -560,6 +570,7 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         initEAttribute(getEvent_Type(), ecorePackage.getEString(), "type", null, 1, 1, Event.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getEvent_Timestamp(), ecorePackage.getELong(), "timestamp", null, 1, 1, Event.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEvent_Source(), this.getEventSource(), null, "source", null, 0, 1, Event.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getEvent_IsProcessed(), ecorePackage.getEBoolean(), "isProcessed", null, 1, 1, Event.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(eventSourceEClass, EventSource.class, "EventSource", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

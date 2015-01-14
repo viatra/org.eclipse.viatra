@@ -32,6 +32,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getCurrentState <em>Current State</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getRecordedEvents <em>Recorded Events</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getLastProcessed <em>Last Processed</em>}</li>
  * </ul>
  * </p>
  *
@@ -57,6 +58,16 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * @ordered
      */
     protected EList<Event> recordedEvents;
+
+    /**
+     * The cached value of the '{@link #getLastProcessed() <em>Last Processed</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getLastProcessed()
+     * @generated
+     * @ordered
+     */
+    protected Event lastProcessed;
 
     /**
      * <!-- begin-user-doc -->
@@ -154,6 +165,44 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * <!-- end-user-doc -->
      * @generated
      */
+    public Event getLastProcessed() {
+        if (lastProcessed != null && lastProcessed.eIsProxy()) {
+            InternalEObject oldLastProcessed = (InternalEObject)lastProcessed;
+            lastProcessed = (Event)eResolveProxy(oldLastProcessed);
+            if (lastProcessed != oldLastProcessed) {
+                if (eNotificationRequired())
+                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED, oldLastProcessed, lastProcessed));
+            }
+        }
+        return lastProcessed;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Event basicGetLastProcessed() {
+        return lastProcessed;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setLastProcessed(Event newLastProcessed) {
+        Event oldLastProcessed = lastProcessed;
+        lastProcessed = newLastProcessed;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED, oldLastProcessed, lastProcessed));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -192,6 +241,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 return basicGetCurrentState();
             case AutomatonPackage.EVENT_TOKEN__RECORDED_EVENTS:
                 return getRecordedEvents();
+            case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
+                if (resolve) return getLastProcessed();
+                return basicGetLastProcessed();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -212,6 +264,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 getRecordedEvents().clear();
                 getRecordedEvents().addAll((Collection<? extends Event>)newValue);
                 return;
+            case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
+                setLastProcessed((Event)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -230,6 +285,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
             case AutomatonPackage.EVENT_TOKEN__RECORDED_EVENTS:
                 getRecordedEvents().clear();
                 return;
+            case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
+                setLastProcessed((Event)null);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -246,6 +304,8 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 return currentState != null;
             case AutomatonPackage.EVENT_TOKEN__RECORDED_EVENTS:
                 return recordedEvents != null && !recordedEvents.isEmpty();
+            case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
+                return lastProcessed != null;
         }
         return super.eIsSet(featureID);
     }

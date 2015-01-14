@@ -18,6 +18,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getCurrentState <em>Current State</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getRecordedEvents <em>Recorded Events</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed <em>Last Processed</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,5 +70,31 @@ public interface EventToken extends EObject {
      * @generated
      */
     EList<Event> getRecordedEvents();
+
+    /**
+     * Returns the value of the '<em><b>Last Processed</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Last Processed</em>' reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Last Processed</em>' reference.
+     * @see #setLastProcessed(Event)
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getEventToken_LastProcessed()
+     * @model
+     * @generated
+     */
+    Event getLastProcessed();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed <em>Last Processed</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Last Processed</em>' reference.
+     * @see #getLastProcessed()
+     * @generated
+     */
+    void setLastProcessed(Event value);
 
 } // EventToken

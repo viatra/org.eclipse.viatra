@@ -24,6 +24,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl#getTimestamp <em>Timestamp</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl#getSource <em>Source</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl#isIsProcessed <em>Is Processed</em>}</li>
  * </ul>
  * </p>
  *
@@ -79,6 +80,26 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * @ordered
      */
     protected EventSource source;
+
+    /**
+     * The default value of the '{@link #isIsProcessed() <em>Is Processed</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isIsProcessed()
+     * @generated
+     * @ordered
+     */
+    protected static final boolean IS_PROCESSED_EDEFAULT = false;
+
+    /**
+     * The cached value of the '{@link #isIsProcessed() <em>Is Processed</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isIsProcessed()
+     * @generated
+     * @ordered
+     */
+    protected boolean isProcessed = IS_PROCESSED_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -184,6 +205,27 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
      * <!-- end-user-doc -->
      * @generated
      */
+    public boolean isIsProcessed() {
+        return isProcessed;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setIsProcessed(boolean newIsProcessed) {
+        boolean oldIsProcessed = isProcessed;
+        isProcessed = newIsProcessed;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.EVENT__IS_PROCESSED, oldIsProcessed, isProcessed));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
@@ -194,6 +236,8 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
             case EventsPackage.EVENT__SOURCE:
                 if (resolve) return getSource();
                 return basicGetSource();
+            case EventsPackage.EVENT__IS_PROCESSED:
+                return isIsProcessed();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -214,6 +258,9 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
                 return;
             case EventsPackage.EVENT__SOURCE:
                 setSource((EventSource)newValue);
+                return;
+            case EventsPackage.EVENT__IS_PROCESSED:
+                setIsProcessed((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -236,6 +283,9 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
             case EventsPackage.EVENT__SOURCE:
                 setSource((EventSource)null);
                 return;
+            case EventsPackage.EVENT__IS_PROCESSED:
+                setIsProcessed(IS_PROCESSED_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -254,6 +304,8 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
                 return timestamp != TIMESTAMP_EDEFAULT;
             case EventsPackage.EVENT__SOURCE:
                 return source != null;
+            case EventsPackage.EVENT__IS_PROCESSED:
+                return isProcessed != IS_PROCESSED_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -272,6 +324,8 @@ public class EventImpl extends MinimalEObjectImpl.Container implements Event {
         result.append(type);
         result.append(", timestamp: ");
         result.append(timestamp);
+        result.append(", isProcessed: ");
+        result.append(isProcessed);
         result.append(')');
         return result.toString();
     }

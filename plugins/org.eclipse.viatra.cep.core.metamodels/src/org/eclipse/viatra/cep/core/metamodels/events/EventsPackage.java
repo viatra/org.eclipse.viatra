@@ -278,13 +278,22 @@ public interface EventsPackage extends EPackage {
     int EVENT__SOURCE = 2;
 
     /**
+     * The feature id for the '<em><b>Is Processed</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT__IS_PROCESSED = 3;
+
+    /**
      * The number of structural features of the '<em>Event</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_FEATURE_COUNT = 3;
+    int EVENT_FEATURE_COUNT = 4;
 
     /**
      * The number of operations of the '<em>Event</em>' class.
@@ -734,6 +743,17 @@ public interface EventsPackage extends EPackage {
     EReference getEvent_Source();
 
     /**
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.Event#isIsProcessed <em>Is Processed</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Is Processed</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Event#isIsProcessed()
+     * @see #getEvent()
+     * @generated
+     */
+    EAttribute getEvent_IsProcessed();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventSource <em>Event Source</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1008,6 +1028,14 @@ public interface EventsPackage extends EPackage {
          * @generated
          */
         EReference EVENT__SOURCE = eINSTANCE.getEvent_Source();
+
+        /**
+         * The meta object literal for the '<em><b>Is Processed</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute EVENT__IS_PROCESSED = eINSTANCE.getEvent_IsProcessed();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventSourceImpl <em>Event Source</em>}' class.
