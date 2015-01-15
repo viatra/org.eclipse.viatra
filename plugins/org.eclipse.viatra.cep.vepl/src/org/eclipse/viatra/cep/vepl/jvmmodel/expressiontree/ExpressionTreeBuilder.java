@@ -160,7 +160,7 @@ public class ExpressionTreeBuilder {
     }
 
     private Timewindow getTimewindow(ComplexEventExpression expression) {
-        if (expression.getTimewindow() != null) {
+        if (expression.getTimewindow() != null && expression.getTimewindow().getLength() > 0) {
             Timewindow timeWindow = EventsFactory.eINSTANCE.createTimewindow();
             timeWindow.setTime(expression.getTimewindow().getLength());
             return timeWindow;
