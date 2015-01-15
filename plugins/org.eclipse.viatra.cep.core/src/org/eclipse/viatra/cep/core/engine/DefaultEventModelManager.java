@@ -147,20 +147,18 @@ public class DefaultEventModelManager implements IEventModelManager {
 
     private void refreshModel(Event event) {
         model.setLatestEvent(null);
+        for (EventToken eventToken : eventTokensToClear) {
+            eventToken.setLastProcessed(null);
+        }
+        for (State state : statesToClear) {
+            state.setLastProcessedEvent(null);
+        }
+        
         wasEnabledForTheLatestEvent.clear();
         strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE, null);
         model.setLatestEvent(event);
         cepUpdateCompleteProvider.latestEventHandled();
         strategy.handleAutomatonResets(model, AutomatonFactory.eINSTANCE);
-
-        for (EventToken eventToken : eventTokensToClear) {
-            eventToken.setLastProcessed(null);
-        }
-
-        for (State state : statesToClear) {
-            state.setLastProcessedEvent(null);
-        }
-
     }
 
     public ExecutionSchema createExecutionSchema() {
