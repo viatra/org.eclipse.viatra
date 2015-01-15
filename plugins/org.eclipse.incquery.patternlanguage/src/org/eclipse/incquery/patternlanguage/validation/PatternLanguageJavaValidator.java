@@ -16,12 +16,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.incquery.patternlanguage.annotations.IPatternAnnotationValidator;
 import org.eclipse.incquery.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -46,20 +49,18 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionCo
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
 import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.incquery.patternlanguage.validation.whitelist.PureClassChecker;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
-import org.eclipse.xtext.common.types.util.Primitives;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
+import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
@@ -73,6 +74,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Validators for Core Pattern Language.
@@ -84,10 +86,11 @@ import com.google.inject.Inject;
  * <li>Duplicate pattern definition (name duplication only, better calculation is needed)</li>
  * <li>Pattern call parameter checking (only the number of the parameters, types not supported yet)</li>
  * <li>Empty PatternBody check</li>
+ * <li>Check for recursive pattern calls</li>
  * </ul>
  *
  * @author Mark Czotter
- *
+ * @author Tamas Szabo (itemis AG)
  */
 @SuppressWarnings("restriction")
 public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
@@ -100,21 +103,28 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     public static final String TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL = "The pattern %s is not of binary arity (it has %d parameters), therefore transitive closure is not supported.";
     public static final String TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION = "Transitive closure of %s is currently only allowed in simple positive pattern calls (no negation or aggregation).";
     public static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
+    public static final String RECURSIVE_PATTERN_CALL = "Recursive pattern call: %s";
 
     @Inject
     private PatternAnnotationProvider annotationProvider;
+
     @Inject
     private PureClassChecker purityChecker;
-    @Inject
-    private Primitives primitives;
+
     @Inject
     private IJvmModelAssociations associations;
+
     @Inject
     private ITypeSystem typeSystem;
+
     @Inject
     private ITypeInferrer typeInferrer;
+
     @Inject
     private IBatchTypeResolver typeResolver;
+
+    @Inject
+    private IResourceScopeCache cache;
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -191,8 +201,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
-                    
-                    Object type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0)); 
+
+                    Object type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
                     Object type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
                     if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
                         error(String.format(
@@ -334,6 +344,98 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
+    @Check
+    public void checkRecursivePatternCall(PatternCall call) {
+        Map<PatternCall, Set<PatternCall>> graph = cache.get(call.eResource(), call.eResource(), new CallGraphProvider(
+                call.eResource()));
+
+        Queue<PatternCall> queue = new LinkedList<PatternCall>();
+        queue.add(call);
+        Map<PatternCall, PatternCall> parentMap = new HashMap<PatternCall, PatternCall>();
+        parentMap.put(call, null);
+
+        // perform a simple BFS, taking care of a possible cycle
+        while (!queue.isEmpty()) {
+            PatternCall head = queue.poll();
+
+            // the check ensures that we are not seeing the call for the first time and it is part of a cycle
+            if (head == call && parentMap.get(call) != null) {
+                break;
+            }
+
+            for (PatternCall target : graph.get(head)) {
+                if (!parentMap.containsKey(target)) {
+                    queue.add(target);
+                }
+                parentMap.put(target, head);
+            }
+        }
+
+        if (parentMap.get(call) != null) {
+            StringBuffer buffer = new StringBuffer();
+
+            PatternCall act = call;
+            do {
+                buffer.insert(0, " -> " + prettyPrintPatternCall(act));
+                act = parentMap.get(act);
+            } while (act != call);
+
+            buffer.insert(0, prettyPrintPatternCall(act));
+
+            if (isNegativePatternCall(call)) {
+                error(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
+                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF);
+            } else {
+                warning(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
+                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF);
+            }
+        }
+    }
+
+    private boolean isNegativePatternCall(PatternCall call) {
+        return (call.eContainer() instanceof PatternCompositionConstraint && ((PatternCompositionConstraint) call
+                .eContainer()).isNegative());
+    }
+
+    private String prettyPrintPatternCall(PatternCall call) {
+        return (isNegativePatternCall(call) ? "neg " : "") + call.getPatternRef().getName();
+    }
+
+    private static class CallGraphProvider implements Provider<Map<PatternCall, Set<PatternCall>>> {
+
+        private Resource resource;
+
+        public CallGraphProvider(Resource resource) {
+            this.resource = resource;
+        }
+
+        @Override
+        public Map<PatternCall, Set<PatternCall>> get() {
+            Map<PatternCall, Set<PatternCall>> graph = new HashMap<PatternCall, Set<PatternCall>>();
+            TreeIterator<EObject> resourceIterator = resource.getAllContents();
+
+            while (resourceIterator.hasNext()) {
+                EObject resourceContent = resourceIterator.next();
+                if (resourceContent instanceof PatternCall) {
+                    PatternCall source = (PatternCall) resourceContent;
+                    Set<PatternCall> targets = new HashSet<PatternCall>();
+                    graph.put(source, targets);
+
+                    TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
+                    while (headIterator.hasNext()) {
+                        EObject headContent = headIterator.next();
+                        if (headContent instanceof PatternCall) {
+                            PatternCall target = (PatternCall) headContent;
+                            targets.add(target);
+                        }
+                    }
+                }
+            }
+
+            return graph;
+        }
+    }
+
     private String getName(PatternBody body) {
         if (body.getName() != null && !body.getName().isEmpty()) {
             return "'" + body.getName() + "'";
@@ -431,7 +533,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         if (xExpression != null) {
             final IResolvedTypes resolvedType = typeResolver.resolveTypes(xExpression);
             LightweightTypeReference type = resolvedType.getReturnType(xExpression);
-            
+
             if (type.getPrimitiveIfWrapperType().getPrimitiveKind() != Primitive.Boolean) {
                 error("Check expressions must return boolean instead of " + type.getSimpleName(), checkConstraint,
                         PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION, IssueCodes.CHECK_MUST_BE_BOOLEAN);
