@@ -60,8 +60,8 @@ class IQGenerator {
 			members += model.toField("resourceSet", typeRefBuilder.typeRef(ResourceSet))
 			members += model.toField("transformation", typeRefBuilder.typeRef(EventDrivenTransformation))
 			var constructor = model.toConstructor [
-				parameters += toParameter("resourceSet", typeRefBuilder.typeRef(ResourceSet))
-				parameters += toParameter("eventStream", typeRefBuilder.typeRef(EventStream))
+				parameters += toParameter(model, "resourceSet", typeRefBuilder.typeRef(ResourceSet))
+				parameters += toParameter(model, "eventStream", typeRefBuilder.typeRef(EventStream))
 				body = [
 					append(
 						'''
@@ -75,8 +75,8 @@ class IQGenerator {
 			members += constructor
 			val groupedPatterns = groupEventPatternsByIqPatternRef(patterns)
 			var registerMappingMethod = model.toMethod("register", typeRefBuilder.typeRef(fqn.toString)) [
-				parameters += toParameter("resourceSet", typeRefBuilder.typeRef(ResourceSet))
-				parameters += toParameter("eventStream", typeRefBuilder.typeRef(EventStream))
+				parameters += toParameter(model, "resourceSet", typeRefBuilder.typeRef(ResourceSet))
+				parameters += toParameter(model, "eventStream", typeRefBuilder.typeRef(EventStream))
 				body = [
 					append(
 						'''
