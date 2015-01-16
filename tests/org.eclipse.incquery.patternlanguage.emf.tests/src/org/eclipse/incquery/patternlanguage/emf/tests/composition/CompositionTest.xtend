@@ -12,15 +12,16 @@
 package org.eclipse.incquery.patternlanguage.emf.tests.composition
 
 import com.google.inject.Inject
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.xtext.diagnostics.Diagnostic
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
-import org.eclipse.xtext.diagnostics.Diagnostic
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -65,7 +66,7 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 	
 	@Test
 	def void testNegativeComposition() {
-		parseHelper.parse(
+		val model = parseHelper.parse(
 			'package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
@@ -73,7 +74,9 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 				Pattern(p);
 				neg find calledPattern(p);
 			}'
-		).assertNoErrors
+		)
+		
+		model.assertError(PatternLanguagePackage.Literals.PATTERN_CALL, null, "Recursive pattern call")
 	}
 	
 	@Test

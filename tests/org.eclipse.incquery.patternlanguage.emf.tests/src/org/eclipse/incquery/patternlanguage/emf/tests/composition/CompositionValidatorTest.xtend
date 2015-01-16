@@ -14,9 +14,11 @@ package org.eclipse.incquery.patternlanguage.emf.tests.composition
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
-import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -25,8 +27,6 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
-
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -141,7 +141,8 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 				neg find calledPattern(p);
 			}'
 		)
-		tester.validate(model).assertOK;
+		
+		tester.validate(model).assertError(null, "Recursive pattern call")
 	}
 	@Test
 	def void testQuantifiedLocalVariable() {
