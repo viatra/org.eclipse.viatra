@@ -15,9 +15,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Set;
 
 import org.apache.log4j.Level;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
@@ -38,18 +40,44 @@ public class EventDrivenTransformation {
     private ConflictResolver conflictResolver;
     private Set<EventDrivenTransformationRule<?, ?>> rules = Sets.newHashSet();
 
+    /**
+     * @deprecated Use {@link #forSource(Notifier)} instead.
+     */
+    @Deprecated
     public static EventDrivenTransformation forResource(ResourceSet resourceSet) {
         return new EventDrivenTransformation(resourceSet);
     }
 
+    /**
+     * @deprecated Use {@link #forSource(Notifier)} instead.
+     */
+    @Deprecated
     public static EventDrivenTransformation forResource(Resource resource) {
         checkArgument(resource.getResourceSet() != null);
         return new EventDrivenTransformation(resource.getResourceSet());
     }
 
+    public static EventDrivenTransformation forSource(Notifier notifier) {
+        return new EventDrivenTransformation(notifier);
+    }
+
+    /**
+     * @deprecated Use {@link #EventDrivenTransformation(Notifier)} instead.
+     */
+    @Deprecated
     private EventDrivenTransformation(ResourceSet resourceSet) {
         try {
             incQueryEngine = IncQueryEngine.on(resourceSet);
+            schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
+            conflictResolver = new ArbitraryOrderConflictResolver();
+        } catch (IncQueryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private EventDrivenTransformation(Notifier source) {
+        try {
+            incQueryEngine = IncQueryEngine.on(new EMFScope(source));
             schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
             conflictResolver = new ArbitraryOrderConflictResolver();
         } catch (IncQueryException e) {
