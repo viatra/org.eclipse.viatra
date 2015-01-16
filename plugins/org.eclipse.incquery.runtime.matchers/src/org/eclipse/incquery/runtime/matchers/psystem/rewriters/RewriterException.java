@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * An exception to wrap various issues during PDisjunction rewriting.
  * @author Zoltan Ujhelyi
  *
  */
-public class RewriterException extends QueryPlannerException {
+public class RewriterException extends QueryInitializationException {
 
     private static final long serialVersionUID = -4703825954995497932L;
 

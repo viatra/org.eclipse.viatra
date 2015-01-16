@@ -23,7 +23,6 @@ import org.eclipse.emf.common.util.Enumerator
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
@@ -74,6 +73,9 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPQuery
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -111,23 +113,30 @@ class PatternQuerySpecificationClassInferrer {
   		return querySpecificationClass
   	}
 
-  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder builder) {
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true, builder)
-  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true)
+  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true)
+  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true, specBuilder)
   		querySpecificationClass.inferExpressions(pattern)
   	}
 
-  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder builder) {
+  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
   		querySpecificationClass.visibility = JvmVisibility::DEFAULT
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false, builder)
-  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false)
+  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false)
+  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false, specBuilder)
   		querySpecificationClass.inferExpressions(pattern)
   	}
 
 	/**
    	 * Infers methods for QuerySpecification class based on the input 'pattern'.
    	 */
-  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean isPublic, SpecificationBuilder builder) {
+  	def inferQuerySpecificationMethods(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, boolean isPublic) {
+  		querySpecificationClass.members += pattern.toConstructor [
+			visibility = JvmVisibility::PRIVATE
+			body = '''
+				super(«pattern.querySpecificationPQueryClassName».INSTANCE);
+			'''
+		] 	
+  		
    		querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
@@ -148,25 +157,6 @@ class PatternQuerySpecificationClassInferrer {
 			} else {
 				'''throw new «UnsupportedOperationException»();'''
 			}
-		]
-		querySpecificationClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(typeof (String))) [
-			visibility = JvmVisibility::PUBLIC
-			annotations += annotationRef(typeof (Override))
-			body = '''
-				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
-			'''
-		]
-		querySpecificationClass.members += pattern.toMethod("getParameterNames",
-			typeRef(typeof(List), typeRef(typeof(String)))) [
-			visibility = JvmVisibility::PUBLIC
-			annotations += annotationRef(typeof(Override))
-			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
-		]
-		querySpecificationClass.members += pattern.toMethod("getParameters",
-			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
-			visibility = JvmVisibility::PUBLIC
-			annotations += annotationRef(typeof(Override))
-			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);'''
 		]
 		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
 			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) 
@@ -192,19 +182,47 @@ class PatternQuerySpecificationClassInferrer {
 					'''throw new «UnsupportedOperationException»();'''
 				}
 		]
-		querySpecificationClass.members += pattern.toMethod("doGetContainedBodies",
+  	}
+
+	def inferPQueryMembers(JvmDeclaredType pQueryClass, Pattern pattern, SpecificationBuilder specBuilder) {
+		pQueryClass.members += pattern.toField("INSTANCE", typeRef(pQueryClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
+			final = true
+			static = true
+			initializer = '''new «pattern.querySpecificationPQueryClassName»()''';
+		]
+		
+		pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(typeof (String))) [
+			visibility = JvmVisibility::PUBLIC
+			annotations += annotationRef(typeof (Override))
+			body = '''
+				return "«CorePatternLanguageHelper::getFullyQualifiedName(pattern)»";
+			'''
+		]
+		pQueryClass.members += pattern.toMethod("getParameterNames",
+			typeRef(typeof(List), typeRef(typeof(String)))) [
+			visibility = JvmVisibility::PUBLIC
+			annotations += annotationRef(typeof(Override))
+			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
+		]
+		pQueryClass.members += pattern.toMethod("getParameters",
+			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
+			visibility = JvmVisibility::PUBLIC
+			annotations += annotationRef(typeof(Override))
+			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);'''
+		]
+		pQueryClass.members += pattern.toMethod("doGetContainedBodies",
 			typeRef(typeof(Set), typeRef(typeof(PBody)))) [
 			visibility = JvmVisibility::PUBLIC
 			annotations += annotationRef(typeof(Override))
-			exceptions += typeRef(typeof(IncQueryException))
+			exceptions += typeRef(typeof(QueryInitializationException))
 			try {
-				val IQuerySpecification<?> genericSpecification = builder.getOrCreateSpecification(pattern, true)
-				if (genericSpecification == null || genericSpecification.status == PQueryStatus::ERROR) {
+				val IQuerySpecification<?> genericSpecification = specBuilder.getOrCreateSpecification(pattern, true)
+				if (genericSpecification == null || genericSpecification.internalQueryRepresentation == null || genericSpecification.internalQueryRepresentation.status == PQueryStatus::ERROR) {
 					feedback.reportError(pattern, "Error building generic query specification",
 					EMFPatternLanguageJvmModelInferrer::SPECIFICATION_BUILDER_CODE, Severity::ERROR,
 							IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
 				}
-				if (genericSpecification == null) {
+				if (genericSpecification == null || genericSpecification.internalQueryRepresentation == null) {
 					body = '''
 						addError(new «PProblem»("Could not initialize query specification from the pattern definition"));
 						return null;
@@ -213,7 +231,7 @@ class PatternQuerySpecificationClassInferrer {
 					body = '''
 						«inferBodies(pattern, genericSpecification)»
 						«inferAnnotations(pattern, genericSpecification)»
-						«FOR problem : genericSpecification.PProblems»
+						«FOR problem : genericSpecification.internalQueryRepresentation.PProblems»
 							addError(new «PProblem»("«problem.shortMessage.escapeToQuotedString»"));
 						«ENDFOR»
 						return bodies;
@@ -228,14 +246,16 @@ class PatternQuerySpecificationClassInferrer {
 				// 	TODO smarter error reporting required
 				logger.warn("Error while building PBodies", e)
 			}
-			]
-  	}
+		]
+		
+	}
+
 
 	def StringConcatenationClient inferBodies(Pattern pattern, IQuerySpecification<?> genericSpecification) {
 		'''
 		«Set»<«PBody»>  bodies = «Sets».newLinkedHashSet();
 		
-		«FOR pBody : genericSpecification.disjunctBodies.bodies »
+		«FOR pBody : genericSpecification.internalQueryRepresentation.disjunctBodies.bodies »
 			{
 				PBody body = new PBody(this);
 				«FOR variable : pBody.uniqueVariables »
@@ -258,7 +278,7 @@ class PatternQuerySpecificationClassInferrer {
  	/**
    	 * Infers inner class for QuerySpecification class based on the input 'pattern'.
    	 */
-  	def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic) {
+  	def inferQuerySpecificationInnerClasses(JvmDeclaredType querySpecificationClass, Pattern pattern, boolean isPublic, SpecificationBuilder specBuilder) {
    		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
@@ -275,8 +295,15 @@ class PatternQuerySpecificationClassInferrer {
 				'''
 			]
 		]
- 	}
-
+		
+   		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationPQueryClassName) [
+			visibility = JvmVisibility::PRIVATE
+			static = true
+			superTypes += typeRef(typeof (BasePQuery))
+			inferPQueryMembers(pattern, specBuilder)
+		]
+	}
+	
 	def escapedName(PVariable variable) {
 		if (variable == null)
 			"var_"
@@ -301,34 +328,30 @@ class PatternQuerySpecificationClassInferrer {
 				'''new «Inequality»(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);'''
 			}
 			TypeUnary: {
-				'''
-				«val literal = constraint.supplierKey as EClassifier»
-				«val packageNsUri = literal.EPackage.nsURI»
-				new «TypeUnary»(body, «constraint.variablesTuple.output», getClassifierLiteral("«packageNsUri»", "«literal.name»"), "«constraint.typeString»");
-				'''
+				val literal = constraint.supplierKey as EClassifier
+				val packageNsUri = literal.EPackage.nsURI
+				'''new «TypeUnary»(body, «constraint.variablesTuple.output», getClassifierLiteral("«packageNsUri»", "«literal.name»"), "«constraint.typeString»");'''
 			}
 			TypeBinary: {
-				'''
-				«val literal = constraint.supplierKey as EStructuralFeature»
-				«val container = literal.EContainingClass»
-				«val packageNsUri = container.EPackage.nsURI»
-				new «TypeBinary»(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");
-				'''
+				val literal = constraint.supplierKey as EStructuralFeature
+				val container = literal.EContainingClass
+				val packageNsUri = container.EPackage.nsURI
+				'''new «TypeBinary»(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");'''
 			}
 			ConstantValue : {
 				'''new «ConstantValue»(body, «constraint.variablesTuple.output», «constraint.supplierKey.outputConstant»);'''
 			}
 			PositivePatternCall : {
-				'''new «PositivePatternCall»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referSpecification(constraint.referredQuery, pattern)»);'''
+				'''new «PositivePatternCall»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referPQuery(constraint.referredQuery, pattern)»);'''
 			}
 			NegativePatternCall : {
-				'''new «NegativePatternCall»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referSpecification(constraint.referredQuery, pattern)»);'''
+				'''new «NegativePatternCall»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referPQuery(constraint.referredQuery, pattern)»);'''
 			}
 			BinaryTransitiveClosure: {
-				'''new «BinaryTransitiveClosure»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referSpecification(constraint.supplierKey, pattern)»);'''
+				'''new «BinaryTransitiveClosure»(body, new «FlatTuple»(«constraint.variablesTuple.output»), «referPQuery(constraint.supplierKey, pattern)»);'''
 			}
 			PatternMatchCounter: {
-				'''new «PatternMatchCounter»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referSpecification(constraint.referredQuery, pattern)», «constraint.resultVariable.escapedName»);'''
+				'''new «PatternMatchCounter»(body, new «FlatTuple»(«constraint.actualParametersTuple.output»), «referPQuery(constraint.referredQuery, pattern)», «constraint.resultVariable.escapedName»);'''
 			}
 			ExpressionEvaluation : {
 				'''
@@ -388,8 +411,10 @@ class PatternQuerySpecificationClassInferrer {
 		}
 	}
 
+	def StringConcatenationClient referPQuery(PQuery referredQuery, Pattern callerPattern) 
+		'''«referSpecification(referredQuery, callerPattern)».getInternalQueryRepresentation()'''
 	def StringConcatenationClient referSpecification(PQuery referredQuery, Pattern callerPattern) {
-		if ((referredQuery as GenericQuerySpecification).getPattern == callerPattern) {
+		if ((referredQuery as GenericEMFPQuery).getPattern == callerPattern) {
 			'''this'''
 		} else {
 			'''«referredQuery.findGeneratedSpecification».instance()'''
@@ -397,7 +422,7 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def findGeneratedSpecification(PQuery query) {
-		(query as GenericQuerySpecification).pattern.findInferredSpecification
+		(query as GenericEMFPQuery).pattern.findInferredSpecification
 	}
 
 	def expressionMethodName(XExpression ex) {
@@ -434,12 +459,13 @@ class PatternQuerySpecificationClassInferrer {
     	pattern.bodies.map[CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(it)].flatten.forEach[ex |
     		querySpecificationClass.members += ex.toMethod(expressionMethodName(ex), inferredType(ex)) [
   				it.visibility = JvmVisibility::PRIVATE
+  				it.static = true
 				for (variable : variables(ex)){
 					val parameter = variable.toParameter(variable.name, variable.calculateType)
 					it.parameters += parameter
 				}
 				it.body = ex
-		]
+			]
     	]
     }
 

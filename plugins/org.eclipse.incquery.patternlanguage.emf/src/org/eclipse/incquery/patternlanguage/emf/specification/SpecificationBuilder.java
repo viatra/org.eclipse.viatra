@@ -30,13 +30,13 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 
@@ -70,11 +70,11 @@ public class SpecificationBuilder {
      * This map is used to detect a re-addition of a pattern with a fqn that is used by a previously added pattern.
      */
     private Map<String, Pattern> patternNameMap = new HashMap<String, Pattern>();
-    private Multimap<PQuery, PQuery> dependantQueries = Multimaps.newSetMultimap(
-            new HashMap<PQuery, Collection<PQuery>>(), new Supplier<Set<PQuery>>() {
+    private Multimap<PQuery, IQuerySpecification<?>> dependantQueries = Multimaps.newSetMultimap(
+            new HashMap<PQuery, Collection<IQuerySpecification<?>>>(), new Supplier<Set<IQuerySpecification<?>>>() {
 
                 @Override
-                public Set<PQuery> get() {
+                public Set<IQuerySpecification<?>> get() {
                     return Sets.newHashSet();
                 }
             });
@@ -116,7 +116,7 @@ public class SpecificationBuilder {
      */
     private void processPatternSpecifications() {
         for (GenericQuerySpecification spec : Iterables.filter(patternMap.values(), GenericQuerySpecification.class)) {
-            patternNameMap.put(spec.getFullyQualifiedName(), spec.getPattern());
+            patternNameMap.put(spec.getFullyQualifiedName(), spec.getInternalQueryRepresentation().getPattern());
         }
     }
 
@@ -158,21 +158,25 @@ public class SpecificationBuilder {
                 "This builder already contains a different pattern with the fqn %s of the newly added pattern.", fqn);
         IQuerySpecification<?> specification = getSpecification(pattern);
         if (specification == null) {
-            specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
+            try {
+				specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
+			} catch (QueryInitializationException e) {
+				throw new IncQueryException(e);
+			}
         }
         return specification;
     }
 
-    protected IQuerySpecification<?> buildSpecification(Pattern pattern) throws IncQueryException {
+    protected IQuerySpecification<?> buildSpecification(Pattern pattern) throws QueryInitializationException {
         return buildSpecification(pattern, false, Lists.<IQuerySpecification<?>>newArrayList());
     }
 
-    protected IQuerySpecification<?> buildSpecification(Pattern pattern, List<IQuerySpecification<?>> newSpecifications) throws IncQueryException {
+    protected IQuerySpecification<?> buildSpecification(Pattern pattern, List<IQuerySpecification<?>> newSpecifications) throws QueryInitializationException {
         return buildSpecification(pattern, false, newSpecifications);
     }
 
     protected IQuerySpecification<?> buildSpecification(Pattern pattern, boolean skipPatternValidation, List<IQuerySpecification<?>> newSpecifications)
-            throws IncQueryException {
+            throws QueryInitializationException {
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(!patternMap.containsKey(fqn), "Builder already stores query with the name of "
                 + fqn);
@@ -190,7 +194,7 @@ public class SpecificationBuilder {
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
-                GenericQuerySpecification specification = new GenericQuerySpecification(newPattern, true);
+                GenericQuerySpecification specification = new GenericQuerySpecification(new GenericEMFPQuery(newPattern, true));
                 patternMap.put(patternFqn, specification);
                 patternNameMap.put(patternFqn, newPattern);
                 newSpecifications.add(specification);
@@ -200,16 +204,16 @@ public class SpecificationBuilder {
             	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
             	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
             	try {
-                	EPMToPBody converter = new EPMToPBody(newPattern, specification, context, patternMap);
-                	buildAnnotations(newPattern, specification, converter);
-                	buildBodies(newPattern, specification, converter);
+                	EPMToPBody converter = new EPMToPBody(newPattern, specification.getInternalQueryRepresentation(), context, patternMap);
+                	buildAnnotations(newPattern, specification.getInternalQueryRepresentation(), converter);
+                	buildBodies(newPattern, specification.getInternalQueryRepresentation(), converter);
             	} catch (IncQueryException e) {
-            		specification.addError(new PProblem(e, e.getShortMessage()));
+            		specification.getInternalQueryRepresentation().addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
-                	specification.addError(new PProblem(e, e.getShortMessage()));
+                	specification.getInternalQueryRepresentation().addError(new PProblem(e, e.getShortMessage()));
                 }
-                if (!PQueryStatus.ERROR.equals(specification.getStatus())) {
-                    for (PQuery query : specification.getDirectReferredQueries()) {
+                if (!PQueryStatus.ERROR.equals(specification.getInternalQueryRepresentation().getStatus())) {
+                    for (PQuery query : specification.getInternalQueryRepresentation().getDirectReferredQueries()) {
                         dependantQueries.put(query, specification);
                     }
                 }
@@ -218,9 +222,9 @@ public class SpecificationBuilder {
             for (Pattern rejectedPattern : sanitizer.getRejectedPatterns()) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
-                    GenericQuerySpecification rejected = new GenericQuerySpecification(rejectedPattern, true);
+                    GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPQuery(rejectedPattern, true));
                     for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
-                    	rejected.addError(problem);
+                    	rejected.getInternalQueryRepresentation().addError(problem);
                     patternMap.put(patternFqn, rejected);
                     patternNameMap.put(patternFqn, rejectedPattern);
                     newSpecifications.add(rejected);
@@ -229,8 +233,8 @@ public class SpecificationBuilder {
         }
         IQuerySpecification<?> specification = patternMap.get(fqn);
         if (specification == null) {
-            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(pattern, true);
-            erroneousSpecification.addError( new PProblem("Unable to compile pattern due to an unspecified error") );
+            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPQuery(pattern, true));
+            erroneousSpecification.getInternalQueryRepresentation().addError( new PProblem("Unable to compile pattern due to an unspecified error") );
             patternMap.put(fqn, erroneousSpecification);
             patternNameMap.put(fqn, pattern);
             newSpecifications.add(erroneousSpecification);
@@ -247,26 +251,22 @@ public class SpecificationBuilder {
         }
     }
 
-    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws IncQueryException, RewriterException {
+    public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws QueryInitializationException {
         return buildBodies(pattern, query, new EPMToPBody(pattern, query, context, patternMap));
     }
 
     protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
-            throws IncQueryException, RewriterException {
+            throws QueryInitializationException {
         Set<PBody> bodies = getBodies(pattern, converter);
-        try {
-            query.initializeBodies(bodies);
-        } catch (QueryPlannerException e) {
-            throw new IncQueryException(e);
-        }
+        query.initializeBodies(bodies);
         return bodies;
     }
 
-    public Set<PBody> getBodies(Pattern pattern, PQuery query) throws IncQueryException, RewriterException {
+    public Set<PBody> getBodies(Pattern pattern, PQuery query) throws QueryInitializationException {
         return getBodies(pattern, new EPMToPBody(pattern, query, context, patternMap));
     }
     
-    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws IncQueryException, RewriterException {
+    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws QueryInitializationException {
         Set<PBody> bodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
             PBody pBody = converter.toPBody(body);
@@ -298,7 +298,7 @@ public class SpecificationBuilder {
         patternMap.remove(fqn);
         if (specification instanceof GenericQuerySpecification) {
             patternNameMap.remove(fqn);
-            sanitizer.forgetPattern(((GenericQuerySpecification) specification).getPattern());
+            sanitizer.forgetPattern(((GenericQuerySpecification) specification).getInternalQueryRepresentation().getPattern());
         }
     }
 
@@ -306,9 +306,9 @@ public class SpecificationBuilder {
             Set<IQuerySpecification<?>> forgottenSpecifications) {
         forgetSpecification(specification);
         forgottenSpecifications.add(specification);
-        for (PQuery dependant : dependantQueries.get(specification)) {
+        for (IQuerySpecification<?> dependant : dependantQueries.get(specification.getInternalQueryRepresentation())) {
             if (!forgottenSpecifications.contains(dependant)) {
-                forgetSpecificationTransitively((IQuerySpecification<?>)dependant, forgottenSpecifications);
+                forgetSpecificationTransitively(dependant, forgottenSpecifications);
             }
         }
         dependantQueries.removeAll(specification);

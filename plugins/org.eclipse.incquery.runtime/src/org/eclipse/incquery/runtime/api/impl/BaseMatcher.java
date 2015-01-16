@@ -28,6 +28,7 @@ import org.eclipse.incquery.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
@@ -53,9 +54,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
         this.engine = engine;
         IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
         this.querySpecification = querySpecification;
-        if (this.querySpecification instanceof BaseQuerySpecification<?>) {
-            ((BaseQuerySpecification<?>) this.querySpecification).ensureInitialized();
-        }
+        try {
+			this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
+		} catch (QueryInitializationException e) {
+			throw new IncQueryException(e);
+		}
         this.backend = accessMatcher(engineImpl, querySpecification);
         engineImpl.reportMatcherInitialized(querySpecification, this);
     }
@@ -63,8 +66,8 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     // HELPERS
 
     private IQueryResultProvider accessMatcher(IncQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
-        Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
-        Preconditions.checkArgument(!specification.getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
+        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
+        Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
             return engine.getResultProvider(specification);
         } catch (QueryPlannerException e) {

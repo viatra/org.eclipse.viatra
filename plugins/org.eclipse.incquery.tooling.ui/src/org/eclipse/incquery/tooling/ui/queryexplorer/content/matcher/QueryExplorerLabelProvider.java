@@ -102,7 +102,7 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
                 return String.format("%s. For details, check the Error Log view.", status.getMessage());
             }
         } else if (element instanceof PatternMatcherContent) {
-        	final List<PProblem> pProblems = ((PatternMatcherContent) element).getSpecification().getPProblems();
+        	final List<PProblem> pProblems = ((PatternMatcherContent) element).getSpecification().getInternalQueryRepresentation().getPProblems();
 			if (! pProblems.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("The following problems have been detected in the query specification: \n");

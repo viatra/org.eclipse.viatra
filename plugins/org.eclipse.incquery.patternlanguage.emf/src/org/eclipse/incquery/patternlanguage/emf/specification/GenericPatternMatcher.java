@@ -16,6 +16,7 @@ import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
 import org.eclipse.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * This is a generic pattern matcher for any EMF-IncQuery pattern, with "interpretative" query execution.
@@ -52,7 +53,11 @@ public class GenericPatternMatcher extends org.eclipse.incquery.runtime.api.Gene
      *             if an error occurs during pattern matcher creation
      */
 	public static GenericPatternMatcher on(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
-		return on(engine, new GenericQuerySpecification(pattern));
+		try {
+			return on(engine, new GenericQuerySpecification(new GenericEMFPQuery(pattern)));
+		} catch (QueryInitializationException e) {
+			throw new IncQueryException(e);
+		}
 	}
 	
     /**

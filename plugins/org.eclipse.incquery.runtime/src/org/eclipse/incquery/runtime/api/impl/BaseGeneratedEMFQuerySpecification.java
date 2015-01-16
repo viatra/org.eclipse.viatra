@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
 
@@ -38,9 +39,12 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
 	
 	protected static final IPatternMatcherContext CONTEXT = EMFPatternMatcherContext.STATIC_INSTANCE;
 	
-    public BaseGeneratedEMFQuerySpecification() {
-        super();
-        ensureInitialized();
+    /**
+     * Instantiates query specification for the given internal query representation.
+	 */
+    public BaseGeneratedEMFQuerySpecification(PQuery wrappedPQuery) {
+        super(wrappedPQuery);
+        ensureInitializedInternalSneaky();
     }
     
     protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
@@ -53,7 +57,7 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
         }
     }
 
-    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
+    protected static EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
         Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
         EClassifier literal = ePackage.getEClassifier(classifierName);
@@ -61,7 +65,7 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
         return literal;
     }
 
-    protected EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) {
+    protected static EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) {
         EClassifier container = getClassifierLiteral(packageUri, className);
         Preconditions.checkState(container instanceof EClass, "Classifier %s in EPackage %s does not refer to an EClass.", className, packageUri);
         EStructuralFeature feature = ((EClass)container).getEStructuralFeature(featureName);
@@ -69,7 +73,7 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
         return feature;
     }
 
-    protected EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) {
+    protected static EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) {
         EClassifier enumContainer = getClassifierLiteral(packageUri, enumName);
         Preconditions.checkState(enumContainer instanceof EEnum, "Classifier %s in EPackage %s is not an EEnum.", enumName, packageUri);
         EEnumLiteral literal = ((EEnum)enumContainer).getEEnumLiteral(literalName);

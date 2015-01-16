@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.api;
 
 import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * This is a generic query specification for IncQuery pattern matchers, for "interpretative" query execution. 
@@ -31,6 +32,13 @@ import org.eclipse.incquery.runtime.api.impl.BaseQuerySpecification;
  */
 public abstract class GenericQuerySpecification<Matcher extends GenericPatternMatcher> extends
 		BaseQuerySpecification<Matcher> {
+
+    /**
+     * Instantiates query specification for the given internal query representation.
+	 */
+	public GenericQuerySpecification(PQuery wrappedPQuery) {
+		super(wrappedPQuery);
+	}
 
 	@Override
 	public GenericPatternMatch newEmptyMatch() {

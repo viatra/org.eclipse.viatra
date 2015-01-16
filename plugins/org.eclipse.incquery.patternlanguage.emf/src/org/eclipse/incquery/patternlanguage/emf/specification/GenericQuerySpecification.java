@@ -11,34 +11,12 @@
 
 package org.eclipse.incquery.patternlanguage.emf.specification;
 
-import java.util.List;
-import java.util.Set;
-
-import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
-import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
-import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
 import org.eclipse.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
-import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
-import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
-import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
-import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * This is a generic query specification for EMF-IncQuery pattern matchers, for "interpretative" query execution. Instantiate the
@@ -60,142 +38,22 @@ import com.google.common.collect.Lists;
  */
 public class GenericQuerySpecification 
 	extends org.eclipse.incquery.runtime.api.GenericQuerySpecification<GenericPatternMatcher> 
-	implements InitializablePQuery
 {
+	protected GenericEMFPQuery genericEMFPQuery;
 
-    private Pattern pattern;
-
-    /**
-     * Initializes a generic query specification for a given pattern. </p>
-     * <p>
-     * <strong>Warning</strong>: it is not recommended to directly instantiate GenericQuerySpecification instances as
-     * they will not reuse previously built specifications- use {@link SpecificationBuilder} instead.
-     *
-     * @param patternName
-     *            the name of the pattern for which matchers are to be constructed.
-     * @throws QueryPlannerException
-     */
-    public GenericQuerySpecification(Pattern pattern) throws IncQueryException {
-        this(pattern, false);
-    }
-
-    /**
-     * Initializes a generic query specification for a given pattern.
-     *
-     * @param delayedInitialization
-     *            true if the query is not created automatically - in this case before use the
-     *            {@link #initializeBodies(SpecificationBuilder)} method
-     * @param patternName
-     *            the name of the pattern for which matchers are to be constructed.
-     *
-     * @throws QueryPlannerException
-     */
-    public GenericQuerySpecification(Pattern pattern, boolean delayedInitialization) throws IncQueryException {
-        super();
-        this.pattern = pattern;
-        if (delayedInitialization) {
-            setStatus(PQueryStatus.UNINITIALIZED);
-        } else {
-            setBodies(doGetContainedBodies());
-        }
-    }
-
-    /**
-     * Sets up the bodies stored inside this query specification. Only available for uninitialized specifications.
-     * @param bodies a non-empty set of {@link PBody} instances
-     */
-    @Override
-    public void initializeBodies(Set<PBody> bodies) throws QueryPlannerException {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The bodies can only be set for uninitialized queries.");
-        if (bodies.isEmpty()) {
-            addError(new PProblem("No bodies specified for query"));
-        } else {
-            setBodies(bodies);
-        }
-    }
-
-    @Override
-	public final void setStatus(PQueryStatus newStatus) {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
-        super.setStatus(newStatus);
-    }
-	@Override
-	public void addError(PProblem problem) {
-        Preconditions.checkState(
-        		getStatus().equals(PQueryStatus.UNINITIALIZED) || getStatus().equals(PQueryStatus.ERROR), 
-        		"Errors can only be added to unitialized or erroneous queries.");
-        super.addError(problem);
+	public GenericQuerySpecification(GenericEMFPQuery genericEMFPQuery) {
+		super(genericEMFPQuery);
+		this.genericEMFPQuery = genericEMFPQuery;
 	}
 
-    public Pattern getPattern() {
-        return pattern;
-    }
-
-    @Override
-    public String getFullyQualifiedName() {
-        return CorePatternLanguageHelper.getFullyQualifiedName(getPattern());
-    }
+	@Override
+	public GenericEMFPQuery getInternalQueryRepresentation() {
+		return genericEMFPQuery;
+	}
 
     @Override
     public GenericPatternMatcher instantiate(IncQueryEngine engine) throws IncQueryException {
         return GenericPatternMatcher.on(engine, this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-    	return (obj == this) ||
-    			(obj instanceof GenericQuerySpecification &&
-    					pattern.equals(((GenericQuerySpecification)obj).pattern));
-    }
-
-    @Override
-    public int hashCode() {
-    	return pattern.hashCode();
-    }
-
-    @Override
-    public List<PParameter> getParameters() {
-        return Lists.transform(pattern.getParameters(), new Function<Variable, PParameter>() {
-
-            @Override
-            public PParameter apply(Variable var) {
-                if (var == null) {
-                    return new PParameter("", "");
-                } else {
-                    IEMFTypeProvider typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(IEMFTypeProvider.class);
-                    JvmTypeReference ref = typeProvider.getVariableType(var);
-                    // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-                    String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
-                            .getQualifiedName();
-                    return new PParameter(var.getName(), clazz);
-                }
-            }
-
-        });
-    }
-
-    @Override
-    public PDisjunction getDisjunctBodies() {
-        Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query %s is not initialized.", getFullyQualifiedName());
-        Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
-        return super.getDisjunctBodies();
-    }
-    
-    @Override
-    public void addAnnotation(PAnnotation annotation) {
-        // Making the upper-level construct visible
-        super.addAnnotation(annotation);
-    }
-
-    @Override
-    protected Set<PBody> doGetContainedBodies() throws IncQueryException {
-        SpecificationBuilder converter = new SpecificationBuilder();
-        try {
-			return converter.getBodies(pattern, this);
-		} catch (RewriterException e) {
-            addError(new PProblem(e, e.getShortMessage()));
-            throw new RuntimeException(e);
-		}
     }
 
 	@Override

@@ -11,10 +11,7 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -22,19 +19,10 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * Base implementation of IQuerySpecification.
@@ -46,31 +34,38 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
         IQuerySpecification<Matcher> {
 
     
-    private final class AnnotationNameTester implements Predicate<PAnnotation> {
-        private final String annotationName;
-
-        private AnnotationNameTester(String annotationName) {
-            this.annotationName = annotationName;
-        }
-
-        @Override
-        public boolean apply(PAnnotation annotation) {
-            return (annotation == null) ? false : annotationName.equals(annotation.getName());
-        }
-    }
-
+	protected final PQuery wrappedPQuery;
+	
     protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
 
+    
+    
+    
+    /**
+     * Instantiates query specification for the given internal query representation.
+	 */
+	public BaseQuerySpecification(PQuery wrappedPQuery) {
+		super();
+		this.wrappedPQuery = wrappedPQuery;
+		wrappedPQuery.publishedAs().add(this);
+	}
+
+
+	@Override
+    public PQuery getInternalQueryRepresentation() {
+    	return wrappedPQuery;
+    }
+    
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
         IncQueryEngine engine = IncQueryEngine.on(emfRoot);
-        ensureInitialized();
+        ensureInitializedInternal();
         return getMatcher(engine);
     }
 
     @Override
     public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
-        ensureInitialized();
+    	ensureInitializedInternal();
     	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
     		return instantiate(engine);
     	else throw new IncQueryException(
@@ -81,150 +76,23 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     					engine.getScope(), engine.getScope().getClass().getCanonicalName()), 
     			"Incompatible scope classes of engine and query.");
     }
-    
-    protected PQueryStatus status = PQueryStatus.UNINITIALIZED;
-    protected List<PProblem> pProblems = new ArrayList<PProblem>();
-    private List<PAnnotation> annotations = new ArrayList<PAnnotation>();
-    private QueryEvaluationHint evaluationHints = null;
-    
-    @Override
-    public Integer getPositionOfParameter(String parameterName) {
-        ensureInitialized();
-        int index = getParameterNames().indexOf(parameterName);
-        return index != -1 ? index : null;
-    }
 
-    protected void setStatus(PQueryStatus newStatus) {
-        this.status = newStatus;
-    }
-    protected void addError(PProblem problem) {
-    	status = PQueryStatus.ERROR;
-        pProblems.add(problem);
-    }
-
-    @Override
-    public PQueryStatus getStatus() {
-        return status;
-    }
-    
-    @Override
-    public List<PProblem> getPProblems() {
-    	return Collections.unmodifiableList(pProblems);
-    }
-
-    @Override
-    public boolean isMutable() {
-        return status.equals(PQueryStatus.UNINITIALIZED);
-    }
-    
-    @Override
-    public void checkMutability() throws IllegalStateException {
-        Preconditions.checkState(isMutable(), "Cannot edit query definition " + getFullyQualifiedName());
-    }
-    
-    protected void setEvaluationHints(QueryEvaluationHint hints) {
-        checkMutability();
-        this.evaluationHints = hints;
-    }
-    
-	@Override
-    public QueryEvaluationHint getEvaluationHints() {
-    	ensureInitialized();
-    	return evaluationHints;
-    	// TODO instead of field, compute something from annotations?
-    }
-
-
-    protected void addAnnotation(PAnnotation annotation) {
-        checkMutability();
-        annotations.add(annotation);
-    }
-
-    @Override
-    public List<PAnnotation> getAllAnnotations() {
-        ensureInitialized();
-        return Lists.newArrayList(annotations);
-    }
-
-    @Override
-    public List<PAnnotation> getAnnotationsByName(final String annotationName) {
-        ensureInitialized();
-        return Lists.newArrayList(Iterables.filter(annotations, new AnnotationNameTester(annotationName)));
-    }
-
-    @Override
-    public PAnnotation getFirstAnnotationByName(String annotationName) {
-        ensureInitialized();
-        return Iterables.find(annotations, new AnnotationNameTester(annotationName), null);
-    }
-
-    @Override
-    public List<String> getParameterNames() {
-        ensureInitialized();
-        return Lists.transform(getParameters(), PQueries.parameterNameFunction());
-    }
-
-    @Override
-    public Set<PQuery> getDirectReferredQueries() {
-        ensureInitialized();
-        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(canonicalDisjunction.getBodies(),
-                PQueries.directlyReferencedQueriesFunction()));
-        return Sets.newHashSet(queries);
-    }
-
-    @Override
-    public Set<PQuery> getAllReferredQueries() {
-        Set<PQuery> processedQueries = Sets.newHashSet((PQuery)this);
-        Set<PQuery> foundQueries = getDirectReferredQueries();
-        Set<PQuery> newQueries = Sets.newHashSet(foundQueries);
-
-        while(!processedQueries.containsAll(newQueries)) {
-            PQuery query = newQueries.iterator().next();
-            processedQueries.add(query);
-            newQueries.remove(query);
-            Set<PQuery> referred = query.getDirectReferredQueries();
-            referred.removeAll(processedQueries);
-            foundQueries.addAll(referred);
-            newQueries.addAll(referred);
-        }
-        return foundQueries;
-    }
-
-    PDisjunction canonicalDisjunction;
-    
-    @Override
-    public PDisjunction getDisjunctBodies() {
-        ensureInitialized();
-        Preconditions.checkState(!status.equals(PQueryStatus.ERROR), "Query " + getFullyQualifiedName() + " contains errors.");
-        return canonicalDisjunction;
-    }
-    
-    protected final void ensureInitialized() {
-        try {
-            if (status.equals(PQueryStatus.UNINITIALIZED)) {
-                setBodies(doGetContainedBodies());
-                setStatus(PQueryStatus.OK);
-            }
-        } catch (IncQueryException e) {
-            addError(new PProblem(e, e.getShortMessage()));
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected final void setBodies(Set<PBody> bodies) {
-        canonicalDisjunction = new PDisjunction(this, bodies);
-        for (PBody body : canonicalDisjunction.getBodies()) {
-            body.setStatus(null);
-        }
-        setStatus(PQueryStatus.OK);
-    }
-    
-    /**
-     * Creates and returns the bodies of the query. If recalled again, a new instance is created.
-     * 
-     * @return
-     */
-    protected abstract Set<PBody> doGetContainedBodies() throws IncQueryException;
+	protected void ensureInitializedInternal() throws IncQueryException {
+		try {
+			wrappedPQuery.ensureInitialized();
+		} catch (QueryInitializationException e) {
+			throw new IncQueryException(e);
+		}
+	}
+	protected void ensureInitializedInternalSneaky() {
+		try {
+			wrappedPQuery.ensureInitialized();
+		} catch (QueryInitializationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	
 
     // // EXPERIMENTAL
     //
@@ -242,5 +110,37 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     // throw new IncQueryRuntimeException(e);
     // }
     // }
+	
+	
+	// // DELEGATIONS
+	
+	@Override
+	public List<PAnnotation> getAllAnnotations() {
+		return wrappedPQuery.getAllAnnotations();
+	}
+	@Override
+	public List<PAnnotation> getAnnotationsByName(String annotationName) {
+		return wrappedPQuery.getAnnotationsByName(annotationName);
+	}
+	@Override
+	public PAnnotation getFirstAnnotationByName(String annotationName) {
+		return wrappedPQuery.getFirstAnnotationByName(annotationName);
+	}
+	@Override
+	public String getFullyQualifiedName() {
+		return wrappedPQuery.getFullyQualifiedName();
+	}
+	@Override
+	public List<String> getParameterNames() {
+		return wrappedPQuery.getParameterNames();
+	}
+	@Override
+	public List<PParameter> getParameters() {
+		return wrappedPQuery.getParameters();
+	}
+	@Override
+	public Integer getPositionOfParameter(String parameterName) {
+		return wrappedPQuery.getPositionOfParameter(parameterName);
+	}
 
 }

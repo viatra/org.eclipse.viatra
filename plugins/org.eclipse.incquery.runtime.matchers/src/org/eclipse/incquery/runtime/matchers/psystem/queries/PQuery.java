@@ -13,13 +13,18 @@ package org.eclipse.incquery.runtime.matchers.psystem.queries;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
-import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 
 /**
- * A definition of queries usable inside pattern descriptions. Such description always has (a non-null) name. The query
+ * Internal representation of a query / graph pattern (using a constraint system formalism), 
+ * to be interpreted by a query evaluator ({@link IQueryBackend}). 
+ * End-users of IncQuery should access a query as an IQuerySpecification instead. 
+ * 
+ * <p>
+ * PQuerys are definitions of queries usable inside pattern descriptions. Such description always has (a non-null) name. The query
  * itself is defined as a (non-empty) set of {@link PBody} instances, the result is the disjunction of the single
  * {@link PBody} instances. </p>
  * <p>
@@ -28,8 +33,11 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
  * @author Zoltan Ujhelyi
  * @since 0.8.0
  */
-public interface PQuery {
+public interface PQuery extends PQueryHeader {
 
+	// TODO add "published as" back-trace to IQuerySpecification
+	// TODO rewritten as / rewritten from traceability to PDisjunction?
+	
     /**
      * @author Zoltan Ujhelyi
      * 
@@ -54,11 +62,6 @@ public interface PQuery {
     }
 
     /**
-     * Identifies the pattern for which matchers can be instantiated.
-     */
-    String getFullyQualifiedName();
-
-    /**
      * Returns all bodies associated with the query in their canonical form. If called multiple times, the same set with
      * the same contents will be returned.
      * 
@@ -79,28 +82,6 @@ public interface PQuery {
      * @return a non-null, but possibly empty list of query definitions
      */
     Set<PQuery> getAllReferredQueries();
-
-    /**
-     * Return the list of parameter names
-     * 
-     * @return a non-null, but possibly empty list of parameter names
-     */
-    List<String> getParameterNames();
-
-    /**
-     * Returns a list of parameter descriptions
-     * 
-     * @return a non-null, but possibly empty list of parameter descriptions
-     */
-    List<PParameter> getParameters();
-
-    /**
-     * Returns the index of a named parameter
-     * 
-     * @param parameterName
-     * @return the index, or null of no such parameter is available
-     */
-    Integer getPositionOfParameter(String parameterName);
 
     /**
      * Returns the initialization status of the definition
@@ -133,33 +114,26 @@ public interface PQuery {
     boolean isMutable();
 
     /**
-     * Returns the list of annotations specified for this query
-     * 
-     * @return a non-null, but possibly empty list of annotations
-     */
-    List<PAnnotation> getAllAnnotations();
-
-    /**
-     * Returns the list of annotations with a specified name
-     * 
-     * @param annotationName
-     * @return a non-null, but possibly empty list of annotations
-     */
-    List<PAnnotation> getAnnotationsByName(String annotationName);
-
-    /**
-     * Returns the first annotation with a specified name
-     * 
-     * @param annotationName
-     * @return the found annotation, or null if non is available
-     */
-    PAnnotation getFirstAnnotationByName(String annotationName);
-
-	/**
 	 * Optional hints regarding the query evaluation strategy, to be interpreted by the query engine.
 	 * <p> To ensure the possibility of external overrides, 
 	 * 	the evaluation engine should not directly consult this field, 
 	 * 	but use an {@link IQueryBackendHintProvider} instead.
 	 */
 	public QueryEvaluationHint getEvaluationHints();
+
+	/**
+	 * If the query definition is uninitialized, initializes it.
+	 * @throws QueryInitializationException if initialization of query specification fails
+	 */
+	public abstract void ensureInitialized() throws QueryInitializationException;
+	
+    /**
+     * Returns the end-user query specification API objects that wrap this query.
+     * 
+     * <p> Intended for traceability and debug purposes, not part of normal operation. 
+     * Returned list is intended to be appended during query specification construction time.
+     * 
+     * @return a non-null, but possibly empty list of query specification objects;
+     */
+    List<Object> publishedAs();
 }

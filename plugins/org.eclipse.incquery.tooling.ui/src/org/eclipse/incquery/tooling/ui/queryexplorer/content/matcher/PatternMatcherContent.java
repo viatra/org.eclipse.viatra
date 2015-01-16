@@ -65,7 +65,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         this.transformerFunction = new TransformerFunction(this);
         this.listChangeListener = new ListChangeListener();
 
-        if (specification.getStatus() != PQueryStatus.ERROR) {
+        if (specification.getInternalQueryRepresentation().getStatus() != PQueryStatus.ERROR) {
 	        try {
 	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
 	        } catch (IncQueryException e) {
@@ -219,7 +219,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
      * @return true if matcher could be created
      */
     public boolean isCreated() {
-        return specification.getStatus() == PQueryStatus.OK && matcher != null;
+        return specification.getInternalQueryRepresentation().getStatus() == PQueryStatus.OK && matcher != null;
     }
 
     @Override

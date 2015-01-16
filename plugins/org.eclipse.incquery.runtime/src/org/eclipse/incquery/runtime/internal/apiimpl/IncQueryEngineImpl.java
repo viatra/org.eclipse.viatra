@@ -62,6 +62,7 @@ import org.eclipse.incquery.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -115,8 +116,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     private static Map<Class<? extends IQueryBackend>, IQueryBackendFactory> queryBackendFactories 
     		= Maps.newHashMap();
     static {
+    	// TODO use global registry
     	queryBackendFactories.put(ReteEngine.class, new ReteBackendFactory());
     }
+    
+    
     /**
      * Default backend implementation.
      */
@@ -165,7 +169,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     		QueryEvaluationHint optionalEvaluationHints) 
     	throws IncQueryException 
     {
-    	overrideKnownHints(querySpecification, optionalEvaluationHints);
+    	overrideKnownHints(querySpecification.getInternalQueryRepresentation(), optionalEvaluationHints);
         return getMatcher(querySpecification);
     }
 
@@ -467,11 +471,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		throws QueryPlannerException, IncQueryException 
 	{
 		final IQueryBackend backend = getQueryBackend(query);
-		return backend.getResultProvider(query);
+		return backend.getResultProvider(query.getInternalQueryRepresentation());
 	}
 	
 	private IQueryBackend getQueryBackend(IQuerySpecification<?> query) throws IncQueryException {
-		return getQueryBackend(getCurrentHint(query).getQueryBackendClass());
+		return getQueryBackend(getCurrentHint(query.getInternalQueryRepresentation()).getQueryBackendClass());
 	}
 	
 	@Override
@@ -533,7 +537,12 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
     		
     		final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(queryGroup.getSpecifications());
-            final Set<PQuery> patterns = new HashSet<PQuery>(specifications);
+            final Collection<PQuery> patterns = Collections2.transform(specifications, new Function<IQuerySpecification, PQuery>() {
+            	@Override
+            	public PQuery apply(IQuerySpecification input) {
+            		return input.getInternalQueryRepresentation();
+            	}
+            });
             Collection<String> uninitializedPatterns = Collections2.transform(
                     Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
                     PQueries.queryNameFunction());
@@ -551,7 +560,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     				@Override
     				public Void call() throws Exception {
    					for (IQuerySpecification<?> query : specifications) {
-   							overrideKnownHints(query, optionalEvaluationHints);
+   							overrideKnownHints(query.getInternalQueryRepresentation(), optionalEvaluationHints);
     					}
     					for (IQuerySpecification<?> query : specifications) {
     						getResultProviderInternal(query);

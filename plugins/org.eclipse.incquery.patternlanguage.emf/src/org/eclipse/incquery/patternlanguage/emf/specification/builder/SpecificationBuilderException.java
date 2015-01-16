@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.specification.builder;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * @author Zoltan Ujhelyi
  *
  */
-public class SpecificationBuilderException extends QueryPlannerException {
+public class SpecificationBuilderException extends QueryInitializationException {
 
     private static final long serialVersionUID = -9107359020858174569L;
 

@@ -93,6 +93,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	def querySpecificationHolderClassName(Pattern pattern) {
 		"LazyHolder"
 	}
+	/**
+	 * Returns the PQuery class name based on the Pattern's name
+	 */
+	def querySpecificationPQueryClassName(Pattern pattern) {
+		"GeneratedPQuery"
+	}
 
 	/**
 	 * Returns the MatcherClass name based on the Pattern's name

@@ -91,7 +91,7 @@ public class DisplayUtil {
         if (orderByPatternMarkers.get(patternFqn) == null) {
             IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternFqn);
             if (specification instanceof GenericQuerySpecification) {
-                Pattern pattern = ((GenericQuerySpecification) specification).getPattern();
+                Pattern pattern = ((GenericQuerySpecification) specification).getInternalQueryRepresentation().getPattern();
                 URI uri = pattern.eResource().getURI();
                 String platformString = uri.toPlatformString(true);
                 IResource markerLoc = ResourcesPlugin.getWorkspace().getRoot().findMember(platformString);

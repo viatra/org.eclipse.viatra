@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.exception;
 
 import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 public class IncQueryException extends Exception {
 
@@ -21,6 +22,7 @@ public class IncQueryException extends Exception {
     public static final String CONVERT_NULL_PARAMETER = "Could not convert null to the designated type";
     public static final String RELATIONAL_PARAM_UNSUITABLE = "The parameters are not acceptable by the operation";
     public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of an IncQuery pattern matcher";
+    public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of an IncQuery query specification";
     public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 
     public static final String INVALID_EMFROOT = "Incremental EMF query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet. Received instead: ";
@@ -36,6 +38,11 @@ public class IncQueryException extends Exception {
 
     public IncQueryException(QueryPlannerException e) {
         super(PATTERN_MATCHER_PROBLEM + ": " + e.getMessage(), e);
+        this.shortMessage = e.getShortMessage();
+    }
+    
+    public IncQueryException(QueryInitializationException e) {
+        super(QUERY_INIT_PROBLEM + ": " + e.getMessage(), e);
         this.shortMessage = e.getShortMessage();
     }
 

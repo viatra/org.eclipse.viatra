@@ -180,10 +180,10 @@ public class QueryExplorerPatternRegistry {
         for (IQuerySpecification<?> createdSpecification : allCreatedSpecifications) {
             if (createdSpecification instanceof GenericQuerySpecification) {
                 GenericQuerySpecification genericSpecification = (GenericQuerySpecification) createdSpecification;
-                if (EcoreUtil.isAncestor(patternModel, genericSpecification.getPattern())) {
+                if (EcoreUtil.isAncestor(patternModel, genericSpecification.getInternalQueryRepresentation().getPattern())) {
                     this.registeredPatterModels.put(file, createdSpecification);
                 } else {
-                    final URI uri = genericSpecification.getPattern().eResource().getURI();
+                    final URI uri = genericSpecification.getInternalQueryRepresentation().getPattern().eResource().getURI();
                     if (uri.isPlatformResource()) {
                         final IFile dependentFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(uri.toPlatformString(true)));
                         if (dependentFile.exists()) {

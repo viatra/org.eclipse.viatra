@@ -20,6 +20,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPQuery;
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -51,7 +52,6 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.EdgeInterpretation;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -70,6 +70,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeTernary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.xtext.xbase.XExpression;
@@ -100,7 +101,7 @@ public class EPMToPBody {
         patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
     }
 
-    public PBody toPBody(PatternBody body) throws IncQueryException {
+    public PBody toPBody(PatternBody body) throws QueryInitializationException {
         try {
             PBody pBody = new PBody(query);
             
@@ -109,7 +110,7 @@ public class EPMToPBody {
             return pBody;
         } catch (SpecificationBuilderException e) {
             e.setPatternDescription(pattern);
-            throw new IncQueryException(e);
+            throw e;
         }
     }
 
@@ -164,7 +165,7 @@ public class EPMToPBody {
         return getPNode(variable.getVariable(), pBody);
     }
 
-    protected Tuple getPNodeTuple(List<? extends ValueReference> variables, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    protected Tuple getPNodeTuple(List<? extends ValueReference> variables, final PBody pBody) throws SpecificationBuilderException {
         int k = 0;
         // The Object[] is required otherwise the new FlatTuple shows a warning
         Object[] pNodeArray = new PVariable[variables.size()];
@@ -174,7 +175,7 @@ public class EPMToPBody {
         return new FlatTuple(pNodeArray);
     }
 
-    protected PVariable getPNode(ValueReference reference, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    protected PVariable getPNode(ValueReference reference, final PBody pBody) throws SpecificationBuilderException {
         if (reference instanceof VariableValue)
             return getPNode(((VariableValue) reference).getValue(), pBody);
         else if (reference instanceof AggregatedValue)
@@ -219,14 +220,14 @@ public class EPMToPBody {
         pBody.setExportedParameters(exportedParameters);
     }
 
-    private void gatherBodyConstraints(PatternBody body, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    private void gatherBodyConstraints(PatternBody body, final PBody pBody) throws SpecificationBuilderException {
         EList<Constraint> constraints = body.getConstraints();
         for (Constraint constraint : constraints) {
             gatherConstraint(constraint, pBody);
         }
     }
 
-    protected void gatherConstraint(Constraint constraint, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    protected void gatherConstraint(Constraint constraint, final PBody pBody) throws SpecificationBuilderException {
         if (constraint instanceof EClassifierConstraint) { // EMF-specific
             EClassifierConstraint constraint2 = (EClassifierConstraint) constraint;
             gatherClassifierConstraint(constraint2, pBody);
@@ -248,7 +249,7 @@ public class EPMToPBody {
         }
     }
 
-    protected void gatherPathExpression(PathExpressionConstraint pathExpression, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    protected void gatherPathExpression(PathExpressionConstraint pathExpression, final PBody pBody) throws SpecificationBuilderException {
         PathExpressionHead head = pathExpression.getHead();
         PVariable currentSrc = getPNode(head.getSrc(), pBody);
         PVariable finalDst = getPNode(head.getDst(), pBody);
@@ -279,7 +280,7 @@ public class EPMToPBody {
         new Equality(pBody, currentSrc, finalDst);
     }
 
-    protected void gatherCompareConstraint(CompareConstraint compare, final PBody pBody) throws SpecificationBuilderException, IncQueryException {
+    protected void gatherCompareConstraint(CompareConstraint compare, final PBody pBody) throws SpecificationBuilderException {
         PVariable left = getPNode(compare.getLeftOperand(), pBody);
         PVariable right = getPNode(compare.getRightOperand(), pBody);
         switch (compare.getFeature()) {
@@ -293,10 +294,10 @@ public class EPMToPBody {
     }
 
     protected void gatherCompositionConstraint(PatternCompositionConstraint constraint, final PBody pBody)
-            throws SpecificationBuilderException, IncQueryException {
+            throws SpecificationBuilderException {
         PatternCall call = constraint.getCall();
         Pattern patternRef = call.getPatternRef();
-        IQuerySpecification<?> calledSpecification = findCalledSpecification(patternRef);
+        PQuery calledSpecification = findCalledPQuery(patternRef);
         Tuple pNodeTuple = getPNodeTuple(call.getParameters(), pBody);
         if (!call.isTransitive()) {
             if (constraint.isNegative())
@@ -352,12 +353,12 @@ public class EPMToPBody {
         return result;
 	}
 
-    protected PVariable aggregate(AggregatedValue reference, final PBody pBody) throws IncQueryException, SpecificationBuilderException {
+    protected PVariable aggregate(AggregatedValue reference, final PBody pBody) throws SpecificationBuilderException {
         PVariable result = newVirtual(pBody);
 
         PatternCall call = reference.getCall();
         Pattern patternRef = call.getPatternRef();
-        IQuerySpecification<?> calledSpecification = findCalledSpecification(patternRef);
+        PQuery calledSpecification = findCalledPQuery(patternRef);
         Tuple pNodeTuple = getPNodeTuple(call.getParameters(), pBody);
 
         AggregatorExpression aggregator = reference.getAggregator();
@@ -371,12 +372,19 @@ public class EPMToPBody {
         return result;
     }
 
-    private IQuerySpecification<?> findCalledSpecification(Pattern patternRef) throws IncQueryException {
+    private PQuery findCalledPQuery(Pattern patternRef) {
         IQuerySpecification<?> calledSpecification = patternMap.get(CorePatternLanguageHelper.getFullyQualifiedName(patternRef));
         if (calledSpecification == null) {
-            calledSpecification = new GenericQuerySpecification(patternRef, true);
+        	// This should only happen in case of erroneous links, e.g. link to a proxy Pattern or similar
+        	// otherwise pattern would be found in the name map (see SpecificationBuilder logic)
+            try {
+				calledSpecification = new GenericQuerySpecification(new GenericEMFPQuery(patternRef, true));
+			} catch (QueryInitializationException e) {
+				// Cannot happen, as initialization is delayed
+				throw new RuntimeException(e);
+			}
         }
-        return calledSpecification;
+        return calledSpecification.getInternalQueryRepresentation();
     }
 
 

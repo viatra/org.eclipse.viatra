@@ -67,7 +67,7 @@ public class ShowLocationHandler extends AbstractHandler {
         if (!(specification instanceof GenericQuerySpecification)) {
             return;
         }
-        Pattern pattern = ((GenericQuerySpecification) specification).getPattern();
+        Pattern pattern = ((GenericQuerySpecification) specification).getInternalQueryRepresentation().getPattern();
         IFile file = QueryExplorerPatternRegistry.getInstance().getFileForPattern(specification);
 
         for (IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()

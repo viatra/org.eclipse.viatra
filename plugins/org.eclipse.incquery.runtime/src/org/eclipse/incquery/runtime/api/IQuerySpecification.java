@@ -16,15 +16,18 @@ import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueryHeader;
 
 /**
- * Internal interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
+ * API interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
+ * 
+ * <p> As of 0.9.0, some internal details (mostly relevant for query evaluator backends) have been moved to {@link #getInternalQueryRepresentation()}.  
  *
  * @author Bergmann Gábor
  *
  */
-public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends PQuery {
+public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends PQueryHeader {
 
     /**
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
@@ -92,5 +95,11 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * E.g. for queries over EMF models, the {@link EMFScope} class is returned.
      */
     public Class<? extends IncQueryScope> getPreferredScopeClass();
+    
+    /**
+     * Returns the definition of the query in a format intended for consumption by the query evaluator. 
+     * @return the internal representation of the query.
+     */
+    public PQuery getInternalQueryRepresentation();
     
 }

@@ -153,7 +153,7 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
 
             @Override
             public boolean apply(IQuerySpecification<?> specification) {
-                return specification.getStatus().equals(status);
+                return specification.getInternalQueryRepresentation().getStatus().equals(status);
             }
         });
     }
