@@ -105,7 +105,7 @@ class IQGenerator {
 				body = [
 					append(
 						'''
-						transformation = EventDrivenTransformation.forResource(resourceSet).addRules(getRules()).create();'''
+						transformation = EventDrivenTransformation.forSource(resourceSet).addRules(getRules()).create();'''
 					)
 				]
 			]
