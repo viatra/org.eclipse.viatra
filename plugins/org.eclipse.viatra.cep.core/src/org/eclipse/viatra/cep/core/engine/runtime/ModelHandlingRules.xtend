@@ -53,7 +53,7 @@ class ModelHandlingRules {
 	}
 
 	def registerRules() {
-		EventDrivenTransformation.forResource(eventModelManager.resourceSet).addRules(rules).create()
+		EventDrivenTransformation.forSource(eventModelManager.resourceSet).addRules(rules).create()
 	}
 
 	def registerRulesWithCustomPriorities() {
@@ -67,7 +67,7 @@ class ModelHandlingRules {
 			1
 		)
 
-		EventDrivenTransformation.forResource(eventModelManager.resourceSet).addRules(rules).
+		EventDrivenTransformation.forSource(eventModelManager.resourceSet).addRules(rules).
 			setConflictResolver(fixedPriorityResolver).create()
 	}
 
@@ -75,7 +75,7 @@ class ModelHandlingRules {
 		val resolver = new RuleOrderBasedFixedPriorityResolver()
 		resolver.setPrioritiesFromScratch(new ArrayList(rules.ruleSpecifications))
 
-		EventDrivenTransformation.forResource(eventModelManager.resourceSet).addRules(rules).
+		EventDrivenTransformation.forSource(eventModelManager.resourceSet).addRules(rules).
 			setConflictResolver(resolver).create()
 	}
 
