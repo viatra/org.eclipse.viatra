@@ -200,19 +200,22 @@ public class Compiler {
 
         states.put(StateType.IN, preState);
 
-        State outState = FACTORY.createState();
+        State outState = createState();
         states.put(StateType.OUT, outState);
 
         List<State> statesToBeMergedIntoOut = Lists.newArrayList();
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            if (eventPattern instanceof AtomicEventPattern) {
-                Guard guard = createGuard((AtomicEventPattern) eventPattern);
-                createTransition(preState, outState, guard);
-            } else if (eventPattern instanceof ComplexEventPattern) {
-                Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) eventPattern);
-                statesToBeMergedIntoOut.add(marginStates.get(StateType.OUT));
+            int multiplicity = eventPatternReference.getMultiplicity();
+            for (int i = 0; i < multiplicity; i++) {
+                if (eventPattern instanceof AtomicEventPattern) {
+                    Guard guard = createGuard((AtomicEventPattern) eventPattern);
+                    createTransition(preState, outState, guard);
+                } else if (eventPattern instanceof ComplexEventPattern) {
+                    Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) eventPattern);
+                    statesToBeMergedIntoOut.add(marginStates.get(StateType.OUT));
+                }
             }
         }
 
