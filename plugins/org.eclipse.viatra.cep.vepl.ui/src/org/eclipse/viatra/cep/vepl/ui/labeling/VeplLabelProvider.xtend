@@ -11,6 +11,8 @@ import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
 import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
+import org.eclipse.viatra.cep.vepl.vepl.Usage
+import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 
 /**
  * Provides labels for a EObjects.
@@ -41,11 +43,15 @@ class VeplLabelProvider extends XbaseLabelProvider {
 			PackagedModel:
 				'package.gif'
 			AtomicEventPattern:
-				'atomic.png'
+				'atomic-event.png'
 			ComplexEventPattern:
-				'complex.png'
+				'complex-event.png'
+			IQPatternEventPattern:
+				'iq-pattern.png'
 			Rule:
 				'rule.png'
+			Usage:
+				'import.gif'
 			default:
 				super.image(element)
 		}

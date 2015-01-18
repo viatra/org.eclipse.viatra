@@ -10,7 +10,7 @@
 		<wizard
         category="org.eclipse.viatra.cep.tooling.ui.category"
         class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewProjectWizard"
-        icon="icons/cepproject.PNG"
+        icon="icons/new-project.PNG"
         id="org.eclipse.viatra.cep.tooling.ui.newproject"
         name="New VIATRA-CEP Project"
         preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
@@ -20,9 +20,9 @@
         category="org.eclipse.viatra.cep.tooling.ui.category"
         class="org.eclipse.viatra.cep.tooling.ui.builder.VeplLanguageExecutableExtensionFactory:org.eclipse.viatra.cep.tooling.ui.wizards.NewVeplFileWizard"
         finalPerspective="org.eclipse.pde.ui.PDEPerspective"
-        icon="icons/cep.jpg"
+        icon="icons/new-model.png"
         id="org.eclipse.viatra.cep.tooling.ui.newveplfile"
-        name="New VEPL File"
+        name="New VIATRA-CEP Event Model File"
         preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
         project="true">
 		</wizard>
