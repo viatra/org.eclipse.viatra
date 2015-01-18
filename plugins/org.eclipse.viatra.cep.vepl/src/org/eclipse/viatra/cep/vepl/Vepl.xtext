@@ -64,7 +64,7 @@ AtomicEventPattern:
 IQPatternEventPattern:
 	'IQPatternEvent' name=ID '('parameters=TypedParameterList?')' '{'
 		'iqPatternRef' ':' iqPatternRef=ParametrizedIncQueryPatternReference
-		'iqChangeType' ':' iqChangeType=IQPatternChangeType
+		('iqChangeType' ':' iqChangeType=IQPatternChangeType)?
 	'}'
 ;
 
