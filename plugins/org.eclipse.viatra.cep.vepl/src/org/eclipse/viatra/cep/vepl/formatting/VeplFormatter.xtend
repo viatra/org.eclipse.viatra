@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.vepl.formatting
 
 import com.google.inject.Inject
@@ -68,6 +67,7 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(2).after(grammar.eventPatternAccess.rule)
 		c.setLinewrap(2).after(grammar.ruleAccess.rule)
 		c.setLinewrap(2).after(grammar.sourceAccess.rule)
+		c.setLinewrap(2).before(grammar.sourceAccess.rule)
 
 		//handle line breaks and indentation in patterns' and rules' bodies
 		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_5)
@@ -77,7 +77,8 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.lineBreakAndIncrementIndentation(grammar.sourceAccess.leftCurlyBracketKeyword_2)
 
 		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_8)
-		c.lineBreakAndDecrementIndentation(grammar.IQPatternEventPatternAccess.rightCurlyBracketKeyword_12)
+		c.lineBreakAndDecrementIndentation(grammar.IQPatternEventPatternAccess.rightCurlyBracketKeyword_10)
+		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_7)
 		c.lineBreakAndDecrementIndentation(grammar.ruleAccess.rightCurlyBracketKeyword_9)
 		c.lineBreakAndDecrementIndentation(grammar.sourceAccess.rightCurlyBracketKeyword_4)
 
@@ -90,30 +91,34 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 
 		//handle line breaks in IQ bodies
 		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqPatternRefAssignment_8)
-		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqChangeTypeAssignment_11)
-
-		//handle line breaks in COMPLEX bodies
-		c.setLinewrap().after(grammar.complexEventExpressionAccess.primaryParserRuleCall_0)
+		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqChangeTypeAssignment_9_2)
 
 		//handle line breaks in RULE bodies
 		c.setLinewrap().before(grammar.ruleAccess.actionKeyword_8_0)
 		c.setLinewrap().before(grammar.ruleAccess.actionHandlerKeyword_7_0)
 
-		//time windows and multiplicity
+		//handle time windows and multiplicity line breaks in COMPLEX bodies
 		c.setNoSpace.before(grammar.timewindowAccess.leftSquareBracketKeyword_0)
 		c.setNoSpace.after(grammar.timewindowAccess.leftSquareBracketKeyword_0)
 		c.setNoSpace.before(grammar.timewindowAccess.rightSquareBracketKeyword_2)
+		c.setLinewrap().after(grammar.timewindowAccess.rightSquareBracketKeyword_2)
 
 		c.setNoSpace.before(grammar.multiplicityAccess.leftCurlyBracketKeyword_0)
 		c.setNoSpace.after(grammar.multiplicityAccess.leftCurlyBracketKeyword_0)
 		c.setNoSpace.before(grammar.multiplicityAccess.rightCurlyBracketKeyword_2)
-		c.setNoSpace.after(grammar.multiplicityAccess.rightCurlyBracketKeyword_2)
+		c.setLinewrap().after(grammar.multiplicityAccess.rightCurlyBracketKeyword_2)
 
 		//complex event operators
 		c.setSpace.before(grammar.complexEventOperatorAccess.rule)
 		c.setSpace.after(grammar.complexEventOperatorAccess.rule)
 		c.setNoLinewrap.before(grammar.complexEventOperatorAccess.rule)
 		c.setNoLinewrap.after(grammar.complexEventOperatorAccess.rule)
+
+		//comments
+		c.setLinewrap.before(grammar.SL_COMMENTRule)
+		c.setLinewrap.after(grammar.SL_COMMENTRule)
+		c.setLinewrap.before(grammar.ML_COMMENTRule)
+		c.setLinewrap.after(grammar.ML_COMMENTRule)
 	}
 
 	def private setSpace(FormattingConfig c) {
