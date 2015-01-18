@@ -51,7 +51,7 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		val packageKeyword = grammar.packagedModelAccess.packageKeyword_0
 		c.setNoLinewrap.before(packageKeyword)
 
-		val usages = grammar.packagedModelAccess.usagesUsageParserRuleCall_2_0
+		val usages = grammar.packagedModelAccess.importsImportParserRuleCall_2_0
 		c.setLinewrap(2).before(usages)
 		c.setLinewrap(2).after(usages)
 

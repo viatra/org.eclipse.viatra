@@ -24,7 +24,7 @@ import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.IQPatternChangeType
 import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.PatternUsage
+import org.eclipse.viatra.cep.vepl.vepl.PatternImport
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
 import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
 import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
@@ -49,7 +49,7 @@ class IQGenerator {
 		IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
 		this.typeRefBuilder = typeRefBuilder
 
-		if (model.packagedModel.usages.filter[e|(e instanceof PatternUsage)].size == 0) {
+		if (model.packagedModel.imports.filter[e|(e instanceof PatternImport)].size == 0) {
 			return
 		}
 
@@ -111,7 +111,7 @@ class IQGenerator {
 			]
 			registerTransformationMethod.setVisibility(JvmVisibility.PRIVATE)
 			members += registerTransformationMethod
-			val patternsNamespace = model.packagedModel.usages.filter[e|(e instanceof PatternUsage)].head.
+			val patternsNamespace = model.packagedModel.imports.filter[e|(e instanceof PatternImport)].head.
 				importedNamespace.replace('*', '')
 			for (p : groupedPatterns.keySet) {
 				if (p != null) {

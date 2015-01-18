@@ -23,22 +23,22 @@ EventModel:
 
 PackagedModel:
 	'package' name=QualifiedName
-	usages+=Usage*
+	imports+=Import*
 	modelElements+=ModelElement*	
 ;
 
 DOUBLE returns ecore::EDouble:
 	('-')? INT('.' INT)?;
 
-Usage:
-	GenericUsage | PatternUsage
+Import:
+	GenericImport | PatternImport
 ;
 
-GenericUsage:
-	'uses' importedNamespace=QualifiedNameWithWildcard;
+GenericImport:
+	'import' importedNamespace=QualifiedNameWithWildcard;
 	
-PatternUsage:
-	'uses-patterns' importedNamespace=QualifiedNameWithWildcard;
+PatternImport:
+	'import-patterns' importedNamespace=QualifiedNameWithWildcard;
 
 ModelElement:
 	EventPattern | Rule | Source

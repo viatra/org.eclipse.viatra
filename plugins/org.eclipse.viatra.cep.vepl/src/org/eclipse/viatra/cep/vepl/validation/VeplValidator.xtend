@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.validation
 
+import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
 import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
+import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
-import org.eclipse.viatra.cep.vepl.vepl.PatternUsage
+import org.eclipse.viatra.cep.vepl.vepl.PatternImport
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
-import org.eclipse.viatra.cep.vepl.vepl.Atom
-import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 
 class VeplValidator extends AbstractVeplValidator {
 
@@ -108,7 +108,7 @@ class VeplValidator extends AbstractVeplValidator {
 	@Check
 	def explicitlyImportedIQPatternPackage(IQPatternEventPattern iqPatternEventPattern) {
 		var packagedModel = (iqPatternEventPattern.eContainer as PackagedModel)
-		if (!(packagedModel.usages.filter[u|u instanceof PatternUsage].size == 1)) {
+		if (!(packagedModel.imports.filter[i|i instanceof PatternImport].size == 1)) {
 			error(
 				"Missing 'uses-patterns' statement for IncQuery patterns.",
 				VeplPackage.Literals.IQ_PATTERN_EVENT_PATTERN__IQ_PATTERN_REF,

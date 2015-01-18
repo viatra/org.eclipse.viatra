@@ -16,14 +16,14 @@
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//PackagedModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//PackagedModel/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PackagedModel/usages"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PackagedModel/imports"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//PackagedModel/modelElements"/>
     </genClasses>
-    <genClasses ecoreClass="Vepl.ecore#//Usage">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Usage/importedNamespace"/>
+    <genClasses ecoreClass="Vepl.ecore#//Import">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Import/importedNamespace"/>
     </genClasses>
-    <genClasses ecoreClass="Vepl.ecore#//GenericUsage"/>
-    <genClasses ecoreClass="Vepl.ecore#//PatternUsage"/>
+    <genClasses ecoreClass="Vepl.ecore#//GenericImport"/>
+    <genClasses ecoreClass="Vepl.ecore#//PatternImport"/>
     <genClasses ecoreClass="Vepl.ecore#//ModelElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//ModelElement/name"/>
     </genClasses>

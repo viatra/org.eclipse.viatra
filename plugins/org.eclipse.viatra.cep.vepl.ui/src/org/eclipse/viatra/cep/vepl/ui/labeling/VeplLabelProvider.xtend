@@ -7,12 +7,12 @@ import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.EventModel
+import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.Import
+import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
-import org.eclipse.viatra.cep.vepl.vepl.EventModel
-import org.eclipse.viatra.cep.vepl.vepl.Usage
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 
 /**
  * Provides labels for a EObjects.
@@ -50,7 +50,7 @@ class VeplLabelProvider extends XbaseLabelProvider {
 				'iq-pattern.png'
 			Rule:
 				'rule.png'
-			Usage:
+			Import:
 				'import.gif'
 			default:
 				super.image(element)
