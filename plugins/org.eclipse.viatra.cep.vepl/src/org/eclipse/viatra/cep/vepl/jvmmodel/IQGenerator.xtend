@@ -138,37 +138,31 @@ class IQGenerator {
 								append(
 									'''.querySpecification());
 										''')
-							for (eventPattern : groupedPatterns.get(p)) {
-								newLine
-								append(
-									'''«referClass(it, typeRefBuilder, eventPattern, IMatchProcessor,
-										typeRefBuilder.typeRef(match))» «eventPattern.actionName»''').append(''' = new ''').
-									append(
-										'''«referClass(it, typeRefBuilder, eventPattern, IMatchProcessor,
-											typeRefBuilder.typeRef(match))»() {''').increaseIndentation
-								newLine
-								append('''public void process(final ''').append(
-									'''«it.referClass(typeRefBuilder, match, p)»''').append(''' matchedPattern) {''').
-									increaseIndentation
-								newLine
-								append('''«it.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append(
-									''' event = new ''').append(
-									'''«it.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append('''(null);''')
-								append('''«getParameterMapping(it, eventPattern)»''')
-								newLine
-								append('''event.setIncQueryPattern(matchedPattern);''')
-								newLine
-								append('''eventStream.push(event);''').decreaseIndentation
-								newLine
-								append('''}''').decreaseIndentation
-								newLine
-								append('''};''')
-								newLine
-								append('''builder.action(''').append(
-									'''«referClass(it, typeRefBuilder, eventPattern, IncQueryActivationStateEnum)».''').
-									append('''«eventPattern.getActivationState», «eventPattern.actionName»''').
-									append(''');''')
-								newLine
+							val appearActionPatterns = groupedPatterns.get(p).toList.patternsRequiringAppearAction.
+								toList
+							val disappearActionPatterns = groupedPatterns.get(p).toList.patternsRequiringDisappearAction.
+								toList
+							var counter = 0
+							for (eventPattern : appearActionPatterns) {
+								generateAction(IQPatternChangeType.NEW_MATCH_FOUND, it, typeRefBuilder, eventPattern,
+									match, p, counter)
+								counter = counter + 1
+							}
+							if (appearActionPatterns.empty) {
+								val eventPattern = disappearActionPatterns.head
+								generateAction(IQPatternChangeType.NEW_MATCH_FOUND, it, typeRefBuilder, eventPattern,
+									match, p, counter, true)
+							}
+							counter = 0
+							for (eventPattern : disappearActionPatterns) {
+								generateAction(IQPatternChangeType.EXISTING_MATCH_LOST, it, typeRefBuilder, eventPattern,
+									match, p, counter)
+								counter = counter + 1
+							}
+							if (disappearActionPatterns.empty) {
+								val eventPattern = appearActionPatterns.head
+								generateAction(IQPatternChangeType.EXISTING_MATCH_LOST, it, typeRefBuilder, eventPattern,
+									match, p, counter, true)
 							}
 							newLine
 							append('''return builder.build();''').decreaseIndentation
@@ -205,6 +199,70 @@ class IQGenerator {
 		]
 	}
 
+	def requiresAppearAction(IQPatternEventPattern pattern) {
+		val changeType = pattern.iqChangeType
+		if (changeType == null || changeType.equals(IQPatternChangeType.NEW_MATCH_FOUND)) {
+			return true
+		}
+		return false
+	}
+
+	def patternsRequiringAppearAction(List<IQPatternEventPattern> patterns) {
+		patterns.filter[p|p.requiresAppearAction]
+	}
+
+	def requiresDisappearAction(IQPatternEventPattern pattern) {
+		val changeType = pattern.iqChangeType
+		if (changeType.equals(IQPatternChangeType.EXISTING_MATCH_LOST)) {
+			return true
+		}
+		return false
+	}
+
+	def patternsRequiringDisappearAction(List<IQPatternEventPattern> patterns) {
+		patterns.filter[p|p.requiresDisappearAction]
+	}
+
+	def private generateAction(IQPatternChangeType changeType, ITreeAppendable ita,
+		JvmTypeReferenceBuilder typeRefBuilder, IQPatternEventPattern eventPattern, String match, Pattern p, int counter) {
+		generateAction(changeType, ita, typeRefBuilder, eventPattern, match, p, counter, false)
+	}
+
+	def private generateAction(IQPatternChangeType changeType, ITreeAppendable ita,
+		JvmTypeReferenceBuilder typeRefBuilder, IQPatternEventPattern eventPattern, String match, Pattern p, int counter,
+		boolean empty) {
+		ita.newLine
+		ita.append(
+			'''«referClass(ita, typeRefBuilder, eventPattern, IMatchProcessor, typeRefBuilder.typeRef(match))» «changeType.
+				actionName»_«counter»''').append(''' = new ''').append(
+			'''«referClass(ita, typeRefBuilder, eventPattern, IMatchProcessor, typeRefBuilder.typeRef(match))»() {''').
+			increaseIndentation
+		ita.newLine
+		ita.append('''public void process(final ''').append('''«ita.referClass(typeRefBuilder, match, p)»''').
+			append(''' matchedPattern) {''')
+		if (!empty) {
+			ita.increaseIndentation
+			ita.newLine
+			ita.append('''«ita.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append(
+				''' event = new ''').append('''«ita.referClass(typeRefBuilder, eventPattern.classFqn, p)»''').append(
+				'''(null);''')
+			ita.append('''«getParameterMapping(ita, eventPattern)»''')
+			ita.newLine
+			ita.append('''event.setIncQueryPattern(matchedPattern);''')
+			ita.newLine
+			ita.append('''eventStream.push(event);''').decreaseIndentation
+		}
+		ita.newLine
+		ita.append('''}''').decreaseIndentation
+		ita.newLine
+		ita.append('''};''')
+		ita.newLine
+		ita.append('''builder.action(''').append(
+			'''«referClass(ita, typeRefBuilder, eventPattern, IncQueryActivationStateEnum)».''').append(
+			'''«changeType.activationState», «changeType.actionName»_«counter»''').append(''');''')
+		ita.newLine
+	}
+
 	def private getMappingMethodName(Pattern pattern) {
 		return "create" + pattern.name + "_MappingRule"
 	}
@@ -222,15 +280,15 @@ class IQGenerator {
 		return groupedPatterns
 	}
 
-	def private getActivationState(IQPatternEventPattern eventPattern) {
-		switch (eventPattern.iqChangeType) {
+	def private getActivationState(IQPatternChangeType changeType) {
+		switch (changeType) {
 			case IQPatternChangeType.NEW_MATCH_FOUND: return IncQueryActivationStateEnum.APPEARED
 			case IQPatternChangeType.EXISTING_MATCH_LOST: return IncQueryActivationStateEnum.DISAPPEARED
 		}
 	}
 
-	def private getActionName(IQPatternEventPattern eventPattern) {
-		switch (eventPattern.iqChangeType) {
+	def private getActionName(IQPatternChangeType changeType) {
+		switch (changeType) {
 			case IQPatternChangeType.NEW_MATCH_FOUND: return "actionOnAppear"
 			case IQPatternChangeType.EXISTING_MATCH_LOST: return "actionOnDisappear"
 		}
