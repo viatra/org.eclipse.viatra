@@ -18,10 +18,6 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate vepl "http://www.eclipse.org/viatra/cep/vepl/Vepl"
 
 EventModel:
-	packagedModel=PackagedModel
-;
-
-PackagedModel:
 	'package' name=QualifiedName
 	imports+=Import*
 	modelElements+=ModelElement*	
@@ -31,14 +27,14 @@ DOUBLE returns ecore::EDouble:
 	('-')? INT('.' INT)?;
 
 Import:
-	GenericImport | PatternImport
+	GenericImport | QueryImport
 ;
 
 GenericImport:
 	'import' importedNamespace=QualifiedNameWithWildcard;
 	
-PatternImport:
-	'import-patterns' importedNamespace=QualifiedNameWithWildcard;
+QueryImport:
+	'import-queries' importedNamespace=QualifiedNameWithWildcard;
 
 ModelElement:
 	EventPattern | Rule | Source
@@ -51,7 +47,7 @@ EventPattern:
 ;
 
 AbstractAtomicEventPattern:
-	AtomicEventPattern | IQPatternEventPattern
+	AtomicEventPattern | QueryResultChangeEventPattern
 ;
 	
 AtomicEventPattern:
@@ -61,10 +57,10 @@ AtomicEventPattern:
 	'}'
 ;
 	
-IQPatternEventPattern:
-	'IQPatternEvent' name=ID '('parameters=TypedParameterList?')' '{'
-		'iqPatternRef' ':' iqPatternRef=ParametrizedIncQueryPatternReference
-		('iqChangeType' ':' iqChangeType=IQPatternChangeType)?
+QueryResultChangeEventPattern:
+	'QueryResultChangeEvent' name=ID '('parameters=TypedParameterList?')' '{'
+		'query' ':' queryReference=ParametrizedQueryReference
+		('resultChangeType' ':' resultChangeType=QueryResultChangeType)?
 	'}'
 ;
 
@@ -88,7 +84,7 @@ Rule:
 	
 	
 /*******************************************IQ PATTERN ELEMENTS*******************************************/
-enum IQPatternChangeType:
+enum QueryResultChangeType:
 	NEW_MATCH_FOUND | EXISTING_MATCH_LOST 
 ;
 /*******************************************IQ PATTERN ELEMENTS*******************************************/
@@ -108,8 +104,8 @@ TypedParameter:
 /*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
 
 /*******************************************INCQUERY INTEGRATION*******************************************/
-ParametrizedIncQueryPatternReference:
-	iqpattern=[iqpl::Pattern]('('parameterList=PatternCallParameterList?')')?
+ParametrizedQueryReference:
+	query=[iqpl::Pattern]('('parameterList=PatternCallParameterList?')')?
 ;
 /*******************************************INCQUERY INTEGRATION*******************************************/
 

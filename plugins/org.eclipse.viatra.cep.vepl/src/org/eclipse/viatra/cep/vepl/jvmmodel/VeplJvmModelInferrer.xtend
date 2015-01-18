@@ -14,11 +14,11 @@ import com.google.inject.Inject
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -60,29 +60,29 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
 	 *            <code>true</code>.
 	 */
 	def dispatch void infer(EventModel element, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
-		if (element == null || element.packagedModel == null || element.packagedModel.modelElements.empty) {
+		if (element == null || element.modelElements.empty) {
 			return
 		}
 
 		FactoryManager.instance.flush
 
 		//generate atomic event classes and patterns
-		var patterns = element.packagedModel.modelElements.filter[e|(e instanceof AtomicEventPattern)]
+		var patterns = element.modelElements.filter[e|(e instanceof AtomicEventPattern)]
 		if (!patterns.empty) {
 			patterns.generateAtomicEventClasses(acceptor, _typeReferenceBuilder)
 			patterns.generateAtomicEventPatterns(acceptor, _typeReferenceBuilder)
 		}
 
 		//generate atomic IncQuery event classes, patterns and the IQ-CEP mapping
-		var iqPatterns = element.packagedModel.modelElements.filter[e|(e instanceof IQPatternEventPattern)]
-		if (!iqPatterns.empty) {
-			iqPatterns.generateAtomicEventClasses(acceptor, _typeReferenceBuilder)
-			iqPatterns.generateAtomicEventPatterns(acceptor, _typeReferenceBuilder)
-			iqPatterns.map[p|(p as IQPatternEventPattern)].toList.generateIncQuery2ViatraCep(element, acceptor, _typeReferenceBuilder)
+		var queryPatterns = element.modelElements.filter[e|(e instanceof QueryResultChangeEventPattern)]
+		if (!queryPatterns.empty) {
+			queryPatterns.generateAtomicEventClasses(acceptor, _typeReferenceBuilder)
+			queryPatterns.generateAtomicEventPatterns(acceptor, _typeReferenceBuilder)
+			queryPatterns.map[p|(p as QueryResultChangeEventPattern)].toList.generateQueryEngine2CepEngine(element, acceptor, _typeReferenceBuilder)
 		}
 
 		//generate complex event patterns
-		var complexPatterns = element.packagedModel.modelElements.filter[e|(e instanceof ComplexEventPattern)].map[p|
+		var complexPatterns = element.modelElements.filter[e|(e instanceof ComplexEventPattern)].map[p|
 			(p as ComplexEventPattern)].toList
 		AnonymousPatternManager.instance.flush
 		if (!complexPatterns.empty) {
@@ -90,11 +90,11 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
 		}
 
 		//generate rules
-		var rules = element.packagedModel.modelElements.filter[e|(e instanceof Rule)].map[p|(p as Rule)].toList
+		var rules = element.modelElements.filter[e|(e instanceof Rule)].map[p|(p as Rule)].toList
 		if (!rules.empty) {
 			rules.generateRulesAndJobs(acceptor, _typeReferenceBuilder)
 		}
 
-		generateFactory(element.packagedModel, acceptor, _typeReferenceBuilder)
+		generateFactory(element, acceptor, _typeReferenceBuilder)
 	}
 }

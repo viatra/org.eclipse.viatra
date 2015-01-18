@@ -48,10 +48,10 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 			c.setNoSpace().before(pair.getSecond());
 		}
 
-		val packageKeyword = grammar.packagedModelAccess.packageKeyword_0
+		val packageKeyword = grammar.eventModelAccess.packageKeyword_0
 		c.setNoLinewrap.before(packageKeyword)
 
-		val usages = grammar.packagedModelAccess.importsImportParserRuleCall_2_0
+		val usages = grammar.eventModelAccess.importsImportParserRuleCall_2_0
 		c.setLinewrap(2).before(usages)
 		c.setLinewrap(2).after(usages)
 
@@ -71,13 +71,13 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 
 		//handle line breaks and indentation in patterns' and rules' bodies
 		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_5)
-		c.lineBreakAndIncrementIndentation(grammar.IQPatternEventPatternAccess.leftCurlyBracketKeyword_5)
+		c.lineBreakAndIncrementIndentation(grammar.queryResultChangeEventPatternAccess.leftCurlyBracketKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.complexEventPatternAccess.leftCurlyBracketKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.ruleAccess.leftCurlyBracketKeyword_2)
 		c.lineBreakAndIncrementIndentation(grammar.sourceAccess.leftCurlyBracketKeyword_2)
 
 		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_8)
-		c.lineBreakAndDecrementIndentation(grammar.IQPatternEventPatternAccess.rightCurlyBracketKeyword_10)
+		c.lineBreakAndDecrementIndentation(grammar.queryResultChangeEventPatternAccess.rightCurlyBracketKeyword_10)
 		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_7)
 		c.lineBreakAndDecrementIndentation(grammar.ruleAccess.rightCurlyBracketKeyword_9)
 		c.lineBreakAndDecrementIndentation(grammar.sourceAccess.rightCurlyBracketKeyword_4)
@@ -90,8 +90,8 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.lineBreakAndDecrementIndentation(grammar.XBlockExpressionAccess.rightCurlyBracketKeyword_3)
 
 		//handle line breaks in IQ bodies
-		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqPatternRefAssignment_8)
-		c.setLinewrap().after(grammar.IQPatternEventPatternAccess.iqChangeTypeAssignment_9_2)
+		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.queryReferenceAssignment_8)
+		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.resultChangeTypeAssignment_9_2)
 
 		//handle line breaks in RULE bodies
 		c.setLinewrap().before(grammar.ruleAccess.actionKeyword_8_0)

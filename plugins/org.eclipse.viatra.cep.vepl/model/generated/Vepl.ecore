@@ -2,10 +2,6 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="vepl" nsURI="http://www.eclipse.org/viatra/cep/vepl/Vepl" nsPrefix="vepl">
   <eClassifiers xsi:type="ecore:EClass" name="EventModel">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="packagedModel" eType="#//PackagedModel"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PackagedModel">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
@@ -16,7 +12,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importedNamespace" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GenericImport" eSuperTypes="#//Import"/>
-  <eClassifiers xsi:type="ecore:EClass" name="PatternImport" eSuperTypes="#//Import"/>
+  <eClassifiers xsi:type="ecore:EClass" name="QueryImport" eSuperTypes="#//Import"/>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -30,10 +26,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="staticBindings" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQPatternEventPattern" eSuperTypes="#//AbstractAtomicEventPattern">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="iqPatternRef" eType="#//ParametrizedIncQueryPatternReference"
+  <eClassifiers xsi:type="ecore:EClass" name="QueryResultChangeEventPattern" eSuperTypes="#//AbstractAtomicEventPattern">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="queryReference" eType="#//ParametrizedQueryReference"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iqChangeType" eType="#//IQPatternChangeType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="resultChangeType" eType="#//QueryResultChangeType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ComplexEventPattern" eSuperTypes="#//EventPattern">
     <eStructuralFeatures xsi:type="ecore:EReference" name="complexEventExpression"
@@ -46,7 +42,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="IQPatternChangeType">
+  <eClassifiers xsi:type="ecore:EEnum" name="QueryResultChangeType">
     <eLiterals name="NEW_MATCH_FOUND" literal="NEW_MATCH_FOUND"/>
     <eLiterals name="EXISTING_MATCH_LOST" value="1" literal="EXISTING_MATCH_LOST"/>
   </eClassifiers>
@@ -59,8 +55,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ParametrizedIncQueryPatternReference">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="iqpattern" eType="ecore:EClass platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.ecore#//Pattern"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ParametrizedQueryReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="query" eType="ecore:EClass platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.ecore#//Pattern"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameterList" eType="#//PatternCallParameterList"
         containment="true"/>
   </eClassifiers>

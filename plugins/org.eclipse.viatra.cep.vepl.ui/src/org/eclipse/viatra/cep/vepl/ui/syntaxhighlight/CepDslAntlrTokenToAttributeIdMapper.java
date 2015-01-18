@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.cep.vepl.ui.syntaxhighlight;
 
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternChangeType;
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 
 import com.google.common.base.Joiner;
@@ -22,8 +22,8 @@ public class CepDslAntlrTokenToAttributeIdMapper extends DefaultAntlrTokenToAttr
     protected String calculateId(String tokenName, int tokenType) {
         String calculateId = super.calculateId(tokenName, tokenType);
 
-        if (getApostrophedKeyword(IQPatternChangeType.NEW_MATCH_FOUND.getLiteral()).equals(tokenName)
-                || getApostrophedKeyword(IQPatternChangeType.EXISTING_MATCH_LOST.getLiteral()).equals(tokenName)) {
+        if (getApostrophedKeyword(QueryResultChangeType.NEW_MATCH_FOUND.getLiteral()).equals(tokenName)
+                || getApostrophedKeyword(QueryResultChangeType.EXISTING_MATCH_LOST.getLiteral()).equals(tokenName)) {
             return CepDslHighlightingConfiguration.EDL_ENUM_ID;
         }
 

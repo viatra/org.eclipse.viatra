@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
+import com.google.common.collect.Lists
 import com.google.inject.Inject
 import java.util.List
+import org.eclipse.viatra.cep.core.api.rules.ICepRule
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
+import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.xtext.common.types.JvmMember
 import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.cep.core.api.rules.ICepRule
-import com.google.common.collect.Lists
 
 @SuppressWarnings("discouraged", "restriction")
 class FactoryGenerator {
@@ -29,7 +29,7 @@ class FactoryGenerator {
 	@Inject extension NamingProvider
 	@Inject extension Utils
 
-	def public generateFactory(PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+	def public generateFactory(EventModel model, IJvmDeclaredTypeAcceptor acceptor,
 		JvmTypeReferenceBuilder typeRefBuilder) {
 		acceptor.accept(model.toClass(model.factoryFqn)) [
 			var instanceField = (model.toField("instance", typeRefBuilder.typeRef("CepFactory")))
@@ -64,13 +64,12 @@ class FactoryGenerator {
 					members += method
 				}
 			}
-			
 			val rules = FactoryManager.instance.registeredClasses.filter[fqn|fqn.rule].toList
-			members+=rules.createAllRulesMethod(model, acceptor, members, typeRefBuilder)
+			members += rules.createAllRulesMethod(model, acceptor, members, typeRefBuilder)
 		]
 	}
 
-	def private createFactoryMethod(QualifiedName fqn, PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+	def private createFactoryMethod(QualifiedName fqn, EventModel model, IJvmDeclaredTypeAcceptor acceptor,
 		List<JvmMember> members, FactoryMethodParameter methodParameter, JvmTypeReferenceBuilder typeRefBuilder) {
 		var method = model.toMethod("create" + fqn.lastSegment, typeRefBuilder.typeRef(fqn.toString)) [
 			body = [
@@ -81,19 +80,19 @@ class FactoryGenerator {
 		method.setDocumentation('''Factory method for «fqn.type» {@link «fqn.lastSegment»}.''')
 		method
 	}
-	
-	def private createAllRulesMethod(List<QualifiedName> ruleFqns, PackagedModel model, IJvmDeclaredTypeAcceptor acceptor,
+
+	def private createAllRulesMethod(List<QualifiedName> ruleFqns, EventModel model, IJvmDeclaredTypeAcceptor acceptor,
 		List<JvmMember> members, JvmTypeReferenceBuilder typeRefBuilder) {
 		var method = model.toMethod("allRules", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(ICepRule))) [
 			body = [
 				append('''List<ICepRule> rules = ''')
-				append('''«referClass(typeRefBuilder, model, Lists)».newArrayList();
-				''');
-				for(fqn:ruleFqns){
-					append('''rules.add(new ''')
-					.append('''«referClass(typeRefBuilder, fqn, model)»''')
-					.append('''());
-					''')
+				append(
+					'''«referClass(typeRefBuilder, model, Lists)».newArrayList();
+						''');
+				for (fqn : ruleFqns) {
+					append('''rules.add(new ''').append('''«referClass(typeRefBuilder, fqn, model)»''').append(
+						'''());
+							''')
 				}
 				append('''return rules;''')
 			]

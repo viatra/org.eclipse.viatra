@@ -16,11 +16,11 @@ import org.eclipse.viatra.cep.core.api.events.ParameterizableIncQueryPatternEven
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource
 import org.eclipse.viatra.cep.core.metamodels.events.impl.AtomicEventPatternImpl
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 
 class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -32,7 +32,7 @@ class AtomicGenerator {
 		for (pattern : patterns) {
 			acceptor.accept(pattern.toClass(pattern.classFqn))[
 				documentation = pattern.documentation
-				if (pattern instanceof IQPatternEventPattern) {
+				if (pattern instanceof QueryResultChangeEventPattern) {
 					superTypes += typeRefBuilder.typeRef(ParameterizableIncQueryPatternEventInstance)
 				} else if (pattern instanceof AtomicEventPattern) {
 					superTypes += typeRefBuilder.typeRef(ParameterizableEventInstance)
@@ -115,8 +115,8 @@ class AtomicGenerator {
 	def private getParamList(ModelElement modelElement) {
 		if(modelElement instanceof AtomicEventPattern){
 			return (modelElement as AtomicEventPattern).parameters
-		}else if(modelElement instanceof IQPatternEventPattern){
-			return (modelElement as IQPatternEventPattern).parameters
+		}else if(modelElement instanceof QueryResultChangeEventPattern){
+			return (modelElement as QueryResultChangeEventPattern).parameters
 		}
 	}
 }

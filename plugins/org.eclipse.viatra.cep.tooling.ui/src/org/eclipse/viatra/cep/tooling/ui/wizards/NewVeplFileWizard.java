@@ -39,7 +39,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import org.eclipse.viatra.cep.tooling.ui.internal.Activator;
 import org.eclipse.viatra.cep.vepl.vepl.EventModel;
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel;
 import org.eclipse.viatra.cep.vepl.vepl.VeplFactory;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
@@ -139,10 +138,7 @@ public class NewVeplFileWizard extends Wizard implements INewWizard {
 
     private EventModel getDefaultEventModel(String packageName) {
         EventModel eventModel = VeplFactory.eINSTANCE.createEventModel();
-
-        PackagedModel packagedModel = VeplFactory.eINSTANCE.createPackagedModel();
-        packagedModel.setName(packageName.replaceAll("/", "\\."));
-        eventModel.setPackagedModel(packagedModel);
+        eventModel.setName(packageName.replaceAll("/", "\\."));
 
         return eventModel;
     }

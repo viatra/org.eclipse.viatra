@@ -13,13 +13,13 @@ package org.eclipse.viatra.cep.vepl.validation
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
-import org.eclipse.viatra.cep.vepl.vepl.PatternImport
+import org.eclipse.viatra.cep.vepl.vepl.QueryImport
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
@@ -38,9 +38,9 @@ class VeplValidator extends AbstractVeplValidator {
 	@Check
 	def uniqueName(ModelElement modelElement) {
 		if(modelElement.name.nullOrEmpty) return;
-		if(!(modelElement.eContainer instanceof PackagedModel)) return;
+		if(!(modelElement.eContainer instanceof EventModel)) return;
 
-		var model = (modelElement.eContainer as PackagedModel)
+		var model = (modelElement.eContainer as EventModel)
 
 		for (me : model.modelElements) {
 			checkUniqueness(modelElement, me)
@@ -93,7 +93,7 @@ class VeplValidator extends AbstractVeplValidator {
 	def private int getParameterNumber(EventPattern eventPattern) {
 		switch (eventPattern) {
 			AtomicEventPattern: getTypedParamterListSize(eventPattern.parameters)
-			IQPatternEventPattern: getTypedParamterListSize(eventPattern.parameters)
+			QueryResultChangeEventPattern: getTypedParamterListSize(eventPattern.parameters)
 			ComplexEventPattern: getTypedParamterListSize(eventPattern.parameters)
 			default: 0
 		}
@@ -106,12 +106,12 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 	@Check
-	def explicitlyImportedIQPatternPackage(IQPatternEventPattern iqPatternEventPattern) {
-		var packagedModel = (iqPatternEventPattern.eContainer as PackagedModel)
-		if (!(packagedModel.imports.filter[i|i instanceof PatternImport].size == 1)) {
+	def explicitlyImportedIQPatternPackage(QueryResultChangeEventPattern iqPatternEventPattern) {
+		var eventModel = (iqPatternEventPattern.eContainer as EventModel)
+		if (!(eventModel.imports.filter[i|i instanceof QueryImport].size == 1)) {
 			error(
-				"Missing 'uses-patterns' statement for IncQuery patterns.",
-				VeplPackage.Literals.IQ_PATTERN_EVENT_PATTERN__IQ_PATTERN_REF,
+				"Missing 'import-patterns' statement for query reference.",
+				VeplPackage.Literals.QUERY_RESULT_CHANGE_EVENT_PATTERN__QUERY_REFERENCE,
 				MISSING_IQPATTERN_USAGE
 			)
 		}

@@ -8,9 +8,8 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
-import org.eclipse.viatra.cep.vepl.vepl.IQPatternEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Import
-import org.eclipse.viatra.cep.vepl.vepl.PackagedModel
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
 
@@ -39,19 +38,17 @@ class VeplLabelProvider extends XbaseLabelProvider {
 		// icons are stored in the 'icons' folder of this project
 		switch element {
 			EventModel:
-				'cep.jpg'
-			PackagedModel:
 				'package.gif'
 			AtomicEventPattern:
 				'atomic-event.png'
 			ComplexEventPattern:
 				'complex-event.png'
-			IQPatternEventPattern:
-				'iq-pattern.png'
+			QueryResultChangeEventPattern:
+				'model-query.png'
 			Rule:
 				'rule.png'
 			Import:
-				'import.gif'
+				'import-declaration.png'
 			default:
 				super.image(element)
 		}
