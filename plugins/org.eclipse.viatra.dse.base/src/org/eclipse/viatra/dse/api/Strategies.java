@@ -31,14 +31,12 @@ public final class Strategies {
         return new DepthFirstStrategy(depthLimit);
     }
 
-    public static IStrategy createFixedPriorityStrategy(int depthLimit) {
-        return createFixedPriorityStrategy(depthLimit, true);
+    public static IStrategy createFixedPriorityStrategy() {
+        return createFixedPriorityStrategy(0);
     }
 
-    public static IStrategy createFixedPriorityStrategy(int depthLimit,
-            boolean tryHigherPriorityFirst) {
-        return new FixedPriorityStrategy(tryHigherPriorityFirst, true,
-                depthLimit);
+    public static IStrategy createFixedPriorityStrategy(int depthLimit) {
+        return new FixedPriorityStrategy().withDepthLimit(depthLimit);
     }
 
     public static IStrategy createBFSStrategy() {

@@ -22,7 +22,6 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.guidance.RuleInfo;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 import com.google.common.collect.Lists;
@@ -40,34 +39,56 @@ import com.google.common.collect.Lists;
  */
 public class FixedPriorityStrategy implements IStrategy {
 
-    private boolean tryHigherPriorityFirst = true;
     private boolean tryBestTransitionsOnly = true;
-    private Map<Object, Double> bestPriorityInState;
+    private Map<Object, Integer> bestPriorityInState = new HashMap<Object, Integer>();
     private int depthLimit = 0;
     private Random rnd = new Random();
     private DesignSpaceManager dsm;
     private boolean isInterrupted = false;
 
+    protected Map<TransformationRule<? extends IPatternMatch>, Integer> priorities = new HashMap<TransformationRule<? extends IPatternMatch>, Integer>();
+
+    /**
+     * Creates a fixed priority strategy instance, with default configuration: it tries only the rule activations with
+     * the highest priority from a state, without a depth limit.
+     */
     public FixedPriorityStrategy() {
-        // tryBestTransitionsOnly = true by default
-        bestPriorityInState = new HashMap<Object, Double>();
     }
 
     /**
-     * @param tryHigherPriorityFirst
-     *            If set to true (default) it will return the transition with the highest priority, else it returns the
-     *            lowest.
-     * @param tryBestTransitionsOnly
-     *            If set to true (default) it will try only the best rules based on priority, else it will try the less
-     *            ones true.
+     * If called the strategy will traverse all of the transitions in a state instead of just the best ones.
+     * 
+     * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy(boolean tryHigherPriorityFirst, boolean tryBestTransitionsOnly, int depthLimit) {
-        this.tryHigherPriorityFirst = tryHigherPriorityFirst;
-        this.tryBestTransitionsOnly = tryBestTransitionsOnly;
+    public FixedPriorityStrategy withFullSearch() {
+        this.tryBestTransitionsOnly = false;
+        return this;
+    }
+
+    /**
+     * Adds a depth limit to the strategy.
+     * 
+     * @param depthLimit
+     *            The depth limit.
+     * @return The actual instance to enable a builder pattern like usage.
+     */
+    public FixedPriorityStrategy withDepthLimit(int depthLimit) {
         this.depthLimit = depthLimit;
-        if (tryBestTransitionsOnly) {
-            bestPriorityInState = new HashMap<Object, Double>();
-        }
+        return this;
+    }
+
+    /**
+     * Assigns a priority to a rule. Unassigned rule will have a priority of 0.
+     * 
+     * @param rule
+     *            The transformation rule.
+     * @param priority
+     *            The priority of the rule.
+     * @return The actual instance to enable a builder pattern like usage.
+     */
+    public FixedPriorityStrategy withRulePriority(TransformationRule<? extends IPatternMatch> rule, int priority) {
+        priorities.put(rule, priority);
+        return this;
     }
 
     @Override
@@ -82,11 +103,10 @@ public class FixedPriorityStrategy implements IStrategy {
             return null;
         }
 
-        Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos = context.getGuidance().getRuleInfos();
-
         // Backtrack if there is no more unfired transition from here
         List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
-        while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit) || (transitions == null || transitions.isEmpty())) {
+        while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit)
+                || (transitions == null || transitions.isEmpty())) {
             if (!dsm.undoLastTransformation()) {
                 return null;
             }
@@ -96,14 +116,14 @@ public class FixedPriorityStrategy implements IStrategy {
         do {
 
             if (tryBestTransitionsOnly) {
-                Double bestPriority = bestPriorityInState.get(dsm.getCurrentState().getId());
+                Integer bestPriority = bestPriorityInState.get(dsm.getCurrentState().getId());
                 if (bestPriority == null) {
-                    bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState(), ruleInfos);
+                    bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState());
                     bestPriorityInState.put(dsm.getCurrentState().getId(), bestPriority);
                 }
                 List<ITransition> bestTrasitions = Lists.newArrayList();
                 for (ITransition iTransition : dsm.getUntraversedTransitionsFromCurrentState()) {
-                    if (ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority() == bestPriority) {
+                    if (priorities.get(iTransition.getTransitionMetaData().rule) == bestPriority) {
                         bestTrasitions.add(iTransition);
                     }
                 }
@@ -114,13 +134,11 @@ public class FixedPriorityStrategy implements IStrategy {
                     return iTransition;
                 }
             } else {
-                ITransition bestTransition = getBestTransition(dsm.getUntraversedTransitionsFromCurrentState(),
-                        ruleInfos);
+                ITransition bestTransition = getBestTransition(dsm.getUntraversedTransitionsFromCurrentState());
                 if (bestTransition != null) {
                     return bestTransition;
                 }
             }
-
 
         } while (!dsm.undoLastTransformation());
 
@@ -140,18 +158,12 @@ public class FixedPriorityStrategy implements IStrategy {
         isInterrupted = true;
     }
 
-    private ITransition getBestTransition(Collection<? extends ITransition> transitions,
-            Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos) {
-        double bestPriority;
+    private ITransition getBestTransition(Collection<? extends ITransition> transitions) {
         ITransition bestTransition = null;
-        if (tryHigherPriorityFirst) {
-            bestPriority = Double.MIN_VALUE;
-        } else {
-            bestPriority = Double.MAX_VALUE;
-        }
+        Integer bestPriority = Integer.MIN_VALUE;
         for (ITransition iTransition : transitions) {
-            double priority = ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority();
-            if (tryHigherPriorityFirst ? (priority > bestPriority) : (priority < bestPriority)) {
+            Integer priority = priorities.get(iTransition.getTransitionMetaData().rule);
+            if (priority > bestPriority) {
                 bestPriority = priority;
                 bestTransition = iTransition;
             }
@@ -159,17 +171,11 @@ public class FixedPriorityStrategy implements IStrategy {
         return bestTransition;
     }
 
-    private double getBestPriority(Collection<? extends ITransition> transitions,
-            Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos) {
-        double bestPriority;
-        if (tryHigherPriorityFirst) {
-            bestPriority = Double.MIN_VALUE;
-        } else {
-            bestPriority = Double.MAX_VALUE;
-        }
+    private Integer getBestPriority(Collection<? extends ITransition> transitions) {
+        Integer bestPriority = Integer.MIN_VALUE;
         for (ITransition iTransition : transitions) {
-            double priority = ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority();
-            if (tryHigherPriorityFirst ? (priority > bestPriority) : (priority < bestPriority)) {
+            Integer priority = priorities.get(iTransition.getTransitionMetaData().rule);
+            if (priority > bestPriority) {
                 bestPriority = priority;
             }
         }
@@ -184,20 +190,12 @@ public class FixedPriorityStrategy implements IStrategy {
         this.tryBestTransitionsOnly = tryBestTransitionsOnly;
     }
 
-    public Map<Object, Double> getBestPriorityInState() {
+    public Map<Object, Integer> getBestPriorityInState() {
         return bestPriorityInState;
     }
 
-    public void setBestPriorityInState(Map<Object, Double> bestPriorityInState) {
+    public void setBestPriorityInState(Map<Object, Integer> bestPriorityInState) {
         this.bestPriorityInState = bestPriorityInState;
-    }
-
-    public boolean isTryHigherPriorityFirst() {
-        return tryHigherPriorityFirst;
-    }
-
-    public void setTryHigherPriorityFirst(boolean tryHigherPriorityFirst) {
-        this.tryHigherPriorityFirst = tryHigherPriorityFirst;
     }
 
     public int getDepthLimit() {
