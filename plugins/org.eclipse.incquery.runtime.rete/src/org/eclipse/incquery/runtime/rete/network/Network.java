@@ -13,6 +13,8 @@ package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -376,6 +378,20 @@ public class Network {
     }
 
     /**
+     * @return an unmodifiable set of known recipe traces
+     */
+    public Set<RecipeTraceInfo> getRecipeTraces() {
+		return Collections.unmodifiableSet(recipeTraces);
+	}
+    
+    /**
+     * @return an unmodifiable list of containers
+     */
+	public List<ReteContainer> getContainers() {
+		return Collections.unmodifiableList(containers);
+	}
+	
+	/**
      * @return the structuralChangeLock
      */
     public Lock getStructuralChangeLock() {
