@@ -11,22 +11,13 @@
 
 package org.eclipse.incquery.runtime.api.impl;
 
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
-import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
-
-import com.google.common.base.Preconditions;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * Provides common functionality of pattern-specific generated query specifications over the EMF scope.
@@ -37,7 +28,6 @@ import com.google.common.base.Preconditions;
 public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
 	
-	protected static final IPatternMatcherContext CONTEXT = EMFPatternMatcherContext.STATIC_INSTANCE;
 	
     /**
      * Instantiates query specification for the given internal query representation.
@@ -47,40 +37,19 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
         ensureInitializedInternalSneaky();
     }
     
-    protected static void processInitializerError(ExceptionInInitializerError err) throws IncQueryException {
+    protected static IncQueryException processInitializerError(ExceptionInInitializerError err) {
         Throwable cause1 = err.getCause();
         if (cause1 instanceof RuntimeException) {
             Throwable cause2 = ((RuntimeException) cause1).getCause();
             if (cause2 instanceof IncQueryException) {
-                throw (IncQueryException) cause2;
-            }
+                return (IncQueryException) cause2;
+            } else if (cause2 instanceof QueryInitializationException) {
+                return new IncQueryException((QueryInitializationException) cause2);
+            } 
         }
+        throw err;
     }
-
-    protected static EClassifier getClassifierLiteral(String packageUri, String classifierName) {
-        EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
-        Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
-        EClassifier literal = ePackage.getEClassifier(classifierName);
-        Preconditions.checkState(literal != null, "Classifier %s not found in EPackage %s", classifierName, packageUri);
-        return literal;
-    }
-
-    protected static EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) {
-        EClassifier container = getClassifierLiteral(packageUri, className);
-        Preconditions.checkState(container instanceof EClass, "Classifier %s in EPackage %s does not refer to an EClass.", className, packageUri);
-        EStructuralFeature feature = ((EClass)container).getEStructuralFeature(featureName);
-        Preconditions.checkState(feature != null, "Feature %s not found in EClass %s", featureName, className);
-        return feature;
-    }
-
-    protected static EEnumLiteral getEnumLiteral(String packageUri, String enumName, String literalName) {
-        EClassifier enumContainer = getClassifierLiteral(packageUri, enumName);
-        Preconditions.checkState(enumContainer instanceof EEnum, "Classifier %s in EPackage %s is not an EEnum.", enumName, packageUri);
-        EEnumLiteral literal = ((EEnum)enumContainer).getEEnumLiteral(literalName);
-        Preconditions.checkState(literal != null, "Unknown literal %s in enum %s", literalName, enumName);
-        return literal;
-    }
-    
+        
 	@Override
 	public Class<? extends IncQueryScope> getPreferredScopeClass() {
 		return EMFScope.class;

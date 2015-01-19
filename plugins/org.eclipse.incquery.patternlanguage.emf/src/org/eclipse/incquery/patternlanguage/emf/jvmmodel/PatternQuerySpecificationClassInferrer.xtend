@@ -76,6 +76,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPQuery
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -143,7 +144,11 @@ class PatternQuerySpecificationClassInferrer {
 			exceptions += typeRef(typeof (IncQueryException))
 			documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
 			body = '''
-					return «pattern.querySpecificationHolderClassName».INSTANCE;
+					try{
+						return «pattern.querySpecificationHolderClassName».INSTANCE;
+					} catch («ExceptionInInitializerError» err) {
+						throw processInitializerError(err);
+					}
 			'''
 		]
 
@@ -229,11 +234,18 @@ class PatternQuerySpecificationClassInferrer {
 					'''
 				} else {
 					body = '''
-						«inferBodies(pattern, genericSpecification)»
-						«inferAnnotations(pattern, genericSpecification)»
-						«FOR problem : genericSpecification.internalQueryRepresentation.PProblems»
-							addError(new «PProblem»("«problem.shortMessage.escapeToQuotedString»"));
-						«ENDFOR»
+						«Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
+						try {
+							«inferBodies(pattern, genericSpecification)»
+							«inferAnnotations(pattern, genericSpecification)»
+							«FOR problem : genericSpecification.internalQueryRepresentation.PProblems»
+								addError(new «PProblem»("«problem.shortMessage.escapeToQuotedString»"));
+							«ENDFOR»
+							// to silence compiler error
+							if (false) throw new IncQueryException("Never", "happens");
+						} catch («IncQueryException» ex) {
+							throw processDependencyException(ex);
+						}
 						return bodies;
 					'''
 				}			
@@ -252,10 +264,7 @@ class PatternQuerySpecificationClassInferrer {
 
 
 	def StringConcatenationClient inferBodies(Pattern pattern, IQuerySpecification<?> genericSpecification) {
-		'''
-		«Set»<«PBody»>  bodies = «Sets».newLinkedHashSet();
-		
-		«FOR pBody : genericSpecification.internalQueryRepresentation.disjunctBodies.bodies »
+		'''«FOR pBody : genericSpecification.internalQueryRepresentation.disjunctBodies.bodies »
 			{
 				PBody body = new PBody(this);
 				«FOR variable : pBody.uniqueVariables »
@@ -271,8 +280,7 @@ class PatternQuerySpecificationClassInferrer {
 				«ENDFOR»
 				bodies.add(body);
 			}
-		«ENDFOR»
-		'''
+		«ENDFOR»'''
 	}
 
  	/**
@@ -299,7 +307,7 @@ class PatternQuerySpecificationClassInferrer {
    		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationPQueryClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
-			superTypes += typeRef(typeof (BasePQuery))
+			superTypes += typeRef(typeof (BaseGeneratedEMFPQuery))
 			inferPQueryMembers(pattern, specBuilder)
 		]
 	}
@@ -411,14 +419,13 @@ class PatternQuerySpecificationClassInferrer {
 		}
 	}
 
-	def StringConcatenationClient referPQuery(PQuery referredQuery, Pattern callerPattern) 
-		'''«referSpecification(referredQuery, callerPattern)».getInternalQueryRepresentation()'''
-	def StringConcatenationClient referSpecification(PQuery referredQuery, Pattern callerPattern) {
+	def StringConcatenationClient referPQuery(PQuery referredQuery, Pattern callerPattern) {
 		if ((referredQuery as GenericEMFPQuery).getPattern == callerPattern) {
 			'''this'''
 		} else {
-			'''«referredQuery.findGeneratedSpecification».instance()'''
+			'''«referredQuery.findGeneratedSpecification».instance().getInternalQueryRepresentation()'''
 		}
+		
 	}
 
 	def findGeneratedSpecification(PQuery query) {
