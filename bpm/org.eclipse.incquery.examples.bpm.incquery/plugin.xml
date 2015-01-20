@@ -23,10 +23,10 @@
   <extension id="extension.derived.system.queries.DataTaskWriteCorrespondence" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="Data" feature-name="writingTask" package-nsUri="http://system/1.0"/>
   </extension>
-  <extension id="operation.queries.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:operation.queries.DerivedFeatures" id="operation.queries.DerivedFeatures"/>
-  </extension>
   <extension id="system.queries.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
     <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:system.queries.DerivedFeatures" id="system.queries.DerivedFeatures"/>
+  </extension>
+  <extension id="operation.queries.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:operation.queries.DerivedFeatures" id="operation.queries.DerivedFeatures"/>
   </extension>
 </plugin>

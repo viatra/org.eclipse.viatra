@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.incquery.validation.runtime.Constraint;
 import org.eclipse.incquery.validation.runtime.ValidationUtil;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import operation.queries.IncorrectEntryInChecklistMatch;
@@ -39,7 +39,7 @@ public class IncorrectEntryInChecklistConstraint0 extends Constraint<IncorrectEn
 	}
 
 	@Override
-	public BaseGeneratedQuerySpecification<IncorrectEntryInChecklistMatcher> getQuerySpecification() {
+	public BaseGeneratedEMFQuerySpecification<IncorrectEntryInChecklistMatcher> getQuerySpecification() {
 		return querySpecification;
 	}
 }

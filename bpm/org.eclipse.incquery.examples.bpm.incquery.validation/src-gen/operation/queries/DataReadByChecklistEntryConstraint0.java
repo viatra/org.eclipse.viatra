@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.incquery.validation.runtime.Constraint;
 import org.eclipse.incquery.validation.runtime.ValidationUtil;
-import org.eclipse.incquery.runtime.api.impl.BaseGeneratedQuerySpecification;
+import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
 import operation.queries.DataReadByChecklistEntryMatch;
@@ -39,7 +39,7 @@ public class DataReadByChecklistEntryConstraint0 extends Constraint<DataReadByCh
 	}
 
 	@Override
-	public BaseGeneratedQuerySpecification<DataReadByChecklistEntryMatcher> getQuerySpecification() {
+	public BaseGeneratedEMFQuerySpecification<DataReadByChecklistEntryMatcher> getQuerySpecification() {
 		return querySpecification;
 	}
 }
