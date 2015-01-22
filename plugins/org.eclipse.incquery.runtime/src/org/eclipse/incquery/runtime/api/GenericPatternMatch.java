@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
  * See also the generated matcher and signature of the pattern, with pattern-specific API simplifications.
  *
  * @author Bergmann Gábor
+ * @since 0.9
  *
  */
 public abstract class GenericPatternMatch extends BasePatternMatch {

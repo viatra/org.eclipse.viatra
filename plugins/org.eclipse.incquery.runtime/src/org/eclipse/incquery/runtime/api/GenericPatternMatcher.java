@@ -30,6 +30,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * @see GenericPatternMatch
  * @see GenericMatchProcessor
  * @see GenericQuerySpecification
+ * @since 0.9
  */
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 	
@@ -61,4 +62,20 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     public GenericQuerySpecification<? extends GenericPatternMatcher> getSpecification() {
         return (GenericQuerySpecification<? extends GenericPatternMatcher>)querySpecification;
     }
+    
+    
+    /**
+     * Internal method for {@link GenericQuerySpecification}
+     * @noreference
+     */
+	static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(IncQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+		// check if matcher already exists
+		GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
+        if (matcher == null) {
+        	matcher = new GenericPatternMatcher(engine, querySpecification);
+        	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
+        } 	
+        return matcher;
+	}
+
 }
