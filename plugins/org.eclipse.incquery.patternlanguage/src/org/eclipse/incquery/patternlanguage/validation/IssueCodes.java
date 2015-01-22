@@ -68,4 +68,5 @@ public final class IssueCodes {
             + "anonym_variable_multiple_reference";
     public static final String DUBIUS_VARIABLE_NAME = ISSUE_CODE_PREFIX + "dubius_variable_name";
 
+    public static final String RECURSIVE_PATTERN_CALL = ISSUE_CODE_PREFIX + "recursive_pattern_call";
 }

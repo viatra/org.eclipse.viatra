@@ -384,10 +384,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
             if (isNegativePatternCall(call)) {
                 error(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
-                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF);
+                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
             } else {
                 warning(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
-                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF);
+                        PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
             }
         }
     }

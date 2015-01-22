@@ -8,35 +8,51 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.incquery.patternlanguage.emf.tests.composition
 
 import com.google.inject.Inject
+import com.google.inject.Injector
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.eclipse.xtext.junit4.validation.ValidatorTester
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
-	
-	
+class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPatternLanguageTest{
+
 	@Inject
-	ParseHelper parseHelper
+	private ParseHelper<EObject> parseHelper
+
+	@Inject
+	private EMFPatternLanguageJavaValidator validator
+
+	@Inject
+	private Injector injector
+
+	private ValidatorTester<EMFPatternLanguageJavaValidator> tester
+
+	@Before
+	def void initialize() {
+		tester = new ValidatorTester(validator, injector)
+	}
 	
 	@Inject extension ValidationTestHelper
 
-	
 	@Test
 	def void testSimpleComposition() {
-		parseHelper.parse(
+		val model = parseHelper.parse(
 			'package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
@@ -47,12 +63,13 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 			pattern callPattern(p : Pattern) = {
 				find calledPattern(p);
 			}'
-		).assertNoErrors
+		)
+		tester.validate(model).assertOK
 	}
-	
+
 	@Test
 	def void testRecursiveComposition() {
-		parseHelper.parse(
+		val model = parseHelper.parse(
 			'package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
 
@@ -61,9 +78,10 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 			} or {
 				find calledPattern(p);
 			}'
-		).assertNoErrors
+		)
+		tester.validate(model).assertWarning(IssueCodes::RECURSIVE_PATTERN_CALL)
 	}
-	
+
 	@Test
 	def void testNegativeComposition() {
 		val model = parseHelper.parse(
@@ -75,13 +93,13 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 				neg find calledPattern(p);
 			}'
 		)
-		
-		model.assertError(PatternLanguagePackage.Literals.PATTERN_CALL, null, "Recursive pattern call")
+
+		tester.validate(model).assertError(IssueCodes::RECURSIVE_PATTERN_CALL)
 	}
-	
+
 	@Test
 	def void testMissingComposition() {
-		var parsed = parseHelper.parse(
+		val model = parseHelper.parse(
 			'
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
@@ -89,8 +107,9 @@ class CompositionTest {//} extends AbstractEMFPatternLanguageTest{
 			pattern callPattern(p : Pattern) = {
 				find calledPatternMissing(p);
 			}'
-		);
-		parsed.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
+		)
+		
+		model.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
 			Diagnostic::LINKING_DIAGNOSTIC, 
 			"Couldn't resolve reference to Pattern 'calledPatternMissing'."
 		)
