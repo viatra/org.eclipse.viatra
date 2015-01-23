@@ -241,6 +241,52 @@ public interface EventsPackage extends EPackage {
     int COMPLEX_EVENT_PATTERN_OPERATION_COUNT = EVENT_PATTERN_OPERATION_COUNT + 1;
 
     /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+     * @generated
+     */
+    int EVENT_PATTERN_REFERENCE = 3;
+
+    /**
+     * The feature id for the '<em><b>Event Pattern</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE__EVENT_PATTERN = 0;
+
+    /**
+     * The feature id for the '<em><b>Multiplicity</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE__MULTIPLICITY = 1;
+
+    /**
+     * The number of structural features of the '<em>Event Pattern Reference</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE_FEATURE_COUNT = 2;
+
+    /**
+     * The number of operations of the '<em>Event Pattern Reference</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_PATTERN_REFERENCE_OPERATION_COUNT = 0;
+
+    /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl <em>Event</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -248,7 +294,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEvent()
      * @generated
      */
-    int EVENT = 3;
+    int EVENT = 4;
 
     /**
      * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -312,7 +358,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventSource()
      * @generated
      */
-    int EVENT_SOURCE = 4;
+    int EVENT_SOURCE = 5;
 
     /**
      * The number of structural features of the '<em>Event Source</em>' class.
@@ -349,7 +395,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getComplexEventOperator()
      * @generated
      */
-    int COMPLEX_EVENT_OPERATOR = 5;
+    int COMPLEX_EVENT_OPERATOR = 6;
 
     /**
      * The number of structural features of the '<em>Complex Event Operator</em>' class.
@@ -377,7 +423,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getOR()
      * @generated
      */
-    int OR = 6;
+    int OR = 7;
 
     /**
      * The number of structural features of the '<em>OR</em>' class.
@@ -405,7 +451,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getNEG()
      * @generated
      */
-    int NEG = 7;
+    int NEG = 8;
 
     /**
      * The number of structural features of the '<em>NEG</em>' class.
@@ -433,7 +479,7 @@ public interface EventsPackage extends EPackage {
      * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getFOLLOWS()
      * @generated
      */
-    int FOLLOWS = 8;
+    int FOLLOWS = 9;
 
     /**
      * The number of structural features of the '<em>FOLLOWS</em>' class.
@@ -452,34 +498,6 @@ public interface EventsPackage extends EPackage {
      * @ordered
      */
     int FOLLOWS_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
-
-    /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.UNTILImpl <em>UNTIL</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.UNTILImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getUNTIL()
-     * @generated
-     */
-    int UNTIL = 9;
-
-    /**
-     * The number of structural features of the '<em>UNTIL</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int UNTIL_FEATURE_COUNT = COMPLEX_EVENT_OPERATOR_FEATURE_COUNT + 0;
-
-    /**
-     * The number of operations of the '<em>UNTIL</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int UNTIL_OPERATION_COUNT = COMPLEX_EVENT_OPERATOR_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl <em>AND</em>}' class.
@@ -547,50 +565,125 @@ public interface EventsPackage extends EPackage {
     int TIMEWINDOW_OPERATION_COUNT = 0;
 
     /**
-     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.AbstractMultiplicityImpl <em>Abstract Multiplicity</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
-     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.AbstractMultiplicityImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAbstractMultiplicity()
      * @generated
      */
-    int EVENT_PATTERN_REFERENCE = 12;
+    int ABSTRACT_MULTIPLICITY = 12;
 
     /**
-     * The feature id for the '<em><b>Event Pattern</b></em>' containment reference.
+     * The number of structural features of the '<em>Abstract Multiplicity</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_PATTERN_REFERENCE__EVENT_PATTERN = 0;
+    int ABSTRACT_MULTIPLICITY_FEATURE_COUNT = 0;
 
     /**
-     * The feature id for the '<em><b>Multiplicity</b></em>' attribute.
+     * The number of operations of the '<em>Abstract Multiplicity</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_PATTERN_REFERENCE__MULTIPLICITY = 1;
+    int ABSTRACT_MULTIPLICITY_OPERATION_COUNT = 0;
 
     /**
-     * The number of structural features of the '<em>Event Pattern Reference</em>' class.
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.MultiplicityImpl <em>Multiplicity</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.MultiplicityImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getMultiplicity()
+     * @generated
+     */
+    int MULTIPLICITY = 13;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_PATTERN_REFERENCE_FEATURE_COUNT = 2;
+    int MULTIPLICITY__VALUE = ABSTRACT_MULTIPLICITY_FEATURE_COUNT + 0;
 
     /**
-     * The number of operations of the '<em>Event Pattern Reference</em>' class.
+     * The number of structural features of the '<em>Multiplicity</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_PATTERN_REFERENCE_OPERATION_COUNT = 0;
+    int MULTIPLICITY_FEATURE_COUNT = ABSTRACT_MULTIPLICITY_FEATURE_COUNT + 1;
+
+    /**
+     * The number of operations of the '<em>Multiplicity</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int MULTIPLICITY_OPERATION_COUNT = ABSTRACT_MULTIPLICITY_OPERATION_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.InfiniteImpl <em>Infinite</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.InfiniteImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getInfinite()
+     * @generated
+     */
+    int INFINITE = 14;
+
+    /**
+     * The number of structural features of the '<em>Infinite</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INFINITE_FEATURE_COUNT = ABSTRACT_MULTIPLICITY_FEATURE_COUNT + 0;
+
+    /**
+     * The number of operations of the '<em>Infinite</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INFINITE_OPERATION_COUNT = ABSTRACT_MULTIPLICITY_OPERATION_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.AtLeastOneImpl <em>At Least One</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.AtLeastOneImpl
+     * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAtLeastOne()
+     * @generated
+     */
+    int AT_LEAST_ONE = 15;
+
+    /**
+     * The number of structural features of the '<em>At Least One</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AT_LEAST_ONE_FEATURE_COUNT = ABSTRACT_MULTIPLICITY_FEATURE_COUNT + 0;
+
+    /**
+     * The number of operations of the '<em>At Least One</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AT_LEAST_ONE_OPERATION_COUNT = ABSTRACT_MULTIPLICITY_OPERATION_COUNT + 0;
 
 
     /**
@@ -698,6 +791,38 @@ public interface EventsPackage extends EPackage {
      * @generated
      */
     EOperation getComplexEventPattern__EvaluateParameterBindings__Event();
+
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Event Pattern Reference</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+     * @generated
+     */
+    EClass getEventPatternReference();
+
+    /**
+     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern <em>Event Pattern</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Event Pattern</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern()
+     * @see #getEventPatternReference()
+     * @generated
+     */
+    EReference getEventPatternReference_EventPattern();
+
+    /**
+     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity <em>Multiplicity</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Multiplicity</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity()
+     * @see #getEventPatternReference()
+     * @generated
+     */
+    EReference getEventPatternReference_Multiplicity();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Event <em>Event</em>}'.
@@ -814,16 +939,6 @@ public interface EventsPackage extends EPackage {
     EClass getFOLLOWS();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.UNTIL <em>UNTIL</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>UNTIL</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.UNTIL
-     * @generated
-     */
-    EClass getUNTIL();
-
-    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.AND <em>AND</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -855,36 +970,55 @@ public interface EventsPackage extends EPackage {
     EAttribute getTimewindow_Time();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity <em>Abstract Multiplicity</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Event Pattern Reference</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+     * @return the meta object for class '<em>Abstract Multiplicity</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity
      * @generated
      */
-    EClass getEventPatternReference();
+    EClass getAbstractMultiplicity();
 
     /**
-     * Returns the meta object for the containment reference '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern <em>Event Pattern</em>}'.
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Multiplicity <em>Multiplicity</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the containment reference '<em>Event Pattern</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getEventPattern()
-     * @see #getEventPatternReference()
+     * @return the meta object for class '<em>Multiplicity</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Multiplicity
      * @generated
      */
-    EReference getEventPatternReference_EventPattern();
+    EClass getMultiplicity();
 
     /**
-     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity <em>Multiplicity</em>}'.
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.cep.core.metamodels.events.Multiplicity#getValue <em>Value</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Multiplicity</em>'.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity()
-     * @see #getEventPatternReference()
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Multiplicity#getValue()
+     * @see #getMultiplicity()
      * @generated
      */
-    EAttribute getEventPatternReference_Multiplicity();
+    EAttribute getMultiplicity_Value();
+
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.Infinite <em>Infinite</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Infinite</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Infinite
+     * @generated
+     */
+    EClass getInfinite();
+
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne <em>At Least One</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>At Least One</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne
+     * @generated
+     */
+    EClass getAtLeastOne();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -996,6 +1130,32 @@ public interface EventsPackage extends EPackage {
         EOperation COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT = eINSTANCE.getComplexEventPattern__EvaluateParameterBindings__Event();
 
         /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+         * @generated
+         */
+        EClass EVENT_PATTERN_REFERENCE = eINSTANCE.getEventPatternReference();
+
+        /**
+         * The meta object literal for the '<em><b>Event Pattern</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_PATTERN_REFERENCE__EVENT_PATTERN = eINSTANCE.getEventPatternReference_EventPattern();
+
+        /**
+         * The meta object literal for the '<em><b>Multiplicity</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_PATTERN_REFERENCE__MULTIPLICITY = eINSTANCE.getEventPatternReference_Multiplicity();
+
+        /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventImpl <em>Event</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1096,16 +1256,6 @@ public interface EventsPackage extends EPackage {
         EClass FOLLOWS = eINSTANCE.getFOLLOWS();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.UNTILImpl <em>UNTIL</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.UNTILImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getUNTIL()
-         * @generated
-         */
-        EClass UNTIL = eINSTANCE.getUNTIL();
-
-        /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.ANDImpl <em>AND</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1134,30 +1284,52 @@ public interface EventsPackage extends EPackage {
         EAttribute TIMEWINDOW__TIME = eINSTANCE.getTimewindow_Time();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl <em>Event Pattern Reference</em>}' class.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.AbstractMultiplicityImpl <em>Abstract Multiplicity</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventPatternReferenceImpl
-         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getEventPatternReference()
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.AbstractMultiplicityImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAbstractMultiplicity()
          * @generated
          */
-        EClass EVENT_PATTERN_REFERENCE = eINSTANCE.getEventPatternReference();
+        EClass ABSTRACT_MULTIPLICITY = eINSTANCE.getAbstractMultiplicity();
 
         /**
-         * The meta object literal for the '<em><b>Event Pattern</b></em>' containment reference feature.
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.MultiplicityImpl <em>Multiplicity</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.MultiplicityImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getMultiplicity()
          * @generated
          */
-        EReference EVENT_PATTERN_REFERENCE__EVENT_PATTERN = eINSTANCE.getEventPatternReference_EventPattern();
+        EClass MULTIPLICITY = eINSTANCE.getMultiplicity();
 
         /**
-         * The meta object literal for the '<em><b>Multiplicity</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute EVENT_PATTERN_REFERENCE__MULTIPLICITY = eINSTANCE.getEventPatternReference_Multiplicity();
+        EAttribute MULTIPLICITY__VALUE = eINSTANCE.getMultiplicity_Value();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.InfiniteImpl <em>Infinite</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.InfiniteImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getInfinite()
+         * @generated
+         */
+        EClass INFINITE = eINSTANCE.getInfinite();
+
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.events.impl.AtLeastOneImpl <em>At Least One</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.AtLeastOneImpl
+         * @see org.eclipse.viatra.cep.core.metamodels.events.impl.EventsPackageImpl#getAtLeastOne()
+         * @generated
+         */
+        EClass AT_LEAST_ONE = eINSTANCE.getAtLeastOne();
 
     }
 

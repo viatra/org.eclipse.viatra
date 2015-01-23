@@ -14,6 +14,8 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
 
 import org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonPackageImpl;
 
+import org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity;
+import org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne;
 import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
@@ -23,6 +25,8 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
+import org.eclipse.viatra.cep.core.metamodels.events.Infinite;
+import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 
 /**
@@ -52,6 +56,13 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * @generated
      */
     private EClass complexEventPatternEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass eventPatternReferenceEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -100,13 +111,6 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass untilEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EClass andEClass = null;
 
     /**
@@ -121,7 +125,28 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass eventPatternReferenceEClass = null;
+    private EClass abstractMultiplicityEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass multiplicityEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass infiniteEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass atLeastOneEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -284,6 +309,33 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getEventPatternReference() {
+        return eventPatternReferenceEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getEventPatternReference_EventPattern() {
+        return (EReference)eventPatternReferenceEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getEventPatternReference_Multiplicity() {
+        return (EReference)eventPatternReferenceEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getEvent() {
         return eventEClass;
     }
@@ -383,15 +435,6 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EClass getUNTIL() {
-        return untilEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getAND() {
         return andEClass;
     }
@@ -419,8 +462,8 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EClass getEventPatternReference() {
-        return eventPatternReferenceEClass;
+    public EClass getAbstractMultiplicity() {
+        return abstractMultiplicityEClass;
     }
 
     /**
@@ -428,8 +471,8 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getEventPatternReference_EventPattern() {
-        return (EReference)eventPatternReferenceEClass.getEStructuralFeatures().get(0);
+    public EClass getMultiplicity() {
+        return multiplicityEClass;
     }
 
     /**
@@ -437,8 +480,26 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEventPatternReference_Multiplicity() {
-        return (EAttribute)eventPatternReferenceEClass.getEStructuralFeatures().get(1);
+    public EAttribute getMultiplicity_Value() {
+        return (EAttribute)multiplicityEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getInfinite() {
+        return infiniteEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getAtLeastOne() {
+        return atLeastOneEClass;
     }
 
     /**
@@ -482,6 +543,10 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         createEReference(complexEventPatternEClass, COMPLEX_EVENT_PATTERN__CONTAINED_EVENT_PATTERNS);
         createEOperation(complexEventPatternEClass, COMPLEX_EVENT_PATTERN___EVALUATE_PARAMETER_BINDINGS__EVENT);
 
+        eventPatternReferenceEClass = createEClass(EVENT_PATTERN_REFERENCE);
+        createEReference(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__EVENT_PATTERN);
+        createEReference(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__MULTIPLICITY);
+
         eventEClass = createEClass(EVENT);
         createEAttribute(eventEClass, EVENT__TYPE);
         createEAttribute(eventEClass, EVENT__TIMESTAMP);
@@ -499,16 +564,19 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
 
         followsEClass = createEClass(FOLLOWS);
 
-        untilEClass = createEClass(UNTIL);
-
         andEClass = createEClass(AND);
 
         timewindowEClass = createEClass(TIMEWINDOW);
         createEAttribute(timewindowEClass, TIMEWINDOW__TIME);
 
-        eventPatternReferenceEClass = createEClass(EVENT_PATTERN_REFERENCE);
-        createEReference(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__EVENT_PATTERN);
-        createEAttribute(eventPatternReferenceEClass, EVENT_PATTERN_REFERENCE__MULTIPLICITY);
+        abstractMultiplicityEClass = createEClass(ABSTRACT_MULTIPLICITY);
+
+        multiplicityEClass = createEClass(MULTIPLICITY);
+        createEAttribute(multiplicityEClass, MULTIPLICITY__VALUE);
+
+        infiniteEClass = createEClass(INFINITE);
+
+        atLeastOneEClass = createEClass(AT_LEAST_ONE);
     }
 
     /**
@@ -547,8 +615,10 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
         orEClass.getESuperTypes().add(this.getComplexEventOperator());
         negEClass.getESuperTypes().add(this.getComplexEventOperator());
         followsEClass.getESuperTypes().add(this.getComplexEventOperator());
-        untilEClass.getESuperTypes().add(this.getComplexEventOperator());
         andEClass.getESuperTypes().add(this.getComplexEventOperator());
+        multiplicityEClass.getESuperTypes().add(this.getAbstractMultiplicity());
+        infiniteEClass.getESuperTypes().add(this.getAbstractMultiplicity());
+        atLeastOneEClass.getESuperTypes().add(this.getAbstractMultiplicity());
 
         // Initialize classes, features, and operations; add parameters
         initEClass(eventPatternEClass, EventPattern.class, "EventPattern", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -565,6 +635,10 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
 
         EOperation op = initEOperation(getComplexEventPattern__EvaluateParameterBindings__Event(), ecorePackage.getEBoolean(), "evaluateParameterBindings", 1, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, this.getEvent(), "event", 1, 1, IS_UNIQUE, IS_ORDERED);
+
+        initEClass(eventPatternReferenceEClass, EventPatternReference.class, "EventPatternReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getEventPatternReference_EventPattern(), this.getEventPattern(), null, "eventPattern", null, 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEventPatternReference_Multiplicity(), this.getAbstractMultiplicity(), null, "multiplicity", null, 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(eventEClass, Event.class, "Event", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getEvent_Type(), ecorePackage.getEString(), "type", null, 1, 1, Event.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -584,16 +658,19 @@ public class EventsPackageImpl extends EPackageImpl implements EventsPackage {
 
         initEClass(followsEClass, org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS.class, "FOLLOWS", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-        initEClass(untilEClass, org.eclipse.viatra.cep.core.metamodels.events.UNTIL.class, "UNTIL", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
         initEClass(andEClass, org.eclipse.viatra.cep.core.metamodels.events.AND.class, "AND", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(timewindowEClass, Timewindow.class, "Timewindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getTimewindow_Time(), ecorePackage.getELong(), "time", null, 1, 1, Timewindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(eventPatternReferenceEClass, EventPatternReference.class, "EventPatternReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getEventPatternReference_EventPattern(), this.getEventPattern(), null, "eventPattern", null, 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getEventPatternReference_Multiplicity(), ecorePackage.getEInt(), "multiplicity", "1", 1, 1, EventPatternReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(abstractMultiplicityEClass, AbstractMultiplicity.class, "AbstractMultiplicity", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(multiplicityEClass, Multiplicity.class, "Multiplicity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getMultiplicity_Value(), ecorePackage.getEInt(), "value", null, 0, 1, Multiplicity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(infiniteEClass, Infinite.class, "Infinite", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(atLeastOneEClass, AtLeastOne.class, "AtLeastOne", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

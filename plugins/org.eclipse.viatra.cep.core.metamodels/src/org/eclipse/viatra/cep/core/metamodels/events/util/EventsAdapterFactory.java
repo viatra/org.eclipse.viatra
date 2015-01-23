@@ -80,6 +80,10 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createComplexEventPatternAdapter();
             }
             @Override
+            public Adapter caseEventPatternReference(EventPatternReference object) {
+                return createEventPatternReferenceAdapter();
+            }
+            @Override
             public Adapter caseEvent(Event object) {
                 return createEventAdapter();
             }
@@ -104,10 +108,6 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createFOLLOWSAdapter();
             }
             @Override
-            public Adapter caseUNTIL(UNTIL object) {
-                return createUNTILAdapter();
-            }
-            @Override
             public Adapter caseAND(AND object) {
                 return createANDAdapter();
             }
@@ -116,8 +116,20 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createTimewindowAdapter();
             }
             @Override
-            public Adapter caseEventPatternReference(EventPatternReference object) {
-                return createEventPatternReferenceAdapter();
+            public Adapter caseAbstractMultiplicity(AbstractMultiplicity object) {
+                return createAbstractMultiplicityAdapter();
+            }
+            @Override
+            public Adapter caseMultiplicity(Multiplicity object) {
+                return createMultiplicityAdapter();
+            }
+            @Override
+            public Adapter caseInfinite(Infinite object) {
+                return createInfiniteAdapter();
+            }
+            @Override
+            public Adapter caseAtLeastOne(AtLeastOne object) {
+                return createAtLeastOneAdapter();
             }
             @Override
             public Adapter defaultCase(EObject object) {
@@ -178,6 +190,20 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createComplexEventPatternAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+     * @generated
+     */
+    public Adapter createEventPatternReferenceAdapter() {
         return null;
     }
 
@@ -266,20 +292,6 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.UNTIL <em>UNTIL</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.UNTIL
-     * @generated
-     */
-    public Adapter createUNTILAdapter() {
-        return null;
-    }
-
-    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.AND <em>AND</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
@@ -308,16 +320,58 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference <em>Event Pattern Reference</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity <em>Abstract Multiplicity</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity
      * @generated
      */
-    public Adapter createEventPatternReferenceAdapter() {
+    public Adapter createAbstractMultiplicityAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.Multiplicity <em>Multiplicity</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Multiplicity
+     * @generated
+     */
+    public Adapter createMultiplicityAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.Infinite <em>Infinite</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.Infinite
+     * @generated
+     */
+    public Adapter createInfiniteAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne <em>At Least One</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne
+     * @generated
+     */
+    public Adapter createAtLeastOneAdapter() {
         return null;
     }
 

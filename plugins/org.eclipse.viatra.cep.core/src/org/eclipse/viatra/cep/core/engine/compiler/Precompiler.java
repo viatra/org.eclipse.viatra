@@ -21,6 +21,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
+import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.NEG;
 
 import com.google.common.base.Preconditions;
@@ -77,12 +78,16 @@ public class Precompiler {
             for (EventPatternReference eventPatternReference : permutation) {
                 EObject copy = new EcoreUtil.Copier().copy(eventPatternReference.getEventPattern());
                 EventPatternReference newReference = EventsFactory.eINSTANCE.createEventPatternReference();
-                newReference.setMultiplicity(1);
+                Multiplicity multiplicity = EventsFactory.eINSTANCE.createMultiplicity();
+                multiplicity.setValue(1);
+                newReference.setMultiplicity(multiplicity);
                 newReference.setEventPattern((EventPattern) copy);
                 innerPattern.getContainedEventPatterns().add(newReference);
             }
             EventPatternReference innerReference = EventsFactory.eINSTANCE.createEventPatternReference();
-            innerReference.setMultiplicity(1);
+            Multiplicity multiplicity = EventsFactory.eINSTANCE.createMultiplicity();
+            multiplicity.setValue(1);
+            innerReference.setMultiplicity(multiplicity);
             innerReference.setEventPattern(innerPattern);
             newPattern.getContainedEventPatterns().add(innerReference);
         }

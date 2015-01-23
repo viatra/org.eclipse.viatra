@@ -86,6 +86,12 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case EventsPackage.EVENT_PATTERN_REFERENCE: {
+                EventPatternReference eventPatternReference = (EventPatternReference)theEObject;
+                T result = caseEventPatternReference(eventPatternReference);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             case EventsPackage.EVENT: {
                 Event event = (Event)theEObject;
                 T result = caseEvent(event);
@@ -125,13 +131,6 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.UNTIL: {
-                UNTIL until = (UNTIL)theEObject;
-                T result = caseUNTIL(until);
-                if (result == null) result = caseComplexEventOperator(until);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case EventsPackage.AND: {
                 AND and = (AND)theEObject;
                 T result = caseAND(and);
@@ -145,9 +144,30 @@ public class EventsSwitch<T> extends Switch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case EventsPackage.EVENT_PATTERN_REFERENCE: {
-                EventPatternReference eventPatternReference = (EventPatternReference)theEObject;
-                T result = caseEventPatternReference(eventPatternReference);
+            case EventsPackage.ABSTRACT_MULTIPLICITY: {
+                AbstractMultiplicity abstractMultiplicity = (AbstractMultiplicity)theEObject;
+                T result = caseAbstractMultiplicity(abstractMultiplicity);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case EventsPackage.MULTIPLICITY: {
+                Multiplicity multiplicity = (Multiplicity)theEObject;
+                T result = caseMultiplicity(multiplicity);
+                if (result == null) result = caseAbstractMultiplicity(multiplicity);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case EventsPackage.INFINITE: {
+                Infinite infinite = (Infinite)theEObject;
+                T result = caseInfinite(infinite);
+                if (result == null) result = caseAbstractMultiplicity(infinite);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case EventsPackage.AT_LEAST_ONE: {
+                AtLeastOne atLeastOne = (AtLeastOne)theEObject;
+                T result = caseAtLeastOne(atLeastOne);
+                if (result == null) result = caseAbstractMultiplicity(atLeastOne);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -197,6 +217,21 @@ public class EventsSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseComplexEventPattern(ComplexEventPattern object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Event Pattern Reference</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Event Pattern Reference</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseEventPatternReference(EventPatternReference object) {
         return null;
     }
 
@@ -291,21 +326,6 @@ public class EventsSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>UNTIL</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>UNTIL</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseUNTIL(UNTIL object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>AND</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -336,17 +356,62 @@ public class EventsSwitch<T> extends Switch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>Event Pattern Reference</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Abstract Multiplicity</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>Event Pattern Reference</em>'.
+     * @return the result of interpreting the object as an instance of '<em>Abstract Multiplicity</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseEventPatternReference(EventPatternReference object) {
+    public T caseAbstractMultiplicity(AbstractMultiplicity object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Multiplicity</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Multiplicity</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseMultiplicity(Multiplicity object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Infinite</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Infinite</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseInfinite(Infinite object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>At Least One</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>At Least One</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseAtLeastOne(AtLeastOne object) {
         return null;
     }
 

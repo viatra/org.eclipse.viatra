@@ -20,6 +20,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="containedEventPatterns"
         upperBound="-1" eType="#//EventPatternReference" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EventPatternReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" lowerBound="1"
+        eType="#//EventPattern" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="multiplicity" lowerBound="1"
+        eType="#//AbstractMultiplicity" containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Event">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="timestamp" lowerBound="1"
@@ -35,15 +41,14 @@
   <eClassifiers xsi:type="ecore:EClass" name="OR" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="NEG" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="FOLLOWS" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="UNTIL" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="AND" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="Timewindow">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EventPatternReference">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" lowerBound="1"
-        eType="#//EventPattern" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multiplicity" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="1"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractMultiplicity" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Multiplicity" eSuperTypes="#//AbstractMultiplicity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Infinite" eSuperTypes="#//AbstractMultiplicity"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AtLeastOne" eSuperTypes="#//AbstractMultiplicity"/>
 </ecore:EPackage>

@@ -25,10 +25,12 @@ import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.ExpressionTreeBuilder
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Leaf
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Node
 import org.eclipse.viatra.cep.vepl.vepl.AndOperator
+import org.eclipse.viatra.cep.vepl.vepl.AtLeastOne
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
+import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.NegOperator
 import org.eclipse.viatra.cep.vepl.vepl.OrOperator
 import org.eclipse.viatra.cep.vepl.vepl.PatternCallParameter
@@ -41,6 +43,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.viatra.cep.vepl.vepl.Infinite
 
 class ComplexGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -126,16 +129,33 @@ class ComplexGenerator {
 						'''.«node.operator.factoryMethod»''').append(
 						''');
 							''')
-					it.append(
+					append(
 						'''
 							
 							// contained event patterns
 						''')
 					for (p : compositionPatterns) {
-						it.append('''addEventPatternRefrence(new ''').append(
-							'''«referClass(typeRefBuilder, p, pattern)»''').append(
-							'''(), «node.multiplicity»);
-								''')
+						append('''addEventPatternRefrence(new ''').append(
+							'''«referClass(typeRefBuilder, p, pattern)»''').append('''(), ''')
+						if (node.multiplicity instanceof Multiplicity) {
+							append('''«(node.multiplicity as Multiplicity).value»''').append(
+								''');
+									''')
+						} else if (node.multiplicity instanceof Infinite) {
+							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)»''').append(
+								'''.eINSTANCE.createInfinite()''').append(
+								''');
+									''')
+						} else if (node.multiplicity instanceof AtLeastOne) {
+							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)»''').append(
+								'''.eINSTANCE.createAtLeastOne()''').append(
+								''');
+									''')
+						} else {
+							append(
+								'''1);
+									''')
+						}
 					}
 					if (node.timewindow != null) {
 						it.append(
@@ -167,6 +187,20 @@ class ComplexGenerator {
 		} else if (complexPatternType.anonymous) {
 			anonManager.add(className.toString)
 			return className
+		}
+	}
+
+	def expandMultiplicity(Node node, ITreeAppendable treeAppendable, ComplexEventPattern pattern) {
+		val multiplicity = node.multiplicity
+		switch (multiplicity) {
+			Multiplicity case multiplicity:
+				treeAppendable.append('''«multiplicity.value»''')
+			Infinite case multiplicity:
+				treeAppendable.append('''«referClass(treeAppendable, typeRefBuilder, pattern, EventsFactory)»''').
+					append('''.eINSTANCE().createInfinite()''').append(''';''')
+			AtLeastOne case multiplicity:
+				treeAppendable.append('''«referClass(treeAppendable, typeRefBuilder, pattern, EventsFactory)»''').
+					append('''.eINSTANCE().createAtLeastOne()''').append(''';''')
 		}
 	}
 

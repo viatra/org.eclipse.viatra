@@ -80,6 +80,10 @@
         <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings/event"/>
       </genOperations>
     </genClasses>
+    <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/multiplicity"/>
+    </genClasses>
     <genClasses ecoreClass="Cep.ecore#//Event">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Event/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Event/timestamp"/>
@@ -93,14 +97,15 @@
     <genClasses ecoreClass="Cep.ecore#//OR"/>
     <genClasses ecoreClass="Cep.ecore#//NEG"/>
     <genClasses ecoreClass="Cep.ecore#//FOLLOWS"/>
-    <genClasses ecoreClass="Cep.ecore#//UNTIL"/>
     <genClasses ecoreClass="Cep.ecore#//AND"/>
     <genClasses ecoreClass="Cep.ecore#//Timewindow">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Timewindow/time"/>
     </genClasses>
-    <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//EventPatternReference/multiplicity"/>
+    <genClasses image="false" ecoreClass="Cep.ecore#//AbstractMultiplicity"/>
+    <genClasses ecoreClass="Cep.ecore#//Multiplicity">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Multiplicity/value"/>
     </genClasses>
+    <genClasses ecoreClass="Cep.ecore#//Infinite"/>
+    <genClasses ecoreClass="Cep.ecore#//AtLeastOne"/>
   </genPackages>
 </genmodel:GenModel>

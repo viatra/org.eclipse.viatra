@@ -14,6 +14,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 import java.util.List;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
+import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator;
 
 import com.google.common.collect.Lists;
@@ -26,7 +27,7 @@ import com.google.common.collect.Lists;
  */
 public class Node extends TreeElement {
     private ComplexEventOperator operator;
-    private int multiplicity = 1;
+    private AbstractMultiplicity multiplicity;
     private Timewindow timewindow;
     private List<TreeElement> children = Lists.newArrayList();
 
@@ -34,12 +35,12 @@ public class Node extends TreeElement {
         this.operator = operator;
     }
 
-    public Node(ComplexEventOperator operator, int multiplicity) {
+    public Node(ComplexEventOperator operator, AbstractMultiplicity multiplicity) {
         this.operator = operator;
         this.multiplicity = multiplicity;
     }
 
-    public Node(ComplexEventOperator operator, int multiplicity, Timewindow timewindow) {
+    public Node(ComplexEventOperator operator, AbstractMultiplicity multiplicity, Timewindow timewindow) {
         this.operator = operator;
         this.multiplicity = multiplicity;
         this.timewindow = timewindow;
@@ -49,11 +50,11 @@ public class Node extends TreeElement {
         return operator;
     }
 
-    public int getMultiplicity() {
+    public AbstractMultiplicity getMultiplicity() {
         return multiplicity;
     }
 
-    public void setMultiplicity(int multiplicity) {
+    public void setMultiplicity(AbstractMultiplicity multiplicity) {
         this.multiplicity = multiplicity;
     }
 

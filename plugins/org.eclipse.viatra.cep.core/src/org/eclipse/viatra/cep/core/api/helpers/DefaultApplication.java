@@ -28,13 +28,13 @@ public abstract class DefaultApplication {
     private EventStream eventStream;
 
     public DefaultApplication() {
-        setUpEngine();
+        engine = CEPEngine.newEngine(getContext());
         setUpEventStream();
         configureRules();
     }
 
-    protected void setUpEngine() {
-        engine = CEPEngine.newEngine(EventContext.CHRONICLE);
+    protected EventContext getContext() {
+        return EventContext.CHRONICLE;
     }
 
     protected void setUpEventStream() {

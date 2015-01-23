@@ -15,6 +15,7 @@ import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
+import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
@@ -34,6 +35,7 @@ class VeplValidator extends AbstractVeplValidator {
 	private static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
 	private static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
 	private static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
+	private static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -128,7 +130,8 @@ class VeplValidator extends AbstractVeplValidator {
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
 				ATOM_TIMEWINDOW_NO_MULTIPLICITY
 			)
-		} else if (timewindow != null && multiplicity != null && multiplicity.value < 2) {
+		} else if (timewindow == null && (multiplicity instanceof Multiplicity) &&
+			(multiplicity as Multiplicity).value < 2) {
 			error(
 				"One atomic event does not result in a valid complex event.",
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
@@ -145,6 +148,18 @@ class VeplValidator extends AbstractVeplValidator {
 				VeplPackage.Literals.MULTIPLICITY__VALUE,
 				NON_POSITIVE_MULTIPLICITY
 			)
+		}
+	}
+
+	@Check
+	def unsupportedMultiplicityTimewindowCombinations(Atom atom) {
+		if (atom.multiplicity != null && atom.timewindow != null) {
+			if (atom.multiplicity instanceof Infinite)
+				error(
+					"Infinite multiplicity cannot be combined with timewindow.",
+					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+					INFINITE_MULTIPLICITY_WITH_TIMEWINDOW
+				)
 		}
 	}
 

@@ -4,12 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
+import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity;
 import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.VeplFactory;
 
 public class AtomicExpressionTree extends ExpressionTree {
 
-    public AtomicExpressionTree(Atom atom, int multiplicity, Timewindow timewindow) {
+    public AtomicExpressionTree(Atom atom, AbstractMultiplicity multiplicity, Timewindow timewindow) {
         super();
 
         Node root = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), multiplicity, timewindow);

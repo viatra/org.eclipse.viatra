@@ -58,14 +58,16 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
         switch (eClass.getClassifierID()) {
             case EventsPackage.ATOMIC_EVENT_PATTERN: return createAtomicEventPattern();
             case EventsPackage.COMPLEX_EVENT_PATTERN: return createComplexEventPattern();
+            case EventsPackage.EVENT_PATTERN_REFERENCE: return createEventPatternReference();
             case EventsPackage.EVENT: return createEvent();
             case EventsPackage.OR: return createOR();
             case EventsPackage.NEG: return createNEG();
             case EventsPackage.FOLLOWS: return createFOLLOWS();
-            case EventsPackage.UNTIL: return createUNTIL();
             case EventsPackage.AND: return createAND();
             case EventsPackage.TIMEWINDOW: return createTimewindow();
-            case EventsPackage.EVENT_PATTERN_REFERENCE: return createEventPatternReference();
+            case EventsPackage.MULTIPLICITY: return createMultiplicity();
+            case EventsPackage.INFINITE: return createInfinite();
+            case EventsPackage.AT_LEAST_ONE: return createAtLeastOne();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -89,6 +91,16 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
     public ComplexEventPattern createComplexEventPattern() {
         ComplexEventPatternImpl complexEventPattern = new ComplexEventPatternImpl();
         return complexEventPattern;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EventPatternReference createEventPatternReference() {
+        EventPatternReferenceImpl eventPatternReference = new EventPatternReferenceImpl();
+        return eventPatternReference;
     }
 
     /**
@@ -136,16 +148,6 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public UNTIL createUNTIL() {
-        UNTILImpl until = new UNTILImpl();
-        return until;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public AND createAND() {
         ANDImpl and = new ANDImpl();
         return and;
@@ -166,9 +168,29 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EventPatternReference createEventPatternReference() {
-        EventPatternReferenceImpl eventPatternReference = new EventPatternReferenceImpl();
-        return eventPatternReference;
+    public Multiplicity createMultiplicity() {
+        MultiplicityImpl multiplicity = new MultiplicityImpl();
+        return multiplicity;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Infinite createInfinite() {
+        InfiniteImpl infinite = new InfiniteImpl();
+        return infinite;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public AtLeastOne createAtLeastOne() {
+        AtLeastOneImpl atLeastOne = new AtLeastOneImpl();
+        return atLeastOne;
     }
 
     /**

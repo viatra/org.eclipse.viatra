@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
@@ -41,24 +42,14 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
     protected EventPattern eventPattern;
 
     /**
-     * The default value of the '{@link #getMultiplicity() <em>Multiplicity</em>}' attribute.
+     * The cached value of the '{@link #getMultiplicity() <em>Multiplicity</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see #getMultiplicity()
      * @generated
      * @ordered
      */
-    protected static final int MULTIPLICITY_EDEFAULT = 1;
-
-    /**
-     * The cached value of the '{@link #getMultiplicity() <em>Multiplicity</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getMultiplicity()
-     * @generated
-     * @ordered
-     */
-    protected int multiplicity = MULTIPLICITY_EDEFAULT;
+    protected AbstractMultiplicity multiplicity;
 
     /**
      * <!-- begin-user-doc -->
@@ -127,7 +118,7 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
      * <!-- end-user-doc -->
      * @generated
      */
-    public int getMultiplicity() {
+    public AbstractMultiplicity getMultiplicity() {
         return multiplicity;
     }
 
@@ -136,11 +127,33 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setMultiplicity(int newMultiplicity) {
-        int oldMultiplicity = multiplicity;
+    public NotificationChain basicSetMultiplicity(AbstractMultiplicity newMultiplicity, NotificationChain msgs) {
+        AbstractMultiplicity oldMultiplicity = multiplicity;
         multiplicity = newMultiplicity;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY, oldMultiplicity, multiplicity));
+        if (eNotificationRequired()) {
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY, oldMultiplicity, newMultiplicity);
+            if (msgs == null) msgs = notification; else msgs.add(notification);
+        }
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setMultiplicity(AbstractMultiplicity newMultiplicity) {
+        if (newMultiplicity != multiplicity) {
+            NotificationChain msgs = null;
+            if (multiplicity != null)
+                msgs = ((InternalEObject)multiplicity).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY, null, msgs);
+            if (newMultiplicity != null)
+                msgs = ((InternalEObject)newMultiplicity).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY, null, msgs);
+            msgs = basicSetMultiplicity(newMultiplicity, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY, newMultiplicity, newMultiplicity));
     }
 
     /**
@@ -153,6 +166,8 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
         switch (featureID) {
             case EventsPackage.EVENT_PATTERN_REFERENCE__EVENT_PATTERN:
                 return basicSetEventPattern(null, msgs);
+            case EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY:
+                return basicSetMultiplicity(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -185,7 +200,7 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
                 setEventPattern((EventPattern)newValue);
                 return;
             case EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY:
-                setMultiplicity((Integer)newValue);
+                setMultiplicity((AbstractMultiplicity)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -203,7 +218,7 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
                 setEventPattern((EventPattern)null);
                 return;
             case EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY:
-                setMultiplicity(MULTIPLICITY_EDEFAULT);
+                setMultiplicity((AbstractMultiplicity)null);
                 return;
         }
         super.eUnset(featureID);
@@ -220,25 +235,9 @@ public class EventPatternReferenceImpl extends MinimalEObjectImpl.Container impl
             case EventsPackage.EVENT_PATTERN_REFERENCE__EVENT_PATTERN:
                 return eventPattern != null;
             case EventsPackage.EVENT_PATTERN_REFERENCE__MULTIPLICITY:
-                return multiplicity != MULTIPLICITY_EDEFAULT;
+                return multiplicity != null;
         }
         return super.eIsSet(featureID);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (multiplicity: ");
-        result.append(multiplicity);
-        result.append(')');
-        return result.toString();
     }
 
 } //EventPatternReferenceImpl

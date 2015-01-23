@@ -49,30 +49,29 @@ public interface EventPatternReference extends EObject {
     void setEventPattern(EventPattern value);
 
     /**
-     * Returns the value of the '<em><b>Multiplicity</b></em>' attribute.
-     * The default value is <code>"1"</code>.
+     * Returns the value of the '<em><b>Multiplicity</b></em>' containment reference.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Multiplicity</em>' attribute isn't clear,
+     * If the meaning of the '<em>Multiplicity</em>' containment reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Multiplicity</em>' attribute.
-     * @see #setMultiplicity(int)
+     * @return the value of the '<em>Multiplicity</em>' containment reference.
+     * @see #setMultiplicity(AbstractMultiplicity)
      * @see org.eclipse.viatra.cep.core.metamodels.events.EventsPackage#getEventPatternReference_Multiplicity()
-     * @model default="1" required="true"
+     * @model containment="true" required="true"
      * @generated
      */
-    int getMultiplicity();
+    AbstractMultiplicity getMultiplicity();
 
     /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity <em>Multiplicity</em>}' attribute.
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference#getMultiplicity <em>Multiplicity</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Multiplicity</em>' attribute.
+     * @param value the new value of the '<em>Multiplicity</em>' containment reference.
      * @see #getMultiplicity()
      * @generated
      */
-    void setMultiplicity(int value);
+    void setMultiplicity(AbstractMultiplicity value);
 
 } // EventPatternReference

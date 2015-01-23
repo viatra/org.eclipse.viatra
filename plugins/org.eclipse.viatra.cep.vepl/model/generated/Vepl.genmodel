@@ -68,9 +68,7 @@
     <genClasses ecoreClass="Vepl.ecore#//Atom">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Atom/patternCall"/>
     </genClasses>
-    <genClasses ecoreClass="Vepl.ecore#//Multiplicity">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Multiplicity/value"/>
-    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//AbstractMultiplicity"/>
     <genClasses ecoreClass="Vepl.ecore#//Timewindow">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Timewindow/length"/>
     </genClasses>
@@ -100,5 +98,10 @@
     <genClasses ecoreClass="Vepl.ecore#//Adapter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Adapter/name"/>
     </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Multiplicity">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Multiplicity/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Infinite"/>
+    <genClasses ecoreClass="Vepl.ecore#//AtLeastOne"/>
   </genPackages>
 </genmodel:GenModel>

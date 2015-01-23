@@ -16,10 +16,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance;
+import org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
+import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.impl.ComplexEventPatternImpl;
 
 import com.google.common.base.Strings;
@@ -73,6 +75,12 @@ public abstract class ParameterizableComplexEventPattern extends ComplexEventPat
     }
 
     public void addEventPatternRefrence(EventPattern eventPatternToBeReffered, int multiplicity) {
+        Multiplicity multiplicityObject = EventsFactory.eINSTANCE.createMultiplicity();
+        multiplicityObject.setValue(multiplicity);
+        addEventPatternRefrence(eventPatternToBeReffered, multiplicityObject);
+    }
+
+    public void addEventPatternRefrence(EventPattern eventPatternToBeReffered, AbstractMultiplicity multiplicity) {
         EventPatternReference eventPatternReference = EventsFactory.eINSTANCE.createEventPatternReference();
         eventPatternReference.setEventPattern(eventPatternToBeReffered);
         eventPatternReference.setMultiplicity(multiplicity);

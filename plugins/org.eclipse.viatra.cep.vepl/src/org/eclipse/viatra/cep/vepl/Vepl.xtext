@@ -120,17 +120,30 @@ ChainedExpression:
 ;
 
 Primary returns ComplexEventExpression:
-	Atom (multiplicity=Multiplicity)? (timewindow=Timewindow)? | '('ComplexEventExpression')' (multiplicity=Multiplicity)? (timewindow=Timewindow)?
+	Atom (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)? | '('ComplexEventExpression')' (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)?
 ;
 
 Atom:
 	patternCall=ParameterizedPatternCall
 ;
 
+AbstractMultiplicity:
+	Multiplicity | Infinite | AtLeastOne
+;
 
-
-Multiplicity:
+Multiplicity returns AbstractMultiplicity:
+	{Multiplicity}
 	'{'value=INT'}'
+;
+
+Infinite returns AbstractMultiplicity:
+	{Infinite}
+	'{''*''}'
+;
+
+AtLeastOne returns AbstractMultiplicity:
+	{AtLeastOne}
+	'{''+''}'
 ;
 
 Timewindow:

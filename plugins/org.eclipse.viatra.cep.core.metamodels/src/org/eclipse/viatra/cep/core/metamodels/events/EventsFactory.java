@@ -40,6 +40,15 @@ public interface EventsFactory extends EFactory {
     ComplexEventPattern createComplexEventPattern();
 
     /**
+     * Returns a new object of class '<em>Event Pattern Reference</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Event Pattern Reference</em>'.
+     * @generated
+     */
+    EventPatternReference createEventPatternReference();
+
+    /**
      * Returns a new object of class '<em>Event</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -76,15 +85,6 @@ public interface EventsFactory extends EFactory {
     FOLLOWS createFOLLOWS();
 
     /**
-     * Returns a new object of class '<em>UNTIL</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>UNTIL</em>'.
-     * @generated
-     */
-    UNTIL createUNTIL();
-
-    /**
      * Returns a new object of class '<em>AND</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -103,13 +103,31 @@ public interface EventsFactory extends EFactory {
     Timewindow createTimewindow();
 
     /**
-     * Returns a new object of class '<em>Event Pattern Reference</em>'.
+     * Returns a new object of class '<em>Multiplicity</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return a new object of class '<em>Event Pattern Reference</em>'.
+     * @return a new object of class '<em>Multiplicity</em>'.
      * @generated
      */
-    EventPatternReference createEventPatternReference();
+    Multiplicity createMultiplicity();
+
+    /**
+     * Returns a new object of class '<em>Infinite</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Infinite</em>'.
+     * @generated
+     */
+    Infinite createInfinite();
+
+    /**
+     * Returns a new object of class '<em>At Least One</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>At Least One</em>'.
+     * @generated
+     */
+    AtLeastOne createAtLeastOne();
 
     /**
      * Returns the package supported by this factory.

@@ -103,10 +103,20 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setNoSpace.before(grammar.timewindowAccess.rightSquareBracketKeyword_2)
 		c.setLinewrap().after(grammar.timewindowAccess.rightSquareBracketKeyword_2)
 
-		c.setNoSpace.before(grammar.multiplicityAccess.leftCurlyBracketKeyword_0)
-		c.setNoSpace.after(grammar.multiplicityAccess.leftCurlyBracketKeyword_0)
-		c.setNoSpace.before(grammar.multiplicityAccess.rightCurlyBracketKeyword_2)
-		c.setLinewrap().after(grammar.multiplicityAccess.rightCurlyBracketKeyword_2)
+		c.setNoSpace.before(grammar.multiplicityAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.after(grammar.multiplicityAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.before(grammar.multiplicityAccess.rightCurlyBracketKeyword_3)
+		c.setLinewrap().after(grammar.multiplicityAccess.rightCurlyBracketKeyword_3)
+		
+		c.setNoSpace.before(grammar.infiniteAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.after(grammar.infiniteAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.before(grammar.infiniteAccess.rightCurlyBracketKeyword_3)
+		c.setLinewrap().after(grammar.infiniteAccess.rightCurlyBracketKeyword_3)
+		
+		c.setNoSpace.before(grammar.atLeastOneAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.after(grammar.atLeastOneAccess.leftCurlyBracketKeyword_1)
+		c.setNoSpace.before(grammar.atLeastOneAccess.rightCurlyBracketKeyword_3)
+		c.setLinewrap().after(grammar.atLeastOneAccess.rightCurlyBracketKeyword_3)
 
 		//complex event operators
 		c.setSpace.before(grammar.complexEventOperatorAccess.rule)

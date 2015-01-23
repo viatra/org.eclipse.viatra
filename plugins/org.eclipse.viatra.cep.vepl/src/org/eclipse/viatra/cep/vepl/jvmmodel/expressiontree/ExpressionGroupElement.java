@@ -12,6 +12,7 @@
 package org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
+import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
 
 /**
@@ -22,12 +23,18 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
  */
 public class ExpressionGroupElement {
     private ComplexEventExpression complexEventExpression;
-    private int multiplicity;
+    private AbstractMultiplicity multiplicity;
     private Timewindow timewindow;
 
-    public ExpressionGroupElement(ComplexEventExpression complexEventExpression, int multiplicity, Timewindow timewindow) {
+    public ExpressionGroupElement(ComplexEventExpression complexEventExpression, AbstractMultiplicity multiplicity,
+            Timewindow timewindow) {
         this.complexEventExpression = complexEventExpression;
         this.multiplicity = multiplicity;
+        this.timewindow = timewindow;
+    }
+
+    public ExpressionGroupElement(ComplexEventExpression complexEventExpression, Timewindow timewindow) {
+        this.complexEventExpression = complexEventExpression;
         this.timewindow = timewindow;
     }
 
@@ -39,11 +46,11 @@ public class ExpressionGroupElement {
         this.complexEventExpression = complexEventExpression;
     }
 
-    public int getMultiplicity() {
+    public AbstractMultiplicity getMultiplicity() {
         return multiplicity;
     }
 
-    public void setMultiplicity(int multiplicity) {
+    public void setMultiplicity(AbstractMultiplicity multiplicity) {
         this.multiplicity = multiplicity;
     }
 

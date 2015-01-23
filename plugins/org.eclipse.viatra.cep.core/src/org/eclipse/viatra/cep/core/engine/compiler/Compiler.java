@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
@@ -27,17 +26,18 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Within;
+import org.eclipse.viatra.cep.core.metamodels.events.AbstractMultiplicity;
+import org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne;
 import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventOperator;
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS;
+import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
 import org.eclipse.viatra.cep.core.metamodels.events.OR;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
-import org.eclipse.viatra.cep.core.metamodels.events.UNTIL;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -143,8 +143,6 @@ public class Compiler {
             return mapFollows(preState, complexEventPattern);
         } else if (operator instanceof OR) {
             return mapOr(preState, complexEventPattern);
-        } else if (operator instanceof UNTIL) {
-            return mapUntil(preState, complexEventPattern);
         }
         throw new UnsupportedOperationException();
     }
@@ -159,31 +157,55 @@ public class Compiler {
      * @return the IN and OUT ({@link StateType}s) {@link State} of the automaton
      */
     private Map<StateType, State> mapFollows(State preState, ComplexEventPattern complexEventPattern) {
-        Map<StateType, State> states = Maps.newHashMap();
+        Map<StateType, State> marginStates = Maps.newHashMap();
 
-        states.put(StateType.IN, preState);
+        marginStates.put(StateType.IN, preState);
 
         State lastCreatedState = preState;
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            int multiplicity = eventPatternReference.getMultiplicity();
-            for (int i = 0; i < multiplicity; i++) {
-                if (eventPattern instanceof AtomicEventPattern) {
-                    State currentState = createState();
-                    Guard guard = createGuard((AtomicEventPattern) eventPattern);
-                    createTransition(lastCreatedState, currentState, guard);
-                    lastCreatedState = currentState;
-                } else if (eventPattern instanceof ComplexEventPattern) {
-                    Map<StateType, State> marginStates = map(lastCreatedState, (ComplexEventPattern) eventPattern);
-                    lastCreatedState = marginStates.get(StateType.OUT);
+            AbstractMultiplicity multiplicity = eventPatternReference.getMultiplicity();
+            if (multiplicity instanceof Multiplicity) {
+                for (int i = 0; i < ((Multiplicity) multiplicity).getValue(); i++) {
+                    Map<StateType, State> subPathStates = mapFollowsPath(lastCreatedState, eventPattern);
+                    lastCreatedState = subPathStates.get(StateType.OUT);
                 }
+            } else if (multiplicity instanceof AtLeastOne) {
+                Map<StateType, State> subPathStates = mapFollowsPath(lastCreatedState, eventPattern);
+                lastCreatedState = subPathStates.get(StateType.OUT);
+
+                for (Transition transition : marginStates.get(StateType.IN).getOutTransitions()) {
+                    if (!(transition instanceof TypedTransition)) {
+                        continue;
+                    }
+                    Guard guard = ((TypedTransition) transition).getGuard();
+                    Guard backwardLoopGuard = createGuard(guard.getEventType());
+                    createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard);
+                }
+            } else {
+                throw new UnsupportedOperationException(); // TODO Infinite case should be implemented here
             }
+
         }
 
-        states.put(StateType.OUT, lastCreatedState);
+        marginStates.put(StateType.OUT, lastCreatedState);
 
-        return states;
+        return marginStates;
+    }
+
+    private Map<StateType, State> mapFollowsPath(State preState, EventPattern eventPattern) {
+        Map<StateType, State> marginStates = Maps.newHashMap();
+        if (eventPattern instanceof AtomicEventPattern) {
+            State currentState = createState();
+            Guard guard = createGuard((AtomicEventPattern) eventPattern);
+            createTransition(preState, currentState, guard);
+            marginStates.put(StateType.IN, preState);
+            marginStates.put(StateType.OUT, currentState);
+        } else if (eventPattern instanceof ComplexEventPattern) {
+            marginStates = map(preState, (ComplexEventPattern) eventPattern);
+        }
+        return marginStates;
     }
 
     /**
@@ -207,16 +229,7 @@ public class Compiler {
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            int multiplicity = eventPatternReference.getMultiplicity();
-            for (int i = 0; i < multiplicity; i++) {
-                if (eventPattern instanceof AtomicEventPattern) {
-                    Guard guard = createGuard((AtomicEventPattern) eventPattern);
-                    createTransition(preState, outState, guard);
-                } else if (eventPattern instanceof ComplexEventPattern) {
-                    Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) eventPattern);
-                    statesToBeMergedIntoOut.add(marginStates.get(StateType.OUT));
-                }
-            }
+            mapOrPath(preState, outState, statesToBeMergedIntoOut, eventPattern);
         }
 
         for (State state : statesToBeMergedIntoOut) {
@@ -232,75 +245,15 @@ public class Compiler {
         return states;
     }
 
-    /**
-     * Maps a single non-nested {@link EventPattern} featuring an {@link UNTIL} operator onto an {@link Automaton}.
-     * 
-     * @param preState
-     *            the {@link State} the automaton begins with
-     * @param complexEventPattern
-     *            {@link ComplexEventPattern} to be mapped
-     * @return the IN and OUT ({@link StateType}s) {@link State} of the automaton
-     */
-    private Map<StateType, State> mapUntil(State preState, ComplexEventPattern complexEventPattern) {
-        Map<StateType, State> states = Maps.newHashMap();
-
-        states.put(StateType.IN, preState);
-
-        List<EventPatternReference> containedEventPatterns = complexEventPattern.getContainedEventPatterns();
-        Preconditions.checkArgument(containedEventPatterns.size() == 2); // UNTIL is a binary operator
-
-        EventPattern selfEdgePattern = containedEventPatterns.get(0).getEventPattern();
-        EventPattern advanceEdgePattern = containedEventPatterns.get(1).getEventPattern();
-
-        if (selfEdgePattern instanceof AtomicEventPattern) {
-            Guard guard = createGuard((AtomicEventPattern) selfEdgePattern);
-            createTransition(preState, preState, guard);
-        } else if (selfEdgePattern instanceof ComplexEventPattern) {
-            Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) selfEdgePattern);
-            State stateToBeReplaced = marginStates.get(StateType.OUT);
-            replace(stateToBeReplaced, preState);
+    private void mapOrPath(State preState, State outState, List<State> statesToBeMergedIntoOut,
+            EventPattern eventPattern) {
+        if (eventPattern instanceof AtomicEventPattern) {
+            Guard guard = createGuard((AtomicEventPattern) eventPattern);
+            createTransition(preState, outState, guard);
+        } else if (eventPattern instanceof ComplexEventPattern) {
+            Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) eventPattern);
+            statesToBeMergedIntoOut.add(marginStates.get(StateType.OUT));
         }
-
-        if (advanceEdgePattern instanceof AtomicEventPattern) {
-            State currentState = createState();
-            Guard guard = createGuard((AtomicEventPattern) advanceEdgePattern);
-            createTransition(preState, currentState, guard);
-            states.put(StateType.OUT, currentState);
-        } else if (selfEdgePattern instanceof ComplexEventPattern) {
-            Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) advanceEdgePattern);
-            states.put(StateType.OUT, marginStates.get(StateType.OUT));
-        }
-
-        return states;
-    }
-
-    /**
-     * Replaces a {@link State} with another.
-     * 
-     * @param stateToBeReplaced
-     *            the {@link State} to be replaced
-     * @param replaceWith
-     *            the {@link State} to replace with
-     */
-    private void replace(State stateToBeReplaced, State replaceWith) {
-        Transition[] inTransitions = stateToBeReplaced.getInTransitions().toArray(
-                new Transition[stateToBeReplaced.getInTransitions().size()]);
-        for (Transition transition : inTransitions) {
-            transition.setPostState(replaceWith);
-        }
-
-        Transition[] outTransitions = stateToBeReplaced.getOutTransitions().toArray(
-                new Transition[stateToBeReplaced.getOutTransitions().size()]);
-        for (Transition transition : outTransitions) {
-            transition.setPreState(replaceWith);
-        }
-
-        replaceWith.setInStateOf(stateToBeReplaced.getInStateOf());
-        replaceWith.setOutStateOf(stateToBeReplaced.getOutStateOf());
-
-        EObject eContainer = stateToBeReplaced.eContainer();
-        Preconditions.checkArgument(eContainer instanceof Automaton);
-        ((Automaton) eContainer).getStates().remove(stateToBeReplaced);
     }
 
     private void createTimedZone(Timewindow timewindow, State inState, State outState) {

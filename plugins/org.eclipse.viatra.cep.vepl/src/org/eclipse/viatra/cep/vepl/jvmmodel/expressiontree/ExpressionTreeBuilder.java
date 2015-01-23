@@ -50,7 +50,7 @@ public class ExpressionTreeBuilder {
 
     private ExpressionTree buildTree(ComplexEventExpression expression) {
         if (expression instanceof Atom) {
-            return new AtomicExpressionTree((Atom) expression, getMultiplicity(expression), getTimewindow(expression));
+            return new AtomicExpressionTree((Atom) expression, expression.getMultiplicity(), getTimewindow(expression));
         }
 
         if (expressionInParenthesis(expression)) {
@@ -59,9 +59,9 @@ public class ExpressionTreeBuilder {
             ExpressionTree subTree = buildTree(newExpression);
 
             if (!(newExpression instanceof Atom)
-                    && (getMultiplicity(newExpression) > 1 || getTimewindow(newExpression) != null)) {
-                Node node = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), newExpression.getMultiplicity()
-                        .getValue(), getTimewindow(newExpression));
+                    && (newExpression.getMultiplicity() != null || getTimewindow(newExpression) != null)) {
+                Node node = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), newExpression.getMultiplicity(),
+                        getTimewindow(newExpression));
                 node.addChild(subTree.getRoot());
                 subTree.setRoot(node);
             }
@@ -76,7 +76,7 @@ public class ExpressionTreeBuilder {
         List<ExpressionGroupElement> currentExpressionGroup = Lists.newArrayList();
 
         ComplexEventExpression head = expression.getLeft();
-        currentExpressionGroup.add(new ExpressionGroupElement(head, getMultiplicity(head), getTimewindow(head)));
+        currentExpressionGroup.add(new ExpressionGroupElement(head, head.getMultiplicity(), getTimewindow(head)));
 
         for (ChainedExpression che : expression.getRight()) {
             if (!sameOperators(che.getOperator(), lastOperator) || untilIntroducedCurrying(currentExpressionGroup, che)) {
@@ -86,7 +86,13 @@ public class ExpressionTreeBuilder {
             }
 
             ComplexEventExpression tail = che.getExpression();
-            currentExpressionGroup.add(new ExpressionGroupElement(tail, getMultiplicity(tail), getTimewindow(tail)));
+            if (tail.getMultiplicity() != null) {
+                currentExpressionGroup
+                        .add(new ExpressionGroupElement(tail, tail.getMultiplicity(), getTimewindow(tail)));
+            } else {
+                currentExpressionGroup.add(new ExpressionGroupElement(tail, getTimewindow(tail)));
+            }
+
         }
 
         packagePatternGroup(lastOperator, currentExpressionGroup, tree);
@@ -125,7 +131,7 @@ public class ExpressionTreeBuilder {
     private TreeElement createTreeElement(ExpressionGroupElement groupElement) {
         Leaf leaf = new Leaf(groupElement.getComplexEventExpression());
 
-        if (groupElement.getMultiplicity() > 1 || groupElement.getTimewindow() != null) {
+        if (groupElement.getMultiplicity() != null || groupElement.getTimewindow() != null) {
             Node node = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), groupElement.getMultiplicity(),
                     groupElement.getTimewindow());
             node.addChild(leaf);
@@ -166,13 +172,6 @@ public class ExpressionTreeBuilder {
             return timeWindow;
         }
         return null;
-    }
-
-    private int getMultiplicity(ComplexEventExpression expression) {
-        if (expression.getMultiplicity() == null) {
-            return 1;
-        }
-        return expression.getMultiplicity().getValue();
     }
 
     private boolean expressionInParenthesis(ComplexEventExpression expression) {

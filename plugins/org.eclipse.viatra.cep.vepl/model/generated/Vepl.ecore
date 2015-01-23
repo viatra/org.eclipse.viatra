@@ -65,7 +65,7 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="right" upperBound="-1"
         eType="#//ChainedExpression" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="multiplicity" eType="#//Multiplicity"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="multiplicity" eType="#//AbstractMultiplicity"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="timewindow" eType="#//Timewindow"
         containment="true"/>
@@ -80,9 +80,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="patternCall" eType="#//ParameterizedPatternCall"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Multiplicity">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractMultiplicity"/>
   <eClassifiers xsi:type="ecore:EClass" name="Timewindow">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="length" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
@@ -117,4 +115,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Adapter">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Multiplicity" eSuperTypes="#//AbstractMultiplicity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Infinite" eSuperTypes="#//AbstractMultiplicity"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AtLeastOne" eSuperTypes="#//AbstractMultiplicity"/>
 </ecore:EPackage>
