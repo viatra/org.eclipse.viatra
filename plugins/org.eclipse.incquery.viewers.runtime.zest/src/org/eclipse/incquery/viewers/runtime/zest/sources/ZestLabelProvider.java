@@ -133,10 +133,14 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 
 	@Override
 	public IFigure getTooltip(Object entity) {
-        if (!(entity instanceof EObject)) {
+        if (!(entity instanceof Item)) {
             return null;
         }
-		EObject eobj = (EObject) entity;
+        final Object entityObject = ((Item) entity).getParamObject();
+        if (!(entityObject instanceof EObject)) {
+            return null;
+        }
+		EObject eobj = (EObject) entityObject;
 		String text = "";
 		for (EStructuralFeature feature : eobj.eClass().getEAllAttributes()) {
 			text = text.concat(feature.getName() + ": ");
