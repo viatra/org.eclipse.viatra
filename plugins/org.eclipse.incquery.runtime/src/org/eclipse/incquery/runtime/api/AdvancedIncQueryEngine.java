@@ -193,6 +193,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return the advanced interface to a newly created unmanaged engine
+     * @since 0.9
      */
     public static AdvancedIncQueryEngine createUnmanagedEngine(IncQueryScope scope)
             throws IncQueryException {
@@ -296,6 +297,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	 * @return a pattern matcher corresponding to the specification
      * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with the query
 	 * @throws IncQueryException if the matcher could not be initialized
+	 * @since 0.9
 	 */
     public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
     		IQuerySpecification<Matcher> querySpecification, 
@@ -317,6 +319,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with each query
      * @throws IncQueryException
      *             if there was an error in preparing the engine
+     * @since 0.9
      */
     public abstract void prepareGroup(
     		IQueryGroup queryGroup, 

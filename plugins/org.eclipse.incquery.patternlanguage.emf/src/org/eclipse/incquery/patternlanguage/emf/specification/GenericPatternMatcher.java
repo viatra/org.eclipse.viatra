@@ -14,16 +14,19 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.GenericMatchProcessor;
 import org.eclipse.incquery.runtime.api.GenericPatternMatch;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
- * This is a generic pattern matcher for any EMF-IncQuery pattern, with "interpretative" query execution.
- * Use the pattern matcher on a given model via {@link #on(IncQueryEngine, Pattern)}, 
- * e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+ * This is a generic pattern matcher for any EMF-IncQuery pattern, with
+ * "interpretative" query execution. Use the pattern matcher on a given model
+ * via {@link #on(IncQueryEngine, Pattern)}, e.g. in conjunction with
+ * {@link IncQueryEngine#on(Notifier)}.
  * <p>
- * Whenever available, consider using the pattern-specific generated matcher API instead.
+ * Whenever available, consider using the pattern-specific generated matcher API
+ * instead.
  * 
  * <p>
  * Matches of the pattern will be represented as {@link GenericPatternMatch}.
@@ -32,56 +35,75 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitialization
  * @see GenericPatternMatch
  * @see GenericMatchProcessor
  * @see GenericQuerySpecification
+ * 
+ * @deprecated direct reference not recommended. As of 0.9, clients should use
+ *             {@link SpecificationBuilder} to convert EMF patterns to
+ *             {@link IQuerySpecification}s, or
+ *             {@link org.eclipse.incquery.runtime.api.GenericPatternMatcher}
+ *             for other purposes. Note that the class
+ *             {@link GenericPatternMatch} has also been moved.
  */
-public class GenericPatternMatcher extends org.eclipse.incquery.runtime.api.GenericPatternMatcher {
+@Deprecated
+public class GenericPatternMatcher extends
+		org.eclipse.incquery.runtime.api.GenericPatternMatcher {
 
-	protected GenericPatternMatcher(IncQueryEngine engine, 
+	protected GenericPatternMatcher(IncQueryEngine engine,
 			GenericQuerySpecification specification) throws IncQueryException {
 		super(engine, specification);
 	}
 
 	/**
-     * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-     * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned. 
-     * The match set will be incrementally refreshed upon updates.
-     * 
-     * @param engine
-     *            the existing EMF-IncQuery engine in which this matcher will be created.
-     * @param pattern
-     *            the EMF-IncQuery pattern for which the matcher is to be constructed.
-     * @throws IncQueryException
-     *             if an error occurs during pattern matcher creation
-     */
-	public static GenericPatternMatcher on(IncQueryEngine engine, Pattern pattern) throws IncQueryException {
+	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * If the pattern matcher is already constructed in the engine, only a
+	 * light-weight reference is returned. The match set will be incrementally
+	 * refreshed upon updates.
+	 * 
+	 * @param engine
+	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            created.
+	 * @param pattern
+	 *            the EMF-IncQuery pattern for which the matcher is to be
+	 *            constructed.
+	 * @throws IncQueryException
+	 *             if an error occurs during pattern matcher creation
+	 */
+	public static GenericPatternMatcher on(IncQueryEngine engine,
+			Pattern pattern) throws IncQueryException {
 		try {
-			return on(engine, new GenericQuerySpecification(new GenericEMFPQuery(pattern)));
+			return on(engine, new GenericQuerySpecification(
+					new GenericEMFPatternPQuery(pattern)));
 		} catch (QueryInitializationException e) {
 			throw new IncQueryException(e);
 		}
 	}
-	
-    /**
-     * Initializes the pattern matcher within an existing EMF-IncQuery engine. 
-     * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned. 
-     * The match set will be incrementally refreshed upon updates.
-     * 
-     * @param engine
-     *            the existing EMF-IncQuery engine in which this matcher will be created.
-     * @param querySpecification
-     *            the query specification for which the matcher is to be constructed.
-     * @throws IncQueryException
-     *             if an error occurs during pattern matcher creation
-     */
-	public static GenericPatternMatcher on(IncQueryEngine engine, GenericQuerySpecification querySpecification) throws IncQueryException {
+
+	/**
+	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * If the pattern matcher is already constructed in the engine, only a
+	 * light-weight reference is returned. The match set will be incrementally
+	 * refreshed upon updates.
+	 * 
+	 * @param engine
+	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            created.
+	 * @param querySpecification
+	 *            the query specification for which the matcher is to be
+	 *            constructed.
+	 * @throws IncQueryException
+	 *             if an error occurs during pattern matcher creation
+	 */
+	public static GenericPatternMatcher on(IncQueryEngine engine,
+			GenericQuerySpecification querySpecification)
+			throws IncQueryException {
 		// check if matcher already exists
-		GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
-        if (matcher == null) {
-        	matcher = new GenericPatternMatcher(engine, querySpecification);
-        	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
-        } 	
-        return matcher;
+		GenericPatternMatcher matcher = engine
+				.getExistingMatcher(querySpecification);
+		if (matcher == null) {
+			matcher = new GenericPatternMatcher(engine, querySpecification);
+			// do not have to "put" it into engine.matchers,
+			// reportMatcherInitialized() will take care of it
+		}
+		return matcher;
 	}
-	
-	
 
 }

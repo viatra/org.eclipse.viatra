@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.api.scope;
 
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+
 /**
  * 
  * This interface contains callbacks for various internal errors from the {@link NavigationHelper base index}.
  * 
  * @author Zoltan Ujhelyi
+ * @since 0.9
  *
  */
 public interface IIndexingErrorListener {

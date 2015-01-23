@@ -21,7 +21,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
  * 
  * 
  * @author Bergmann Gabor
- * @since 0.9.0
+ * @since 0.9
  */
 public interface PQueryHeader {
 

@@ -32,17 +32,21 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  *            the handle of a receiver-like RETE ending to which plans can be
  *            connected
  * @author Gabor Bergmann
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IOperationCompiler<Collector> {
 
-    public Collector patternCollector(PQuery pattern) throws QueryPlannerException;
+    public Collector patternCollector(PQuery pattern) throws QueryProcessingException;
  
     public void buildConnection(SubPlan parentPlan, Collector collector);
     
+    /**
+	 * @since 0.9
+	 */
     public void patternFinished(PQuery pattern, IPatternMatcherContext context, Collector collector);
     
     public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
-            throws QueryPlannerException;
+            throws QueryProcessingException;
 
     public SubPlan transitiveInstantiationPlan(Tuple nodes);
 
@@ -94,6 +98,7 @@ public interface IOperationCompiler<Collector> {
 
     /**
      * @return an operation compiler that puts build actions on the tab of the given pattern
+     * @since 0.9
      */
     public IOperationCompiler<Collector> putOnTab(PQuery effort, IPatternMatcherContext context);
 

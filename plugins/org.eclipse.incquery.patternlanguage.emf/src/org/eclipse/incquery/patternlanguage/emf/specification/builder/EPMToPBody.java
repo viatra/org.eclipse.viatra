@@ -20,7 +20,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
-import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPQuery;
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPatternPQuery;
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
@@ -378,7 +378,7 @@ public class EPMToPBody {
         	// This should only happen in case of erroneous links, e.g. link to a proxy Pattern or similar
         	// otherwise pattern would be found in the name map (see SpecificationBuilder logic)
             try {
-				calledSpecification = new GenericQuerySpecification(new GenericEMFPQuery(patternRef, true));
+				calledSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(patternRef, true));
 			} catch (QueryInitializationException e) {
 				// Cannot happen, as initialization is delayed
 				throw new RuntimeException(e);

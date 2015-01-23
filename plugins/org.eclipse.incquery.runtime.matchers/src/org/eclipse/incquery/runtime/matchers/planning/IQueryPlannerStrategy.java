@@ -18,7 +18,8 @@ import org.eclipse.incquery.runtime.matchers.psystem.PBody;
  * An algorithm that builds a query plan based on a PSystem representation of a body of constraints.
  * 
  * @author Gabor Bergmann
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) throws QueryPlannerException;
+    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) throws QueryProcessingException;
 }

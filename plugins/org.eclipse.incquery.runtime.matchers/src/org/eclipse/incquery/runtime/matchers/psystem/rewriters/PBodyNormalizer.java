@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -70,12 +70,12 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
     public PBody normalizeBody(PBody body) throws RewriterException {
         try {
 			return normalizeBodyInternal(body);
-		} catch (QueryPlannerException e) {
+		} catch (QueryProcessingException e) {
             throw new RewriterException("Error during rewriting: {1}", new String[]{e.getMessage()}, e.getShortMessage(), body.getPattern(), e);
 		}
     }
     
-	PBody normalizeBodyInternal(PBody body) throws QueryPlannerException {
+	PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
 		// UNIFICATION AND WEAK INEQUALITY ELMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
@@ -153,7 +153,7 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
      * @param body
      * @throws RetePatternBuildException
      */
-    void checkSanity(PBody body) throws QueryPlannerException {
+    void checkSanity(PBody body) throws QueryProcessingException {
         for (PConstraint pConstraint : body.getConstraints())
             pConstraint.checkSanity();
     }

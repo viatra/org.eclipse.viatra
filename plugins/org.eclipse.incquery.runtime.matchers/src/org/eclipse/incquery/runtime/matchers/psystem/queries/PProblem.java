@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.queries;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * Represents an error that was detected while the {@link PQuery} object was built from a source.
@@ -25,7 +25,7 @@ public class PProblem {
 	public PProblem(String shortMessage) {
 		this(null, shortMessage);
 	}
-	public PProblem(QueryPlannerException exception) {
+	public PProblem(QueryProcessingException exception) {
 		this(exception, exception.getShortMessage());
 	}
 	public PProblem(Exception exception, String shortMessage) {

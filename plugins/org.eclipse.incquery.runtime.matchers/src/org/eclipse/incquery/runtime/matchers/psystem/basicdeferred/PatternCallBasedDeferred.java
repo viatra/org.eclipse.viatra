@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
@@ -71,7 +71,7 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
     }
 
     @Override
-    public void checkSanity() throws QueryPlannerException {
+    public void checkSanity() throws QueryProcessingException {
         super.checkSanity();
         for (Object obj : this.actualParametersTuple.getDistinctElements()) {
             PVariable var = (PVariable) obj;
@@ -80,7 +80,7 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
                 for (PConstraint pConstraint : var.getReferringConstraints()) {
                     if (pConstraint != this
                             && !(pConstraint instanceof Equality && ((Equality) pConstraint).isMoot()))
-                        throw new QueryPlannerException (
+                        throw new QueryProcessingException (
                                 "Variable {1} of constraint {2} is not a positively determined part of the pattern, yet it is also affected by {3}.",
                                 new String[] { var.toString(), this.toString(), pConstraint.toString() },
                                 "Read-only variable can not be deduced", null);

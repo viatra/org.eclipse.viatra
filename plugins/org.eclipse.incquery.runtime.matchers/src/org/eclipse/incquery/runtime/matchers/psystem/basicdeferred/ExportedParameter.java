@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicdeferred;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
@@ -65,7 +65,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     }
 
     @Override
-    public void checkSanity() throws QueryPlannerException {
+    public void checkSanity() throws QueryProcessingException {
         super.checkSanity();
         if (!parameterVariable.isDeducable()) {
             String[] args = { parameterName };
@@ -73,7 +73,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
                     + "exported pattern variable {1} can not be determined based on the pattern constraints. "
                     + "HINT: certain constructs (e.g. negative patterns or check expressions) cannot output symbolic parameters.";
             String shortMsg = "Could not deduce value of parameter";
-            throw new QueryPlannerException(msg, args, shortMsg, null);
+            throw new QueryProcessingException(msg, args, shortMsg, null);
         }
 
     }

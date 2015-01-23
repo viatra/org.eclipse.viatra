@@ -194,7 +194,7 @@ public class SpecificationBuilder {
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
-                GenericQuerySpecification specification = new GenericQuerySpecification(new GenericEMFPQuery(newPattern, true));
+                GenericQuerySpecification specification = new GenericQuerySpecification(new GenericEMFPatternPQuery(newPattern, true));
                 patternMap.put(patternFqn, specification);
                 patternNameMap.put(patternFqn, newPattern);
                 newSpecifications.add(specification);
@@ -222,7 +222,7 @@ public class SpecificationBuilder {
             for (Pattern rejectedPattern : sanitizer.getRejectedPatterns()) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(rejectedPattern);
                 if (!patternMap.containsKey(patternFqn)) {
-                    GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPQuery(rejectedPattern, true));
+                    GenericQuerySpecification rejected = new GenericQuerySpecification(new GenericEMFPatternPQuery(rejectedPattern, true));
                     for (PProblem problem: sanitizer.getProblemByPattern(rejectedPattern)) 
                     	rejected.getInternalQueryRepresentation().addError(problem);
                     patternMap.put(patternFqn, rejected);
@@ -233,7 +233,7 @@ public class SpecificationBuilder {
         }
         IQuerySpecification<?> specification = patternMap.get(fqn);
         if (specification == null) {
-            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPQuery(pattern, true));
+            GenericQuerySpecification erroneousSpecification = new GenericQuerySpecification(new GenericEMFPatternPQuery(pattern, true));
             erroneousSpecification.getInternalQueryRepresentation().addError( new PProblem("Unable to compile pattern due to an unspecified error") );
             patternMap.put(fqn, erroneousSpecification);
             patternNameMap.put(fqn, pattern);

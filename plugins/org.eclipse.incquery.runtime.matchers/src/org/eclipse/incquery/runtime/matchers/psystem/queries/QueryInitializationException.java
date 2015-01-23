@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.queries;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * Represent an exception that occurred while initializing the specification of a query. 
  * @author Bergmann Gabor
+ * @since 0.9
  *
  */
-public class QueryInitializationException extends QueryPlannerException {
+public class QueryInitializationException extends QueryProcessingException {
 
     public QueryInitializationException(String message, String[] context, String shortMessage, Object patternDescription,
             Throwable cause) {

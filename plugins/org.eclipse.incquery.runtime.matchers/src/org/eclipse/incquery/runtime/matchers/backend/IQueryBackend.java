@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.backend;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -18,15 +18,16 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
  * of the pattern with various parameters.
  *
  * @author Bergmann Gábor
+ * @since 0.9
  *
  */
 public interface IQueryBackend {
 	
     /**
      * Returns a result provider for a given query. Repeated calls may return the same instance.
-     * @throws QueryPlannerException 
+     * @throws QueryProcessingException 
      */
-	public IQueryResultProvider getResultProvider(PQuery query) throws QueryPlannerException;
+	public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException;
 
 	/**
 	 * Disposes the query backend.

@@ -74,9 +74,9 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery
-import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPQuery
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery
+import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPatternPQuery
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -420,7 +420,7 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def StringConcatenationClient referPQuery(PQuery referredQuery, Pattern callerPattern) {
-		if ((referredQuery as GenericEMFPQuery).getPattern == callerPattern) {
+		if ((referredQuery as GenericEMFPatternPQuery).getPattern == callerPattern) {
 			'''this'''
 		} else {
 			'''«referredQuery.findGeneratedSpecification».instance().getInternalQueryRepresentation()'''
@@ -429,7 +429,7 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def findGeneratedSpecification(PQuery query) {
-		(query as GenericEMFPQuery).pattern.findInferredSpecification
+		(query as GenericEMFPatternPQuery).getPattern.findInferredSpecification
 	}
 
 	def expressionMethodName(XExpression ex) {

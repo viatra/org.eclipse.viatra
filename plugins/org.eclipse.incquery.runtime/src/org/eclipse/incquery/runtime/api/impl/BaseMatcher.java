@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
@@ -70,7 +70,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
         Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
             return engine.getResultProvider(specification);
-        } catch (QueryPlannerException e) {
+        } catch (QueryProcessingException e) {
             throw new IncQueryException(e);
         }
     }

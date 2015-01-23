@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * Helper functions for dealing with the EMF-IncQuery objects.
  * 
  * @author Abel Hegedus
+ * @since 0.9
  *
  */
 public class IncQueryRuntimeHelper {

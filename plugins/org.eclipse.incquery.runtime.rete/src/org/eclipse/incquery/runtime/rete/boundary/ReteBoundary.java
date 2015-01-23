@@ -20,7 +20,7 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.GeneralizationQueryDirection;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
@@ -358,7 +358,7 @@ public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
     public synchronized RecipeTraceInfo accessProductionTrace(PQuery query)
-            throws QueryPlannerException 
+            throws QueryProcessingException 
     {
     	final CompiledQuery compiled = engine.getCompiler().getCompiledForm(query);
     	return compiled;
@@ -380,7 +380,7 @@ public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
      * accesses the production node for specified pattern; builds pattern matcher if it doesn't exist yet
      */
     public synchronized Address<? extends Production> accessProductionNode(PQuery query)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
     	final RecipeTraceInfo productionTrace = accessProductionTrace(query);
 		return (Address<? extends Production>) headContainer.getProvisioner().getOrCreateNodeByRecipe(productionTrace);
     }

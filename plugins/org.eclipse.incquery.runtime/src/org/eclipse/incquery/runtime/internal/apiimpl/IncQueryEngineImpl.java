@@ -53,7 +53,7 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -364,7 +364,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     }
 
 	private <Match extends IPatternMatch> IQueryResultProvider getUnderlyingResultProvider(
-			final BaseMatcher<Match> matcher) throws QueryPlannerException {
+			final BaseMatcher<Match> matcher) {
 		//IQueryResultProvider resultProvider = reteEngine.accessMatcher(matcher.getSpecification());
 		return matcher.backend;
 	}
@@ -404,12 +404,8 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 			}
 		};
         
-        try {
-            IQueryResultProvider resultProvider = getUnderlyingResultProvider(bm);
-            resultProvider.addUpdateListener(updateDispatcher, listener, fireNow);
-        } catch (QueryPlannerException e) {
-            logger.error("Error while adding listener " + listener + " to the matcher of " + matcher.getPatternName(), e);
-        }
+        IQueryResultProvider resultProvider = getUnderlyingResultProvider(bm);
+        resultProvider.addUpdateListener(updateDispatcher, listener, fireNow);
     }
 
     
@@ -456,11 +452,11 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      * 
      * @param query the pattern for which the result provider should be delivered
      * 
-     * @throws QueryPlannerException
+     * @throws QueryProcessingException
      * @throws IncQueryException
      */
 	public IQueryResultProvider getResultProvider(IQuerySpecification<?> query) 
-		throws QueryPlannerException, IncQueryException 
+		throws QueryProcessingException, IncQueryException 
 	{
 		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
         
@@ -468,7 +464,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	}
 
 	private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query) 
-		throws QueryPlannerException, IncQueryException 
+		throws QueryProcessingException, IncQueryException 
 	{
 		final IQueryBackend backend = getQueryBackend(query);
 		return backend.getResultProvider(query.getInternalQueryRepresentation());
@@ -570,15 +566,15 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     			});
             } catch (InvocationTargetException ex) {
                 final Throwable cause = ex.getCause();
-                if (cause instanceof QueryPlannerException)
-                    throw (QueryPlannerException) cause;
+                if (cause instanceof QueryProcessingException)
+                    throw (QueryProcessingException) cause;
                 if (cause instanceof IncQueryException)
                     throw (IncQueryException) cause;
                 if (cause instanceof RuntimeException)
                     throw (RuntimeException) cause;
                 assert (false);
             }
-        } catch (QueryPlannerException e) {
+        } catch (QueryProcessingException e) {
             throw new IncQueryException(e);
         }
 	}

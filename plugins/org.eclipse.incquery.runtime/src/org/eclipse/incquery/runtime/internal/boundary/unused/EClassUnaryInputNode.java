@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
-import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -74,7 +73,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 		}
 	};
 	
-	public EClassUnaryInputNode(IncQueryEngine engine, ReteContainer reteContainer, EClass clazz) throws IncQueryBaseException {
+	public EClassUnaryInputNode(IncQueryEngine engine, ReteContainer reteContainer, EClass clazz) {
 		super(reteContainer);
 		this.engine = engine;
 	//	this.baseIndex = engine.getBaseIndex();

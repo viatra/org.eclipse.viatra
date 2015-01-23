@@ -66,7 +66,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
 
 	private final NavigationHelper baseIndex;
     private BaseIndexListener listener;
-    private IncQueryEngine iqEngine;
     
     private final Set<EClass> classes = new HashSet<EClass>();
     private final Set<EDataType> dataTypes = new HashSet<EDataType>();
@@ -80,11 +79,10 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
      */
     public EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine, Logger logger, NavigationHelper baseIndex) {
         super(logger);
-        this.iqEngine = iqEngine;
         this.baseIndex = baseIndex;
         // this.waitingVisitors = new ArrayList<EMFVisitor>();
         // this.traversalCoalescing = false;
-        this.listener = new BaseIndexListener(iqEngine, baseIndex);
+        this.listener = new BaseIndexListener(iqEngine);
     }
     
     

@@ -23,7 +23,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
@@ -126,7 +126,7 @@ public class ReteRecipeCompiler {
 	/**
 	 * Returns a {@link CompiledQuery} compiled from a query
 	 */
-	public CompiledQuery getCompiledForm(PQuery query) throws QueryPlannerException {
+	public CompiledQuery getCompiledForm(PQuery query) throws QueryProcessingException {
 		CompiledQuery compiled = queryCompilerCache.get(query);
 		if (compiled == null) {
 			boolean reentrant = ! compilationInProgress.add(query);
@@ -155,7 +155,7 @@ public class ReteRecipeCompiler {
 	/**
 	 * Returns a {@link CompiledSubPlan} compiled from a query plan
 	 */
-	public CompiledSubPlan getCompiledForm(SubPlan plan) throws QueryPlannerException {
+	public CompiledSubPlan getCompiledForm(SubPlan plan) throws QueryProcessingException {
 		CompiledSubPlan compiled = subPlanCompilerCache.get(plan);
 		if (compiled == null) {
 			compiled = doCompileDispatch(plan);
@@ -165,7 +165,7 @@ public class ReteRecipeCompiler {
 		return compiled;
 	}
 	
-	public SubPlan getPlan(PBody pBody) throws QueryPlannerException {
+	public SubPlan getPlan(PBody pBody) throws QueryProcessingException {
 		// if the query is not marked as being compiled, initiate compilation
 		//  (this is useful in case of recursion if getPlan() is the entry point)
 		PQuery pQuery = pBody.getPattern();
@@ -191,7 +191,7 @@ public class ReteRecipeCompiler {
 		return plan;
 	}
 	
-	private CompiledQuery compileProduction(PQuery query) throws QueryPlannerException {
+	private CompiledQuery compileProduction(PQuery query) throws QueryProcessingException {
 		Collection<SubPlan> bodyPlans = new ArrayList<SubPlan>();
 		for (PBody pBody : query.getDisjunctBodies().getBodies()) {
 			SubPlan bodyPlan = getPlan(pBody);
@@ -201,7 +201,7 @@ public class ReteRecipeCompiler {
 	}
 
 	
-	private CompiledQuery doCompileProduction(PQuery query, Collection<SubPlan> bodies) throws QueryPlannerException {
+	private CompiledQuery doCompileProduction(PQuery query, Collection<SubPlan> bodies) throws QueryProcessingException {
 		//TODO skip production node if there is just one body and no projection needed?
 		Collection<RecipeTraceInfo> bodyFinalTraces = new HashSet<RecipeTraceInfo>();
 		Collection<ReteNodeRecipe> bodyFinalRecipes = new HashSet<ReteNodeRecipe>();
@@ -237,7 +237,7 @@ public class ReteRecipeCompiler {
 	}
 
 
-	private CompiledSubPlan doCompileDispatch(SubPlan plan) throws QueryPlannerException {
+	private CompiledSubPlan doCompileDispatch(SubPlan plan) throws QueryProcessingException {
 		final POperation operation = plan.getOperation();
 		if (operation instanceof PEnumerate) {
 			return doCompileEnumerate(((PEnumerate) operation).getEnumerablePConstraint(), plan);
@@ -268,7 +268,7 @@ public class ReteRecipeCompiler {
 	}
 
 
-	private CompiledSubPlan doDeferredDispatch(DeferredPConstraint constraint, SubPlan plan) throws QueryPlannerException {
+	private CompiledSubPlan doDeferredDispatch(DeferredPConstraint constraint, SubPlan plan) throws QueryProcessingException {
 		final SubPlan parentPlan = plan.getParentPlans().get(0);
     	final CompiledSubPlan parentCompiled = getCompiledForm(parentPlan);
         if (constraint instanceof Equality) {
@@ -354,7 +354,7 @@ public class ReteRecipeCompiler {
         }
     }
     private CompiledSubPlan compileDeferred(NegativePatternCall constraint, 
-    		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryPlannerException  
+    		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  
     {
 		final PlanningTrace callTrace = 
 				referQuery(constraint.getReferredQuery(), plan, constraint.getActualParametersTuple());
@@ -370,7 +370,7 @@ public class ReteRecipeCompiler {
 		return new CompiledSubPlan(plan, parentCompiled.getVariablesTuple(), antiJoinRecipe, primaryIndexer, secondaryIndexer);
     }
     private CompiledSubPlan compileDeferred(PatternMatchCounter constraint, 
-    		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryPlannerException  
+    		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  
     {
 		final PlanningTrace callTrace = 
 				referQuery(constraint.getReferredQuery(), plan, constraint.getActualParametersTuple());
@@ -456,7 +456,7 @@ public class ReteRecipeCompiler {
     }
 
 
-	private CompiledSubPlan doCompileJoin(PJoin operation, SubPlan plan) throws QueryPlannerException {
+	private CompiledSubPlan doCompileJoin(PJoin operation, SubPlan plan) throws QueryProcessingException {
 		final List<CompiledSubPlan> compiledParents = getCompiledFormOfParents(plan);
 		final CompiledSubPlan leftCompiled = compiledParents.get(0);
 		final CompiledSubPlan rightCompiled = compiledParents.get(1);
@@ -474,7 +474,7 @@ public class ReteRecipeCompiler {
         		joinHelper.getPrimaryIndexer(), joinHelper.getSecondaryIndexer());
 	}
 
-	private CompiledSubPlan doCompileProject(PProject operation, SubPlan plan) throws QueryPlannerException {
+	private CompiledSubPlan doCompileProject(PProject operation, SubPlan plan) throws QueryProcessingException {
 		final List<CompiledSubPlan> compiledParents = getCompiledFormOfParents(plan);
 		final CompiledSubPlan compiledParent = compiledParents.get(0);
 		
@@ -508,7 +508,7 @@ public class ReteRecipeCompiler {
 
 	private CompiledSubPlan doCompileEnumerate(
 			EnumerablePConstraint constraint,
-			SubPlan plan) throws QueryPlannerException 
+			SubPlan plan) throws QueryProcessingException 
 	{		
 		final PlanningTrace trimmedTrace = 
 				doEnumerateAndDeduplicate(constraint, plan);
@@ -517,7 +517,7 @@ public class ReteRecipeCompiler {
 	}
 
 	private PlanningTrace doEnumerateAndDeduplicate(
-			EnumerablePConstraint constraint, SubPlan plan) throws QueryPlannerException 
+			EnumerablePConstraint constraint, SubPlan plan) throws QueryProcessingException 
 	{
 		final PlanningTrace coreTrace = 
 				doEnumerateDispatch(plan, constraint);		
@@ -529,7 +529,7 @@ public class ReteRecipeCompiler {
 	
 	
 	
-	private PlanningTrace doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) throws QueryPlannerException {
+	private PlanningTrace doEnumerateDispatch(SubPlan plan, EnumerablePConstraint constraint) throws QueryProcessingException {
         if (constraint instanceof BinaryTransitiveClosure) {
             return compileEnumerable(plan, (BinaryTransitiveClosure) constraint);
         } else if (constraint instanceof ConstantValue) {
@@ -553,7 +553,7 @@ public class ReteRecipeCompiler {
 	}
 
 	private PlanningTrace compileEnumerable(SubPlan plan,
-			BinaryTransitiveClosure constraint) throws QueryPlannerException {
+			BinaryTransitiveClosure constraint) throws QueryProcessingException {
 		final PQuery referredQuery = constraint.getSupplierKey();
 		final PlanningTrace callTrace = referQuery(referredQuery, plan, constraint.getVariablesTuple());
 		
@@ -563,7 +563,7 @@ public class ReteRecipeCompiler {
 		return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe, callTrace);
 	}
 
-	private PlanningTrace compileEnumerable(SubPlan plan, PositivePatternCall constraint) throws QueryPlannerException {
+	private PlanningTrace compileEnumerable(SubPlan plan, PositivePatternCall constraint) throws QueryProcessingException {
 		final PQuery referredQuery = constraint.getReferredQuery();
 		return referQuery(referredQuery, plan, constraint.getVariablesTuple());
 	}
@@ -590,7 +590,7 @@ public class ReteRecipeCompiler {
 	}
 	
 	// TODO handle recursion
-	private PlanningTrace referQuery(PQuery query, SubPlan plan, Tuple actualParametersTuple) throws QueryPlannerException {
+	private PlanningTrace referQuery(PQuery query, SubPlan plan, Tuple actualParametersTuple) throws QueryProcessingException {
 		CompiledQuery compiledQuery = getCompiledForm(query);
 		return new PlanningTrace(plan, 
 				CompilerHelper.convertVariablesTuple(actualParametersTuple), 
@@ -599,7 +599,7 @@ public class ReteRecipeCompiler {
 
 	
 
-	protected List<CompiledSubPlan> getCompiledFormOfParents(SubPlan plan) throws QueryPlannerException {
+	protected List<CompiledSubPlan> getCompiledFormOfParents(SubPlan plan) throws QueryProcessingException {
 		List<CompiledSubPlan> results = new ArrayList<CompiledSubPlan>();
 		for (SubPlan parentPlan : plan.getParentPlans()) {
 			results.add(getCompiledForm(parentPlan));

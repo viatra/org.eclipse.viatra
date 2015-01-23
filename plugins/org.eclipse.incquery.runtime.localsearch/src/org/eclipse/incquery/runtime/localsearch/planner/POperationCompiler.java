@@ -31,7 +31,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStruc
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.incquery.runtime.localsearch.planner.util.CompilerHelper;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
 import org.eclipse.incquery.runtime.matchers.planning.operations.POperation;
@@ -71,9 +71,9 @@ public class POperationCompiler {
      * @param plan
      * @param boundVariableIndexes 
      * @return
-     * @throws QueryPlannerException 
+     * @throws QueryProcessingException 
      */
-    public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryPlannerException {
+    public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryProcessingException {
 
         Map<PVariable, Integer> variableMappings = CompilerHelper.createVariableMapping(plan);
         Map<PConstraint, Set<Integer>> variableBindings = CompilerHelper.cacheVariableBindings(plan,variableMappings,boundVariableIndexes);
@@ -89,7 +89,7 @@ public class POperationCompiler {
     }
  
     private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping,
-            Map<PConstraint, Set<Integer>> variableBindings) throws QueryPlannerException {
+            Map<PConstraint, Set<Integer>> variableBindings) throws QueryProcessingException {
 
         if (pOperation instanceof PApply) {
             PApply pApply = (PApply) pOperation;
@@ -114,7 +114,7 @@ public class POperationCompiler {
         } else if (pOperation instanceof PProject) {
             // nop
         } else {
-            throw new QueryPlannerException("PStart, PApply or PProject was expected, received: " + pOperation.getClass(), null,"Unexpected POperation type", null);
+            throw new QueryProcessingException("PStart, PApply or PProject was expected, received: " + pOperation.getClass(), null,"Unexpected POperation type", null);
         }
 
     }

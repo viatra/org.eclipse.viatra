@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
@@ -45,7 +45,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
     public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
         return new Scaffold(pSystem, /*compiler,*/ context).run();
     }
 
@@ -73,7 +73,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         /**
          * @return
          */
-        public SubPlan run() throws QueryPlannerException {
+        public SubPlan run() throws QueryProcessingException {
             try {
                 context.logDebug(String.format(
                 		"%s: patternbody build started for %s",
@@ -139,7 +139,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             return candidates;
         }
 
-        private void admitSubPlan(SubPlan plan) throws QueryPlannerException {
+        private void admitSubPlan(SubPlan plan) throws QueryProcessingException {
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
@@ -161,7 +161,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         }
 
         private void doJoin(JoinCandidate selectedJoin)
-                throws QueryPlannerException {
+                throws QueryProcessingException {
             forefront.remove(selectedJoin.getPrimary());
             forefront.remove(selectedJoin.getSecondary());
             admitSubPlan(selectedJoin.getJoinedPlan());

@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
  * @author Bergmann Gábor
  * @noinstantiate This class is not intended to be instantiated by clients
  */
-public class GenericEMFPQuery extends BasePQuery implements InitializablePQuery {
+public class GenericEMFPatternPQuery extends BasePQuery implements InitializablePQuery {
 
     private Pattern pattern;
 	
@@ -56,7 +56,7 @@ public class GenericEMFPQuery extends BasePQuery implements InitializablePQuery 
      *            the pattern for which the matcher is to be constructed.
      * @throws QueryInitializationException
      */
-    public GenericEMFPQuery(Pattern pattern) throws QueryInitializationException {
+    public GenericEMFPatternPQuery(Pattern pattern) throws QueryInitializationException {
         this(pattern, false);
     }
 
@@ -71,7 +71,7 @@ public class GenericEMFPQuery extends BasePQuery implements InitializablePQuery 
      *
      * @throws QueryInitializationException
      */
-    public GenericEMFPQuery(Pattern pattern, boolean delayedInitialization) throws QueryInitializationException {
+    public GenericEMFPatternPQuery(Pattern pattern, boolean delayedInitialization) throws QueryInitializationException {
         super();
         this.pattern = pattern;
         if (delayedInitialization) {
@@ -88,8 +88,8 @@ public class GenericEMFPQuery extends BasePQuery implements InitializablePQuery 
     @Override
     public boolean equals(Object obj) {
     	return (obj == this) ||
-    			(obj instanceof GenericEMFPQuery &&
-    					pattern.equals(((GenericEMFPQuery)obj).pattern));
+    			(obj instanceof GenericEMFPatternPQuery &&
+    					pattern.equals(((GenericEMFPatternPQuery)obj).pattern));
     }
 
     @Override

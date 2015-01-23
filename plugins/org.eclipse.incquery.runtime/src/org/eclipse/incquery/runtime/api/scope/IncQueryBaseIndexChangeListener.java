@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.api.scope;
  * Listener interface for change notifications from the IncQuery Base index.
  * 
  * @author Abel Hegedus
+ * @since 0.9
  *
  */
 public interface IncQueryBaseIndexChangeListener {

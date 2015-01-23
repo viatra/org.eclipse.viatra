@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.api.scope;
 /**
  * Listener interface for lightweight observation of changes in edges leaving from given source instance elements.
  * @author Bergmann Gabor
+ * @since 0.9
  *
  */
 public interface IInstanceObserver {

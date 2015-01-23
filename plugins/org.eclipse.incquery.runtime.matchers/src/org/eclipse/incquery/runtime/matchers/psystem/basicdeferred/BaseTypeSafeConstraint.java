@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicdeferred;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +22,8 @@ import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Gabor Bergmann
@@ -49,7 +50,8 @@ public abstract class BaseTypeSafeConstraint extends
         super(pSystem, 
         		(outputVariable == null) ? 
         				inputVariables : 
-        				new HashSet<PVariable>(inputVariables){{add(outputVariable);}});
+        				ImmutableSet.<PVariable>builder().addAll(inputVariables).add(outputVariable).build()
+        			);
         this.inputVariables = inputVariables;
         this.outputVariable = outputVariable;
     }

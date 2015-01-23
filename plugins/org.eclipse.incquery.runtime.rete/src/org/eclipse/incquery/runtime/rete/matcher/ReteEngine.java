@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
@@ -162,7 +162,7 @@ public class ReteEngine implements IQueryBackend {
      *             if construction fails.
      */
     public synchronized RetePatternMatcher accessMatcher(final PQuery query)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
     	ensureInitialized();
     	RetePatternMatcher matcher;
         // String namespace = gtPattern.getNamespace().getName();
@@ -172,7 +172,7 @@ public class ReteEngine implements IQueryBackend {
         if (matcher == null) {
             constructionWrapper(new Callable<Void>() {
         		@Override
-        		public Void call() throws QueryPlannerException {
+        		public Void call() throws QueryProcessingException {
         			RecipeTraceInfo prodNode;
         			prodNode = boundary.accessProductionTrace(query);
 
@@ -201,11 +201,11 @@ public class ReteEngine implements IQueryBackend {
      *             if construction fails.
      */
     public synchronized void buildMatchersCoalesced(final Collection<PQuery> specifications)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
     	ensureInitialized();
     	constructionWrapper(new Callable<Void>() {
     		@Override
-    		public Void call() throws QueryPlannerException {
+    		public Void call() throws QueryProcessingException {
     			for (PQuery specification : specifications) {
     			    boundary.accessProductionNode(specification);
     			}
@@ -480,7 +480,7 @@ public class ReteEngine implements IQueryBackend {
     }
     
     @Override
-    public IQueryResultProvider getResultProvider(PQuery query) throws QueryPlannerException {
+    public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
     	return accessMatcher(query);
     }
 

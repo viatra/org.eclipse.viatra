@@ -77,6 +77,7 @@ import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
  * Instantiate using {@link IncQueryBaseFactory}
  * 
  * @author Tamas Szabo
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  */
 public interface NavigationHelper {
@@ -685,14 +686,14 @@ public interface NavigationHelper {
      * Adds a listener for internal errors in the index. A listener can only be added once.
      * @param listener
      * @returns true if the listener was not already added
-     * @since 0.8.0
+     * @since 0.8
      */
     boolean addIndexingErrorListener(IEMFIndexingErrorListener listener);
     /**
      * Removes a listener for internal errors in the index
      * @param listener
      * @returns true if the listener was successfully removed (e.g. it did exist)
-     * @since 0.8.0
+     * @since 0.8
      */
     boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener);
 }

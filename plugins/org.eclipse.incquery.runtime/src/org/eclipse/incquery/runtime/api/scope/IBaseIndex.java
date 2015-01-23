@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 /**
  * Represents the index maintained on the model.
  * @author Bergmann Gabor
+ * @since 0.9
  * 
  */
 public interface IBaseIndex {

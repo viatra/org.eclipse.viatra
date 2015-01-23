@@ -143,27 +143,27 @@ public class PBodyCopier {
 
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(positivePatternCall);
-        FlatTuple variablesTuple = new FlatTuple(mappedVariables);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
         new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery());
     }
 
 
     protected void copyNegativePatternCallConstraint(NegativePatternCall negativePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(negativePatternCall);
-        FlatTuple variablesTuple = new FlatTuple(mappedVariables);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
         new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery());
     }
 
     protected void copyBinaryTransitiveClosureConstraint(BinaryTransitiveClosure binaryTransitiveClosure) {
         PVariable[] mappedVariables = extractMappedVariables(binaryTransitiveClosure);
-        FlatTuple variablesTuple = new FlatTuple(mappedVariables);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
         new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery());
     }
 
     protected void copyPatternMatchCounterConstraint(PatternMatchCounter patternMatchCounter) {
         PVariable[] mappedVariables = extractMappedVariables(patternMatchCounter);
         PVariable mappedResultVariable = variableMapping.get(patternMatchCounter.getResultVariable());
-        FlatTuple variablesTuple = new FlatTuple(mappedVariables);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
         new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable);
     }
 
@@ -199,7 +199,7 @@ public class PBodyCopier {
     private PVariable[] mapVariableList(Object[] pVariables) {
         List<PVariable> list = new ArrayList<PVariable>();
         for (int i = 0; i < pVariables.length; i++) {
-            PVariable mappedVariable = variableMapping.get((PVariable)pVariables[i]);
+            PVariable mappedVariable = variableMapping.get(pVariables[i]);
             list.add(mappedVariable);
         }
         return list.toArray(new PVariable[0]);

@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -84,10 +84,10 @@ public class LocalSearchPlanner {
      * <code>initializePlanner()</code> methods before calling this method.
      * 
      * @param boundVarIndices
-     * @throws QueryPlannerException
+     * @throws QueryProcessingException
      */
     public List<List<ISearchOperation>> plan(PQuery querySpec, Set<Integer> boundVarIndices)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
 
         // Flatten
         flatDisjunction = flattener.flatten(querySpec);

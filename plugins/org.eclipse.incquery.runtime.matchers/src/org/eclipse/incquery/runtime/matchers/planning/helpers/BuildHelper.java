@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
@@ -123,10 +123,10 @@ public class BuildHelper {
      * @throws RetePatternBuildException
      */
     public static void finalCheck(final PBody pSystem, SubPlan plan, IPatternMatcherContext context)
-            throws QueryPlannerException {
+            throws QueryProcessingException {
         PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, plan);
         if (unenforcedConstraint != null) {
-            throw new QueryPlannerException(
+            throw new QueryProcessingException(
                     "Pattern matcher construction terminated without successfully enforcing constraint {1}."
                             + " Could be caused if the value of some variables can not be deduced, e.g. by circularity of pattern constraints.",
                     new String[] { unenforcedConstraint.toString() }, "Could not enforce a pattern constraint", null);
@@ -134,7 +134,7 @@ public class BuildHelper {
         for (ExportedParameter export : pSystem
                 .getConstraintsOfType(ExportedParameter.class)) {
             if (!export.isReadyAt(plan, context)) {
-                throw new QueryPlannerException(
+                throw new QueryProcessingException(
                         "Exported pattern parameter {1} could not be deduced during pattern matcher construction."
                                 + " A pattern constraint is required to positively deduce its value.",
                         new String[] { export.getParameterName().toString() }, "Could not calculate pattern parameter",

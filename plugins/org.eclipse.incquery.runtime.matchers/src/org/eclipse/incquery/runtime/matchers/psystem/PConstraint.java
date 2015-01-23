@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * @author Gabor Bergmann
@@ -42,7 +42,7 @@ public interface PConstraint {
 
     public void delete();
 
-    public void checkSanity() throws QueryPlannerException;
+    public void checkSanity() throws QueryProcessingException;
 
     /**
      * Returns an integer ID that is guaranteed to increase strictly monotonously for constraints within a pBody.

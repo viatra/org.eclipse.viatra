@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * @author Gabor Bergmann
@@ -84,7 +84,7 @@ public abstract class BasePConstraint implements PConstraint {
     }
 
     @Override
-    public void checkSanity() throws QueryPlannerException {
+    public void checkSanity() throws QueryProcessingException {
     }
 
     public PBody getPSystem() {

@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.BuildHelper;
@@ -47,7 +47,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 	//SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan plan(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryPlannerException {
+    public SubPlan plan(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryProcessingException {
     	SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
         //planProcessor.setCompiler(compiler);

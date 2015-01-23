@@ -15,6 +15,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 /**
  * Internal interface for the query backend to singal an update to a query result.
  * @author Bergmann Gabor
+ * @since 0.9
  *
  */
 public interface IUpdateable {

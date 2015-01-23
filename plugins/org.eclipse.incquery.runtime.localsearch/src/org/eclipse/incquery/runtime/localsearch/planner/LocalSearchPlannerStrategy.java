@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OrderingHeuristics;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
@@ -53,7 +53,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
      * PBody
      */
     @Override
-    public SubPlan plan(PBody pBody, IPatternMatcherContext context) throws QueryPlannerException {
+    public SubPlan plan(PBody pBody, IPatternMatcherContext context) throws QueryProcessingException {
 
         // Create a starting plan
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);

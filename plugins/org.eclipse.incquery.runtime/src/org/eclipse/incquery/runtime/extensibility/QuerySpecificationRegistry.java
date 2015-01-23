@@ -26,7 +26,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQueryGroup;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -117,8 +116,8 @@ public final class QuerySpecificationRegistry {
     private static void loadQuerySpecification(
             Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
             Set<String> duplicates, IConfigurationElement el,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification)
-            throws IncQueryException {
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification) {
+    	
         String fullyQualifiedName = querySpecification.getFullyQualifiedName();
         if (specifications.containsKey(fullyQualifiedName)) {
             duplicates.add(fullyQualifiedName);

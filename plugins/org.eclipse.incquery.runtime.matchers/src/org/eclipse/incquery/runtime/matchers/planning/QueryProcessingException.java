@@ -14,9 +14,9 @@ import java.util.Arrays;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @since 0.9
  */
-public class QueryPlannerException extends Exception {
+public class QueryProcessingException extends Exception {
 
     private static final long serialVersionUID = -8272290113656867086L;
     /**
@@ -51,7 +51,7 @@ public class QueryPlannerException extends Exception {
      * @param patternDescription
      *            the PatternDescription where the exception occurred
      */
-    public QueryPlannerException(String message, String[] context, String shortMessage, Object patternDescription) {
+    public QueryProcessingException(String message, String[] context, String shortMessage, Object patternDescription) {
         super(bind(message, context));
         initializeFields(message, context, shortMessage, patternDescription);
     }
@@ -65,7 +65,7 @@ public class QueryPlannerException extends Exception {
      * @param patternDescription
      *            the PatternDescription where the exception occurred
      */
-    public QueryPlannerException(String message, String[] context, String shortMessage, Object patternDescription,
+    public QueryProcessingException(String message, String[] context, String shortMessage, Object patternDescription,
             Throwable cause) {
         super(bind(message, context), cause);
         initializeFields(message, context, shortMessage, patternDescription);

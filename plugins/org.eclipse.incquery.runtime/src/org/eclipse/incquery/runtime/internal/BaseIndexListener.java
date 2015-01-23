@@ -22,7 +22,6 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.DataTypeListener;
 import org.eclipse.incquery.runtime.base.api.FeatureListener;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
-import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContextListener;
 
 /**
@@ -32,7 +31,6 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeConte
  * 
  */
 public class BaseIndexListener implements FeatureListener, InstanceListener, DataTypeListener {
-	private final NavigationHelper baseIndex;
     final Set<IPatternMatcherRuntimeContextListener> listeners = 
     		new HashSet<IPatternMatcherRuntimeContextListener>();
 
@@ -47,10 +45,9 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
     /**
      * @param inputConnector
      */
-    public BaseIndexListener(IncQueryEngine iqEngine, NavigationHelper baseIndex) {
+    public BaseIndexListener(IncQueryEngine iqEngine) {
         super();
         this.iqEngine = iqEngine;
-        this.baseIndex = baseIndex;
     }
     
     public void addListener(IPatternMatcherRuntimeContextListener listener) {

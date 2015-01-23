@@ -39,16 +39,16 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 public class GenericQuerySpecification 
 	extends org.eclipse.incquery.runtime.api.GenericQuerySpecification<GenericPatternMatcher> 
 {
-	protected GenericEMFPQuery genericEMFPQuery;
+	protected GenericEMFPatternPQuery genericEMFPatternPQuery;
 
-	public GenericQuerySpecification(GenericEMFPQuery genericEMFPQuery) {
-		super(genericEMFPQuery);
-		this.genericEMFPQuery = genericEMFPQuery;
+	public GenericQuerySpecification(GenericEMFPatternPQuery genericEMFPatternPQuery) {
+		super(genericEMFPatternPQuery);
+		this.genericEMFPatternPQuery = genericEMFPatternPQuery;
 	}
 
 	@Override
-	public GenericEMFPQuery getInternalQueryRepresentation() {
-		return genericEMFPQuery;
+	public GenericEMFPatternPQuery getInternalQueryRepresentation() {
+		return genericEMFPatternPQuery;
 	}
 
     @Override

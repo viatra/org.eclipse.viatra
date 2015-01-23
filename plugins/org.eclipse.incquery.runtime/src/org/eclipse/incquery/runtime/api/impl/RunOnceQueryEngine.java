@@ -88,9 +88,6 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
         this.baseIndexOptions = new RunOnceBaseIndexOptions();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.api.IRunOnceQueryEngine#getAllMatches(org.eclipse.incquery.runtime.api.IQuerySpecification)
-     */
     @Override
     public <Match extends IPatternMatch> Collection<Match> getAllMatches(
             IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) throws IncQueryException {
@@ -113,26 +110,16 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
         return allMatches;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.api.IRunOnceQueryEngine#getBaseIndexOptions()
-     */
     @Override
     public BaseIndexOptions getBaseIndexOptions() {
         return baseIndexOptions;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.api.IRunOnceQueryEngine#getScope()
-     */
     @Override
     public Notifier getScope() {
         return notifier;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.api.IRunOnceQueryEngine#setAutomaticResampling(boolean)
-     */
     @Override
     public void setAutomaticResampling(boolean automaticResampling) {
         samplingMode = automaticResampling;
@@ -146,9 +133,6 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.api.IRunOnceQueryEngine#resampleOnNextCall()
-     */
     @Override
     public void resampleOnNextCall() {
         reSamplingNeeded = true;

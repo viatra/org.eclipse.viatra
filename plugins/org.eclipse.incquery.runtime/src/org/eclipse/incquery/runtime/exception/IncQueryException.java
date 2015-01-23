@@ -10,9 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.exception;
 
-import org.eclipse.incquery.runtime.matchers.planning.QueryPlannerException;
+import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
+/**
+ * A general IncQuery-related problem during the operation of the IncQuery
+ * engine, or the loading, manipulation and evaluation of queries.
+ * 
+ * @author Bergmann Gabor
+ * @since 0.9
+ * 
+ */
 public class IncQueryException extends Exception {
 
     private static final long serialVersionUID = -74252748358355750L;
@@ -21,7 +29,13 @@ public class IncQueryException extends Exception {
     public static final String CONVERSION_FAILED = "Could not convert the term to the designated type";
     public static final String CONVERT_NULL_PARAMETER = "Could not convert null to the designated type";
     public static final String RELATIONAL_PARAM_UNSUITABLE = "The parameters are not acceptable by the operation";
-    public static final String PATTERN_MATCHER_PROBLEM = "The following error occurred during the preparation of an IncQuery pattern matcher";
+    /**
+	 * @since 0.9
+	 */
+    public static final String PROCESSING_PROBLEM = "The following error occurred during the processing of a query (e.g. for the preparation of an IncQuery pattern matcher)";
+    /**
+	 * @since 0.9
+	 */
     public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of an IncQuery query specification";
     public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 
@@ -36,8 +50,8 @@ public class IncQueryException extends Exception {
         this.shortMessage = shortMessage;
     }
 
-    public IncQueryException(QueryPlannerException e) {
-        super(PATTERN_MATCHER_PROBLEM + ": " + e.getMessage(), e);
+    public IncQueryException(QueryProcessingException e) {
+        super(PROCESSING_PROBLEM + ": " + e.getMessage(), e);
         this.shortMessage = e.getShortMessage();
     }
     

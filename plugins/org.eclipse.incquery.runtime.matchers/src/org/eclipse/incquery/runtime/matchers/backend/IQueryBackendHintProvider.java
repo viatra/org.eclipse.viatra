@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
  * May override hints embedded in query itself.
  * 
  * @author Bergmann Gabor
+ * @since 0.9
  *
  */
 public interface IQueryBackendHintProvider {
