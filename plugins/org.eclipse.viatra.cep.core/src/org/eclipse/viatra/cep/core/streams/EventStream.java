@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.cep.core.streams;
 
-import java.awt.EventQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -39,8 +38,8 @@ public class EventStream extends EObjectImpl {
     }
 
     /**
-     * Adds an {@link Event} to the {@link EventQueue}. Every new Event is published to the interested adapters via
-     * EMF's notification mechanism.
+     * Adds an {@link Event} to the event queue. Every new Event is published to the interested adapters via EMF's
+     * notification mechanism.
      * 
      * @param event
      *            the {@link Event} to be added
