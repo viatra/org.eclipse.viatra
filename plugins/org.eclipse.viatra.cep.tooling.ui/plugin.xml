@@ -35,6 +35,9 @@
                class="org.eclipse.viatra.cep.tooling.ui.nature.ViatraCepNature">
          </run>
       </runtime>
+      <builder
+            id="org.eclipse.viatra.cep.tooling.ui.projectbuilder">
+      </builder>
    </extension>
    <extension
          id="org.eclipse.viatra.cep.tooling.ui.projectbuilder"
