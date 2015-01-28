@@ -10,7 +10,7 @@
  *   Istvan David - updated for VIATRA-CEP
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.tooling.ui.wizards;
+package org.eclipse.viatra.cep.tooling.core.project;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.viatra.cep.tooling.ui.internal.Activator;
-import org.eclipse.viatra.cep.tooling.ui.nature.ViatraCepNature;
+import org.eclipse.viatra.cep.tooling.core.internal.Activator;
+import org.eclipse.viatra.cep.tooling.core.nature.ViatraCepNature;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -54,9 +54,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
- * A common helper class for generating IncQuery-related projects.
- * 
+ * A common helper class for generating VIATRA-CEP-related projects.
+ *
  * @author Zoltan Ujhelyi
+ * @author Istvan David - updated for VIATRA-CEP
  */
 @SuppressWarnings("restriction")
 public abstract class ProjectGenerationHelper {
@@ -100,12 +101,12 @@ public abstract class ProjectGenerationHelper {
     public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of("src");
 
     /**
-     * Creates a new IncQuery project: a plug-in project with src and src-gen folders and specific dependencies.
-     * 
+     * Creates a new VIATRA-CEP project: a plug-in project with src and src-gen folders and specific dependencies.
+     *
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
-        List<String> dependencies = Lists.newArrayList("org.eclipse.core.runtime", "org.eclipse.viatra.cep.core");
+        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore", "org.eclipse.viatra.cep.core");
         List<String> importPackages = Lists.newArrayList("org.apache.log4j");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
@@ -117,7 +118,7 @@ public abstract class ProjectGenerationHelper {
 
             monitor.beginTask("", 2000);
             /* Creating plug-in information */
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(proj);
@@ -125,7 +126,7 @@ public abstract class ProjectGenerationHelper {
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, importPackages, service, bundleDesc,
                     additionalBinIncludes);
             bundleDesc.apply(monitor);
-            // Adding IncQuery-specific natures
+            // Adding VIATRA-CEP-specific natures
             ProjectGenerationHelper.updateNatures(proj,
                     ImmutableList.of(ViatraCepNature.XTEXT_NATURE_ID, ViatraCepNature.NATURE_ID),
                     ImmutableList.<String> of(), monitor);
@@ -153,7 +154,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Adds a file to a container.
-     * 
+     *
      * @param container
      *            the container to add the file to
      * @param path
@@ -185,7 +186,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -201,7 +202,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Initializes the plug-in metadata of a newly created project.
-     * 
+     *
      * @param project
      *            the plug-in project to create the metadata for. The plug-in id will be the same as the project name
      * @param dependencies
@@ -234,7 +235,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Checks whether the project depends on a selected bundle ID
-     * 
+     *
      * @param project
      *            an existing, open plug-in project to check
      * @param dependency
@@ -248,7 +249,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -268,7 +269,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -280,7 +281,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected package imports are set. Does not change existing package imports
      * or required bundle declarations.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -292,7 +293,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param project
      *            an existing, open PDE plug-in project
      * @param dependencies
@@ -309,7 +310,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -330,7 +331,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param dependencies
@@ -372,7 +373,7 @@ public abstract class ProjectGenerationHelper {
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param packageImports
@@ -395,7 +396,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param project
      * @param dependencies
      * @throws CoreException
@@ -407,7 +408,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param project
      *            an existing, open PDE plug-in project
      * @param exports
@@ -426,7 +427,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -441,7 +442,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
-     * 
+     *
      * @param project
      *            an existing, open plug-in project
      * @param dependencies
@@ -459,7 +460,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -474,7 +475,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are exported. Does not change existing exports.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param exports
@@ -505,7 +506,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
-     * 
+     *
      * @param service
      * @param bundleDesc
      * @param exports
@@ -525,8 +526,19 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
+     * Updates project manifest to ensure the selected packages are removed. Does not change existing exports.
+     *
+     * @param project
+     * @param dependencies
+     * @throws CoreException
+     */
+    public static void removePackageExports(IProject project, List<String> dependencies) throws CoreException {
+        removePackageExports(project, dependencies, new NullProgressMonitor());
+    }
+
+    /**
      * Ensures that the project contains the src and src-gen folders as source folders.
-     * 
+     *
      * @param project
      *            an existing, open plug-in project
      * @param monitor
@@ -538,7 +550,7 @@ public abstract class ProjectGenerationHelper {
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
-            context = Activator.getDefault().getBundle().getBundleContext();
+            context = Activator.getContext();
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
@@ -553,7 +565,7 @@ public abstract class ProjectGenerationHelper {
 
     /**
      * Returns an updated the classpath entries of a project by ensuring all required source folders are present.
-     * 
+     *
      * @param service
      * @return
      */

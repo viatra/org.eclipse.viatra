@@ -7,8 +7,10 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra.cep.vepl.ui.builder.VeplBuilderParticipant;
 import org.eclipse.viatra.cep.vepl.ui.syntaxhighlight.CepDslAntlrTokenToAttributeIdMapper;
 import org.eclipse.viatra.cep.vepl.ui.syntaxhighlight.CepDslHighlightingConfiguration;
+import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -44,6 +46,10 @@ public class VeplUiModule extends org.eclipse.viatra.cep.vepl.ui.AbstractVeplUiM
         binder.bind(String.class)
                 .annotatedWith(Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
                 .toInstance(".,");
+    }
+
+    public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
+        return VeplBuilderParticipant.class;
     }
 
     public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA-CEP Tooling Core
+Bundle-SymbolicName: org.eclipse.viatra.cep.tooling.core
+Bundle-Version: 0.7.0.qualifier
+Bundle-Activator: org.eclipse.viatra.cep.tooling.core.internal.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources;bundle-version="3.9.0",
+ org.eclipse.pde;bundle-version="3.8.200",
+ org.eclipse.pde.core;bundle-version="3.10.0",
+ org.eclipse.xtext.xbase;bundle-version="2.7.3",
+ org.eclipse.xtext.xtext.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.viatra.cep.tooling.core.nature,
+ org.eclipse.viatra.cep.tooling.core.project
+Bundle-Vendor: Eclipse VIATRA Project

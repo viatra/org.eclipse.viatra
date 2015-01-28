@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.viatra.cep.tooling.core.project.ProjectGenerationHelper;
 
 public class CreateProjectOperation extends WorkspaceModifyOperation {
     private final IProject projectHandle;

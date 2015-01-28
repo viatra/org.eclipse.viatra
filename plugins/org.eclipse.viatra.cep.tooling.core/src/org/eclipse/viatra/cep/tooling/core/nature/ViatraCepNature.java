@@ -10,7 +10,7 @@
  *   Istvan David - updated for VIATRA-CEP
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.tooling.ui.nature;
+package org.eclipse.viatra.cep.tooling.core.nature;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;

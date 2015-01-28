@@ -520,5 +520,11 @@
             extensions="vepl">
     </provider>
   </extension>
+  <extension
+         point="org.eclipse.xtext.builder.participant">
+      <participant
+            class="org.eclipse.viatra.cep.vepl.ui.VeplExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+      </participant>
+   </extension>
 
 </plugin>
