@@ -30,14 +30,14 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-		 
+
    <plugin
          id="org.eclipse.viatra.cep.tooling.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-		 
+
    <plugin
          id="org.eclipse.viatra.cep.vepl"
          download-size="0"
@@ -47,6 +47,13 @@
 
    <plugin
          id="org.eclipse.viatra.cep.vepl.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.cep.tooling.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
