@@ -180,18 +180,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</repository>
-		<repository>
-			<id>fornax.repository</id>
-			<name>Fornax Repository</name>
-			<url>https://projects.itemis.de/nexus/content/groups/public/</url>
-		</repository>
-	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>central</id>
@@ -199,19 +187,9 @@
 			<url>http://repo.maven.apache.org/maven2</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>fornax.plugin.repository</id>
-			<name>Fornax Plugin Repository</name>
-			<url>https://projects.itemis.de/nexus/content/groups/public/</url>
-		</pluginRepository>
-		<pluginRepository>
 			<id>eclipse.plugin.repository</id>
 			<name>repo.eclipse.org Plug-in repository</name>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>sonatype.snapshot.repository</id>
-			<name>Sonatype OSS snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>incquery-snapshots</id>
