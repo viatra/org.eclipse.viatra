@@ -55,11 +55,11 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(2).before(usages)
 		c.setLinewrap(2).after(usages)
 
-		for (k : grammar.findKeywords("uses")) {
+		for (k : grammar.findKeywords("import")) {
 			c.setLinewrap.before(k)
 		}
 
-		for (k : grammar.findKeywords("uses-patterns")) {
+		for (k : grammar.findKeywords("import-queries")) {
 			c.setLinewrap.before(k)
 		}
 
@@ -70,21 +70,21 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(2).before(grammar.sourceAccess.rule)
 
 		//handle line breaks and indentation in patterns' and rules' bodies
-		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_5)
+		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_3_0)
 		c.lineBreakAndIncrementIndentation(grammar.queryResultChangeEventPatternAccess.leftCurlyBracketKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.complexEventPatternAccess.leftCurlyBracketKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.ruleAccess.leftCurlyBracketKeyword_2)
 		c.lineBreakAndIncrementIndentation(grammar.sourceAccess.leftCurlyBracketKeyword_2)
 
-		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_8)
+		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_3_3)
 		c.lineBreakAndDecrementIndentation(grammar.queryResultChangeEventPatternAccess.rightCurlyBracketKeyword_10)
 		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_7)
 		c.lineBreakAndDecrementIndentation(grammar.ruleAccess.rightCurlyBracketKeyword_9)
 		c.lineBreakAndDecrementIndentation(grammar.sourceAccess.rightCurlyBracketKeyword_4)
 
 		//handle line breaks in ATOMIC bodies
-		c.setLinewrap().after(grammar.atomicEventPatternAccess.sourceAssignment_6_2)
-		c.setLinewrap().after(grammar.atomicEventPatternAccess.staticBindingsAssignment_7_1)
+		c.setLinewrap().after(grammar.atomicEventPatternAccess.sourceAssignment_3_1_2)
+		c.setLinewrap().after(grammar.atomicEventPatternAccess.staticBindingsAssignment_3_2_1)
 
 		c.lineBreakAndIncrementIndentation(grammar.XBlockExpressionAccess.leftCurlyBracketKeyword_1)
 		c.lineBreakAndDecrementIndentation(grammar.XBlockExpressionAccess.rightCurlyBracketKeyword_3)
