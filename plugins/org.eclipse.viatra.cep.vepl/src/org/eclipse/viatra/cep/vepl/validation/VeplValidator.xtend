@@ -36,6 +36,7 @@ class VeplValidator extends AbstractVeplValidator {
 	private static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
 	private static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
 	private static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
+	private static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -147,6 +148,17 @@ class VeplValidator extends AbstractVeplValidator {
 				"Multiplicity should be a positive integer.",
 				VeplPackage.Literals.MULTIPLICITY__VALUE,
 				NON_POSITIVE_MULTIPLICITY
+			)
+		}
+	}
+
+	@Check
+	def infiniteMultiplicityNotYetSupported(Atom atom) {
+		if (atom.multiplicity instanceof Infinite) {
+			error(
+				"Infinite multiplicity not yet supported.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+				NO_INFINITE_SUPPORT
 			)
 		}
 	}
