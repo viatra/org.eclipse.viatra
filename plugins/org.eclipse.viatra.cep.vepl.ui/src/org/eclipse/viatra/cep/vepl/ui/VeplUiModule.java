@@ -48,6 +48,7 @@ public class VeplUiModule extends org.eclipse.viatra.cep.vepl.ui.AbstractVeplUiM
                 .toInstance(".,");
     }
 
+    @Override
     public Class<? extends IXtextBuilderParticipant> bindIXtextBuilderParticipant() {
         return VeplBuilderParticipant.class;
     }

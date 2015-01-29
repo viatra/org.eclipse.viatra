@@ -249,12 +249,6 @@
 	</extension>
 
    <extension
-         point="org.eclipse.xtext.builder.participant">
-      <participant
-            class="org.eclipse.viatra.cep.vepl.ui.VeplExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
-      </participant>
-   </extension>
-   <extension
             point="org.eclipse.ui.preferencePages">
         <page
             category="org.eclipse.viatra.cep.vepl.Vepl"
