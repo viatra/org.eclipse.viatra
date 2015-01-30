@@ -19,6 +19,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.GenericPatternGroup;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
@@ -45,11 +46,11 @@ public class BatchTransformation {
 	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
 	public BatchTransformation(Resource resource) throws IncQueryException {
-		this(AdvancedIncQueryEngine.createUnmanagedEngine(resource));
+		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
 	}
 
 	public BatchTransformation(ResourceSet set) throws IncQueryException {
-		this(AdvancedIncQueryEngine.createUnmanagedEngine(set));
+		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
 	public BatchTransformation(RuleEngine ruleEngine,
