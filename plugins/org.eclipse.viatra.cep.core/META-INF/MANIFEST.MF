@@ -15,7 +15,7 @@ Export-Package: org.eclipse.viatra.cep.core.api.engine,
  org.eclipse.viatra.cep.core.engine.runtime,
  org.eclipse.viatra.cep.core.engine.runtime.util,
  org.eclipse.viatra.cep.core.streams
-Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.10.1",
+Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.core.runtime,
  org.apache.log4j;visibility:=reexport,
  com.google.guava,
