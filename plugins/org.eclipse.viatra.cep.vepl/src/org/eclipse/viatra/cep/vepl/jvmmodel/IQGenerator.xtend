@@ -26,11 +26,11 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
-import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
-import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
-import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformation
-import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule
-import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
+import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
+import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule
+import org.eclipse.viatra.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
@@ -88,7 +88,7 @@ class IQGenerator {
 			registerMappingMethod.setStatic(true)
 			members += registerMappingMethod
 			members += model.toMethod("getRules",
-				typeRefBuilder.typeRef("org.eclipse.viatra2.emf.runtime.rules.EventDrivenTransformationRuleGroup")) [
+				typeRefBuilder.typeRef("org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup")) [
 				body = [
 					append(
 						'''

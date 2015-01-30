@@ -22,10 +22,10 @@ import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState
-import org.eclipse.viatra2.emf.runtime.rules.EventDrivenTransformationRuleGroup
-import org.eclipse.viatra2.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
-import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.EventDrivenTransformation
-import org.eclipse.viatra2.emf.runtime.transformation.eventdriven.RuleOrderBasedFixedPriorityResolver
+import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
+import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
+import org.eclipse.viatra.emf.runtime.transformation.eventdriven.RuleOrderBasedFixedPriorityResolver
 
 import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 import org.eclipse.xtend.lib.annotations.Accessors

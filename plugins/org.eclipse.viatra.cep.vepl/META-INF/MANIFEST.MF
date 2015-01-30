@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.7.0,2.8.0)";visibility:=ree
  org.eclipse.xtext.common.types;bundle-version="[2.7.0,2.8.0)",
  org.eclipse.xtext.xbase.lib;bundle-version="[2.7.0,2.8.0)",
  org.eclipse.viatra.cep.core.metamodels,
- org.eclipse.viatra2.emf.runtime,
+ org.eclipse.viatra.emf.runtime,
  org.eclipse.viatra.cep.core,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
 Import-Package: org.apache.log4j,

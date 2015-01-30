@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="Generated from VIATRA-EMF" sequenceNumber="34">
+  <locations>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="org.eclipse.incquery.patternlanguage" version="0.8.1.201410011502"/>
+      <unit id="org.eclipse.incquery.runtime.evm" version="0.8.1.201410011502"/>
+      <repository location="http://download.eclipse.org/incquery/updates-extra/release/"/>
+    </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="org.eclipse.sdk.feature.group" version="4.4.0.v20140925-0400"/>
+      <repository location="http://download.eclipse.org/releases/luna"/>
+    </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.2.v201407030533"/>
+      <repository location="http://download.itemis.com/updates/releases"/>
+    </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+      <repository location="http://download.eclipse.org/cbi/updates/license"/>
+    </location>
+  </locations>
+</target>

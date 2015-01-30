@@ -60,7 +60,7 @@
   <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.viatra.emf"
-      remoteURI="viatra2/org.eclipse.viatra2.emf">
+      remoteURI="viatra/org.eclipse.viatra.emf">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail
@@ -87,7 +87,7 @@
           source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
         <detail
             key="location">
-          <value>${git.clone.viatra.emf.location/releng/org.eclipse.viatra2.emf.target/org.eclipse.viatra2.emf-oomphgen.target}</value>
+          <value>${git.clone.viatra.emf.location/releng/org.eclipse.viatra.emf.target/org.eclipse.viatra.emf-oomphgen.target}</value>
         </detail>
         <detail
             key="includeAllPlatforms">
@@ -103,17 +103,17 @@
         </detail>
       </annotation>
       <requirement
-          name="org.eclipse.viatra2.emf.runtime.feature.feature.group"/>
+          name="org.eclipse.viatra.emf.runtime.feature.feature.group"/>
       <requirement
           name="org.eclipse.viatra.cep.feature.feature.group"/>
       <requirement
           name="org.eclipse.viatra.dse.feature.feature.group"/>
       <requirement
-          name="org.eclipse.viatra2.emf.parent"/>
+          name="org.eclipse.viatra.emf.parent"/>
       <requirement
-          name="org.eclipse.viatra2.emf.target"/>
+          name="org.eclipse.viatra.emf.target"/>
       <requirement
-          name="org.eclipse.viatra2.emf.update"/>
+          name="org.eclipse.viatra.emf.update"/>
       <requirement
           name="org.eclipse.viatra.setup"/>
       <requirement
@@ -210,10 +210,10 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra2.emf.runtime.feature"/>
+            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern=".*viatra2\.emf\.runtime"/>
+            pattern=".*viatra\.emf\.runtime"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -222,7 +222,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra2.emf.runtime.feature"/>
+            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.cep.*"/>
@@ -235,7 +235,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra2.emf.runtime.feature"/>
+            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.dse.*"/>
@@ -248,7 +248,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra2.emf.runtime.feature"/>
+            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*feature"/>
@@ -261,7 +261,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra2.emf.runtime.feature"/>
+            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:OrPredicate">
           <operand
