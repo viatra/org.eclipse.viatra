@@ -49,6 +49,11 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<argLine>${vmargs}</argLine>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
+						<include>**/*Suite.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>
