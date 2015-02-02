@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.api.strategy.interfaces;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 
-public interface IStrategyFactory {
+public interface IExplorerThreadFactory {
 
     IExplorerThread createStrategy(ThreadContext context);
 }

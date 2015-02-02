@@ -33,7 +33,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
@@ -126,9 +126,13 @@ public class DesignSpaceExplorer {
     public DesignSpaceExplorer() {
         setSerializerFactory(new GraphHasherFactory());
         setDesignspace(new ConcurrentDesignSpace());
-        // setDesignspace(new EMFDesignSpace());
     }
 
+    /**
+     * Adds a metamodel in the form of {@link EPackage}, which is needed for certain guidance.
+     * 
+     * @param metaModelPackage
+     */
     public void addMetaModelPackage(EPackage metaModelPackage) {
         metaModelPackages.add(metaModelPackage);
     }
@@ -136,14 +140,14 @@ public class DesignSpaceExplorer {
     /**
      * Defines the starting model of the algorithm, and whether it is supposed to be used to execute the DSE process or
      * it should be cloned. Please note that in multithreaded mode any subsequent threads will be working on cloned
-     * models!
+     * models.
      * 
      * @param rootEObject
      *            The root object of the EMF model.
      * @param deepCopyModel
      *            If it is set to true, the algorithm will run in cloned model.
      */
-    public void setStartingModel(EObject rootEObject, boolean deepCopyModel) {
+    public void setInitialModel(EObject rootEObject, boolean deepCopyModel) {
 
         EObject copiedEObject = rootEObject;
 
@@ -160,8 +164,24 @@ public class DesignSpaceExplorer {
      * @param rootEObject
      *            The root object of the EMF model. It will be cloned on default.
      */
+    public void setInitialModel(EObject rootEObject) {
+        setInitialModel(rootEObject, true);
+    }
+
+    /**
+     * @deprecated Use setInitialModel instead.
+     */
+    @Deprecated
+    public void setStartingModel(EObject rootEObject, boolean deepCopyModel) {
+        setInitialModel(rootEObject, deepCopyModel);
+    }
+
+    /**
+     * @deprecated Use setInitialModel instead.
+     */
+    @Deprecated
     public void setStartingModel(EObject rootEObject) {
-        setStartingModel(rootEObject, true);
+        setInitialModel(rootEObject, true);
     }
 
     /**
@@ -190,19 +210,29 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Add the a global constraint to the exploration process.
+     * Adds a global constraint to the exploration process. Please see the {@link IGlobalConstraint} interface and its
+     * implementations for details.
      * 
      * @param constraint
      *            The global constraint.
+     * @see IGlobalConstraint
      */
     public void addGlobalConstraint(IGlobalConstraint constraint) {
         globalContext.getGlobalConstraints().add(constraint);
     }
 
+    /**
+     * Adds an objective the the exploration process. Please see the {@link IObjective} interface and its
+     * implementations for details.
+     * 
+     * @param objective
+     *            The objective.
+     * @see IObjective
+     */
     public void addObjective(IObjective objective) {
         globalContext.getObjectives().add(objective);
     }
-    
+
     /**
      * Sets a {@link IStateSerializerFactory} for which will be used for creating {@link IStateSerializer}s.
      * 
@@ -213,23 +243,23 @@ public class DesignSpaceExplorer {
         globalContext.setStateSerializerFactory(serializerFactory);
     }
 
+    @Deprecated
     public void setGuidance(Guidance guidance) {
         this.guidance = guidance;
     }
 
+    @Deprecated
     public void setPredicatesForOcVectorResolving(List<Predicate> predicates) {
         this.predicates = predicates;
     }
 
     /**
      * Defines the maximum processing threads that the design space exploration can use. Note, that this is only
-     * limiting the threads doing the actual calculation. By default this value will be set to the number of processors
-     * in the computer, reported by {@link Runtime#availableProcessors()}. Right now cores that are capable of parallel
-     * execution <b>are not considered</b> (e.g. HyperThreading) and achieving <b>optimal performance may require manual
-     * configuration</b> of this value.
+     * limiting the threads doing the actual calculation. By default this value will be set to the number of logical
+     * processors (including HyperThreading) in the computer, reported by {@link Runtime#availableProcessors()}.
      * 
      * @param maxNumberOfThreads
-     *            the number of maximum processing threads available to the design space exploration process.
+     *            The number of maximum processing threads available to the design space exploration process.
      */
     public void setMaxNumberOfThreads(int maxNumberOfThreads) {
         globalContext.getThreadPool().setMaximumPoolSize(maxNumberOfThreads);
@@ -240,22 +270,51 @@ public class DesignSpaceExplorer {
      * default, the {@link ConcurrentDesignSpace} implementation is used.
      * 
      * @param designspace
-     *            the {@link IDesignSpace} implementation.
+     *            The {@link IDesignSpace} implementation.
      */
     public final void setDesignspace(IDesignSpace designspace) {
         globalContext.setDesignSpace(designspace);
     }
 
+    /**
+     * Sets the solution store. Please see the {@link ISolutionStore} interface and its implementations for details.
+     * 
+     * @param solutionStore
+     *            The {@link ISolutionStore} implementation.
+     */
     public void setSolutionStore(ISolutionStore solutionStore) {
         globalContext.setSolutionStore(solutionStore);
     }
 
-    public void setStrategyFactory(IStrategyFactory factory) {
+    /**
+     * By Setting the {@link IExplorerThreadFactory} the default behavior of the exploration process can be overridden.
+     * For advanced users only.
+     * 
+     * @param factory
+     */
+    public void setStrategyFactory(IExplorerThreadFactory factory) {
         globalContext.setStrategyFactory(factory);
     }
 
-    public void setSharedObject(Object sharedObject) {
-        globalContext.setSharedObject(sharedObject);
+    /**
+     * Starts the design space exploration. It returns only when the strategy decides to stop the execution.
+     * 
+     * @param strategy
+     *            The strategy of the exploration.
+     */
+    public void startExploration(IStrategy strategy) {
+        startExploration(strategy, true);
+    }
+
+    /**
+     * Starts the design space exploration asynchronously. Completion of the process can be verified by calling
+     * {@link DesignSpaceExplorer#isDone()}.
+     * 
+     * @param strategy
+     *            The strategy of the exploration.
+     */
+    public void startExplorationAsync(IStrategy strategy) {
+        startExploration(strategy, false);
     }
 
     /**
@@ -267,11 +326,10 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      * @param waitForTermination
      *            True if the method must wait for the engine to stop.
-     * @throws DSEException
-     *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
-     *             {@link RuntimeException}, so it may be left unchecked.
+     * @deprecated Use startExploration(strategy) or startExplorationAsync(strategy) instead.
      */
-    public void startExploration(IStrategy strategy, boolean waitForTermination) throws DSEException {
+    @Deprecated
+    public void startExploration(IStrategy strategy, boolean waitForTermination) {
         initExploration(strategy);
 
         // wait until all threads exit
@@ -297,9 +355,6 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      * @param waitInMilliseconds
      *            The number of milliseconds the method must wait for stopping the exploration.
-     * @throws DSEException
-     *             On any execution error, a {@link DSEException} is thrown. It's is a descendant of
-     *             {@link RuntimeException}, so it may be left unchecked.
      */
     public void startExploration(IStrategy strategy, int waitInMilliseconds) throws DSEException {
         initExploration(strategy);
@@ -336,8 +391,8 @@ public class DesignSpaceExplorer {
         if (guidance != null) {
 
             guidance.setRules(globalContext.getTransformations());
-//            guidance.setConstraints(globalContext.getConstraints());
-//            guidance.setGoalPatterns(globalContext.getGoalPatterns());
+            // guidance.setConstraints(globalContext.getConstraints());
+            // guidance.setGoalPatterns(globalContext.getGoalPatterns());
 
             // create rule dependency graph
             guidance.resolveDependencyGraph();
@@ -357,10 +412,6 @@ public class DesignSpaceExplorer {
         threadContext.setGuidance(guidance);
 
         globalContext.tryStartNewThread(threadContext, false);
-    }
-
-    public void resetForNewExlporation() {
-        globalContext.reset();
     }
 
     private void processEObject(Map<EModelElement, Integer> initialMarking, EObject eObject) {
@@ -419,6 +470,14 @@ public class DesignSpaceExplorer {
     }
 
     /**
+     * 
+     * @deprecated Use getSolutions() instead.
+     */
+    public Collection<Solution> getAllSolutions() {
+        return getSolutions();
+    }
+
+    /**
      * Returns all of the found {@link Solution}s, trajectories. Call it after
      * {@link DesignSpaceExplorer#startExploration()}. Calling this while the process is running returns the solutions
      * that have been found <b>so far</b>. The returned {@link Solution} objects may change internal state after they
@@ -426,25 +485,21 @@ public class DesignSpaceExplorer {
      * 
      * @return The found solutions.
      */
-    public Collection<Solution> getAllSolutions() {
+    public Collection<Solution> getSolutions() {
         return globalContext.getSolutionStore().getSolutions();
     }
 
-    private int lastSolutions = 0;
-
-    public Collection<Solution> getAllSolutions(int waitForTheNextXSolutions, int waitingIntervalInMilisec) {
-
-        while (globalContext.getSolutionStore().getSolutions().size() < lastSolutions + waitForTheNextXSolutions) {
-            try {
-                Thread.sleep(waitingIntervalInMilisec);
-            } catch (InterruptedException e) {
-
-            }
+    /**
+     * Returns an arbitrary solution trajectory or null if the exploration failed to find any.
+     * 
+     * @return An arbitrary solution trajectory.
+     */
+    public SolutionTrajectory getArbitrarySolution() {
+        Collection<Solution> solutions = getSolutions();
+        if (solutions.isEmpty()) {
+            return null;
         }
-
-        lastSolutions += waitForTheNextXSolutions;
-
-        return globalContext.getSolutionStore().getSolutions();
+        return solutions.iterator().next().getArbitraryTrajectory();
     }
 
     /**
@@ -466,6 +521,12 @@ public class DesignSpaceExplorer {
         return globalContext.getDesignSpace().getNumberOfTransitions();
     }
 
+    /**
+     * Returns the {@link EPackage}s, which were registered with the
+     * {@link DesignSpaceExplorer#addMetaModelPackage(EPackage)} method.
+     * 
+     * @return The set of meta model packages.
+     */
     public Set<EPackage> getMetaModelPackages() {
         return metaModelPackages;
     }
@@ -479,6 +540,11 @@ public class DesignSpaceExplorer {
         return globalContext.isDone();
     }
 
+    /**
+     * Returns the {@link GlobalContext} which holds the configurations such as rule, objectives, etc.
+     * 
+     * @return The global context.
+     */
     public GlobalContext getGlobalContext() {
         return globalContext;
     }

@@ -27,7 +27,7 @@ import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
@@ -62,7 +62,7 @@ public class GlobalContext {
     private ConcurrentLinkedQueue<Throwable> exceptions = new ConcurrentLinkedQueue<Throwable>();
 
     private volatile ExplorationProcessState state = ExplorationProcessState.NOT_STARTED;
-    private IStrategyFactory strategyFactory = new StrategyFactory();
+    private IExplorerThreadFactory strategyFactory = new StrategyFactory();
     private final Set<IExplorerThread> runningThreads = new HashSet<IExplorerThread>();
     private DSEThreadPool threadPool = new DSEThreadPool();
     private int numberOfStartedThreads = 0;
@@ -302,11 +302,11 @@ public class GlobalContext {
         return threadPool;
     }
 
-    public IStrategyFactory getStrategyFactory() {
+    public IExplorerThreadFactory getStrategyFactory() {
         return strategyFactory;
     }
 
-    public void setStrategyFactory(IStrategyFactory strategyFactory) {
+    public void setStrategyFactory(IExplorerThreadFactory strategyFactory) {
         this.strategyFactory = strategyFactory;
     }
 

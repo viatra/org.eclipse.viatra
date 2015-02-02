@@ -11,11 +11,11 @@
 package org.eclipse.viatra.dse.api.strategy;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
-public class StrategyFactory implements IStrategyFactory {
+public class StrategyFactory implements IExplorerThreadFactory {
 
     @Override
     public IExplorerThread createStrategy(ThreadContext context) {

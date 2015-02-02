@@ -45,7 +45,7 @@ public class GeneticDesignSpaceExplorer {
     public GeneticDesignSpaceExplorer() {
         dse = new DesignSpaceExplorer();
         configuration = new GeneticSharedObject();
-        dse.setSharedObject(configuration);
+        dse.getGlobalContext().setSharedObject(configuration);
         dse.setSolutionStore(new DummySolutionStore());
     }
 
