@@ -28,15 +28,15 @@ import org.eclipse.xtext.validation.Check
 
 class VeplValidator extends AbstractVeplValidator {
 
-	private static val INVALID_NAME = 'invalidName'
-	private static val INVALID_ARGUMENTS = 'invalidArguments'
-	private static val INVALID_ACTION_IN_RULE = "invalidRuleActions"
-	private static val MISSING_IQPATTERN_USAGE = "missingIqPatternUsage"
-	private static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
-	private static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
-	private static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
-	private static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
-	private static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
+	public static val INVALID_NAME = 'invalidName'
+	public static val INVALID_ARGUMENTS = 'invalidArguments'
+	public static val INVALID_ACTION_IN_RULE = "invalidRuleActions"
+	public static val MISSING_QUERY_IMPORT = "missingQueryImport"
+	public static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
+	public static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
+	public static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
+	public static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
+	public static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -77,22 +77,6 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
-	@Check
-	def checkRuleActions(Rule rule) {
-		var actionHandler = rule.actionHandler
-		var action = rule.action
-
-		if (actionHandler == null && action == null) {
-			error("There must be either an action handler or an action registered for this rule.",
-				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
-		}
-
-		if (actionHandler != null && action != null) {
-			error("The rule has both an action handler and additional actions defined.",
-				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
-		}
-	}
-
 	def private int getParameterNumber(EventPattern eventPattern) {
 		switch (eventPattern) {
 			AtomicEventPattern: getTypedParamterListSize(eventPattern.parameters)
@@ -109,13 +93,29 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 	@Check
-	def explicitlyImportedIQPatternPackage(QueryResultChangeEventPattern iqPatternEventPattern) {
+	def checkRuleActions(Rule rule) {
+		var actionHandler = rule.actionHandler
+		var action = rule.action
+
+		if (actionHandler == null && action == null) {
+			error("There must be either an action handler or an action registered for this rule.",
+				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
+		}
+
+		if (actionHandler != null && action != null) {
+			error("The rule has both an action handler and additional actions defined.",
+				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
+		}
+	}
+
+	@Check
+	def explicitlyImportedQueryPackage(QueryResultChangeEventPattern iqPatternEventPattern) {
 		var eventModel = (iqPatternEventPattern.eContainer as EventModel)
 		if (!(eventModel.imports.filter[i|i instanceof QueryImport].size == 1)) {
 			error(
 				"Missing 'import-patterns' statement for query reference.",
 				VeplPackage.Literals.QUERY_RESULT_CHANGE_EVENT_PATTERN__QUERY_REFERENCE,
-				MISSING_IQPATTERN_USAGE
+				MISSING_QUERY_IMPORT
 			)
 		}
 	}
@@ -137,17 +137,6 @@ class VeplValidator extends AbstractVeplValidator {
 				"One atomic event does not result in a valid complex event.",
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
 				ATOM_TIMEWINDOW_NO_MULTIPLICITY
-			)
-		}
-	}
-
-	@Check
-	def positiveMultiplicity(Multiplicity multiplicity) {
-		if (multiplicity != null && multiplicity.value < 1) {
-			error(
-				"Multiplicity should be a positive integer.",
-				VeplPackage.Literals.MULTIPLICITY__VALUE,
-				NON_POSITIVE_MULTIPLICITY
 			)
 		}
 	}
