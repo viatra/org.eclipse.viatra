@@ -15,14 +15,11 @@ import org.junit.Test
 
 import static org.junit.Assert.*
 
-class AtomicTests extends ComplexVeplTestCase {
+class ComplexTests extends ComplexVeplTestCase {
 
 	@Test
 	def void parseFollows() {
 		val model = '''
-			AtomicEvent a1
-			AtomicEvent a2
-			
 			ComplexEvent c(){
 				definition: a1->a2
 			}
