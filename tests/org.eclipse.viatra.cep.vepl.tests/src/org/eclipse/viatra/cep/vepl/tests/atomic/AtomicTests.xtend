@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.tests.atomic
 
+import org.eclipse.viatra.cep.vepl.VeplInjectorProvider
 import org.eclipse.viatra.cep.vepl.tests.VeplTestCase
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
 import org.junit.Test
+import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 
+@InjectWith(VeplInjectorProvider)
+@RunWith(XtextRunner)
 class AtomicTests extends VeplTestCase {
 
 	@Test
