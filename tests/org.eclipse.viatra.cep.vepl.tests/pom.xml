@@ -41,6 +41,10 @@
 							<goal>compile</goal>
 							<goal>testCompile</goal>
 						</goals>
+						 <configuration>
+							<outputDirectory>${project.build.directory}/src</outputDirectory>
+							<testOutputDirectory>${project.build.directory}/xtend-gen/test</testOutputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -52,13 +56,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-			<resource>
-				<directory>xtend-gen</directory>
-			</resource>
-		</resources>
 	</build>
 </project>
