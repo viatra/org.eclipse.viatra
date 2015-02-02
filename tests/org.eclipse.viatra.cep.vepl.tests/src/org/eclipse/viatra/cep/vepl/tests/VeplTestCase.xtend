@@ -25,8 +25,8 @@ import org.junit.runner.RunWith
  * @author Istvan David
  * 
  */
-@InjectWith(VeplInjectorProvider)
-@RunWith(XtextRunner)
+@InjectWith(typeof(VeplInjectorProvider))
+@RunWith(typeof(XtextRunner))
 abstract class VeplTestCase {
 
 	@Inject

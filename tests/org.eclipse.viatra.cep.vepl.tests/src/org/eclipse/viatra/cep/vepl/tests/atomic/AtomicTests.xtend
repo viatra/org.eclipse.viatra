@@ -20,8 +20,8 @@ import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
 
-@InjectWith(VeplInjectorProvider)
-@RunWith(XtextRunner)
+@InjectWith(typeof(VeplInjectorProvider))
+@RunWith(typeof(XtextRunner))
 class AtomicTests extends VeplTestCase {
 
 	@Test
