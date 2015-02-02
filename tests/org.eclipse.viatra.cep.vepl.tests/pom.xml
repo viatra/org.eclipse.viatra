@@ -52,7 +52,6 @@
 					<includes>
 						<include>**/*Test.java</include>
 						<include>**/*Tests.java</include>
-						<include>**/*Suite.java</include>
 					</includes>
 				</configuration>
 			</plugin>
