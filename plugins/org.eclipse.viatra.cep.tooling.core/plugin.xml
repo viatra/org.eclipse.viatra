@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.eclipse.viatra.cep.projectnature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.viatra.cep.tooling.core.nature.ViatraCepNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.viatra.cep.tooling.ui.projectbuilder">
+      </builder>
+   </extension>
+</plugin>
