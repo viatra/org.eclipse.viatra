@@ -4,7 +4,7 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.viatra</groupId>
-	<artifactId>org.eclipse.viatra.emf.parent</artifactId>
+	<artifactId>org.eclipse.viatra.parent</artifactId>
 	<name>VIATRA EMF Support</name>
 	<url>http://eclipse.org/viatra2</url>
 	<version>0.7.0-SNAPSHOT</version>
@@ -12,7 +12,7 @@
 	<modules>
 		<module>../../plugins/org.eclipse.viatra.emf.runtime</module>
 
-		<module>../../releng/org.eclipse.viatra.emf.target</module>
+		<module>../../releng/org.eclipse.viatra.target</module>
 	</modules>
 	<properties>
 		<tycho.version>0.20.0</tycho.version>
@@ -50,7 +50,7 @@
 					<target>
 						<artifact>
 							<groupId>org.eclipse.viatra</groupId>
-							<artifactId>org.eclipse.viatra.emf.target</artifactId>
+							<artifactId>org.eclipse.viatra.target</artifactId>
 							<version>0.7.0-SNAPSHOT</version>
 						</artifact>
 					</target>
@@ -195,7 +195,7 @@
 				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
 				<module>../../features/org.eclipse.viatra.cep.feature</module>
 				<module>../../features/org.eclipse.viatra.dse.feature</module>
-				<module>../../releng/org.eclipse.viatra.emf.update</module>
+				<module>../../releng/org.eclipse.viatra.update</module>
 			</modules>
 		</profile>
 		<profile>

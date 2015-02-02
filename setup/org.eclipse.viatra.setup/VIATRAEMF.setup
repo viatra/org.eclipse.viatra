@@ -87,7 +87,7 @@
           source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
         <detail
             key="location">
-          <value>${git.clone.viatra.emf.location/releng/org.eclipse.viatra.emf.target/org.eclipse.viatra.emf-oomphgen.target}</value>
+          <value>${git.clone.viatra.emf.location/releng/org.eclipse.viatra.target/org.eclipse.viatra.emf-oomphgen.target}</value>
         </detail>
         <detail
             key="includeAllPlatforms">
@@ -109,11 +109,11 @@
       <requirement
           name="org.eclipse.viatra.dse.feature.feature.group"/>
       <requirement
-          name="org.eclipse.viatra.emf.parent"/>
+          name="org.eclipse.viatra.parent"/>
       <requirement
-          name="org.eclipse.viatra.emf.target"/>
+          name="org.eclipse.viatra.target"/>
       <requirement
-          name="org.eclipse.viatra.emf.update"/>
+          name="org.eclipse.viatra.update"/>
       <requirement
           name="org.eclipse.viatra.setup"/>
       <requirement
