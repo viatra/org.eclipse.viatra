@@ -24,10 +24,6 @@ public interface IPatternAnnotationValidator {
 
     Iterable<String> getMissingMandatoryAttributes(Annotation annotation);
 
-    /**
-     * @param annotation
-     * @return
-     */
     Iterable<AnnotationParameter> getUnknownAttributes(Annotation annotation);
 
     /**

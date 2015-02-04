@@ -50,9 +50,7 @@ public final class DatabindingAdapterUtil {
     }
 
     /**
-     * @param pattern
-     * @return
-     * @deprecated Use {@link DatabindingUtil#calculateObservableValues(IQuerySpecification<?>)} instead
+     * @deprecated Use {@link IncQueryObservables#calculateObservableValues(IQuerySpecification) } instead
      */
     public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
         return IncQueryObservables.calculateObservableValues(query);

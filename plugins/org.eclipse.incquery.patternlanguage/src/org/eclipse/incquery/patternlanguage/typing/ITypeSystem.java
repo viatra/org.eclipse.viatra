@@ -28,7 +28,6 @@ public interface ITypeSystem {
      * 
      * @param expectedType
      * @param actualType
-     * @return
      */
     boolean isConformant(Object expectedType, Object actualType);
 
@@ -37,7 +36,6 @@ public interface ITypeSystem {
      * 
      * @param relationType
      * @param sourceType
-     * @return
      */
     boolean isConformToRelationSource(Object relationType, Object sourceType);
 
@@ -46,7 +44,6 @@ public interface ITypeSystem {
      * 
      * @param relationType
      * @param targetType
-     * @return
      */
     boolean isConformToRelationTarget(Object relationType, Object targetType);
 
@@ -63,7 +60,6 @@ public interface ITypeSystem {
      * Extracts the model-specific source type from a RelationType declaration
      * 
      * @param type
-     * @return
      */
     Object extractSourceTypeDescriptor(RelationType type);
 
@@ -71,7 +67,6 @@ public interface ITypeSystem {
      * Extracts the model-specific target type from a {@link RelationType} declaration.
      * 
      * @param type
-     * @return
      */
     Object extractTargetTypeDescriptor(RelationType type);
 
@@ -80,7 +75,6 @@ public interface ITypeSystem {
      * 
      * @param type
      * @param context
-     * @return
      */
     JvmTypeReference toJvmTypeReference(Object type, EObject context);
 

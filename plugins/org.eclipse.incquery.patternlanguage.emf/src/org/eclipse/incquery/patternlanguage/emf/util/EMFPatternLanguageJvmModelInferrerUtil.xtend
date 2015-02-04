@@ -183,7 +183,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	 * See the XBaseUsageCrossReferencer class, possible solution for local variable usage
 	 * TODO: improve type calculation
 	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
-	 * @see ITypeProvider
 	 * @see EMFPatternTypeProvider
 	 */
    	def JvmTypeReference calculateType(Variable variable) {

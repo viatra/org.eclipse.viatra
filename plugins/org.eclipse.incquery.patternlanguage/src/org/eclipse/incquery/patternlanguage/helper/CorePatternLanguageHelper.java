@@ -61,7 +61,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-@SuppressWarnings("restriction")
 public final class CorePatternLanguageHelper {
 
     private CorePatternLanguageHelper() {

@@ -20,9 +20,6 @@ import com.google.inject.Inject;
 
 public class EMFPatternLanguageSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 
-    /**
-     * 
-     */
     private static final String RULE_PREFIX = "RULE_";
     @Inject
     EMFPatternLanguageGrammarAccess grammar;

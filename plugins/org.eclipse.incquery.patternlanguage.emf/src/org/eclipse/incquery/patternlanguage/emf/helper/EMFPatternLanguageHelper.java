@@ -33,7 +33,6 @@ public class EMFPatternLanguageHelper {
      * Initializes a new list of package imports defined in a selected pattern model
      * 
      * @param model
-     * @return
      */
     public static List<PackageImport> getAllPackageImports(PatternModel model) {
         return Lists.newArrayList(getPackageImportsIterable(model));
@@ -44,7 +43,6 @@ public class EMFPatternLanguageHelper {
      * proxy, it is omitted.
      * 
      * @param model
-     * @return
      */
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
         XImportSection imports = model.getImportPackages();

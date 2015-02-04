@@ -64,7 +64,6 @@ public class PatternSetValidator {
      * Returns the validation results of a single pattern
      * 
      * @param pattern
-     * @return
      */
     public PatternSetValidationDiagnostics validate(Pattern pattern) {
         return validate(ImmutableList.of(pattern));
@@ -74,7 +73,6 @@ public class PatternSetValidator {
      * Returns the validation results of a single pattern and all its (transitively )referenced patterns.
      * 
      * @param pattern
-     * @return
      */
     public PatternSetValidationDiagnostics validateTransitively(Pattern pattern) {
         Set<Pattern> patternsToValidate = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern);
@@ -86,7 +84,6 @@ public class PatternSetValidator {
      * Returns the validation results of a collection of patterns
      * 
      * @param patternSet
-     * @return
      */
     public PatternSetValidationDiagnostics validate(Collection<Pattern> patternSet) {
         BasicDiagnostic chain = new BasicDiagnostic();

@@ -62,8 +62,6 @@ public class XBaseEvaluator implements IExpressionEvaluator{
     /**
      * @param xExpression
      *            the expression to evaluate
-     * @param qualifiedMapping
-     *            maps variable qualified names to positions.
      * @param pattern
      */
     public XBaseEvaluator(XExpression xExpression, Pattern pattern) throws SpecificationBuilderException{

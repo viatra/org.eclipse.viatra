@@ -22,7 +22,7 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 public class DatabindingUtil {
 
     /**
-     * @deprecated Use {@link IncQueryObservables#getDatabindingAdapter(IQuerySpecification<?>)} instead
+     * @deprecated Use {@link IncQueryObservables#getDatabindingAdapter(IQuerySpecification) } instead
      */
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(IQuerySpecification<?> query) {
         return IncQueryObservables.getDatabindingAdapter(query);

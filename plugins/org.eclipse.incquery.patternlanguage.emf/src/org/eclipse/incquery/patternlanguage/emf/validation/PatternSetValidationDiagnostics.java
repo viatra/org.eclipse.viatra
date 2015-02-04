@@ -28,11 +28,6 @@ public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
     Set<Issue> foundErrors = Sets.newHashSet();
     Set<Issue> foundWarnings = Sets.newHashSet();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.xtext.util.IAcceptor#accept(java.lang.Object)
-     */
     @Override
     public void accept(Issue issue) {
         switch (issue.getSeverity()) {

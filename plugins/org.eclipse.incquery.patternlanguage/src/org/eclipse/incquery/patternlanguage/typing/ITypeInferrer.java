@@ -34,7 +34,6 @@ public interface ITypeInferrer {
      * Returns the inferred type of a variable
      * 
      * @param var
-     * @return
      */
     Object getInferredVariableType(Variable var);
 
@@ -50,7 +49,6 @@ public interface ITypeInferrer {
      * Calculates the type of a variable reference. A type of a reference is the type of the referred variable.
      * 
      * @param reference
-     * @return
      */
     Object getVariableReferenceType(VariableReference reference);
 
@@ -58,7 +56,6 @@ public interface ITypeInferrer {
      * Creates a Jvm Type Reference for a selected variable. Useful during Jvm Model Inference
      * @param var
      * @param context
-     * @return
      */
     JvmTypeReference getVariableJvmType(Variable var, EObject context);
 

@@ -34,9 +34,6 @@ class VariableReferenceCount {
     private int size = 0;
     private boolean parameter;
 
-    /**
-     * @param variable
-     */
     public VariableReferenceCount(Set<Variable> variables, boolean parameter) {
         this.variables = variables;
         this.parameter = parameter;
@@ -51,9 +48,6 @@ class VariableReferenceCount {
         }
     }
 
-    /**
-     * @return the variable
-     */
     public Set<Variable> getVariables() {
         return variables;
     }
@@ -65,9 +59,6 @@ class VariableReferenceCount {
         return size;
     }
 
-    /**
-     * @return the parameter
-     */
     public boolean isParameter() {
         return parameter;
     }

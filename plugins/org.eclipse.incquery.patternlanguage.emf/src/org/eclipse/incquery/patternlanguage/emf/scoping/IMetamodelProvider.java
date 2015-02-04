@@ -25,7 +25,6 @@ public interface IMetamodelProvider {
      * 
      * @param delegateScope the delegate scope
      * @param context the context object for the scoping
-     * @return
      */
     IScope getAllMetamodelObjects(IScope delegateScope, EObject context);
 

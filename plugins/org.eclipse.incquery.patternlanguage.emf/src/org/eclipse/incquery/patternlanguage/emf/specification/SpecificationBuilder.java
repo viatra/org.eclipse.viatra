@@ -125,7 +125,6 @@ public class SpecificationBuilder {
      * not be called with different patterns having the same fqn over its entire lifecycle.
      *
      * @param pattern
-     * @return
      * @throws IncQueryException
      */
     public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
@@ -141,7 +140,6 @@ public class SpecificationBuilder {
      * @param skipPatternValidation
      *            if set to true, detailed pattern validation is skipped - true for model inferrer; not recommended for
      *            generic API
-     * @return
      * @throws IncQueryException
      */
     public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
@@ -291,7 +289,6 @@ public class SpecificationBuilder {
      * they are referring to the old version of the specification. Only use this if you are sure all dependant queries
      * are also removed, otherwise use {@link #forgetSpecificationTransitively(IQuerySpecification)} instead.
      *
-     * @param pattern
      */
     public void forgetSpecification(IQuerySpecification<?> specification) {
         String fqn = specification.getFullyQualifiedName();

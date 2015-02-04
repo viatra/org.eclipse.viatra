@@ -63,11 +63,11 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     /**
      * Initializes a generic query specification for a given pattern.
      *
+     * @param pattern
+     *            the pattern for which matchers are to be constructed.
      * @param delayedInitialization
      *            true if the query is not created automatically - in this case before use the
-     *            {@link #initializeBodies(SpecificationBuilder)} method
-     * @param patternName
-     *            the name of the pattern for which matchers are to be constructed.
+     *            {@link #initializeBodies(Set) } method
      *
      * @throws QueryInitializationException
      */

@@ -46,7 +46,7 @@ public interface IErrorFeedback {
      * @param ctx
      * @param message
      * @param errorCode
-     *            an arbitrary error code - see {@link GeneratorIssueCodes} for already defined constants
+     *            an arbitrary error code
      * @param severity
      * @param markerType
      *            {@link #JVMINFERENCE_ERROR_TYPE} and {@link #FRAGMENT_ERROR_TYPE} are supported
@@ -61,7 +61,7 @@ public interface IErrorFeedback {
      * @param ctx
      * @param message
      * @param errorCode
-     *            an arbitrary error code - see {@link GeneratorIssueCodes} for already defined constants
+     *            an arbitrary error code
      * @param severity
      * @param markerType
      *            {@link #JVMINFERENCE_ERROR_TYPE} and {@link #FRAGMENT_ERROR_TYPE} are supported
@@ -75,7 +75,7 @@ public interface IErrorFeedback {
      * @param resource
      * @param message
      * @param errorCode
-     *            an arbitrary error code - see {@link GeneratorIssueCodes} for already defined constants
+     *            an arbitrary error code
      * @param severity
      * @param markerType
      *            {@link #JVMINFERENCE_ERROR_TYPE} and {@link #FRAGMENT_ERROR_TYPE} are supported

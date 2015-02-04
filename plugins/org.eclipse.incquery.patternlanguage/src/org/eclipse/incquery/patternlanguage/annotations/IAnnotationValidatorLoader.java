@@ -20,7 +20,6 @@ public interface IAnnotationValidatorLoader {
 
     /**
      * Returns all known annotation validators
-     * @return
      */
     Map<String, IPatternAnnotationValidator> getKnownValidators();
 

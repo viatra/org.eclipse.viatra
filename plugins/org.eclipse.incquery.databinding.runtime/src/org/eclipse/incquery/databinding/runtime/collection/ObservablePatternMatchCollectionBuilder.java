@@ -64,7 +64,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
      * Creates a builder for configuring an observable collection
      * observing the match set of the given {@link IQuerySpecification} 
      * 
-     * @param querySpecification
+     * @param specification
      *            the {@link IQuerySpecification} used to create a matcher
      */
     public static <M extends IPatternMatch> ObservablePatternMatchCollectionBuilder<M> create(

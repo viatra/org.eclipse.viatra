@@ -168,8 +168,7 @@ public final class IncQueryObservables {
      * Registers the given changeListener for the appropriate features of the given signature. The features will be
      * computed based on the message parameter.
      *
-     * @param signature
-     *            the signature instance
+     * @param match
      * @param changeListener
      *            the change listener
      * @param message
@@ -280,7 +279,6 @@ public final class IncQueryObservables {
      * Returns a {@link DatabindingAdapter} that can be used to observe details of pattern matches.
      * 
      * @param query
-     * @return
      */
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(IQuerySpecification<?> query) {
         GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(query);
@@ -290,8 +288,7 @@ public final class IncQueryObservables {
     /**
      * Calculates the list of {@link ObservableDefinition}s from a query. 
      * 
-     * @param pattern
-     * @return
+     * @param query
      */
     public static Map<String, ObservableDefinition> calculateObservableValues(IQuerySpecification<?> query) {
         Map<String, ObservableDefinition> propertyMap = Maps.newHashMap();

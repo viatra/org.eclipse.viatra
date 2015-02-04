@@ -118,7 +118,6 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return SimpleClassLoaderProvider.class;
     }
 
-    // contributed by org.eclipse.xtext.generator.xbase.XbaseGeneratorFragment
     public Class<? extends IJvmModelInferrer> bindIJvmModelInferrer() {
         return EMFPatternLanguageJvmModelInferrer.class;
     }
