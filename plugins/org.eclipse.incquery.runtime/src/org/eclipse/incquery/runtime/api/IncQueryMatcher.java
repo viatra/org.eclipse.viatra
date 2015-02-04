@@ -115,7 +115,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
     /**
      * Executes the given processor on each match of the pattern.
      * 
-     * @param action
+     * @param processor
      *            the action that will process each pattern match.
      */
     public abstract void forEachMatch(IMatchProcessor<? super Match> processor);
@@ -124,7 +124,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * Executes the given processor on each match of the pattern that conforms to the given fixed values of some
      * parameters.
      * 
-     * @param parameters
+     * @param partialMatch
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @param processor
      *            the action that will process each pattern match.
@@ -148,7 +148,7 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
      * values of some parameters. Neither determinism nor randomness of selection is guaranteed.
      * 
-     * @param parameters
+     * @param partialMatch
      *            array where each non-null element binds the corresponding pattern parameter to a fixed value.
      * @param processor
      *            the action that will process the selected match.

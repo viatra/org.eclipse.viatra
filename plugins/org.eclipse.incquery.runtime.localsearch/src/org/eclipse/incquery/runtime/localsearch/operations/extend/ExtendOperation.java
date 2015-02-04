@@ -27,16 +27,12 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
 
     /**
      * @param position
-     * @param it
      */
     public ExtendOperation(int position) {
         super();
         this.position = position;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onBacktrack(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     public void onBacktrack(MatchingFrame frame, ISearchContext context) {
         frame.setValue(position, null);
@@ -44,9 +40,6 @@ public abstract class ExtendOperation<T> implements ISearchOperation {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#execute(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) {
         if (it.hasNext()) {

@@ -53,7 +53,6 @@ public class PAnnotation {
 
     /**
      * Return the name of the annotation
-     * @return
      */
     public String getName() {
         return name;
@@ -78,7 +77,6 @@ public class PAnnotation {
     }
     /**
      * Returns all values of all attributes. A selected attribute name (key) can appear multiple times in the collection.
-     * @return
      */
     public Collection<Entry<String,Object>> getAllValues() {
         return attributes.entries();

@@ -28,7 +28,7 @@ public interface IBaseIndex {
      * execution is done. If there are any outstanding feature, class or datatype registrations, a single coalesced model
      * traversal will initialize the caches and deliver the notifications.
      * 
-     * @param runnable
+     * @param callable
      */
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 	
@@ -84,7 +84,7 @@ public interface IBaseIndex {
      * Unregisters a lightweight observer for the given Object.
      * 
      * @param observer the listener instance
-     * @param observedObjectt the observed instance object
+     * @param observedObject the observed instance object
      * @return false if no observer can be registered for the given instance (e.g. it is a primitive), 
      * 	or no observer was registered previously (call has no effect)
      */

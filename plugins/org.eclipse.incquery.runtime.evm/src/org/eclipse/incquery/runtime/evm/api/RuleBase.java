@@ -196,7 +196,6 @@ public class RuleBase {
      *
      * @param conflictResolver
      * @param specifications
-     * @return
      */
     public ScopedConflictSet createScopedConflictSet(final ConflictResolver conflictResolver, final Multimap<RuleSpecification<?>, EventFilter<?>> specifications) {
         final ScopedConflictSet set = new ScopedConflictSet(this, conflictResolver, specifications);

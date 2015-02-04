@@ -58,9 +58,6 @@ public abstract class LightweightEObjectObserverAdapter implements LightweightEO
         this.observedFeatures.removeAll(observedFeatures);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.base.core.LightweightEObjectObserver#featureUpdate(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EStructuralFeature, java.lang.Object, boolean)
-     */
     @Override
     public void notifyFeatureChanged(EObject host, EStructuralFeature feature, Notification notification) {
         if(this.observedFeatures.contains(feature)) {
@@ -73,8 +70,7 @@ public abstract class LightweightEObjectObserverAdapter implements LightweightEO
      * 
      * @param host
      * @param feature
-     * @param value
-     * @param insert
+     * @param notification
      */
     public abstract void observedFeatureUpdate(EObject host, EStructuralFeature feature, Notification notification);
 

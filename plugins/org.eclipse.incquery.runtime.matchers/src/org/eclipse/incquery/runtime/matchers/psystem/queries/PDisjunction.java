@@ -64,7 +64,6 @@ public class PDisjunction {
     /**
      * Decides whether a disjunction is mutable. A disjunction is mutable if all its contained bodies are mutable.
      * 
-     * @return
      */
     public boolean isMutable() {
         for (PBody body : bodies) {

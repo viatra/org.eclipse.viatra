@@ -118,7 +118,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     /**
      * @param manager
      *            null if unmanaged
-     * @param emfRoot
+     * @param scope
      * @throws IncQueryException
      *             if the emf root is invalid
      */

@@ -65,7 +65,6 @@ public interface PQuery extends PQueryHeader {
      * Returns all bodies associated with the query in their canonical form. If called multiple times, the same set with
      * the same contents will be returned.
      * 
-     * @return
      */
     PDisjunction getDisjunctBodies();
 
@@ -86,7 +85,6 @@ public interface PQuery extends PQueryHeader {
     /**
      * Returns the initialization status of the definition
      * 
-     * @return
      */
     PQueryStatus getStatus();
     

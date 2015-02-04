@@ -103,7 +103,7 @@ public interface NavigationHelper {
     /**
      * For a given attribute value <code>value</code>, find each {@link EAttribute} and host {@link EObject} 
      * such that this attribute of the the host object takes the given value. The method will
-     * return a set of {@link EStructuralFeature.Setting}s, one for each such host object - EAttribute - value triplet.
+     * return a set of {@link Setting}s, one for each such host object - EAttribute - value triplet.
      * 
      * <p>
      * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
@@ -115,7 +115,7 @@ public interface NavigationHelper {
      * 
      * @param value
      *            the value of the attribute
-     * @return a set of {@link EStructuralFeature.Setting}s, one for each EObject and EAttribute that have the given value
+     * @return a set of {@link Setting}s, one for each EObject and EAttribute that have the given value
      * @see #findByAttributeValue(Object)
      */
     public Set<Setting> findByAttributeValue(Object value);
@@ -123,7 +123,7 @@ public interface NavigationHelper {
     /**
      * For given <code>attributes</code> and an attribute value <code>value</code>, find each host {@link EObject} 
      * such that any of these attributes of the the host object takes the given value. The method will
-     * return a set of {@link EStructuralFeature.Setting}s, one for each such host object - EAttribute - value triplet.
+     * return a set of {@link Setting}s, one for each such host object - EAttribute - value triplet.
      * 
      * <p>
      * <strong>Precondition:</strong> Unset / null attribute values are not indexed, so <code>value!=null</code>
@@ -137,7 +137,7 @@ public interface NavigationHelper {
      *            the value of the attribute
      * @param attributes
      *            the collection of attributes that should take the given value
-     * @return a set of {@link EStructuralFeature.Setting}s, one for each EObject and attribute that have the given value
+     * @return a set of {@link Setting}s, one for each EObject and attribute that have the given value
      */
     public Set<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes);
 
@@ -232,7 +232,7 @@ public interface NavigationHelper {
     /**
      * For a given {@link EObject} <code>target</code>, find each {@link EReference} and source {@link EObject} 
      * such that this reference (list) of the the host object points to the given target object. The method will
-     * return a set of {@link EStructuralFeature.Setting}s, one for each such source object - EReference - target triplet.
+     * return a set of {@link Setting}s, one for each such source object - EReference - target triplet.
      * 
      * <p>
      * <strong>Precondition:</strong> Unset / null reference values are not indexed, so <code>target!=null</code>
@@ -244,14 +244,14 @@ public interface NavigationHelper {
      * 
      * @param target
      *            the EObject pointed to by the references
-     * @return a set of {@link EStructuralFeature.Setting}s, one for each source EObject and reference that point to the given target
+     * @return a set of {@link Setting}s, one for each source EObject and reference that point to the given target
      */
     public Set<Setting> getInverseReferences(EObject target);
 
     /**
      * For given <code>references</code> and an {@link EObject} <code>target</code>, find each source {@link EObject} 
      * such that any of these references of the the source object points to the given target object. The method will
-     * return a set of {@link EStructuralFeature.Setting}s, one for each such source object - EReference - target triplet.
+     * return a set of {@link Setting}s, one for each such source object - EReference - target triplet.
      * 
      * <p>
      * <strong>Precondition:</strong> Unset / null reference values are not indexed, so <code>target!=null</code>
@@ -264,7 +264,7 @@ public interface NavigationHelper {
      * @param target
      *            the EObject pointed to by the references
      * @param references a set of EReferences pointing to the target 
-     * @return a set of {@link EStructuralFeature.Setting}s, one for each source EObject and reference that point to the given target
+     * @return a set of {@link Setting}s, one for each source EObject and reference that point to the given target
      */
     public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references);
 
@@ -445,7 +445,7 @@ public interface NavigationHelper {
      * Unregisters a lightweight observer for the given EObject.
      * 
      * @param observer the listener instance
-     * @param observedObjectt the observed EObject
+     * @param observedObject the observed EObject
      * @return false if the observer has not been previously attached to the object (call has no effect), true otherwise
      */
     public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject);
@@ -454,7 +454,6 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given types (indexing of others are unaffected). Note that
      * registering new types will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
-     * @throws IllegalStateException if in wildcard mode
      * 
      * @param classes
      *            the set of classes to observe (null okay)
@@ -462,6 +461,7 @@ public interface NavigationHelper {
      *            the set of data types to observe (null okay)
      * @param features
      *            the set of features to observe (null okay)
+     * @throws IllegalStateException if in wildcard mode
      */
     public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
     
@@ -471,13 +471,13 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given types.
-     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * @param classes
      *            the set of classes that will be ignored again from now on (null okay)
      * @param dataTypes
      *            the set of data types that will be ignored again from now on (null okay)
      * @param features
      *            the set of features that will be ignored again from now on (null okay)
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
    
@@ -486,10 +486,10 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
      * registering new features will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
-     * @throws IllegalStateException if in wildcard mode
      * 
      * @param features
      *            the set of features to observe
+     * @throws IllegalStateException if in wildcard mode
      */
     public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
@@ -499,10 +499,10 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given features.
-     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * 
      * @param features
      *            the set of features that will be ignored again from now on
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features);
 
@@ -511,10 +511,10 @@ public interface NavigationHelper {
      * subclasses will also be indexed. Note that registering new classes will result in a single iteration through the whole
      * attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
-     * @throws IllegalStateException if in wildcard mode
      * 
      * @param classes
      *            the set of classes to observe
+     * @throws IllegalStateException if in wildcard mode
      */
     public void registerEClasses(Set<EClass> classes);
 
@@ -524,9 +524,9 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given classes.
-     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * @param classes
      *            the set of classes that will be ignored again from now on
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterEClasses(Set<EClass> classes);
 
@@ -534,10 +534,10 @@ public interface NavigationHelper {
      * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
      * registering new data types will result in a single iteration through the whole attached model.
      * <b> Not usable in <em>wildcard mode</em>.</b>
-     * @throws IllegalStateException if in wildcard mode
      * 
      * @param dataTypes
      *            the set of data types to observe
+     * @throws IllegalStateException if in wildcard mode
      */
     public void registerEDataTypes(Set<EDataType> dataTypes);
 
@@ -547,10 +547,10 @@ public interface NavigationHelper {
      * <b> Not usable in <em>wildcard mode</em>.</b>
      * 
      * <dt><b>Precondition:</b><dd> no listeners can be registered for the given datatypes.
-     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      * 
      * @param dataTypes
      *            the set of data types that will be ignored again from now on
+     * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
     public void unregisterEDataTypes(Set<EDataType> dataTypes);
 
@@ -559,7 +559,7 @@ public interface NavigationHelper {
      * execution is done. If there are any outstanding feature, class or datatype registrations, a single coalesced model
      * traversal will initialize the caches and deliver the notifications.
      * 
-     * @param runnable
+     * @param callable
      */
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 
@@ -600,7 +600,7 @@ public interface NavigationHelper {
      * <p> This method is experimental. Re-entrancy not supported.
      * 
      * @param element the eObject to be moved
-     * @param the containment list of the new parent object into which the element has to be moved
+     * @param targetContainmentReferenceList containment list of the new parent object into which the element has to be moved
      * 
      */
     public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList);

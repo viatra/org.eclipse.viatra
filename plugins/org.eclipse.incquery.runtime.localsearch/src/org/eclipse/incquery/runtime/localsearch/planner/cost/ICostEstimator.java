@@ -25,7 +25,6 @@ public interface ICostEstimator {
      * 
      * @param currentPlan
      * @param patternConstraint
-     * @return
      */
     public double getCost(SubPlan currentPlan, PConstraint patternConstraint);
 

@@ -45,7 +45,6 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.resolver.FixedPriorityConflictResolver;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
@@ -76,7 +75,6 @@ import com.google.common.collect.Sets;
 public class IncQueryViewerDataModel extends ViewerDataModel {
     private IncQueryEngine engine;
     private Logger logger;
-//  private ResourceSet model;
     private Set<IQuerySpecification<?>> patterns;
     
     RuleEngine ruleEngine;
@@ -87,10 +85,8 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
      * 
      * @param patterns
      * @param engine
-     * @throws IncQueryException
      */
     public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, IncQueryEngine engine) {
-//      this.model = model;
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
         logger = IncQueryLoggingUtil.getLogger(getClass());
@@ -105,10 +101,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     public IncQueryEngine getEngine() {
         return engine;
     }
-
-//    public ResourceSet getModel() {
-//        return model;
-//    }
 
 	public Collection<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatterns(final String annotation) {
 		return Collections2.filter(patterns, new Predicate<IQuerySpecification<?>>() {
@@ -350,12 +342,10 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	 * 
  	 * When the state is disposed, the model will be disposed too.
  	 * 
- 	 * @param set
  	 * @param engine
  	 * @param patterns
  	 * @param filter
  	 * @param features
- 	 * @return
  	 */
  	public static ViewerState newViewerState(IncQueryEngine engine,
  			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
@@ -374,7 +364,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	 * @param model
  	 * @param filter
  	 * @param features
- 	 * @return
  	 */
  	public static ViewerState newViewerState(IncQueryViewerDataModel model, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features)

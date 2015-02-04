@@ -65,11 +65,6 @@ public class IncQueryMultiPatternMatchEventFilter<Match extends IPatternMatch> i
         this.filterMatches = filterMatches;
     }
     
-    /**
-     * 
-     * @param eventAtom
-     * @return
-     */
     public static <Match extends IPatternMatch> IncQueryMultiPatternMatchEventFilter<Match> createFilter(Collection<Match> eventAtoms, IncQueryFilterSemantics semantics) {
         checkArgument(eventAtoms != null, "Cannot create filter for null match, use createEmptyFilter() instead!");
         for (Match eventAtom : eventAtoms) {

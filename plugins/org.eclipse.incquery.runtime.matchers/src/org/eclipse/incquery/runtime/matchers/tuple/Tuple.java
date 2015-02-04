@@ -132,11 +132,6 @@ public abstract class Tuple {
     // return retVal;
     // }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -169,11 +164,6 @@ public abstract class Tuple {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         /*
@@ -194,11 +184,6 @@ public abstract class Tuple {
         return s.toString();
     }
 
-    /**
-     * @param obsolete
-     * @param replacement
-     * @return
-     */
     public Tuple replaceAll(Object obsolete, Object replacement) {
         Object[] oldElements = getElements();
         Object[] newElements = new Object[oldElements.length];

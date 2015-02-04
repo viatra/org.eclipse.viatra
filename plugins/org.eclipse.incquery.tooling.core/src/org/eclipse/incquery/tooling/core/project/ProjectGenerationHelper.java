@@ -283,7 +283,7 @@ public abstract class ProjectGenerationHelper {
      * package imports or required bundle declarations.
      *
      * @param project
-     * @param dependencies
+     * @param packageImports
      * @throws CoreException
      */
     public static void ensurePackageImports(IProject project, final List<String> packageImports) throws CoreException {

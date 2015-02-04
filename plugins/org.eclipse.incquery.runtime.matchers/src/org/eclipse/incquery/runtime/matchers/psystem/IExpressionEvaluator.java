@@ -22,13 +22,11 @@ public interface IExpressionEvaluator {
 
     /**
      * A textual description of the expression. Used only for debug purposes, but must not be null.
-     * @return
      */
     String getShortDescription();
 
     /**
      * All input parameter names should be reported correctly.
-     * @return
      */
     Iterable<String> getInputParameterNames();
 

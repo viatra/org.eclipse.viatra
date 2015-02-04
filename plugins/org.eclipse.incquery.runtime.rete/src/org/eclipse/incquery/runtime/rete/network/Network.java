@@ -123,8 +123,6 @@ public class Network {
 
     /**
      * Returns the head container, that is guaranteed to reside in the same JVM as the Network object.
-     * 
-     * @return
      */
     public ReteContainer getHeadContainer() {
         return headContainer;
@@ -391,9 +389,6 @@ public class Network {
 		return Collections.unmodifiableList(containers);
 	}
 	
-	/**
-     * @return the structuralChangeLock
-     */
     public Lock getStructuralChangeLock() {
         return structuralChangeLock;
     }
@@ -405,9 +400,6 @@ public class Network {
 	public NodeFactory getNodeFactory() {
 		return nodeFactory;
 	}
-	/**
-	 * @return
-	 */
 	public InputConnector getInputConnector() {
 		return inputConnector;
 	}

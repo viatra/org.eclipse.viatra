@@ -55,15 +55,13 @@ public interface IQueryGroup {
      *            ResourceSet.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
-     * @deprecated use {@link #prepare(IncQueryEngine) instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}}            
+     * @deprecated use {@link #prepare(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}            
      */
 	@Deprecated
     public void prepare(Notifier emfRoot) throws IncQueryException;
 
     /**
      * Returns the currently assigned {@link IQuerySpecification}s.
-     * 
-     * @return
      */
     public Set<IQuerySpecification<?>> getSpecifications();
 

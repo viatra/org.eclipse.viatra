@@ -43,7 +43,6 @@ public interface IGenerationFragmentProvider {
      *
      * @param modelProject
      * @param fragment
-     * @return
      */
     IProject getFragmentProject(IProject modelProject, IGenerationFragment fragment);
 }

@@ -120,7 +120,7 @@ public class BuildHelper {
      * 
      * @param pSystem
      * @param plan
-     * @throws RetePatternBuildException
+     * @throws QueryProcessingException
      */
     public static void finalCheck(final PBody pSystem, SubPlan plan, IPatternMatcherContext context)
             throws QueryProcessingException {

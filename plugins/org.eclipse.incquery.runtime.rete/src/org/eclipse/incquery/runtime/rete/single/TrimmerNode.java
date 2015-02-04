@@ -35,11 +35,6 @@ public class TrimmerNode extends TransformerNode {
         this.mask = mask;
     }
 
-    /**
-     * @param reteContainer
-     * @param mask
-     *            The mask used to trim substitutions.
-     */
     public TrimmerNode(ReteContainer reteContainer) {
         super(reteContainer);
         this.mask = null;

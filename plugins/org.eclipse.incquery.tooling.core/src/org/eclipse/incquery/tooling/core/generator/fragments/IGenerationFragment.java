@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.tooling.core.generator.ExtensionData;
+import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Pair;
 
@@ -62,7 +63,7 @@ public interface IGenerationFragment {
     void cleanUp(Pattern pattern, IFileSystemAccess fsa);
 
     /**
-     * Returns a collection of extension contributions for the selected pattern. The {@link ExtensionGeneration}
+     * Returns a collection of extension contributions for the selected pattern. The {@link ExtensionGenerator}
      * parameter provides a builder API for Xtend-based generators to have a readable generator.
      *
      * @param pattern
@@ -74,15 +75,12 @@ public interface IGenerationFragment {
      * Returns a collections of extensions, that need to be removed from the plugin.xml.
      *
      * @param pattern
-     * @return
      */
     Iterable<Pair<String, String>> removeExtension(Pattern pattern);
 
     /**
      * Returns pairs of extension id prefix and point id. All extension with one of these ids and prefixes will be
      * removed from the fragments project's plugin.xml. This method only invoked during Clean Build.
-     *
-     * @return
      */
     Collection<Pair<String, String>> getRemovableExtensions();
 

@@ -42,11 +42,11 @@ public abstract class EventProcessorAdapter<EventAtom> {
      * This method is called with the atom corresponding to the
      * activation that is affected by the event.
      * 
-     * If the Activation exists, {@link #activationExists(Activation)} is called 
-     * with the Activation object, otherwise {@link #activationMissing(Object)} 
+     * If the Activation exists, {@link #activationExists(Event, Activation) 8)} is called 
+     * with the Activation object, otherwise {@link #activationMissing(Event)} 
      * with the atom object.
      * 
-     * @param atom
+     * @param event
      */
     public void processEvent(Event<EventAtom> event) {
         checkNotNull(event,"Cannot process null event!");

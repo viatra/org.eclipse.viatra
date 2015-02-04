@@ -18,7 +18,7 @@ package org.eclipse.incquery.runtime.evm.notification;
  * 
  * @author Tamas Szabo
  * 
- * @param <MatchType>
+ * @param <Atom>
  */
 public interface IAttributeMonitorListener<Atom> {
 

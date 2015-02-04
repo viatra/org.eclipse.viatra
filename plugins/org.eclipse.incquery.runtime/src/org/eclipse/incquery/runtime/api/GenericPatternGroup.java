@@ -45,7 +45,6 @@ public class GenericPatternGroup extends BasePatternGroup {
      * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
      * 
      * @param querySpecifications
-     * @return
      */
     public static IQueryGroup of(Set<IQuerySpecification<?>> querySpecifications) {
         return new GenericPatternGroup(querySpecifications);
@@ -55,7 +54,6 @@ public class GenericPatternGroup extends BasePatternGroup {
      * Creates a generic {@link IQueryGroup} instance from {@link IQuerySpecification} objects.
      * 
      * @param querySpecifications
-     * @return
      */
     public static IQueryGroup of(IQuerySpecification<?>... querySpecifications) {
         return of(new HashSet<IQuerySpecification<?>>(Arrays.asList(querySpecifications)));
@@ -64,8 +62,6 @@ public class GenericPatternGroup extends BasePatternGroup {
     /**
      * Creates a generic {@link IQueryGroup} instance from other {@link IQueryGroup} objects (subgroups).
      * 
-     * @param querySpecifications
-     * @return
      */
     public static IQueryGroup of(IQueryGroup... subGroups) {
         Set<IQuerySpecification<?>> patterns = new HashSet<IQuerySpecification<?>>();

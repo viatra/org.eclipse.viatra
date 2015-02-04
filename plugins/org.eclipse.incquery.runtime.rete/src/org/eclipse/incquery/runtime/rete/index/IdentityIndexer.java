@@ -33,10 +33,6 @@ public abstract class IdentityIndexer extends SpecializedProjectionIndexer {
 
     protected abstract Collection<Tuple> getTuples();
 
-    /**
-     * @param reteContainer
-     * @param mask
-     */
     public IdentityIndexer(ReteContainer reteContainer, int tupleWidth, Supplier parent, Node activeNode) {
         super(reteContainer, TupleMask.identity(tupleWidth), parent, activeNode);
     }

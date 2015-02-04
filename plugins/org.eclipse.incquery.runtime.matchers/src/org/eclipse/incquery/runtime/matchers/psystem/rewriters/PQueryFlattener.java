@@ -59,7 +59,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param pQuery
      *            the query to flatten
      * @return a PDisjunction containing the flattened bodies
-     * @throws Exception
      */
     public PDisjunction flatten(PQuery pQuery) {
         return doFlatten(pQuery);
@@ -228,7 +227,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param pBody
      * @param copier
      * @param namingTool
-     * @return
      */
     private void copyBody(PBody pBody, FlattenerCopier copier, INamingTool namingTool) {
         copyBody(pBody, copier, namingTool, new AllowAllFilter());
@@ -240,7 +238,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param pBody
      * @param copier
      * @param namingTool
-     * @return
      */
     private void copyBody(PBody pBody, FlattenerCopier copier, INamingTool namingTool, IConstraintFilter filter) {
 

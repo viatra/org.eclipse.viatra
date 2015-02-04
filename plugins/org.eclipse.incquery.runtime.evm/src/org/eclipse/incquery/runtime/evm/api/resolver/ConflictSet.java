@@ -38,9 +38,6 @@ public interface ConflictSet {
      */
     Set<Activation<?>> getConflictingActivations();
 
-    /**
-     * @return
-     */
     ConflictResolver getConflictResolver();
 
 }

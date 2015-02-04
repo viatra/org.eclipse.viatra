@@ -66,7 +66,7 @@ public abstract class AttributeMonitor<Atom> {
     /**
      * Remove the attribute monitor from watching the given atom.
      * 
-     * @param match
+     * @param atom
      */
     public abstract void unregisterFor(final Atom atom);
 

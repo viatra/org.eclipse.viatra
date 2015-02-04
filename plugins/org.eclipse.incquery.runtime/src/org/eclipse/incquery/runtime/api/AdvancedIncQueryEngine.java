@@ -70,7 +70,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @throws IncQueryException
      * 
-     * @see {@link #createUnmanagedEngine(Notifier, BaseIndexOptions)} for performance tuning and dynamic EMF options.
+     * @see #createUnmanagedEngine(Notifier, BaseIndexOptions) for performance tuning and dynamic EMF options.
      * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
@@ -295,7 +295,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	 * <p> Hints are only effective the first time a matcher is created.
 	 * @param querySpecification a {@link IQuerySpecification} that describes an IncQuery query
 	 * @return a pattern matcher corresponding to the specification
-     * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with the query
+     * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
 	 * @throws IncQueryException if the matcher could not be initialized
 	 * @since 0.9
 	 */
@@ -316,7 +316,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
 	 * @param queryGroup a {@link IQueryGroup} identifying a set of IncQuery queries
-     * @param optionalBackendHints additional / overriding options on query evaluation; passing null means default options associated with each query
+     * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with each query
      * @throws IncQueryException
      *             if there was an error in preparing the engine
      * @since 0.9

@@ -42,7 +42,6 @@ public class FormattableElement {
      * returned.
      * 
      * @param index
-     * @return
      */
     public int getNumberProperty(String index) {
         try {
@@ -56,7 +55,6 @@ public class FormattableElement {
      * Returns a string format property. If the input is erroneous (e.g. non-existent properties),
      * null is returned.
      * @param index
-     * @return
      */
     public String getStringProperty(String index) {
     	return specification.getProperty(index);

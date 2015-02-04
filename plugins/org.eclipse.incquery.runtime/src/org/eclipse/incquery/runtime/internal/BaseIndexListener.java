@@ -43,7 +43,7 @@ public class BaseIndexListener implements FeatureListener, InstanceListener, Dat
 
 
     /**
-     * @param inputConnector
+     * @param iqEngine
      */
     public BaseIndexListener(IncQueryEngine iqEngine) {
         super();

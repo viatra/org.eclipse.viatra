@@ -28,10 +28,6 @@ public class RemoteSupplier extends SingleInputNode {
 
     RemoteReceiver counterpart;
 
-    /**
-     * @param reteContainer
-     * @param remoteAddress
-     */
     public RemoteSupplier(ReteContainer reteContainer, RemoteReceiver counterpart) {
         super(reteContainer);
         this.counterpart = counterpart;

@@ -70,7 +70,6 @@ public class POperationCompiler {
      * 
      * @param plan
      * @param boundVariableIndexes 
-     * @return
      * @throws QueryProcessingException 
      */
     public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryProcessingException {

@@ -18,7 +18,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 /**
  * @author Abel Hegedus
  *
- * @param <Match>
+ * @param <EventAtom>
  */
 public class EnableJob<EventAtom> extends CompositeJob<EventAtom> {
     /**

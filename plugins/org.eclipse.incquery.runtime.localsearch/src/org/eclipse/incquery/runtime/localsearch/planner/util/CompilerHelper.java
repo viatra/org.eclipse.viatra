@@ -105,7 +105,6 @@ public class CompilerHelper {
      * Extracts the operations from a SubPlan into a list of POperations in the order of execution
      * 
      * @param plan
-     * @return
      */
     public static List<POperation> createOperationsList(SubPlan plan) {
         List<POperation> operationsList = Lists.newArrayList();

@@ -74,8 +74,6 @@ public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
 
     /**
      * Prerequisite: engine has its network and framework fields initialized
-     *
-     * @param headContainer
      */
     public ReteBoundary(ReteEngine engine) {
         super();
@@ -577,7 +575,7 @@ public class ReteBoundary implements IPatternMatcherRuntimeContextListener {
     }
 
     /**
-     * @deprecated Use {@link Node#assignTraceInfo(org.eclipse.incquery.runtime.rete.network.Node.TraceInfo)}
+     * @deprecated Use {@link Node#assignTraceInfo(org.eclipse.incquery.runtime.rete.traceability.TraceInfo)}
      */
     @Deprecated
     public void registerParentPlanForReceiver(Address<? extends Receiver> receiver,

@@ -29,8 +29,6 @@ public class OuterJoinNode extends DualInputNode {
 
     /**
      * @param reteContainer
-     * @param primarySlot
-     * @param secondarySlot
      * @param complementerSecondaryMask
      * @param defaults
      *            the default line to use instead of missing elements if a left tuple has no match

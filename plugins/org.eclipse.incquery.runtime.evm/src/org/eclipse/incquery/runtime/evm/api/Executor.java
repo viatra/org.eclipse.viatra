@@ -38,7 +38,7 @@ public class Executor {
      * Executors are usually created as part of an ExecutionSchema 
      * through the EventDrivenVM.createExecutionSchema methods.
      * 
-     * @param engine
+     * @param eventRealm
      */
     public Executor(final EventRealm eventRealm) {
         this(eventRealm, Context.create());
@@ -49,7 +49,7 @@ public class Executor {
      * Executors are usually created as part of an ExecutionSchema 
      * through the EventDrivenVM.createExecutionSchema methods.
      * 
-     * @param engine
+     * @param eventRealm
      * @param context
      */
     public Executor(final EventRealm eventRealm, final Context context) {

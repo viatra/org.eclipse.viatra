@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
  * 
  * @author Tamas Szabo
  * 
- * @param <Match>
+ * @param <EventAtom>
  *            the type of the pattern match
  */
 public class Activation<EventAtom> {

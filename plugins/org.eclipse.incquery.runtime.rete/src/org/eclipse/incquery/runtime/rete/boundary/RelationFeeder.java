@@ -19,13 +19,6 @@ public class RelationFeeder extends Feeder {
 
     protected Object typeObject;
 
-    /**
-     * @param receiver
-     * @param context
-     * @param network
-     * @param boundary
-     * @param typeObject
-     */
     public RelationFeeder(Address<? extends Receiver> receiver, InputConnector inputConnector, Object typeObject) {
         super(receiver, inputConnector);
         this.typeObject = typeObject;

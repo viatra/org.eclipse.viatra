@@ -34,7 +34,6 @@ public class ItemConverter implements IConverter {
     private FormatSpecification format;
 
     /**
-     * @param itemMap2
      * @param itemAnnotation
      *            an Item annotation to initialize the converter with.
      */

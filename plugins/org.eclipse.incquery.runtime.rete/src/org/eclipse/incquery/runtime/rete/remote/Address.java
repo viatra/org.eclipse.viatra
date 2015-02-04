@@ -50,7 +50,7 @@ public class Address<T extends Node> {
     /**
      * Local-only constructor. (use only for containers in the same VM!)
      * 
-     * @param T
+     * @param node
      *            the node to address
      */
     public Address(T node) {
@@ -60,11 +60,6 @@ public class Address<T extends Node> {
         this.nodeId = node.getNodeId();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -74,11 +69,6 @@ public class Address<T extends Node> {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -101,32 +91,18 @@ public class Address<T extends Node> {
         return true;
     }
 
-    /**
-     * @return the container
-     */
     public ReteContainer getContainer() {
         return container;
     }
 
-    /**
-     * @param container
-     *            the container to set
-     */
     public void setContainer(ReteContainer container) {
         this.container = container;
     }
 
-    /**
-     * @return the nodeId
-     */
     public Long getNodeId() {
         return nodeId;
     }
 
-    /**
-     * @param nodeId
-     *            the nodeId to set
-     */
     public void setNodeId(Long nodeId) {
         this.nodeId = nodeId;
     }
@@ -139,11 +115,6 @@ public class Address<T extends Node> {
         this.nodeCache = nodeCache;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         if (nodeCache == null)

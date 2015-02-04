@@ -125,7 +125,7 @@ public abstract class GenericPatternMatch extends BasePatternMatch {
      * Returns a new (partial) match. 
      * This can be used e.g. to call the matcher with a partial match. 
      * 
-     * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
+     * <p>The returned match will be immutable. Use {@link #newEmptyMatch(GenericQuerySpecification)} to obtain a mutable match object.
      * 
      * @param parameters
      *            the fixed value of pattern parameters, or null if not bound.

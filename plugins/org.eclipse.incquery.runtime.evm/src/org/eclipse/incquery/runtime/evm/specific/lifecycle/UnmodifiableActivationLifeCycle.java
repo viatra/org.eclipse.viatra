@@ -55,7 +55,6 @@ public class UnmodifiableActivationLifeCycle extends ActivationLifeCycle{
      * Creates an unmodifiable copy of the given life-cycle.
      * 
      * @param lifeCycle
-     * @return
      */
     public static UnmodifiableActivationLifeCycle copyOf(final ActivationLifeCycle lifeCycle) {
         if(lifeCycle instanceof UnmodifiableActivationLifeCycle) {

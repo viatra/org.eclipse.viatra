@@ -30,7 +30,7 @@ public class InequalityFilterNode extends FilterNode {
 
     /**
      * @param reteContainer
-     * @param subjectIndex
+     * @param subject
      *            the index of the element that should be compared.
      * @param inequalityMask
      *            the indices of elements that should be different from the subjectIndex.

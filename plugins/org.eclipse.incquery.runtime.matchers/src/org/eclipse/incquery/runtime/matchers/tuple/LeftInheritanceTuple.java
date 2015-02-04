@@ -54,7 +54,7 @@ public class LeftInheritanceTuple extends Tuple {
      * Creates a Tuple instance, lets it inherit from an ancestor, extends it with a given array. @pre: no elements are
      * null
      * 
-     * @param elements
+     * @param localElements
      *            array of substitution values
      */
     public LeftInheritanceTuple(Tuple ancestor, Object[] localElements) {

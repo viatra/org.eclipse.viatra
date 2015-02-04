@@ -68,7 +68,6 @@ public class QueryBackendRegistry {
     /**
      * Returns a factory for the selected backend class. If no factories are available for the selected backend, an exception is thrown.
      * @param backend
-     * @return
      * @throws IllegalStateException if no corresponding backend is registered into the factory
      */
     public IQueryBackendFactory getFactory(Class<? extends IQueryBackend> backend) {

@@ -51,7 +51,6 @@ public class IncQueryLoggingUtil {
 	/**
 	 * Provides a class-specific logger that also stores the global logger settings of the IncQuery runtime
 	 * @param clazz
-	 * @return
 	 */
 	public static Logger getLogger(Class<?> clazz) {
 	    return Logger.getLogger(getDefaultLogger().getName() + "." + clazz.getName());

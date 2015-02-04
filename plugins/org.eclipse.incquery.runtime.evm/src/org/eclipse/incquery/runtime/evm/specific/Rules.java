@@ -46,7 +46,6 @@ public final class Rules {
      * @param querySpecification
      * @param lifecycle
      * @param jobs
-     * @return
      */
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
@@ -58,7 +57,6 @@ public final class Rules {
      * 
      * @param querySpecification
      * @param jobs
-     * @return
      */
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
         return newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
@@ -104,7 +102,7 @@ public final class Rules {
      * Creates a "multi" event filter that uses the IPatternMatch.isCompatibleWith to check event atoms against a collection
      * of filter (partial) matches. The possible semantics are documented in {@link IncQueryFilterSemantics}.
      * 
-     * @param filterMatchs non-null match to use for filtering
+     * @param filterMatches non-null match to use for filtering
      * @param semantics the filter semantics to use
      * @return the event filter
      */

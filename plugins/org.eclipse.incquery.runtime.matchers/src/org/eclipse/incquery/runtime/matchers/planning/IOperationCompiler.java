@@ -26,8 +26,6 @@ import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
  * the given pattern; it it important to record this during code generation so
  * that the generated code can be separated according to patterns.
  * 
- * @param <PatternDescription>
- *            the description of a pattern
  * @param <Collector>
  *            the handle of a receiver-like RETE ending to which plans can be
  *            connected

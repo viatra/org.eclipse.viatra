@@ -34,7 +34,7 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable Set of nodes. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableItemSet(ViewerDataFilter)} with an empty filter.
+	 * {@link #initializeObservableItemSet(ViewerDataFilter, Multimap) } with an empty filter.
 	 * 
 	 * @return an observable Set of {@link Item} elements representing the match results in the model.
 	 */
@@ -45,7 +45,7 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable list of nodes. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableItemList(ViewerDataFilter)} with an empty filter.
+	 * {@link #initializeObservableItemList(ViewerDataFilter, Multimap) } with an empty filter.
 	 * 
 	 * @return an observable list of {@link Item} elements representing the match results in the model.
 	 */
@@ -77,9 +77,9 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link IncQueryViewerDataModel#initializeObservableEdgeSet(ViewerDataFilter)} with an empty filter.</p>
+	 * {@link IncQueryViewerDataModel#initializeObservableEdgeSet(ViewerDataFilter, Multimap) } with an empty filter.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
 	 * 
 	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
 	 */
@@ -90,9 +90,9 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link IncQueryViewerDataModel#initializeObservableEdgeList(ViewerDataFilter)} with an empty filter.</p>
+	 * {@link IncQueryViewerDataModel#initializeObservableEdgeList(ViewerDataFilter, Multimap) } with an empty filter.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
@@ -104,7 +104,7 @@ public abstract class ViewerDataModel {
 	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
 	 * 
 	 * @param filter
 	 *            filter specification
@@ -117,7 +117,7 @@ public abstract class ViewerDataModel {
 	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
 	 * 
 	 * @param filter
 	 *            filter specification
@@ -129,9 +129,9 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableContainmentSet(ViewerDataFilter)} with an empty filter.</p>
+	 * {@link #initializeObservableContainmentSet(ViewerDataFilter, Multimap) } with an empty filter.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
 	 * 
 	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
 	 */
@@ -142,9 +142,9 @@ public abstract class ViewerDataModel {
 	/**
 	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableContainmentList(ViewerDataFilter)} with an empty filter.</p>
+	 * {@link #initializeObservableContainmentList(ViewerDataFilter, Multimap) )} with an empty filter.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
 	 * 
 	 * @return an observable list of {@link Edge} elements representing the match results in the model.
 	 */
@@ -156,7 +156,7 @@ public abstract class ViewerDataModel {
 	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
 	 * 
 	 * @param filter
 	 *            filter specification
@@ -168,7 +168,7 @@ public abstract class ViewerDataModel {
 	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
 	 * responsibility of the caller to dispose of the unnecessary observables.</p>
 	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList()} method was called before.
+	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
 	 * 
 	 * @param filter
 	 *            filter specification

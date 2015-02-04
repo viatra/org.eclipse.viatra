@@ -84,7 +84,7 @@ public final class EventDrivenVM {
      * @param schedulerFactory
      * @param specifications
      * @return the prepared execution schema
-     * @deprecated Use {@link ExecutionSchemas#createIncQueryExecutionSchema(IncQueryEngine,ISchedulerFactory,Set<RuleSpecification>)} instead
+     * @deprecated Use {@link ExecutionSchemas#createIncQueryExecutionSchema(IncQueryEngine, ISchedulerFactory, Set)} instead
      */
     public static ExecutionSchema createIncQueryExecutionSchema(final IncQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
@@ -125,7 +125,7 @@ public final class EventDrivenVM {
      * @param engine
      * @param specifications
      * @return the prepared rule engine
-     * @deprecated Use {@link RuleEngines#createIncQueryRuleEngine(IncQueryEngine,Set<RuleSpecification>)} instead
+     * @deprecated Use {@link RuleEngines#createIncQueryRuleEngine(IncQueryEngine,Set)} instead
      */
     public static RuleEngine createIncQueryRuleEngine(final IncQueryEngine engine,
             final Set<RuleSpecification<?>> specifications) {

@@ -100,9 +100,6 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		reteEngine.addDisconnectable(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtimerete.network.Supplier#pullInto(java.util.Collection)
-	 */
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
 //		Collection<Setting> allSettings =  baseIndex.getAllValuesOfFeature(feature);
@@ -112,9 +109,6 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 		collector.addAll(tuples());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.runtimerete.boundary.Disconnectable#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		baseIndex.removeFeatureListener(Collections.singleton(feature), listener);

@@ -72,9 +72,9 @@ public class EMFVisitor {
     }
 
     /**
-     * @param current
+     * @param source
      * @param feature
-     * @param value
+     * @param target
      */
     public void visitAttribute(EObject source, EAttribute feature, Object target) {
     }

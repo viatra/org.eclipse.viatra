@@ -48,7 +48,6 @@ public final class Jobs {
      *
      * @param incQueryActivationStateEnum
      * @param processor
-     * @return
      */
     public static <Match extends IPatternMatch> Job<Match> newStatelessJob(
             final IncQueryActivationStateEnum incQueryActivationStateEnum, final IMatchProcessor<Match> processor) {
@@ -81,7 +80,6 @@ public final class Jobs {
      * afterwards.
      *
      * @param job
-     * @return
      */
     public static <EventAtom> Job<EventAtom> newRecordingJob(final Job<EventAtom> job) {
         return new RecordingJob<EventAtom>(job);
@@ -93,7 +91,6 @@ public final class Jobs {
      * context afterwards.
      *
      * @param job
-     * @return
      */
     public static <EventAtom> Job<EventAtom> newRecordingJob(final Job<EventAtom> job,
             final EventAtomEditingDomainProvider<EventAtom> provider) {
@@ -106,7 +103,6 @@ public final class Jobs {
      * the context afterwards.
      *
      * @param job
-     * @return
      */
     public static <EventAtom extends IPatternMatch> Job<EventAtom> newRecordingJobForMatchActivation(
             final Job<EventAtom> job) {
@@ -120,8 +116,7 @@ public final class Jobs {
      *
      * Consider using your own LifeCycle instead of Nop jobs!
      *
-     * @param incQueryActivationStateEnum
-     * @return
+     * @param activationState
      */
     public static final <EventAtom> Job<EventAtom> newNopJob(final ActivationState activationState) {
         return new Job<EventAtom>(activationState) {

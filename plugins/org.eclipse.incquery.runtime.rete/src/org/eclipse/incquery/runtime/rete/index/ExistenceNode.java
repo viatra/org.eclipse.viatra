@@ -31,8 +31,6 @@ public class ExistenceNode extends DualInputNode {
 
     /**
      * @param reteContainer
-     * @param primarySlot
-     * @param secondarySlot
      * @param negative
      *            if false, act as axistence checker, otherwise a nonexistence-checker
      */

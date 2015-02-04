@@ -70,9 +70,6 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             //planProcessor.setCompiler(compiler);
         }
 
-        /**
-         * @return
-         */
         public SubPlan run() throws QueryProcessingException {
             try {
                 context.logDebug(String.format(

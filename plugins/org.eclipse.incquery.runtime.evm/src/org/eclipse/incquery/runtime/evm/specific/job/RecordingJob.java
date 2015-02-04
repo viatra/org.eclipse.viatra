@@ -66,8 +66,7 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
     /**
      * Creates a new recording job associated with the given state and processor.
      *
-     * @param incQueryActivationStateEnum
-     * @param matchProcessor
+     * @param recordedJob
      */
     public RecordingJob(final Job<EventAtom> recordedJob) {
         super(recordedJob);
@@ -80,13 +79,6 @@ public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
         this.provider = provider;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.eclipse.incquery.runtime.evm.api.StatelessJob#execute(org.eclipse.incquery.runtime.evm
-     * .api.Activation)
-     */
     @Override
     protected void execute(final Activation<? extends EventAtom> activation, final Context context) {
         final Object target = findDomainTarget(activation, context);

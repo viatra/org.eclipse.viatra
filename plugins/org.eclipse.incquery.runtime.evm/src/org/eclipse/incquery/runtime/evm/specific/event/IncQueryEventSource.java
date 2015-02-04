@@ -117,9 +117,6 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
         super.dispose();
     }
 
-    /**
-     * @return
-     */
     public IAttributeMonitorListener<Match> getAttributeMonitorListener() {
         checkState(attributeMonitorListener != null, "Event source not prepared yet!");
         return attributeMonitorListener;

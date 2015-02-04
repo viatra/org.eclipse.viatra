@@ -28,7 +28,7 @@ public class SequentialProcessorsJob<Match extends IPatternMatch> extends Statel
      * Creates a stateless job for the given state and list of processors.
      * 
      * @param incQueryActivationStateEnum
-     * @param matchProcessor
+     * @param matchProcessors
      */
     public SequentialProcessorsJob(IncQueryActivationStateEnum incQueryActivationStateEnum,
             final List<? extends IMatchProcessor<Match>> matchProcessors) {

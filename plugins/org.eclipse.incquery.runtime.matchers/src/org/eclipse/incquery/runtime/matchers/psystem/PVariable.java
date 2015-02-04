@@ -65,7 +65,7 @@ public class PVariable {
      * Replaces this variable with a given other, resulting in their unification. This variable will no longer be
      * unique.
      *
-     * @param constraint
+     * @param replacement
      */
     public void unifyInto(PVariable replacement) {
         pSystem.checkMutability();
@@ -98,8 +98,6 @@ public class PVariable {
 
     /**
      * Determines whether there are any constraints that can deduce this variable
-     *
-     * @return
      */
     public boolean isDeducable() {
         replacementCheck();

@@ -62,7 +62,6 @@ public class ViewerDataFilter {
      * Copies all filter rules from an existing {@link ViewerDataFilter} instance.
      * 
      * @param other
-     * @return
      */
     public static ViewerDataFilter cloneFilter(ViewerDataFilter other) {
         return new ViewerDataFilter(other.filterDefinitions);
@@ -115,9 +114,8 @@ public class ViewerDataFilter {
      * Returns an observable Set of pattern matches, taking account the existing filter rules for a pattern. If no
      * filtering rule is defined for the selected pattern, all matches are returned.
      * 
-     * @param pattern
+     * @param querySpecification
      * @param engine
-     * @return
      */
     public <Match extends IPatternMatch> ObservablePatternMatchSet<Match> getObservableSet(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, RuleEngine engine) {
         ObservablePatternMatchCollectionBuilder<Match> builder = ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine);
@@ -129,9 +127,8 @@ public class ViewerDataFilter {
      * Returns an observable list of pattern matches, taking account the existing filter rules for a pattern. If no
      * filtering rule is defined for the selected pattern, all matches are returned.
      * 
-     * @param pattern
+     * @param querySpecification
      * @param engine
-     * @return
      */
     public <Match extends IPatternMatch> ObservablePatternMatchList<Match> getObservableList(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, RuleEngine engine) {
         ObservablePatternMatchCollectionBuilder<Match> builder = ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine);

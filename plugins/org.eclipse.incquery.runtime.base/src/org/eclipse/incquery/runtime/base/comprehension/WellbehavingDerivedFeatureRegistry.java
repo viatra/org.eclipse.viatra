@@ -111,14 +111,14 @@ public class WellbehavingDerivedFeatureRegistry {
     }
 
     /**
-     * @param feature
+     * @param cls
      */
     public static void registerWellbehavingDerivedClass(EClass cls) {
         contributedWellbehavingDerivedClasses.add(cls);
     }
 
     /**
-     * @param feature
+     * @param pkg
      */
     public static void registerWellbehavingDerivedPackage(EPackage pkg) {
         contributedWellbehavingDerivedPackages.add(pkg);

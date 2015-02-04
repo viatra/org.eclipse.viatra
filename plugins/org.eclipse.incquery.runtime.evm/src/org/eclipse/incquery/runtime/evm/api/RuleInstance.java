@@ -182,7 +182,6 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * 
      * @param listener
      * @param fireNow
-     * @return
      */
     @Override
     public boolean addActivationNotificationListener(final IActivationNotificationListener listener, final boolean fireNow) {
@@ -193,7 +192,6 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * Delegate method for {@link ActivationNotificationProvider#removeActivationNotificationListener}.
      * 
      * @param listener
-     * @return
      */
     @Override
     public boolean removeActivationNotificationListener(final IActivationNotificationListener listener) {

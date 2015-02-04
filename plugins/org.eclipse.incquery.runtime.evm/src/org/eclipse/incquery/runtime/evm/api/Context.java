@@ -36,8 +36,6 @@ public class Context {
     
     /**
      * Static helper method to create an empty Context.
-     * 
-     * @return
      */
     public static Context create() {
         return new Context();

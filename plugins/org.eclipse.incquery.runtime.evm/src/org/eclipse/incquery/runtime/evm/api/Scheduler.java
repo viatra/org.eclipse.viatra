@@ -33,7 +33,6 @@ public abstract class Scheduler {
          * Creates a scheduler for the given executor.
          * 
          * @param executor
-         * @return
          */
         Scheduler prepareScheduler(final Executor executor);
 

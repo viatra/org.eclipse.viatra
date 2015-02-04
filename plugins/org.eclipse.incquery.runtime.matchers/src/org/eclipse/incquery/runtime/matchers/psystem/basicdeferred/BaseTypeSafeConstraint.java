@@ -41,7 +41,7 @@ public abstract class BaseTypeSafeConstraint extends
     }
 
     /**
-     * @param buildable
+     * @param pSystem
      * @param inputVariables
      * @param outputVariable null iff no output (check-only)
      */

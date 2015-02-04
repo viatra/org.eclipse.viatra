@@ -316,8 +316,6 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
      * Initializes and returns the IncQuery generator model for the selected project. If the model is already
      * initialized, it returns the existing model.
      * 
-     * @param project
-     * @return
      */
     public IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
         IFile file = getGeneratorModelFile(project);

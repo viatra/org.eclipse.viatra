@@ -38,7 +38,6 @@ public final class Schedulers {
      *  after update callback on the NavigationHelper of the given engine.
      *    
      * @param engine
-     * @return
      * @deprecated Change parameter to NavigationHelper (e.g. engine.getBaseIndex()) or use getIQEngineSchedulerFactory
      */
     @Deprecated
@@ -55,8 +54,7 @@ public final class Schedulers {
      * Creates a scheduler factory that creates schedulers by registering to the
      *  after update callback on the NavigationHelper.
      *    
-     * @param navigationHelper
-     * @return
+     * @param index
      */
     public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IBaseIndex index) {
         IQBaseCallbackUpdateCompleteProvider provider;
@@ -71,7 +69,6 @@ public final class Schedulers {
      *  model update listener on the given engine.
      *    
      * @param engine
-     * @return
      */
     public static UpdateCompleteBasedSchedulerFactory getIQEngineSchedulerFactory(final IncQueryEngine engine) {
         IQEngineUpdateCompleteProvider provider;
@@ -86,7 +83,6 @@ public final class Schedulers {
      *  for the transaction events on the given domain.
      *  
      * @param domain
-     * @return
      */
     public static UpdateCompleteBasedSchedulerFactory getTransactionSchedulerFactory(final TransactionalEditingDomain domain) {
         TransactionUpdateCompleteProvider provider = new TransactionUpdateCompleteProvider(domain);
@@ -96,7 +92,6 @@ public final class Schedulers {
     /**
      * Creates a scheduler factory with the given interval.
      * @param interval
-     * @return
      */
     public static TimedSchedulerFactory getTimedSchedulerFactory(long interval) {
         return new TimedSchedulerFactory(interval);

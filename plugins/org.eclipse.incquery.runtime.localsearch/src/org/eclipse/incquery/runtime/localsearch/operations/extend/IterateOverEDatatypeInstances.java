@@ -26,16 +26,13 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
 
     /**
      * @param position
-     * @param it
+     * @param dataType
      */
     public IterateOverEDatatypeInstances(int position, EDataType dataType) {
         super(position);
         this.dataType = dataType;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
-     */
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = context.getBaseIndex().getDataTypeInstances(dataType).iterator();

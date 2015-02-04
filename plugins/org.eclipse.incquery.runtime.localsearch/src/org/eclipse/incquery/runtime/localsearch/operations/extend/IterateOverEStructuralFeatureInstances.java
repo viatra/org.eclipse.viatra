@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import com.google.common.collect.Maps;
 
 /**
- * Iterates all available {@link EStructuralReference} elements using an {@link NavigationHelper EMF-IncQuery Base
+ * Iterates all available {@link EStructuralFeature} elements using an {@link NavigationHelper EMF-IncQuery Base
  * indexer}. It is assumed that the base indexer has been registered for the selected reference type.
  * 
  */

@@ -75,8 +75,7 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
      * Notifies listeners about an activation creation.
      * 
      * @param activation
-     * @param oldState
-     * @param event
+     * @param inactiveState
      */
     public void notifyActivationCreated(final Activation<?> activation,
             final ActivationState inactiveState) {
@@ -90,7 +89,6 @@ public abstract class ActivationNotificationProvider implements IActivationNotif
      * 
      * @param activation
      * @param oldState
-     * @param event
      */
     public void notifyActivationRemoved(final Activation<?> activation,
             final ActivationState oldState) {

@@ -65,7 +65,6 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
      * needed.
      * 
      * @param body
-     * @return
      */
     public PBody normalizeBody(PBody body) throws RewriterException {
         try {

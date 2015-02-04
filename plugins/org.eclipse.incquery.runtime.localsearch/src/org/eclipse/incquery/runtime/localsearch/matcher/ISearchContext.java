@@ -46,7 +46,6 @@ public interface ISearchContext{
      * 
      * TODO should return a generic concept, based on the current IncQueryEngine
      * @param query
-     * @return
      */
     LocalSearchMatcher getMatcher(PQuery query);
     

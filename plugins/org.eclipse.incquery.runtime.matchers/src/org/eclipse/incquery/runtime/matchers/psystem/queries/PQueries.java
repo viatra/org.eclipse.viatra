@@ -47,7 +47,6 @@ public final class PQueries {
 
     /**
      * Function that returns the qualified name of a query
-     * @return
      */
     public static Function<PQuery, String> queryNameFunction() {
         return new Function<PQuery, String>() {

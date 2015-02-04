@@ -29,10 +29,6 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
  */
 public class GenericProjectionIndexer extends IndexerWithMemory implements ProjectionIndexer {
 
-    /**
-     * @param side
-     * @param node
-     */
     public GenericProjectionIndexer(ReteContainer reteContainer, TupleMask mask) {
         super(reteContainer, mask);
     }

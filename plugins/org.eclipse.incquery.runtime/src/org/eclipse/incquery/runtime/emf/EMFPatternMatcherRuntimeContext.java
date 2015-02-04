@@ -71,12 +71,6 @@ public class EMFPatternMatcherRuntimeContext extends EMFPatternMatcherContext im
     private final Set<EDataType> dataTypes = new HashSet<EDataType>();
     private final Set<EStructuralFeature> features = new HashSet<EStructuralFeature>();
 
-
-    /**
-     * Notifier must be EObject, Resource or ResourceSet
-     * 
-     * @param notifier
-     */
     public EMFPatternMatcherRuntimeContext(IncQueryEngine iqEngine, Logger logger, NavigationHelper baseIndex) {
         super(logger);
         this.baseIndex = baseIndex;
