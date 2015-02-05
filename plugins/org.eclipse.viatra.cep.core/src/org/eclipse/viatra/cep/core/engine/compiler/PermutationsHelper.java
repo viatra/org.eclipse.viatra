@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
  * @param <T>
  *            the type of the elements to be permutated
  */
-public class Permutations<T> {
+public class PermutationsHelper<T> {
     private List<List<T>> permutations = Lists.newArrayList();
 
     /**

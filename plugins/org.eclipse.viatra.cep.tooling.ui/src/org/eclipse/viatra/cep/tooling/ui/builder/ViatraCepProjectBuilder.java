@@ -66,7 +66,7 @@ public class ViatraCepProjectBuilder extends IncrementalProjectBuilder {
                 });
             }
         }
-        return null;
+        return new IProject[0];
     }
 
 }

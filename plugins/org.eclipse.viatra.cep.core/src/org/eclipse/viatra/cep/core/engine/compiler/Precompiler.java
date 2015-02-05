@@ -71,7 +71,7 @@ public class Precompiler {
         newPattern.setId(originalPattern.getId());
         newPattern.setOperator(EventsFactory.eINSTANCE.createOR());
 
-        for (final List<EventPatternReference> permutation : new Permutations<EventPatternReference>()
+        for (final List<EventPatternReference> permutation : new PermutationsHelper<EventPatternReference>()
                 .getAll(containedEventPatterns)) {
             ComplexEventPattern innerPattern = EventsFactory.eINSTANCE.createComplexEventPattern();
             innerPattern.setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
