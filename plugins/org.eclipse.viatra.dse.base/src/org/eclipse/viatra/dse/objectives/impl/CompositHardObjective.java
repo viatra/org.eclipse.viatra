@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -34,12 +35,7 @@ public class CompositHardObjective implements IObjective {
 
     protected List<IObjective> objectives;
 
-    protected Comparator<Double> comparator = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return o1.compareTo(o2);
-        }
-    };
+    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
 
     public CompositHardObjective(String name, List<IObjective> objectives) {
         Preconditions.checkNotNull(name, "Name of the objective cannot be null.");

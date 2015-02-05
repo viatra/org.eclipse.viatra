@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -37,12 +38,7 @@ public class TrajectoryCostSoftObjective implements IObjective {
     protected List<TransformationRule<? extends IPatternMatch>> rules;
     protected List<Double> costs;
 
-    protected Comparator<Double> comparator = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return o1.compareTo(o2);
-        }
-    };
+    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
 
     public TrajectoryCostSoftObjective(String name) {
         Preconditions.checkNotNull(name, "Name of the objective cannot be null.");

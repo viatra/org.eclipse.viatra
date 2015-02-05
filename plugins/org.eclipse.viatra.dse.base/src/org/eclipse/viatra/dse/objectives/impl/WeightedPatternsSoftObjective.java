@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -42,12 +43,7 @@ public class WeightedPatternsSoftObjective implements IObjective {
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
     protected List<Double> weights;
 
-    protected Comparator<Double> comparator = new Comparator<Double>() {
-        @Override
-        public int compare(Double o1, Double o2) {
-            return o1.compareTo(o2);
-        }
-    };
+    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
 
     protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
 
