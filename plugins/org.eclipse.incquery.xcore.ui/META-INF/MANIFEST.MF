@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.incquery.xcore.ui
 Bundle-SymbolicName: org.eclipse.incquery.xcore.ui;singleton:=true
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,
@@ -20,9 +20,9 @@ Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.emf.ecore.xcore.edit,
  org.eclipse.incquery.xcore.model;bundle-version="0.8.0",
  org.eclipse.jdt.debug.ui
-Export-Package: org.eclipse.incquery.xcore.ui.contentassist.antlr,
- org.eclipse.incquery.xcore.ui.internal,
- org.eclipse.incquery.xcore.ui.contentassist
+Export-Package: org.eclipse.incquery.xcore.ui.contentassist.antlr,org.
+ eclipse.incquery.xcore.ui.internal,org.eclipse.incquery.xcore.ui.cont
+ entassist
 Import-Package: org.eclipse.xtext.xbase.lib,
  org.apache.log4j
 Bundle-ActivationPolicy: lazy

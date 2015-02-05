@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Viewers Runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.viewers.runtime;singleton:=true
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.ui,
@@ -19,10 +19,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.incquery.runtime.evm
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.viewers.runtime,
- org.eclipse.incquery.viewers.runtime.extensions,
- org.eclipse.incquery.viewers.runtime.extensions.jface,
- org.eclipse.incquery.viewers.runtime.model,
- org.eclipse.incquery.viewers.runtime.model.listeners,
- org.eclipse.incquery.viewers.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.zest"
+Export-Package: org.eclipse.incquery.viewers.runtime,org.eclipse.incqu
+ ery.viewers.runtime.extensions,org.eclipse.incquery.viewers.runtime.e
+ xtensions.jface,org.eclipse.incquery.viewers.runtime.model,org.eclips
+ e.incquery.viewers.runtime.model.listeners,org.eclipse.incquery.viewe
+ rs.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.z
+ est"
 Import-Package: org.apache.log4j;version="1.2.15"

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Databinding Runtime Components (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.databinding.runtime;singleton:=true
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
@@ -14,12 +14,11 @@ Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
  org.eclipse.incquery.patternlanguage.emf;resolution:=optional,
  com.google.guava,
  com.google.inject
-Export-Package: org.eclipse.incquery.databinding.runtime,
- org.eclipse.incquery.databinding.runtime.adapter,
- org.eclipse.incquery.databinding.runtime.api,
- org.eclipse.incquery.databinding.runtime.collection,
- org.eclipse.incquery.databinding.runtime.observables,
- org.eclipse.incquery.databinding.runtime.util,
- org.eclipse.incquery.databinding.runtime.util.validation
+Export-Package: org.eclipse.incquery.databinding.runtime,org.eclipse.i
+ ncquery.databinding.runtime.adapter,org.eclipse.incquery.databinding.
+ runtime.api,org.eclipse.incquery.databinding.runtime.collection,org.e
+ clipse.incquery.databinding.runtime.observables,org.eclipse.incquery.
+ databinding.runtime.util,org.eclipse.incquery.databinding.runtime.uti
+ l.validation
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Bundle-Activator: org.eclipse.incquery.databinding.runtime.IncQueryDatabindingRuntimePlugin

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Rete Engine (Incubation)
 Bundle-SymbolicName: org.eclipse.incquery.runtime.rete
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 Require-Bundle: org.eclipse.incquery.runtime.base.itc;bundle-version="0.8.0";visibility:=reexport,
  org.eclipse.incquery.runtime.matchers;bundle-version="0.8.0";visibility:=reexport,
@@ -10,18 +10,14 @@ Require-Bundle: org.eclipse.incquery.runtime.base.itc;bundle-version="0.8.0";vis
  com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.incquery.runtime.rete.boundary,
- org.eclipse.incquery.runtime.rete.construction,
- org.eclipse.incquery.runtime.rete.construction.basiclinear,
- org.eclipse.incquery.runtime.rete.construction.plancompiler,
- org.eclipse.incquery.runtime.rete.eval,
- org.eclipse.incquery.runtime.rete.index,
- org.eclipse.incquery.runtime.rete.matcher,
- org.eclipse.incquery.runtime.rete.misc,
- org.eclipse.incquery.runtime.rete.network,
- org.eclipse.incquery.runtime.rete.remote,
- org.eclipse.incquery.runtime.rete.single,
- org.eclipse.incquery.runtime.rete.traceability,
- org.eclipse.incquery.runtime.rete.tuple,
- org.eclipse.incquery.runtime.rete.util
+Export-Package: org.eclipse.incquery.runtime.rete.boundary,org.eclipse
+ .incquery.runtime.rete.construction,org.eclipse.incquery.runtime.rete
+ .construction.basiclinear,org.eclipse.incquery.runtime.rete.construct
+ ion.plancompiler,org.eclipse.incquery.runtime.rete.eval,org.eclipse.i
+ ncquery.runtime.rete.index,org.eclipse.incquery.runtime.rete.matcher,
+ org.eclipse.incquery.runtime.rete.misc,org.eclipse.incquery.runtime.r
+ ete.network,org.eclipse.incquery.runtime.rete.remote,org.eclipse.incq
+ uery.runtime.rete.single,org.eclipse.incquery.runtime.rete.traceabili
+ ty,org.eclipse.incquery.runtime.rete.tuple,org.eclipse.incquery.runti
+ me.rete.util
 Bundle-ClassPath: .

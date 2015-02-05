@@ -2,18 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.incquery.xcore;singleton:=true
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.incquery.xcore.IncQueryXcorePlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.incquery.xcore,
- org.eclipse.incquery.xcore.parser.antlr,
- org.eclipse.incquery.xcore.parser.antlr.internal,
- org.eclipse.incquery.xcore.services,
- org.eclipse.incquery.xcore.util,
- org.eclipse.incquery.xcore.validation
+Export-Package: org.eclipse.incquery.xcore,org.eclipse.incquery.xcore.
+ parser.antlr,org.eclipse.incquery.xcore.parser.antlr.internal,org.ecl
+ ipse.incquery.xcore.services,org.eclipse.incquery.xcore.util,org.ecli
+ pse.incquery.xcore.validation
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,
