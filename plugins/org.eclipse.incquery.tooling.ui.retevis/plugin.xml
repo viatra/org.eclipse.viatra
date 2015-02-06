@@ -1,68 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
-
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            name="Rete Visualizer"
-            icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png"
-            category="org.eclipse.incquery.tooling.ui"
-            class="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView"
-            id="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisView">
-      </view>
-   </extension>
-   
-   
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
-         <command
-               commandId="org.eclipse.incquery.tooling.ui.initReteVis"
-               label="(Re)initialize Rete Visualizer"
-               style="push">
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.incquery.tooling.ui.retevis.category"
-            id="org.eclipse.incquery.tooling.ui.initReteVis"
-            name="(Re)initialize Rete Visualizer">
-      </command>
-      <category
-            id="org.eclipse.incquery.tooling.ui.retevis.category"
-            name="IncQuery Rete Visualizer">
-      </category>
-   </extension>
-   
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eclipse.incquery.tooling.ui.retevis.handlers.InitializeRetevisHandler"
-            commandId="org.eclipse.incquery.tooling.ui.initReteVis">
-         <enabledWhen>
-            <with
-                  variable="selection">
-               <count
-                     value="1">
-               </count>
-               <iterate>
-                  <or>
-                     <instanceof
-                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
-         </enabledWhen>
-      </handler>
-   </extension>
-
+<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
+  <extension point="org.eclipse.ui.views">
+    <view category="org.eclipse.incquery.tooling.ui" class="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisualizationView" icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png" id="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisualizer" name="Rete Visualizer"/>
+  </extension>
+  <extension id="org.eclipse.incquery.tooling.ui.retevis.ReteVisualization" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.tooling.ui.retevis.ReteVisualization" id="org.eclipse.incquery.tooling.ui.retevis.ReteVisualization"/>
+  </extension>
 </plugin>

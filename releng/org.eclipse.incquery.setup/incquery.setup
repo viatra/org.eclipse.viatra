@@ -176,6 +176,9 @@
           name="org.eclipse.xtext.sdk.feature.group"/>
       <requirement
           name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.gef4.zest.sdk.feature.group"
+          versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
       <repositoryList
           name="Dependencies">
         <repository

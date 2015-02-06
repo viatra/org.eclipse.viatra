@@ -1,0 +1,103 @@
+package org.eclipse.incquery.tooling.ui.retevis
+
+import "http://www.eclipse.org/incquery/rete/recipes"
+
+@Item(item = recipe, label = "Type Input: $recipe.typeName$")
+pattern typeInputRecipe(recipe) {
+	TypeInputRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Constant: $recipe.constantValues$")
+pattern constantRecipe(recipe) {
+	ConstantRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Count")
+pattern countAggregatorRecipe(recipe) {
+	CountAggregatorRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Anti-join")
+pattern antiJoinRecipe(recipe) {
+	AntiJoinRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Semi-join")
+pattern semiJoinRecipe(recipe) {
+	SemiJoinRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Join")
+pattern joinRecipe(recipe) {
+	JoinRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Existence Join")
+pattern existenceJoinRecipe(recipe) {
+	ExistenceJoinRecipe(recipe);
+}
+
+@Item(item = recipe)
+pattern productionRecipe(recipe) {
+	ProductionRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Uniqueness Enforcer")
+pattern uniquenessEnforcerRecipe(recipe) {
+	UniquenessEnforcerRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Expression Enforcer")
+pattern expressionEnforcerRecipe(recipe) {
+	ExpressionEnforcerRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Filter")
+pattern filterRecipe(recipe) {
+	FilterRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Transitive Closure")
+pattern transitiveClosureRecipe(recipe) {
+	TransitiveClosureRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Trimmer")
+pattern trimmerRecipe(recipe) {
+	TrimmerRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Aggregator Indexer")
+pattern aggregatorIndexerRecipe(recipe) {
+	AggregatorIndexerRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Projection Indexer")
+pattern projectionIndexerRecipe(recipe) {
+	ProjectionIndexerRecipe(recipe);
+}
+
+@Edge(source = parent, target = recipe)
+pattern aggregatorRecipeParent(recipe: AggregatorRecipe, parent: ProjectionIndexerRecipe) {
+	AggregatorRecipe.parent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe, label = "left")
+pattern betaRecipeLeftParent(recipe: BetaRecipe, parent: ProjectionIndexerRecipe) {
+	BetaRecipe.leftParent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe, label = "right")
+pattern betaRecipeRightParent(recipe: BetaRecipe, parent: IndexerRecipe) {
+	BetaRecipe.rightParent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe)
+pattern multiParentNodeRecipeParents(recipe: MultiParentNodeRecipe, parent: ReteNodeRecipe) {
+	MultiParentNodeRecipe.parents(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe)
+pattern singleParentNodeRecipeParent(recipe: SingleParentNodeRecipe, parent: ReteNodeRecipe) {
+	SingleParentNodeRecipe.parent(recipe, parent);	
+}

@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.rete.traceability;
 
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 
-public class ActiveNodeConflictTrace extends RecipeTraceInfo {
+public class ActiveNodeConflictTrace extends RecipeTraceInfo { // TODO implement PatternTraceInfo
 	RecipeTraceInfo inactiveRecipeTrace;		
 	public ActiveNodeConflictTrace(ReteNodeRecipe recipe,
 			RecipeTraceInfo parentRecipeTrace,
