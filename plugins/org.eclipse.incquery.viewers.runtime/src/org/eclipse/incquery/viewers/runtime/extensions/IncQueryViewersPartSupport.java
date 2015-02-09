@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.extensions;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionListener;
@@ -73,17 +71,12 @@ public abstract class IncQueryViewersPartSupport {
         @Override
         public void selectionChanged(IWorkbenchPart part, ISelection selection) {
             if (!owner.equals(part) && selection instanceof IStructuredSelection) {
-                ArrayList<Notifier> r = new ArrayList<Notifier>();
-                for (Object _target : ((IStructuredSelection) selection).toArray()) {
-                    if (_target instanceof Notifier) {
-                        r.add((Notifier) _target);
-                    }
-                }
-                filteredSelectionChanged(r);
+                IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+                onSelectionChanged(structuredSelection.toList());
             }
         }
     };
 	
-    protected abstract void filteredSelectionChanged(List<Notifier> eObjects);
+    protected abstract void onSelectionChanged(List<Object> object);
     
 }

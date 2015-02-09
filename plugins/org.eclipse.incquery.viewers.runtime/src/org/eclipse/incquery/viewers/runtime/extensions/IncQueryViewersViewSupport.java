@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 /**
  * Utility class to serve as an extension for {@link ViewPart}s wishing to use
  * IncQuery Viewers.
@@ -62,22 +65,16 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
 		return (IViewPart)owner;
 	}
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#dispose()
-	 */
 	@Override
 	public void dispose() {
 		unbindModel();
 		super.dispose();
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport#filteredSelectionChanged(java.util.List)
-     */
     @Override
-    protected void filteredSelectionChanged(List<Notifier> eObjects) {
+    protected void onSelectionChanged(List<Object> objects) {
     	// extract model source
-    	Notifier target = extractModelSource(eObjects);
+    	Notifier target = extractModelSource(objects);
     	if (target!=null && !target.equals(this.modelSource)) {
     		// we have found a new target
     		unsetModelSource();
@@ -87,7 +84,8 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     
 
     
-    private Notifier extractModelSource(List<Notifier> notifiers) {
+    protected Notifier extractModelSource(List<Object> objects) {
+        List<Notifier> notifiers = ImmutableList.copyOf(Iterables.filter(objects, Notifier.class));
     	// extract logic
     	switch (connectorType) {
     	default:

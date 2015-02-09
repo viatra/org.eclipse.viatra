@@ -48,12 +48,12 @@ import com.google.common.collect.ImmutableSet;
 public class IncQueryViewersZestViewSupport extends
 		IncQueryViewersJFaceViewSupport {
 
-	GraphViewer graphViewer;
+	private final GraphViewer graphViewer;
 	
-	/**
-	 * @param _owner
-	 * @param _jfaceViewer
-	 */
+    public GraphViewer getGraphViewer() {
+        return graphViewer;
+    }
+    
 	public IncQueryViewersZestViewSupport(
 			IViewPart _owner,
 			ViewersComponentConfiguration _config,
@@ -63,19 +63,13 @@ public class IncQueryViewersZestViewSupport extends
 		this.graphViewer = _graphViewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#init()
-	 */
 	@Override
 	protected void init() {
 		super.init();
-		this.graphViewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
-		this.graphViewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
+		this.getGraphViewer().setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
+		this.getGraphViewer().setLayoutAlgorithm(new RadialLayoutAlgorithm());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport#bindModel()
-	 */
 	@Override
 	protected void bindModel() {
 		Assert.isNotNull(this.configuration);
@@ -91,7 +85,6 @@ public class IncQueryViewersZestViewSupport extends
 	    			this.configuration.getPatterns(), 
 	    			this.configuration.getFilter(),  
 	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			//IncQueryGraphViewers.bind(((GraphViewer)jfaceViewer), state);
 			IncQueryGraphViewers.bindWithIsolatedNodes(((GraphViewer)jfaceViewer), state);
 		}
 	}
@@ -130,15 +123,15 @@ public class IncQueryViewersZestViewSupport extends
     protected Action refreshGraph = new Action("Refresh Graph") {
         @Override
         public void run() {
-            graphViewer.applyLayout();
-            graphViewer.refresh();
+            getGraphViewer().applyLayout();
+            getGraphViewer().refresh();
         }
     };
 
     protected Action clearGraph = new Action("Clear Graph") {
         @Override
         public void run() {
-            graphViewer.setInput(null);
+            getGraphViewer().setInput(null);
         }
     };
 
@@ -146,10 +139,10 @@ public class IncQueryViewersZestViewSupport extends
         return new Action(name) {
             @Override
             public void run() {
-                graphViewer.setLayoutAlgorithm(lay);
-                graphViewer.applyLayout();
+                getGraphViewer().setLayoutAlgorithm(lay);
+                getGraphViewer().applyLayout();
             }
         };
     }
-	
+
 }
