@@ -45,9 +45,6 @@ public class TargetPlatformMetamodelProviderService extends
 	 @Inject
 	 private IQualifiedNameConverter qualifiedNameConverter;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService#getAllMetamodelObjects(org.eclipse.emf.ecore.EObject)
-	 */
 	@Override
 	public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
 		final ResourceSet resourceSet = context.eResource().getResourceSet();
@@ -80,9 +77,6 @@ public class TargetPlatformMetamodelProviderService extends
 		return metamodelLoader.loadGenPackage(resourceSet, packageUri);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService#loadEPackage(java.lang.String, org.eclipse.emf.ecore.resource.ResourceSet)
-	 */
 	@Override
 	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
 	    EPackage pack;
@@ -92,13 +86,6 @@ public class TargetPlatformMetamodelProviderService extends
         return pack;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService#isGeneratedCodeAvailable(org.eclipse
-     * .emf.ecore.EPackage, org.eclipse.emf.ecore.resource.ResourceSet)
-     */
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
         return (metamodelLoader.loadGenPackage(set, ePackage.getNsURI()) != null)

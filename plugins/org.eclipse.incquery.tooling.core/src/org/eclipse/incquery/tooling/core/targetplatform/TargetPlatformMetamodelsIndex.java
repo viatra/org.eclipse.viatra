@@ -147,9 +147,6 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 			this.packageURI = packageURI;
 		}
 		
-		/**
-		 * @return the packageURI
-		 */
 		public String getPackageURI() {
 			return packageURI;
 		}
@@ -228,9 +225,6 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.tooling.core.targetPlatform.ITargetPlatformMetamodelLoader#listEPackages()
-	 */
 	@Override
 	public List<String> listEPackages() {
 		List<String> packageURIs = new LinkedList<String>();
@@ -240,9 +234,6 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		return packageURIs;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.tooling.core.targetPlatform.ITargetPlatformMetamodelLoader#loadPackage(org.eclipse.emf.ecore.resource.ResourceSet, java.lang.String)
-	 */
 	@Override
 	public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
 		for(TargetPlatformMetamodel mm : load()){
@@ -253,9 +244,6 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.tooling.core.targetPlatform.ITargetPlatformMetamodelLoader#loadGenPackage(org.eclipse.emf.ecore.resource.ResourceSet, java.lang.String)
-	 */
 	@Override
 	public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
 		for(TargetPlatformMetamodel mm : load()){
