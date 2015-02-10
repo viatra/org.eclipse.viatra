@@ -62,6 +62,14 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
         super(delegate);
     }
 
+    @Override
+    protected Object doGetImage(Object element) {
+        if (element instanceof PackageImport) {
+            super.doGetImage(((PackageImport) element).getEPackage());
+        }
+        return super.doGetImage(element);
+    }
+    
     String text(PatternModel model) {
         return "Pattern Model";
     }

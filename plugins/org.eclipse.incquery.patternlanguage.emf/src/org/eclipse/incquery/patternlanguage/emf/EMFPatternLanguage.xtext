@@ -34,7 +34,7 @@ XImportSection:
 ;
 	
 PackageImport:
-	'import' 'epackage'? ePackage = [ecore::EPackage|STRING] ';'?// ('as' alias=ID)? |
+	'import' 'epackage'? ePackage = [ecore::EPackage|STRING] ';'? ('as' alias=ID)?
 ;
 
 PatternImport:
@@ -60,7 +60,7 @@ EClassifierConstraint:
 
 Type returns core::EntityType:
 	{ClassType}
-	classname=[ecore::EClassifier]
+	(metamodel=[PackageImport] '::' )? classname=[ecore::EClassifier]
 ;
 
 RefType returns core::RelationType:

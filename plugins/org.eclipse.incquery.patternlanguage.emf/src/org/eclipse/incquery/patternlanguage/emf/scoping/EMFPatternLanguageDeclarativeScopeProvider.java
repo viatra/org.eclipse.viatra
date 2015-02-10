@@ -12,7 +12,6 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 
 import static org.eclipse.emf.ecore.util.EcoreUtil.getRootContainer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +22,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageScopeHelper;
@@ -35,6 +35,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType
 import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionTail;
+import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
@@ -44,9 +45,12 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
+import org.eclipse.xtext.scoping.impl.SimpleScope;
+import org.eclipse.xtext.util.SimpleAttributeResolver;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -74,18 +78,34 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
     public IScope scope_EPackage(PackageImport ctx, EReference ref) {
         return metamodelProvider.getAllMetamodelObjects(this.delegateGetScope(ctx, ref), ctx);
     }
-
-    public IScope scope_EClassifier(PatternBody ctx, EReference ref) {
-        // This is needed for content assist - in that case the ClassType does not exists
+    
+    public IScope scope_PackageImport(EObject ctx, EReference ref) {
         EObject root = getRootContainer(ctx);
         if (root instanceof PatternModel) {
-            return createReferencedPackagesScope((PatternModel) root);
+            SimpleAttributeResolver<PackageImport, String> attributeResolver = SimpleAttributeResolver.<PackageImport, String>newResolver(String.class, "alias");
+            final EList<PackageImport> elements = ((PatternModel) root).getImportPackages().getPackageImport();
+            return new SimpleScope(IScope.NULLSCOPE,Scopes.scopedElementsFor(elements, QualifiedName.wrapper(attributeResolver)));
         } else {
             return IScope.NULLSCOPE;
         }
     }
 
+    public IScope scope_EClassifier(EObject ctx, EReference ref) {
+        // The context is general as content assist might ask for different context types
+        if (ctx instanceof ClassType) {
+            return scope_EClassifier((ClassType)ctx, ref);
+        }
+        return createUnqualifiedClassifierScope(ctx);
+    }
+    
     public IScope scope_EClassifier(ClassType ctx, EReference ref) {
+        if (ctx.getMetamodel() != null && !ctx.getMetamodel().eIsProxy()) {
+            return createClassifierScope(ctx.getMetamodel().getEPackage(), IScope.NULLSCOPE);
+        }
+        return createUnqualifiedClassifierScope(ctx);
+    }
+
+    protected IScope createUnqualifiedClassifierScope(EObject ctx) {
         EObject root = getRootContainer(ctx);
         if (root instanceof PatternModel) {
             return createReferencedPackagesScope((PatternModel) root);
@@ -93,28 +113,20 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
             return IScope.NULLSCOPE;
         }
     }
-
-    public IScope scope_EClassifier(Variable ctx, EReference ref) {
-        EObject root = getRootContainer(ctx);
-        if (root instanceof PatternModel) {
-            return createReferencedPackagesScope((PatternModel) root);
-        } else {
-            return IScope.NULLSCOPE;
-        }
-    }
-
-    protected IScope createClassifierScope(Iterable<EClassifier> classifiers) {
-        return Scopes.scopeFor(classifiers);
-    }
-
+    
     protected IScope createReferencedPackagesScope(PatternModel model) {
-        final Collection<EClassifier> allClassifiers = new ArrayList<EClassifier>();
+        IScope scope = IScope.NULLSCOPE;
+        
         for (PackageImport decl : EMFPatternLanguageHelper.getPackageImportsIterable(model)) {
             if (decl.getEPackage() != null) {
-                allClassifiers.addAll(decl.getEPackage().getEClassifiers());
+                scope = createClassifierScope(decl.getEPackage(), scope);
             }
         }
-        return createClassifierScope(allClassifiers);
+        return scope;
+    }
+    
+    protected IScope createClassifierScope(EPackage ePackage, IScope outer) {
+        return Scopes.scopeFor(ePackage.getEClassifiers(), outer);
     }
 
     public IScope scope_EStructuralFeature(PathExpressionHead ctx, EReference ref) {
