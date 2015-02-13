@@ -75,6 +75,19 @@ public class BaseIndexOptions {
         this.wildcardMode = wildcardMode;
     }
 
+    /**
+     * 
+     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withDynamicEMFMode(boolean)} instead
+     */
+    public void setDynamicEMFMode(boolean dynamicEMFMode) {
+            this.dynamicEMFMode = dynamicEMFMode;
+    }
+    
+    /**
+     * 
+     * @param dynamicEMFMode
+     * @since 0.9
+     */
     public BaseIndexOptions withDynamicEMFMode(boolean dynamicEMFMode) {
     	BaseIndexOptions result = copy();
         result.dynamicEMFMode = dynamicEMFMode;
@@ -83,9 +96,21 @@ public class BaseIndexOptions {
 
     /**
      * Adds an object-level filter to the indexer. Warning - object-level indexing can increase indexing time
+     * noticeably. If possibly, use {@link #withObjectFilterConfiguration(IBaseIndexObjectFilter)} instead.
+     * 
+     * @param filter
+     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead
+     */
+    public void setObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
+        notifierFilterConfiguration = filter;
+    }
+    
+    /**
+     * Adds an object-level filter to the indexer configuration. Warning - object-level indexing can increase indexing time
      * noticeably. If possibly, use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead.
      * 
      * @param filter
+     * @since 0.9
      */
     public BaseIndexOptions withObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
     	BaseIndexOptions result = copy();
@@ -101,9 +126,20 @@ public class BaseIndexOptions {
     }
 
     /**
-     * Adds a resource filter
+     * Adds a resource filter to the current configuration
      * 
      * @param filter
+     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead
+     */
+    public void setResourceFilter(IBaseIndexResourceFilter filter) {
+        resourceFilterConfiguration = filter;
+    }
+    
+    /**
+     * Returns a copy of the configuration with a specified resource filter
+     * 
+     * @param filter
+     * @since 0.9
      */
     public BaseIndexOptions withResourceFilterConfiguration(IBaseIndexResourceFilter filter) {
     	BaseIndexOptions result = copy();
@@ -132,6 +168,21 @@ public class BaseIndexOptions {
         return traverseOnlyWellBehavingDerivedFeatures;
     }
 
+    
+    /**
+     * 
+     * @param wildcardMode
+     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withWildcardMode(boolean)} instead
+     */
+    public void setWildcardMode(boolean wildcardMode) {
+        this.wildcardMode = wildcardMode;
+    }
+    
+    /**
+     * 
+     * @param wildcardMode
+     * @since 0.9
+     */
     public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
     	BaseIndexOptions result = copy();
         result.wildcardMode = wildcardMode;
