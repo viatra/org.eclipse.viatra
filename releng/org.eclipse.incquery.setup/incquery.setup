@@ -332,7 +332,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="bugzilla.version"
-        value="0.9.0"/>
+        value="1.0.0"/>
     <setupTask
         xsi:type="mylyn:MylynQueriesTask"
         repositoryURL="https://bugs.eclipse.org/bugs"
@@ -389,7 +389,7 @@
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.7.0,2.8.0)"/>
       <repository
-          url="http://download.eclipse.org/releases/luna"/>
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
     </setupTask>
     <setupTask
         xsi:type="setup:CompoundTask"
@@ -453,6 +453,47 @@
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.6.0,2.7.0)"/>
+      <repository
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+    </setupTask>
+  </stream>
+  <stream name="0.9-maintenance">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="bugzilla.version"
+        value="0.9.1"
+        defaultValue=""/>
+    <setupTask
+        xsi:type="mylyn:MylynQueriesTask"
+        repositoryURL="https://bugs.eclipse.org/bugs"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <query
+          summary="Bugs in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial"/>
+      <query
+          summary="Features in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=enhancement"/>
+      <query
+          summary="Resolved in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=RESOLVED&amp;resolution=FIXED&amp;version=${bugzilla.version}"/>
+      <query
+          summary="Unspecified Version"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;version=unspecified"/>
+    </setupTask>
+    <setupTask
+        xsi:type="mylyn:MylynBuildsTask"
+        serverURL="https://hudson.eclipse.org/incquery"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <buildPlan
+          name="incquery-maintenance-0.9.0"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.7.0,2.8.0)"/>
       <repository
           url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
     </setupTask>
