@@ -63,8 +63,8 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     public void registerFor(MatchType atom) {
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
-            if (index.addInstanceObserver(observer, object))
-            	observedMultimap.put(object, atom);
+        	index.addInstanceObserver(observer, object);
+        	observedMultimap.put(object, atom);
         }
     }
 
@@ -79,8 +79,8 @@ public class LightweightAttributeMonitor<MatchType extends IPatternMatch> extend
     public void unregisterFor(MatchType atom) {
         Collection<Object> allObjects = findAllObjects(atom);
         for (Object object : allObjects) {
-            if (index.removeInstanceObserver(observer, object))
-            	observedMultimap.remove(object, atom);
+        	index.removeInstanceObserver(observer, object);
+        	observedMultimap.remove(object, atom);
         }
     }
 
