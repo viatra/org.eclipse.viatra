@@ -31,7 +31,7 @@ public abstract class BasePatternGroup implements IQueryGroup {
 
     @Override
     public void prepare(IncQueryEngine engine) throws IncQueryException {
-    	AdvancedIncQueryEngine.from(engine);
+    	prepare(AdvancedIncQueryEngine.from(engine));
     }
     
     protected void prepare(AdvancedIncQueryEngine engine) throws IncQueryException {
