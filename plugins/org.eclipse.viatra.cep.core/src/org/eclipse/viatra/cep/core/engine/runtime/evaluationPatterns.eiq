@@ -90,6 +90,7 @@ pattern tokenEntersTimedZone(et : EventToken, s: State, tz : TimedZone){
 
 pattern tokenLeavesTimedZone(et : EventToken, s: State, tz : TimedZone){
 	EventToken.currentState(et, s);
+	EventToken.timedZones(et, tz);
 	State.outStateOf(s, tz);
 }
 

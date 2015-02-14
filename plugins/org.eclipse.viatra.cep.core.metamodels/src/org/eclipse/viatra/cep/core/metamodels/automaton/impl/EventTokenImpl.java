@@ -21,6 +21,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 
+import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
 /**
@@ -33,6 +34,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getCurrentState <em>Current State</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getRecordedEvents <em>Recorded Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getLastProcessed <em>Last Processed</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getTimedZones <em>Timed Zones</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,6 +70,16 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * @ordered
      */
     protected Event lastProcessed;
+
+    /**
+     * The cached value of the '{@link #getTimedZones() <em>Timed Zones</em>}' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTimedZones()
+     * @generated
+     * @ordered
+     */
+    protected EList<TimedZone> timedZones;
 
     /**
      * <!-- begin-user-doc -->
@@ -203,6 +215,18 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<TimedZone> getTimedZones() {
+        if (timedZones == null) {
+            timedZones = new EObjectResolvingEList<TimedZone>(TimedZone.class, this, AutomatonPackage.EVENT_TOKEN__TIMED_ZONES);
+        }
+        return timedZones;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -244,6 +268,8 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
             case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
                 if (resolve) return getLastProcessed();
                 return basicGetLastProcessed();
+            case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
+                return getTimedZones();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -267,6 +293,10 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
             case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
                 setLastProcessed((Event)newValue);
                 return;
+            case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
+                getTimedZones().clear();
+                getTimedZones().addAll((Collection<? extends TimedZone>)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -288,6 +318,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
             case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
                 setLastProcessed((Event)null);
                 return;
+            case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
+                getTimedZones().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -306,6 +339,8 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 return recordedEvents != null && !recordedEvents.isEmpty();
             case AutomatonPackage.EVENT_TOKEN__LAST_PROCESSED:
                 return lastProcessed != null;
+            case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
+                return timedZones != null && !timedZones.isEmpty();
         }
         return super.eIsSet(featureID);
     }

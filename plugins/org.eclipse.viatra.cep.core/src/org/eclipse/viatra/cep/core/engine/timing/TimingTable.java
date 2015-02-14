@@ -47,6 +47,7 @@ public class TimingTable extends HashMap<TimedZone, TokenInTimedZone> {
      */
     public void enterTimedZone(TimedZone timedZone, EventToken eventToken) {
         put(timedZone, new TokenInTimedZone(eventToken, new Date().getTime()));
+        eventToken.getTimedZones().add(timedZone);
     }
 
     /**
@@ -63,6 +64,8 @@ public class TimingTable extends HashMap<TimedZone, TokenInTimedZone> {
         long currentTime = new Date().getTime();
         long timeWindow = timedZone.getTime();
         TokenInTimedZone tokenInTimedZone = get(timedZone);
+
+        eventToken.getTimedZones().remove(timedZone);
 
         remove(eventToken);
 

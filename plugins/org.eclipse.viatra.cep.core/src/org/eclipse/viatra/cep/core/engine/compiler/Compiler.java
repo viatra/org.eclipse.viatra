@@ -12,7 +12,6 @@
 package org.eclipse.viatra.cep.core.engine.compiler;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
@@ -23,6 +22,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
+import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Within;
@@ -39,7 +39,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.OR;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Compiler functionality that maps the {@link EventPattern}s, combined via complex event operators to the internal
@@ -86,20 +85,14 @@ public class Compiler {
         automaton.getStates().add(finalState);
 
         if (unfoldedEventPattern instanceof ComplexEventPattern) {
-            Map<StateType, State> marginStates = map(initState, (ComplexEventPattern) unfoldedEventPattern);
+            SubAutomaton subAutomatonData = map(initState, (ComplexEventPattern) unfoldedEventPattern);
 
-            State lastState = marginStates.get(StateType.OUT);
-            List<Transition> inTransitions = lastState.getInTransitions();
-            finalState.getInTransitions().addAll(inTransitions);
-
-            List<Transition> outTransitions = lastState.getOutTransitions();
-            finalState.getOutTransitions().addAll(outTransitions);
-
-            automaton.getStates().remove(lastState);
+            State lastState = subAutomatonData.getOutState();
+            replaceState(lastState, finalState);
 
             Timewindow timewindow = ((ComplexEventPattern) unfoldedEventPattern).getTimewindow();
             if (timewindow != null) {
-                createTimedZone(timewindow, initState, finalState);
+                createTimedZone(timewindow, subAutomatonData.getInStates(), finalState);
             }
 
         } else if (unfoldedEventPattern instanceof AtomicEventPattern) {
@@ -113,13 +106,27 @@ public class Compiler {
     }
 
     /**
-     * Designates whether the {@link State} is the input or the output state of a sub-automaton.
+     * Carries inforamtion about the sub-automaton parts within an automaton during compilation.
      * 
      * @author Istvan David
-     * 
+     *
      */
-    enum StateType {
-        IN, OUT
+    private static class SubAutomaton {
+        private List<State> inStates = Lists.newArrayList();
+        private State outState;
+
+        public SubAutomaton(List<State> inStates, State outState) {
+            this.inStates = inStates;
+            this.outState = outState;
+        }
+
+        public List<State> getInStates() {
+            return inStates;
+        }
+
+        public State getOutState() {
+            return outState;
+        }
     }
 
     private void map(AtomicEventPattern atomicEventPattern) {
@@ -137,14 +144,23 @@ public class Compiler {
      *            the single {@link ComplexEventPattern} that an {@link Automaton} should be created from
      * @return the IN and OUT ({@link StateType}s) {@link State} of the automaton
      */
-    private Map<StateType, State> map(State preState, ComplexEventPattern complexEventPattern) {
+    private SubAutomaton map(State preState, ComplexEventPattern complexEventPattern) {
+        SubAutomaton subAutomatonData = null;
         ComplexEventOperator operator = complexEventPattern.getOperator();
         if (operator instanceof FOLLOWS) {
-            return mapFollows(preState, complexEventPattern);
+            subAutomatonData = mapFollows(preState, complexEventPattern);
         } else if (operator instanceof OR) {
-            return mapOr(preState, complexEventPattern);
+            subAutomatonData = mapOr(preState, complexEventPattern);
         }
-        throw new UnsupportedOperationException();
+
+        // create timewindow
+        Timewindow timewindow = complexEventPattern.getTimewindow();
+        if (timewindow != null) {
+            createTimedZone(timewindow, subAutomatonData.getInStates(), subAutomatonData.getOutState());
+        }
+
+        // return
+        return subAutomatonData;
     }
 
     /**
@@ -156,11 +172,8 @@ public class Compiler {
      *            {@link ComplexEventPattern} to be mapped
      * @return the IN and OUT ({@link StateType}s) {@link State} of the automaton
      */
-    private Map<StateType, State> mapFollows(State preState, ComplexEventPattern complexEventPattern) {
-        Map<StateType, State> marginStates = Maps.newHashMap();
-
-        marginStates.put(StateType.IN, preState);
-
+    private SubAutomaton mapFollows(State preState, ComplexEventPattern complexEventPattern) {
+        List<State> inStates = Lists.newArrayList();
         State lastCreatedState = preState;
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
@@ -168,14 +181,17 @@ public class Compiler {
             AbstractMultiplicity multiplicity = eventPatternReference.getMultiplicity();
             if (multiplicity instanceof Multiplicity) {
                 for (int i = 0; i < ((Multiplicity) multiplicity).getValue(); i++) {
-                    Map<StateType, State> subPathStates = mapFollowsPath(lastCreatedState, eventPattern);
-                    lastCreatedState = subPathStates.get(StateType.OUT);
+                    SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern);
+                    lastCreatedState = subAutomatonData.getOutState();
+                    if (inStates.isEmpty()) {
+                        inStates.addAll(subAutomatonData.getInStates());
+                    }
                 }
             } else if (multiplicity instanceof AtLeastOne) {
-                Map<StateType, State> subPathStates = mapFollowsPath(lastCreatedState, eventPattern);
-                lastCreatedState = subPathStates.get(StateType.OUT);
+                SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern);
+                lastCreatedState = subAutomatonData.getOutState();
 
-                for (Transition transition : marginStates.get(StateType.IN).getOutTransitions()) {
+                for (Transition transition : preState.getOutTransitions()) {
                     if (!(transition instanceof TypedTransition)) {
                         continue;
                     }
@@ -189,23 +205,19 @@ public class Compiler {
 
         }
 
-        marginStates.put(StateType.OUT, lastCreatedState);
-
-        return marginStates;
+        return new SubAutomaton(inStates, lastCreatedState);
     }
 
-    private Map<StateType, State> mapFollowsPath(State preState, EventPattern eventPattern) {
-        Map<StateType, State> marginStates = Maps.newHashMap();
+    private SubAutomaton mapFollowsPath(State preState, EventPattern eventPattern) {
         if (eventPattern instanceof AtomicEventPattern) {
             State currentState = createState();
             Guard guard = createGuard((AtomicEventPattern) eventPattern);
             createTransition(preState, currentState, guard);
-            marginStates.put(StateType.IN, preState);
-            marginStates.put(StateType.OUT, currentState);
+            return new SubAutomaton(Lists.newArrayList(currentState), currentState);
         } else if (eventPattern instanceof ComplexEventPattern) {
-            marginStates = map(preState, (ComplexEventPattern) eventPattern);
+            return map(preState, (ComplexEventPattern) eventPattern);
         }
-        return marginStates;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -217,42 +229,70 @@ public class Compiler {
      *            {@link ComplexEventPattern} to be mapped
      * @return the IN and OUT ({@link StateType}s) {@link State} of the automaton
      */
-    private Map<StateType, State> mapOr(State preState, ComplexEventPattern complexEventPattern) {
-        Map<StateType, State> states = Maps.newHashMap();
-
-        states.put(StateType.IN, preState);
+    private SubAutomaton mapOr(State preState, ComplexEventPattern complexEventPattern) {
+        List<State> inStates = Lists.newArrayList();
+        List<State> statesToBeMergedIntoOut = Lists.newArrayList();
 
         State outState = createState();
-        states.put(StateType.OUT, outState);
-
-        List<State> statesToBeMergedIntoOut = Lists.newArrayList();
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            mapOrPath(preState, outState, statesToBeMergedIntoOut, eventPattern);
+            mapOrPath(preState, outState, inStates, statesToBeMergedIntoOut, eventPattern);
         }
 
         for (State state : statesToBeMergedIntoOut) {
-            List<Transition> inTransitions = state.getInTransitions();
-            outState.getInTransitions().addAll(inTransitions);
-
-            List<Transition> outTransitions = state.getOutTransitions();
-            outState.getOutTransitions().addAll(outTransitions);
-
-            automaton.getStates().remove(state);
+            replaceState(state, outState);
         }
 
-        return states;
+        return new SubAutomaton(inStates, outState);
     }
 
-    private void mapOrPath(State preState, State outState, List<State> statesToBeMergedIntoOut,
+    private void mapOrPath(State preState, State outState, List<State> inStates, List<State> statesToBeMergedIntoOut,
             EventPattern eventPattern) {
         if (eventPattern instanceof AtomicEventPattern) {
             Guard guard = createGuard((AtomicEventPattern) eventPattern);
             createTransition(preState, outState, guard);
         } else if (eventPattern instanceof ComplexEventPattern) {
-            Map<StateType, State> marginStates = map(preState, (ComplexEventPattern) eventPattern);
-            statesToBeMergedIntoOut.add(marginStates.get(StateType.OUT));
+            SubAutomaton subAutomatonData = map(preState, (ComplexEventPattern) eventPattern);
+            inStates.addAll(subAutomatonData.getInStates());
+            statesToBeMergedIntoOut.add(subAutomatonData.getOutState());
+        }
+    }
+
+    /**
+     * Replaces the oldState with the newState with respect to its incoming and outgoing transitions, and time windows
+     * it participates in.
+     * 
+     * @param oldState
+     *            the state to be replaced
+     * @param newState
+     *            the state replacing the old one
+     */
+    private void replaceState(State oldState, State newState) {
+        List<Transition> inTransitions = oldState.getInTransitions();
+        newState.getInTransitions().addAll(inTransitions);
+
+        List<Transition> outTransitions = oldState.getOutTransitions();
+        newState.getOutTransitions().addAll(outTransitions);
+
+        List<TimedZone> timedZones = automaton.getTimedZones();
+        for (TimedZone timedZone : timedZones) {
+            if (timedZone.getOutState().equals(oldState)) {
+                timedZone.setOutState(newState);
+            }
+        }
+        for (TimedZone timedZone : timedZones) {
+            if (timedZone.getInState().equals(oldState)) {
+                timedZone.setInState(newState);
+            }
+        }
+
+        automaton.getStates().remove(oldState);
+    }
+
+    private void createTimedZone(Timewindow timewindow, List<State> inStates, State outState) {
+        for (State inState : inStates) {
+            createTimedZone(timewindow, inState, outState);
         }
     }
 
@@ -262,14 +302,6 @@ public class Compiler {
         timedZone.setInState(inState);
         timedZone.setOutState(outState);
         automaton.getTimedZones().add(timedZone);
-    }
-
-    private void createTimedZone(Timewindow timewindow, InitState initState, State outState) {
-        List<Transition> outTransitions = initState.getOutTransitions();
-        for (Transition transition : outTransitions) {
-            State timeZoneInState = transition.getPostState();
-            createTimedZone(timewindow, timeZoneInState, outState);
-        }
     }
 
     private State createState() {

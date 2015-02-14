@@ -214,13 +214,22 @@ public interface AutomatonPackage extends EPackage {
     int EVENT_TOKEN__LAST_PROCESSED = 2;
 
     /**
+     * The feature id for the '<em><b>Timed Zones</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_TOKEN__TIMED_ZONES = 3;
+
+    /**
      * The number of structural features of the '<em>Event Token</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_TOKEN_FEATURE_COUNT = 3;
+    int EVENT_TOKEN_FEATURE_COUNT = 4;
 
     /**
      * The number of operations of the '<em>Event Token</em>' class.
@@ -287,7 +296,7 @@ public interface AutomatonPackage extends EPackage {
     int STATE__LAST_PROCESSED_EVENT = 4;
 
     /**
-     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * The feature id for the '<em><b>In State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -296,7 +305,7 @@ public interface AutomatonPackage extends EPackage {
     int STATE__IN_STATE_OF = 5;
 
     /**
-     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * The feature id for the '<em><b>Out State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -378,7 +387,7 @@ public interface AutomatonPackage extends EPackage {
     int INIT_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
 
     /**
-     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * The feature id for the '<em><b>In State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -387,7 +396,7 @@ public interface AutomatonPackage extends EPackage {
     int INIT_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
 
     /**
-     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * The feature id for the '<em><b>Out State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -469,7 +478,7 @@ public interface AutomatonPackage extends EPackage {
     int FINAL_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
 
     /**
-     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * The feature id for the '<em><b>In State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -478,7 +487,7 @@ public interface AutomatonPackage extends EPackage {
     int FINAL_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
 
     /**
-     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * The feature id for the '<em><b>Out State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -560,7 +569,7 @@ public interface AutomatonPackage extends EPackage {
     int TRAP_STATE__LAST_PROCESSED_EVENT = STATE__LAST_PROCESSED_EVENT;
 
     /**
-     * The feature id for the '<em><b>In State Of</b></em>' reference.
+     * The feature id for the '<em><b>In State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -569,7 +578,7 @@ public interface AutomatonPackage extends EPackage {
     int TRAP_STATE__IN_STATE_OF = STATE__IN_STATE_OF;
 
     /**
-     * The feature id for the '<em><b>Out State Of</b></em>' reference.
+     * The feature id for the '<em><b>Out State Of</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -1105,6 +1114,17 @@ public interface AutomatonPackage extends EPackage {
     EReference getEventToken_LastProcessed();
 
     /**
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getTimedZones <em>Timed Zones</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Timed Zones</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getTimedZones()
+     * @see #getEventToken()
+     * @generated
+     */
+    EReference getEventToken_TimedZones();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State <em>State</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1170,10 +1190,10 @@ public interface AutomatonPackage extends EPackage {
     EReference getState_LastProcessedEvent();
 
     /**
-     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf <em>In State Of</em>}'.
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf <em>In State Of</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>In State Of</em>'.
+     * @return the meta object for the reference list '<em>In State Of</em>'.
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf()
      * @see #getState()
      * @generated
@@ -1181,10 +1201,10 @@ public interface AutomatonPackage extends EPackage {
     EReference getState_InStateOf();
 
     /**
-     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf <em>Out State Of</em>}'.
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf <em>Out State Of</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Out State Of</em>'.
+     * @return the meta object for the reference list '<em>Out State Of</em>'.
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf()
      * @see #getState()
      * @generated
@@ -1523,6 +1543,14 @@ public interface AutomatonPackage extends EPackage {
         EReference EVENT_TOKEN__LAST_PROCESSED = eINSTANCE.getEventToken_LastProcessed();
 
         /**
+         * The meta object literal for the '<em><b>Timed Zones</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_TOKEN__TIMED_ZONES = eINSTANCE.getEventToken_TimedZones();
+
+        /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.StateImpl <em>State</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1573,7 +1601,7 @@ public interface AutomatonPackage extends EPackage {
         EReference STATE__LAST_PROCESSED_EVENT = eINSTANCE.getState_LastProcessedEvent();
 
         /**
-         * The meta object literal for the '<em><b>In State Of</b></em>' reference feature.
+         * The meta object literal for the '<em><b>In State Of</b></em>' reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
@@ -1581,7 +1609,7 @@ public interface AutomatonPackage extends EPackage {
         EReference STATE__IN_STATE_OF = eINSTANCE.getState_InStateOf();
 
         /**
-         * The meta object literal for the '<em><b>Out State Of</b></em>' reference feature.
+         * The meta object literal for the '<em><b>Out State Of</b></em>' reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated

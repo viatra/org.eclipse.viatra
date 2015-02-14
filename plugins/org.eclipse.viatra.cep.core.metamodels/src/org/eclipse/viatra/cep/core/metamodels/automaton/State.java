@@ -138,7 +138,8 @@ public interface State extends EObject {
     void setLastProcessedEvent(Event value);
 
     /**
-     * Returns the value of the '<em><b>In State Of</b></em>' reference.
+     * Returns the value of the '<em><b>In State Of</b></em>' reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone}.
      * It is bidirectional and its opposite is '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getInState <em>In State</em>}'.
      * <!-- begin-user-doc -->
      * <p>
@@ -146,27 +147,17 @@ public interface State extends EObject {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>In State Of</em>' reference.
-     * @see #setInStateOf(TimedZone)
+     * @return the value of the '<em>In State Of</em>' reference list.
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getState_InStateOf()
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getInState
      * @model opposite="inState"
      * @generated
      */
-    TimedZone getInStateOf();
+    EList<TimedZone> getInStateOf();
 
     /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getInStateOf <em>In State Of</em>}' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>In State Of</em>' reference.
-     * @see #getInStateOf()
-     * @generated
-     */
-    void setInStateOf(TimedZone value);
-
-    /**
-     * Returns the value of the '<em><b>Out State Of</b></em>' reference.
+     * Returns the value of the '<em><b>Out State Of</b></em>' reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone}.
      * It is bidirectional and its opposite is '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getOutState <em>Out State</em>}'.
      * <!-- begin-user-doc -->
      * <p>
@@ -174,23 +165,12 @@ public interface State extends EObject {
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Out State Of</em>' reference.
-     * @see #setOutStateOf(TimedZone)
+     * @return the value of the '<em>Out State Of</em>' reference list.
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getState_OutStateOf()
      * @see org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getOutState
      * @model opposite="outState"
      * @generated
      */
-    TimedZone getOutStateOf();
-
-    /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State#getOutStateOf <em>Out State Of</em>}' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Out State Of</em>' reference.
-     * @see #getOutStateOf()
-     * @generated
-     */
-    void setOutStateOf(TimedZone value);
+    EList<TimedZone> getOutStateOf();
 
 } // State

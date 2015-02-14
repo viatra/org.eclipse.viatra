@@ -25,6 +25,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="recordedEvents" upperBound="-1"
         eType="ecore:EClass Cep.ecore#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lastProcessed" eType="ecore:EClass Cep.ecore#//Event"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="timedZones" upperBound="-1"
+        eType="#//TimedZone"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="State">
     <eStructuralFeatures xsi:type="ecore:EReference" name="inTransitions" upperBound="-1"
@@ -35,10 +37,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokens" upperBound="-1"
         eType="#//EventToken" eOpposite="#//EventToken/currentState"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lastProcessedEvent" eType="ecore:EClass Cep.ecore#//Event"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="inStateOf" eType="#//TimedZone"
-        eOpposite="#//TimedZone/inState"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="outStateOf" eType="#//TimedZone"
-        eOpposite="#//TimedZone/outState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inStateOf" upperBound="-1"
+        eType="#//TimedZone" eOpposite="#//TimedZone/inState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outStateOf" upperBound="-1"
+        eType="#//TimedZone" eOpposite="#//TimedZone/outState"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InitState" eSuperTypes="#//State"/>
   <eClassifiers xsi:type="ecore:EClass" name="FinalState" eSuperTypes="#//State"/>

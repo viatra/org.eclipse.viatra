@@ -148,7 +148,8 @@ public class ExpressionTreeBuilder {
             int leafPosition = parentNode.getChildren().indexOf(leaf);
 
             // decompose
-            ExpressionTree subTree = buildTree(leaf.getExpression());
+            ComplexEventExpression expression = leaf.getExpression();
+            ExpressionTree subTree = buildTree(expression);
 
             // replace
             parentNode.getChildren().set(leafPosition, subTree.getRoot());

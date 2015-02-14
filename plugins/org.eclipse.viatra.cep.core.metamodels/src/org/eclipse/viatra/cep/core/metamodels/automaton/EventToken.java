@@ -19,6 +19,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getCurrentState <em>Current State</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getRecordedEvents <em>Recorded Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed <em>Last Processed</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getTimedZones <em>Timed Zones</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,5 +97,21 @@ public interface EventToken extends EObject {
      * @generated
      */
     void setLastProcessed(Event value);
+
+    /**
+     * Returns the value of the '<em><b>Timed Zones</b></em>' reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Timed Zones</em>' reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Timed Zones</em>' reference list.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getEventToken_TimedZones()
+     * @model
+     * @generated
+     */
+    EList<TimedZone> getTimedZones();
 
 } // EventToken
