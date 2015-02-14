@@ -89,12 +89,6 @@ public class Compiler {
 
             State lastState = subAutomatonData.getOutState();
             replaceState(lastState, finalState);
-
-            Timewindow timewindow = ((ComplexEventPattern) unfoldedEventPattern).getTimewindow();
-            if (timewindow != null) {
-                createTimedZone(timewindow, subAutomatonData.getInStates(), finalState);
-            }
-
         } else if (unfoldedEventPattern instanceof AtomicEventPattern) {
             map((AtomicEventPattern) unfoldedEventPattern);
         }
