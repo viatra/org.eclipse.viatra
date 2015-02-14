@@ -26,6 +26,8 @@ import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
 
+import static extension org.eclipse.viatra.cep.vepl.validation.ValidationHelper.*
+
 class VeplValidator extends AbstractVeplValidator {
 
 	public static val INVALID_NAME = 'invalidName'
@@ -60,7 +62,7 @@ class VeplValidator extends AbstractVeplValidator {
 
 	@Check
 	def validPatternCallArguments(ParameterizedPatternCall patternCall) {
-		if(patternCall.parameterList == null || patternCall.eventPattern == null) return
+		if(!patternCall.hasParameterList || patternCall.eventPattern == null) return
 
 		var parameterList = patternCall.parameterList
 		var eventPatternParameter = patternCall.eventPattern
@@ -79,14 +81,14 @@ class VeplValidator extends AbstractVeplValidator {
 
 	def private int getParameterNumber(EventPattern eventPattern) {
 		switch (eventPattern) {
-			AtomicEventPattern: getTypedParamterListSize(eventPattern.parameters)
-			QueryResultChangeEventPattern: getTypedParamterListSize(eventPattern.parameters)
-			ComplexEventPattern: getTypedParamterListSize(eventPattern.parameters)
+			AtomicEventPattern: getTypedParameterListSize(eventPattern.parameters)
+			QueryResultChangeEventPattern: getTypedParameterListSize(eventPattern.parameters)
+			ComplexEventPattern: getTypedParameterListSize(eventPattern.parameters)
 			default: 0
 		}
 	}
 
-	def private int getTypedParamterListSize(TypedParameterList parameterList) {
+	def private int getTypedParameterListSize(TypedParameterList parameterList) {
 		if(parameterList == null) return 0
 		if(parameterList.parameters.nullOrEmpty) return 0
 		return parameterList.parameters.size
@@ -94,15 +96,12 @@ class VeplValidator extends AbstractVeplValidator {
 
 	@Check
 	def checkRuleActions(Rule rule) {
-		var actionHandler = rule.actionHandler
-		var action = rule.action
-
-		if (actionHandler == null && action == null) {
+		if (!rule.hasActionHandler && !rule.hasAction) {
 			error("There must be either an action handler or an action registered for this rule.",
 				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
 		}
 
-		if (actionHandler != null && action != null) {
+		if (rule.hasActionHandler && rule.hasAction) {
 			error("The rule has both an action handler and additional actions defined.",
 				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
 		}
@@ -121,27 +120,6 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 	@Check
-	def expressionAtomWithTimewindowMustFeatureMultiplicity(Atom atom) {
-		val multiplicity = atom.multiplicity
-		val timewindow = atom.timewindow
-
-		if (timewindow != null && multiplicity == null) {
-			error(
-				"Timewindows on expression atoms are allowed only if multiplicity is also specified.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
-				ATOM_TIMEWINDOW_NO_MULTIPLICITY
-			)
-		} else if (timewindow == null && (multiplicity instanceof Multiplicity) &&
-			(multiplicity as Multiplicity).value < 2) {
-			error(
-				"One atomic event does not result in a valid complex event.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
-				ATOM_TIMEWINDOW_NO_MULTIPLICITY
-			)
-		}
-	}
-
-	@Check
 	def infiniteMultiplicityNotYetSupported(Atom atom) {
 		if (atom.multiplicity instanceof Infinite) {
 			error(
@@ -153,8 +131,26 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 	@Check
+	def expressionAtomWithTimewindowMustFeatureMultiplicity(Atom atom) {
+		if (atom.hasTimewindow && !atom.hasMultiplicity) {
+			error(
+				"Timewindows on expression atoms are allowed only if multiplicity is also specified.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
+				ATOM_TIMEWINDOW_NO_MULTIPLICITY
+			)
+		} else if (!atom.hasTimewindow && (atom.multiplicity instanceof Multiplicity) &&
+			(atom.multiplicity as Multiplicity).value < 2) {
+			error(
+				"One atomic event does not result in a valid complex event.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+				ATOM_TIMEWINDOW_NO_MULTIPLICITY
+			)
+		}
+	}
+
+	@Check
 	def unsupportedMultiplicityTimewindowCombinations(Atom atom) {
-		if (atom.multiplicity != null && atom.timewindow != null) {
+		if (atom.hasMultiplicity && atom.hasTimewindow) {
 			if (atom.multiplicity instanceof Infinite)
 				error(
 					"Infinite multiplicity cannot be combined with timewindow.",
@@ -171,7 +167,7 @@ class VeplValidator extends AbstractVeplValidator {
 		if (expression.right.empty && (expression.left instanceof Atom)) {
 			val atom = expression.left as Atom
 
-			if (atom.multiplicity == null) {
+			if (!atom.hasMultiplicity) {
 				warning("Using a single plain atomic event pattern in the complex event pattern is a bad design.",
 					VeplPackage.Literals.COMPLEX_EVENT_PATTERN__COMPLEX_EVENT_EXPRESSION,
 					SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION)
