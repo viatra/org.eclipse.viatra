@@ -256,11 +256,13 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
 			boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);
         	
         	if(!annotationsOK){
-        		validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!", sourceClass.getName(), uri.toString()), source,
-        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        		validator.error(String.format("Ecore package of %s must be writable by Query-based Feature generator, "
+        				+ "but resource with URI %s is not!", sourceClass.getName(), uri.toString()), annotation,
+        				PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
         	} else {
-        		validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable, but it already contains correct annotations.", uri.toString(), sourceClass.getName()), source,
-        				PatternLanguagePackage.Literals.VARIABLE__TYPE, METAMODEL_ISSUE_CODE);
+        		validator.warning(String.format("Resource at URI %s for EPackage of %s is not writable,"
+        				+ " but it already contains correct annotations.", uri.toString(), sourceClass.getName()), annotation,
+        				PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
         	}
             return;
         }
