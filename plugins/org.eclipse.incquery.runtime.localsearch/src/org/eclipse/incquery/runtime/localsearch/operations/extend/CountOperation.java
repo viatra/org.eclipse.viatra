@@ -11,15 +11,18 @@
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 
 /**
  * Calculates the count of matches for a called matcher
@@ -40,7 +43,15 @@ public class CountOperation extends ExtendOperation<Integer> {
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        LocalSearchMatcher calledMatcher = context.getMatcher(calledQuery);
+        Set<Integer> adornment = Sets.newHashSet();
+        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+            Integer source = mapping.getKey();
+            if (frame.get(source) != null) {
+                adornment.add(mapping.getValue());
+            }
+        }
+        
+        LocalSearchMatcher calledMatcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));

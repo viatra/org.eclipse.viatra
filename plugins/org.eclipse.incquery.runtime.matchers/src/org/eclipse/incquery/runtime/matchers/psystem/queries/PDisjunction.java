@@ -15,6 +15,8 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
@@ -61,6 +63,39 @@ public class PDisjunction {
         return query;
     }
 
+    /**
+     * Returns all queries directly referred in the constraints. They are all required to evaluate this query
+     * 
+     * @return a non-null, but possibly empty list of query definitions
+     */
+    public Set<PQuery> getDirectReferredQueries() {
+        Iterable<PQuery> queries = Iterables.concat(Iterables.transform(this.getBodies(),
+                PQueries.directlyReferencedQueriesFunction()));
+        return Sets.newHashSet(queries);
+    }
+
+    /**
+     * Returns all queries required to evaluate this query (transitively).
+     * 
+     * @return a non-null, but possibly empty list of query definitions
+     */
+    public Set<PQuery> getAllReferredQueries() {
+        Set<PQuery> processedQueries = Sets.newHashSet(this.getQuery());
+        Set<PQuery> foundQueries = getDirectReferredQueries();
+        Set<PQuery> newQueries = Sets.newHashSet(foundQueries);
+    
+        while(!processedQueries.containsAll(newQueries)) {
+            PQuery query = newQueries.iterator().next();
+            processedQueries.add(query);
+            newQueries.remove(query);
+            Set<PQuery> referred = query.getDirectReferredQueries();
+            referred.removeAll(processedQueries);
+            foundQueries.addAll(referred);
+            newQueries.addAll(referred);
+        }
+        return foundQueries;
+    }
+    
     /**
      * Decides whether a disjunction is mutable. A disjunction is mutable if all its contained bodies are mutable.
      * 

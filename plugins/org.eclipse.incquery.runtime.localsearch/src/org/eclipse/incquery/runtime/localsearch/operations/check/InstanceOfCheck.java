@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author Zoltan Ujhelyi
  *
@@ -31,6 +33,7 @@ public class InstanceOfCheck extends CheckOperation {
 
     @Override
     protected boolean check(MatchingFrame frame) {
+        Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
         if (frame.getValue(position) instanceof EObject) {
             return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
         }

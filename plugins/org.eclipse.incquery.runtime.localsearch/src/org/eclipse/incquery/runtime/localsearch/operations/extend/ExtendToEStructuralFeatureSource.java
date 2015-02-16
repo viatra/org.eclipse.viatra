@@ -35,6 +35,10 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
         this.feature = feature;
     }
 
+    public EStructuralFeature getFeature() {
+        return feature;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.incquery.runtime.localsearch.MatchingFrame)
      */

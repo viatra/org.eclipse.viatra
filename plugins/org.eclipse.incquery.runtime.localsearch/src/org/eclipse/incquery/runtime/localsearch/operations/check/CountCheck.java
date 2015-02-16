@@ -11,13 +11,17 @@
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+
+import com.google.common.collect.Sets;
 
 /**
  * Calculates the count of matches for a called matcher
@@ -39,10 +43,21 @@ public class CountCheck extends CheckOperation {
         this.position = position;
     }
 
+    public PQuery getCalledQuery() {
+        return calledQuery;
+    }
+
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        matcher = context.getMatcher(calledQuery);
+        Set<Integer> adornment = Sets.newHashSet();
+        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+            Integer source = mapping.getKey();
+            if (frame.get(source) != null) {
+                adornment.add(mapping.getValue());
+            }
+        }
+        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
     }
 
     @Override

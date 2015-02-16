@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OrderingHeuristics;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
@@ -31,6 +32,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -75,7 +77,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
     }
 
-    private PConstraint selectNextPConstraint(PBody pBody, SubPlan plan, Set<PConstraint> constraintSet, IPatternMatcherContext context) {
+    private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IPatternMatcherContext context) {
 
         PConstraint pConstraint = null;
 
@@ -94,7 +96,8 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {
             // TODO use better ordering heuristic based on the runtime context
-            pConstraint = Collections.min(constraintSet, new OrderingHeuristics(plan,context));
+            pConstraint = Collections.min(Collections2.filter(constraintSet, new EvaluablePConstraint(plan)),
+                    new OrderingHeuristics(plan,context));
         }
         // Remove it from the to-be-processed constraints list
         constraintSet.remove(pConstraint);

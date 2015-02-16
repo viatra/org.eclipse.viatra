@@ -33,6 +33,10 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
         this.dataType = dataType;
     }
 
+    public EDataType getDataType() {
+        return dataType;
+    }
+
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = context.getBaseIndex().getDataTypeInstances(dataType).iterator();

@@ -117,4 +117,13 @@ public class MatchingFrame extends Tuple implements Cloneable {
     public Object get(int index) {
         return getValue(index);
     }
+    
+    @Override
+    public Object[] getElements() {
+        //Redefining to trim the results to keySize
+        Object[] allElements = new Object[keySize];
+        for (int i = 0; i < keySize; ++i)
+            allElements[i] = get(i);
+        return allElements;
+    }
 }

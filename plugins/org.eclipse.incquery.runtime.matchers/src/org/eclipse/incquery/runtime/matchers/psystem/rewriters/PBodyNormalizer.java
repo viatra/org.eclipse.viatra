@@ -41,7 +41,7 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
     /**
      * If set to true, shrinks the net by avoiding unnecessary typechecks
      */
-    public static final boolean calcImpliedTypes = true;
+    public static final boolean calcImpliedTypes = false;
     private IPatternMatcherContext context;
 
     public PBodyNormalizer(IPatternMatcherContext context) {

@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.CheckConstant;
@@ -25,6 +26,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.InequalityCheck
 import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.check.StructuralFeatureCheck;
+import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExpressionEval;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendConstant;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
@@ -52,6 +54,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -64,6 +67,8 @@ import com.google.common.collect.Sets;
 public class POperationCompiler {
 
     private List<ISearchOperation> operations;
+    private Set<MatcherReference> dependencies = Sets.newHashSet();
+    private Map<PConstraint, Set<Integer>> variableBindings;
 
     /**
      * Compiles a plan of <code>POperation</code>s to a list of type <code>List&ltISearchOperation></code>
@@ -75,20 +80,19 @@ public class POperationCompiler {
     public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryProcessingException {
 
         Map<PVariable, Integer> variableMappings = CompilerHelper.createVariableMapping(plan);
-        Map<PConstraint, Set<Integer>> variableBindings = CompilerHelper.cacheVariableBindings(plan,variableMappings,boundVariableIndexes);
+        variableBindings = CompilerHelper.cacheVariableBindings(plan,variableMappings,boundVariableIndexes);
 
         operations = Lists.newArrayList();
 
         List<POperation> operationList = CompilerHelper.createOperationsList(plan);
         for (POperation pOperation : operationList) {
-            compile(pOperation, variableMappings, variableBindings);
+            compile(pOperation, variableMappings);
         }
 
         return operations;
     }
  
-    private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping,
-            Map<PConstraint, Set<Integer>> variableBindings) throws QueryProcessingException {
+    private void compile(POperation pOperation, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
 
         if (pOperation instanceof PApply) {
             PApply pApply = (PApply) pOperation;
@@ -105,7 +109,7 @@ public class POperationCompiler {
                 createCheckDispatcher(pConstraint, variableMapping);
             } else {
                 // extend
-                createExtendDispatcher(pConstraint, variableMapping, variableBindings);
+                createExtendDispatcher(pConstraint, variableMapping);
             }
 
         } else if (pOperation instanceof PStart) {
@@ -185,6 +189,9 @@ public class POperationCompiler {
         PQuery referredQuery = binaryTransitiveColsure.getReferredQuery();
         
         operations.add(new BinaryTransitiveClosureCheck(referredQuery, sourcePosition, targetPosition));
+        //The second parameter is NOT bound during execution!
+        Set<Integer> adornment = ImmutableSet.of(0);
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
 
 
@@ -194,8 +201,23 @@ public class POperationCompiler {
     }    
     
     private void createCheck(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
-        // Technically same as extend
-        createExtend(patternMatchCounter, variableMapping);
+        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
+        // Create frame mapping
+        Map<Integer, Integer> frameMapping = Maps.newHashMap();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(patternMatchCounter);
+        int keySize = patternMatchCounter.getActualParametersTuple().getSize();
+        for (int i = 0; i < keySize; i++) {
+            PVariable parameter = (PVariable) patternMatchCounter.getActualParametersTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
+        }
+        
+        PQuery referredQuery = patternMatchCounter.getReferredQuery();
+        operations.add(new CountCheck(referredQuery, frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
     
     private void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
@@ -208,7 +230,7 @@ public class POperationCompiler {
     }
 
     
-    private void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping, Map<PConstraint, Set<Integer>> variableBindings) {
+    private void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) {
 
         // DeferredPConstraint subclasses
         
@@ -229,13 +251,13 @@ public class POperationCompiler {
         // EnumerablePConstraint subclasses
 
         if (pConstraint instanceof BinaryTransitiveClosure) {
-            createExtend((BinaryTransitiveClosure) pConstraint, variableMapping, variableBindings);
+            createExtend((BinaryTransitiveClosure) pConstraint, variableMapping);
         } 
         else if (pConstraint instanceof ConstantValue) {
             createExtend((ConstantValue) pConstraint, variableMapping);
         } 
         else if (pConstraint instanceof TypeBinary) {
-            createExtend((TypeBinary) pConstraint,variableMapping, variableBindings);
+            createExtend((TypeBinary) pConstraint,variableMapping);
         }
         else if (pConstraint instanceof TypeUnary) {
             createExtend((TypeUnary) pConstraint,variableMapping);
@@ -255,7 +277,7 @@ public class POperationCompiler {
         operations.add(new IterateOverEClassInstances(variableMapping.get(pConstraint.getVariableInTuple(0)), (EClass) pConstraint.getSupplierKey()));
     }
 
-    private void createExtend(TypeBinary typeBinary, Map<PVariable, Integer> variableMapping, Map<PConstraint, Set<Integer>> variableBindings) {
+    private void createExtend(TypeBinary typeBinary, Map<PVariable, Integer> variableMapping) {
         Object supplierKey = typeBinary.getSupplierKey();
         PVariable from = (PVariable) typeBinary.getVariablesTuple().get(0);
         PVariable to = (PVariable) typeBinary.getVariablesTuple().get(1);
@@ -276,7 +298,7 @@ public class POperationCompiler {
         }
     }
 
-    private void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping, Map<PConstraint, Set<Integer>> variableBindings) {
+    private void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
         throw new UnsupportedOperationException("Binary transitive closures must be checks");
     }
 
@@ -306,32 +328,48 @@ public class POperationCompiler {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         // Create frame mapping
         Map<Integer, Integer> frameMapping = Maps.newHashMap();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(patternMatchCounter);
         int keySize = patternMatchCounter.getActualParametersTuple().getSize();
         for (int i = 0; i < keySize; i++) {
             PVariable parameter = (PVariable) patternMatchCounter.getActualParametersTuple().get(i);
             frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
         }
         
         PQuery referredQuery = patternMatchCounter.getReferredQuery();
-        operations.add(new CountCheck(referredQuery, frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
-
+        operations.add(new CountOperation(referredQuery, frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
+    
     private void createExtend(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         // Create frame mapping
         Map<Integer,Integer> frameMapping = Maps.newHashMap();
         int keySize = negativePatternCall.getActualParametersTuple().getSize();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(negativePatternCall);
         for (int i = 0; i < keySize; i++) {
             PVariable parameter = (PVariable) negativePatternCall.getActualParametersTuple().get(i);
             frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
+            
         }
-
         PQuery referredQuery = negativePatternCall.getReferredQuery();
         operations.add(new NACOperation(referredQuery, frameMapping));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
 
     private void createExtend(Inequality pConstraint, Map<PVariable, Integer> variableMapping) {
         throw new UnsupportedOperationException("Unsafe operation. Requires iteration over the entire domain");
+    }
+
+    public Set<MatcherReference> getDependencies() {
+        return dependencies;
     }
     
 }

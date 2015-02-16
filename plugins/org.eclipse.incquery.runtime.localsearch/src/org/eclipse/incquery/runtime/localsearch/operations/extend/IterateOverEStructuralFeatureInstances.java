@@ -43,6 +43,10 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
         this.feature = feature;
     }
     
+    public EStructuralFeature getFeature() {
+        return feature;
+    }
+
     @Override
     public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         frame.setValue(sourcePosition, null);

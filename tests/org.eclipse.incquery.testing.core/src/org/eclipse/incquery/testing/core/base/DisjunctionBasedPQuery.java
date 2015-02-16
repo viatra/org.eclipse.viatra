@@ -58,12 +58,12 @@ public class DisjunctionBasedPQuery implements PQuery  {
 
     @Override
     public Set<PQuery> getDirectReferredQueries() {
-        return wrapped.getDirectReferredQueries();
+        return pDisjunction.getDirectReferredQueries();
     }
 
     @Override
     public Set<PQuery> getAllReferredQueries() {
-        return wrapped.getAllReferredQueries();
+        return pDisjunction.getAllReferredQueries();
     }
 
     @Override

@@ -32,6 +32,10 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> {
         this.clazz = clazz;
     }
 
+    public EClass getClazz() {
+        return clazz;
+    }
+
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         it = context.getBaseIndex().getAllInstances(clazz).iterator();

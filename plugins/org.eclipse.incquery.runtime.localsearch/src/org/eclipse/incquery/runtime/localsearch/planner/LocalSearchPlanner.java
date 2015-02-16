@@ -90,7 +90,7 @@ public class LocalSearchPlanner {
             throws QueryProcessingException {
 
         // Flatten
-        flatDisjunction = flattener.flatten(querySpec);
+        flatDisjunction = flattener.rewrite(querySpec.getDisjunctBodies());
         Set<PBody> flatBodies = flatDisjunction.getBodies();
         prepareFlatBodesForNormalize(flatBodies);
 

@@ -16,8 +16,10 @@ import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -48,10 +50,16 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
         this.targetPosition = targetPosition;
     }
 
+    public PQuery getCalledQuery() {
+        return calledQuery;
+    }
+
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        matcher = context.getMatcher(calledQuery);
+        //Second parameter is NOT bound during execution, but the first is
+        ImmutableSet<Integer> adornment = ImmutableSet.of(0);
+        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
     }
     
     @Override
@@ -63,6 +71,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
         do {
             Object currentValue = sourcesToEvaluate.iterator().next();
             sourcesToEvaluate.remove(currentValue);
+            sourceEvaluated.add(currentValue);
             final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
             mappedFrame.setValue(0, currentValue);
             for (MatchingFrame match : matcher.getAllMatches(mappedFrame)) {

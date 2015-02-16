@@ -41,13 +41,13 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         PQuery query = disjunction.getQuery();
 
         // Check for recursion
-        if (query.getAllReferredQueries().contains(query)) {
-            throw new RewriterException("Recursive queries are not supported, can't flatten query named \""
-                    + query.getFullyQualifiedName() + "\"", null, "Unsupported recursive query", query);
+        if (disjunction.getAllReferredQueries().contains(query)) {
+            throw new RewriterException("Recursive queries are not supported, can't flatten query named \"{1}\"", 
+                    new String[] {query.getFullyQualifiedName()}, "Unsupported recursive query", query);
         }
 
         try {
-            return this.flatten(query);
+            return this.doFlatten(disjunction);
         } catch (Exception e) {
             throw new RewriterException(FLATTENING_ERROR_MESSAGE, null, FLATTENING_ERROR_MESSAGE, query, e);
         }
@@ -59,28 +59,33 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param pQuery
      *            the query to flatten
      * @return a PDisjunction containing the flattened bodies
+     * @deprecated Use {@link #rewrite(PDisjunction)} instead
      */
     public PDisjunction flatten(PQuery pQuery) {
-        return doFlatten(pQuery);
+        try {
+            return rewrite(pQuery.getDisjunctBodies());
+        } catch (RewriterException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * This function holds the actual flattening logic for a PQuery
      * 
-     * @param pQuery
+     * @param disjunction
      *            to be flattened
      * @return the flattened bodies of the pQuery
      * @throws Exception
      */
-    private PDisjunction doFlatten(PQuery pQuery) {
-        Set<PBody> bodies = pQuery.getDisjunctBodies().getBodies();
+    private PDisjunction doFlatten(PDisjunction disjunction) {
+        Set<PBody> bodies = disjunction.getBodies();
         // This stores the flattened bodies; they are disjoint
         Set<PBody> flattenedBodies = Sets.<PBody> newHashSet();
         for (PBody pBody : bodies) {
             // OR connection between the bodies
             flattenedBodies.addAll(doFlatten(pBody));
         }
-        return new PDisjunction(pQuery, flattenedBodies);
+        return new PDisjunction(disjunction.getQuery(), flattenedBodies);
     }
 
     /**
@@ -112,7 +117,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
                 if (shouldFlatten(positivePatternCall)) {
                     // If the above preconditions meet, do the flattening and return the disjoint bodies
                     PQuery referredQuery = positivePatternCall.getReferredQuery();
-                    PDisjunction flattenedDisjunction = doFlatten(referredQuery);
+                    PDisjunction flattenedDisjunction = doFlatten(referredQuery.getDisjunctBodies());
                     flattenedDisjunctions.add(flattenedDisjunction);
                     flattenedCalls.add(positivePatternCall);
                 }
@@ -244,7 +249,9 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         // Copy variables
         Set<PVariable> allVariables = pBody.getAllVariables();
         for (PVariable pVariable : allVariables) {
-            copier.copyVariable(pVariable, namingTool.createVariableName(pVariable, pBody.getPattern()));
+            if (pVariable.isUnique()) {
+                copier.copyVariable(pVariable, namingTool.createVariableName(pVariable, pBody.getPattern()));
+            }
         }
 
         // Copy constraints which are not filtered
