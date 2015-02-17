@@ -44,6 +44,7 @@ public final class EMFIssueCodes {
     public static final String IDENTIFIER_AS_KEYWORD = ISSUE_CODE_PREFIX + "identifier_as_keyword";
 
     public static final String FEATURE_NOT_REPRESENTABLE = ISSUE_CODE_PREFIX + "feature_not_representable";
+    public static final String SURROGATE_QUERY_EXISTS = ISSUE_CODE_PREFIX + "surrogate_query_exists";
 
     public static final String MISSING_PARAMETER_TYPE = ISSUE_CODE_PREFIX + "missing_parameter_type";
 
