@@ -42,6 +42,13 @@
                name="generateIntoModelCode"
                type="boolean">
          </annotationparameter>
+         <annotationparameter
+               description="If true, the Ecore model is not modified and instead of replacing the derived feature, the defined query will be used as a pattern call in all patterns where the derived feature is used in the definition."
+               mandatory="false"
+               multiple="false"
+               name="useAsSurrogate"
+               type="boolean">
+         </annotationparameter>
       </annotation>
    </extension>
    <extension

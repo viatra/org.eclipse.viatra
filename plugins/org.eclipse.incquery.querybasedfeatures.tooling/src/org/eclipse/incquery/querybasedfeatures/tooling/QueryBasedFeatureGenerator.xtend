@@ -34,14 +34,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
-/* usage: @DerivedFeature(
- *      feature="featureName", (default: patten name)
- *      source="Src" (default: first parameter),
- *      target="Trg" (default: second parameter),
- *      kind="single/many/counter/sum/iteration" (default: feature.isMany?many:single)
- *      keepCache="true/false" (default: true)
- *      )
- */
 /**
  * @author Abel Hegedus
  *
@@ -90,15 +82,14 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   
   def private processAnnotations(Pattern pattern, boolean generate) {
     for(annotation : pattern.getAnnotationsByName(QueryBasedFeatures::ANNOTATION_LITERAL)) {
-      val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode")
-      var useModelCode = false
-      if(useModelCodeRef != null){
-          useModelCode = (useModelCodeRef as BoolValue).value
-      }
-      if(useModelCode){
-        modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
-      } else {
-        delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
+      val useAsSurrogate = annotation.getValueOfFirstBooleanAnnotationParameter("useAsSurrogate", false)
+      if(!useAsSurrogate){
+          val useModelCode = annotation.getValueOfFirstBooleanAnnotationParameter("generateIntoModelCode", false)
+          if(useModelCode){
+            modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
+          } else {
+            delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
+          }
       }
     }
   }
@@ -123,6 +114,10 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
             contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)
             contribAttribute(it, "classifier-name", parameters.source.name)
             contribAttribute(it, "feature-name", parameters.feature.name)
+            
+            if(parameters.useAsSurrogate) {
+                contribAttribute(it, "surrogate-query-fqn", pattern.fullyQualifiedName)
+            }
           ]
         ]
       ]
@@ -156,6 +151,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     var featureTmp = ""
     var kindTmp = ""
     var keepCacheTmp = true
+    var useAsSurrogate = false
 
     if(pattern.parameters.size < 2){
       if(feedback)
@@ -174,6 +170,8 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
           kindTmp = (ap.value as StringValue).value
         } else if (ap.name.matches("keepCache")) {
           keepCacheTmp = (ap.value as BoolValue).value
+        } else if (ap.name.matches("useAsSurrogate")) {
+          useAsSurrogate = (ap.value as BoolValue).value
         }
       }
 
@@ -282,7 +280,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     }
     parameters.targetVar = targetTmp
     parameters.keepCache = keepCacheTmp
-
+    parameters.useAsSurrogate = useAsSurrogate
 
     return parameters
   }
@@ -303,5 +301,6 @@ class QueryBasedFeatureParameters{
   
   public QueryBasedFeatureKind kind
   public boolean keepCache
+  public boolean useAsSurrogate
   
 }
