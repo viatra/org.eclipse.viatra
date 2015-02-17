@@ -123,7 +123,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 						!(containerClass.getEAllStructuralFeatures().contains(container)),
 						"The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
 						containerClass.getName(), feature.getName());
-		Preconditions.checkArgument(feature.getUpperBound() > 1,
+		Preconditions.checkArgument(feature.isMany(),
 				"The EAttribute %s must have an upper bound larger than 1.",
 				feature.getName());
 		Preconditions
