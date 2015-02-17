@@ -18,8 +18,6 @@ import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedSc
 import org.eclipse.incquery.runtime.evm.update.IQBaseCallbackUpdateCompleteProvider;
 import org.eclipse.incquery.runtime.evm.update.IQEngineUpdateCompleteProvider;
 import org.eclipse.incquery.runtime.evm.update.TransactionUpdateCompleteProvider;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -35,23 +33,6 @@ public final class Schedulers {
 
     /**
      * Creates a scheduler factory that creates schedulers by registering to the
-     *  after update callback on the NavigationHelper of the given engine.
-     *    
-     * @param engine
-     * @deprecated Change parameter to NavigationHelper (e.g. engine.getBaseIndex()) or use getIQEngineSchedulerFactory
-     */
-    @Deprecated
-	public static UpdateCompleteBasedSchedulerFactory getIQBaseSchedulerFactory(final IncQueryEngine engine) {
-        try {
-            return getIQBaseSchedulerFactory(engine.getBaseIndex());
-        } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getLogger(Schedulers.class).error("Base index not available in engine", e);
-            return null;
-        }
-    }
-    
-    /**
-     * Creates a scheduler factory that creates schedulers by registering to the
      *  after update callback on the NavigationHelper.
      *    
      * @param index
@@ -61,8 +42,6 @@ public final class Schedulers {
         provider = new IQBaseCallbackUpdateCompleteProvider(index);
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
-    
-    
     
     /**
      * Creates a scheduler factory that creates schedulers by registering a
@@ -76,8 +55,6 @@ public final class Schedulers {
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
 
-    
-    
     /**
      * Creates a scheduler factory that creates schedulers by registering a listener
      *  for the transaction events on the given domain.

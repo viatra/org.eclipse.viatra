@@ -220,15 +220,8 @@ public class RuleEngine {
     }
     
     /**
-     * 
      * @return the immutable set of rules in the EVM
-     * @deprecated use the {@link #getRuleSpecificationMultimap()} instead as it returns the filter configurations as well
      */
-    @Deprecated
-	public Set<RuleSpecification<?>> getRuleSpecifications() {
-        return ImmutableSet.copyOf(ruleBase.getRuleSpecificationMultimap().keySet());
-    }
-    
     public Multimap<RuleSpecification<?>, EventFilter<?>> getRuleSpecificationMultimap(){
         return ImmutableMultimap.copyOf(ruleBase.getRuleSpecificationMultimap());
     }
