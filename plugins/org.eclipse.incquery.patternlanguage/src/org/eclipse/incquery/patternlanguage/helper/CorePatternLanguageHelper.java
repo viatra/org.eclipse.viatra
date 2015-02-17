@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
+import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
@@ -401,6 +402,28 @@ public final class CorePatternLanguageHelper {
     public static ValueReference getFirstAnnotationParameter(final Annotation annotation, final String parameterName) {
         Collection<ValueReference> parameters = getAnnotationParameters(annotation, parameterName);
         return (!parameters.isEmpty()) ? parameters.iterator().next() : null;
+    }
+    
+    /**
+     * Returns the value of the first Boolean annotation parameter with the given name. If the parameter with the given name
+     * is not Boolean or is not defined then the default value is returned.
+     *  
+     * @param annotation
+     * @param parameterName
+     * @param defaultValue
+     * @return the value of the first boolean parameter with the given name, otherwise defaultValue
+     */
+    public static boolean getValueOfFirstBooleanAnnotationParameter(Annotation annotation, String parameterName, boolean defaultValue){
+        ValueReference useAsSurrogateRef = getFirstAnnotationParameter(annotation,parameterName);
+        if(useAsSurrogateRef != null){
+        	if(useAsSurrogateRef instanceof BoolValue){
+        		return ((BoolValue) useAsSurrogateRef).isValue();
+        	} else {
+        		return defaultValue;
+        	}
+        } else {
+            return defaultValue;
+        }
     }
 
     /**
