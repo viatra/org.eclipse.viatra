@@ -15,8 +15,8 @@
 		<module>../../releng/org.eclipse.viatra.target</module>
 	</modules>
 	<properties>
-		<tycho.version>0.20.0</tycho.version>
-		<tycho.extras.version>0.20.0</tycho.extras.version>
+		<tycho.version>0.22.0</tycho.version>
+		<tycho.extras.version>0.22.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra2/org.eclipse.viatra2.emf.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=gmt&amp;component=VIATRA2</eclipse.bugzillaUrl>
@@ -260,7 +260,7 @@
 	</repositories>
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
-		<url>http://git.eclipse.org/c/viatra2/org.eclipse.viatra2.emf.git/</url>
+		<url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
 	</scm>
 	<ciManagement>
 		<url>https://hudson.eclipse.org/hudson/</url>

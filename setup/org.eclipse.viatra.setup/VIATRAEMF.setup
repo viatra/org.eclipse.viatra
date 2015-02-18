@@ -60,7 +60,7 @@
   <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.viatra.emf"
-      remoteURI="viatra/org.eclipse.viatra.emf">
+      remoteURI="viatra/org.eclipse.viatra">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail
