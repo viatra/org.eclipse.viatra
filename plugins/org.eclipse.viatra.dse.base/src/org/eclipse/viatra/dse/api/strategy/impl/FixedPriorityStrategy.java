@@ -22,6 +22,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 import com.google.common.collect.Lists;
@@ -47,12 +48,14 @@ public class FixedPriorityStrategy implements IStrategy {
     private boolean isInterrupted = false;
 
     protected Map<TransformationRule<? extends IPatternMatch>, Integer> priorities = new HashMap<TransformationRule<? extends IPatternMatch>, Integer>();
+    private FilterOptions filterOptions;
 
     /**
      * Creates a fixed priority strategy instance, with default configuration: it tries only the rule activations with
      * the highest priority from a state, without a depth limit.
      */
     public FixedPriorityStrategy() {
+        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     /**
@@ -103,17 +106,16 @@ public class FixedPriorityStrategy implements IStrategy {
             return null;
         }
 
-        // Backtrack if there is no more unfired transition from here
-        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
-        while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit)
-                || (transitions == null || transitions.isEmpty())) {
-            if (!dsm.undoLastTransformation()) {
-                return null;
-            }
-            transitions = dsm.getUntraversedTransitionsFromCurrentState();
-        }
-
         do {
+            // Backtrack if there is no more unfired transition from here
+            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
+            while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit)
+                    || (transitions == null || transitions.isEmpty())) {
+                if (!dsm.undoLastTransformation()) {
+                    return null;
+                }
+                transitions = dsm.getTransitionsFromCurrentState(filterOptions);
+            }
 
             if (tryBestTransitionsOnly) {
                 Integer bestPriority = bestPriorityInState.get(dsm.getCurrentState().getId());
@@ -122,7 +124,7 @@ public class FixedPriorityStrategy implements IStrategy {
                     bestPriorityInState.put(dsm.getCurrentState().getId(), bestPriority);
                 }
                 List<ITransition> bestTrasitions = Lists.newArrayList();
-                for (ITransition iTransition : dsm.getUntraversedTransitionsFromCurrentState()) {
+                for (ITransition iTransition : transitions) {
                     if (priorities.get(iTransition.getTransitionMetaData().rule) == bestPriority) {
                         bestTrasitions.add(iTransition);
                     }
@@ -134,13 +136,15 @@ public class FixedPriorityStrategy implements IStrategy {
                     return iTransition;
                 }
             } else {
-                ITransition bestTransition = getBestTransition(dsm.getUntraversedTransitionsFromCurrentState());
+                ITransition bestTransition = getBestTransition(transitions);
                 if (bestTransition != null) {
                     return bestTransition;
                 }
             }
 
-        } while (!dsm.undoLastTransformation());
+            dsm.undoLastTransformation();
+            
+        } while (!isInterrupted);
 
         return null;
     }

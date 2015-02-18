@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.solutionstore;
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
-import org.eclipse.viatra.dse.base.ThreadContext;
-
 /**
  * An empty implementation of {@link ISolutionStore} which doesn't store any solution. Useful when the framework is
  * extended in such a way, that the solutions are stored elsewhere and in other structure.
@@ -24,25 +17,11 @@ import org.eclipse.viatra.dse.base.ThreadContext;
  * @author Andras Szabolcs Nagy
  * 
  */
-public class DummySolutionStore implements ISolutionStore {
-
-    @Override
-    public StopExecutionType newSolution(ThreadContext context) {
-        return StopExecutionType.CONTINUE;
-    }
-
-    @Override
-    public Collection<Solution> getSolutions() {
-        throw new UnsupportedOperationException("DummySolutionStore cannot return any solutions.");
-    }
-
-    @Override
-    public void registerSolutionFoundHandler(ISolutionFoundHandler handler) {
-    }
+public class StrategyDependentSolutionStore extends SimpleSolutionStore {
 
     @Override
     public boolean isStrategyDependent() {
-        return false;
+        return true;
     }
 
 }

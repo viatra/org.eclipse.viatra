@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -19,6 +20,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 public class PetriGuidedStrategy implements IStrategy {
@@ -28,10 +30,12 @@ public class PetriGuidedStrategy implements IStrategy {
     private List<Integer> trajectoyIndexes = new ArrayList<Integer>();
     private BreadthFirstStrategy breadthFirstSearch;
     private boolean lastWasPetriTurn = true;
-    private boolean isInterrupted = false;;
+    private boolean isInterrupted = false;
+    private FilterOptions filterOptions;
 
     @Override
     public void init(ThreadContext context) {
+        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
@@ -47,7 +51,7 @@ public class PetriGuidedStrategy implements IStrategy {
             petriTrajectory = context.getGuidance().getPetriNetAbstractionResult().getSolutions().get(0)
                     .getTrajectory();
         }
-        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
+        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
 
         // backtrack if there is no more unfired transition from here
         // don't backtrack if breadth first search is running
@@ -65,7 +69,7 @@ public class PetriGuidedStrategy implements IStrategy {
                 trajectoyIndexes.remove(trajectoyIndexes.size() - 1);
             }
 
-            transitions = dsm.getUntraversedTransitionsFromCurrentState();
+            transitions = dsm.getTransitionsFromCurrentState(filterOptions);
         }
 
         TransformationRule<? extends IPatternMatch> nextPetriRule = petriTrajectory.get(actIndex);

@@ -46,6 +46,7 @@ public class ExplorerThread implements IExplorerThread {
     private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final Logger logger = Logger.getLogger(this.getClass());
+    private ObjectiveValuesMap objectiveValuesMap;
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
@@ -87,6 +88,8 @@ public class ExplorerThread implements IExplorerThread {
 
             logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
 
+            calculateObjectives();
+
             // do the exploration until {@link StrategyBase#solutionFound}
             // returns
             // stop, or interrupted from outside by Strategy#stopRunning
@@ -96,8 +99,6 @@ public class ExplorerThread implements IExplorerThread {
                 if (interrupted.get()) {
                     strategy.interrupted(threadContext);
                 }
-
-                ObjectiveValuesMap objectiveValuesMap = null;
 
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
 
@@ -131,14 +132,26 @@ public class ExplorerThread implements IExplorerThread {
 
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
                 boolean areConstraintsSatisfied = true;
-                objectiveValuesMap = calculateObjectives();
-                
+
+                calculateObjectives();
+
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = newState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (objectiveValuesMap.isSatisifiesHardObjectives()) {
-                        globalContext.getSolutionStore().newSolution(threadContext, objectiveValuesMap);
+                    if (objectiveValuesMap.isSatisifiesHardObjectives()
+                            && !globalContext.getSolutionStore().isStrategyDependent()) {
+                        StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                        switch (verdict) {
+                        case STOP_ALL:
+                            continueExecution = false;
+                            globalContext.stopAllThreads();
+                            break;
+                        case STOP_THREAD:
+                            continueExecution = false;
+                        default:
+                            break;
+                        }
                     } else if (traversalState == TraversalStateType.CUT) {
                         areConstraintsSatisfied = false;
                     }
@@ -153,22 +166,22 @@ public class ExplorerThread implements IExplorerThread {
                         // if it is a goal state
                         if (objectiveValuesMap.isSatisifiesHardObjectives()) {
 
-                            logger.debug("Goal state.");
+                            logger.debug("State satisfies all the hard objectives.");
 
                             newState.setTraversalState(TraversalStateType.GOAL);
 
-                            StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext,
-                                    objectiveValuesMap);
-
-                            switch (verdict) {
-                            case STOP_ALL:
-                                continueExecution = false;
-                                globalContext.stopAllThreads();
-                                break;
-                            case STOP_THREAD:
-                                continueExecution = false;
-                            default:
-                                break;
+                            if (!globalContext.getSolutionStore().isStrategyDependent()) {
+                                StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                                switch (verdict) {
+                                case STOP_ALL:
+                                    continueExecution = false;
+                                    globalContext.stopAllThreads();
+                                    break;
+                                case STOP_THREAD:
+                                    continueExecution = false;
+                                default:
+                                    break;
+                                }
                             }
 
                         }
@@ -232,9 +245,12 @@ public class ExplorerThread implements IExplorerThread {
 
         result.setSatisifiesHardObjectives(satisifiesHardObjectives);
 
+        threadContext.setObjectiveValuesMap(result);
+        objectiveValuesMap = result;
+
         return result;
     }
-    
+
     private boolean checkGlobalConstraints() {
         for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
             if (!globalConstraint.checkGlobalConstraint(threadContext)) {

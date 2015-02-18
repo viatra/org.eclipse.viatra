@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.solutionstore;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +24,7 @@ import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 
 /**
  * This is a simple implementation of the {@link ISolutionStore} interface which stores all the found solution
- * trajectory (i.e. for which the implementation of {@link ICheckGoalState#isGoalState(ThreadContext)} returns with
- * anything but null).
+ * trajectory (i.e. trajectories, which satisfy all the hard objectives).
  * 
  * It can be configured to stop the exploration after a predefined number of solutions is found.
  * 
@@ -49,13 +47,13 @@ public class SimpleSolutionStore implements ISolutionStore {
     }
 
     @Override
-    public StopExecutionType newSolution(ThreadContext context, Map<String, Double> objectives) {
+    public StopExecutionType newSolution(ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object id = dsm.getCurrentState().getId();
         IStateSerializerFactory serializerFactory = context.getGlobalContext().getStateSerializerFactory();
         SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(serializerFactory);
-        solutionTrajectory.setObjectives(objectives);
+        solutionTrajectory.setObjectives(context.getObjectiveValuesMap());
         
         Solution solution = solutions.get(id);
 
@@ -100,6 +98,11 @@ public class SimpleSolutionStore implements ISolutionStore {
             solutionFoundHandlers = new ConcurrentLinkedQueue<ISolutionFoundHandler>();
         }
         solutionFoundHandlers.add(handler);
+    }
+
+    @Override
+    public boolean isStrategyDependent() {
+        return false;
     }
 
 }

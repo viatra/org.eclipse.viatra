@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.designspace.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,46 +26,98 @@ import org.eclipse.viatra.dse.api.TransformationRule;
  */
 public interface IGetCertainTransitions {
 
-    // ******** No jump
-    // ****************************
-
     /**
-     * Return the untraversed {@link ITransition}s which are start from the current {@link IState}.
-     * 
-     * @return The transitions.
+     * Filter options for retrieving transitions. 
      */
-    List<? extends ITransition> getUntraversedTransitionsFromCurrentState();
+    public static class FilterOptions {
+        /**
+         * If set to true and the current state dissatisfies the global constraints an empty list will be returned.
+         */
+        public boolean nothingIfCut = false;
+        
+        /**
+         * If set to true and the current state satisfies the hard objectives an empty list will be returned.
+         */
+        public boolean nothingIfGoal = false;
+        
+        /**
+         * Already traversed transitions won't be returned.
+         */
+        public boolean untraversedOnly = false;
+        
+        /**
+         * Only transitions with rules referenced by this list will be retrieved.
+         */
+        public List<TransformationRule<? extends IPatternMatch>> ruleFilter;
+
+        /**
+         * Will return an empty list if the current state dissatisfies the global constraints.
+         * @return this
+         */
+        public FilterOptions nothingIfCut() {
+            nothingIfCut = true;
+            return this;
+        }
+
+        /**
+         * Will return an empty list if the current state satisfies the hard objectives.
+         * @return this
+         */
+        public FilterOptions nothingIfGoal() {
+            nothingIfGoal = true;
+            return this;
+        }
+
+        /**
+         * Will return only untraversed transitions.
+         * @return this
+         */
+        public FilterOptions untraversedOnly() {
+            untraversedOnly = true;
+            return this;
+        }
+
+        /**
+         * Will return transitions derived from the given rule. Multiple rules can be given.
+         * @param rule of the transitions to return
+         * @return this
+         */
+        public FilterOptions withRuleFilter(TransformationRule<? extends IPatternMatch> rule) {
+            if (ruleFilter == null) {
+                ruleFilter = new ArrayList<TransformationRule<? extends IPatternMatch>>(1);
+            }
+            ruleFilter.add(rule);
+            return this;
+        }
+
+        /**
+         * Checks if the given rule is already in the filter list. If the filter list is empty, it will evaluate to true.
+         * @param rule
+         * @return True if it contains the rule or no rule was specified. False otherwise.
+         */
+        public boolean containsRule(TransformationRule<? extends IPatternMatch> rule) {
+            if (ruleFilter == null || ruleFilter.contains(rule)) {
+                return true;
+            }
+            return false;
+        }
+    }
 
     /**
-     * Return all of the {@link ITransition}s which are start from the current {@link IState}.
+     * Return all of the {@link ITransition}s which start from the current {@link IState}.
      * 
      * @return The transitions.
      */
     Collection<? extends ITransition> getTransitionsFromCurrentState();
 
     /**
-     * Return the untraversed {@link ITransition}s which are start from the current {@link IState} and represents an
-     * activation of the given rule.
+     * Return the {@link ITransition}s which start from the current {@link IState} filtered by the {@link FilterOptions}.
      * 
-     * @param ruleFilter
-     *            The {@link TransformationRule}.
+     * @param filter Filter options.
      * @return The filtered transitions.
+     * @see FilterOptions
      */
-    List<? extends ITransition> getUntraversedTransitionsFromCurrentState(
-            TransformationRule<? extends IPatternMatch> ruleFilter);
-
-    /**
-     * Return all of the {@link ITransition}s which are start from the current {@link IState} and represents an
-     * activation of the given rule.
-     * 
-     * @param ruleFilter
-     *            The {@link TransformationRule}.
-     * @return The filtered transitions.
-     */
-    List<? extends ITransition> getTransitionsFromCurrentState(TransformationRule<? extends IPatternMatch> ruleFilter);
-
-    // *********** Short jump
-    // ****************************************
+    Collection<? extends ITransition> getTransitionsFromCurrentState(FilterOptions filter);
 
     /**
      * Returns all untraversed {@link ITransition}s which are start from the {@code numOfStatesBack} previous

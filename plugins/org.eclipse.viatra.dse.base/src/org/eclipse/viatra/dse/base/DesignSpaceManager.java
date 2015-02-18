@@ -156,7 +156,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             }
         }
 
-        logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to " + newStateId);
+        logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to "
+                + newStateId);
     }
 
     public ITransition getTransitionByActivation(Activation<?> activation) {
@@ -195,13 +196,10 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         throw new DSEException(errorMsg);
     }
 
-    // ** API for strategy **//
-
     /**
      * Returns true if the given state is not owned by this crawler.
      * 
      **/
-
     @Override
     public boolean isNewModelStateAlreadyTraversed() {
         return !isNewState;
@@ -230,53 +228,27 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     }
 
     @Override
-    public List<? extends ITransition> getUntraversedTransitionsFromCurrentState() {
-        IState currentState = trajectory.getCurrentState();
-        if (currentState.getTraversalState() != TraversalStateType.TRAVERSED) {
+    public Collection<? extends ITransition> getTransitionsFromCurrentState(FilterOptions filter) {
+        if ((filter.nothingIfCut && trajectory.getCurrentState().getTraversalState() == TraversalStateType.CUT)
+                || (filter.nothingIfGoal && trajectory.getCurrentState().getTraversalState() == TraversalStateType.GOAL)) {
             return Collections.emptyList();
         }
 
-        List<ITransition> immediatelyFireableTransitions = new ArrayList<ITransition>();
-        for (ITransition transition : currentState.getOutgoingTransitions()) {
-            if (!transition.isAssignedToFire()) {
-                immediatelyFireableTransitions.add(transition);
+        if (filter.untraversedOnly) {
+            IState currentState = trajectory.getCurrentState();
+
+            List<ITransition> transitions = new ArrayList<ITransition>();
+            for (ITransition transition : currentState.getOutgoingTransitions()) {
+                if (!transition.isAssignedToFire() && filter.containsRule(transition.getTransitionMetaData().rule)) {
+                    transitions.add(transition);
+                }
             }
+
+            return transitions;
         }
 
-        return immediatelyFireableTransitions;
-    }
+        return trajectory.getCurrentState().getOutgoingTransitions();
 
-    @Override
-    public List<? extends ITransition> getUntraversedTransitionsFromCurrentState(
-            TransformationRule<? extends IPatternMatch> ruleFilter) {
-        IState currentState = trajectory.getCurrentState();
-        if (currentState.getTraversalState() != TraversalStateType.TRAVERSED) {
-            return Collections.emptyList();
-        }
-
-        List<ITransition> immediatelyFireableTransitions = new ArrayList<ITransition>();
-        for (ITransition transition : currentState.getOutgoingTransitions()) {
-            if (!transition.isAssignedToFire() && transition.getTransitionMetaData().rule.equals(ruleFilter)) {
-                immediatelyFireableTransitions.add(transition);
-            }
-        }
-
-        return immediatelyFireableTransitions;
-    }
-
-    @Override
-    public List<? extends ITransition> getTransitionsFromCurrentState(
-            TransformationRule<? extends IPatternMatch> ruleFilter) {
-        IState currentState = trajectory.getCurrentState();
-
-        List<ITransition> transitions = new ArrayList<ITransition>();
-        for (ITransition transition : currentState.getOutgoingTransitions()) {
-            if (transition.getTransitionMetaData().rule.equals(ruleFilter)) {
-                transitions.add(transition);
-            }
-        }
-
-        return transitions;
     }
 
     @Override
@@ -291,8 +263,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         throw new UnsupportedOperationException();
     }
 
-    // ** API for moving in the design space**//
-
     @Override
     public boolean undoLastTransformation() {
         // check if it is valid to step back from here (you can't step back from
@@ -302,9 +272,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             logger.debug("Failed undo request. Cannot undo.");
             return false;
         }
-
-        // get the current state
-        IState previousState = trajectory.getCurrentState();
 
         // we move the model by executing undo on the command stack
         domain.getCommandStack().undo();
@@ -324,9 +291,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             }
         }
 
-        logger.debug(
-                "Successul undo from " + lastTransition.getResultsIn().getId() + " transition "
-                        + lastTransition.getId() + " to " + lastTransition.getFiredFrom().getId());
+        logger.debug("Successul undo from " + lastTransition.getResultsIn().getId() + " transition "
+                + lastTransition.getId() + " to " + lastTransition.getFiredFrom().getId());
 
         // return with true, indicating that we indeed executed a step back.
         return true;
@@ -394,7 +360,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             logger.error("Saving designspace failed", e);
         }
     }
-    
+
     public void registerExploreEventHandler(IExploreEventHandler handler) {
         if (handler == null) {
             return;
@@ -404,7 +370,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         }
         handlers.add(handler);
     }
-    
+
     public void deregisterExploreEventHandler(IExploreEventHandler handler) {
         if (handler == null) {
             return;

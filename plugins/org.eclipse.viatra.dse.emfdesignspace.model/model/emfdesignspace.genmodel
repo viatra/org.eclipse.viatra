@@ -3,7 +3,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.dse.emfdesignspace.model/src"
     modelPluginID="org.eclipse.viatra.dse.emfdesignspace.model" modelName="Emfdesignspace"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="7.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+    complianceLevel="6.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
   <foreignModel>emfdesignspace.ecore</foreignModel>
   <genPackages prefix="EMFDesignSpace" basePackage="org.eclipse.viatra.dse.emf" disposableProviderFactory="true"
       ecorePackage="emfdesignspace.ecore#/">

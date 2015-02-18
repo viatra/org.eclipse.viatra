@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.genetic.initialselectors;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
@@ -22,6 +23,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
@@ -44,6 +46,8 @@ public class BFSSelector implements IInitialPopulationSelector {
 
     private boolean isInterrupted = false;
 
+    private FilterOptions filterOptions;
+
     public BFSSelector() {
         this(2, 1);
     }
@@ -55,6 +59,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     public BFSSelector(float chanceOfSelection, int minDepthOfFirstPopulation) {
         this.minDepthOfFirstPopulation = minDepthOfFirstPopulation;
         this.chanceOfSelection = chanceOfSelection;
+        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
@@ -104,10 +109,10 @@ public class BFSSelector implements IInitialPopulationSelector {
             dsm.undoLastTransformation();
         }
 
-        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
+        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
         do {
             if (!transitions.isEmpty()) {
-                return transitions.get(0);
+                return transitions.iterator().next();
             } else {
                 List<ITransition> next = pullQueue.poll();
                 if (next != null) {
@@ -124,7 +129,7 @@ public class BFSSelector implements IInitialPopulationSelector {
                     pullQueue = pushQueue;
                     pushQueue = new ArrayDeque<List<ITransition>>();
                 }
-                transitions = dsm.getUntraversedTransitionsFromCurrentState();
+                transitions = dsm.getTransitionsFromCurrentState(filterOptions);
             }
         } while (true);
     }

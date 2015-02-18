@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.impl;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,6 +20,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -57,13 +58,13 @@ public class ParallelBFSStrategy implements IStrategy {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    private boolean isInterrupted = false;;
+    private boolean isInterrupted = false;
 
-    public ParallelBFSStrategy() {
-    }
+    private FilterOptions filterOptions;
 
     public ParallelBFSStrategy(int maxDepth) {
         this.initMaxDepth = maxDepth;
+        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
@@ -90,6 +91,7 @@ public class ParallelBFSStrategy implements IStrategy {
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
 
         if ((sharedData.maxDepth > 0 && sharedData.actLevel > sharedData.maxDepth) || isInterrupted) {
+            logger.debug("Reached maximum depth.");
             return null;
         }
 
@@ -103,11 +105,11 @@ public class ParallelBFSStrategy implements IStrategy {
             dsm.undoLastTransformation();
         }
 
-        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
+        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
         do {
             if (!transitions.isEmpty()) {
 
-                ITransition transition = transitions.get(0);
+                ITransition transition = transitions.iterator().next();
                 logger.debug("Next transition: " + transition.getId());
                 return transition;
 
@@ -156,7 +158,7 @@ public class ParallelBFSStrategy implements IStrategy {
                     logger.debug("Moved to state: " + dsm.getCurrentState().getId());
 
                 }
-                transitions = dsm.getUntraversedTransitionsFromCurrentState();
+                transitions = dsm.getTransitionsFromCurrentState(filterOptions);
             }
         } while (!sharedData.isAllExplored);
 

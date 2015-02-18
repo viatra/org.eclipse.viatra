@@ -11,10 +11,10 @@
 package org.eclipse.viatra.dse.solutionstore;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
@@ -60,12 +60,9 @@ public interface ISolutionStore {
      * 
      * @param context
      *            Context with the actual state of the exploration process.
-     * @param objectives
-     *            Measurements returned by the used implementation of {@link ICheckGoalState}. Cannot be null (but empty
-     *            is possible).
      * @return The {@link StopExecutionType} based on it's internal reasoning.
      */
-    StopExecutionType newSolution(ThreadContext context, Map<String, Double> objectives);
+    StopExecutionType newSolution(ThreadContext context);
 
     /**
      * Returns the currently stored solutions.
@@ -82,4 +79,12 @@ public interface ISolutionStore {
      *            The handler.
      */
     void registerSolutionFoundHandler(ISolutionFoundHandler handler);
+
+    /**
+     * If an {@link ISolutionStore} is exploration strategy dependent the framework passes the responsibility of calling
+     * the {@link ISolutionStore#newSolution(ThreadContext)} method to the {@link IStrategy} implementation.
+     * 
+     * @return True if it is strategy dependent.
+     */
+    boolean isStrategyDependent();
 }

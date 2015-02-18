@@ -94,9 +94,9 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
     }
 
     @Override
-    public synchronized StopExecutionType newSolution(ThreadContext context, Map<String, Double> objectives) {
+    public synchronized StopExecutionType newSolution(ThreadContext context) {
 
-        Double fitness = objectives.get(key);
+        Double fitness = context.getObjectiveValuesMap().get(key);
 
         if (solutionsToStore <= 0 || solutionsToStore > solutionsTrajectories.size()) {
             saveTrajectory(context.getDesignSpaceManager(), fitness);
@@ -138,6 +138,11 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
     @Override
     public void registerSolutionFoundHandler(ISolutionFoundHandler handler) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isStrategyDependent() {
+        return false;
     }
 
 }

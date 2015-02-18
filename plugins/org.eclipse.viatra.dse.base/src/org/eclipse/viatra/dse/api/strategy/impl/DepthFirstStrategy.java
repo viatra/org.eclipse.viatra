@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.impl;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -18,6 +19,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
@@ -37,12 +39,11 @@ public class DepthFirstStrategy implements IStrategy {
     private Random random = new Random();
     private Logger logger = Logger.getLogger(this.getClass());
     private boolean isInterrupted = false;
-
-    public DepthFirstStrategy() {
-    }
+    private FilterOptions filterOptions;
 
     public DepthFirstStrategy(int maxDepth) {
         initMaxDepth = maxDepth;
+        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
@@ -68,7 +69,7 @@ public class DepthFirstStrategy implements IStrategy {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         PerformanceMonitorManager.startTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
-        List<? extends ITransition> transitions = dsm.getUntraversedTransitionsFromCurrentState();
+        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
         PerformanceMonitorManager.endTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
 
         // backtrack
@@ -85,7 +86,7 @@ public class DepthFirstStrategy implements IStrategy {
                     + dsm.getCurrentState().getId());
 
             PerformanceMonitorManager.startTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
-            transitions = dsm.getUntraversedTransitionsFromCurrentState();
+            transitions = dsm.getTransitionsFromCurrentState(filterOptions);
             PerformanceMonitorManager.endTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
         }
 
@@ -94,7 +95,12 @@ public class DepthFirstStrategy implements IStrategy {
         }
 
         int index = random.nextInt(transitions.size());
-        ITransition transition = transitions.get(index);
+        Iterator<? extends ITransition> iterator = transitions.iterator();
+        while (iterator.hasNext() && index != 0) {
+            index--;
+            iterator.next();
+        }
+        ITransition transition = iterator.next();
 
         logger.debug("Depth: " + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() + " Next transition: "
                 + transition.getId() + " From state: " + transition.getFiredFrom().getId());

@@ -33,6 +33,7 @@ import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
 
 /**
  * This class holds all the information that is related to a single processing thread of the DesignSpaceExploration
@@ -53,6 +54,7 @@ public class ThreadContext {
     private DesignSpaceManager designSpaceManager;
     private List<IObjective> objectives;
     private List<IGlobalConstraint> globalConstraints;
+    private ObjectiveValuesMap objectiveValuesMap;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -147,7 +149,7 @@ public class ThreadContext {
             for (IObjective objective : globalContext.getObjectives()) {
                 objectives.add(objective.createNew());
             }
-            
+
             globalConstraints = new ArrayList<IGlobalConstraint>();
             for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
                 globalConstraints.add(globalConstraint);
@@ -172,9 +174,9 @@ public class ThreadContext {
         }
 
         globalContext.initVisualizersForThread(this);
-        
+
         strategy.init(this);
-        
+
         if (isFirstThread) {
             isFirstReady.set(true);
         }
@@ -223,6 +225,14 @@ public class ThreadContext {
 
     public void setExplorerThread(IExplorerThread explorerThread) {
         this.explorerThread = explorerThread;
+    }
+
+    public ObjectiveValuesMap getObjectiveValuesMap() {
+        return objectiveValuesMap;
+    }
+
+    public void setObjectiveValuesMap(ObjectiveValuesMap objectiveValuesMap) {
+        this.objectiveValuesMap = objectiveValuesMap;
     }
 
 }
