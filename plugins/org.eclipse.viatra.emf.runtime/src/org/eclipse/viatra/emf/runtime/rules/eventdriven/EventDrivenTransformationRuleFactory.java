@@ -15,7 +15,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.specific.Lifecycles;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule;
@@ -25,14 +24,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class EventDrivenTransformationRuleFactory {
-    public static final ActivationLifeCycle POINT_SEMANTICS = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
-    public static final ActivationLifeCycle INTERVAL_SEMANTICS = Lifecycles.getDefault(false, true);
-
+    
     public class EventDrivenTransformationBuilder<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
         private String name = "";
         private IQuerySpecification<Matcher> precondition;
         private Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
-        private ActivationLifeCycle lifeCycle = POINT_SEMANTICS;
+        private ActivationLifeCycle lifeCycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
 
         public EventDrivenTransformationBuilder<Match, Matcher> name(String name) {
             this.name = name;
