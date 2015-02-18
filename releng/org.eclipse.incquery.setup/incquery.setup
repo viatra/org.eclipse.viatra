@@ -24,7 +24,7 @@
   </setupTask>
   <setupTask
       xsi:type="setup:EclipseIniTask"
-      option="-Doomph.redirection.incquery.cps.demo.setup"
+      option="-Doomph.redirection.incquery.setup"
       value="=http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/plain/releng/org.eclipse.incquery.setup/incquery.setup->${git.clone.incquery.location|uri}/releng/org.eclipse.incquery.setup/incquery.setup"
       vm="true"/>
   <setupTask
@@ -141,17 +141,11 @@
     <requirement
         name="org.eclipse.graphiti.sdk.feature.feature.group"/>
     <requirement
-        name="org.eclipse.gef4.geometry.feature.group"/>
-    <requirement
-        name="org.eclipse.gef4.zest.sdk.feature.group"/>
-    <requirement
         name="de.itemis.xtext.antlr.feature.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/luna"/>
     <repository
         url="http://download.eclipse.org/releases/indigo"/>
-    <repository
-        url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
     <repository
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
     <repository
@@ -188,8 +182,6 @@
             url="http://download.eclipse.org/releases/luna"/>
         <repository
             url="http://download.eclipse.org/releases/indigo"/>
-        <repository
-            url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
         <repository
             url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         <repository
@@ -376,7 +368,8 @@
           name="incquery-master-maven"/>
     </setupTask>
     <setupTask
-        xsi:type="setup.p2:P2Task">
+        xsi:type="setup.p2:P2Task"
+        label="Xtext">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.7.0,2.8.0)"/>
@@ -406,6 +399,23 @@
           id="launch.incqeury.generator.xcore"
           excludedTriggers="STARTUP"
           launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateIncQueryXcore.launch"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="GEF4 Zest">
+        <requirement
+            name="org.eclipse.gef4.geometry.feature.group"/>
+        <requirement
+            name="org.eclipse.gef4.zest.sdk.feature.group"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="https://hudson.eclipse.org/incquery/job/incquery-master/lastSuccessfulBuild/artifact/update-site-extra/"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="0.8-maintenance">
@@ -441,12 +451,30 @@
           name="incquery-maintenance-0.8.0"/>
     </setupTask>
     <setupTask
-        xsi:type="setup.p2:P2Task">
+        xsi:type="setup.p2:P2Task"
+        label="Xtext">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.6.0,2.7.0)"/>
       <repository
           url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="GEF4 Zest">
+        <requirement
+            name="org.eclipse.gef4.geometry.feature.group"/>
+        <requirement
+            name="org.eclipse.gef4.zest.sdk.feature.group"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/incquery/updates-extra/release"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="0.9-maintenance">
@@ -482,12 +510,30 @@
           name="incquery-maintenance-0.9.0"/>
     </setupTask>
     <setupTask
-        xsi:type="setup.p2:P2Task">
+        xsi:type="setup.p2:P2Task"
+        label="Xtext">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.7.0,2.8.0)"/>
       <repository
           url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="GEF4 Zest">
+        <requirement
+            name="org.eclipse.gef4.geometry.feature.group"/>
+        <requirement
+            name="org.eclipse.gef4.zest.sdk.feature.group"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/incquery/updates-extra/release"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <logicalProjectContainer
