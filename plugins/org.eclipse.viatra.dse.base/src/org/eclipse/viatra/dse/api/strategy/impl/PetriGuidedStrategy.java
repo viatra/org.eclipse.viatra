@@ -21,7 +21,7 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class PetriGuidedStrategy implements IStrategy {
 
@@ -89,7 +89,7 @@ public class PetriGuidedStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
     }
 

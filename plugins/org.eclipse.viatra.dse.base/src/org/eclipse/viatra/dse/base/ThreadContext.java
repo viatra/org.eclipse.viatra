@@ -33,7 +33,7 @@ import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 /**
  * This class holds all the information that is related to a single processing thread of the DesignSpaceExploration
@@ -54,7 +54,7 @@ public class ThreadContext {
     private DesignSpaceManager designSpaceManager;
     private List<IObjective> objectives;
     private List<IGlobalConstraint> globalConstraints;
-    private ObjectiveValuesMap objectiveValuesMap;
+    private Fitness fitness;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -227,12 +227,12 @@ public class ThreadContext {
         this.explorerThread = explorerThread;
     }
 
-    public ObjectiveValuesMap getObjectiveValuesMap() {
-        return objectiveValuesMap;
+    public Fitness getFitness() {
+        return fitness;
     }
 
-    public void setObjectiveValuesMap(ObjectiveValuesMap objectiveValuesMap) {
-        this.objectiveValuesMap = objectiveValuesMap;
+    public void setFitness(Fitness fitness) {
+        this.fitness = fitness;
     }
 
 }

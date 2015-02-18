@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class RandomSearchStrategy implements IStrategy {
 
@@ -111,7 +111,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();

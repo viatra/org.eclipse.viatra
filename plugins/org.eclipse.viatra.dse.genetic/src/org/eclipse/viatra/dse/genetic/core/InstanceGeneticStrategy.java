@@ -21,7 +21,7 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class InstanceGeneticStrategy implements IStrategy {
 
@@ -163,7 +163,7 @@ public class InstanceGeneticStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness objectives,
             boolean constraintsNotSatisfied) {
     }
 

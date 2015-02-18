@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.objectives;
 
 import java.util.HashMap;
 
-public class ObjectiveValuesMap extends HashMap<String, Double>{
+public class Fitness extends HashMap<String, Double>{
 
     private boolean satisifiesHardObjectives;
     

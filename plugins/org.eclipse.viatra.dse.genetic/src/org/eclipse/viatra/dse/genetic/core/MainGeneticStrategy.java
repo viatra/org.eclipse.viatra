@@ -32,7 +32,7 @@ import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
 public class MainGeneticStrategy implements IStrategy, IStoreChild {
@@ -368,10 +368,10 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
         if (state == GeneticStrategyState.FIRST_POPULATION) {
-            sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, objectives,
+            sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, fitness,
                     constraintsNotSatisfied);
         }
     }

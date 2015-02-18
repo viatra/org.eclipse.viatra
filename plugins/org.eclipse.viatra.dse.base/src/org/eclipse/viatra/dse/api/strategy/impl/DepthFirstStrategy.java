@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class DepthFirstStrategy implements IStrategy {
 
@@ -109,10 +109,10 @@ public class DepthFirstStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
-        if (isAlreadyTraversed || constraintsNotSatisfied || (objectives.isSatisifiesHardObjectives())) {
-            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (objectives!=null)
+        if (isAlreadyTraversed || constraintsNotSatisfied || (fitness.isSatisifiesHardObjectives())) {
+            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (fitness!=null)
                     + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();
         }

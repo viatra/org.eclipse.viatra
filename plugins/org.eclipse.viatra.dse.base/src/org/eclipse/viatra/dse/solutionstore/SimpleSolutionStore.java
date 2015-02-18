@@ -53,7 +53,7 @@ public class SimpleSolutionStore implements ISolutionStore {
         Object id = dsm.getCurrentState().getId();
         IStateSerializerFactory serializerFactory = context.getGlobalContext().getStateSerializerFactory();
         SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(serializerFactory);
-        solutionTrajectory.setObjectives(context.getObjectiveValuesMap());
+        solutionTrajectory.setFitness(context.getFitness());
         
         Solution solution = solutions.get(id);
 

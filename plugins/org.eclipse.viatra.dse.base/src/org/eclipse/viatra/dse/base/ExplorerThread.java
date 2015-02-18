@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
@@ -46,7 +46,7 @@ public class ExplorerThread implements IExplorerThread {
     private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final Logger logger = Logger.getLogger(this.getClass());
-    private ObjectiveValuesMap objectiveValuesMap;
+    private Fitness fitness;
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
@@ -88,7 +88,7 @@ public class ExplorerThread implements IExplorerThread {
 
             logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
 
-            calculateObjectives();
+            calculateFitness();
 
             // do the exploration until {@link StrategyBase#solutionFound}
             // returns
@@ -133,13 +133,13 @@ public class ExplorerThread implements IExplorerThread {
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
                 boolean areConstraintsSatisfied = true;
 
-                calculateObjectives();
+                calculateFitness();
 
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = newState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (objectiveValuesMap.isSatisifiesHardObjectives()
+                    if (fitness.isSatisifiesHardObjectives()
                             && !globalContext.getSolutionStore().isStrategyDependent()) {
                         StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
                         switch (verdict) {
@@ -164,7 +164,7 @@ public class ExplorerThread implements IExplorerThread {
                     if (areConstraintsSatisfied) {
 
                         // if it is a goal state
-                        if (objectiveValuesMap.isSatisifiesHardObjectives()) {
+                        if (fitness.isSatisifiesHardObjectives()) {
 
                             logger.debug("State satisfies all the hard objectives.");
 
@@ -201,7 +201,7 @@ public class ExplorerThread implements IExplorerThread {
                     newState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, objectiveValuesMap,
+                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, fitness,
                         !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
             }
@@ -230,8 +230,8 @@ public class ExplorerThread implements IExplorerThread {
         return threadContext;
     }
 
-    private ObjectiveValuesMap calculateObjectives() {
-        ObjectiveValuesMap result = new ObjectiveValuesMap();
+    private Fitness calculateFitness() {
+        Fitness result = new Fitness();
 
         boolean satisifiesHardObjectives = true;
 
@@ -245,8 +245,8 @@ public class ExplorerThread implements IExplorerThread {
 
         result.setSatisifiesHardObjectives(satisifiesHardObjectives);
 
-        threadContext.setObjectiveValuesMap(result);
-        objectiveValuesMap = result;
+        threadContext.setFitness(result);
+        fitness = result;
 
         return result;
     }

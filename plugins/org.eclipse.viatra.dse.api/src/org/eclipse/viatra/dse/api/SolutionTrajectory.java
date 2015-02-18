@@ -34,7 +34,7 @@ public class SolutionTrajectory {
     private final List<Object> transitionIds;
     private final List<TransformationRule<? extends IPatternMatch>> transformationRules;
     private final IStateSerializerFactory stateSerializerFactory;
-    private Map<String, Double> objectives;
+    private Map<String, Double> fitness;
 
     private IncQueryEngine engine;
     private EObject rootEObject;
@@ -149,12 +149,12 @@ public class SolutionTrajectory {
         return transitionIds;
     }
 
-    public Map<String, Double> getObjectives() {
-        return objectives;
+    public Map<String, Double> getFitness() {
+        return fitness;
     }
 
-    public void setObjectives(Map<String, Double> objectives) {
-        this.objectives = objectives;
+    public void setFitness(Map<String, Double> fitness) {
+        this.fitness = fitness;
     }
 
 }

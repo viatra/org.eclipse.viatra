@@ -75,8 +75,8 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
             solutionsTrajectories = new TreeSet<SolutionTrajectory>(new Comparator<SolutionTrajectory>() {
                 @Override
                 public int compare(SolutionTrajectory o1, SolutionTrajectory o2) {
-                    Double d1 = o1.getObjectives().get(key);
-                    Double d2 = o2.getObjectives().get(key);
+                    Double d1 = o1.getFitness().get(key);
+                    Double d2 = o2.getFitness().get(key);
                     return comparator.compare(d1, d2);
                 }
             });
@@ -84,8 +84,8 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
             solutionsTrajectories = new TreeSet<SolutionTrajectory>(new Comparator<SolutionTrajectory>() {
                 @Override
                 public int compare(SolutionTrajectory o1, SolutionTrajectory o2) {
-                    Double d1 = o1.getObjectives().get(key);
-                    Double d2 = o2.getObjectives().get(key);
+                    Double d1 = o1.getFitness().get(key);
+                    Double d2 = o2.getFitness().get(key);
                     return d1.compareTo(d2);
                 }
             });
@@ -96,11 +96,11 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
     @Override
     public synchronized StopExecutionType newSolution(ThreadContext context) {
 
-        Double fitness = context.getObjectiveValuesMap().get(key);
+        Double fitness = context.getFitness().get(key);
 
         if (solutionsToStore <= 0 || solutionsToStore > solutionsTrajectories.size()) {
             saveTrajectory(context.getDesignSpaceManager(), fitness);
-        } else if (solutionsTrajectories.first().getObjectives().get(key) > fitness) {
+        } else if (solutionsTrajectories.first().getFitness().get(key) > fitness) {
             return StopExecutionType.CONTINUE;
         } else {
             SolutionTrajectory worst = solutionsTrajectories.pollFirst();

@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
-import org.eclipse.viatra.dse.objectives.ObjectiveValuesMap;
+import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class BFSSelector implements IInitialPopulationSelector {
 
@@ -135,7 +135,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, ObjectiveValuesMap objectives,
+    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness objectives,
             boolean constraintsNotSatisfied) {
     }
 
