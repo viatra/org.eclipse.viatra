@@ -50,8 +50,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
  * A common helper class for generating VIATRA-CEP-related projects.
@@ -401,9 +403,10 @@ public abstract class ProjectGenerationHelper {
      * @param dependencies
      * @throws CoreException
      */
-    public static void ensurePackageExports(IProject project, final Collection<String> dependencies)
-            throws CoreException {
-        ensurePackageExports(project, dependencies, new NullProgressMonitor());
+    public static void ensurePackageExports(IProject project, final Collection<String> exports,
+            final Collection<String> cepPackages) throws CoreException {
+        removePackageExports(project, Lists.newArrayList(cepPackages));
+        ensurePackageExports(project, exports, new NullProgressMonitor());
     }
 
     /**
@@ -502,6 +505,25 @@ public abstract class ProjectGenerationHelper {
         }));
 
         bundleDesc.setPackageExports(exportList.toArray(new IPackageExportDescription[exportList.size()]));
+    }
+
+    public static Multimap<IProject, String> getLastExported(IProject project) {
+        Multimap<IProject, String> exported = HashMultimap.create();
+
+        BundleContext context = Activator.getContext();
+        ServiceReference<IBundleProjectService> ref = context.getServiceReference(IBundleProjectService.class);
+        final IBundleProjectService service = context.getService(ref);
+        IBundleProjectDescription bundleDesc;
+        try {
+            bundleDesc = service.getDescription(project);
+            IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
+            for (IPackageExportDescription iPackageExportDescription : packageExports) {
+                exported.put(project, iPackageExportDescription.getName());
+            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+        return exported;
     }
 
     /**
