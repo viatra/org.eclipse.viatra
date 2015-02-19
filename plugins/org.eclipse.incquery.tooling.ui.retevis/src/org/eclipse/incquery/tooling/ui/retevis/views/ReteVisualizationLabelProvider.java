@@ -10,10 +10,17 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.ui.retevis.views;
 
+import java.util.Map;
+
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery;
+import org.eclipse.incquery.runtime.rete.index.IndexerWithMemory;
+import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
+import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
+import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.zest.sources.ZestLabelProvider;
@@ -22,8 +29,11 @@ import org.eclipse.swt.widgets.Display;
 
 public class ReteVisualizationLabelProvider extends ZestLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
 
-    public ReteVisualizationLabelProvider(ViewerState state, Display display) {
+    private final Map<ReteNodeRecipe, Node> nodeTrace;
+
+    public ReteVisualizationLabelProvider(ViewerState state, Map<ReteNodeRecipe, Node> nodeTrace, Display display) {
         super(state, display);
+        this.nodeTrace = nodeTrace;
     }
 
     @Override
@@ -33,25 +43,39 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider implements
 
     @Override
     public String getText(Object element) {
+        StringBuffer text = new StringBuffer(super.getText(element));
         if (element instanceof Item) {
             Item item = (Item) element;
             Object paramObject = item.getParamObject();
             if (paramObject instanceof ProductionRecipe) {
                 ProductionRecipe productionRecipe = (ProductionRecipe) paramObject;
-                return getProductionRecipeLabel(productionRecipe);
+                Object pattern = productionRecipe.getPattern();
+                if (pattern instanceof BasePQuery) {
+                    BasePQuery pQuery = (BasePQuery) pattern;
+                    text.append(": ");
+                    text.append(pQuery.getFullyQualifiedName());
+                }
+            }
+            if (paramObject instanceof ReteNodeRecipe) {
+                ReteNodeRecipe recipe = (ReteNodeRecipe) paramObject;
+                Node node = nodeTrace.get(recipe);
+                if (node instanceof UniquenessEnforcerNode) {
+                    UniquenessEnforcerNode uniquenessEnforcerNode = (UniquenessEnforcerNode) node;
+                    text.append(formatSize(uniquenessEnforcerNode.getMemory().size()));
+                } else if (node instanceof IndexerWithMemory) {
+                    IndexerWithMemory indexerWithMemory = (IndexerWithMemory) node;
+                    text.append(formatSize(indexerWithMemory.getMemory().getKeysetSize()));
+                } else if (node instanceof IterableIndexer) {
+                    IterableIndexer iterableIndexer = (IterableIndexer) node;
+                    text.append(formatSize(iterableIndexer.getSignatures().size()));
+                }
             }
         }
-        return super.getText(element);
+        return text.toString();
     }
-
-    private String getProductionRecipeLabel(ProductionRecipe productionRecipe) {
-        Object pattern = productionRecipe.getPattern();
-        if (pattern instanceof BasePQuery) {
-            BasePQuery pQuery = (BasePQuery) pattern;
-            return "Production: " + pQuery.getFullyQualifiedName();
-        } else { // shouldn't happen
-            return "Production";
-        }
+    
+    private static String formatSize(int size) {
+        return " [" + size + "]";
     }
 
 }

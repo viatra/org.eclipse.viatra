@@ -12,10 +12,12 @@ package org.eclipse.incquery.tooling.ui.retevis.views;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -43,6 +45,7 @@ import org.eclipse.incquery.viewers.runtime.zest.sources.ZestContentWithIsolated
 import org.eclipse.ui.IViewPart;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport {
 
@@ -59,9 +62,16 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
 		getGraphViewer().setLayoutAlgorithm(new TreeLayoutAlgorithm());
 	}
 
+	private Map<ReteNodeRecipe, Node> nodeTrace; // XXX NOOO mutable state
+	
 	@Override
     protected Notifier extractModelSource(List<Object> objects) {
-        ResourceSet resourceSet = new ResourceSetImpl();
+        nodeTrace = computeNodeTrace(objects);
+        return createRecipeModel(nodeTrace);
+    }
+
+    private Map<ReteNodeRecipe, Node> computeNodeTrace(List<Object> objects) {
+        Map<ReteNodeRecipe, Node> nodeTrace = Maps.newHashMap();
         for (Object object : objects) {
             if (object instanceof PatternMatcherContent) {
                 PatternMatcherContent patternMatcherContent = (PatternMatcherContent) object;
@@ -70,14 +80,13 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
                             .getEngine()).getQueryBackend(ReteEngine.class);
                     final Collection<Node> allNodes = ((ReteEngine) reteEngine).getReteNet().getHeadContainer()
                             .getAllNodes();
-                    Resource resource = resourceSet.createResource(URI.createURI("temp"));
                     for (Node node : allNodes) {
                         for (TraceInfo traceInfo : node.getTraceInfos()) {
                             if (traceInfo instanceof RecipeTraceInfo) {
                                 RecipeTraceInfo recipeTraceInfo = (RecipeTraceInfo) traceInfo;
                                 if (patternMatcherContent.getPatternName().equals(getPatternName(recipeTraceInfo))) {
                                     ReteNodeRecipe recipe = recipeTraceInfo.getRecipe();
-                                    resource.getContents().add(EcoreUtil.getRootContainer(recipe)); // to avoid messing up containment hierarchy 
+                                    nodeTrace.put(recipe, node);
                                 }
                             }
                         }
@@ -85,12 +94,12 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
                 } catch (IncQueryException e) {
                     throw new RuntimeException("Failed to get query backend", e);
                 }
-            }   
+            }
         }
-        return resourceSet;
+        return nodeTrace;
     }
-
-    private String getPatternName(RecipeTraceInfo recipeTraceInfo) {
+	
+	private String getPatternName(RecipeTraceInfo recipeTraceInfo) {
         if (recipeTraceInfo instanceof PatternTraceInfo) {
             PatternTraceInfo patternTraceInfo = (PatternTraceInfo) recipeTraceInfo;
             return patternTraceInfo.getPatternName();
@@ -102,26 +111,35 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
         }
     }
 
-	@Override
-	protected void bindModel() {
-		Assert.isNotNull(this.configuration);
-		Assert.isNotNull(this.configuration.getPatterns());
-		
-		if (state!=null && !state.isDisposed()) {
-    		state.dispose();
-    	}
-		IncQueryEngine engine = getEngine();
-		if (engine!=null) {
-			state = IncQueryViewerDataModel.newViewerState(
-					engine, 
-	    			this.configuration.getPatterns(), 
-	    			this.configuration.getFilter(),  
-	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			GraphViewer viewer = (GraphViewer)jfaceViewer;
-			viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
-			viewer.setLabelProvider(new ReteVisualizationLabelProvider(state, viewer.getControl().getDisplay()));
-			viewer.setInput(state);
-		}
-	}
+    private Notifier createRecipeModel(Map<ReteNodeRecipe, Node> nodeTrace) {
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource resource = resourceSet.createResource(URI.createURI("temp"));
+        for (ReteNodeRecipe recipe : nodeTrace.keySet()) {
+            EObject rootContainer = EcoreUtil.getRootContainer(recipe); // to avoid messing up containment hierarchy
+            resource.getContents().add(rootContainer);
+        }
+        return resourceSet;
+    }
+
+    @Override
+    protected void bindModel() {
+        Assert.isNotNull(this.configuration);
+        Assert.isNotNull(this.configuration.getPatterns());
+
+        if (state != null && !state.isDisposed()) {
+            state.dispose();
+        }
+        IncQueryEngine engine = getEngine();
+        if (engine != null) {
+            state = IncQueryViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
+                    this.configuration.getFilter(),
+                    ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            GraphViewer viewer = (GraphViewer) jfaceViewer;
+            viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
+            viewer.setLabelProvider(new ReteVisualizationLabelProvider(state, nodeTrace, viewer.getControl()
+                    .getDisplay()));
+            viewer.setInput(state);
+        }
+    }
 	
 }

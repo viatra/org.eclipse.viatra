@@ -37,7 +37,7 @@ pattern existenceJoinRecipe(recipe) {
 	ExistenceJoinRecipe(recipe);
 }
 
-@Item(item = recipe)
+@Item(item = recipe, label = "Production")
 pattern productionRecipe(recipe) {
 	ProductionRecipe(recipe);
 }
