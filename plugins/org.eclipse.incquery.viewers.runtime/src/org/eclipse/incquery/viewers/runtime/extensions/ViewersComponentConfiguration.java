@@ -61,6 +61,7 @@ public class ViewersComponentConfiguration
 	 * Java generics bugs?
 	 * 
 	 * @param specs
+	 * @return
 	 */
 	public static ViewersComponentConfiguration fromQuerySpecs(Collection<IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>>> specs)
 	{

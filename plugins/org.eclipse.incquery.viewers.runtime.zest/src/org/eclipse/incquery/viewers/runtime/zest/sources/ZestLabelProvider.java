@@ -32,6 +32,7 @@ import org.eclipse.incquery.viewers.runtime.model.FormattableElement;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
+import org.eclipse.incquery.viewers.runtime.util.FormatParser;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -57,8 +58,8 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     }
 
     private Color getColorProperty(FormattableElement element, String property) {
-        if (element.isFormatted()) {
-            RGB color = element.getColorFormatProperty(property);
+        if (FormatParser.isFormatted(element)) {
+            RGB color = FormatParser.getColorFormatProperty(element,property);
             if (color != null) {
                 return getColor(color);
             }
@@ -67,15 +68,15 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     }
 
     private int getIntProperty(FormattableElement element, String property) {
-        if (element.isFormatted()) {
-            return element.getNumberProperty(property);
+        if (FormatParser.isFormatted(element)) {
+            return FormatParser.getNumberProperty(element,property);
         }
         return -1;
     }
     
     private String getStringProperty(FormattableElement element, String property) {
-    	if (element.isFormatted()) {
-    		return element.getStringProperty(property);
+    	if (FormatParser.isFormatted(element)) {
+    		return FormatParser.getStringProperty(element, property);
     	}
     	return "";
     }
@@ -97,7 +98,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	@Override
     public Color getBorderColor(Object entity) {
         if (entity instanceof Item) {
-            return getColorProperty((FormattableElement) entity, FormatSpecification.LINE_COLOR);
+            return getColorProperty((FormattableElement) entity, FormatParser.LINE_COLOR);
         }
         return null;
     }
@@ -110,7 +111,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	@Override
 	public int getBorderWidth(Object entity) {
         if (entity instanceof Node) {
-            return getIntProperty((FormattableElement) entity, FormatSpecification.LINE_WIDTH);
+            return getIntProperty((FormattableElement) entity, FormatParser.LINE_WIDTH);
         }
         return -1;
 	}
@@ -118,7 +119,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	@Override
 	public Color getBackgroundColour(Object entity) {
         if (entity instanceof Item) {
-            return getColorProperty((FormattableElement) entity, FormatSpecification.COLOR);
+            return getColorProperty((FormattableElement) entity, FormatParser.COLOR);
         }
         return null;
 	}
@@ -126,7 +127,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	@Override
 	public Color getForegroundColour(Object entity) {
         if (entity instanceof Item) {
-            return getColorProperty((FormattableElement) entity, FormatSpecification.TEXT_COLOR);
+            return getColorProperty((FormattableElement) entity, FormatParser.TEXT_COLOR);
         }
         return null;
 	}
@@ -189,7 +190,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     	}
     	// handle lineStyle property
     	if (rel instanceof FormattableElement) {
-    		String lS = getStringProperty((FormattableElement) rel, FormatSpecification.LINE_STYLE);
+    		String lS = getStringProperty((FormattableElement) rel, FormatParser.LINE_STYLE);
     		if ("dashed".equalsIgnoreCase(lS)) {
     			return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
     		}
@@ -212,7 +213,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     @Override
     public Color getColor(Object rel) {
         if (rel instanceof Edge) {
-            return getColorProperty((FormattableElement) rel, FormatSpecification.LINE_COLOR);
+            return getColorProperty((FormattableElement) rel, FormatParser.LINE_COLOR);
         }
         return null;
     }
@@ -235,7 +236,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     @Override
     public int getLineWidth(Object rel) {
         if (rel instanceof Edge) {
-            return getIntProperty((FormattableElement) rel, FormatSpecification.LINE_WIDTH);
+            return getIntProperty((FormattableElement) rel, FormatParser.LINE_WIDTH);
         }
         return -1;
     }

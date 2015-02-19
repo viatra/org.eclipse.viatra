@@ -47,8 +47,4 @@ public class ViewerFilterDefinition {
         this.singleFilterMatch = singleFilterMatch;
         this.filterMatches = filterMatches;
     }
-
-
-
-
 }

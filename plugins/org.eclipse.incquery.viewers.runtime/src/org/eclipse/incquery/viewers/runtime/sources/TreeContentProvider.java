@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Item;
-import org.eclipse.incquery.viewers.runtime.model.Item.RootItem;
+import org.eclipse.incquery.viewers.runtime.model.ItemExtender.RootItem;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerStateListener;
 import org.eclipse.jface.viewers.AbstractTreeViewer;

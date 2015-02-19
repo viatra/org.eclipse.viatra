@@ -7,9 +7,12 @@
  *
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
+ *   Csaba Debreceni - add exception for deprecated methods
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime;
 
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataFilter;
+import org.eclipse.incquery.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
 import org.eclipse.incquery.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.incquery.viewers.runtime.sources.QueryLabelProvider;
@@ -29,9 +32,9 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-//	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-//	}
+	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * 
@@ -39,11 +42,10 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-//	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
-//			ViewerDataFilter filter) {
-//		bind(viewer, ViewerState.newInstance(model, filter, ImmutableSet
-//						.of(ViewerStateFeature.CONTAINMENT)));
-//	}
+	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
+			ViewerDataFilter filter) {
+	    throw new UnsupportedOperationException();
+	 }
 
 	/**
 	 * Bind the viewerstate to the list viewer.
@@ -80,9 +82,9 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerStateSet} consists of the shared data between
 	 *             various viewers.
 	 */
-//	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
-//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-//	}
+	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
+	    throw new UnsupportedOperationException();
+	 }
 
 	/**
 	 * 
@@ -90,12 +92,10 @@ public class IncQueryViewerSupport {
 	 *             {@link ViewerState} consists of the shared data between
 	 *             various viewers.
 	 */
-//	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
-//			ViewerDataFilter filter) {
-//		ViewerState state = ViewerState.newInstance(model, filter, ImmutableSet
-//				.of(ViewerStateFeature.CONTAINMENT));
-//		bind(viewer, state);
-//	}
+	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
+			ViewerDataFilter filter) {
+	    throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Bind the viewerstate to the tree viewer.

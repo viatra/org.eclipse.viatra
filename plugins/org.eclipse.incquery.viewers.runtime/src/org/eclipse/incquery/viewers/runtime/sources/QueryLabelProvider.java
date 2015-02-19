@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
@@ -59,11 +58,11 @@ public class QueryLabelProvider extends LabelProvider {
     @Override
     public String getText(Object element) {
         if (element instanceof Item) {
-            IObservableValue value = ((Item) element).getLabel();
-            return value.getValue().toString();
+            String value = ((Item) element).getLabel();
+            return value;
         } else if (element instanceof Edge) {
-            IObservableValue value = ((Edge) element).getLabel();
-            return value.getValue().toString();
+            String value = ((Edge) element).getLabel();
+            return value;
     	}
     	return "";
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Csaba Debreceni, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,170 +8,232 @@
  * Contributors:
  *   ujhelyiz - initial API and implementation
  *   istvanrath - refactoring
+ *   Csaba Debreceni - update for new viewers implementation
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Collection;
-import java.util.Map;
 
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.incquery.databinding.runtime.observables.ObservableLabelFeature;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
+import org.eclipse.incquery.viewers.runtime.specifications.ContainmentQuerySpecificationDescriptor;
+import org.eclipse.incquery.viewers.runtime.specifications.EdgeQuerySpecificationDescriptor;
+import org.eclipse.incquery.viewers.runtime.specifications.ItemQuerySpecificationDescriptor;
+import org.eclipse.incquery.viewers.runtime.util.ViewerTraceabilityUtil;
+import org.eclipse.incquery.viewmodel.core.ViewModelManager;
+import org.eclipse.incquery.viewmodel.core.ViewModelRule;
+import org.eclipse.incquery.viewmodel.traceability.Traceability;
 
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Lists;
 
 /**
  * <p>
- * A Viewer state represents a stateful data model for an IncQuery Viewer. The
- * state is capable of either returning observable lists of its content, and is
- * also capable of sending of sending state change notifications based to
- * {@link IViewerStateListener} implementations.
+ * A Viewer state represents a stateful data model for an IncQuery Viewer. The state is capable of either returning
+ * lists of its content, and is also capable of sending state change notifications based to {@link IViewerStateListener}
+ * implementations.
  * </p>
  * 
  * <p>
- * A Viewer can be initialized directly with a set of patterns and model, or a
- * {@link IncQueryViewerDataModel} can be used to prepare and share such data between
- * instances.
+ * A Viewer can be initialized directly with a set of patterns and model, or a {@link IncQueryViewerDataModel} can be
+ * used to prepare and share such data between instances.
  * </p>
  * 
  * <p>
- * A ViewerState needs to be cleaned up using the {@link #dispose()} method to unregister all listeners. 
+ * A ViewerState needs to be cleaned up using the {@link #dispose()} method to unregister all listeners.
  * </p>
- * @author Zoltan Ujhelyi, Istvan Rath
+ * 
+ * @author Zoltan Ujhelyi, Istvan Rath, Csaba Debreceni
  *
  */
-public abstract class ViewerState {
+public class ViewerState implements IViewerStateListener, IViewerLabelListener {
 
-	/**
-	 * If true, then the viewerstate has an "external" model that should not be disposed internally.
-	 */
-	protected boolean hasExternalViewerDataModel = false;
-	/**
-	 * Maps low-xlevel model objects to their corresponding items.
-	 */
-	protected Multimap<Object, Item> itemMap;
-	/**
-	 * Maps parent-child relationships in the viewer model.
-	 */
-	protected Multimap<Item, Item> childrenMap;
-	/**
-	 * Maps child-parent relationships in the viewer model.
-	 */
-	protected Map<Item, Item> parentMap;
+    /**
+     * If true, then the viewerstate has an "external" model that should not be disposed internally.
+     */
+    protected boolean hasExternalViewerDataModel = false;
+    protected ViewerDataModel model;
+    protected ViewerDataFilter filter;
+    protected Collection<ViewerStateFeature> features;
+    protected ViewModelManager manager;
 
-	protected EdgeDelayer edgeDelayer = new EdgeDelayer();
-	
-	public Collection<Item> getChildren(Item parent) {
-		return childrenMap.get(parent);
-	}
+    public ViewerState(ViewerDataModel model, ViewerDataFilter filter, Collection<ViewerStateFeature> features) {
+        this.model = model;
+        this.filter = filter;
+        this.features = features;
+        this.manager = new ViewModelManager();
+        
+        try {
+            manager.setEngine(model.getEngine());
+            manager.setRules(collectRules(model));
+            manager.initialize();
+        } catch (IncQueryException e) {
+            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        } catch (QueryInitializationException e) {
+            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        }
+    }
 
-	public Item getParent(Item child) {
-		return parentMap.get(child);
-	}
+    private Collection<ViewModelRule> collectRules(ViewerDataModel model) throws QueryInitializationException {
 
-	protected ViewerDataModel model;
+        Collection<ViewModelRule> rules = Lists.newArrayList();
+        for (IQuerySpecification<?> pattern : model.getPatterns()) {
+            for(PAnnotation annotation : pattern.getAllAnnotations()) {
+                if (features.contains(ViewerStateFeature.EDGE) && annotation.getName().equals(EdgeQuerySpecificationDescriptor.ANNOTATION_ID))
+                    rules.add(EdgeRule.initiate(pattern, annotation, this, filter));
+                
+                if (features.contains(ViewerStateFeature.CONTAINMENT) && annotation.getName().equals(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID))
+                    rules.add(ContainmentRule.initiate(pattern, annotation, this, filter));
+                
+                if (annotation.getName().equals(ItemQuerySpecificationDescriptor.ANNOTATION_ID))
+                    rules.add(ItemRule.initiate(pattern, annotation, this, filter));
+            }
+        }
+        return rules;
+    }
 
-	public enum ViewerStateFeature {
-		EDGE, CONTAINMENT
-	}
+    public Collection<Item> getChildren(Item parent) {
+        return parent.getChildren();
+    }
 
-	protected ListenerList stateListeners = new ListenerList();
-	protected ListenerList labelListeners = new ListenerList();
-	protected IChangeListener labelChangeListener = new IChangeListener() {
-			@Override
-			public void handleChange(ChangeEvent event) {
-	            Object element = ((ObservableLabelFeature) event.getSource()).getContainer();
-	            for (Object _listener : labelListeners.getListeners()) {
-	            	IViewerLabelListener listener = (IViewerLabelListener) _listener;
-	            	if (element instanceof Item) {
-	            		Item item = (Item) element;
-						listener.labelUpdated(item, ((Item) element).getLabel().getValue().toString());
-	            	} else if (element instanceof Edge) {
-						Edge edge = (Edge) element;
-	            		listener.labelUpdated(edge, ((Edge) element).getLabel().getValue().toString());
-	            	}
-	            }
-			}
-		};
+    public Item getParent(Item child) {
+        return child.getParent();
+    }
 
-	/**
-	 * Adds a new state Listener to the Viewer State
-	 */
-	public void addStateListener(IViewerStateListener listener) {
-		stateListeners.add(listener);
-	}
+    public enum ViewerStateFeature {
+        EDGE, CONTAINMENT
+    }
 
-	/**
-	 * Removes a state Listener from the Viewer State
-	 */
-	public void removeStateListener(IViewerStateListener listener) {
-		stateListeners.remove(listener);
-	}
+    protected Collection<IViewerStateListener> stateListeners = Lists.newArrayList();
+    protected Collection<IViewerLabelListener> labelListeners = Lists.newArrayList();
+    private boolean isDisposed;
 
-	public void addLabelListener(IViewerLabelListener listener) {
-		labelListeners.add(listener);
-	}
+    public final void itemAppeared(Item item) {
+        for (IViewerStateListener l : stateListeners) {
+            l.itemAppeared(item);
+        }
+    }
 
-	public void removeLabelListener(IViewerLabelListener listener) {
-		labelListeners.remove(listener);
-	}
+    public final void itemDisappeared(Item item) {
+        for (IViewerStateListener l : stateListeners) {
+            l.itemDisappeared(item);
+        }
+    }
 
-	/**
-	 * Exposes EObject -> Item* traceability information.
-	 * 
-	 * Access the Set of Items mapped to an EObject.
-	 */
-	public Collection<Item> getItemsFor(Object target) {
-		return itemMap.get(target);
-	}
+    public final void containmentAppeared(Containment containment) {
+        for (IViewerStateListener l : stateListeners) {
+            l.containmentAppeared(containment);
+        }
+    }
 
-	public abstract IObservableCollection getItems();
+    public final void containmentDisappeared(Containment containment) {
+        for (IViewerStateListener l : stateListeners) {
+            l.containmentDisappeared(containment);
+        }
+    }
 
-	public abstract IObservableCollection getEdges();
+    public final void edgeAppeared(Edge edge) {
+        for (IViewerStateListener l : stateListeners) {
+            l.edgeAppeared(edge);
+        }
+    }
 
-	public abstract IObservableCollection getContainments();
+    public final void edgeDisappeared(Edge edge) {
+        for (IViewerStateListener l : stateListeners) {
+            l.edgeDisappeared(edge);
+        }
+    }
 
-	/**
-	 * Removes all listeners and disposes all observable collections managed by the class.
-	 */
-	public void dispose() {
-		if (!getItems().isDisposed()) {
-			for (Object _item : getItems()) {
-				Item item = (Item) _item;
-				item.getLabel().removeChangeListener(labelChangeListener);
-				item.dispose();
-			}
-			getItems().dispose();
-			
-		}
-		if (!getEdges().isDisposed()) {
-			for (Object _edge : getEdges()) {
-				Edge edge = (Edge) _edge;
-				edge.getLabel().removeChangeListener(labelChangeListener);
-				edge.dispose();
-			}
-			getEdges().dispose();
-		}
-		if (!getContainments().isDisposed()) {
-			getContainments().dispose();
-		}
-		
-		stateListeners.clear();
-		labelListeners.clear();
-		
-		if (!hasExternalViewerDataModel) {
-			// we have an "internal" data model -> dispose it too
-			this.model.dispose();
-		}
-		
-	}
+    public final void labelUpdated(Item item, String newLabel) {
+        for (IViewerLabelListener l : labelListeners) {
+            l.labelUpdated(item, newLabel);
+        }
+    }
 
-	public boolean isDisposed() {
-		return this.getItems().isDisposed() || this.getEdges().isDisposed() || this.getContainments().isDisposed();
-	}
+    public final void labelUpdated(Edge edge, String newLabel) {
+        for (IViewerLabelListener l : labelListeners) {
+            l.labelUpdated(edge, newLabel);
+        }
+    }
+
+    /**
+     * Adds a new state Listener to the Viewer State
+     */
+    public void addStateListener(IViewerStateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    /**
+     * Removes a state Listener from the Viewer State
+     */
+    public void removeStateListener(IViewerStateListener listener) {
+        stateListeners.remove(listener);
+    }
+
+    /**
+     * Adds a new label Listener to the Viewer State
+     */
+    public void addLabelListener(IViewerLabelListener listener) {
+        labelListeners.add(listener);
+    }
+
+    /**
+     * Removes a label Listener from the Viewer State
+     */
+    public void removeLabelListener(IViewerLabelListener listener) {
+        labelListeners.remove(listener);
+    }
+
+    /**
+     * Access the Set of Items mapped to an EObject.
+     */
+    public Collection<Item> getItemsFor(Object target) {
+        return ViewerTraceabilityUtil.traceToItem(model.getEngine(), target);
+    }
+
+    public Collection<Item> getItems() {
+        return model.getNotationModel().getItems();
+    }
+
+    public Collection<Edge> getEdges() {
+        return model.getNotationModel().getEdges();
+    }
+
+    public Collection<Containment> getContainments() {
+        return model.getNotationModel().getContainments();
+    }
+
+    public ViewModelManager getManager() {
+        return manager;
+    }
+
+    public NotationModel getNotationModel() {
+        return model.getNotationModel();
+    }
+
+    public Traceability getTraceability() {
+        return manager.getTraceability();
+    }
+
+    public IncQueryEngine getEngine() {
+        return model.getEngine();
+    }
+
+    public void dispose() {
+        manager.dispose();
+        if(!hasExternalViewerDataModel)
+            model.dispose();
+        
+        isDisposed = true;
+    }
+
+    public boolean isDisposed() {
+        return isDisposed;
+    }
 
 }

@@ -1,20 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, istvanrath, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Csaba Debreceni, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   istvanrath - initial API and implementation
+ *   Istvan Rath - initial API and implementation
+ *   Zoltan Ujhelyi - initial API and implementation
+ *   Csaba Debreceni - remove dependency from observable collections
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.model;
 
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.ObservableSet;
+import java.util.Collection;
 
-import com.google.common.collect.Multimap;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.emf.EMFScope;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.incquery.viewmodel.core.ViewModelManager;
 
 /**
  * Data model collecting input from multiple query results, and returns them as {@link ObservableSet} instances.
@@ -22,164 +31,74 @@ import com.google.common.collect.Multimap;
  * 
  * @author Zoltan Ujhelyi
  * @author Istvan Rath
+ * @author Csaba Debreceni
  * 
  */
 public abstract class ViewerDataModel {
 
-	protected static final int NODE_PRIORITY = 1;
-	protected static final int CONTAINMENT_PRIORITY = 2;
-	protected static final int EDGE_PRIORITY = 3;
+    private final String NOTATION_RESOURCE = "org.eclipse.incquery.viewers.notation.NotationResource";
+    
+    protected NotationModel model;
+    protected IncQueryEngine engine;
+    protected ResourceSet resourceSet;
 
+    public ViewerDataModel(ResourceSet notifier) throws IncQueryException {
+        this(IncQueryEngine.on(new EMFScope(notifier)));
+    }
 
-	/**
-	 * Initializes and returns an observable Set of nodes. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableItemSet(ViewerDataFilter, Multimap) } with an empty filter.
-	 * 
-	 * @return an observable Set of {@link Item} elements representing the match results in the model.
-	 */
-	public IObservableSet initializeObservableItemSet(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableItemSet(ViewerDataFilter.UNFILTERED, itemMap);
-	}
+    public ViewerDataModel(IncQueryEngine engine) {
+        if (!(engine.getScope() instanceof EMFScope)) {
+            IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
+                    "Only EMFScope is supported currently for IncQueryEngine");
+            return;
+        }
+        if (!(((EMFScope) engine.getScope()).getScopeRoot() instanceof ResourceSet)) {
+            IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
+                    "Only ResourceSet is supported currently for EMFScope");
+            return;
+        }
+        
+        model = NotationFactory.eINSTANCE.createNotationModel();
+        this.engine = engine;
+        prepareBaseNotifier();
+    }
+    
+    private void prepareBaseNotifier() {
 
-	/**
-	 * Initializes and returns an observable list of nodes. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableItemList(ViewerDataFilter, Multimap) } with an empty filter.
-	 * 
-	 * @return an observable list of {@link Item} elements representing the match results in the model.
-	 */
-	public IObservableList initializeObservableItemList(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableItemList(ViewerDataFilter.UNFILTERED, itemMap);
-	}
+        ResourceSet resourceSet = (ResourceSet)((EMFScope) engine.getScope()).getScopeRoot();
+        Resource resource = null;
 
-	/**
-	 * Initializes and returns an observable Set of nodes. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable Set of {@link Item} elements representing the match results in the model.
-	 */
-	public abstract IObservableSet initializeObservableItemSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
-	/**
-	 * Initializes and returns an observable list of nodes. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable list of {@link Item} elements representing the match results in the model.
-	 */
-	public abstract IObservableList initializeObservableItemList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
-	
-	/**
-	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link IncQueryViewerDataModel#initializeObservableEdgeSet(ViewerDataFilter, Multimap) } with an empty filter.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
-	 * 
-	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
-	 */
-	public IObservableSet initializeObservableEdgeSet(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableEdgeSet(ViewerDataFilter.UNFILTERED, itemMap);
-	}
+        for (Resource r : resourceSet.getResources()) {
+            if (r.getURI().toString().equals(getNotationResourceId())) {
+                resource = r;
+                break;
+            }
+        }
 
-	/**
-	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link IncQueryViewerDataModel#initializeObservableEdgeList(ViewerDataFilter, Multimap) } with an empty filter.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
-	 * 
-	 * @return an observable list of {@link Edge} elements representing the match results in the model.
-	 */
-	public IObservableList initializeObservableEdgeList(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableEdgeList(ViewerDataFilter.UNFILTERED, itemMap);
-	}
+        if (resource == null) {
+            resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
+        }
 
-	/**
-	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
-	 */
-	public abstract IObservableSet initializeObservableEdgeSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
+//        resource.getContents().clear();
+        resource.getContents().add(model);
+    }
+    
+    private String getNotationResourceId() {
+        return NOTATION_RESOURCE;
+    }
 
-	/**
-	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable list of {@link Edge} elements representing the match results in the model.
-	 */
-	public abstract IObservableList initializeObservableEdgeList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
+    public NotationModel getNotationModel() {
+        return model;
+    }
 
-	/**
-	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableContainmentSet(ViewerDataFilter, Multimap) } with an empty filter.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
-	 * 
-	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
-	 */
-	public IObservableSet initializeObservableContainmentSet(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableContainmentSet(ViewerDataFilter.UNFILTERED, itemMap);
-	}
+    public IncQueryEngine getEngine() {
+        return engine;
+    }
+    
+    public void dispose() {
+        EcoreUtil.delete(model);
+    }
 
-	/**
-	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables. Equivalent of calling
-	 * {@link #initializeObservableContainmentList(ViewerDataFilter, Multimap) )} with an empty filter.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
-	 * 
-	 * @return an observable list of {@link Edge} elements representing the match results in the model.
-	 */
-	public IObservableList initializeObservableContainmentList(final Multimap<Object, Item> itemMap) {
-	    return initializeObservableContainmentList(ViewerDataFilter.UNFILTERED, itemMap);
-	}
-
-	/**
-	 * Initializes and returns an observable Set of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemSet(Multimap) } method was called before.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable Set of {@link Edge} elements representing the match results in the model.
-	 */
-	public abstract IObservableSet initializeObservableContainmentSet(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
-	/**
-	 * Initializes and returns an observable list of edges. Each call initializes a new observable, it is the
-	 * responsibility of the caller to dispose of the unnecessary observables.</p>
-	 * 
-	 * <p><strong>Precondition</strong>: The method expects that the {@link #initializeObservableItemList(Multimap) } method was called before.
-	 * 
-	 * @param filter
-	 *            filter specification
-	 * 
-	 * @return an observable list of {@link Edge} elements representing the match results in the model.
-	 */
-	public abstract IObservableList initializeObservableContainmentList(ViewerDataFilter filter, final Multimap<Object, Item> itemMap);
-	
-	/**
-	 * Dispose of the data model once it's not needed anymore.
-	 */
-	public abstract void dispose();
+    public abstract Collection<IQuerySpecification<?>> getPatterns();
 
 }

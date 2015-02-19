@@ -263,6 +263,7 @@
 				<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 				<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.runtime</module>
+				<module>../../plugins/org.eclipse.incquery.viewmodel</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.runtime.zest</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui.zest</module>

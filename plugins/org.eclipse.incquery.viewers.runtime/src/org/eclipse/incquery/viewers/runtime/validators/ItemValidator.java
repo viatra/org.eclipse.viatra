@@ -19,7 +19,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePacka
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
-import org.eclipse.incquery.viewers.runtime.model.Item.HierarchyPolicy;
+import org.eclipse.incquery.viewers.runtime.model.HierarchyPolicy;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.zest.sources;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
+import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
@@ -55,11 +57,18 @@ public class ZestContentWithIsolatedNodesProvider extends
 		edgeTable = HashBasedTable.create();
 		addEdges(state.getEdges());
 		if (displayContainment) {
-			addEdges(state.getContainments());
+		    addContainments(state.getContainments());
 		}
 	}
 
-	private void addEdges(IObservableCollection edges) {
+	private void addContainments(Collection<Containment> edges) {
+        for (Object _edge : edges) {
+            Edge edge = (Edge)_edge;
+            addEdge(edge);
+        }
+    }
+	
+	private void addEdges(Collection<Edge> edges) {
 		for (Object _edge : edges) {
 			Edge edge = (Edge)_edge;
 			addEdge(edge);
@@ -101,7 +110,7 @@ public class ZestContentWithIsolatedNodesProvider extends
 		if (state == null) {
 			return new Object[0];
 		}
-		IObservableCollection items = state.getItems();
+		Collection<Item> items = state.getItems();
 		return items.toArray(new Object[items.size()]);
 	}
 

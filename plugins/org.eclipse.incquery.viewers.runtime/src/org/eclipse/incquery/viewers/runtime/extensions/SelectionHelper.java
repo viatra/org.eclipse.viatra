@@ -47,17 +47,27 @@ public class SelectionHelper {
 		}
 	};
 	
+	private Object getSourceObject(Item i) {
+	    if (i.getParamEObject() != null) {
+	        return i.getParamEObject();
+	    } else if (i.getParamObject() != null) {
+	        return i.getParamObject();
+	    } else {
+	        throw new IllegalStateException("Invalid Item selected - no source model element available.");
+	    }
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ISelection unwrapElements_ViewersElementsToEObjects(ISelection sel) {
     	List proxy = Lists.newArrayList();
     	if (sel instanceof IStructuredSelection) {
 	    	for (Object e : ((IStructuredSelection)sel).toArray()) {
 	    		if (e instanceof Item) {
-	    			proxy.add(((Item)e).getParamObject());
+	    			proxy.add(getSourceObject((Item)e));
 	    		}
 	    		else if (e instanceof Edge) {
-	    			proxy.add(((Edge)e).getSource().getParamObject());
-	    			proxy.add(((Edge)e).getTarget().getParamObject());
+	    		    proxy.add(getSourceObject(((Edge) e).getSource()));
+	    		    proxy.add(getSourceObject(((Edge) e).getTarget()));
 	    		}
 	    	}
     	}

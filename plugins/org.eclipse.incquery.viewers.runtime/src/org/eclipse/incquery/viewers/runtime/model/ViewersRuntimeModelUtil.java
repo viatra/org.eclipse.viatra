@@ -11,6 +11,9 @@
 package org.eclipse.incquery.viewers.runtime.model;
 
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.viewers.runtime.specifications.ContainmentQuerySpecificationDescriptor;
+import org.eclipse.incquery.viewers.runtime.specifications.EdgeQuerySpecificationDescriptor;
+import org.eclipse.incquery.viewers.runtime.specifications.ItemQuerySpecificationDescriptor;
 
 /**
  * @author istvanrath
@@ -19,15 +22,15 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 public class ViewersRuntimeModelUtil {
 
 	public static boolean isItemQuerySpecification(IQuerySpecification<?> querySpecification) {
-		return querySpecification.getFirstAnnotationByName(Item.ANNOTATION_ID) != null;
+		return querySpecification.getFirstAnnotationByName(ItemQuerySpecificationDescriptor.ANNOTATION_ID) != null;
 	}
 	
 	public static boolean isEdgeQuerySpecification(IQuerySpecification<?> querySpecification) {
-	    return querySpecification.getFirstAnnotationByName(Edge.ANNOTATION_ID) != null;
+	    return querySpecification.getFirstAnnotationByName(EdgeQuerySpecificationDescriptor.ANNOTATION_ID) != null;
 	}
 	
 	public static boolean isContainmentQuerySpecification(IQuerySpecification<?> querySpecification) {
-	    return querySpecification.getFirstAnnotationByName(Containment.ANNOTATION_ID) != null;
+	    return querySpecification.getFirstAnnotationByName(ContainmentQuerySpecificationDescriptor.ANNOTATION_ID) != null;
 	}
 	
 }
