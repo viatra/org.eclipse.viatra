@@ -121,6 +121,8 @@
     <requirement
         name="org.eclipse.mylyn.gerrit.feature.feature.group"/>
     <requirement
+        name="org.eclipse.mylyn.gerrit.dashboard.feature.feature.group"/>
+    <requirement
         name="org.eclipse.mylyn_feature.feature.group"/>
     <requirement
         name="org.eclipse.mylyn.bugzilla_feature.feature.group"/>
@@ -150,6 +152,8 @@
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
     <repository
         url="http://download.itemis.com/updates/releases"/>
+    <repository
+        url="http://download.eclipse.org/mylyn/releases/latest"/>
   </setupTask>
   <setupTask
       xsi:type="projects:ProjectsImportTask">
