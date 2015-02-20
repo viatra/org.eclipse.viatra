@@ -3,11 +3,13 @@ package org.eclipse.incquery.tooling.ui.retevis
 import "http://www.eclipse.org/incquery/rete/recipes"
 
 @Item(item = recipe, label = "Type Input: $recipe.typeName$")
+@Format(textColor = "#FFFFFF", color = "#7F004D")
 pattern typeInputRecipe(recipe) {
 	TypeInputRecipe(recipe);
 }
 
 @Item(item = recipe, label = "Constant: $recipe.constantValues$")
+@Format(textColor = "#FFFFFF", color = "#7F004D")
 pattern constantRecipe(recipe) {
 	ConstantRecipe(recipe);
 }
@@ -38,6 +40,7 @@ pattern existenceJoinRecipe(recipe) {
 }
 
 @Item(item = recipe, label = "Production")
+@Format(textColor = "#FFFFFF", color = "#881A71")
 pattern productionRecipe(recipe) {
 	ProductionRecipe(recipe);
 }
@@ -68,11 +71,13 @@ pattern trimmerRecipe(recipe) {
 }
 
 @Item(item = recipe, label = "Aggregator Indexer")
+@Format(textColor = "#000000", color = "#FFFFFF")
 pattern aggregatorIndexerRecipe(recipe) {
 	AggregatorIndexerRecipe(recipe);
 }
 
 @Item(item = recipe, label = "Projection Indexer")
+@Format(textColor = "#000000", color = "#FFFFFF")
 pattern projectionIndexerRecipe(recipe) {
 	ProjectionIndexerRecipe(recipe);
 }
