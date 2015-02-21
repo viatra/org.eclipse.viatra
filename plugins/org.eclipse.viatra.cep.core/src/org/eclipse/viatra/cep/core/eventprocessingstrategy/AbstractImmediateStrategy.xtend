@@ -18,6 +18,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
 
 import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
+import org.apache.log4j.Logger
 
 /**
 * Common ancestor of the <i>immediate</i> type of strategies. Defines how the {@link Automaton} resets should be
@@ -27,7 +28,7 @@ import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 *
 */
 abstract class AbstractImmediateStrategy extends AbstractStrategy {
-	val logger = LoggerUtils.instance.logger;
+	val extension Logger logger = LoggerUtils.instance.logger;
 
 	new(IEventModelManager eventModelManager) {
 		super(eventModelManager)
@@ -35,10 +36,9 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 
 	override public handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
 		model.automata.filter[a|a.needsReset].forEach [ a |
-			logger.debug(
-				String.format("ImmediateStrategy: No suitable update in the SM : %s. It's going to be reset.", a.id));
+			debug(String.format("ImmediateStrategy: No suitable update in the SM : %s. It's going to be reset.", a.id));
 			a.normalStates.filter[s|s.notEmpty].forEach [ s |
-				logger.debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", s.label))
+				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", s.label))
 				s.clear
 			]
 			model.setLatestEvent(null);
